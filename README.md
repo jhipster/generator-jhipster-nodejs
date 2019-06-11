@@ -92,7 +92,7 @@ Apache-2.0 © [Angelo Manganiello](https://github.com/amanganiello90)
 
 [npm-image]: https://img.shields.io/npm/v/generator-jhipster-nodejs.svg
 [npm-url]: https://npmjs.org/package/generator-jhipster-nodejs
-[travis-image]: https://travis-ci.org/jhipster/generator-jhipster-nodejs.svg?branch=master
-[travis-url]: https://travis-ci.org/jhipster/generator-jhipster-nodejs
+[travis-image]: https://travis-ci.com/jhipster/generator-jhipster-nodejs.svg?branch=master
+[travis-url]: https://travis-ci.com/jhipster/generator-jhipster-nodejs
 [daviddm-image]: https://david-dm.org/jhipster/generator-jhipster-nodejs.svg?theme=shields.io
 [daviddm-url]: https://david-dm.org/jhipster/generator-jhipster-nodejs

@@ -22,6 +22,17 @@ const path = require('path');
 const { logger } = require('generator-jhipster/cli/utils');
 const packageJson = require('../package.json');
 
+const currentNodeVersion = process.versions.node;
+const minimumNodeVersion = packageJson.engines.node;
+
+if (!semver.satisfies(currentNodeVersion, minimumNodeVersion)) {
+    /* eslint-disable no-console */
+    logger.error(
+        `You are running Node version ${currentNodeVersion}\nKHipster requires Node version ${minimumNodeVersion}\nPlease update your version of Node.`
+    );
+    /* eslint-enable  */
+}
+
 let preferLocal = true;
 
 // Don't use commander for parsing command line to avoid polluting it in cli.js

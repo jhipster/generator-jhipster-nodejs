@@ -1,0 +1,10 @@
+{
+  "generator-jhipster-blueprint": {
+    "promptValues": {
+      "githubName": "amanganiello90",
+      "authorName": "Angelo Manganiello",
+      "authorEmail": "angelo.mang@libero.it",
+      "authorUrl": "https://github.com/amanganiello90"
+    }
+  }
+}
