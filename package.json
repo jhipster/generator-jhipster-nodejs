@@ -5,24 +5,30 @@
   "keywords": [
     "yeoman-generator",
     "jhipster-blueprint",
-    "jhipster-5"
+    "jhipster-5",
+    "nodejs"
   ],
-  "homepage": "https://github.com/amanganiello90/generator-jhipster-nodejs",
+  "homepage": "https://github.com/amanganiello90/generator-jhipster-nodejs#readme",
   "author": {
     "name": "Angelo Manganiello",
     "email": "angelo.mang@libero.it",
     "url": "https://github.com/amanganiello90"
   },
   "files": [
-    "generators"
+    "generators",
+    "cli"
   ],
   "main": "generators/app/index.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/amanganiello90/generator-jhipster-nodejs.git"
   },
+  "bin": {
+    "nhipster": "./cli/nhipster.js"
+  },
   "dependencies": {
     "chalk": "2.4.1",
+    "commander": "2.19.0",
     "ejs": "2.6.1",
     "glob": "7.1.2",
     "gulp-filter": "5.1.0",

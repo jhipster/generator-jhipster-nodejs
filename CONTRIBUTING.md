@@ -20,9 +20,9 @@
 
 ### Step 3 ✌️ : to setup JHipster-nodejs generator
 
-`git clone https://github.com/jhipster/jhipster-nodejs`
+`git clone https://github.com/jhipster/generator-jhipster-nodejs`
 
-`cd jhipster-nodejs`
+`cd generator-jhipster-nodejs`
 
 `npm link generator-jhipster | yarn link generator-jhipster`
 
