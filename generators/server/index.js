@@ -1,6 +1,7 @@
 /* eslint-disable consistent-return */
 const chalk = require('chalk');
 const ServerGenerator = require('generator-jhipster/generators/server');
+const writeFiles = require('./files').writeFiles;
 
 module.exports = class extends ServerGenerator {
     constructor(args, opts) {
@@ -59,7 +60,19 @@ module.exports = class extends ServerGenerator {
     }
 
     get prompting() {
-        // Here we are not overriding this phase and hence its being handled by JHipster
+        // The prompting phase is being overriden so that we can ask our own questions
+        // return {
+        //     askForMainServer: prompts.askForMainServer,
+        //     askForMainServerSideOpts: prompts.askForMainServerSideOpts,
+
+        //     setSharedConfigOptions() {
+        //         this.configOptions.lastQuestion = this.currentQuestion;
+        //         this.configOptions.totalQuestions = this.totalQuestions;
+        //         this.configOptions.clientFramework = this.clientFramework;
+        //         this.configOptions.useSass = this.useSass;
+        //     }
+        // };
+        // If the prompts need to be overriden then use the code commented out above instead
         return super._prompting();
     }
 
@@ -74,12 +87,25 @@ module.exports = class extends ServerGenerator {
     }
 
     get writing() {
+        // The writing phase is being overriden so that we can write our own templates as well.
+        // If the templates doesnt need to be overrriden then just return `super._writing()` here
+        const phaseFromJHipster = super._writing();
+        const customPhaseSteps = {
+            writeAdditionalFile() {
+                writeFiles.call(this);
+            }
+        };
+        return Object.assign(phaseFromJHipster, customPhaseSteps);
+    }
+
+    get install() {
         // Here we are not overriding this phase and hence its being handled by JHipster
-        return super._writing();
+        return super._install();
     }
 
     get end() {
         // Here we are not overriding this phase and hence its being handled by JHipster
         return super._end();
     }
+
 };
