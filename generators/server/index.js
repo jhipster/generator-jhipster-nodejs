@@ -2,6 +2,7 @@
 const chalk = require('chalk');
 const ServerGenerator = require('generator-jhipster/generators/server');
 const writeFiles = require('./files').writeFiles;
+const prompts = require('./prompts');
 
 module.exports = class extends ServerGenerator {
     constructor(args, opts) {
@@ -55,25 +56,34 @@ module.exports = class extends ServerGenerator {
          *      return Object.assign(phaseFromJHipster, myCustomPhaseSteps);
          * ```
          */
+
         // Here we are not overriding this phase and hence its being handled by JHipster
+
         return super._initializing();
     }
 
     get prompting() {
         // The prompting phase is being overriden so that we can ask our own questions
-        // return {
-        //     askForMainServer: prompts.askForMainServer,
-        //     askForMainServerSideOpts: prompts.askForMainServerSideOpts,
 
-        //     setSharedConfigOptions() {
-        //         this.configOptions.lastQuestion = this.currentQuestion;
-        //         this.configOptions.totalQuestions = this.totalQuestions;
-        //         this.configOptions.clientFramework = this.clientFramework;
-        //         this.configOptions.useSass = this.useSass;
-        //     }
-        // };
+        // const configuration = this.getAllJhipsterConfig(this, true);
+
+        // const applicationType= this.applicationType;
+
+        // if(applicationType=== 'monolith'){
+        return {
+            askForMainServer: prompts.askForMainServer,
+            // askForMainServerSideOpts: prompts.askForMainServerSideOpts,
+
+            setSharedConfigOptions() {
+                //         this.configOptions.lastQuestion = this.currentQuestion;
+                //         this.configOptions.totalQuestions = this.totalQuestions;
+                this.configOptions.serverFramework = this.serverFramework;
+                //         this.configOptions.useSass = this.useSass;
+            }
+        };
+        // }
         // If the prompts need to be overriden then use the code commented out above instead
-        return super._prompting();
+        // return super._prompting();
     }
 
     get configuring() {
@@ -107,5 +117,4 @@ module.exports = class extends ServerGenerator {
         // Here we are not overriding this phase and hence its being handled by JHipster
         return super._end();
     }
-
 };

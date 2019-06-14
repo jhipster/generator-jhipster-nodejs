@@ -10,22 +10,22 @@ function askForMainServer(meta) {
 
     const choices = [
         {
-            value: 'vue',
-            name: 'VueJS'
+            value: 'node',
+            name: 'NodeJS'
+        },
+        {
+            value: 'java',
+            name: 'Java'
         }
     ];
 
     const PROMPT = {
         type: 'list',
-        name: 'clientFramework',
-        when: response => applicationType !== 'microservice' && applicationType !== 'uaa',
-        message: response =>
-            this.getNumberedQuestion(
-                'Which *Framework* would you like to use for the client?',
-                applicationType !== 'microservice' && applicationType !== 'uaa'
-            ),
+        name: 'serverFramework',
+        when: applicationType === 'monolith',
+        message: 'Which *Framework* would you like to use for the server?',
         choices,
-        default: 'vue'
+        default: 'node'
     };
 
     if (meta) return PROMPT; // eslint-disable-line consistent-return
@@ -33,7 +33,7 @@ function askForMainServer(meta) {
     const done = this.async();
 
     this.prompt(PROMPT).then(prompt => {
-        this.clientFramework = prompt.clientFramework;
+        this.serverFramework = prompt.serverFramework;
         done();
     });
 }
@@ -46,7 +46,7 @@ function askForMainServerSideOpts() {
         {
             type: 'confirm',
             name: 'useSass',
-            message: response => this.getNumberedQuestion('Would you like to use the LibSass stylesheet preprocessor for your CSS?', true),
+            message: 'Would you like to use the LibSass stylesheet preprocessor for your CSS?',
             default: false
         }
     ];
