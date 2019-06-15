@@ -1,4 +1,4 @@
-# This is the Roadmap fot development. 🎉🎉🎉 Thank you for whatever contribution to one of these features! 🎉🎉🎉
+# This is the Roadmap for development. 🎉🎉🎉 Thank you for whatever contribution to one of these features! 🎉🎉🎉
 
 For every feature you can contribute opening a branch called `feature/<numer>` (for example *feature/one* for the first) from the master branch and after a pull request to me.
 
