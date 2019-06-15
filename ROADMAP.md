@@ -2,7 +2,7 @@
 
 For every feature you can contribute opening a branch called `feature/<numer>` (for example *feature/one* for the first) from the master branch and after a pull request to me.
 
-> let it free to give advices or tips!
+> Let it free to give advices or tips!
 
 ## Feature one
 The blueprint must add nodejs framework only if you choose a **monolithic application** (and after baseName question).
@@ -18,10 +18,10 @@ When you choose monolitich application and nodejs framework, the generator will 
 * A question for the jhipster client framework (angular or react)
 * A question for the server port
 
-So, the generation for now must follow still the jhipster standard with these default value for the other features:
+So, the generation for now must still follow the jhipster standard with these default values for the other features:
 
 
-`
+```
 		packageName com.example.node,
 		cacheProvider no,
 		enableHibernateCache false,
@@ -34,6 +34,6 @@ So, the generation for now must follow still the jhipster standard with these de
 		clientPackageManager yarn,
 		useSass true,
 		skipUserManagement false
-`
+```
 
 As you can see you have to modify only the server and the client generator (i18n and the other for now must be unchanged).
