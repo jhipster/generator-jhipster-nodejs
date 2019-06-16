@@ -1,5 +1,6 @@
 module.exports = {
     askForMainServer,
+    askForPackageManager,
     askForMainServerSideOpts
 };
 
@@ -37,6 +38,42 @@ function askForMainServer(meta) {
         done();
     });
 }
+
+
+function askForPackageManager(meta) {
+    if (!meta && this.existingProject) return;
+    const defaultPackageManager = 'npm';
+    const applicationType = this.applicationType;
+    const serverFramework = this.serverFramework;
+    const choices = [
+        {
+            value: 'npm',
+            name: 'Npm'
+        },
+        {
+            value: 'yarn',
+            name: 'Yarn'
+        }
+    ];
+
+    const PROMPT = {
+        when: serverFramework === 'node' && applicationType === 'monolith',
+        type: 'list',
+        name: 'packageManager',
+        message: 'Which **Package Manager** Would you like to use?',
+        choices: choices,
+        default: defaultPackageManager
+    }
+
+    if (meta) return PROMPT; // eslint-disable-line consistent-return
+
+    const done = this.async();
+
+    this.prompt(PROMPT).then(prompt => {
+        this.packageManager = prompt.packageManager;
+        done();
+    });
+};
 
 function askForMainServerSideOpts() {
     if (this.existingProject) return;

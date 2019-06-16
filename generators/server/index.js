@@ -72,12 +72,14 @@ module.exports = class extends ServerGenerator {
         // if(applicationType=== 'monolith'){
         return {
             askForMainServer: prompts.askForMainServer,
+            askForPackageManager: prompts.askForPackageManager,
             // askForMainServerSideOpts: prompts.askForMainServerSideOpts,
 
             setSharedConfigOptions() {
                 //         this.configOptions.lastQuestion = this.currentQuestion;
                 //         this.configOptions.totalQuestions = this.totalQuestions;
                 this.configOptions.serverFramework = this.serverFramework;
+                this.configOptions.packageManager = this.packageManager;
                 //         this.configOptions.useSass = this.useSass;
             }
         };
