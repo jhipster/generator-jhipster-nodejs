@@ -39,7 +39,6 @@ function askForMainServer(meta) {
     });
 }
 
-
 function askForPackageManager(meta) {
     if (!meta && this.existingProject) return;
     const defaultPackageManager = 'npm';
@@ -61,9 +60,9 @@ function askForPackageManager(meta) {
         type: 'list',
         name: 'packageManager',
         message: 'Which **Package Manager** Would you like to use?',
-        choices: choices,
+        choices,
         default: defaultPackageManager
-    }
+    };
 
     if (meta) return PROMPT; // eslint-disable-line consistent-return
 
@@ -73,7 +72,7 @@ function askForPackageManager(meta) {
         this.packageManager = prompt.packageManager;
         done();
     });
-};
+}
 
 function askForMainServerSideOpts() {
     if (this.existingProject) return;
