@@ -1,7 +1,7 @@
 /* eslint-disable consistent-return */
 const chalk = require('chalk');
 const ClientGenerator = require('generator-jhipster/generators/client');
-const writeFiles = require('./files').writeFiles;
+// const writeFiles = require('./files').writeFiles;
 
 module.exports = class extends ClientGenerator {
     constructor(args, opts) {
@@ -61,17 +61,16 @@ module.exports = class extends ClientGenerator {
 
     get prompting() {
         // The prompting phase is being overriden so that we can ask our own questions
-        // return {
-        //     askForClient: prompts.askForClient,
-        //     askForClientSideOpts: prompts.askForClientSideOpts,
+        /*
+        return {
+            askForClientSideOpts: prompts.askForClientSideOpts,
 
-        //     setSharedConfigOptions() {
-        //         this.configOptions.lastQuestion = this.currentQuestion;
-        //         this.configOptions.totalQuestions = this.totalQuestions;
-        //         this.configOptions.clientFramework = this.clientFramework;
-        //         this.configOptions.useSass = this.useSass;
-        //     }
-        // };
+            setSharedConfigOptions() {
+
+                this.configOptions.clientFramework = this.clientFramework;
+            }
+        };
+        */
         // If the prompts need to be overriden then use the code commented out above instead
         return super._prompting();
     }
@@ -89,6 +88,7 @@ module.exports = class extends ClientGenerator {
     get writing() {
         // The writing phase is being overriden so that we can write our own templates as well.
         // If the templates doesnt need to be overrriden then just return `super._writing()` here
+        /*
         const phaseFromJHipster = super._writing();
         const customPhaseSteps = {
             writeAdditionalFile() {
@@ -96,6 +96,8 @@ module.exports = class extends ClientGenerator {
             }
         };
         return Object.assign(phaseFromJHipster, customPhaseSteps);
+        */
+        return super._writing();
     }
 
     get install() {
