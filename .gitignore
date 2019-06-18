@@ -22,3 +22,4 @@ package-lock.json
 .project
 .settings
 test/**/*.png
+*.tgz
