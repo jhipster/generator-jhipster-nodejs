@@ -4,19 +4,20 @@ For every feature you can contribute opening a branch called `feature/<numer>` (
 
 > Let it free to give advices or tips!
 
-## Feature one
+## Feature one - DONE
 The blueprint must add nodejs framework only if you choose a **monolithic application** (and after baseName question).
-So only in this case there will be a question to choose the language framework (java or nodejs). 
+So only in this case there will the custom questions.
 
-> If you choose nodejs language there will be the blueprint custom questions. In the other all case (**not monolitich application or java language** choosing, the generator is retrocompatible with the standard jhipster questions and generation)
+> In the other all case (**not monolitich application** choosing, the generator run an error and stop the prompting)
 
 
-## Feature two
+## Feature two - DONE
 When you choose monolitich application and nodejs framework, the generator will ask:
 
-* A question for the package manager type (npm or yarn)
+* A question for the server package manager type (npm or yarn)
+* A question for the base name node app
 * A question for the jhipster client framework (angular or react)
-* A question for the server port
+* A question for the server port for NestJS node app
 
 So, the generation for now must still follow the jhipster standard with these default values for the other features:
 
@@ -36,4 +37,9 @@ So, the generation for now must still follow the jhipster standard with these de
 		skipUserManagement false
 ```
 
-As you can see you have to modify only the server and the client generator (i18n and the other for now must be unchanged).
+As you can see you have to modify only the server generator (i18n and the other for now must be unchanged).
+
+## Feature three
+
+As the app use the maven pom.xml to manage client and node server, we have to "clean" that file from unuseful dependencies and orchestrate the frontend and NestJS app.
+So we have to add new pom.xml template and NestJS files.
