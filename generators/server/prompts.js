@@ -1,3 +1,5 @@
+const chalk = require('chalk');
+
 module.exports = {
     askForMainServerSideOpts
 };
@@ -10,16 +12,28 @@ function askForMainServerSideOpts(meta) {
     const PROMPT = [
         {
             type: 'input',
+            name: 'baseName',
+            when: applicationType === 'monolith',
+            validate(text) {
+                return text ? true : 'The base application port cannot be empty!';
+            },
+            message: `What is ${chalk.yellow('*base name*')} of your node application?`
+        },
+        {
+            type: 'input',
             name: 'serverPort',
             when: applicationType === 'monolith',
-            message: 'Which *Port* would you like to start your NestJS server?',
+            validate(text) {
+                return text ? true : 'The base application port cannot be empty!';
+            },
+            message: `Which ${chalk.yellow('*port*')} would you like to start your NestJS server?`,
             default: '8081'
         },
         {
             type: 'list',
             name: 'serverPackageManager',
             when: applicationType === 'monolith',
-            message: 'Which *Package Manager* would you like for server?',
+            message: `Which ${chalk.yellow('*package manager*')} would you like for server?`,
             choices: [
                 {
                     value: 'npm',
@@ -35,7 +49,7 @@ function askForMainServerSideOpts(meta) {
     ];
 
     if (applicationType !== 'monolith') {
-        this.log.error('For now only monolithic app type is allowed!');
+        this.log.error(`For now ${chalk.red('only monolitich app type')} is allowed!`);
         process.exit(0);
     }
 
@@ -46,6 +60,7 @@ function askForMainServerSideOpts(meta) {
     this.prompt(PROMPT).then(prompt => {
         this.serverPort = prompt.serverPort;
         this.serverPackageManager = prompt.serverPackageManager;
+        this.baseName = prompt.baseName;
         done();
     });
 }

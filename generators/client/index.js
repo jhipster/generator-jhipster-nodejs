@@ -66,8 +66,7 @@ module.exports = class extends ClientGenerator {
             askForClientSideOpts: prompts.askForClientSideOpts,
 
             setSharedConfigOptions() {
-
-                this.configOptions.clientFramework = this.clientFramework;
+                // this.configOptions.clientFramework = this.clientFramework;
             }
         };
         */

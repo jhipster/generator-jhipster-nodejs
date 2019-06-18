@@ -76,6 +76,7 @@ module.exports = class extends ServerGenerator {
 
             setSharedConfigOptions() {
                 this.configOptions.serverPort = this.serverPort;
+                this.configOptions.baseName = this.baseName;
                 this.configOptions.serverPackageManager = this.serverPackageManager;
                 this.configOptions.packageName = this.packageName;
                 this.configOptions.cacheProvider = this.cacheProvider;
@@ -105,8 +106,11 @@ module.exports = class extends ServerGenerator {
         const phaseFromJHipster = super._configuring();
         const myCustomPhaseSteps = {
             mySaveConfig() {
-                this.config.serverPackageManager = this.serverPackageManager;
-                // this.config.set(this.config);
+                const config = {
+                    serverPackageManager: this.serverPackageManager,
+                    baseName: this.baseName
+                };
+                this.config.set(config);
             }
         };
         return Object.assign(phaseFromJHipster, myCustomPhaseSteps);
