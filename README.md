@@ -83,7 +83,7 @@ Found an [issue](https://github.com/jhipster/generator-jhipster-nodejs/issues), 
 
 Interested in contributing, check out our [contributing guide](https://github.com/jhipster/generator-jhipster-nodejs/blob/master/CONTRIBUTING.md) to get started.
 
-Refers for contribution to [roadmap](https://github.com/jhipster/generator-jhipster-nodejs/blob/master/ROADMAP.md).
+Refers for contribution to [roadmap](https://github.com/jhipster/generator-jhipster-nodejs/blob/master/ROADMAP.md) or to [kanban board](https://github.com/jhipster/generator-jhipster-nodejs/projects/1?fullscreen=true).
 
 Any questions [amanganiello90](mailto:angelo.mang@libero.it).
 
