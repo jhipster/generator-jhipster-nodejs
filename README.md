@@ -1,5 +1,5 @@
 # generator-jhipster-nodejs
-[![NPM version][npm-image]][npm-url] [![Build Status][travis-image]][travis-url] [![Dependency Status][daviddm-image]][daviddm-url]
+[![NPM version][npm-image]][npm-url] [![Build Status][travis-image]][travis-url] [![Dependency Status][daviddm-image]][daviddm-url] [![Gitter](https://badges.gitter.im/generator-jhipster-nodejs/community.svg)](https://gitter.im/generator-jhipster-nodejs/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 
 > ## 🛠 Mode: Development
 >
@@ -79,13 +79,21 @@ yarn global upgrade generator-jhipster-nodejs
 
 ## ❤️ for community
 
-Found an issue, let us know [here](https://github.com/jhipster/generator-jhipster-nodejs/issues).
+Found an [issue](https://github.com/jhipster/generator-jhipster-nodejs/issues), check if is already opened or closed, otherwise open a new [feature or bug](https://github.com/jhipster/generator-jhipster-nodejs/issues/new/choose).
 
 Interested in contributing, check out our [contributing guide](https://github.com/jhipster/generator-jhipster-nodejs/blob/master/CONTRIBUTING.md) to get started.
 
-Refers for contribution to [roadmap](https://github.com/jhipster/generator-jhipster-nodejs/blob/master/ROADMAP.md)
+Refers for contribution to [roadmap](https://github.com/jhipster/generator-jhipster-nodejs/blob/master/ROADMAP.md) or to [kanban board](https://github.com/jhipster/generator-jhipster-nodejs/projects/1?fullscreen=true).
 
-Any questions [amanganiello90](mailto:angelo.mang@libero.it)
+Any questions [amanganiello90](mailto:angelo.mang@libero.it).
+
+
+# Contributors ✨
+
+Thanks goes to these wonderful people:
+
+<table><tr><td align="center"><a href="https://github.com/amanganiello90"><img src="https://avatars3.githubusercontent.com/u/20536757?s=400&v=4" width="100px;" alt="Angelo Manganiello"/><br /><sub><b>Angelo Manganiello</b></sub></a></td><td align="center"><a href="https://github.com/hadirsa"><img src="https://avatars2.githubusercontent.com/u/3942854?s=400&v=4" width="100px;" alt="Hadi Rasouli"/><br /><sub><b>Hadi Rasouli</b></sub></a></td></tr></table>
+
 
 # License
 

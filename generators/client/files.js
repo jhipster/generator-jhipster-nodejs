@@ -3,5 +3,5 @@ module.exports = {
 };
 
 function writeFiles() {
-    this.copy('_dummy.txt', 'dummy.txt');
+    this.copy('_dummy-client.txt', 'dummy-client.txt');
 }
