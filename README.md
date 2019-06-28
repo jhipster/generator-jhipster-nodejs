@@ -1,5 +1,5 @@
 # generator-jhipster-nodejs
-[![NPM version][npm-image]][npm-url] [![Build Status][travis-image]][travis-url] [![Dependency Status][daviddm-image]][daviddm-url]
+[![NPM version][npm-image]][npm-url] [![Build Status][travis-image]][travis-url] [![Dependency Status][daviddm-image]][daviddm-url] [![Gitter](https://badges.gitter.im/generator-jhipster-nodejs/community.svg)](https://gitter.im/generator-jhipster-nodejs/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 
 > ## 🛠 Mode: Development
 >
