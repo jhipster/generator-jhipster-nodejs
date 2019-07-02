@@ -15,7 +15,7 @@ function askForMainServerSideOpts(meta) {
             name: 'baseName',
             when: applicationType === 'monolith',
             validate(text) {
-                return text ? true : 'The base application port cannot be empty!';
+                return text ? true : 'The base application name cannot be empty!';
             },
             message: `What is ${chalk.yellow('*base name*')} of your node application?`
         },

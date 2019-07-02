@@ -51,14 +51,7 @@ module.exports = class extends ServerGenerator {
                 // override the displayLogo method from the _initializing phase of JHipster
             },
             mySetupServerconsts() {
-                this.packageName = 'com.example.node';
-                this.buildTool = 'maven';
-                this.enableHibernateCache = false;
-                this.enableSwaggerCodegen = false;
-                this.databaseType = 'mongodb';
-                this.devDatabaseType = 'mongodb';
-                this.prodDatabaseType = 'mongodb';
-                this.skipUserManagement = false;
+                this.packageName = this.configOptions.baseName;
             }
         };
         return Object.assign(phaseFromJHipster, myCustomPhaseSteps);
@@ -79,18 +72,6 @@ module.exports = class extends ServerGenerator {
                 this.configOptions.baseName = this.baseName;
                 this.configOptions.serverPackageManager = this.serverPackageManager;
                 this.configOptions.packageName = this.packageName;
-                this.configOptions.cacheProvider = this.cacheProvider;
-                this.configOptions.enableHibernateCache = this.enableHibernateCache;
-                this.configOptions.websocket = this.websocket;
-                this.configOptions.databaseType = this.databaseType;
-                this.configOptions.devDatabaseType = this.devDatabaseType;
-                this.configOptions.prodDatabaseType = this.prodDatabaseType;
-                this.configOptions.searchEngine = this.searchEngine;
-                this.configOptions.messageBroker = this.messageBroker;
-                this.configOptions.serviceDiscoveryType = this.serviceDiscoveryType;
-                this.configOptions.buildTool = this.buildTool;
-                this.configOptions.enableSwaggerCodegen = this.enableSwaggerCodegen;
-                this.configOptions.authenticationType = this.authenticationType;
 
                 // Make dist dir available in templates
                 this.BUILD_DIR = this.getBuildDirectoryForBuildTool(this.buildTool);
@@ -127,13 +108,16 @@ module.exports = class extends ServerGenerator {
     get writing() {
         // The writing phase is being overriden so that we can write our own templates as well.
         // If the templates doesnt need to be overrriden then just return `super._writing()` here
-        const phaseFromJHipster = super._writing();
-        const customPhaseSteps = {
-            writeAdditionalFile() {
-                writeFiles.call(this);
-            }
-        };
-        return Object.assign(phaseFromJHipster, customPhaseSteps);
+
+        // const phaseFromJHipster = super._writing();
+        // const customPhaseSteps = {
+        //     writeAdditionalFile() {
+        //         writeFiles.call(this);
+        //     }
+        // };
+        // return Object.assign(phaseFromJHipster, customPhaseSteps);
+
+        return writeFiles(); // We are completely overriding the writing files there.
     }
 
     get install() {
