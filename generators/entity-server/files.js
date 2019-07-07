@@ -17,15 +17,7 @@
  * limitations under the License.
  */
 
-const constants = require('generator-jhipster/generators/generator-constants');
 const utils = require('generator-jhipster/generators/utils');
-
-/* Constants use throughout */
-const INTERPOLATE_REGEX = constants.INTERPOLATE_REGEX;
-const SERVER_MAIN_SRC_DIR = constants.SERVER_MAIN_SRC_DIR;
-const SERVER_MAIN_RES_DIR = constants.SERVER_MAIN_RES_DIR;
-const TEST_DIR = constants.TEST_DIR;
-const SERVER_TEST_SRC_DIR = constants.SERVER_TEST_SRC_DIR;
 
 /**
  * The default is to use a file path string. It implies use of the template method.
