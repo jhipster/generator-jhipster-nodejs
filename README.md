@@ -77,7 +77,7 @@ yarn global upgrade generator-jhipster-nodejs
 ✅ Entity generation (WIP)
     - `nhipster entity <entity-name>`
 
-## ❤️ for community
+## ❤️ For community
 
 Found an [issue](https://github.com/jhipster/generator-jhipster-nodejs/issues), check if is already opened or closed, otherwise open a new [feature or bug](https://github.com/jhipster/generator-jhipster-nodejs/issues/new/choose).
 
@@ -92,7 +92,7 @@ Any questions [amanganiello90](mailto:angelo.mang@libero.it).
 
 Thanks goes to these wonderful people:
 
-<table><tr><td align="center"><a href="https://github.com/amanganiello90"><img src="https://avatars3.githubusercontent.com/u/20536757?s=400&v=4" width="100px;" alt="Angelo Manganiello"/><br /><sub><b>Angelo Manganiello</b></sub></a></td><td align="center"><a href="https://github.com/hadirsa"><img src="https://avatars2.githubusercontent.com/u/3942854?s=400&v=4" width="100px;" alt="Hadi Rasouli"/><br /><sub><b>Hadi Rasouli</b></sub></a></td></tr></table>
+<table><tr><td align="center"><a href="https://github.com/amanganiello90"><img src="https://avatars3.githubusercontent.com/u/20536757?s=400&v=4" width="100px;" alt="Angelo Manganiello"/><br /><sub><b>Angelo Manganiello</b></sub></a></td><td align="center"><a href="https://github.com/hadirsa"><img src="https://avatars2.githubusercontent.com/u/3942854?s=400&v=4" width="100px;" alt="Hadi Rasouli"/><br /><sub><b>Hadi Rasouli</b></sub></a></td><td align="center"><a href="https://github.com/ivangsa"><img src="https://avatars1.githubusercontent.com/u/1246876?s=400&v=4" width="100px;" alt="Iván García Sainz-Aja"/><br /><sub><b>Iván García Sainz-Aja</b></sub></a></td></tr></table>
 
 
 # License
