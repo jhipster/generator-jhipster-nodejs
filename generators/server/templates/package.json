@@ -1,0 +1,60 @@
+{
+  "name": "nestjs-sample-api",
+  "version": "1.0.0",
+  "description": "nestjs-sample-api",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "start:watch": "nodemon",
+    "prestart:prod": "tsc",
+    "start:prod": "node dist/main.js",
+    "test": "jest --config=jest.json",
+    "test:watch": "jest --watch --config=jest.json",
+    "test:coverage": "jest --config=jest.json --coverage --coverageDirectory=coverage"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hadirsa/nestjs-api-example.git"
+  },
+  "author": "rasuli.hadi4@gmail.com",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/hadirsa/nestjs-api-example.git/issues"
+  },
+  "homepage": "https://github.com/hadirsa/nestjs-api-example.git#readme",
+  "dependencies": {
+    "@nestjs/common": "^6.3.2",
+    "@nestjs/core": "^6.3.2",
+    "@nestjs/microservices": "^6.3.2",
+    "@nestjs/platform-express": "^6.3.2",
+    "@nestjs/swagger": "^3.0.1",
+    "@nestjs/testing": "^6.3.2",
+    "@nestjs/typeorm": "^6.1.2",
+    "@nestjs/websockets": "^6.3.2",
+    "class-transformer": "^0.2.0",
+    "class-validator": "^0.9.1",
+    "crypto": "^1.0.1",
+    "crypto-js": "^3.1.9-1",
+    "jsonwebtoken": "^8.5.1",
+    "pg": "^7.11.0",
+    "passport": "^0.4.0",
+    "passport-jwt": "^4.0.0",
+    "reflect-metadata": "^0.1.13",
+    "rxjs": "^6.4.0",
+    "slug": "^1.0.0",
+    "typeorm": "^0.2.18",
+    "typescript": "^3.5.2"
+  },
+  "devDependencies": {
+    "@types/jest": "^23.3.13",
+    "@types/node": "^10.12.21",
+    "jest": "^24.5.0",
+    "nodemon": "^1.18.10",
+    "supertest": "^3.0.0",
+    "ts-jest": "^24.0.0",
+    "ts-node": "^8.0.3",
+    "deep-extend": ">=0.5.1",
+    "extend": ">=3.0.2",
+    "atob": ">=2.1.0"
+  }
+}
