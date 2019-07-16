@@ -133,7 +133,8 @@ module.exports = class extends ServerGenerator {
                 writeFiles.call(this);
             }
         };
-        return Object.assign(phaseFromJHipster, customPhaseSteps);
+        // The writing phase is completely overridden
+        return Object.assign(phaseFromJHipster, customPhaseSteps, writeFiles);
     }
 
     get install() {
