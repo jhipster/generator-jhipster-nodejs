@@ -1,2 +1,0 @@
-hello nodejs!
-It's dummy.txt
