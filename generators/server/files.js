@@ -24,8 +24,7 @@ const serverFiles = {
             templates: ['pom.xml']
         }
     ]
-}
-
+};
 
 function writeFiles() {
     this.writeFilesToDisk(serverFiles, this, false, this.fetchFromInstalledJHipster('server/templates'));
