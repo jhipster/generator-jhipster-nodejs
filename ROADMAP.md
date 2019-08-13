@@ -44,7 +44,7 @@ For the next features, refer to to [kanban board](https://github.com/jhipster/ge
 
 > The actual goal is to have **the first release (0.0.2)** with these basic features:
 
-* Blueprint to generate monolitich app with nestJS basic template with angular client
+* Blueprint to generate monolitich app with NestJS basic template including, optionally, angular client
 * Swagger support
 * Entity ORM generation for only a database type and in development
 * Preserve liquibase db script orchestration
