@@ -1,6 +1,6 @@
 {
   "name": "generator-jhipster-nodejs",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "A NodeJS blueprint that creates the backend using NodeJS with NestJS framework",
   "keywords": [
     "yeoman-generator",
@@ -30,6 +30,7 @@
     "chalk": "2.4.2",
     "commander": "2.20.0",
     "ejs": "2.6.1",
+    "generator-jhipster": ">=5.4.0",
     "glob": "7.1.4",
     "gulp-filter": "6.0.0",
     "insight": "0.10.3",
@@ -44,9 +45,9 @@
     "semver": "6.1.1",
     "shelljs": "0.8.3",
     "through2": "3.0.1",
-    "generator-jhipster": ">=5.4.0",
     "yeoman-environment": "2.3.4",
-    "yeoman-generator": "4.0.1"
+    "yeoman-generator": "4.0.1",
+    "yo": "^3.1.0"
   },
   "devDependencies": {
     "chai": "4.2.0",
