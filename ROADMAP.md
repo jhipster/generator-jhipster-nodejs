@@ -1,6 +1,15 @@
 # This is the Roadmap for development. 🎉🎉🎉 Thank you for whatever contribution to one of these features! 🎉🎉🎉
 
-For every feature you can contribute opening a branch called `feature/<numer>` (for example *feature/one* for the first) from the master branch and after a pull request to me.
+To contribute for the next featues, fork the repo and open a pull request regarding the [kanban board](https://github.com/jhipster/generator-jhipster-nodejs/projects/1?fullscreen=true) progress issues or to do. 
+
+> The actual goal is to have **the first release (0.0.2)** with these basic features:
+
+* Blueprint to generate monolitich app with NestJS basic template including, optionally, angular client
+* Swagger support
+* Entity ORM generation for only a database type and in development
+* Preserve liquibase db script orchestration
+* Basic security
+* Maven simple orchestration to run server and/or client part 
 
 > Let it free to give advices or tips!
 
@@ -40,13 +49,4 @@ So, the generation for now must still follow the jhipster standard with these de
 As you can see you have to modify only the server generator (i18n and the other for now must be unchanged).
 
 ## Next Features
-For the next features, refer to to [kanban board](https://github.com/jhipster/generator-jhipster-nodejs/projects/1?fullscreen=true) in order to contribute in the progress issues or to do. 
 
-> The actual goal is to have **the first release (0.0.2)** with these basic features:
-
-* Blueprint to generate monolitich app with NestJS basic template including, optionally, angular client
-* Swagger support
-* Entity ORM generation for only a database type and in development
-* Preserve liquibase db script orchestration
-* Basic security
-* Maven simple orchestration to run server and/or client part
