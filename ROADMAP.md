@@ -1,5 +1,6 @@
 # This is the Roadmap for development. 🎉🎉🎉 Thank you for whatever contribution to one of these features! 🎉🎉🎉
 
+## Next Features
 To contribute for the next featues, fork the repo and open a pull request regarding the [kanban board](https://github.com/jhipster/generator-jhipster-nodejs/projects/1?fullscreen=true) progress issues or to do. 
 
 > The actual goal is to have **the first release (0.0.2)** with these basic features:
@@ -48,5 +49,4 @@ So, the generation for now must still follow the jhipster standard with these de
 
 As you can see you have to modify only the server generator (i18n and the other for now must be unchanged).
 
-## Next Features
 
