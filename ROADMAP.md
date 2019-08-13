@@ -39,7 +39,14 @@ So, the generation for now must still follow the jhipster standard with these de
 
 As you can see you have to modify only the server generator (i18n and the other for now must be unchanged).
 
-## Feature three
+## Next Features
+For the next features, refer to to [kanban board](https://github.com/jhipster/generator-jhipster-nodejs/projects/1?fullscreen=true) in order to contribute in the progress issues or to do. 
 
-As the app use the maven pom.xml to manage client and node server, we have to "clean" that file from unuseful dependencies and orchestrate the frontend and NestJS app.
-So we have to add new pom.xml template and NestJS files.
+> The actual goal is to have **the first release (0.0.2)** with these basic features:
+
+* Blueprint to generate monolitich app with nestJS basic template with angular client
+* Swagger support
+* Entity ORM generation for only a database type and in development
+* Preserve liquibase db script orchestration
+* Basic security
+* Maven simple orchestration to run server and/or client part
