@@ -27,8 +27,11 @@ const serverFiles = {
 };
 
 function writeFiles() {
-    this.writeFilesToDisk(serverFiles, this, false, this.fetchFromInstalledJHipster('server/templates'));
-    this.writeFilesToDisk(serverFiles, this, false, '');
+    return {
+        writeSameFiles() {
+            this.writeFilesToDisk(serverFiles, this, false);
+        }
+    };
 }
 
 module.exports = {

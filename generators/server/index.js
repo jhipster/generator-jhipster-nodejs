@@ -70,10 +70,8 @@ module.exports = class extends ServerGenerator {
 
     get prompting() {
         // The prompting phase is being overriden so that we can ask our own questions
-
         return {
             askForMainServerSideOpts: prompts.askForMainServerSideOpts,
-
             setSharedConfigOptions() {
                 this.configOptions.serverPort = this.serverPort;
                 this.configOptions.baseName = this.baseName;
@@ -91,7 +89,6 @@ module.exports = class extends ServerGenerator {
                 this.configOptions.buildTool = this.buildTool;
                 this.configOptions.enableSwaggerCodegen = this.enableSwaggerCodegen;
                 this.configOptions.authenticationType = this.authenticationType;
-
                 // Make dist dir available in templates
                 this.BUILD_DIR = this.getBuildDirectoryForBuildTool(this.buildTool);
                 this.CLIENT_DIST_DIR = this.getResourceBuildDirectoryForBuildTool(this.configOptions.buildTool) + constants.CLIENT_DIST_DIR;
@@ -128,13 +125,8 @@ module.exports = class extends ServerGenerator {
         // The writing phase is being overriden so that we can write our own templates as well.
         // If the templates doesnt need to be overrriden then just return `super._writing()` here
         const phaseFromJHipster = super._writing();
-        const customPhaseSteps = {
-            writeAdditionalFile() {
-                writeFiles.call(this);
-            }
-        };
-        // The writing phase is completely overridden
-        return Object.assign(phaseFromJHipster, customPhaseSteps, writeFiles);
+        const customPhaseSteps = writeFiles();
+        return Object.assign(phaseFromJHipster, customPhaseSteps);
     }
 
     get install() {
