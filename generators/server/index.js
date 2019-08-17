@@ -104,10 +104,7 @@ module.exports = class extends ServerGenerator {
 
     get writing() {
         // The writing phase is being overriden so that we can write our own templates as well.
-        // If the templates doesnt need to be overrriden then just return `super._writing()` here
-        const phaseFromJHipster = super._writing();
-        const customPhaseSteps = writeFiles();
-        return Object.assign(phaseFromJHipster, customPhaseSteps);
+        return writeFiles();
     }
 
     get install() {
