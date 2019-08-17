@@ -1,0 +1,16 @@
+import { Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { JwtStrategy } from './common/security/passport.jwt.strategy';
+import { UsersModule } from './core/users/users.module';
+// jhipster-needle-add-entity-module-to-main-import - JHipster will import entity modules here
+
+@Module({
+  imports: [
+    TypeOrmModule.forRoot(), 
+    UsersModule,
+    // jhipster-needle-add-entity-module-to-main - JHipster will add entity modules here
+  ],
+  controllers: [],
+  providers: [JwtStrategy],
+})
+export class AppModule {}

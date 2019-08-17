@@ -1,0 +1,20 @@
+import { ExtractJwt, Strategy } from 'passport-jwt';
+import { PassportStrategy } from '@nestjs/passport';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
+
+import { config } from '../../config/config';
+
+@Injectable()
+export class JwtStrategy extends PassportStrategy(Strategy) {
+  constructor() {
+    super({
+      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+      secretOrKey: config['jhipster.security.authentication.jwt.base64-secret'],
+    });
+  }
+
+  async validate(payload: any) {
+    // TODO: parse claims as User
+    return payload;
+  }
+}
