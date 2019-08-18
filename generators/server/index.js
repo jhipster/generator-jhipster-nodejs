@@ -45,58 +45,39 @@ module.exports = class extends ServerGenerator {
          *
          * 3. Partially override a phase, this is when the blueprint gets the phase from JHipster and customizes it.
          */
-        const phaseFromJHipster = super._initializing();
-        const myCustomPhaseSteps = {
-            displayLogo() {
-                // override the displayLogo method from the _initializing phase of JHipster
-            },
-            mySetupServerconsts() {
-                this.packageName = 'com.example.node';
-                this.buildTool = 'maven';
-                this.enableHibernateCache = false;
-                this.enableSwaggerCodegen = false;
-                this.databaseType = 'mongodb';
-                this.devDatabaseType = 'mongodb';
-                this.prodDatabaseType = 'mongodb';
-                this.skipUserManagement = false;
-            }
-        };
-        return Object.assign(phaseFromJHipster, myCustomPhaseSteps);
-
         // Here we are not overriding this phase and hence its being handled by JHipster
-
-        // return super._initializing();
+        return super._initializing();
     }
 
     get prompting() {
-        // The prompting phase is being overriden so that we can ask our own questions
-        return {
-            askForMainServerSideOpts: prompts.askForMainServerSideOpts,
-            setSharedConfigOptions() {
-                this.configOptions.serverPort = this.serverPort;
-                this.configOptions.baseName = this.baseName;
-                this.configOptions.serverPackageManager = this.serverPackageManager;
-                this.configOptions.packageName = this.packageName;
-                this.configOptions.cacheProvider = this.cacheProvider;
-                this.configOptions.enableHibernateCache = this.enableHibernateCache;
-                this.configOptions.websocket = this.websocket;
-                this.configOptions.databaseType = this.databaseType;
-                this.configOptions.devDatabaseType = this.devDatabaseType;
-                this.configOptions.prodDatabaseType = this.prodDatabaseType;
-                this.configOptions.searchEngine = this.searchEngine;
-                this.configOptions.messageBroker = this.messageBroker;
-                this.configOptions.serviceDiscoveryType = this.serviceDiscoveryType;
-                this.configOptions.buildTool = this.buildTool;
-                this.configOptions.enableSwaggerCodegen = this.enableSwaggerCodegen;
-                this.configOptions.authenticationType = this.authenticationType;
-                // Make dist dir available in templates
-                this.BUILD_DIR = this.getBuildDirectoryForBuildTool(this.buildTool);
-                this.CLIENT_DIST_DIR = this.getResourceBuildDirectoryForBuildTool(this.configOptions.buildTool) + constants.CLIENT_DIST_DIR;
-            }
-        };
+        // // The prompting phase is being overriden so that we can ask our own questions
+        // return {
+        //     askForMainServerSideOpts: prompts.askForMainServerSideOpts,
+        //     setSharedConfigOptions() {
+        //         this.configOptions.serverPort = this.serverPort;
+        //         this.configOptions.baseName = this.baseName;
+        //         this.configOptions.serverPackageManager = this.serverPackageManager;
+        //         this.configOptions.packageName = this.packageName;
+        //         this.configOptions.cacheProvider = this.cacheProvider;
+        //         this.configOptions.enableHibernateCache = this.enableHibernateCache;
+        //         this.configOptions.websocket = this.websocket;
+        //         this.configOptions.databaseType = this.databaseType;
+        //         this.configOptions.devDatabaseType = this.devDatabaseType;
+        //         this.configOptions.prodDatabaseType = this.prodDatabaseType;
+        //         this.configOptions.searchEngine = this.searchEngine;
+        //         this.configOptions.messageBroker = this.messageBroker;
+        //         this.configOptions.serviceDiscoveryType = this.serviceDiscoveryType;
+        //         this.configOptions.buildTool = this.buildTool;
+        //         this.configOptions.enableSwaggerCodegen = this.enableSwaggerCodegen;
+        //         this.configOptions.authenticationType = this.authenticationType;
+        //         // Make dist dir available in templates
+        //         this.BUILD_DIR = this.getBuildDirectoryForBuildTool(this.buildTool);
+        //         this.CLIENT_DIST_DIR = this.getResourceBuildDirectoryForBuildTool(this.configOptions.buildTool) + constants.CLIENT_DIST_DIR;
+        //     }
+        // };
 
         // If the prompts need to be overriden then use the code commented out above instead
-        // return super._prompting();
+        return super._prompting();
     }
 
     get configuring() {
@@ -123,10 +104,7 @@ module.exports = class extends ServerGenerator {
 
     get writing() {
         // The writing phase is being overriden so that we can write our own templates as well.
-        // If the templates doesnt need to be overrriden then just return `super._writing()` here
-        const phaseFromJHipster = super._writing();
-        const customPhaseSteps = writeFiles();
-        return Object.assign(phaseFromJHipster, customPhaseSteps);
+        return writeFiles();
     }
 
     get install() {

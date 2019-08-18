@@ -1,0 +1,10 @@
+import { Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { <%= entityClass %>Controller } from './<%= entityModelFileName %>.controller';
+import { <%= entityClass %>Repository } from './<%= entityModelFileName %>.repository';
+
+@Module({
+  imports: [TypeOrmModule.forFeature([<%= entityClass %>Repository])],
+  controllers: [<%= entityClass %>Controller],
+})
+export class <%= entityClass %>Module {}

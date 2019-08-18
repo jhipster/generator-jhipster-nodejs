@@ -1,0 +1,86 @@
+import { Body, Controller, Delete, Get, HttpCode, Logger, Param, Post as PostMethod, Put, Query, Res, UseGuards, Req, UseInterceptors } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { ApiBearerAuth, ApiUseTags, ApiResponse, ApiOperation } from '@nestjs/swagger';
+import { Response, Request } from 'express';
+import <%= entityClass %> from '../../domain/<%= entityModelFileName %>.model';
+import { PageRequest, Page } from '../../domain/base/pagination.model';
+import { <%= entityClass %>Repository } from './<%= entityModelFileName %>.repository';
+import { AuthGuard, Roles, RolesGuard, RoleType } from '../../common/security';
+import { HeaderUtil } from '../../common/header-util';
+import { LoggingInterceptor } from '../../common/interceptors/logging.interceptor';
+
+@Controller('<%= entityApiUrl %>')
+@UseGuards(AuthGuard, RolesGuard)
+@UseInterceptors(LoggingInterceptor)
+@ApiBearerAuth()
+@ApiUseTags('<%= entityApiUrl %>')
+export class <%= entityClass %>Controller {
+  logger = new Logger('<%= entityClass %>Controller');
+
+  constructor(@InjectRepository(<%= entityClass %>Repository) private <%= asEntity(entityInstance) %>Repository: <%= entityClass %>Repository) {}
+
+  @Get('/')
+  @Roles(RoleType.USER)
+  @ApiResponse({
+    status: 200,
+    description: 'List all records',
+    type: <%= entityClass %>,
+  })
+  async getAll(@Req() req: Request) {
+    const pageRequest: PageRequest = new PageRequest(req.query.page, req.query.size, req.query.sort);
+    const [results, count] = await this.<%= asEntity(entityInstance) %>Repository.findAndCount({
+      skip: +pageRequest.page * pageRequest.size,
+      take: +pageRequest.size,
+      order: pageRequest.sort.asOrder(),
+    });
+    HeaderUtil.addPaginationHeaders(req.res, new Page(results, count, pageRequest));
+    return results;
+  }
+
+  @Get('/:id')
+  @ApiResponse({
+    status: 200,
+    description: 'The found record',
+    type: <%= entityClass %>,
+  })
+  getOne(@Param('id') id: string) {
+    return this.<%= asEntity(entityInstance) %>Repository.findOne(id);
+  }
+
+  @PostMethod('/')
+  @ApiOperation({ title: 'Create <%= asEntity(entityInstance) %>' })
+  @ApiResponse({
+    status: 201,
+    description: 'The record has been successfully created.',
+    type: <%= entityClass %>,
+  })
+  @ApiResponse({ status: 403, description: 'Forbidden.' })
+  async post(@Req() req: Request, @Body() <%= asEntity(entityInstance) %>: <%= entityClass %>) {
+    const created = await this.<%= asEntity(entityInstance) %>Repository.save(<%= asEntity(entityInstance) %>);
+    HeaderUtil.addEntityCreatedHeaders(req.res, '<%= entityClass %>', created.id);
+    return created;
+  }
+
+  @Put('/:id')
+  @ApiOperation({ title: 'Update <%= asEntity(entityInstance) %>' })
+  @ApiResponse({
+    status: 200,
+    description: 'The record has been successfully updated.',
+    type: <%= entityClass %>,
+  })
+  put(@Req() req: Request, @Param('id') id: string, @Body() <%= asEntity(entityInstance) %>: <%= entityClass %>) {
+    HeaderUtil.addEntityCreatedHeaders(req.res, '<%= entityClass %>', id);
+    return this.<%= asEntity(entityInstance) %>Repository.update(id, <%= asEntity(entityInstance) %>);
+  }
+
+  @Delete('/:id')
+  @ApiOperation({ title: 'Delete <%= asEntity(entityInstance) %>' })
+  @ApiResponse({
+    status: 204,
+    description: 'The record has been successfully deleted.',
+  })
+  remove(@Req() req: Request, @Param('id') id: string) {
+    this.<%= asEntity(entityInstance) %>Repository.delete(id);
+    HeaderUtil.addEntityDeletedHeaders(req.res, '<%= entityClass %>', id);
+  }
+}

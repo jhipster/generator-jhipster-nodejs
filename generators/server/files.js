@@ -4,7 +4,7 @@
  * This file is part of the JHipster project, see https://www.jhipster.tech/
  * for more information.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
+ * Licensed under the Apache License, Version 2.0 (the License);
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
@@ -17,11 +17,54 @@
  * limitations under the License.
  */
 
+module.exports = {
+    writeFiles
+};
+
 const serverFiles = {
-    pom: [
+    common: [
         {
-            path: '',
-            templates: ['pom.xml']
+            templates: [
+                'README.md',
+                'src/core/users/users.controller.ts',
+                'src/core/users/user.repository.ts',
+                'src/core/users/users.module.ts',
+                'src/core/users/users.controller.spec.ts',
+                'src/config/application-dev.yml',
+                'src/config/config.ts',
+                'src/config/application-prod.yml',
+                'src/config/application.yml',
+                'src/domain/base/pagination.model.ts',
+                'src/domain/base/base.model.ts',
+                'src/domain/user.model.ts',
+                'src/domain/product-category.model.ts',
+                'src/domain/product.model.ts',
+                'src/common/security/guards/roles.guard.ts',
+                'src/common/security/guards/auth.guard.ts',
+                'src/common/security/role-type.ts',
+                'src/common/security/decorators/auth-user.decorator.ts',
+                'src/common/security/decorators/roles.decorator.ts',
+                'src/common/security/passport.jwt.strategy.ts',
+                'src/common/security/index.ts',
+                'src/common/header-util.ts',
+                'src/common/interceptors/logging.interceptor.ts',
+                'src/main.ts',
+                'src/app.module.ts',
+                'source2blueprint.sh',
+                'scripts/copy-resources.ts',
+                'tsconfig.build.json',
+                'test/app.e2e-spec.ts',
+                'test/jest-e2e.json',
+                'ormconfig.json',
+                'pom.xml',
+                'nest-cli.json',
+                '.env',
+                'tslint.json',
+                'package-lock.json',
+                'package.json',
+                'tsconfig.json',
+
+            ]
         }
     ]
 };
@@ -34,6 +77,3 @@ function writeFiles() {
     };
 }
 
-module.exports = {
-    writeFiles
-};
