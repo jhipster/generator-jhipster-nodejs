@@ -62,8 +62,7 @@ const serverFiles = {
                 'tslint.json',
                 'package-lock.json',
                 'package.json',
-                'tsconfig.json',
-
+                'tsconfig.json'
             ]
         }
     ]
@@ -76,4 +75,3 @@ function writeFiles() {
         }
     };
 }
-

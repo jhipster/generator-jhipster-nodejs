@@ -1,9 +1,9 @@
 /* eslint-disable consistent-return */
 const chalk = require('chalk');
 const ServerGenerator = require('generator-jhipster/generators/server');
-const constants = require('generator-jhipster/generators/generator-constants');
+// const constants = require('generator-jhipster/generators/generator-constants');
 const writeFiles = require('./files').writeFiles;
-const prompts = require('./prompts');
+// const prompts = require('./prompts');
 
 module.exports = class extends ServerGenerator {
     constructor(args, opts) {
