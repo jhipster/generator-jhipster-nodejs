@@ -16,29 +16,29 @@ To contribute for the next featues, fork the repo and open a pull request regard
 
 ## Completed list
 
-[x] Running microservice o monolith project
-[x] Import jdl: functional entity-server generator with simple options (no dto, no serviceImpl...)
-[x] Typeorm mappings for both sql and mongodb (todo: needs way more testing of different relations, combinations..)
-[x] Rest API (with headers) compatible with other jhipster implementations
-[x] Spring Cloud Configuration client
-[x] Eureka client: there are some issues registering zuul routes in jhipster registry app..
-[x] JWT authentication and role base method decorators
-[x] Swagger documentation (todo: export json/yaml to integrate with jhipster gateway)
+- [x] Running microservice o monolith project
+- [x] Import jdl: functional entity-server generator with simple options (no dto, no serviceImpl...)
+- [x] Typeorm mappings for both sql and mongodb (todo: needs way more testing of different relations, combinations..)
+- [x] Rest API (with headers) compatible with other jhipster implementations
+- [x] Spring Cloud Configuration client
+- [x] Eureka client: there are some issues registering zuul routes in jhipster registry app..
+- [x] JWT authentication and role base method decorators
+- [x] Swagger documentation (todo: export json/yaml to integrate with jhipster gateway)
 
 
 ## To DO
 
-[ ] Monolithic generation with client generation (need orchestration with pom)
-[ ] Delete unuseful java questions not supported 
-[ ] Unit tests: both for the blueprint and for generated project
-[ ] DTOs based rest api
-[ ] Validation
-[ ] Different pagination options
-[ ] Elastic Search support
-[ ] Search api
-[ ] User management api
-[ ] Other security/authentication options
-[ ] Other core/admin jhipster services
+- [ ] Monolithic generation with client generation (need orchestration with pom)
+- [ ] Delete unuseful java questions not supported 
+- [ ] Unit tests: both for the blueprint and for generated project
+- [ ] DTOs based rest api
+- [ ] Validation
+- [ ] Different pagination options
+- [ ] Elastic Search support
+- [ ] Search api
+- [ ] User management api
+- [ ] Other security/authentication options
+- [ ] Other core/admin jhipster services
 
 
 
