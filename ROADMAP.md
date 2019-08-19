@@ -5,48 +5,40 @@ To contribute for the next featues, fork the repo and open a pull request regard
 
 > The actual goal is to have **the first release (0.0.2)** with these basic features:
 
-* Blueprint to generate monolitich app with NestJS basic template including, optionally, angular client
+* Blueprint to generate monolitich/microservice app with NestJS basic template including, optionally, angular client
 * Swagger support
 * Entity ORM generation for only a database type and in development
 * Preserve liquibase db script orchestration
-* Basic security
-* Maven simple orchestration to run server and/or client part 
+* Basic security management
+* Maven simple orchestration to run server with client part in case of monolithic app with frontend code
 
 > Let it free to give advices or tips!
 
-## Feature one - DONE
-The blueprint must add nodejs framework only if you choose a **monolithic application** (and after baseName question).
-So only in this case there will the custom questions.
+## Completed list
 
-> In the other all case (**not monolitich application** choosing, the generator run an error and stop the prompting)
-
-
-## Feature two - DONE
-When you choose monolitich application and nodejs framework, the generator will ask:
-
-* A question for the server package manager type (npm or yarn)
-* A question for the base name node app
-* A question for the jhipster client framework (angular or react)
-* A question for the server port for NestJS node app
-
-So, the generation for now must still follow the jhipster standard with these default values for the other features:
+[x] Running microservice o monolith project
+[x] Import jdl: functional entity-server generator with simple options (no dto, no serviceImpl...)
+[x] Typeorm mappings for both sql and mongodb (todo: needs way more testing of different relations, combinations..)
+[x] Rest API (with headers) compatible with other jhipster implementations
+[x] Spring Cloud Configuration client
+[x] Eureka client: there are some issues registering zuul routes in jhipster registry app..
+[x] JWT authentication and role base method decorators
+[x] Swagger documentation (todo: export json/yaml to integrate with jhipster gateway)
 
 
-```
-		packageName com.example.node,
-		cacheProvider no,
-		enableHibernateCache false,
-		authenticationType session,
-		devDatabaseType mongodb,
-		prodDatabaseType mongodb,
-		buildTool maven,
-		serviceDiscoveryType false,
-		testFrameworks[cucumber],
-		clientPackageManager yarn,
-		useSass true,
-		skipUserManagement false
-```
+## To DO
 
-As you can see you have to modify only the server generator (i18n and the other for now must be unchanged).
+[ ] Monolithic generation with client generation (need orchestration with pom)
+[ ] Delete unuseful java questions not supported 
+[ ] Unit tests: both for the blueprint and for generated project
+[ ] DTOs based rest api
+[ ] Validation
+[ ] Different pagination options
+[ ] Elastic Search support
+[ ] Search api
+[ ] User management api
+[ ] Other security/authentication options
+[ ] Other core/admin jhipster services
+
 
 
