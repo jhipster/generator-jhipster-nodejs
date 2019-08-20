@@ -7,7 +7,7 @@ To contribute for the next featues, fork the repo and open a pull request regard
 
 * Blueprint to generate monolitich/microservice app with NestJS basic templates
 * Swagger support
-* Entity ORM generation for prod and dev database
+* Entity ORM generation for prod and dev database (default db is sqlite already configured)
 * Basic security management
 * Maven simple orchestration to run server with client part in case of monolithic app with frontend code
 
@@ -16,6 +16,7 @@ To contribute for the next featues, fork the repo and open a pull request regard
 ## Completed list
 
 - [x] Running microservice or monolith project
+- [x] Default sqlite support already configured
 - [x] Import jdl: functional entity-server generator with simple options (no dto, no serviceImpl)
 - [x] Typeorm mappings for both sql and mongodb 
 - [x] Rest API (with headers) compatible with other jhipster implementations
@@ -23,11 +24,12 @@ To contribute for the next featues, fork the repo and open a pull request regard
 - [x] Eureka client (but there are some issues registering zuul routes in jhipster registry app)
 - [x] JWT authentication and role base method decorators
 - [x] Swagger documentation
+- [x] Monolithic generation with client generation (orchestration with dev and prod maven profile)
 
 
 ## To DO
 
-- [ ] Monolithic generation with client generation (need orchestration with pom)
+- [ ] Overwrite standard README.md (for every application type) with new instruction for project structure
 - [ ] Delete unuseful java questions not supported 
 - [ ] Unit tests: both for the blueprint and for generated project
 - [ ] DTOs based rest api
@@ -40,6 +42,3 @@ To contribute for the next featues, fork the repo and open a pull request regard
 - [ ] User management api
 - [ ] Other security/authentication options
 - [ ] Other core/admin jhipster services
-
-
-
