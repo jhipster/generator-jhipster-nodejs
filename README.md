@@ -25,15 +25,6 @@ As this is a [JHipster](https://www.jhipster.tech/) blueprint, we expect you hav
 
 # 🚀 How to get started
 
-Install the package with `npm install -g generator-jhipster-nodejs`
-1. Make sure you have `yo` installed with `npm install -g yo`
-2. Install the package with `npm install -g generator-jhipster-nodejs`
-3. Generate the application with `nhipster`
-
-(or)
-
-If you also have JHipster available locally Use the following:
-
 1. Make sure you have followed the [JHipster installation guide](https://www.jhipster.tech/installation) and that both `yeoman` and `jhipster` are installed.
 2. Install the package with `npm install -g generator-jhipster-nodejs`
 3. And generate the application with `jhipster --blueprint nodejs`
