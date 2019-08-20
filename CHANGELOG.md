@@ -3,7 +3,7 @@
 # [0.0.2](https://github.com/jhipster/generator-jhipster-nodejs) (in progress)
 
 - Adding generic base scaffolder from the official blueprint generator
-- Running microservice or monolith project
+- Running microservice or monolith project with default sqlite db
 - Import jdl: functional entity-server generator with simple options (no dto, no serviceImpl)
 - Typeorm mappings for both sql and mongodb 
 - Rest API (with headers) compatible with other jhipster implementations
@@ -11,5 +11,5 @@
 - Eureka client 
 - JWT authentication and role base method decorators
 - Swagger documentation
-- Managing pom to orchestrate server/client part
+- Maven pom orchestration of server/client part with dev and prod profiles
 
