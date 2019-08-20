@@ -18,14 +18,22 @@ export const enum ProductStatus {
 
 @Entity('product')
 export class Product extends BaseModel {
-  @Column() name?: string;
-  @Column() description?: string;
-  @Column() price?: number;
-  @Column() size?: Sizes;
-  @Column() status?: ProductStatus;
-  @Column() imageContentType?: string;
-  @Column() image?: any;
-  @Column(type => ProductCategory) category?: ProductCategory;
+  @Column() 
+  name?: string;
+  @Column() 
+  description?: string;
+  @Column() 
+  price?: number;
+  @Column() 
+  size?: Sizes;
+  @Column() 
+  status?: ProductStatus;
+  @Column() 
+  imageContentType?: string;
+  @Column() 
+  image?: any;
+  @Column(type => ProductCategory) 
+  category?: ProductCategory;
 }
 
 export const defaultValue: Readonly<Product> = new Product();

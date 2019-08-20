@@ -5,22 +5,30 @@ import { ApiModelProperty } from '@nestjs/swagger';
 
 @Entity('jhi_user')
 export class User extends BaseModel {
-  @PrimaryGeneratedColumn() id: string;
   @ApiModelProperty({ example: 'admin', description: 'User login' })
   @Column()
   login?: string;
   @ApiModelProperty({ example: 'Smith', description: 'User first name' })
   @Column()
   firstName?: string;
-  @Column() lastName?: string;
-  @Column() email?: string;
-  @Column() activated?: boolean;
-  @Column() langKey?: string;
-  @Column() authorities?: any[];
-  @Column() createdBy?: string;
-  @Column() createdDate?: Date;
-  @Column() lastModifiedBy?: string;
-  @Column() lastModifiedDate?: Date;
+  @Column() 
+  lastName?: string;
+  @Column() 
+  email?: string;
+  @Column() 
+  activated?: boolean;
+  @Column() 
+  langKey?: string;
+  @Column() 
+  authorities?: any[];
+  @Column() 
+  createdBy?: string;
+  @Column() 
+  createdDate?: Date;
+  @Column() 
+  lastModifiedBy?: string;
+  @Column() 
+  lastModifiedDate?: Date;
 
   @JsonIgnore()
   @Column()

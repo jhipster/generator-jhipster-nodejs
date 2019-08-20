@@ -1,3 +1,9 @@
 import * as shell from 'shelljs';
+import fs from 'fs';
 
 shell.cp('-R', 'src/config/*.yml', 'dist/config');
+const clientDist=__dirname+'../../target/classes/static';
+
+if (fs.existsSync(clientDist)) {
+    shell.cp('-R', clientDist+'/**', 'dist/classes/static');
+}

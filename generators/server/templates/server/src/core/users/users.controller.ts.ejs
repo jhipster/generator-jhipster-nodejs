@@ -13,7 +13,7 @@ import { ApiBearerAuth, ApiUseTags, ApiResponse, ApiOperation } from '@nestjs/sw
 @UseGuards(AuthGuard, RolesGuard)
 @UseInterceptors(LoggingInterceptor)
 @ApiBearerAuth()
-@ApiUseTags('cats')
+@ApiUseTags('users')
 export class UserController {
   logger = new Logger('UserController');
 

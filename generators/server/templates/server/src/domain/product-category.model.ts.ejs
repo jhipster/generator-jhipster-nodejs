@@ -3,8 +3,10 @@ import { BaseModel } from './base/base.model';
 
 @Entity('product-category')
 export class ProductCategory extends BaseModel {
-  @Column() name?: string;
-  @Column() description?: string;
+  @Column() 
+  name?: string;
+  @Column() 
+  description?: string;
 }
 
 export const defaultValue: Readonly<ProductCategory> = {};

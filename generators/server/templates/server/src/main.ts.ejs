@@ -3,7 +3,7 @@ require('dotenv').config({ path: '.env' });
 import { NestFactory } from '@nestjs/core';
 import cloudConfigClient from 'cloud-config-client';
 import { AppModule } from './app.module';
-import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+import { setupSwagger } from './swagger';
 import { config } from './config/config';
 import { Logger, ValidationPipe, ValidationError, BadRequestException } from '@nestjs/common';
 
@@ -22,15 +22,7 @@ async function bootstrap() {
     }),
   );
 
-  const options = new DocumentBuilder()
-    .setTitle(config.get('jhipster.swagger.title'))
-    .setDescription(config.get('jhipster.swagger.description'))
-    .setVersion(config.get('jhipster.swagger.version'))
-    .setBasePath('api')
-    .addBearerAuth()
-    .build();
-  const document = SwaggerModule.createDocument(app, options);
-  SwaggerModule.setup('/api/v2/api-docs', app, document);
+  setupSwagger(app);
 
   await app.listen(config.get('server.port'));
   logger.log(`Aplication listening on port ${config.get('server.port')}`);

@@ -1,0 +1,14 @@
+const path = require('path');
+
+module.exports = {
+  target: "node",
+  entry: {
+    app: ["dist/main.js"]
+  },
+  node: { __filename: false, __dirname: false },
+  output: {
+    path: path.resolve(__dirname, "dist"),
+    filename: "main-bundle.js"
+  },
+  externals: {}
+};
