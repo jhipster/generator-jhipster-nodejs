@@ -5,6 +5,7 @@ import { ApiModelProperty } from '@nestjs/swagger';
 
 @Entity('jhi_user')
 export class User extends BaseModel {
+  @PrimaryGeneratedColumn() id: string;
   @ApiModelProperty({ example: 'admin', description: 'User login' })
   @Column()
   login?: string;
