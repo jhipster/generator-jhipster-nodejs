@@ -5,10 +5,9 @@ To contribute for the next featues, fork the repo and open a pull request regard
 
 > The actual goal is to have **the first release (0.0.2)** with these basic features:
 
-* Blueprint to generate monolitich/microservice app with NestJS basic template including, optionally, angular client
+* Blueprint to generate monolitich/microservice app with NestJS basic templates
 * Swagger support
-* Entity ORM generation for only a database type and in development
-* Preserve liquibase db script orchestration
+* Entity ORM generation for prod and dev database
 * Basic security management
 * Maven simple orchestration to run server with client part in case of monolithic app with frontend code
 
@@ -16,14 +15,14 @@ To contribute for the next featues, fork the repo and open a pull request regard
 
 ## Completed list
 
-- [x] Running microservice o monolith project
-- [x] Import jdl: functional entity-server generator with simple options (no dto, no serviceImpl...)
-- [x] Typeorm mappings for both sql and mongodb (todo: needs way more testing of different relations, combinations..)
+- [x] Running microservice or monolith project
+- [x] Import jdl: functional entity-server generator with simple options (no dto, no serviceImpl)
+- [x] Typeorm mappings for both sql and mongodb 
 - [x] Rest API (with headers) compatible with other jhipster implementations
 - [x] Spring Cloud Configuration client
-- [x] Eureka client: there are some issues registering zuul routes in jhipster registry app..
+- [x] Eureka client (but there are some issues registering zuul routes in jhipster registry app)
 - [x] JWT authentication and role base method decorators
-- [x] Swagger documentation (todo: export json/yaml to integrate with jhipster gateway)
+- [x] Swagger documentation
 
 
 ## To DO
@@ -33,6 +32,8 @@ To contribute for the next featues, fork the repo and open a pull request regard
 - [ ] Unit tests: both for the blueprint and for generated project
 - [ ] DTOs based rest api
 - [ ] Validation
+- [ ] Export json/yaml for swagger to integrate with jhipster gateway
+- [ ] Needs way more testing of different relations, combinations for entity
 - [ ] Different pagination options
 - [ ] Elastic Search support
 - [ ] Search api
