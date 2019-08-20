@@ -10,7 +10,7 @@ function askForMainServerSideOpts(meta) {
     const applicationType = this.applicationType;
 
     const PROMPT = [
-        {
+        /* {
             type: 'input',
             name: 'baseName',
             when: applicationType === 'monolith',
@@ -46,6 +46,7 @@ function askForMainServerSideOpts(meta) {
             ],
             default: 'npm'
         }
+        */
     ];
 
     if (applicationType !== 'monolith') {

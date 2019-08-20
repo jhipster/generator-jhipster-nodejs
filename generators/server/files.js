@@ -25,7 +25,6 @@ const serverFiles = {
     common: [
         {
             templates: [
-                'server/README.md',
                 'server/src/core/users/users.controller.ts',
                 'server/src/core/users/user.repository.ts',
                 'server/src/core/users/users.module.ts',
@@ -61,6 +60,7 @@ const serverFiles = {
                 'server/package.json',
                 'server/tsconfig.json',
                 'pom.xml',
+                'server/README.md',
                 { file: 'source2blueprint.sh', method: 'copy', noEjs: true },
                 { file: 'mvnw', method: 'copy', noEjs: true },
                 { file: 'mvnw.cmd', method: 'copy', noEjs: true },

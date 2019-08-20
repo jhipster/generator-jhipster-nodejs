@@ -81,7 +81,7 @@ module.exports = class extends ServerGenerator {
     }
 
     get configuring() {
-        const phaseFromJHipster = super._configuring();
+        /* const phaseFromJHipster = super._configuring();
         const myCustomPhaseSteps = {
             mySaveConfig() {
                 const config = {
@@ -93,8 +93,9 @@ module.exports = class extends ServerGenerator {
         };
         return Object.assign(phaseFromJHipster, myCustomPhaseSteps);
 
+        */
         // Here we are not overriding this phase and hence its being handled by JHipster
-        // return super._configuring();
+        return super._configuring();
     }
 
     get default() {

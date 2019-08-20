@@ -1,8 +1,8 @@
 [
   {
     "name": "default",
-    "type": "mongodb",
-    "url": "mongodb://localhost:27017/<%= baseName %>",
+    "type": "sqlite",
+    "database": "target/sqlite-dev-db.sql",
     "synchronize": true,
     "logging": false,
     "entities": ["src/domain/*.model{.ts,.js}"]
@@ -23,14 +23,6 @@
     "username": "<%= baseName %>",
     "password": "<%= baseName %>",
     "database": "<%= baseName %>",
-    "synchronize": true,
-    "logging": false,
-    "entities": ["src/domain/*.model{.ts,.js}"]
-  },
-  {
-    "name": "dev",
-    "type": "sqlite",
-    "database": "target/sqlite-dev-db.sql",
     "synchronize": true,
     "logging": false,
     "entities": ["src/domain/*.model{.ts,.js}"]
