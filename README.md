@@ -62,11 +62,10 @@ yarn global upgrade generator-jhipster-nodejs
 
 ## 🚦 What we have now
 
-✅ General App generation (WIP)
-    - `nhipster`
-
+✅ General App generation 
+  
 ✅ Entity generation (WIP)
-    - `nhipster entity <entity-name>`
+ 
 
 ## ❤️ For community
 
