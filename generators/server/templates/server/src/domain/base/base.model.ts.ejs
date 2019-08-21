@@ -2,6 +2,6 @@ import { ObjectIdColumn, PrimaryGeneratedColumn } from 'typeorm';
 
 export abstract class BaseModel {
    @ObjectIdColumn() 
-   @PrimaryGeneratedColumn() 
+   @PrimaryGeneratedColumn('uuid') 
    id?: string; 
 }
