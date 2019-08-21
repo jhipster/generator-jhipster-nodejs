@@ -6,7 +6,9 @@ import { AppModule } from './app.module';
 import { setupSwagger } from './swagger';
 import { config } from './config/config';
 import { Logger, ValidationPipe, ValidationError, BadRequestException } from '@nestjs/common';
-
+import * as express from 'express';
+import * as path from 'path';
+import * as fs from 'fs';
 const logger: Logger = new Logger('main.ts');
 
 async function bootstrap() {
@@ -21,6 +23,12 @@ async function bootstrap() {
       exceptionFactory: (errors: ValidationError[]) => new BadRequestException('Validation error'),
     }),
   );
+  
+  const staticClientPath = path.join(__dirname, '../dist/classes/static');
+  if (fs.existsSync(staticClientPath )) {
+    app.use(express.static(staticClientPath));
+    logger.log(`Serving static client resources on ${staticClientPath}`);
+  }
 
   setupSwagger(app);
 

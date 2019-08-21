@@ -14,7 +14,7 @@
     "start:dev": "npm run copy-resources && tsc-watch -p tsconfig.build.json --onSuccess \"node dist/main.js\"",
     "start:debug": "npm run copy-resources && tsc-watch -p tsconfig.build.json --onSuccess \"node --inspect-brk dist/main.js\"",
     "start:prod": "npm run copy-resources && node dist/main.js",
-    "start": "nodemon --watch src -e ts,tsx --exec ts-node src/main.ts",
+    "start": "npm run clean && npm run copy-resources && nodemon --watch src -e ts,tsx --exec ts-node src/main.ts",
     "lint": "tslint -p tsconfig.json -c tslint.json",
     "test": "jest",
     "test:watch": "jest --watch",

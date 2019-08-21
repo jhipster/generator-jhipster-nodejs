@@ -60,7 +60,6 @@ const serverFiles = {
                 'server/tslint.json',
                 'server/package.json',
                 'server/tsconfig.json',
-                'server/src/common/middleware/frontend.middleware.ts',
                 'pom.xml',
                 'server/README.md',
                 'server/webpack.config.js',

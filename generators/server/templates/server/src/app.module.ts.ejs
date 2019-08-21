@@ -1,33 +1,25 @@
-import { MiddlewareConsumer, Module, NestModule, RequestMethod } from '@nestjs/common';
+import { Module, NestModule } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { JwtStrategy } from './common/security/passport.jwt.strategy';
 import { UsersModule } from './core/users/users.module';
-import { FrontendMiddleware } from './common/middleware/frontend.middleware';
 // jhipster-needle-add-entity-module-to-main-import - JHipster will import entity modules here
 
 @Module({
   imports: [
-   TypeOrmModule.forRoot({
-    name: 'default',
-    type: 'sqlite',
-    database: '../target/sqlite-dev-db.sql',
-    synchronize: true,
-    logging: false,
-    entities: [__dirname + '/domain/*.model{.ts,.js}']
-    }), 
-    UsersModule,
+    TypeOrmModule.forRoot({
+      name: 'default',
+      type: 'sqlite',
+      database: '../target/sqlite-dev-db.sql',
+      synchronize: true,
+      logging: false,
+      entities: [__dirname + '/domain/*.model{.ts,.js}']
+    }),
+    UsersModule
     // jhipster-needle-add-entity-module-to-main - JHipster will add entity modules here
   ],
   controllers: [],
-  providers: [JwtStrategy],
+  providers: [JwtStrategy]
 })
-export class AppModule implements NestModule {
-  configure(consumer: MiddlewareConsumer): void {
-    consumer.apply(FrontendMiddleware).forRoutes(
-      {
-        path: '/**', // For all routes
-        method: RequestMethod.ALL, // For all methods
-      },
-    );
-  }
+export class AppModule  {
+
 }
