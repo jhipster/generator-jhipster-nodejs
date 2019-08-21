@@ -1,5 +1,5 @@
 import * as shell from 'shelljs';
-import fs from 'fs';
+import * as fs from 'fs';
 
 shell.cp('-R', 'src/config/*.yml', 'dist/config');
 const clientDist=__dirname+'../../target/classes/static';

@@ -54,7 +54,7 @@ const serverFiles = {
                 'server/tsconfig.build.json',
                 'server/test/app.e2e-spec.ts',
                 'server/test/jest-e2e.json',
-                'server/ormconfig.json',
+                'server/ormconfig-examples.json',
                 'server/nest-cli.json',
                 'server/.env',
                 'server/tslint.json',

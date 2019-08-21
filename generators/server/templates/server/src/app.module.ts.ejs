@@ -7,7 +7,14 @@ import { FrontendMiddleware } from './common/middleware/frontend.middleware';
 
 @Module({
   imports: [
-    TypeOrmModule.forRoot(), 
+   TypeOrmModule.forRoot({
+    name: 'default',
+    type: 'sqlite',
+    database: '../target/sqlite-dev-db.sql',
+    synchronize: true,
+    logging: false,
+    entities: [__dirname + '/domain/*.model{.ts,.js}']
+    }), 
     UsersModule,
     // jhipster-needle-add-entity-module-to-main - JHipster will add entity modules here
   ],
