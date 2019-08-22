@@ -14,6 +14,12 @@
     "email": "angelo.mang@libero.it",
     "url": "https://github.com/amanganiello90"
   },
+  "contributors": [
+    "Deepu KS <d4udts@gmail.com> (https://deepu105.github.io)",
+    "Hadi Rasouli (https://github.com/hadirsa)",
+    "Iván García Sainz-Aja (https://github.com/ivangsa)",
+    "Daniel Franco <dandrfranco@gmail.com> (https://github.com/DanielFran)"
+  ],
   "files": [
     "generators"
   ],
