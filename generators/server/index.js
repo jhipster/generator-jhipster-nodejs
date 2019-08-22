@@ -2,12 +2,22 @@
 const chalk = require('chalk');
 const ServerGenerator = require('generator-jhipster/generators/server');
 // const constants = require('generator-jhipster/generators/generator-constants');
+const os = require('os');
+const packagejs = require('../../package.json');
 const writeFiles = require('./files').writeFiles;
 // const prompts = require('./prompts');
 
 module.exports = class extends ServerGenerator {
     constructor(args, opts) {
-        super(args, Object.assign({ fromBlueprint: true }, opts)); // fromBlueprint variable is important
+        super(
+            args,
+            Object.assign(
+                {
+                    fromBlueprint: true
+                },
+                opts
+            )
+        ); // fromBlueprint variable is important
 
         const jhContext = (this.jhipsterContext = this.options.jhipsterContext);
 
@@ -21,32 +31,49 @@ module.exports = class extends ServerGenerator {
     }
 
     get initializing() {
-        /**
-         * Any method beginning with _ can be reused from the superclass `ClientGenerator`
-         *
-         * There are multiple ways to customize a phase from JHipster.
-         *
-         * 1. Let JHipster handle a phase, blueprint doesnt override anything.
-         * ```
-         *      return super._initializing();
-         * ```
-         *
-         * 2. Override the entire phase, this is when the blueprint takes control of a phase
-         * ```
-         *      return {
-         *          myCustomInitPhaseStep() {
-         *              // Do all your stuff here
-         *          },
-         *          myAnotherCustomInitPhaseStep(){
-         *              // Do all your stuff here
-         *          }
-         *      };
-         * ```
-         *
-         * 3. Partially override a phase, this is when the blueprint gets the phase from JHipster and customizes it.
-         */
-        // Here we are not overriding this phase and hence its being handled by JHipster
-        return super._initializing();
+        const phaseFromJHipster = super._initializing();
+        const jhipsterNodePhaseSteps = {
+            displayLogo() {
+                this.printJHipsterNodeLogo();
+            }
+        };
+        return Object.assign(phaseFromJHipster, jhipsterNodePhaseSteps);
+    }
+
+    printJHipsterNodeLogo() {
+        this.log('\n');
+        this.log(`${chalk.yellow(' ███╗   ██╗')}${chalk.green(' ██╗   ██╗ ████████╗ ███████╗   ██████╗ ████████╗ ████████╗ ███████╗')}`);
+        this.log(`${chalk.yellow(' ████╗  ██║')}${chalk.green(' ██║   ██║ ╚══██╔══╝ ██╔═══██╗ ██╔════╝ ╚══██╔══╝ ██╔═════╝ ██╔═══██╗')}`);
+        this.log(`${chalk.yellow(' ██╔██╗ ██║')}${chalk.green(' ████████║    ██║    ███████╔╝ ╚█████╗     ██║    ██████╗   ███████╔╝')}`);
+        this.log(`${chalk.yellow(' ██║╚██╗██║')}${chalk.green(' ██╔═══██║    ██║    ██╔════╝   ╚═══██╗    ██║    ██╔═══╝   ██╔══██║')}`);
+        this.log(`${chalk.yellow(' ██║ ╚████║')}${chalk.green(' ██║   ██║ ████████╗ ██║       ██████╔╝    ██║    ████████╗ ██║  ╚██╗')}`);
+        this.log(`${chalk.yellow(' ╚═╝  ╚═══╝')}${chalk.green(' ╚═╝   ╚═╝ ╚═══════╝ ╚═╝       ╚═════╝     ╚═╝    ╚═══════╝ ╚═╝   ╚═╝')}\n`);
+        this.log(chalk.white.bold('                            https://www.jhipster.tech\n'));
+        this.log(chalk.white('Welcome to NHipster (Jhipster NodeJS Official Blueprint) ') + chalk.yellow(`v${packagejs.version}`));
+        this.log(chalk.white('This blueprint generates your backend in NodeJS with NestJS framework'));
+
+        this.log(
+            chalk.green(
+                ' _______________________________________________________________________________________________________________\n'
+            )
+        );
+        this.log(
+            chalk.white(
+                `  For any questions or improvements refer to the stream lead at ${chalk.yellow('https://github.com/amanganiello90')}`
+            )
+        );
+        this.log(
+            chalk.white(
+                `  If you find NHipster useful, support and star the project at ${chalk.yellow(
+                    'https://github.com/jhipster/generator-jhipster-nodejs'
+                )}`
+            )
+        );
+        this.log(
+            chalk.green(
+                ' _______________________________________________________________________________________________________________\n'
+            )
+        );
     }
 
     get prompting() {
@@ -82,18 +109,18 @@ module.exports = class extends ServerGenerator {
 
     get configuring() {
         /* const phaseFromJHipster = super._configuring();
-        const myCustomPhaseSteps = {
-            mySaveConfig() {
-                const config = {
-                    serverPackageManager: this.serverPackageManager,
-                    baseName: this.baseName
-                };
-                this.config.set(config);
-            }
-        };
-        return Object.assign(phaseFromJHipster, myCustomPhaseSteps);
+		const myCustomPhaseSteps = {
+		mySaveConfig() {
+		const config = {
+		serverPackageManager: this.serverPackageManager,
+		baseName: this.baseName
+		};
+		this.config.set(config);
+		}
+		};
+		return Object.assign(phaseFromJHipster, myCustomPhaseSteps);
 
-        */
+		 */
         // Here we are not overriding this phase and hence its being handled by JHipster
         return super._configuring();
     }
@@ -114,7 +141,20 @@ module.exports = class extends ServerGenerator {
     }
 
     get end() {
+        return {
+            customEnd() {
+                this.log(chalk.green.bold('\nServer application generated successfully.\n'));
+
+                const executable = 'mvnw clean package -Pdev';
+
+                let logMsgComment = '';
+                if (os.platform() === 'win32') {
+                    logMsgComment = ` (${chalk.yellow.bold(executable)} if using Windows Command Prompt)`;
+                }
+                this.log(chalk.green(`Run your Spring Boot application:\n${chalk.yellow.bold(`./${executable}`)}${logMsgComment}`));
+            }
+        };
         // Here we are not overriding this phase and hence its being handled by JHipster
-        return super._end();
+        // return super._end();
     }
 };
