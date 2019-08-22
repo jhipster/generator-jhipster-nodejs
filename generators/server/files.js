@@ -62,7 +62,6 @@ const serverFiles = {
                 'server/tsconfig.json',
                 'pom.xml',
                 'server/README.md',
-                'server/webpack.config.js',
                 { file: 'source2blueprint.sh', method: 'copy', noEjs: true },
                 { file: 'mvnw', method: 'copy', noEjs: true },
                 { file: 'mvnw.cmd', method: 'copy', noEjs: true },

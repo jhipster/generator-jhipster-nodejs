@@ -32,9 +32,7 @@
     <properties>
         <!-- Build properties -->
         <node.version>v<%= NODE_VERSION %></node.version>
-    <%_ if (clientPackageManager === 'npm') { _%>
         <npm.version><%= NPM_VERSION %></npm.version>
-    <%_ } _%>
     <%_ if (clientPackageManager === 'yarn') { _%>
         <yarn.version>v<%= YARN_VERSION %></yarn.version>
     <%_ } _%>
@@ -53,6 +51,27 @@
                                     <installDirectory>${basedir}</installDirectory>
                                 </configuration>
                             <executions>
+                                <execution>
+                                    <!-- optional: default phase is "generate-resources" -->
+                                     <id>install node and npm</id>
+                                     <goals>
+                                         <goal>install-node-and-npm</goal>
+                                     </goals>
+                                     <configuration>
+                                         <nodeVersion>${node.version}</nodeVersion>
+                                         <npmVersion>${npm.version}</npmVersion>
+                                     </configuration>
+                                </execution>
+                                <!-- install server part-->
+                                <execution>
+                                    <id>npm install server</id>
+                                    <goals>
+                                         <goal>npm</goal>
+                                    </goals>
+                                    <configuration>
+                                    <workingDirectory>server</workingDirectory>
+                                     </configuration>
+                                </execution>
         <%_ if (clientPackageManager === 'yarn') { _%>
                                 <execution>
                                     <!-- optional: default phase is "generate-resources" -->
@@ -74,29 +93,9 @@
                                     </goals>
                                 </execution>
                                 <%_ } _%>
-                                <!-- install server part-->
-                                <execution>
-                                        <id>yarn install server</id>
-                                    <goals>
-                                        <goal>yarn</goal>
-                                    </goals>
-                                    <configuration>
-                                            <workingDirectory>server</workingDirectory>
-                                    </configuration>
-                                </execution>
 
         <%_ } else if (clientPackageManager === 'npm') { _%>
-                                <execution>
-                                    <!-- optional: default phase is "generate-resources" -->
-                                    <id>install node and npm</id>
-                                    <goals>
-                                        <goal>install-node-and-npm</goal>
-                                    </goals>
-                                    <configuration>
-                                        <nodeVersion>${node.version}</nodeVersion>
-                                        <npmVersion>${npm.version}</npmVersion>
-                                    </configuration>
-                                </execution>
+
                                 <%_ if (!skipClient) { _%>
                                     <!-- install client part-->
                                 <execution>
@@ -106,16 +105,7 @@
                                     </goals>
                                 </execution>
                                 <%_ } _%>
-                                    <!-- install server part-->
-                                <execution>
-                                        <id>npm install server</id>
-                                        <goals>
-                                            <goal>npm</goal>
-                                        </goals>
-                                        <configuration>
-                                            <workingDirectory>server</workingDirectory>
-                                        </configuration>
-                                 </execution>
+
         <%_ } _%>
                                 <%_ if (!skipClient) { _%>
                                 <execution>
@@ -157,7 +147,7 @@
                                             <id>server dev running</id>
                                             <phase>package</phase>
                                             <goals>
-                                                <goal><%= clientPackageManager %></goal>
+                                                <goal>npm</goal>
                                             </goals>
                                             <configuration>
                                                 <workingDirectory>server</workingDirectory>
@@ -165,11 +155,7 @@
                                                 <environmentVariables>
                                                     <APP_VERSION>${project.version}</APP_VERSION>
                                                 </environmentVariables>
-                <%_ if (clientPackageManager === 'yarn') { _%>
-                                                <yarnInheritsProxyConfigFromMaven>false</yarnInheritsProxyConfigFromMaven>
-                <%_ } else if (clientPackageManager === 'npm') { _%>
                                                 <npmInheritsProxyConfigFromMaven>false</npmInheritsProxyConfigFromMaven>
-                <%_ } _%>
                                             </configuration>
                                         </execution>
                             </executions>
@@ -192,19 +178,15 @@
                                             <id>server build</id>
                                             <phase>package</phase>
                                             <goals>
-                                                <goal><%= clientPackageManager %></goal>
+                                                <goal>npm</goal>
                                             </goals>
                                             <configuration>
                                                 <workingDirectory>server</workingDirectory>
                                                 <arguments>run build</arguments>
                                                 <environmentVariables>
                                                     <APP_VERSION>${project.version}</APP_VERSION>
+                                                    <npmInheritsProxyConfigFromMaven>false</npmInheritsProxyConfigFromMaven>
                                                 </environmentVariables>
-                <%_ if (clientPackageManager === 'yarn') { _%>
-                                                <yarnInheritsProxyConfigFromMaven>false</yarnInheritsProxyConfigFromMaven>
-                <%_ } else if (clientPackageManager === 'npm') { _%>
-                                                <npmInheritsProxyConfigFromMaven>false</npmInheritsProxyConfigFromMaven>
-                <%_ } _%>
                                             </configuration>
                                         </execution>
                             </executions>
