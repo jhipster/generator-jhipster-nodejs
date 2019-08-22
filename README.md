@@ -1,5 +1,5 @@
 # generator-jhipster-nodejs
-[![NPM version][npm-image]][npm-url] [![Build Status][travis-image]][travis-url] [![Dependency Status][daviddm-image]][daviddm-url] [![Gitter](https://badges.gitter.im/generator-jhipster-nodejs/community.svg)](https://gitter.im/generator-jhipster-nodejs/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
+[![NPM version][npm-image]][npm-url] [![Build Status][travis-image]][travis-url] [![Dependency Status][daviddm-image]][daviddm-url] [![Gitter](https://badges.gitter.im/generator-jhipster-nodejs/community.svg)](https://gitter.im/generator-jhipster-nodejs/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge) [![Downloads][npmcharts-image]][npmcharts-url]
 
 > ## 🛠 Mode: Development
 >
@@ -96,3 +96,5 @@ Apache-2.0 © [Angelo Manganiello](https://github.com/amanganiello90)
 [travis-url]: https://travis-ci.com/jhipster/generator-jhipster-nodejs
 [daviddm-image]: https://david-dm.org/jhipster/generator-jhipster-nodejs.svg?theme=shields.io
 [daviddm-url]: https://david-dm.org/jhipster/generator-jhipster-nodejs
+[npmcharts-image]: https://img.shields.io/npm/dm/generator-jhipster-nodejs.svg?label=Downloads&style=flat
+[npmcharts-url]: https://npmcharts.com/compare/generator-jhipster-nodejs
