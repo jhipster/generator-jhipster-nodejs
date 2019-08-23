@@ -17,6 +17,10 @@
  * limitations under the License.
  */
 
+const constants = require('../generator-nodejs-constants');
+
+const SERVER_NODEJS_DIR = `${constants.SERVER_NODEJS_SRC_DIR}/`;
+
 module.exports = {
     writeFiles
 };
@@ -24,44 +28,49 @@ module.exports = {
 const serverFiles = {
     common: [
         {
+            path: SERVER_NODEJS_DIR,
             templates: [
-                'server/src/core/users/users.controller.ts',
-                'server/src/core/users/user.repository.ts',
-                'server/src/core/users/users.module.ts',
-                'server/src/core/users/users.controller.spec.ts',
-                'server/src/config/application-dev.yml',
-                'server/src/config/config.ts',
-                'server/src/config/application-prod.yml',
-                'server/src/config/application.yml',
-                'server/src/domain/base/pagination.model.ts',
-                'server/src/domain/base/base.model.ts',
-                'server/src/domain/user.model.ts',
-                'server/src/domain/product-category.model.ts',
-                'server/src/domain/product.model.ts',
-                'server/src/common/security/guards/roles.guard.ts',
-                'server/src/common/security/guards/auth.guard.ts',
-                'server/src/common/security/role-type.ts',
-                'server/src/common/security/decorators/auth-user.decorator.ts',
-                'server/src/common/security/decorators/roles.decorator.ts',
-                'server/src/common/security/passport.jwt.strategy.ts',
-                'server/src/common/security/index.ts',
-                'server/src/common/header-util.ts',
-                'server/src/common/interceptors/logging.interceptor.ts',
-                'server/src/main.ts',
-                'server/src/swagger.ts',
-                'server/src/app.module.ts',
-                'server/scripts/copy-resources.ts',
-                'server/tsconfig.build.json',
-                'server/test/app.e2e-spec.ts',
-                'server/test/jest-e2e.json',
-                'server/ormconfig-examples.json',
-                'server/nest-cli.json',
-                'server/.env',
-                'server/tslint.json',
-                'server/package.json',
-                'server/tsconfig.json',
+                'src/core/users/users.controller.ts',
+                'src/core/users/user.repository.ts',
+                'src/core/users/users.module.ts',
+                'src/core/users/users.controller.spec.ts',
+                'src/config/application-dev.yml',
+                'src/config/config.ts',
+                'src/config/application-prod.yml',
+                'src/config/application.yml',
+                'src/domain/base/pagination.model.ts',
+                'src/domain/base/base.model.ts',
+                'src/domain/user.model.ts',
+                'src/domain/product-category.model.ts',
+                'src/domain/product.model.ts',
+                'src/common/security/guards/roles.guard.ts',
+                'src/common/security/guards/auth.guard.ts',
+                'src/common/security/role-type.ts',
+                'src/common/security/decorators/auth-user.decorator.ts',
+                'src/common/security/decorators/roles.decorator.ts',
+                'src/common/security/passport.jwt.strategy.ts',
+                'src/common/security/index.ts',
+                'src/common/header-util.ts',
+                'src/common/interceptors/logging.interceptor.ts',
+                'src/main.ts',
+                'src/swagger.ts',
+                'src/app.module.ts',
+                'scripts/copy-resources.ts',
+                'tsconfig.build.json',
+                'test/app.e2e-spec.ts',
+                'test/jest-e2e.json',
+                'ormconfig-examples.json',
+                'nest-cli.json',
+                '.env',
+                'tslint.json',
+                'package.json',
+                'tsconfig.json',
+                'README.md'
+            ]
+        },
+        {
+            templates: [
                 'pom.xml',
-                'server/README.md',
                 { file: 'source2blueprint.sh', method: 'copy', noEjs: true },
                 { file: 'mvnw', method: 'copy', noEjs: true },
                 { file: 'mvnw.cmd', method: 'copy', noEjs: true },

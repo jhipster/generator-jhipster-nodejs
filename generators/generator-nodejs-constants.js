@@ -17,10 +17,10 @@
  * limitations under the License.
  */
 
-const SERVER_NODEJS_ROOT = 'server';
+const SERVER_NODEJS_SRC_DIR = 'server';
 
 const constants = {
-    SERVER_NODEJS_ROOT
+    SERVER_NODEJS_SRC_DIR
 };
 
 module.exports = constants;

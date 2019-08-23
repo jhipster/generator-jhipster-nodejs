@@ -66,7 +66,7 @@ module.exports = class extends ServerGenerator {
         /* eslint-enable */
         return Object.assign(initPhaseFromJHipster, jhipsterInitNodePhaseSteps);
 
-        //  return phaseFromJHipster;
+        //  return initPhaseFromJHipster;
     }
 
     get prompting() {
