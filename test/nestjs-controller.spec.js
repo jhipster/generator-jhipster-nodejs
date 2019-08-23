@@ -3,7 +3,7 @@ const fse = require('fs-extra');
 const assert = require('yeoman-assert');
 const helpers = require('yeoman-test');
 
-describe('Subgenerator spring-controller of nodejs JHipster blueprint', () => {
+describe('Subgenerator nestjs-controller of nodejs JHipster blueprint', () => {
     describe('Sample test', () => {
         before(done => {
             helpers
@@ -19,9 +19,9 @@ describe('Subgenerator spring-controller of nodejs JHipster blueprint', () => {
                 })
                 .withGenerators([
                     [
-                        require('../generators/spring-controller/index.js'), // eslint-disable-line global-require
+                        require('../generators/nestjs-controller/index.js'), // eslint-disable-line global-require
                         'jhipster-nodejs:spring-controller',
-                        path.join(__dirname, '../generators/spring-controller/index.js')
+                        path.join(__dirname, '../generators/nestjs-controller/index.js')
                     ]
                 ])
                 .withArguments(['foo'])

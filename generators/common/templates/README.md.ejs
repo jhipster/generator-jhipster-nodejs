@@ -1,5 +1,5 @@
 <%#
- Copyright 2013-2019 the original author or authors from the JHipster project.
+ Copyright 2019 Angelo Manganiello and the respective JHipster contributors
 
  This file is part of the JHipster project, see https://www.jhipster.tech/
  for more information.
@@ -30,7 +30,7 @@ if (clientPackageManager === 'yarn') {
 }
 let DOCUMENTATION_ARCHIVE_URL = `${DOCUMENTATION_URL + DOCUMENTATION_ARCHIVE_PATH}v${jhipsterVersion}`;
 _%>
-This application was generated using JHipster <%= jhipsterVersion %>, you can find documentation and help at [<%= DOCUMENTATION_ARCHIVE_URL %>](<%= DOCUMENTATION_ARCHIVE_URL %>).
+This application was generated using the [NodeJS blueprint](https://github.com/jhipster/generator-jhipster-nodejs) of JHipster <%= jhipsterVersion %>, you can find documentation and help at [<%= DOCUMENTATION_ARCHIVE_URL %>](<%= DOCUMENTATION_ARCHIVE_URL %>). For any questions you can refer to the stream lead: [Angelo Manganiello](https://github.com/amanganiello90).
 <%_ if (applicationType === 'gateway' || applicationType === 'microservice' || applicationType === 'uaa') { _%>
 
 This is a "<%= applicationType %>" application intended to be part of a microservice architecture, please refer to the [Doing microservices with JHipster][] page of the documentation for more information.

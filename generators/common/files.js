@@ -14,7 +14,7 @@ const commonFiles = {
 
 function writeFiles() {
     return {
-        writeSameFiles() {
+        overrideFiles() {
             this.writeFilesToDisk(commonFiles, this, false);
         }
     };

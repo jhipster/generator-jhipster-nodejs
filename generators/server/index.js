@@ -33,13 +33,50 @@ module.exports = class extends ServerGenerator {
     get initializing() {
         const phaseFromJHipster = super._initializing();
         const jhipsterNodePhaseSteps = {
+            /* eslint-disable */
             displayLogo() {
-                this.printJHipsterNodeLogo();
+                this.log('\n');
+                this.log(`${chalk.yellow(' ███╗   ██╗')}${chalk.green(' ██╗   ██╗ ████████╗ ███████╗   ██████╗ ████████╗ ████████╗ ███████╗')}`);
+                this.log(`${chalk.yellow(' ████╗  ██║')}${chalk.green(' ██║   ██║ ╚══██╔══╝ ██╔═══██╗ ██╔════╝ ╚══██╔══╝ ██╔═════╝ ██╔═══██╗')}`);
+                this.log(`${chalk.yellow(' ██╔██╗ ██║')}${chalk.green(' ████████║    ██║    ███████╔╝ ╚█████╗     ██║    ██████╗   ███████╔╝')}`);
+                this.log(`${chalk.yellow(' ██║╚██╗██║')}${chalk.green(' ██╔═══██║    ██║    ██╔════╝   ╚═══██╗    ██║    ██╔═══╝   ██╔══██║')}`);
+                this.log(`${chalk.yellow(' ██║ ╚████║')}${chalk.green(' ██║   ██║ ████████╗ ██║       ██████╔╝    ██║    ████████╗ ██║  ╚██╗')}`);
+                this.log(`${chalk.yellow(' ╚═╝  ╚═══╝')}${chalk.green(' ╚═╝   ╚═╝ ╚═══════╝ ╚═╝       ╚═════╝     ╚═╝    ╚═══════╝ ╚═╝   ╚═╝')}\n`);
+                this.log(chalk.white.bold('                            https://www.jhipster.tech\n'));
+                this.log(chalk.white('Welcome to NHipster (Jhipster NodeJS Official Blueprint) ') + chalk.yellow(`v${packagejs.version}`));
+                this.log(chalk.white('This blueprint generates your backend in NodeJS with NestJS framework'));
+
+                this.log(
+                    chalk.green(
+                        ' _______________________________________________________________________________________________________________\n'
+                    )
+                );
+                this.log(
+                    chalk.white(
+                        `  For any questions or improvements refer to the stream lead at ${chalk.yellow('https://github.com/amanganiello90')}`
+                    )
+                );
+                this.log(
+                    chalk.white(
+                        `  If you find NHipster useful, support and star the project at ${chalk.yellow(
+                            'https://github.com/jhipster/generator-jhipster-nodejs'
+                        )}`
+                    )
+                );
+                this.log(
+                    chalk.green(
+                        ' _______________________________________________________________________________________________________________\n'
+                    )
+                );
             }
+
         };
         return Object.assign(phaseFromJHipster, jhipsterNodePhaseSteps);
+
+        //  return phaseFromJHipster;
     }
 
+    /*
     printJHipsterNodeLogo() {
         this.log('\n');
         this.log(`${chalk.yellow(' ███╗   ██╗')}${chalk.green(' ██╗   ██╗ ████████╗ ███████╗   ██████╗ ████████╗ ████████╗ ███████╗')}`);
@@ -75,6 +112,7 @@ module.exports = class extends ServerGenerator {
             )
         );
     }
+    */
 
     get prompting() {
         // // The prompting phase is being overriden so that we can ask our own questions
