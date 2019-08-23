@@ -3,13 +3,18 @@ const clientFiles = {
         {
             condition: generator => generator.clientFramework === 'angularX',
             templates: [
-                { file: 'angular/webpack/webpack.dev.js', renameTo: () => 'webpack/webpack.dev.js' },
-                { file: 'angular/webpack/webpack.prod.js', renameTo: () => 'webpack/webpack.prod.js' }
+                { file: 'angular/tsconfig-aot.json', renameTo: () => 'tsconfig-aot.json' },
+                { file: 'angular/tsconfig.e2e.json', renameTo: () => 'tsconfig.e2e.json' },
+                { file: 'angular/tsconfig.json', renameTo: () => 'tsconfig.json' }
             ]
         },
         {
             condition: generator => generator.clientFramework === 'react',
-            templates: [{ file: 'react/webpack/webpack.common.js', renameTo: () => 'webpack/webpack.common.js' }]
+            templates: [
+                { file: 'react/tsconfig.test.json', renameTo: () => 'tsconfig.test.json' },
+                { file: 'react/tsconfig.e2e.json', renameTo: () => 'tsconfig.e2e.json' },
+                { file: 'react/tsconfig.json', renameTo: () => 'tsconfig.json' }
+            ]
         }
     ]
 };
