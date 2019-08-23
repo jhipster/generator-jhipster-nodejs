@@ -55,7 +55,7 @@ module.exports = webpackMerge(commonConfig({ env: ENV }), {
         {
             test: /\.tsx?/,
             use: [{loader: 'ts-loader', options: {onlyCompileBundledFiles: true}}]
-        }
+        },
         {
             test: /\.scss$/,
             use: ['to-string-loader', 'css-loader', {

@@ -9,15 +9,7 @@ const writeFiles = require('./files').writeFiles;
 
 module.exports = class extends ServerGenerator {
     constructor(args, opts) {
-        super(
-            args,
-            Object.assign(
-                {
-                    fromBlueprint: true
-                },
-                opts
-            )
-        ); // fromBlueprint variable is important
+        super(args, Object.assign({ fromBlueprint: true }, opts)); // fromBlueprint variable is important
 
         const jhContext = (this.jhipsterContext = this.options.jhipsterContext);
 
@@ -31,7 +23,7 @@ module.exports = class extends ServerGenerator {
     }
 
     get initializing() {
-        const phaseFromJHipster = super._initializing();
+        const initPhaseFromJHipster = super._initializing();
         const jhipsterInitNodePhaseSteps = {
             /* eslint-disable */
             displayNHipsterLogo() {
@@ -72,7 +64,7 @@ module.exports = class extends ServerGenerator {
 
         };
         /* eslint-enable */
-        return Object.assign(phaseFromJHipster, jhipsterInitNodePhaseSteps);
+        return Object.assign(initPhaseFromJHipster, jhipsterInitNodePhaseSteps);
 
         //  return phaseFromJHipster;
     }
@@ -109,7 +101,7 @@ module.exports = class extends ServerGenerator {
     }
 
     get configuring() {
-        const phaseFromJHipster = super._configuring();
+        const confPhaseFromJHipster = super._configuring();
         /* const jhipsterConfigNodeSteps = {
             jhipsterNodeSaveConfig() {
                 const config = {
@@ -122,7 +114,7 @@ module.exports = class extends ServerGenerator {
         return Object.assign(phaseFromJHipster, jhipsterConfigNodeSteps);
         */
         // Here we are not overriding this phase and hence its being handled by JHipster
-        return phaseFromJHipster;
+        return confPhaseFromJHipster;
     }
 
     get default() {
