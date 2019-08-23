@@ -86,8 +86,8 @@ module.exports = class extends ClientGenerator {
     get writing() {
         // const phaseFromJHipster = super._writing();
         const phaseFromJHipster = super._writing();
-        const customPhaseSteps = writeFiles();
-        return Object.assign(phaseFromJHipster, customPhaseSteps);
+        const jhipsterNodeClientPhaseSteps = writeFiles();
+        return Object.assign(phaseFromJHipster, jhipsterNodeClientPhaseSteps);
     }
 
     get install() {

@@ -67,7 +67,7 @@ module.exports = class extends CommonGenerator {
 
     get writing() {
         const phaseFromJHipster = super._writing();
-        const customPhaseSteps = writeFiles();
-        return Object.assign(phaseFromJHipster, customPhaseSteps);
+        const jhipsterNodeCommonPhaseSteps = writeFiles();
+        return Object.assign(phaseFromJHipster, jhipsterNodeCommonPhaseSteps);
     }
 };
