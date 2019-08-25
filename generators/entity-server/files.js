@@ -17,6 +17,9 @@
  * limitations under the License.
  */
 
+const constants = require('../generator-nodejs-constants');
+
+const SERVER_NODEJS_DIR = `${constants.SERVER_NODEJS_SRC_DIR}/`;
 const utils = require('../utils');
 
 /**
@@ -26,6 +29,7 @@ const utils = require('../utils');
 const serverFiles = {
     server: [
         {
+            path: SERVER_NODEJS_DIR,
             templates: [
                 {
                     file: 'src/domain/entity.model.ts',

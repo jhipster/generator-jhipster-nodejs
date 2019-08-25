@@ -25,11 +25,12 @@ To contribute for the next featues, fork the repo and open a pull request regard
 - [x] JWT authentication and role base method decorators
 - [x] Swagger documentation
 - [x] Monolithic generation with client generation (orchestration with dev and prod maven profile)
+- [x] Overwrite standard README.md (for every application type) with new instructions for project structure
 
 
 ## To DO
 
-- [ ] Overwrite standard README.md (for every application type) with new instruction for project structure
+
 - [ ] Delete unuseful java questions not supported 
 - [ ] Unit tests: both for the blueprint and for generated project
 - [ ] DTOs based rest api
