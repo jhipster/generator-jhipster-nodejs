@@ -1,4 +1,4 @@
-const path = require('path');
+/* const path = require('path');
 const fse = require('fs-extra');
 const assert = require('yeoman-assert');
 const helpers = require('yeoman-test');
@@ -37,3 +37,4 @@ describe('Subgenerator nestjs-controller of nodejs JHipster blueprint', () => {
         });
     });
 });
+*/

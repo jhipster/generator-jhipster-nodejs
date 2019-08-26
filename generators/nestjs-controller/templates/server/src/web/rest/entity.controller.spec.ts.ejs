@@ -1,15 +1,15 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { <%= entityClass %>Controller } from './<%= entityModelFileName %>.controller';
+import { <%= controllerClass %>Controller } from './<%= controllerModelFileName %>.controller';
 
 describe('<%= entityClass %> Controller', () => {
-  let controller: <%= entityClass %>Controller;
+  let controller: <%= controllerClass %>Controller;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      controllers: [<%= entityClass %>Controller],
+      controllers: [<%= controllerClass %>Controller],
     }).compile();
 
-    controller = module.get<<%= entityClass %>Controller>(<%= entityClass %>Controller);
+    controller = module.get<<%= controllerClass %>Controller>(<%= controllerClass %>Controller);
   });
 
   it('should be defined', () => {
