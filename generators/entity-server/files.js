@@ -32,24 +32,24 @@ const serverFiles = {
             path: SERVER_NODEJS_DIR,
             templates: [
                 {
-                    file: 'src/domain/entity.model.ts',
-                    renameTo: generator => `src/domain/${generator.entityFileName}.model.ts`
+                    file: 'src/domain/entity.ts',
+                    renameTo: generator => `src/domain/${generator.entityFileName}.entity.ts`
                 },
                 {
                     file: 'src/module/entity.module.ts',
-                    renameTo: generator => `src/modules/${generator.entityFolderName}/${generator.entityFileName}.module.ts`
+                    renameTo: generator => `src/module/${generator.entityFolderName}/${generator.entityFileName}.module.ts`
                 },
                 {
-                    file: 'src/module/entity.repository.ts',
-                    renameTo: generator => `src/modules/${generator.entityFolderName}/${generator.entityFileName}.repository.ts`
+                    file: 'src/repository/entity.repository.ts',
+                    renameTo: generator => `src/repository/${generator.entityFolderName}/${generator.entityFileName}.repository.ts`
                 },
                 {
-                    file: 'src/module/entity.controller.ts',
-                    renameTo: generator => `src/modules/${generator.entityFolderName}/${generator.entityFileName}.controller.ts`
+                    file: 'src/web/rest/entity.controller.ts',
+                    renameTo: generator => `src/web/rest/${generator.entityFolderName}/${generator.entityFileName}.controller.ts`
                 },
                 {
-                    file: 'src/module/entity.controller.spec.ts',
-                    renameTo: generator => `src/modules/${generator.entityFolderName}/${generator.entityFileName}.contoller.spec.ts`
+                    file: 'src/web/rest/entity.controller.spec.ts',
+                    renameTo: generator => `src/web/rest/${generator.entityFolderName}/${generator.entityFileName}.contoller.spec.ts`
                 }
             ]
         }
