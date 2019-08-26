@@ -19,9 +19,9 @@ describe('Subgenerator nestjs-service of nodejs JHipster blueprint', () => {
                 })
                 .withGenerators([
                     [
-                        require('../generators/nestjs-service/index.js'), // eslint-disable-line global-require
+                        require('../generators/spring-service/index.js'), // eslint-disable-line global-require
                         'jhipster-nodejs:spring-service',
-                        path.join(__dirname, '../generators/nestjs-service/index.js')
+                        path.join(__dirname, '../generators/spring-service/index.js')
                     ]
                 ])
                 .withArguments(['foo'])

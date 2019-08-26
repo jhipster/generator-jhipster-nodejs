@@ -28,10 +28,17 @@ To contribute for the next featues, fork the repo and open a pull request regard
 - [x] Overwrite standard README.md (for every application type) with new instructions for project structure
 
 
-## To DO
-
+## To DO for the 0.0.2 release
 
 - [ ] Delete unuseful java questions not supported 
+- [ ] User management api
+- [ ] entity generator
+- [ ] Other security/authentication options
+- [ ] Other core/admin jhipster services
+- [ ] automatic config in dev profile sqlite db and in prod mongodb or another db
+
+## To DO for next release
+
 - [ ] Unit tests: both for the blueprint and for generated project
 - [ ] DTOs based rest api
 - [ ] Validation
