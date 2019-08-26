@@ -1,7 +1,7 @@
 import { Module, NestModule } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { JwtStrategy } from './common/security/passport.jwt.strategy';
-import { UsersModule } from './core/users/users.module';
+import { JwtStrategy } from './security/passport.jwt.strategy';
+import { UsersModule } from './module/users.module';
 // jhipster-needle-add-entity-module-to-main-import - JHipster will import entity modules here
 
 @Module({
@@ -12,7 +12,7 @@ import { UsersModule } from './core/users/users.module';
       database: '../target/sqlite-dev-db.sql',
       synchronize: true,
       logging: false,
-      entities: [__dirname + '/domain/*.model{.ts,.js}']
+      entities: [__dirname + '/domain/*.entity{.ts,.js}']
     }),
     UsersModule
     // jhipster-needle-add-entity-module-to-main - JHipster will add entity modules here

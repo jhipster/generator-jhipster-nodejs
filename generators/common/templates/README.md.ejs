@@ -198,6 +198,19 @@ will generate few files:
     create <%= CLIENT_MAIN_SRC_DIR %>app/my-component/my-component.component.ts
     update <%= CLIENT_MAIN_SRC_DIR %>app/app.module.ts
 <%_ } _%>
+### Using NestJS CLI
+
+You can also use [NestJS CLI][] to generate some custom server code.
+
+For example, the following command:
+
+    nest generate module my-module
+
+will generate the file:
+
+    create <%= SERVER_NODEJS_SRC_DIR %>/src/my-component/my-component.module.ts
+
+
 <%_ if (enableSwaggerCodegen) { _%>
 ### Doing API-First development using openapi-generator
 
@@ -237,15 +250,6 @@ The build folder with all artifact will be **server/dist**.
 
 > For more explanation about full stack server/client build refer to **server/README.md**
 
-## Testing
-
-To launch your application's tests, run:
-
-    <%_ if (buildTool === 'maven') { _%>
-    ./mvnw verify
-    <%_ } else { _%>
-    ./gradlew test integrationTest
-    <%_ } _%>
 <% if (!skipClient) { %>
 ### Client tests
 
@@ -262,10 +266,6 @@ Performance tests are run by [Gatling][] and written in Scala. They're located i
 To use those tests, you must install Gatling from [https://gatling.io/](https://gatling.io/).
 <% } %>
 For more information, refer to the [Running tests page][].
-
-## Continuous Integration (optional)
-
-To configure CI for your project, run the ci-cd sub-generator (`jhipster ci-cd`), this will let you generate configuration files for a number of Continuous Integration systems. Consult the [Setting up Continuous Integration][] page for more information.
 
 [JHipster Homepage and latest documentation]: <%= DOCUMENTATION_URL %>
 [JHipster <%= jhipsterVersion %> archive]: <%= DOCUMENTATION_ARCHIVE_URL %>
@@ -293,6 +293,7 @@ To configure CI for your project, run the ci-cd sub-generator (`jhipster ci-cd`)
 [BrowserSync]: http://www.browsersync.io/
 [Jest]: https://facebook.github.io/jest/
 [NestJS]: https://nestjs.com/
+[NestJS CLI]: https://docs.nestjs.com/cli/usages
 [Jasmine]: http://jasmine.github.io/2.0/introduction.html
 [Protractor]: https://angular.github.io/protractor/
 [Leaflet]: http://leafletjs.com/

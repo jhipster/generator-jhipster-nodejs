@@ -1,4 +1,4 @@
-import { BaseModel } from './base.model';
+import { BaseEntity } from './base.entity';
 import { Type, Expose as JsonProperty } from 'class-transformer';
 
 export class Sort {
@@ -34,6 +34,6 @@ export class PageRequest {
 }
 
 // tslint:disable-next-line: max-classes-per-file
-export class Page<T extends BaseModel> {
+export class Page<T extends BaseEntity> {
   constructor(public content: T[], public total: number, public pageable: PageRequest) {}
 }

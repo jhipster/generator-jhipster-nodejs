@@ -1,0 +1,7 @@
+import { ObjectIdColumn, PrimaryGeneratedColumn } from 'typeorm';
+
+export abstract class BaseEntity {
+   @ObjectIdColumn()
+   @PrimaryGeneratedColumn('uuid')
+   id?: string;
+}
