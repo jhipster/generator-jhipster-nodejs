@@ -1,4 +1,4 @@
-/* const path = require('path');
+const path = require('path');
 const fse = require('fs-extra');
 const assert = require('yeoman-assert');
 const helpers = require('yeoman-test');
@@ -10,6 +10,7 @@ describe('Subgenerator entity of nodejs JHipster blueprint', () => {
                 .run('generator-jhipster/generators/entity')
                 .inTmpDir(dir => {
                     fse.copySync(path.join(__dirname, '../test/templates/ngx-blueprint'), dir);
+                    fse.copySync(path.join(__dirname, '../test/templates/server'), `${dir}/server`);
                 })
                 .withOptions({
                     'from-cli': true,
@@ -41,4 +42,3 @@ describe('Subgenerator entity of nodejs JHipster blueprint', () => {
         });
     });
 });
-*/

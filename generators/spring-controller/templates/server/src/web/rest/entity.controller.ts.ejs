@@ -7,11 +7,11 @@ import { AuthGuard, Roles, RolesGuard, RoleType } from '../../security';
 import { HeaderUtil } from '../../client/header-util';
 import { LoggingInterceptor } from '../../client/interceptors/logging.interceptor';
 
-// @Controller('<%= controllerClass %>')
+@Controller('<%= controllerFileName %>')
 @UseGuards(AuthGuard, RolesGuard)
 @UseInterceptors(LoggingInterceptor)
 @ApiBearerAuth()
-// @ApiUseTags('<%= controllerClass %>')
+@ApiUseTags('<%= controllerFileName %>')
 export class <%= controllerClass %>Controller {
   logger = new Logger('<%= controllerClass %>Controller');
 
@@ -21,8 +21,7 @@ export class <%= controllerClass %>Controller {
   @Roles(RoleType.USER)
   @ApiResponse({
     status: 200,
-    description: 'List all records',
-    type: <%= entityClass %>,
+    description: 'List all records'
   })
   async getAll(@Req() req: Request) {
    return;
@@ -38,28 +37,28 @@ export class <%= controllerClass %>Controller {
   }
 
   @PostMethod('/')
-  @ApiOperation({ title: 'Create <%= asEntity(entityInstance) %>' })
+  @ApiOperation({ title: 'Create ' })
   @ApiResponse({
     status: 201,
     description: 'The record has been successfully created.'
   })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
-  async post(@Req() req: Request, @Body() <%= asEntity(entityInstance) %>: <%= entityClass %>) {
+  async post(@Req() req: Request, @Body() any: any) {
     return;
   }
 
   @Put('/:id')
-  @ApiOperation({ title: 'Update <%= asEntity(entityInstance) %>' })
+  @ApiOperation({ title: 'Update ' })
   @ApiResponse({
     status: 200,
     description: 'The record has been successfully updated.'
   })
-  put(@Req() req: Request, @Param('id') id: string, @Body() <%= asEntity(entityInstance) %>: <%= entityClass %>) {
+  put(@Req() req: Request, @Param('id') id: string, @Body() any: any) {
     return;
   }
 
   @Delete('/:id')
-  @ApiOperation({ title: 'Delete <%= asEntity(entityInstance) %>' })
+  @ApiOperation({ title: 'Delete ' })
   @ApiResponse({
     status: 204,
     description: 'The record has been successfully deleted.',

@@ -26,47 +26,47 @@ module.exports = {
     addControllerToAppModule
 };
 
-function addEntityToAppModuleImport(generator, entityName, fileName) {
+// NEED TO TEST
+
+function addEntityToAppModuleImport(generator, entityClass, entityFileName) {
     jhipsterUtils.rewriteFile(
         {
             file: `${constants.SERVER_NODEJS_SRC_DIR}/src/app.module.ts`,
             needle: 'jhipster-needle-add-entity-module-to-main-import',
-            splicable: [`import { ${entityName}Module } from './module/${fileName}.module';`]
+            splicable: [`import { ${entityClass}Module } from './module/${entityFileName}.module';`]
         },
         generator
     );
 }
 
-function addEntityToAppModule(generator, entityName, fileName) {
+function addEntityToAppModule(generator, entityClass) {
     jhipsterUtils.rewriteFile(
         {
             file: `${constants.SERVER_NODEJS_SRC_DIR}/src/app.module.ts`,
             needle: 'jhipster-needle-add-entity-module-to-main',
-            splicable: [`${entityName}Module,`]
+            splicable: [`${entityClass}Module,`]
         },
         generator
     );
 }
 
-// NEED TEST
-
-function addControllerToAppModuleImport(generator, controllerName, fileName) {
+function addControllerToAppModuleImport(generator, controllerClass, controllerFileName) {
     jhipsterUtils.rewriteFile(
         {
             file: `${constants.SERVER_NODEJS_SRC_DIR}/src/app.module.ts`,
             needle: 'jhipster-needle-add-controller-module-to-main-import',
-            splicable: [`import { ${controllerName}Module } from './web/rest/${fileName}.module';`]
+            splicable: [`import { ${controllerClass} } from './web/rest/${controllerFileName}.module';`]
         },
         generator
     );
 }
 
-function addControllerToAppModule(generator, controllerName, fileName) {
+function addControllerToAppModule(generator, controllerClass) {
     jhipsterUtils.rewriteFile(
         {
             file: `${constants.SERVER_NODEJS_SRC_DIR}/src/app.module.ts`,
             needle: 'jhipster-needle-add-controller-module-to-main',
-            splicable: [`${controllerName}Module,`]
+            splicable: [`${controllerClass},`]
         },
         generator
     );

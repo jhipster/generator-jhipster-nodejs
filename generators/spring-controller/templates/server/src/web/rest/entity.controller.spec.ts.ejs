@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { <%= controllerClass %>Controller } from './<%= controllerModelFileName %>.controller';
+import { <%= controllerClass %>Controller } from './<%= controllerFileName %>.controller';
 
-describe('<%= entityClass %> Controller', () => {
+describe('<%= controllerClass %> Controller', () => {
   let controller: <%= controllerClass %>Controller;
 
   beforeEach(async () => {

@@ -151,6 +151,6 @@ function writeFiles() {
         }
     });
 
-    utils.addEntityToAppModuleImport(this, this.entityAngularName, this.entityFileName);
-    utils.addEntityToAppModule(this, this.entityAngularName, this.entityFileName);
+    utils.addEntityToAppModuleImport(this, this.entityClass, this.entityFileName);
+    utils.addEntityToAppModule(this, this.entityClass);
 }
