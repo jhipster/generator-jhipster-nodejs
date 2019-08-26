@@ -1,6 +1,7 @@
 /* eslint-disable consistent-return */
 const chalk = require('chalk');
 const SpringControllerGenerator = require('generator-jhipster/generators/spring-controller');
+const writeFiles = require('./files').writeFiles;
 
 module.exports = class extends SpringControllerGenerator {
     constructor(args, opts) {
@@ -67,7 +68,10 @@ module.exports = class extends SpringControllerGenerator {
     }
 
     get writing() {
-        // Here we are not overriding this phase and hence its being handled by JHipster
-        return super._writing();
+        return {
+            writeAdditionalFile() {
+                writeFiles.call(this);
+            }
+        };
     }
 };

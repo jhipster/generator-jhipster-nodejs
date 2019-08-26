@@ -17,30 +17,55 @@
  * limitations under the License.
  */
 const jhipsterUtils = require('generator-jhipster/generators/utils');
-// const constants = require('generator-jhipster/generators/generator-constants');
+const constants = require('../generator-nodejs-constants');
+
 
 module.exports = {
     addEntityToAppModuleImport,
     addEntityToAppModule
 };
 
-function addEntityToAppModuleImport(generator, entityAngularName, fileName, folderName) {
+function addEntityToAppModuleImport(generator, entityName, fileName) {
     jhipsterUtils.rewriteFile(
         {
-            file: 'src/app.module.ts',
+            file: `${constants.SERVER_NODEJS_SRC_DIR}/src/app.module.ts`,
             needle: 'jhipster-needle-add-entity-module-to-main-import',
-            splicable: [`import { ${entityAngularName}Module } from './modules/${folderName}/${fileName}.module';`]
+            splicable: [`import { ${entityName}Module } from './module/${fileName}.module';`]
         },
         generator
     );
 }
 
-function addEntityToAppModule(generator, entityAngularName, fileName, folderName) {
+function addEntityToAppModule(generator, entityName, fileName) {
     jhipsterUtils.rewriteFile(
         {
-            file: 'src/app.module.ts',
+            file: `${constants.SERVER_NODEJS_SRC_DIR}/src/app.module.ts`,
             needle: 'jhipster-needle-add-entity-module-to-main',
-            splicable: [`    ${entityAngularName}Module,`]
+            splicable: [`${entityName}Module,`]
+        },
+        generator
+    );
+}
+
+// NEED TEST
+
+function addControllerToAppModuleImport(generator, controllerName, fileName) {
+    jhipsterUtils.rewriteFile(
+        {
+            file: `${constants.SERVER_NODEJS_SRC_DIR}/src/app.module.ts`,
+            needle: 'jhipster-needle-add-controller-module-to-main-import',
+            splicable: [`import { ${controllerName}Module } from './web/rest/${fileName}.module';`]
+        },
+        generator
+    );
+}
+
+function addControllerToAppModule(generator, controllerName, fileName) {
+    jhipsterUtils.rewriteFile(
+        {
+            file: `${constants.SERVER_NODEJS_SRC_DIR}/src/app.module.ts`,
+            needle: 'jhipster-needle-add-controller-module-to-main',
+            splicable: [`${controllerName}Module,`]
         },
         generator
     );

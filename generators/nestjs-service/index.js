@@ -1,6 +1,7 @@
 /* eslint-disable consistent-return */
 const chalk = require('chalk');
 const SpringServiceGenerator = require('generator-jhipster/generators/spring-service');
+const writeFiles = require('./files').writeFiles;
 
 module.exports = class extends SpringServiceGenerator {
     constructor(args, opts) {
@@ -67,7 +68,7 @@ module.exports = class extends SpringServiceGenerator {
     }
 
     get writing() {
-        // Here we are not overriding this phase and hence its being handled by JHipster
-        return super._writing();
+        // The writing phase is being overriden so that we can write our own templates as well.
+        return writeFiles();
     }
 };

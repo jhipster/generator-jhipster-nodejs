@@ -37,19 +37,19 @@ const serverFiles = {
                 },
                 {
                     file: 'src/module/entity.module.ts',
-                    renameTo: generator => `src/module/${generator.entityFolderName}/${generator.entityFileName}.module.ts`
+                    renameTo: generator => `src/module/${generator.entityFileName}.module.ts`
                 },
                 {
                     file: 'src/repository/entity.repository.ts',
-                    renameTo: generator => `src/repository/${generator.entityFolderName}/${generator.entityFileName}.repository.ts`
+                    renameTo: generator => `src/repository/${generator.entityFileName}.repository.ts`
                 },
                 {
                     file: 'src/web/rest/entity.controller.ts',
-                    renameTo: generator => `src/web/rest/${generator.entityFolderName}/${generator.entityFileName}.controller.ts`
+                    renameTo: generator => `src/web/rest/${generator.entityFileName}.controller.ts`
                 },
                 {
                     file: 'src/web/rest/entity.controller.spec.ts',
-                    renameTo: generator => `src/web/rest/${generator.entityFolderName}/${generator.entityFileName}.contoller.spec.ts`
+                    renameTo: generator => `src/web/rest/${generator.entityFileName}.controller.spec.ts`
                 }
             ]
         }
@@ -135,8 +135,7 @@ const serverFiles = {
 };
 
 module.exports = {
-    writeFiles,
-    serverFiles
+    writeFiles
 };
 
 function writeFiles() {
@@ -152,6 +151,6 @@ function writeFiles() {
         }
     });
 
-    utils.addEntityToAppModuleImport(this, this.entityAngularName, this.entityFileName, this.entityFolderName);
-    utils.addEntityToAppModule(this, this.entityAngularName, this.entityFileName, this.entityFolderName);
+    utils.addEntityToAppModuleImport(this, this.entityAngularName, this.entityFileName);
+    utils.addEntityToAppModule(this, this.entityAngularName, this.entityFileName);
 }

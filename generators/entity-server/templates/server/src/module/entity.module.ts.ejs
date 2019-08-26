@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { <%= entityClass %>Controller } from './<%= entityModelFileName %>.controller';
-import { <%= entityClass %>Repository } from './<%= entityModelFileName %>.repository';
+import { <%= entityClass %>Controller } from '../web/rest/<%= entityModelFileName %>.controller';
+import { <%= entityClass %>Repository } from '../repository/<%= entityModelFileName %>.repository';
 
 @Module({
   imports: [TypeOrmModule.forFeature([<%= entityClass %>Repository])],
