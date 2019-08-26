@@ -1,12 +1,12 @@
 import { Body, Controller, Delete, Get, HttpCode, Logger, Param, Post, Put, Query, Res, UseGuards, Req, UseInterceptors } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Response, Request } from 'express';
-import { AuthGuard, Roles, RolesGuard, RoleType } from '../../common/security';
-import { PageRequest, Page } from '../../domain/base/pagination.model';
-import { User } from '../../domain/user.model';
-import { UserRepository } from './user.repository';
-import { HeaderUtil } from '../../common/header-util';
-import { LoggingInterceptor } from '../../common/interceptors/logging.interceptor';
+import { AuthGuard, Roles, RolesGuard, RoleType } from '../../security';
+import { PageRequest, Page } from '../../domain/base/pagination.entity';
+import { User } from '../../domain/user.entity';
+import { UserRepository } from '../../repository/user.repository';
+import { HeaderUtil } from '../../client/header-util';
+import { LoggingInterceptor } from '../../client/interceptors/logging.interceptor';
 import { ApiBearerAuth, ApiUseTags, ApiResponse, ApiOperation } from '@nestjs/swagger';
 
 @Controller('users')

@@ -1,33 +1,33 @@
 import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
-import { BaseModel } from './base/base.model';
+import { BaseEntity } from './base/base.entity';
 import { Exclude as JsonIgnore } from 'class-transformer';
 import { ApiModelProperty } from '@nestjs/swagger';
 
 @Entity('jhi_user')
-export class User extends BaseModel {
+export class User extends BaseEntity {
   @ApiModelProperty({ example: 'admin', description: 'User login' })
   @Column()
   login?: string;
   @ApiModelProperty({ example: 'Smith', description: 'User first name' })
   @Column()
   firstName?: string;
-  @Column() 
+  @Column()
   lastName?: string;
-  @Column() 
+  @Column()
   email?: string;
-  @Column() 
+  @Column()
   activated?: boolean;
-  @Column() 
+  @Column()
   langKey?: string;
-  // @Column() 
+  // @Column()
   authorities?: any[];
-  @Column() 
+  @Column()
   createdBy?: string;
-  @Column() 
+  @Column()
   createdDate?: Date;
-  @Column() 
+  @Column()
   lastModifiedBy?: string;
-  @Column() 
+  @Column()
   lastModifiedDate?: Date;
 
   @JsonIgnore()

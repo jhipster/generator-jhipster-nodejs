@@ -1,9 +1,8 @@
 /* eslint-disable consistent-return */
 const chalk = require('chalk');
-const SpringServiceGenerator = require('generator-jhipster/generators/spring-service');
-const writeFiles = require('./files').writeFiles;
+const EntityGenerator = require('generator-jhipster/generators/entity');
 
-module.exports = class extends SpringServiceGenerator {
+module.exports = class extends EntityGenerator {
     constructor(args, opts) {
         super(args, Object.assign({ fromBlueprint: true }, opts)); // fromBlueprint variable is important
 
@@ -14,11 +13,13 @@ module.exports = class extends SpringServiceGenerator {
         }
 
         this.configOptions = jhContext.configOptions || {};
+        // This sets up options for this sub generator and is being reused from JHipster
+        jhContext.setupEntityOptions(this, jhContext, this);
     }
 
     get initializing() {
         /**
-         * Any method beginning with _ can be reused from the superclass `SpringServiceGenerator`
+         * Any method beginning with _ can be reused from the superclass `EntityGenerator`
          *
          * There are multiple ways to customize a phase from JHipster.
          *
@@ -62,13 +63,18 @@ module.exports = class extends SpringServiceGenerator {
         return super._prompting();
     }
 
-    get default() {
+    get configuring() {
         // Here we are not overriding this phase and hence its being handled by JHipster
-        return super._default();
+        return super._configuring();
     }
 
     get writing() {
-        // The writing phase is being overriden so that we can write our own templates as well.
-        return writeFiles();
+        // Here we are not overriding this phase and hence its being handled by JHipster
+        return super._writing();
+    }
+
+    get install() {
+        // Here we are not overriding this phase and hence its being handled by JHipster
+        return super._install();
     }
 };

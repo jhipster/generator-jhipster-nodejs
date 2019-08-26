@@ -1,13 +1,13 @@
-/* const path = require('path');
+const path = require('path');
 const fse = require('fs-extra');
 const assert = require('yeoman-assert');
 const helpers = require('yeoman-test');
 
-describe('Subgenerator nestjs-controller of nodejs JHipster blueprint', () => {
+describe('Subgenerator common of nodejs JHipster blueprint', () => {
     describe('Sample test', () => {
         before(done => {
             helpers
-                .run('generator-jhipster/generators/spring-controller')
+                .run('generator-jhipster/generators/common')
                 .inTmpDir(dir => {
                     fse.copySync(path.join(__dirname, '../test/templates/ngx-blueprint'), dir);
                 })
@@ -19,12 +19,11 @@ describe('Subgenerator nestjs-controller of nodejs JHipster blueprint', () => {
                 })
                 .withGenerators([
                     [
-                        require('../generators/nestjs-controller/index.js'), // eslint-disable-line global-require
-                        'jhipster-nodejs:spring-controller',
-                        path.join(__dirname, '../generators/nestjs-controller/index.js')
+                        require('../generators/common/index.js'), // eslint-disable-line global-require
+                        'jhipster-nodejs:common',
+                        path.join(__dirname, '../generators/common/index.js')
                     ]
                 ])
-                .withArguments(['foo'])
                 .withPrompts({
                     actionAdd: false
                 })
@@ -37,4 +36,3 @@ describe('Subgenerator nestjs-controller of nodejs JHipster blueprint', () => {
         });
     });
 });
-*/

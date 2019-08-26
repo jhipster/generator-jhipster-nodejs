@@ -2,12 +2,12 @@ import { Body, Controller, Delete, Get, HttpCode, Logger, Param, Post as PostMet
 import { InjectRepository } from '@nestjs/typeorm';
 import { ApiBearerAuth, ApiUseTags, ApiResponse, ApiOperation } from '@nestjs/swagger';
 import { Response, Request } from 'express';
-import <%= entityClass %> from '../../domain/<%= entityModelFileName %>.model';
-import { PageRequest, Page } from '../../domain/base/pagination.model';
-import { <%= entityClass %>Repository } from './<%= entityModelFileName %>.repository';
-import { AuthGuard, Roles, RolesGuard, RoleType } from '../../common/security';
-import { HeaderUtil } from '../../common/header-util';
-import { LoggingInterceptor } from '../../common/interceptors/logging.interceptor';
+import <%= entityClass %> from '../../domain/<%= entityModelFileName %>.entity';
+import { PageRequest, Page } from '../../domain/base/pagination.entity';
+import { <%= entityClass %>Repository } from '../repository/<%= entityModelFileName %>.repository';
+import { AuthGuard, Roles, RolesGuard, RoleType } from '../../security';
+import { HeaderUtil } from '../../client/header-util';
+import { LoggingInterceptor } from '../../client/interceptors/logging.interceptor';
 
 @Controller('<%= entityApiUrl %>')
 @UseGuards(AuthGuard, RolesGuard)

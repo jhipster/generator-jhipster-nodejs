@@ -3,11 +3,11 @@ const fse = require('fs-extra');
 const assert = require('yeoman-assert');
 const helpers = require('yeoman-test');
 
-describe('Subgenerator nestjs-controller of nodejs JHipster blueprint', () => {
+describe('Subgenerator entity of nodejs JHipster blueprint', () => {
     describe('Sample test', () => {
         before(done => {
             helpers
-                .run('generator-jhipster/generators/spring-controller')
+                .run('generator-jhipster/generators/entity')
                 .inTmpDir(dir => {
                     fse.copySync(path.join(__dirname, '../test/templates/ngx-blueprint'), dir);
                 })
@@ -19,14 +19,18 @@ describe('Subgenerator nestjs-controller of nodejs JHipster blueprint', () => {
                 })
                 .withGenerators([
                     [
-                        require('../generators/nestjs-controller/index.js'), // eslint-disable-line global-require
-                        'jhipster-nodejs:spring-controller',
-                        path.join(__dirname, '../generators/nestjs-controller/index.js')
+                        require('../generators/entity/index.js'), // eslint-disable-line global-require
+                        'jhipster-nodejs:entity',
+                        path.join(__dirname, '../generators/entity/index.js')
                     ]
                 ])
                 .withArguments(['foo'])
                 .withPrompts({
-                    actionAdd: false
+                    fieldAdd: false,
+                    relationshipAdd: false,
+                    dto: 'no',
+                    service: 'no',
+                    pagination: 'infinite-scroll'
                 })
                 .on('end', done);
         });
