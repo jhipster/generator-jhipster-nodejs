@@ -7,11 +7,11 @@ import { AuthGuard, Roles, RolesGuard, RoleType } from '../../security';
 import { HeaderUtil } from '../../client/header-util';
 import { LoggingInterceptor } from '../../client/interceptors/logging.interceptor';
 
-@Controller('<%= controllerFileName %>')
+@Controller('<%= controllerFileName %>s')
 @UseGuards(AuthGuard, RolesGuard)
 @UseInterceptors(LoggingInterceptor)
 @ApiBearerAuth()
-@ApiUseTags('<%= controllerFileName %>')
+@ApiUseTags('<%= controllerFileName %>s')
 export class <%= controllerClass %>Controller {
   logger = new Logger('<%= controllerClass %>Controller');
 

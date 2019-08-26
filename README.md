@@ -66,7 +66,7 @@ yarn global upgrade generator-jhipster-nodejs
 
 ✅ Controller generation (jhipster spring-controller _name_ command)
   
-✅ Entity generation (WIP)
+✅ Entity generation (jhipster entity _name_ command)
  
 
 ## ❤️ For community

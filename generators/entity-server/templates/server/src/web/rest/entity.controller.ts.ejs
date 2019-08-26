@@ -4,7 +4,7 @@ import { ApiBearerAuth, ApiUseTags, ApiResponse, ApiOperation } from '@nestjs/sw
 import { Response, Request } from 'express';
 import <%= entityClass %> from '../../domain/<%= entityModelFileName %>.entity';
 import { PageRequest, Page } from '../../domain/base/pagination.entity';
-import { <%= entityClass %>Repository } from '../repository/<%= entityModelFileName %>.repository';
+import { <%= entityClass %>Repository } from '../../repository/<%= entityModelFileName %>.repository';
 import { AuthGuard, Roles, RolesGuard, RoleType } from '../../security';
 import { HeaderUtil } from '../../client/header-util';
 import { LoggingInterceptor } from '../../client/interceptors/logging.interceptor';

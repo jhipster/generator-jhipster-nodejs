@@ -30,6 +30,7 @@ for (idx in fields) {
 %>
 
 import { Entity, Column, PrimaryGeneratedColumn, JoinColumn, OneToOne, ManyToOne, OneToMany, ManyToMany } from 'typeorm';
+import { BaseEntity } from './base/base.entity';
 <%_ if (!hasDto && importApiModelProperty === true) { _%>
 import { ApiModelProperty } from '@nestjs/swagger';
 <%_ } if (validation) { _%>
@@ -53,10 +54,12 @@ import { <%= element %> } from './enumeration/<%= element %>';
 <%- formatAsClassJavadoc(javadoc) %>
 <%_ } _%>
 @Entity('<%= entityTableName %>')
-export default class <%= asEntity(entityClass) %>  {
+export default class <%= asEntity(entityClass) %> extends BaseEntity  {
 
+    /*
     @PrimaryGeneratedColumn()
     id: <%= pkType === 'String'? 'string' : 'number' %>;
+    */
 
 <%_ for (idx in fields) {
     if (typeof fields[idx].javadoc !== 'undefined') { _%>

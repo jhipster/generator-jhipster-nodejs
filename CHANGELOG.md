@@ -12,4 +12,5 @@
 - JWT authentication and role base method decorators
 - Swagger documentation
 - Maven pom orchestration of server/client part with dev and prod profiles [issue #23](https://github.com/jhipster/generator-jhipster-nodejs/issues/23)
+- Adding controller generator
 
