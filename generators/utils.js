@@ -55,7 +55,7 @@ function addControllerToAppModuleImport(generator, controllerClass, controllerFi
         {
             file: `${constants.SERVER_NODEJS_SRC_DIR}/src/app.module.ts`,
             needle: 'jhipster-needle-add-controller-module-to-main-import',
-            splicable: [`import { ${controllerClass} } from './web/rest/${controllerFileName}.module';`]
+            splicable: [`import { ${controllerClass}Controller } from './web/rest/${controllerFileName}.controller';`]
         },
         generator
     );
@@ -66,7 +66,7 @@ function addControllerToAppModule(generator, controllerClass) {
         {
             file: `${constants.SERVER_NODEJS_SRC_DIR}/src/app.module.ts`,
             needle: 'jhipster-needle-add-controller-module-to-main',
-            splicable: [`${controllerClass},`]
+            splicable: [`${controllerClass}Controller,`]
         },
         generator
     );

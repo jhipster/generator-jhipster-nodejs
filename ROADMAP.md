@@ -26,6 +26,7 @@ To contribute for the next featues, fork the repo and open a pull request regard
 - [x] Swagger documentation
 - [x] Monolithic generation with client generation (orchestration with dev and prod maven profile)
 - [x] Overwrite standard README.md (for every application type) with new instructions for project structure
+- [x] Added controller generator (jhipster spring-controller _name_ command)
 
 
 ## To DO for the 0.0.2 release
