@@ -17,12 +17,13 @@
  * limitations under the License.
  */
 const jhipsterUtils = require('generator-jhipster/generators/utils');
-const constants = require('../generator-nodejs-constants');
-
+const constants = require('./generator-nodejs-constants');
 
 module.exports = {
     addEntityToAppModuleImport,
-    addEntityToAppModule
+    addEntityToAppModule,
+    addControllerToAppModuleImport,
+    addControllerToAppModule
 };
 
 function addEntityToAppModuleImport(generator, entityName, fileName) {

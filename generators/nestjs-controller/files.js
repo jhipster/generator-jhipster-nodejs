@@ -20,7 +20,7 @@
 const constants = require('../generator-nodejs-constants');
 
 const SERVER_NODEJS_DIR = `${constants.SERVER_NODEJS_SRC_DIR}/`;
-const utils = require('../utils');
+// const utils = require('../utils');
 
 /**
  * The default is to use a file path string. It implies use of the template method.
@@ -56,4 +56,3 @@ function writeFiles() {
     // utils.addControllerToAppModuleImport(this, this.entityAngularName, this.entityFileName);
     // utils.addControllerToAppModule(this, this.entityAngularName, this.entityFileName);
 }
-
