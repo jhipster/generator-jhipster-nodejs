@@ -29,7 +29,7 @@ To contribute for the next featues, fork the repo and open a pull request regard
 - [x] Added controller generator (jhipster spring-controller _name_ command)
 
 
-## To DO for the 0.0.2 release
+## To DO for the 1.0.0 release
 
 - [ ] Delete unuseful java questions not supported 
 - [ ] User management api
