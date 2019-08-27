@@ -1,6 +1,8 @@
 import { Body, Controller, Delete, Get, HttpCode, Logger, Param, Post, Put, Query, Res, UseGuards, Req, UseInterceptors } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Response, Request } from 'express';
+import { Authority } from '../../domain/authority.entity';
+import { AuthorityRepository } from '../../repository/authority.repository';
 import { AuthGuard, Roles, RolesGuard, RoleType } from '../../security';
 import { PageRequest, Page } from '../../domain/base/pagination.entity';
 import { User } from '../../domain/user.entity';
@@ -17,10 +19,12 @@ import { ApiBearerAuth, ApiUseTags, ApiResponse, ApiOperation } from '@nestjs/sw
 export class UserController {
   logger = new Logger('UserController');
 
-  constructor(@InjectRepository(UserRepository) private userRepository: UserRepository) {}
+  constructor(@InjectRepository(UserRepository) private userRepository: UserRepository, @InjectRepository(AuthorityRepository) private authorityRepository: AuthorityRepository ) {}
+
+  const LOGIN_REGEX = "^[_.@A-Za-z0-9-]*$";
 
   @Get('/')
-  @Roles(RoleType.USER)
+  // @Roles(RoleType.USER)
   @ApiResponse({
     status: 200,
     description: 'List all records',
@@ -48,6 +52,7 @@ export class UserController {
   }
 
   @Post('/')
+  @Roles(RoleType.ADMIN)
   @ApiOperation({ title: 'Create user' })
   @ApiResponse({
     status: 201,
@@ -61,16 +66,17 @@ export class UserController {
     return created;
   }
 
-  @Put('/:id')
+  @Put('/')
+  @Roles(RoleType.ADMIN)
   @ApiOperation({ title: 'Update user' })
   @ApiResponse({
     status: 200,
     description: 'The record has been successfully updated.',
     type: User,
   })
-  put(@Req() req: Request, @Param('id') id: string, @Body() user: User) {
-    HeaderUtil.addEntityCreatedHeaders(req.res, 'User', id);
-    return this.userRepository.update(id, user);
+  put(@Req() req: Request, @Body() user: User) {
+    HeaderUtil.addEntityCreatedHeaders(req.res, 'User', user.id);
+    return this.userRepository.update(user);
   }
 
   @Delete('/:id')
@@ -83,4 +89,55 @@ export class UserController {
     this.userRepository.delete(id);
     HeaderUtil.addEntityDeletedHeaders(req.res, 'User', id);
   }
+
+
+  @Get("/authorities")
+  @ApiOperation({ title: 'Get a list of all roles' })
+  @ApiResponse({
+    status: 200,
+    description: 'List all records',
+    type: Authority,
+  })
+  @Roles(RoleType.ADMIN)
+  async getAuthorities(@Req() req: Request) {
+    const pageRequest: PageRequest = new PageRequest(req.query.page, req.query.size, req.query.sort);
+    const [results, count] = await this.authorityRepository.findAndCount({
+      skip: +pageRequest.page * pageRequest.size,
+      take: +pageRequest.size,
+      order: pageRequest.sort.asOrder(),
+    });
+    HeaderUtil.addPaginationHeaders(req.res, new Page(results, count, pageRequest));
+    return results;
+  }
+
+
+  /**
+     * {@code GET /users/:login} : get the "login" user.
+     *
+     * @param login the login of the user to find.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the "login" user, or with status {@code 404 (Not Found)}.
+     */
+    @GetMapping("/users/{login:" + Constants.LOGIN_REGEX + "}")
+    public ResponseEntity<UserDTO> getUser(@PathVariable String login) {
+        log.debug("REST request to get User : {}", login);
+        return ResponseUtil.wrapOrNotFound(
+            userService.getUserWithAuthoritiesByLogin(login)
+                .map(UserDTO::new));
+    }
+
+    /**
+     * {@code DELETE /users/:login} : delete the "login" User.
+     *
+     * @param login the login of the user to delete.
+     * @return the {@link ResponseEntity} with status {@code 204 (NO_CONTENT)}.
+     */
+    @DeleteMapping("/users/{login:" + Constants.LOGIN_REGEX + "}")
+    @PreAuthorize("hasRole(\"" + AuthoritiesConstants.ADMIN + "\")")
+    public ResponseEntity<Void> deleteUser(@PathVariable String login) {
+        log.debug("REST request to delete User: {}", login);
+        userService.deleteUser(login);
+        return ResponseEntity.noContent().headers(HeaderUtil.createAlert(applicationName,  "A user is deleted with identifier " + login, login)).build();
+    }
+
+
 }

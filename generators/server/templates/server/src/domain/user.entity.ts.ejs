@@ -1,4 +1,5 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import { Authority } from './authority.entity';
+import { Entity, Column } from 'typeorm';
 import { BaseEntity } from './base/base.entity';
 import { Exclude as JsonIgnore } from 'class-transformer';
 import { ApiModelProperty } from '@nestjs/swagger';
@@ -19,8 +20,11 @@ export class User extends BaseEntity {
   activated?: boolean;
   @Column()
   langKey?: string;
-  // @Column()
-  authorities?: any[];
+
+  @ManyToMany(type => Authority)
+  @JoinTable()
+  authorities?: Authority[];
+
   @Column()
   createdBy?: string;
   @Column()
@@ -35,9 +39,10 @@ export class User extends BaseEntity {
   password?: string;
 }
 
-export const userSchema = {
+/* export const userSchema = {
   id: { type: 'string', required: false, example: '1' },
   firstName: { type: 'string', required: false, example: 'Ivan' },
   lastName: { type: 'string', required: false, example: 'Garcia Sainz-Aja' },
   email: { type: 'string', required: true, example: 'ivangsa@gmail.com' },
 };
+*/
