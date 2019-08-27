@@ -14,16 +14,13 @@ import { ApiBearerAuth, ApiUseTags, ApiResponse, ApiOperation } from '@nestjs/sw
 
 
 @Controller()
-@UseGuards(AuthGuard, RolesGuard)
 @UseInterceptors(LoggingInterceptor)
-@ApiBearerAuth()
 @ApiUseTags('accounts')
 export class AccountController {
   logger = new Logger('AccountController');
 
   constructor(@InjectRepository(UserRepository) private userRepository: UserRepository, @InjectRepository(AuthorityRepository) private authorityRepository: AuthorityRepository ) {}
 
-  const LOGIN_REGEX = "^[_.@A-Za-z0-9-]*$";
 
   /**
      * {@code POST  /register} : register the user.

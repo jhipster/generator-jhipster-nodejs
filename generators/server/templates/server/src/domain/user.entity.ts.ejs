@@ -1,5 +1,5 @@
 import { Authority } from './authority.entity';
-import { Entity, Column } from 'typeorm';
+import { Entity, Column, ManyToMany, JoinTable } from 'typeorm';
 import { BaseEntity } from './base/base.entity';
 import { Exclude as JsonIgnore } from 'class-transformer';
 import { ApiModelProperty } from '@nestjs/swagger';

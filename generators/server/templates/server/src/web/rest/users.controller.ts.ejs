@@ -21,7 +21,6 @@ export class UserController {
 
   constructor(@InjectRepository(UserRepository) private userRepository: UserRepository, @InjectRepository(AuthorityRepository) private authorityRepository: AuthorityRepository ) {}
 
-  const LOGIN_REGEX = "^[_.@A-Za-z0-9-]*$";
 
   @Get('/')
   // @Roles(RoleType.USER)
@@ -76,7 +75,7 @@ export class UserController {
   })
   put(@Req() req: Request, @Body() user: User) {
     HeaderUtil.addEntityCreatedHeaders(req.res, 'User', user.id);
-    return this.userRepository.update(user);
+    return this.userRepository.update(user.id, user);
   }
 
   @Delete('/:id')
@@ -91,7 +90,7 @@ export class UserController {
   }
 
 
-  @Get("/authorities")
+  @Get('/authorities')
   @ApiOperation({ title: 'Get a list of all roles' })
   @ApiResponse({
     status: 200,
@@ -100,44 +99,32 @@ export class UserController {
   })
   @Roles(RoleType.ADMIN)
   async getAuthorities(@Req() req: Request) {
-    const pageRequest: PageRequest = new PageRequest(req.query.page, req.query.size, req.query.sort);
-    const [results, count] = await this.authorityRepository.findAndCount({
-      skip: +pageRequest.page * pageRequest.size,
-      take: +pageRequest.size,
-      order: pageRequest.sort.asOrder(),
-    });
-    HeaderUtil.addPaginationHeaders(req.res, new Page(results, count, pageRequest));
-    return results;
+    return this.authorityRepository.find();
   }
 
 
-  /**
-     * {@code GET /users/:login} : get the "login" user.
-     *
-     * @param login the login of the user to find.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the "login" user, or with status {@code 404 (Not Found)}.
-     */
-    @GetMapping("/users/{login:" + Constants.LOGIN_REGEX + "}")
-    public ResponseEntity<UserDTO> getUser(@PathVariable String login) {
-        log.debug("REST request to get User : {}", login);
-        return ResponseUtil.wrapOrNotFound(
-            userService.getUserWithAuthoritiesByLogin(login)
-                .map(UserDTO::new));
-    }
+  @Get('/:login')
+  @ApiResponse({
+    status: 200,
+    description: 'The found record',
+    type: User,
+  })
+  getUser(@Param('login') loginValue: string) {
+    return this.userRepository.find({ where: { login: loginValue } });
+  }
 
-    /**
-     * {@code DELETE /users/:login} : delete the "login" User.
-     *
-     * @param login the login of the user to delete.
-     * @return the {@link ResponseEntity} with status {@code 204 (NO_CONTENT)}.
-     */
-    @DeleteMapping("/users/{login:" + Constants.LOGIN_REGEX + "}")
-    @PreAuthorize("hasRole(\"" + AuthoritiesConstants.ADMIN + "\")")
-    public ResponseEntity<Void> deleteUser(@PathVariable String login) {
-        log.debug("REST request to delete User: {}", login);
-        userService.deleteUser(login);
-        return ResponseEntity.noContent().headers(HeaderUtil.createAlert(applicationName,  "A user is deleted with identifier " + login, login)).build();
-    }
+
+  @Delete('/:login')
+  @ApiOperation({ title: 'Delete login user' })
+  @ApiResponse({
+     status: 204,
+     description: 'The record has been successfully deleted.',
+  })
+  @Roles(RoleType.ADMIN)
+  deleteUser(@Req() req: Request, @Param('login') loginValue: string) {
+    this.userRepository.delete({ login: loginValue });
+    HeaderUtil.addEntityDeletedHeaders(req.res, 'User', loginValue);
+  }
 
 
 }
