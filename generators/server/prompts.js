@@ -1,4 +1,4 @@
-const chalk = require('chalk');
+// const chalk = require('chalk');
 
 module.exports = {
     askForMainServerSideOpts
@@ -8,51 +8,40 @@ function askForMainServerSideOpts(meta) {
     if (!meta && this.existingProject) return;
 
     const applicationType = this.applicationType;
+    const defaultPort = applicationType === 'gateway' ? '8080' : '8081';
 
     const PROMPT = [
-        /* {
-            type: 'input',
-            name: 'baseName',
-            when: applicationType === 'monolith',
-            validate(text) {
-                return text ? true : 'The base application port cannot be empty!';
-            },
-            message: `What is ${chalk.yellow('*base name*')} of your node application?`
-        },
         {
+            when: response => applicationType === 'gateway' || applicationType === 'microservice' || applicationType === 'uaa',
             type: 'input',
             name: 'serverPort',
-            when: applicationType === 'monolith',
-            validate(text) {
-                return text ? true : 'The base application port cannot be empty!';
-            },
-            message: `Which ${chalk.yellow('*port*')} would you like to start your NestJS server?`,
-            default: '8081'
+            validate: input => (/^([0-9]*)$/.test(input) ? true : 'This is not a valid port number.'),
+            message:
+                'As you are running in a microservice architecture, on which port would like your server to run? It should be unique to avoid port conflicts.',
+            default: defaultPort
         },
         {
             type: 'list',
-            name: 'serverPackageManager',
-            when: applicationType === 'monolith',
-            message: `Which ${chalk.yellow('*package manager*')} would you like for server?`,
-            choices: [
-                {
-                    value: 'npm',
-                    name: 'Npm'
-                },
-                {
-                    value: 'yarn',
-                    name: 'Yarn'
-                }
-            ],
-            default: 'npm'
-        }
-        */
-    ];
+            name: 'mongoProdDatabase',
+            message: 'Would you like to use mongodb in prod?',
+            choices: response => {
+                const opts = [];
 
-    if (applicationType !== 'monolith') {
-        this.log.error(`For now ${chalk.red('only monolitich app type')} is allowed!`);
-        process.exit(0);
-    }
+                opts.push({
+                    value: 'no',
+                    name: 'No'
+                });
+
+                opts.push({
+                    value: 'yes',
+                    name: 'Yes'
+                });
+
+                return opts;
+            },
+            default: 0
+        }
+    ];
 
     if (meta) return PROMPT; // eslint-disable-line consistent-return
 
@@ -60,8 +49,7 @@ function askForMainServerSideOpts(meta) {
 
     this.prompt(PROMPT).then(prompt => {
         this.serverPort = prompt.serverPort;
-        this.serverPackageManager = prompt.serverPackageManager;
-        this.baseName = prompt.baseName;
+        this.mongoProdDatabase = prompt.mongoProdDatabase;
         done();
     });
 }

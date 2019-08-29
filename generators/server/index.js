@@ -1,11 +1,12 @@
 /* eslint-disable consistent-return */
 const chalk = require('chalk');
 const ServerGenerator = require('generator-jhipster/generators/server');
-// const constants = require('generator-jhipster/generators/generator-constants');
+const jhipsterConstants = require('generator-jhipster/generators/generator-constants');
 const os = require('os');
+const jhipsterNodeConstants = require('../generator-nodejs-constants');
 const packagejs = require('../../package.json');
 const writeFiles = require('./files').writeFiles;
-// const prompts = require('./prompts');
+const prompts = require('./prompts');
 
 module.exports = class extends ServerGenerator {
     constructor(args, opts) {
@@ -71,33 +72,34 @@ module.exports = class extends ServerGenerator {
 
     get prompting() {
         //  The prompting phase is being overriden so that we can ask our own questions
-        //   return {
-        //     askForMainServerSideOpts: prompts.askForMainServerSideOpts,
-        //     setSharedConfigOptions() {
-        //         this.configOptions.serverPort = this.serverPort;
-        //         this.configOptions.baseName = this.baseName;
-        //         this.configOptions.serverPackageManager = this.serverPackageManager;
-        //         this.configOptions.packageName = this.packageName;
-        //         this.configOptions.cacheProvider = this.cacheProvider;
-        //         this.configOptions.enableHibernateCache = this.enableHibernateCache;
-        //         this.configOptions.websocket = this.websocket;
-        //         this.configOptions.databaseType = this.databaseType;
-        //         this.configOptions.devDatabaseType = this.devDatabaseType;
-        //         this.configOptions.prodDatabaseType = this.prodDatabaseType;
-        //         this.configOptions.searchEngine = this.searchEngine;
-        //         this.configOptions.messageBroker = this.messageBroker;
-        //         this.configOptions.serviceDiscoveryType = this.serviceDiscoveryType;
-        //         this.configOptions.buildTool = this.buildTool;
-        //         this.configOptions.enableSwaggerCodegen = this.enableSwaggerCodegen;
-        //         this.configOptions.authenticationType = this.authenticationType;
-        //         // Make dist dir available in templates
-        //         this.BUILD_DIR = this.getBuildDirectoryForBuildTool(this.buildTool);
-        //         this.CLIENT_DIST_DIR = this.getResourceBuildDirectoryForBuildTool(this.configOptions.buildTool) + constants.CLIENT_DIST_DIR;
-        //     }
-        // };
+        return {
+            askForMainServerSideOpts: prompts.askForMainServerSideOpts,
+            setSharedNodeConfigOptions() {
+                this.configOptions.serverPort = this.serverPort;
+                this.configOptions.baseName = this.baseName;
+                this.configOptions.mongoProdDatabase = this.mongoProdDatabase;
+                this.configOptions.packageName = jhipsterNodeConstants.PACKAGE_NAME_NODEJS;
+                this.configOptions.cacheProvider = jhipsterNodeConstants.CACHE_PROVIDER_NODEJS;
+                this.configOptions.enableHibernateCache = jhipsterNodeConstants.ENABLE_HIBERNATE_CACHE_NODEJS;
+                this.configOptions.websocket = jhipsterNodeConstants.WEB_SOCKET_NODEJS;
+                this.configOptions.databaseType = jhipsterNodeConstants.DATABASE_TYPE_NODEJS;
+                this.configOptions.devDatabaseType = jhipsterNodeConstants.DEV_DATABASE_TYPE_NODEJS;
+                this.configOptions.prodDatabaseType = jhipsterNodeConstants.PROD_DATABASE_TYPE_NODEJS;
+                this.configOptions.searchEngine = jhipsterNodeConstants.SEARCH_ENGINE_NODEJS;
+                this.configOptions.messageBroker = jhipsterNodeConstants.MESSAGE_BROKER_NODEJS;
+                this.configOptions.serviceDiscoveryType = jhipsterNodeConstants.SERVICE_DISCOVERY_TYPE_NODEJS;
+                this.configOptions.buildTool = jhipsterNodeConstants.BUILD_TOOL_NODEJS;
+                this.configOptions.enableSwaggerCodegen = jhipsterNodeConstants.ENABLE_SWAGGER_CODEGEN_NODEJS;
+                this.configOptions.authenticationType = jhipsterNodeConstants.AUTHENTICATION_TYPE_NODEJS;
+                // Make dist dir available in templates
+                this.BUILD_DIR = this.getBuildDirectoryForBuildTool(this.configOptions.buildTool);
+                this.CLIENT_DIST_DIR =
+                    this.getResourceBuildDirectoryForBuildTool(this.configOptions.buildTool) + jhipsterConstants.CLIENT_DIST_DIR;
+            }
+        };
 
         // If the prompts need to be overriden then use the code commented out above instead
-        return super._prompting();
+        // return super._prompting();
     }
 
     get configuring() {
