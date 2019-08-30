@@ -27,15 +27,14 @@ To contribute for the next featues, fork the repo and open a pull request regard
 - [x] Monolithic generation with client generation (orchestration with dev and prod maven profile)
 - [x] Overwrite standard README.md (for every application type) with new instructions for project structure
 - [x] Added controller generator (jhipster spring-controller _name_ command)
+- [x] Delete unuseful java questions not supported 
+- [x] entity generator
 
 
 ## To DO for the 1.0.0 release
 
-- [ ] Delete unuseful java questions not supported 
-- [ ] User management api
-- [ ] entity generator
-- [ ] Other security/authentication options
-- [ ] Other core/admin jhipster services
+
+- [ ] All user management api with jwt auth
 - [ ] automatic config in dev profile sqlite db and in prod mongodb or another db
 
 ## To DO for next release
