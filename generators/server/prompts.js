@@ -1,13 +1,21 @@
 // const chalk = require('chalk');
 
 module.exports = {
+    askForModuleName,
     askForMainServerSideOpts
 };
+
+function askForModuleName() {
+    if (this.baseName) return;
+
+    this.askModuleName(this);
+}
 
 function askForMainServerSideOpts(meta) {
     if (!meta && this.existingProject) return;
 
     const applicationType = this.applicationType;
+
     const defaultPort = applicationType === 'gateway' ? '8080' : '8081';
 
     const PROMPT = [
@@ -28,12 +36,12 @@ function askForMainServerSideOpts(meta) {
                 const opts = [];
 
                 opts.push({
-                    value: 'no',
+                    value: false,
                     name: 'No'
                 });
 
                 opts.push({
-                    value: 'yes',
+                    value: true,
                     name: 'Yes'
                 });
 
@@ -50,6 +58,7 @@ function askForMainServerSideOpts(meta) {
     this.prompt(PROMPT).then(prompt => {
         this.serverPort = prompt.serverPort;
         this.mongoProdDatabase = prompt.mongoProdDatabase;
+
         done();
     });
 }
