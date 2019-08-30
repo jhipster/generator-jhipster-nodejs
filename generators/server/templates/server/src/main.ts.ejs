@@ -23,7 +23,7 @@ async function bootstrap() {
       exceptionFactory: (errors: ValidationError[]) => new BadRequestException('Validation error'),
     }),
   );
-  
+
   const staticClientPath = path.join(__dirname, '../dist/classes/static');
   if (fs.existsSync(staticClientPath )) {
     app.use(express.static(staticClientPath));
@@ -33,7 +33,7 @@ async function bootstrap() {
   setupSwagger(app);
 
   await app.listen(config.get('server.port'));
-  logger.log(`Aplication listening on port ${config.get('server.port')}`);
+  logger.log(`Application listening on port ${config.get('server.port')}`);
 }
 
 async function loadSpringCloudConfig() {

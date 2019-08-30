@@ -79,7 +79,7 @@ Interested in contributing, check out our [contributing guide](https://github.co
 
 Refers for contribution to [roadmap](https://github.com/jhipster/generator-jhipster-nodejs/blob/master/ROADMAP.md) or to [kanban board](https://github.com/jhipster/generator-jhipster-nodejs/projects/1?fullscreen=true).
 
-Any questions [amanganiello90](mailto:angelo.mang@libero.it).
+Any questions [Angelo Manganiello](mailto:angelo.mang@libero.it).
 
 
 # Contributors ✨

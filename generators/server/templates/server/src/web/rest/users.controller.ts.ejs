@@ -1,6 +1,8 @@
 import { Body, Controller, Delete, Get, HttpCode, Logger, Param, Post, Put, Query, Res, UseGuards, Req, UseInterceptors } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Response, Request } from 'express';
+import { Authority } from '../../domain/authority.entity';
+import { AuthorityRepository } from '../../repository/authority.repository';
 import { AuthGuard, Roles, RolesGuard, RoleType } from '../../security';
 import { PageRequest, Page } from '../../domain/base/pagination.entity';
 import { User } from '../../domain/user.entity';
@@ -17,10 +19,11 @@ import { ApiBearerAuth, ApiUseTags, ApiResponse, ApiOperation } from '@nestjs/sw
 export class UserController {
   logger = new Logger('UserController');
 
-  constructor(@InjectRepository(UserRepository) private userRepository: UserRepository) {}
+  constructor(@InjectRepository(UserRepository) private userRepository: UserRepository, @InjectRepository(AuthorityRepository) private authorityRepository: AuthorityRepository ) {}
+
 
   @Get('/')
-  @Roles(RoleType.USER)
+  // @Roles(RoleType.USER)
   @ApiResponse({
     status: 200,
     description: 'List all records',
@@ -48,6 +51,7 @@ export class UserController {
   }
 
   @Post('/')
+  @Roles(RoleType.ADMIN)
   @ApiOperation({ title: 'Create user' })
   @ApiResponse({
     status: 201,
@@ -61,16 +65,17 @@ export class UserController {
     return created;
   }
 
-  @Put('/:id')
+  @Put('/')
+  @Roles(RoleType.ADMIN)
   @ApiOperation({ title: 'Update user' })
   @ApiResponse({
     status: 200,
     description: 'The record has been successfully updated.',
     type: User,
   })
-  put(@Req() req: Request, @Param('id') id: string, @Body() user: User) {
-    HeaderUtil.addEntityCreatedHeaders(req.res, 'User', id);
-    return this.userRepository.update(id, user);
+  put(@Req() req: Request, @Body() user: User) {
+    HeaderUtil.addEntityCreatedHeaders(req.res, 'User', user.id);
+    return this.userRepository.update(user.id, user);
   }
 
   @Delete('/:id')
@@ -83,4 +88,43 @@ export class UserController {
     this.userRepository.delete(id);
     HeaderUtil.addEntityDeletedHeaders(req.res, 'User', id);
   }
+
+
+  @Get('/authorities')
+  @ApiOperation({ title: 'Get a list of all roles' })
+  @ApiResponse({
+    status: 200,
+    description: 'List all records',
+    type: Authority,
+  })
+  @Roles(RoleType.ADMIN)
+  async getAuthorities(@Req() req: Request) {
+    return this.authorityRepository.find();
+  }
+
+
+  @Get('/:login')
+  @ApiResponse({
+    status: 200,
+    description: 'The found record',
+    type: User,
+  })
+  getUser(@Param('login') loginValue: string) {
+    return this.userRepository.find({ where: { login: loginValue } });
+  }
+
+
+  @Delete('/:login')
+  @ApiOperation({ title: 'Delete login user' })
+  @ApiResponse({
+     status: 204,
+     description: 'The record has been successfully deleted.',
+  })
+  @Roles(RoleType.ADMIN)
+  deleteUser(@Req() req: Request, @Param('login') loginValue: string) {
+    this.userRepository.delete({ login: loginValue });
+    HeaderUtil.addEntityDeletedHeaders(req.res, 'User', loginValue);
+  }
+
+
 }
