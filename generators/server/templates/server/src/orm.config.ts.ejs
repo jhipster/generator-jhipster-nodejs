@@ -1,0 +1,28 @@
+import { ConnectionOptions} from 'typeorm';
+
+let ormconfig: ConnectionOptions = {
+   "name": "sqlite",
+	type: 'sqlite',
+    database: '../target/sqlite-dev-db.sql',
+    synchronize: true,
+    logging: false,
+    entities: [__dirname + '/domain/*.entity{.ts,.js}'],
+	cli: {
+		migrationsDir: 'src/migrations',
+	}
+};
+
+if(process.env.NODE_ENV==='prod'){
+    ormconfig = {
+       "name": "mongodb",
+        type: 'mongodb',
+        "url": "mongodb://localhost:27017/<%= baseName %>",
+        "synchronize": true,
+        "logging": false,
+        entities: [__dirname + '/../**/*.entity{.ts,.js}', ],
+        cli: {
+            migrationsDir: 'src/migrations',
+        }
+    };
+}
+export = ormconfig;

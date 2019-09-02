@@ -56,6 +56,7 @@ const serverFiles = {
                 'src/main.ts',
                 'src/swagger.ts',
                 'src/app.module.ts',
+                'src/orm.config.ts',
                 'scripts/copy-resources.ts',
                 'tsconfig.build.json',
                 'test/app.e2e-spec.ts',
