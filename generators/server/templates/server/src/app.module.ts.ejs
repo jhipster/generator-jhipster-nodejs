@@ -2,19 +2,30 @@ import { Module, NestModule } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { JwtStrategy } from './security/passport.jwt.strategy';
 import { UsersModule } from './module/users.module';
+import { config } from './config/config';
 // jhipster-needle-add-entity-module-to-main-import - JHipster will import entity modules here, do not remove
 // jhipster-needle-add-controller-module-to-main-import - JHipster will import controller modules here, do not remove
 
 @Module({
   imports: [
     TypeOrmModule.forRoot({
-      name: 'default',
       type: 'sqlite',
       database: '../target/sqlite-dev-db.sql',
       synchronize: true,
       logging: false,
       entities: [__dirname + '/domain/*.entity{.ts,.js}']
-    }),
+    }
+    <%_ if (mongoProdDatabase === 'true') { _%>,
+    {
+      name: ${process.env.NODE_ENV}?'prod'='default':'prod',
+     "type": "mongodb",
+     "url": "mongodb://localhost:27017/<%= baseName %>",
+     "synchronize": true,
+     "logging": false,
+     entities: [__dirname + '/domain/*.entity{.ts,.js}']
+      }
+    <%_ } _%>
+    ),
     UsersModule
   // jhipster-needle-add-entity-module-to-main - JHipster will add entity modules here, do not remove
   ],
