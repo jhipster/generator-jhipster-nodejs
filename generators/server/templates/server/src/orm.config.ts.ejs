@@ -1,11 +1,11 @@
-import { ConnectionOptions} from 'typeorm';
+import { TypeOrmModuleOptions } from '@nestjs/typeorm';
 
-let ormconfig: ConnectionOptions = {
-   "name": "sqlite",
+let ormconfig: TypeOrmModuleOptions = {
+   "name": "default",
 	type: 'sqlite',
     database: '../target/sqlite-dev-db.sql',
     synchronize: true,
-    logging: false,
+    logging: true,
     entities: [__dirname + '/domain/*.entity{.ts,.js}'],
 	cli: {
 		migrationsDir: 'src/migrations',
@@ -14,15 +14,15 @@ let ormconfig: ConnectionOptions = {
 
 if(process.env.NODE_ENV==='prod'){
     ormconfig = {
-       "name": "mongodb",
+       "name": "default",
         type: 'mongodb',
         "url": "mongodb://localhost:27017/<%= baseName %>",
         "synchronize": true,
         "logging": false,
-        entities: [__dirname + '/../**/*.entity{.ts,.js}', ],
+        entities: [__dirname + '/domain/*.entity{.ts,.js}'],
         cli: {
             migrationsDir: 'src/migrations',
         }
     };
 }
-export = ormconfig;
+export { ormconfig };
