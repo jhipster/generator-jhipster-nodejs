@@ -3,13 +3,14 @@
 ## Next Features
 To contribute for the next featues, fork the repo and open a pull request regarding the [kanban board](https://github.com/jhipster/generator-jhipster-nodejs/projects/1?fullscreen=true) progress issues or to do. 
 
-> The actual goal is to have **the first release (0.0.2)** with these basic features:
+> The actual goal is to have **the first release (1.0.0)** with these basic features:
 
 * Blueprint to generate monolitich/microservice app with NestJS basic templates
 * Swagger support
-* Entity ORM generation for prod and dev database (default db is sqlite already configured)
-* Basic security management
+* Entity ORM generation for prod database (mongodb) and dev database (default db is sqlite already configured)
+* Basic security management with jwt
 * Maven simple orchestration to run server with client part in case of monolithic app with frontend code
+* All subgenerators (without services)
 
 > Let it free to give advices or tips!
 
@@ -28,14 +29,15 @@ To contribute for the next featues, fork the repo and open a pull request regard
 - [x] Overwrite standard README.md (for every application type) with new instructions for project structure
 - [x] Added controller generator (jhipster spring-controller _name_ command)
 - [x] Delete unuseful java questions not supported 
-- [x] entity generator
+- [x] Entity generator
+- [x] Automatic config in dev profile sqlite db and in prod mongodb or another db
 
 
 ## To DO for the 1.0.0 release
 
 
 - [ ] All user management api with jwt auth
-- [ ] automatic config in dev profile sqlite db and in prod mongodb or another db
+
 
 ## To DO for next release
 
@@ -47,6 +49,4 @@ To contribute for the next featues, fork the repo and open a pull request regard
 - [ ] Different pagination options
 - [ ] Elastic Search support
 - [ ] Search api
-- [ ] User management api
-- [ ] Other security/authentication options
 - [ ] Other core/admin jhipster services
