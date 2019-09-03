@@ -6,10 +6,7 @@ let ormconfig: TypeOrmModuleOptions = {
     database: '../target/sqlite-dev-db.sql',
     synchronize: true,
     logging: true,
-    entities: [__dirname + '/domain/*.entity{.ts,.js}'],
-	cli: {
-		migrationsDir: 'src/migrations',
-	}
+    entities: [__dirname + '/domain/*.entity{.ts,.js}']
 };
 
 if(process.env.NODE_ENV==='prod'){
@@ -19,10 +16,7 @@ if(process.env.NODE_ENV==='prod'){
         "url": "mongodb://localhost:27017/<%= baseName %>",
         "synchronize": true,
         "logging": false,
-        entities: [__dirname + '/domain/*.entity{.ts,.js}'],
-        cli: {
-            migrationsDir: 'src/migrations',
-        }
+        entities: [__dirname + '/domain/*.entity{.ts,.js}']
     };
 }
 export { ormconfig };
