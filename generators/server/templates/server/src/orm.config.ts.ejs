@@ -9,6 +9,8 @@ let ormconfig: TypeOrmModuleOptions = {
     entities: [__dirname + '/domain/*.entity{.ts,.js}']
 };
 
+<%_ if (mongoProdDatabase) { _%>
+
 if(process.env.NODE_ENV==='prod'){
     ormconfig = {
        "name": "default",
@@ -19,4 +21,5 @@ if(process.env.NODE_ENV==='prod'){
         entities: [__dirname + '/domain/*.entity{.ts,.js}']
     };
 }
+<%_ } _%>
 export { ormconfig };

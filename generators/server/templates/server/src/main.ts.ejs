@@ -4,7 +4,7 @@ import { NestFactory } from '@nestjs/core';
 import cloudConfigClient from 'cloud-config-client';
 import { AppModule } from './app.module';
 import { setupSwagger } from './swagger';
-import { initialDataLoad } from './initial.data.load';
+import { initialDataLoad } from './initial-data.load';
 import { config } from './config/config';
 import { Logger, ValidationPipe, ValidationError, BadRequestException } from '@nestjs/common';
 import * as express from 'express';
