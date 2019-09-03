@@ -79,7 +79,7 @@ module.exports = class extends ServerGenerator {
                 this.authenticationType = jhipsterNodeConstants.AUTHENTICATION_TYPE_NODEJS;
                 this.testFrameworks =[];
 
-                if(this.applicationType){
+                /* if(this.applicationType){
                     this.log(
                         chalk.green(
                             'This is an existing project, using the configuration from your .yo-rc.json file \n' +
@@ -91,6 +91,7 @@ module.exports = class extends ServerGenerator {
 
                     this.existingProject = true;
                 }
+                */
             }
 
         };

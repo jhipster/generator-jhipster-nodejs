@@ -21,22 +21,33 @@ export class User extends BaseEntity {
   @Column()
   langKey?: string;
 
+
   @ManyToMany(type => Authority)
   @JoinTable()
   authorities?: Authority[];
 
   @Column()
   createdBy?: string;
-  @Column()
+  @Column({nullable: true} )
   createdDate?: Date;
   @Column()
   lastModifiedBy?: string;
-  @Column()
+  @Column({nullable: true} )
   lastModifiedDate?: Date;
 
   @JsonIgnore()
   @Column()
-  password?: string;
+  passwordHash?: string;
+  @Column()
+  imageUrl?: string;
+  @Column({nullable: true} )
+  activationKey?: string;
+  @Column({nullable: true} )
+  resetKey?: string;
+  @Column({nullable: true} )
+  resetDate?: Date;
+
+
 }
 
 /* export const userSchema = {

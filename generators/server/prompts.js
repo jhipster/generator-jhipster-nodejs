@@ -47,7 +47,7 @@ function askForMainServerSideOpts(meta) {
 
                 return opts;
             },
-            default: 0
+            default: false
         }
     ];
 

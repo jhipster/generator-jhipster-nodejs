@@ -78,6 +78,7 @@ export class UserController {
     return this.userRepository.update(user.id, user);
   }
 
+  /*
   @Delete('/:id')
   @ApiOperation({ title: 'Delete user' })
   @ApiResponse({
@@ -88,7 +89,7 @@ export class UserController {
     this.userRepository.delete(id);
     HeaderUtil.addEntityDeletedHeaders(req.res, 'User', id);
   }
-
+ */
 
   @Get('/authorities')
   @ApiOperation({ title: 'Get a list of all roles' })
