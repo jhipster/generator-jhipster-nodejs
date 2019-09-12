@@ -1,25 +1,27 @@
-import { ExtractJwt, Strategy } from 'passport-jwt';
+import { ExtractJwt, Strategy, VerifiedCallback } from 'passport-jwt';
 import { PassportStrategy } from '@nestjs/passport';
 import { Injectable, Inject, UnauthorizedException } from '@nestjs/common';
-
+import { Payload } from './payload.interface';
+import { Request } from 'express';
 import { config } from '../config/config';
+import { AuthService } from '../service/auth.service';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
-  constructor() {
+  constructor(private readonly authService: AuthService) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+      ignoreExpiration: true,
       secretOrKey: config['jhipster.security.authentication.jwt.base64-secret'],
     });
   }
 
-  // TO DO
-  async validate(payload: any, done: Function) {
-    // const user = getByPayloadId()
-	 const user = '';
+  async validate(payload: Payload, done: VerifiedCallback) {
+    const user = this.authService.validateUser(payload);
     if (!user) {
-        return done(new UnauthorizedException(), false);
+      return done(new UnauthorizedException({ message: 'user does not exist' }), false);
     }
-    done(null, user);
+
+    return done(null, user);
   }
 }

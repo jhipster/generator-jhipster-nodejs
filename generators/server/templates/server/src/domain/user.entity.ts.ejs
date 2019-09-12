@@ -6,54 +6,47 @@ import { ApiModelProperty } from '@nestjs/swagger';
 
 @Entity('jhi_user')
 export class User extends BaseEntity {
-  @ApiModelProperty({ example: 'admin', description: 'User login' })
+  @ApiModelProperty({ example: 'user', description: 'User login' })
   @Column()
   login?: string;
-  @ApiModelProperty({ example: 'Smith', description: 'User first name' })
+  @ApiModelProperty({ example: 'User', description: 'User first name' })
   @Column()
   firstName?: string;
+  @ApiModelProperty({ example: 'User', description: 'User last name' })
   @Column()
   lastName?: string;
+  @ApiModelProperty({ example: 'user@localhost', description: 'User email' })
   @Column()
   email?: string;
+  @ApiModelProperty({ example: 'true', description: 'User activation' })
   @Column()
   activated?: boolean;
+  @ApiModelProperty({ example: 'en', description: 'User language' })
   @Column()
   langKey?: string;
 
-
   @ManyToMany(type => Authority)
   @JoinTable()
-  authorities?: Authority[];
+  authorities?: string[];
 
   @Column()
   createdBy?: string;
-  @Column({nullable: true} )
+  @Column({ nullable: true })
   createdDate?: Date;
   @Column()
   lastModifiedBy?: string;
-  @Column({nullable: true} )
+  @Column({ nullable: true })
   lastModifiedDate?: Date;
 
-  @JsonIgnore()
+  @ApiModelProperty({ example: 'user', description: 'User password' })
   @Column()
-  passwordHash?: string;
+  password?: string;
   @Column()
   imageUrl?: string;
-  @Column({nullable: true} )
+  @Column({ nullable: true })
   activationKey?: string;
-  @Column({nullable: true} )
+  @Column({ nullable: true })
   resetKey?: string;
-  @Column({nullable: true} )
+  @Column({ nullable: true })
   resetDate?: Date;
-
-
 }
-
-/* export const userSchema = {
-  id: { type: 'string', required: false, example: '1' },
-  firstName: { type: 'string', required: false, example: 'Ivan' },
-  lastName: { type: 'string', required: false, example: 'Garcia Sainz-Aja' },
-  email: { type: 'string', required: true, example: 'ivangsa@gmail.com' },
-};
-*/

@@ -1,7 +1,7 @@
 import { Module, NestModule } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { JwtStrategy } from './security/passport.jwt.strategy';
-import { UsersModule } from './module/users.module';
+import { AuthModule } from './module/auth.module';
 import { ormconfig } from './orm.config';
 // jhipster-needle-add-entity-module-to-main-import - JHipster will import entity modules here, do not remove
 // jhipster-needle-add-controller-module-to-main-import - JHipster will import controller modules here, do not remove
@@ -9,13 +9,13 @@ import { ormconfig } from './orm.config';
 @Module({
   imports: [
     TypeOrmModule.forRoot(ormconfig),
-    UsersModule
+    AuthModule,
   // jhipster-needle-add-entity-module-to-main - JHipster will add entity modules here, do not remove
   ],
   controllers: [
   // jhipster-needle-add-controller-module-to-main - JHipster will add controller modules here, do not remove
   ],
-  providers: [JwtStrategy]
+  providers: []
 })
 export class AppModule  {
 
