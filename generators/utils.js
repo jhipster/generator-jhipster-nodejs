@@ -44,7 +44,7 @@ function addEntityToAppModule(generator, entityClass) {
         {
             file: `${constants.SERVER_NODEJS_SRC_DIR}/src/app.module.ts`,
             needle: 'jhipster-needle-add-entity-module-to-main',
-            splicable: [`,${entityClass}Module`]
+            splicable: [`${entityClass}Module,`]
         },
         generator
     );

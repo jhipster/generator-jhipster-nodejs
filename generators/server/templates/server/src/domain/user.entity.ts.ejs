@@ -29,15 +29,6 @@ export class User extends BaseEntity {
   @JoinTable()
   authorities?: string[];
 
-  @Column()
-  createdBy?: string;
-  @Column({ nullable: true })
-  createdDate?: Date;
-  @Column()
-  lastModifiedBy?: string;
-  @Column({ nullable: true })
-  lastModifiedDate?: Date;
-
   @ApiModelProperty({ example: 'user', description: 'User password' })
   @Column()
   password?: string;
