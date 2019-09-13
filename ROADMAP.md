@@ -37,6 +37,7 @@ To contribute for the next featues, fork the repo and open a pull request regard
 
 ## To DO for next release
 
+- [ ] Languages subgenerator support i18n: translate home page for NHipster and remove spring boot resources message 
 - [ ] Unit tests: both for the blueprint and for generated project
 - [ ] DTOs based rest api
 - [ ] Validation
