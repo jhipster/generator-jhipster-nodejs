@@ -1,6 +1,11 @@
 import { TypeOrmModuleOptions } from '@nestjs/typeorm';
 
+<%_ if (mongoProdDatabase) { _%>
+
+let ormconfig: TypeOrmModuleOptions = {
+<%_ } else { _%>
 const ormconfig: TypeOrmModuleOptions = {
+<%_ } _%>
     name: 'default',
 	type: 'sqlite',
     database: '../target/sqlite-dev-db.sql',
