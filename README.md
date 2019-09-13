@@ -27,6 +27,11 @@ This project adds nodejs to the [JHipster](https://www.jhipster.tech/) applicati
 > 4. The app runs also as a full stack app including, for the monolitich choise, the angular client with the home page set for NHipster
 
 
+![demo-full-app]
+
+> A **generated example app** is [here](https://github.com/amanganiello90/jhipster-nodejs-sample-app/tags/v1.0.0) 
+
+
 # Prerequisites
 
 As this is a [JHipster](https://www.jhipster.tech/) blueprint, we expect you have JHipster and its related tools already installed:
@@ -112,3 +117,4 @@ Apache-2.0 © [Angelo Manganiello](https://github.com/amanganiello90)
 [daviddm-url]: https://david-dm.org/jhipster/generator-jhipster-nodejs
 [npmcharts-image]: https://img.shields.io/npm/dm/generator-jhipster-nodejs.svg?label=Downloads&style=flat
 [npmcharts-url]: https://npmcharts.com/compare/generator-jhipster-nodejs
+[demo-full-app]: demo-full-app.gif
