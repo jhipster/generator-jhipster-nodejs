@@ -1,6 +1,6 @@
 <a name="1.0.0"></a>
 
-# [1.0.0](https://github.com/jhipster/generator-jhipster-nodejs) (in progress)
+# [1.0.0](https://github.com/jhipster/generator-jhipster-nodejs/tree/v1.0.0)
 
 - Adding generic base scaffolder from the official blueprint generator
 - Running microservice or monolith project with default sqlite db
