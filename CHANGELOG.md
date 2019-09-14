@@ -1,6 +1,6 @@
 <a name="1.0.0"></a>
 
-# [1.0.0](https://github.com/jhipster/generator-jhipster-nodejs) (in progress)
+# [1.0.0](https://github.com/jhipster/generator-jhipster-nodejs/tree/v1.0.0)
 
 - Adding generic base scaffolder from the official blueprint generator
 - Running microservice or monolith project with default sqlite db
@@ -14,4 +14,4 @@
 - Maven pom orchestration of server/client part with dev and prod profiles [issue #23](https://github.com/jhipster/generator-jhipster-nodejs/issues/23)
 - Adding controller generator
 - Automatic config in dev profile sqlite db and in prod mongodb or another db [issue #30](https://github.com/jhipster/generator-jhipster-nodejs/issues/30)
-
+- All user and auth api with jwt integrated in angular ui [issue #22](https://github.com/jhipster/generator-jhipster-nodejs/issues/22)

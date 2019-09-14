@@ -64,6 +64,7 @@ module.exports = class extends ServerGenerator {
             },
 
             setupNodeServerconsts() {
+
                 this.packageName = jhipsterNodeConstants.PACKAGE_NAME_NODEJS;
                 this.cacheProvider = jhipsterNodeConstants.CACHE_PROVIDER_NODEJS;
                 this.enableHibernateCache = jhipsterNodeConstants.ENABLE_HIBERNATE_CACHE_NODEJS;
@@ -79,19 +80,8 @@ module.exports = class extends ServerGenerator {
                 this.authenticationType = jhipsterNodeConstants.AUTHENTICATION_TYPE_NODEJS;
                 this.testFrameworks =[];
 
-                /* if(this.applicationType){
-                    this.log(
-                        chalk.green(
-                            'This is an existing project, using the configuration from your .yo-rc.json file \n' +
-                                'to re-generate the project...\n'
-                        )
-                    );
-
-                    // how get serverPort and mongoDatabaseProd....
-
-                    this.existingProject = true;
-                }
-                */
+                const configuration = this.getAllJhipsterConfig(this, true);
+                this.mongoProdDatabase = configuration.get('mongoProdDatabase');
             }
 
         };

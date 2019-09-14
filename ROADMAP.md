@@ -31,16 +31,13 @@ To contribute for the next featues, fork the repo and open a pull request regard
 - [x] Delete unuseful java questions not supported 
 - [x] Entity generator
 - [x] Automatic config in dev profile sqlite db and in prod mongodb or another db
+- [x] All user and auth api with jwt integrated in angular ui
 
-
-## To DO for the 1.0.0 release
-
-
-- [ ] All user management api with jwt auth
 
 
 ## To DO for next release
 
+- [ ] Languages subgenerator support i18n: translate home page for NHipster and remove spring boot resources message 
 - [ ] Unit tests: both for the blueprint and for generated project
 - [ ] DTOs based rest api
 - [ ] Validation
@@ -49,4 +46,4 @@ To contribute for the next featues, fork the repo and open a pull request regard
 - [ ] Different pagination options
 - [ ] Elastic Search support
 - [ ] Search api
-- [ ] Other core/admin jhipster services
+- [ ] Other core/admin jhipster management api and services

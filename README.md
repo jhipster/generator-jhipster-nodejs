@@ -16,6 +16,24 @@
 
 This project adds nodejs to the [JHipster](https://www.jhipster.tech/) application 😎. It is based on JHipster Blueprint 🔵, that is meant to be used in a JHipster application.
 
+> The generator applies this standard configuration for the nodeJS app:
+
+> 1. NestJS base app with web controllers, [swagger doc](https://github.com/nestjs/swagger) and [jwt passport auth](https://github.com/nestjs/passport) services
+
+> 2. The app starts with four seed users (admin, basic user and anonymous roles), as standard jhipster monolithic app, with sqlite for dev and prod running
+
+> 3. The app uses [typeORM](https://github.com/nestjs/typeorm) and asks you a question if you don't want sqlite database in prod mode but using mongodb
+
+> 4. The app runs also as a full stack app including, for the monolitich choise, the angular client with the home page set for NHipster
+
+
+<div align="center">
+		<img src="demo-full-app.gif">
+</div>
+
+
+> A **generated example app** is [here](https://github.com/amanganiello90/jhipster-nodejs-sample-app/tree/v1.0.0) 
+
 
 # Prerequisites
 

@@ -3,29 +3,60 @@ import { User } from './domain/user.entity';
 import { Authority } from './domain/authority.entity';
 
 export async function initialDataLoad() {
+  const role1: Authority = { name: 'ROLE_ADMIN' };
 
-  const role1 = { name: 'ROLE_ADMIN' };
+  const role2: Authority = { name: 'ROLE_USER' };
 
-  const role2 = { name: 'ROLE_USER' };
-
-  const user1 = {
-    login: 'system', passwordHash: 'system', firstName: 'System', lastName: 'System',
-    email: 'system@localhost', imageUrl: '', activated: true, langKey: 'en', createdBy: 'system', lastModifiedBy: 'system'
+  const user1: User = {
+    login: 'system',
+    password: 'system',
+    firstName: 'System',
+    lastName: 'System',
+    email: 'system@localhost.it',
+    imageUrl: '',
+    activated: true,
+    langKey: 'en',
+    createdBy: 'system',
+    lastModifiedBy: 'system',
   };
 
-  const user2 = {
-    login: 'anonymoususer', passwordHash: 'anonymoususer', firstName: 'Anonymous', lastName: 'User',
-    email: 'anonymoususer@localhost', imageUrl: '', activated: true, langKey: 'en', createdBy: 'system', lastModifiedBy: 'system'
+  const user2: User = {
+    login: 'anonymoususer',
+    password: 'anonymoususer',
+    firstName: 'Anonymous',
+    lastName: 'User',
+    email: 'anonymoususer@localhost.it',
+    imageUrl: '',
+    activated: true,
+    langKey: 'en',
+    createdBy: 'system',
+    lastModifiedBy: 'system',
   };
 
-  const user3 = {
-    login: 'admin', passwordHash: 'admin', firstName: 'Administrator', lastName: 'Administrator',
-    email: 'admin@localhost', imageUrl: '', activated: true, langKey: 'en', createdBy: 'system', lastModifiedBy: 'system'
+  const user3: User = {
+    login: 'admin',
+    password: 'admin',
+    firstName: 'Administrator',
+    lastName: 'Administrator',
+    email: 'admin@localhost.it',
+    imageUrl: '',
+    activated: true,
+    langKey: 'en',
+    createdBy: 'system',
+    lastModifiedBy: 'system',
   };
 
-  const user4 = {
-    login: 'user', passwordHash: 'user', firstName: 'User', lastName: 'User',
-    email: 'user@localhost', imageUrl: '', activated: true, langKey: 'en', createdBy: 'system', lastModifiedBy: 'system'
+  const user4: User = {
+    login: 'user',
+    password: 'user',
+    firstName: 'User',
+    lastName: 'User',
+    email: 'user@localhost.it',
+    imageUrl: '',
+    activated: true,
+    langKey: 'en',
+    createdBy: 'system',
+    lastModifiedBy: 'system',
   };
 
   await getConnection()
@@ -35,8 +66,6 @@ export async function initialDataLoad() {
     .values([role1, role2])
     .onConflict(`("name") DO NOTHING`)
     .execute();
-
-
 
   await getConnection()
     .createQueryBuilder()
@@ -56,5 +85,4 @@ export async function initialDataLoad() {
     .relation(User, 'authorities')
     .of(user4)
     .add([role2]);
-
 }

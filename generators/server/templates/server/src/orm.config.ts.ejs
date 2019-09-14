@@ -1,24 +1,29 @@
 import { TypeOrmModuleOptions } from '@nestjs/typeorm';
 
+<%_ if (mongoProdDatabase) { _%>
+
 let ormconfig: TypeOrmModuleOptions = {
-   "name": "default",
+<%_ } else { _%>
+const ormconfig: TypeOrmModuleOptions = {
+<%_ } _%>
+    name: 'default',
 	type: 'sqlite',
     database: '../target/sqlite-dev-db.sql',
     synchronize: true,
     logging: true,
-    entities: [__dirname + '/domain/*.entity{.ts,.js}']
+    entities: [__dirname + '/domain/*.entity{.ts,.js}'],
 };
 
 <%_ if (mongoProdDatabase) { _%>
 
 if(process.env.NODE_ENV==='prod'){
     ormconfig = {
-       "name": "default",
+        name: 'default',
         type: 'mongodb',
-        "url": "mongodb://localhost:27017/<%= baseName %>",
-        "synchronize": true,
-        "logging": false,
-        entities: [__dirname + '/domain/*.entity{.ts,.js}']
+        url: 'mongodb://localhost:27017/<%= baseName %>',
+        synchronize: true,
+        logging: false,
+        entities: [__dirname + '/domain/*.entity{.ts,.js}'],
     };
 }
 <%_ } _%>

@@ -48,13 +48,39 @@ $ npm run build && npm run start:prod
 # run production build with node
 $ set NODE_ENV=dev&&node dist/main.js
 ```
+
 > You can specify dev or prod NODE_ENV value
+
+## Lint
+
+```bash
+# run lint
+$ npm run lint
+
+# fix lint issues
+$ npm run lint-fix
+
+```
+
+## Debug
+
+```bash
+# run this and after you can execute debug task in VSCode
+$ npm run start:debug
+
+```
 
 ## Test
 
 ```bash
 # unit tests
 $ npm run test
+
+# lint
+$ npm run lint
+
+# fix lint issues
+$ npm run lint-fix
 
 # e2e tests
 $ npm run test:e2e
