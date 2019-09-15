@@ -14,7 +14,7 @@
 
 # Greetings, nodejs Hipster!
 
-This project adds nodejs. **all typescript generation**, to the [JHipster](https://www.jhipster.tech/) application 😎. It is based on JHipster Blueprint 🔵, that is meant to be used in a JHipster application.
+This project adds nodejs, **all typescript files generation, not JAVA!**, to the [JHipster](https://www.jhipster.tech/) application 😎. It is based on JHipster Blueprint 🔵, that is meant to be used in a JHipster application.
 
 > The generator applies this standard configuration for the nodeJS app:
 
