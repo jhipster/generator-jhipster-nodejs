@@ -63,14 +63,14 @@ After installing Node, you should be able to run the following command to instal
 You will only need to run this command when dependencies change in [package.json](package.json).
 
     <%= clientPackageManager %> install
+    cd server && <%= clientPackageManager %> install
 
 We use <%= clientPackageManager %> scripts and [Webpack][] as our build system.
 
 Run the following commands in two separate terminals to create a blissful development experience where your browser
 auto-refreshes when files change on your hard drive.
-<% if (buildTool === 'maven') { %>
-    ./mvnw clean package -Pdev<% } %><% if (buildTool === 'gradle') { %>
-    ./gradlew<% } %>
+
+    cd server && <%= clientPackageManager %> start
     <%= clientPackageManager %> start
 
 <%= clientPackageMngrName %> is also used to manage CSS and JavaScript dependencies used in this application. You can upgrade dependencies by
@@ -234,19 +234,46 @@ Refer to [Doing API-First development][] for more details.
 
 ## Building and running
 
+You can run the application using mvnw command (if you have JAVA) or the npm standard scripts
 
-### Running
+### With JAVA installed
+
+#### Running
 
 ```bash
 ./mvnw clean package -Pdev
 ```
-### Building
+#### Building
 
 ```bash
 ./mvnw clean package -Pprod
 ```
 
-The build folder with all artifact will be **server/dist**.
+### With node npm scripts
+
+<%_ if (!skipClient) { _%>
+
+As prerequisite you have before build the client code:
+    
+```bash
+<%= clientPackageManager %> build
+```
+<%_ } _%>
+
+#### Running
+
+
+```bash
+cd server && <%= clientPackageManager %> start
+```
+
+#### Building
+
+```bash
+cd server && <%= clientPackageManager %> build
+```
+
+The build folder with all compiled sources will be **server/dist**.
 
 > For more explanation about full stack server/client build refer to **server/README.md**
 
