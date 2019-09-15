@@ -3,7 +3,7 @@
 
 > ## 🛠 Mode: Development
 >
-> Generator-jhipster-nodejs, that uses [NestJS Fremework](https://nestjs.com/), is currently in development. We encourage you to use it and give us your feedback.
+> Generator-jhipster-nodejs, that uses [NestJS Framework](https://nestjs.com/), is currently in development. We encourage you to use it and give us your feedback.
 
 <div align="center">
 	<a href="https://github.com/jhipster/generator-jhipster-nodejs">
