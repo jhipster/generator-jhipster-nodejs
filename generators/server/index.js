@@ -165,10 +165,20 @@ module.exports = class extends ServerGenerator {
                 const executable = 'mvnw clean package -Pdev';
 
                 let logMsgComment = '';
+                const java = 'JAVA';
+                const serverREADME = 'server/README';
                 if (os.platform() === 'win32') {
                     logMsgComment = ` (${chalk.yellow.bold(executable)} if using Windows Command Prompt)`;
                 }
-                this.log(chalk.green(`Run your Spring Boot application:\n${chalk.yellow.bold(`./${executable}`)}${logMsgComment}`));
+                this.log(
+                    chalk.green(
+                        `Run your application:\n${chalk.yellow.bold(
+                            `./${executable}`
+                        )}${logMsgComment}.\n Otherwise, If you don't have ${chalk.yellow.bold(
+                            java
+                        )} installed, run the npm scripts explained under ${chalk.yellow.bold(serverREADME)}`
+                    )
+                );
             }
         };
         // Here we are not overriding this phase and hence its being handled by JHipster
