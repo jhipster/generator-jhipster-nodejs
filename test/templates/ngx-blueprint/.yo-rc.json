@@ -13,7 +13,7 @@
         "enableHibernateCache": true,
         "websocket": false,
         "databaseType": "sql",
-        "devDatabaseType": "h2Disk",
+        "devDatabaseType": "sqlite",
         "prodDatabaseType": "mysql",
         "searchEngine": false,
         "messageBroker": false,

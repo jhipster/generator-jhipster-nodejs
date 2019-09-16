@@ -5,7 +5,7 @@ import * as fs from 'fs';
 export class Config {
   debugLogging = 'debug';
 
-  'server.port' = 8081;
+  'server.port' = '<%= serverPort %>';
   'jhipster.clientApp.name' = '<%= baseName %>';
   'jhipster.registry.password' = 'admin';
   'jhipster.security.authentication.jwt.base64-secret' = '';
