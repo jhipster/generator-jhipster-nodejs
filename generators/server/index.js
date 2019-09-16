@@ -61,6 +61,37 @@ module.exports = class extends ServerGenerator {
                         ' _______________________________________________________________________________________________________________\n'
                     )
                 );
+                this.log(
+                    chalk.green.bold(
+                        ' This NodeJS blueprint use these following pre-configuration:\n'
+                    )
+                );
+                this.log(
+                    chalk.green.bold(
+                        ' 1. NestJS Framework with swagger doc\n'
+                    )
+                );
+                this.log(
+                    chalk.green.bold(
+                        ' 2. JWT Passport authentication/authorization\n'
+                    )
+                );
+                this.log(
+                    chalk.green.bold(
+                        ' 3. TypeORM usage with SQLite development database\n'
+                    )
+                );
+                this.log(
+                    chalk.green.bold(
+                        ' 4. initial load data with users seed integrated with the angular client (monolithic application type)\n'
+                    )
+                );
+                this.log(
+                    chalk.green.bold(
+                        ' 5. Eureka JS client registry\n'
+                    )
+                );
+
             },
 
             setupNodeServerconsts() {
@@ -80,8 +111,10 @@ module.exports = class extends ServerGenerator {
                 this.authenticationType = jhipsterNodeConstants.AUTHENTICATION_TYPE_NODEJS;
                 this.testFrameworks =[];
 
+                /*
                 const configuration = this.getAllJhipsterConfig(this, true);
                 this.mongoProdDatabase = configuration.get('mongoProdDatabase');
+                */
             }
 
         };
@@ -99,7 +132,6 @@ module.exports = class extends ServerGenerator {
             setSharedNodeConfigOptions() {
                 this.configOptions.serverPort = this.serverPort;
                 this.configOptions.baseName = this.baseName;
-                this.configOptions.mongoProdDatabase = this.mongoProdDatabase;
                 this.configOptions.packageName = this.packageName;
                 this.configOptions.cacheProvider = this.cacheProvider;
                 this.configOptions.enableHibernateCache = this.enableHibernateCache;
@@ -130,8 +162,9 @@ module.exports = class extends ServerGenerator {
         const jhipsterConfigNodeSteps = {
             jhipsterNodeSaveConfig() {
                 const config = {
-                    mongoProdDatabase: this.mongoProdDatabase,
-                    testFrameworks: this.testFrameworks
+                    databaseType: this.databaseType,
+                    devDatabaseType: this.devDatabaseType,
+                    prodDatabaseType: this.prodDatabaseType
                 };
                 this.config.set(config);
             }

@@ -8,9 +8,7 @@
 # ===================================================================
 
 # ===================================================================
-# Standard Spring Boot properties.
-# Full reference is available at:
-# http://docs.spring.io/spring-boot/docs/current/reference/html/common-application-properties.html
+# Standard app properties.
 # ===================================================================
 
 eureka:
@@ -21,13 +19,9 @@ eureka:
       defaultZone: http://admin:${jhipster.registry.password}@localhost:8761/eureka/
 
 server:
-  port: 8082
+  port: <%= serverPort %>
 
-spring:
-  data:
-    mongodb:
-      uri: mongodb://localhost:27017/jhipster
-      database: <%= baseName %>
+
   mail:
     host: localhost
     port: 25

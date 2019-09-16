@@ -1,4 +1,4 @@
-// const chalk = require('chalk');
+const chalk = require('chalk');
 
 module.exports = {
     askForModuleName,
@@ -30,24 +30,37 @@ function askForMainServerSideOpts(meta) {
         },
         {
             type: 'list',
-            name: 'mongoProdDatabase',
-            message: 'Would you like to use mongodb in prod?',
+            name: 'prodDatabaseType',
+            message: `Which ${chalk.yellow('*production*')} database would you like to use?`,
             choices: response => {
                 const opts = [];
-
                 opts.push({
-                    value: false,
-                    name: 'No'
+                    value: 'sqlite',
+                    name: 'SQLite'
                 });
-
                 opts.push({
-                    value: true,
-                    name: 'Yes'
+                    value: 'mongodb',
+                    name: 'MongoDB'
                 });
-
+                opts.push({
+                    value: 'mysql',
+                    name: 'MySQL or MariaDB'
+                });
+                opts.push({
+                    value: 'postgresql',
+                    name: 'PostgreSQL or CockroachDB'
+                });
+                opts.push({
+                    value: 'oracle',
+                    name: 'Oracle (Please follow our documentation to use the Oracle proprietary driver)'
+                });
+                opts.push({
+                    value: 'mssql',
+                    name: 'Microsoft SQL Server'
+                });
                 return opts;
             },
-            default: false
+            default: 0
         }
     ];
 
@@ -57,7 +70,14 @@ function askForMainServerSideOpts(meta) {
 
     this.prompt(PROMPT).then(prompt => {
         this.serverPort = prompt.serverPort;
-        this.mongoProdDatabase = prompt.mongoProdDatabase;
+        this.devDatabaseType = 'sqlite';
+        this.prodDatabaseType = prompt.prodDatabaseType;
+
+        if (this.prodDatabaseType === 'mongodb') {
+            this.databaseType = 'mongodb';
+        } else {
+            this.databaseType = 'sql';
+        }
 
         done();
     });
