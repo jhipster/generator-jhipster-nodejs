@@ -63,7 +63,7 @@ module.exports = class extends ServerGenerator {
                 );
                 this.log(
                     chalk.green.bold(
-                        ' This NodeJS blueprint use these following pre-configuration:\n'
+                        ' This NodeJS blueprint use these following configurations:\n'
                     )
                 );
                 this.log(
@@ -73,7 +73,7 @@ module.exports = class extends ServerGenerator {
                 );
                 this.log(
                     chalk.green.bold(
-                        ' 2. JWT Passport authentication/authorization\n'
+                        ' 2. JWT Passport security authentication\n'
                     )
                 );
                 this.log(
@@ -83,7 +83,7 @@ module.exports = class extends ServerGenerator {
                 );
                 this.log(
                     chalk.green.bold(
-                        ' 4. initial load data with users seed integrated with the angular client (monolithic application type)\n'
+                        ' 4. Initial load data seed with users (using auth roles) integrated with the angular client (monolithic application type)\n'
                     )
                 );
                 this.log(
