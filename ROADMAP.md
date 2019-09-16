@@ -32,6 +32,7 @@ To contribute for the next featues, fork the repo and open a pull request regard
 - [x] Entity generator
 - [x] Automatic config in dev profile sqlite db and in prod mongodb or another db
 - [x] All user and auth api with jwt integrated in angular ui
+- [x] Replaced mongoProdDatabase question with standard jhipster databaseType and with all db typeORM support
 
 
 

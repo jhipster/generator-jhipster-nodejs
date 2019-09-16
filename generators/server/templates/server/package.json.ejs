@@ -36,8 +36,16 @@
     "dotenv": "8.1.0",
     "eureka-js-client": "4.5.0",
     "js-yaml": "3.13.1",
-    <%_ if (mongoProdDatabase) { _%>
+    <%_ if (prodDatabaseType === 'mongodb') { _%>
         "mongodb": "3.3.0",
+    <%_ } else if (prodDatabaseType === 'mysql') {_%>
+        "mysql2": "1.7.0",
+    <%_ } else if (prodDatabaseType === 'postgresql') {_%>
+        "pg": "7.12.1",
+    <%_ } else if (prodDatabaseType === 'oracle') {_%>
+        "oracledb": "4.0.1",
+    <%_ } else if (prodDatabaseType === 'mssql') {_%>
+        "mssql": "5.1.0",
     <%_ } _%>
     "passport": "0.4.0",
     "passport-jwt": "4.0.0",

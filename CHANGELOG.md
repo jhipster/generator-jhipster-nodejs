@@ -15,3 +15,4 @@
 - Adding controller generator
 - Automatic config in dev profile sqlite db and in prod mongodb or another db [issue #30](https://github.com/jhipster/generator-jhipster-nodejs/issues/30)
 - All user and auth api with jwt integrated in angular ui [issue #22](https://github.com/jhipster/generator-jhipster-nodejs/issues/22)
+- Replaced mongoProdDatabase question with standard jhipster databaseType and with all db typeORM support //ISSUE
