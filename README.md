@@ -7,7 +7,7 @@
 
 <div align="center">
 	<a href="https://github.com/jhipster/generator-jhipster-nodejs">
-		<img width="160" height="200" src="https://github.com/jhipster/generator-jhipster-nodejs/blob/master/logo-nhipster.png">
+		<img width="160" height="200" src="https://raw.githubusercontent.com/jhipster/generator-jhipster-nodejs/v1.0.0-alpha.1/logo-nhipster.png">
 	</a>
 </div>
 
@@ -26,13 +26,17 @@ This project adds nodejs, **all typescript files generation, not JAVA!**, to the
 
 > 4. The app runs also as a full stack app including, for the monolitich choise, the angular client with the home page set for NHipster
 
-
 <div align="center">
-		<img src="demo-full-app.gif">
+		<img src="https://raw.githubusercontent.com/jhipster/generator-jhipster-nodejs/v1.0.0-alpha.1/nhipster-cli.png">
 </div>
 
 
-> A **generated example app** is [here](https://github.com/amanganiello90/jhipster-nodejs-sample-app/tree/v1.0.0) 
+> A **generated example app** is [here](https://github.com/amanganiello90/jhipster-sample-app-nodejs/tree/v1.0.0-alpha.1) 
+
+<div align="center">
+		<img src="https://raw.githubusercontent.com/jhipster/generator-jhipster-nodejs/v1.0.0-alpha.1/demo-full-app.gif">
+</div>
+
 
 
 # Prerequisites
