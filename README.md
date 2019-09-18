@@ -1,9 +1,9 @@
 # generator-jhipster-nodejs
 [![NPM version][npm-image]][npm-url] [![Build Status][travis-image]][travis-url] [![Dependency Status][daviddm-image]][daviddm-url] [![Gitter](https://badges.gitter.im/generator-jhipster-nodejs/community.svg)](https://gitter.im/generator-jhipster-nodejs/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge) [![Downloads][npmcharts-image]][npmcharts-url]
 
-> ## 🛠 Mode: Development
+> ## 🛠 Mode: Just Released :smile_cat: :smile_cat: :smile_cat:
 >
-> Generator-jhipster-nodejs, that uses [NestJS Framework](https://nestjs.com/), is currently in development. We encourage you to use it and give us your feedback.
+> Generator-jhipster-nodejs, that uses [NestJS Typescript Framework](https://nestjs.com/). We encourage you to use it and give us your feedback.
 
 <div align="center">
 	<a href="https://github.com/jhipster/generator-jhipster-nodejs">
