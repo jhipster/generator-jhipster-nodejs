@@ -35,7 +35,6 @@ To contribute for the next featues, fork the repo and open a pull request regard
 - [x] Replaced mongoProdDatabase question with standard jhipster databaseType and with all db typeORM support
 
 
-
 ## To DO for next release
 
 - [ ] Languages subgenerator support i18n: translate home page for NHipster and remove spring boot resources message 
