@@ -1,13 +1,13 @@
 # generator-jhipster-nodejs
 [![NPM version][npm-image]][npm-url] [![Build Status][travis-image]][travis-url] [![Dependency Status][daviddm-image]][daviddm-url] [![Gitter](https://badges.gitter.im/generator-jhipster-nodejs/community.svg)](https://gitter.im/generator-jhipster-nodejs/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge) [![Downloads][npmcharts-image]][npmcharts-url]
 
-> ## 🛠 Mode: Development
+> ## 🛠 Mode: Just Released :smile_cat: :smile_cat: :smile_cat:
 >
-> Generator-jhipster-nodejs, that uses [NestJS Framework](https://nestjs.com/), is currently in development. We encourage you to use it and give us your feedback.
+> Generator-jhipster-nodejs, _the official NodeJS blueprint_ that uses [NestJS Typescript Framework](https://nestjs.com/). We encourage you to use it and give us your feedback.
 
 <div align="center">
 	<a href="https://github.com/jhipster/generator-jhipster-nodejs">
-		<img width="160" height="200" src="https://github.com/jhipster/generator-jhipster-nodejs/blob/master/logo-nhipster.png">
+		<img width="160" height="200" src="https://raw.githubusercontent.com/jhipster/generator-jhipster-nodejs/v1.0.0-alpha.2/logo-nhipster.png">
 	</a>
 </div>
 
@@ -26,13 +26,17 @@ This project adds nodejs, **all typescript files generation, not JAVA!**, to the
 
 > 4. The app runs also as a full stack app including, for the monolitich choise, the angular client with the home page set for NHipster
 
-
 <div align="center">
-		<img src="demo-full-app.gif">
+		<img src="https://raw.githubusercontent.com/jhipster/generator-jhipster-nodejs/v1.0.0-alpha.2/nhipster-cli.png">
 </div>
 
 
-> A **generated example app** is [here](https://github.com/amanganiello90/jhipster-nodejs-sample-app/tree/v1.0.0) 
+> A **generated example app** is [here](https://github.com/jhipster/jhipster-sample-app-nodejs/tree/v1.0.0-alpha.2) 
+
+<div align="center">
+		<img src="https://raw.githubusercontent.com/jhipster/generator-jhipster-nodejs/v1.0.0-alpha.2/demo-full-app.gif">
+</div>
+
 
 
 # Prerequisites
