@@ -3,7 +3,7 @@
 
 > ## 🛠 Mode: Just Released :smile_cat: :smile_cat: :smile_cat:
 >
-> Generator-jhipster-nodejs, _the official NodeJS blueprint_ that uses [NestJS Typescript Framework](https://nestjs.com/). We encourage you to use it and give us your feedback.
+> Generator-jhipster-nodejs, the _official NodeJS blueprint_ that uses [NestJS Typescript Framework](https://nestjs.com/) for your **backend**. We encourage you to use it and give us your feedback.
 
 <div align="center">
 	<a href="https://github.com/jhipster/generator-jhipster-nodejs">
@@ -14,7 +14,7 @@
 
 # Greetings, nodejs Hipster!
 
-This project adds nodejs, **all typescript files generation, not JAVA!**, to the [JHipster](https://www.jhipster.tech/) application 😎. It is based on JHipster Blueprint 🔵, that is meant to be used in a JHipster application.
+This project adds nodejs for your backend, **all typescript files generation, not JAVA!**, to the [JHipster](https://www.jhipster.tech/) application 😎. It is based on JHipster Blueprint 🔵, that is meant to be used in a JHipster application.
 
 > The generator applies this standard configuration for the nodeJS app:
 
