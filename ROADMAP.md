@@ -37,7 +37,13 @@ To contribute for the next featues, fork the repo and open a pull request regard
 
 ## To DO for next release
 
+- [ ] Remove maven with option JAVA requirement
+- [ ] Add package.json when no client
+- [ ] Test prod database and update doc with react client
+- [ ] Encrypt user password in db
+- [ ] Avoid reinsert seed db in restart app
 - [ ] Languages subgenerator support i18n: translate home page for NHipster and remove spring boot resources message 
+- [ ] OAuth2 feature
 - [ ] Unit tests: both for the blueprint and for generated project
 - [ ] DTOs based rest api
 - [ ] Validation
@@ -46,4 +52,4 @@ To contribute for the next featues, fork the repo and open a pull request regard
 - [ ] Different pagination options
 - [ ] Elastic Search support
 - [ ] Search api
-- [ ] Other core/admin jhipster management api and services
+- [ ] Other core/admin jhipster management api and services with sending email
