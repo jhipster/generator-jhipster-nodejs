@@ -1,4 +1,9 @@
+<a name="1.0.0-alpha.3"></a>
 <a name="1.0.0-alpha.2"></a>
+
+# [1.0.0-alpha.3](https://github.com/jhipster/generator-jhipster-nodejs/tree/v1.0.0-alpha.3)
+
+- Remove maven with java optional requirement [issue #44](https://github.com/jhipster/generator-jhipster-nodejs/issues/44)
 
 # [1.0.0-alpha.2](https://github.com/jhipster/generator-jhipster-nodejs/tree/v1.0.0-alpha.2)
 
