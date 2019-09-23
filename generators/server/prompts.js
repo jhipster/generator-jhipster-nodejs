@@ -69,7 +69,11 @@ function askForMainServerSideOpts(meta) {
     const done = this.async();
 
     this.prompt(PROMPT).then(prompt => {
-        this.serverPort = prompt.serverPort;
+        if (prompt.serverPort) {
+            this.serverPort = prompt.serverPort;
+        } else {
+            this.serverPort = defaultPort;
+        }
         this.devDatabaseType = 'sqlite';
         this.prodDatabaseType = prompt.prodDatabaseType;
 

@@ -162,6 +162,7 @@ module.exports = class extends ServerGenerator {
         const jhipsterConfigNodeSteps = {
             jhipsterNodeSaveConfig() {
                 const config = {
+                    serverPort: this.serverPort,
                     databaseType: this.databaseType,
                     devDatabaseType: this.devDatabaseType,
                     prodDatabaseType: this.prodDatabaseType
