@@ -78,14 +78,15 @@ const serverFiles = {
                 'tsconfig.json',
                 'README.md'
             ]
-        }
-        /* {
+        },
+        {
             templates: [
-                'pom.xml',
+                'package.json'
+                /* 'pom.xml',
                 { file: '.mvn/wrapper/maven-wrapper.properties', method: 'copy', noEjs: true },
+            */
             ]
         }
-        */
     ]
 };
 
