@@ -8,12 +8,16 @@ const clientFiles = {
             condition: generator => generator.clientFramework === 'angularX',
             templates: [
                 { file: 'angular/tsconfig-aot.json', renameTo: () => 'tsconfig-aot.json' },
-                { file: 'angular/tsconfig.json', renameTo: () => 'tsconfig.json' }
+                { file: 'angular/tsconfig.json', renameTo: () => 'tsconfig.json' },
+                { file: 'angular/package.json', renameTo: () => 'package.json' }
             ]
         },
         {
             condition: generator => generator.clientFramework === 'react',
-            templates: [{ file: 'react/tsconfig.json', renameTo: () => 'tsconfig.json' }]
+            templates: [
+                { file: 'react/tsconfig.json', renameTo: () => 'tsconfig.json' },
+                { file: 'react/package.json', renameTo: () => 'package.json' }
+            ]
         }
     ],
     angularMain: [
