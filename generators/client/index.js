@@ -1,6 +1,7 @@
 /* eslint-disable consistent-return */
 const chalk = require('chalk');
 const ClientGenerator = require('generator-jhipster/generators/client');
+// const jhipsterPackagejs = require('generator-jhipster/package.json');
 const constants = require('../generator-nodejs-constants');
 const writeFiles = require('./files').writeFiles;
 
@@ -11,7 +12,7 @@ module.exports = class extends ClientGenerator {
         const jhContext = (this.jhipsterContext = this.options.jhipsterContext);
 
         if (!jhContext) {
-            this.error(`This is a JHipster blueprint and should be used only like ${chalk.yellow('jhipster --blueprint nodejs')}`);
+            this.error(`This is a JHipster blueprint and should be used only like ${chalk.yellow('jhipster --blueprints nodejs')}`);
         }
 
         this.configOptions = jhContext.configOptions || {};
@@ -25,6 +26,7 @@ module.exports = class extends ClientGenerator {
             // variables to use in templates
             setupCustomClientConsts() {
                 this.SERVER_NODEJS_SRC_DIR = constants.SERVER_NODEJS_SRC_DIR;
+                // this.packagejs = jhipsterPackagejs;
             }
         };
         return Object.assign(initPhaseFromJHipster, initNodeClientPhaseSteps);
@@ -39,7 +41,7 @@ module.exports = class extends ClientGenerator {
         return {
             askForClientSideOpts: prompts.askForClientSideOpts,
             setSharedConfigOptions() {
-                // this.configOptions.clientFramework = this.clientFramework;
+                 this.configOptions.clientFramework = this.clientFramework;
             }
         };
         */

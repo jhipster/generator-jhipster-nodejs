@@ -85,16 +85,16 @@ yarn global upgrade generator-jhipster-nodejs
 ## 🚦 What we have now
 
 ✅ General App generation 
-   - `jhipster --blueprint nodejs`
+   - `jhipster --blueprints nodejs`
 
 ✅ Controller generation
-   - `jhipster spring-controller <controller-name> --blueprint nodejs`
+   - `jhipster spring-controller <controller-name> --blueprints nodejs`
   
 ✅ Entity generation
-   - `jhipster entity <entity-name> --blueprint nodejs`
+   - `jhipster entity <entity-name> --blueprints nodejs`
 
 ✅ JDL Entity model support generation
-   - `jhipster import-jdl my_file.jdl --blueprint nodejs`
+   - `jhipster import-jdl my_file.jdl --blueprints nodejs`
 
 ## ❤️ For community
 

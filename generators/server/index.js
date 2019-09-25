@@ -3,8 +3,9 @@ const chalk = require('chalk');
 const ServerGenerator = require('generator-jhipster/generators/server');
 const jhipsterConstants = require('generator-jhipster/generators/generator-constants');
 const os = require('os');
+// const jhipsterPackagejs = require('generator-jhipster/package.json');
 const jhipsterNodeConstants = require('../generator-nodejs-constants');
-const packagejs = require('../../package.json');
+const nodePackagejs = require('../../package.json');
 const writeFiles = require('./files').writeFiles;
 const prompts = require('./prompts');
 
@@ -15,7 +16,7 @@ module.exports = class extends ServerGenerator {
         const jhContext = (this.jhipsterContext = this.options.jhipsterContext);
 
         if (!jhContext) {
-            this.error(`This is a JHipster blueprint and should be used only like ${chalk.yellow('jhipster --blueprint nodejs')}`);
+            this.error(`This is a JHipster blueprint and should be used only like ${chalk.yellow('jhipster --blueprints nodejs')}`);
         }
 
         this.configOptions = jhContext.configOptions || {};
@@ -36,7 +37,7 @@ module.exports = class extends ServerGenerator {
                 this.log(`${chalk.yellow(' ██║ ╚████║')}${chalk.green(' ██║   ██║ ████████╗ ██║       ██████╔╝    ██║    ████████╗ ██║  ╚██╗')}`);
                 this.log(`${chalk.yellow(' ╚═╝  ╚═══╝')}${chalk.green(' ╚═╝   ╚═╝ ╚═══════╝ ╚═╝       ╚═════╝     ╚═╝    ╚═══════╝ ╚═╝   ╚═╝')}\n`);
                 this.log(chalk.white.bold('                            https://www.jhipster.tech\n'));
-                this.log(chalk.white('Welcome to NHipster (Jhipster NodeJS Official Blueprint) ') + chalk.yellow(`v${packagejs.version}`));
+                this.log(chalk.white('Welcome to NHipster (Jhipster NodeJS Official Blueprint) ') + chalk.yellow(`v${nodePackagejs.version}`));
                 this.log(chalk.white('This blueprint generates your backend in NodeJS with NestJS framework'));
 
                 this.log(
@@ -112,6 +113,9 @@ module.exports = class extends ServerGenerator {
                 this.testFrameworks =[];
 
                 /*
+                this.packagejs= jhipsterPackagejs;
+                this.jhipsterVersion=jhipsterPackagejs.version;
+
                 const configuration = this.getAllJhipsterConfig(this, true);
                 this.mongoProdDatabase = configuration.get('mongoProdDatabase');
                 */
@@ -165,13 +169,16 @@ module.exports = class extends ServerGenerator {
                     serverPort: this.serverPort,
                     databaseType: this.databaseType,
                     devDatabaseType: this.devDatabaseType,
-                    prodDatabaseType: this.prodDatabaseType
+                    prodDatabaseType: this.prodDatabaseType,
+
+                   jhipsterVersion: this.jhipsterVersion
                 };
                 this.config.set(config);
             }
         };
          return Object.assign(confPhaseFromJHipster, jhipsterConfigNodeSteps);
-        */
+         */
+
         // Here we are not overriding this phase and hence its being handled by JHipster
         return confPhaseFromJHipster;
     }
