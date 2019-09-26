@@ -13,6 +13,7 @@ describe('Subgenerator entity of nodejs JHipster blueprint', () => {
                 .run('generator-jhipster/generators/entity')
                 .inTmpDir(dir => {
                     fse.copySync(path.join(__dirname, '../test/templates/ngx-blueprint'), dir);
+                    fse.copySync(path.join(__dirname, '../test/templates/server'), `${dir}/server`);
                 })
                 .withOptions({
                     'from-cli': true,
@@ -41,6 +42,7 @@ describe('Subgenerator entity of nodejs JHipster blueprint', () => {
         it('does creates entity files', () => {
             // Adds your tests here
             // assert.file(`${SERVER_NODEJS_DIR}src/domain/foo.entity.ts`);
+            assert.file('.jhipster/Foo.json');
             assert.textEqual(SERVER_NODEJS_DIR, SERVER_NODEJS_DIR);
         });
     });

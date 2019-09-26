@@ -31,12 +31,14 @@ application {
 // JDL definition entity for application
 
 entity DemetraUser {
-	gender Gender required,
+	gender string required,
 	address String required,
 	borndate LocalDate required,
     cf String required unique,
-	usertype UserType required
+	usertype string required
 }
+
+/*
 
 enum Gender {
 	MALE,
@@ -47,7 +49,7 @@ enum UserType {
 	STUDENT,
 	TEACHER
 }
-
+ */
 
 entity SingleCourse {
 	title String required unique,
@@ -66,12 +68,13 @@ relationship ManyToMany {
 }
 
 
-
+/*
 relationship OneToMany {
    
-    DemetraUser{singlecourseteacher} to SingleCourse{cfteacher(cf) required}
+ DemetraUser{singlecourseteacher} to SingleCourse{cfteacher(cf) required}
     
 }
+ */
 
 // Set pagination options
 // paginate PostMessage with infinite-scroll

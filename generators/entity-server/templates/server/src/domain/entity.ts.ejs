@@ -133,11 +133,11 @@ export default class <%= asEntity(entityClass) %> extends BaseEntity  {
     <%= relationshipFieldNamePlural %>: <%= relationship.otherEntityAngularName %>[];
 
     <%_ } else if (relationshipType === 'many-to-one') { _%>
-    @ManyToOne(type => <%= relationship.otherEntityAngularName %>, other => other.<%= entityInstance %>)
+    @ManyToOne(type => <%= relationship.otherEntityAngularName %>, other => other.<%= relationshipFieldNamePlural %>)
     <%= relationshipFieldName %>: <%= relationship.otherEntityAngularName %>;
 
     <%_ } else if (relationshipType === 'many-to-many') { _%>
-    @ManyToMany({})
+    @ManyToMany(type => <%= relationship.otherEntityAngularName %> )
         <%_ if (ownerSide === true) { _%>
     @JoinTable({
         name: '<%= joinTableName %>',
