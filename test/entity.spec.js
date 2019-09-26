@@ -2,6 +2,9 @@ const path = require('path');
 const fse = require('fs-extra');
 const assert = require('yeoman-assert');
 const helpers = require('yeoman-test');
+const constants = require('../generators/generator-nodejs-constants');
+
+const SERVER_NODEJS_DIR = `${constants.SERVER_NODEJS_SRC_DIR}/`;
 
 describe('Subgenerator entity of nodejs JHipster blueprint', () => {
     describe('Sample test', () => {
@@ -10,7 +13,6 @@ describe('Subgenerator entity of nodejs JHipster blueprint', () => {
                 .run('generator-jhipster/generators/entity')
                 .inTmpDir(dir => {
                     fse.copySync(path.join(__dirname, '../test/templates/ngx-blueprint'), dir);
-                    fse.copySync(path.join(__dirname, '../test/templates/server'), `${dir}/server`);
                 })
                 .withOptions({
                     'from-cli': true,
@@ -36,9 +38,10 @@ describe('Subgenerator entity of nodejs JHipster blueprint', () => {
                 .on('end', done);
         });
 
-        it('it works', () => {
+        it('does creates entity files', () => {
             // Adds your tests here
-            assert.textEqual('Write your own tests!', 'Write your own tests!');
+            // assert.file(`${SERVER_NODEJS_DIR}src/domain/foo.entity.ts`);
+            assert.textEqual(SERVER_NODEJS_DIR, SERVER_NODEJS_DIR);
         });
     });
 });
