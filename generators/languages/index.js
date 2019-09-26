@@ -2,7 +2,6 @@
 const chalk = require('chalk');
 // const constants = require('generator-jhipster/generators/generator-constants');
 const LanguagesGenerator = require('generator-jhipster/generators/languages');
-// const statistics = require('generator-jhipster/generators/statistics');
 
 module.exports = class extends LanguagesGenerator {
     constructor(args, opts) {
