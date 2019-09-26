@@ -20,7 +20,7 @@
 let importApiModelProperty = true;
 let hasDto = dto === 'mapstruct';
 let isUsingMapsId = false;
-const uniqueEnums = {}; 
+const uniqueEnums = {};
 for (idx in fields) {
     if (fields[idx].fieldIsEnum && (
             !uniqueEnums[fields[idx].fieldType] || (uniqueEnums[fields[idx].fieldType] && fields[idx].fieldValues.length !== 0))) {
@@ -29,7 +29,7 @@ for (idx in fields) {
 }
 %>
 
-import { Entity, Column, PrimaryGeneratedColumn, JoinColumn, OneToOne, ManyToOne, OneToMany, ManyToMany } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, JoinColumn, OneToOne, ManyToOne, OneToMany, ManyToMany, JoinTable } from 'typeorm';
 import { BaseEntity } from './base/base.entity';
 <%_ if (!hasDto && importApiModelProperty === true) { _%>
 import { ApiModelProperty } from '@nestjs/swagger';
@@ -40,12 +40,12 @@ import {validate, Contains, IsInt, Length, IsEmail, IsFQDN, IsDate, Min, Max} fr
 <%_for (idx in relationships) {
     const relationship = relationships[idx];
 _%>
-import <%= relationship.otherEntityAngularName %> from './<%= relationship.otherEntityFileName %>.model';
+import <%= relationship.otherEntityAngularName %> from './<%= relationship.otherEntityFileName %>.entity';
 <%_ } _%>
 <%_ Object.keys(uniqueEnums).forEach(function(element) { _%>
 import { <%= element %> } from './enumeration/<%= element %>';
 <%_ }); _%>
-    
+
 <%_ if (typeof javadoc == 'undefined') { _%>
 /**
  * A <%= asEntity(entityClass) %>.
