@@ -10,12 +10,13 @@ const fieldTypes = {
     Float: 'number',
     Double: 'number',
     BigDecimal: 'number',
-    String: '',
+    String: 'string',
     UUID: 'string',
-    LocalDate: 'string',
+    LocalDate: 'Date',
     Instant: 'Moment',
     ZonedDateTime: 'Moment',
     'byte[]': 'any',
+    text: 'string',
     ByteBuffer: 'any'
 };
 
@@ -48,7 +49,7 @@ module.exports = class extends EntityServerGenerator {
         return super._end();
     }
 
-    getTsType(field) {
-        return field.fieldTypeBlobContent === 'text' ? 'string' : fieldTypes[field.fieldType] || 'any';
+    getTsType(fieldType) {
+        return fieldTypes[fieldType] || 'string';
     }
 };

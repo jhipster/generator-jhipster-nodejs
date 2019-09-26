@@ -31,11 +31,11 @@ application {
 // JDL definition entity for application
 
 entity DemetraUser {
-	gender string required,
+	gender String required,
 	address String required,
 	borndate LocalDate required,
     cf String required unique,
-	usertype string required
+	usertype String required
 }
 
 /*
