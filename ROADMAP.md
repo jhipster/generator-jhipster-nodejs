@@ -33,12 +33,13 @@ To contribute for the next featues, fork the repo and open a pull request regard
 - [x] Automatic config in dev profile sqlite db and in prod mongodb or another db
 - [x] All user and auth api with jwt integrated in angular ui
 - [x] Replaced mongoProdDatabase question with standard jhipster databaseType and with all db typeORM support
+- [x] Remove maven with option JAVA requirement
+- [x] Add package.json when no client
 
 
 ## To DO for next release
 
-- [ ] Remove maven with option JAVA requirement
-- [ ] Add package.json when no client
+
 - [ ] Test prod database and update doc with react client
 - [ ] Encrypt user password in db
 - [ ] Avoid reinsert seed db in restart app
