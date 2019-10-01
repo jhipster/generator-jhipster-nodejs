@@ -3,7 +3,9 @@
 
 # [1.0.0-alpha.3](https://github.com/jhipster/generator-jhipster-nodejs/tree/v1.0.0-alpha.3)
 
-- Remove maven with java optional requirement [issue #44](https://github.com/jhipster/generator-jhipster-nodejs/issues/44)
+- Add package.json template also for server generation without client [issue #49](https://github.com/jhipster/generator-jhipster-nodejs/issues/49)
+- Replace maven pom.xml (with JAVA requirement to run it) with a simple node script to manage profiles [issue #44](https://github.com/jhipster/generator-jhipster-nodejs/issues/44)
+- Enum generation error for import-jdl [issue #57](https://github.com/jhipster/generator-jhipster-nodejs/issues/57)
 
 # [1.0.0-alpha.2](https://github.com/jhipster/generator-jhipster-nodejs/tree/v1.0.0-alpha.2)
 
