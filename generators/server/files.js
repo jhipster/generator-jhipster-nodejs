@@ -81,12 +81,10 @@ const serverFiles = {
         },
         {
             templates: [
-                'pom.xml',
-                { file: 'mvnw', method: 'copy', noEjs: true },
-                { file: 'mvnw.cmd', method: 'copy', noEjs: true },
-                { file: '.mvn/wrapper/maven-wrapper.jar', method: 'copy', noEjs: true },
+                'package.json'
+                /*
                 { file: '.mvn/wrapper/maven-wrapper.properties', method: 'copy', noEjs: true },
-                { file: '.mvn/wrapper/MavenWrapperDownloader.java', method: 'copy', noEjs: true }
+            */
             ]
         }
     ]

@@ -2,6 +2,9 @@ const path = require('path');
 const fse = require('fs-extra');
 const assert = require('yeoman-assert');
 const helpers = require('yeoman-test');
+const constants = require('../generators/generator-nodejs-constants');
+
+const SERVER_NODEJS_DIR = `${constants.SERVER_NODEJS_SRC_DIR}/`;
 
 describe('Subgenerator nestjs-controller of nodejs JHipster blueprint', () => {
     describe('Sample test', () => {
@@ -34,7 +37,7 @@ describe('Subgenerator nestjs-controller of nodejs JHipster blueprint', () => {
 
         it('it works', () => {
             // Adds your tests here
-            assert.textEqual('Write your own tests!', 'Write your own tests!');
+            assert.file(`${SERVER_NODEJS_DIR}src/web/rest/foo.controller.ts`);
         });
     });
 });

@@ -2,9 +2,9 @@
 const chalk = require('chalk');
 const ServerGenerator = require('generator-jhipster/generators/server');
 const jhipsterConstants = require('generator-jhipster/generators/generator-constants');
-const os = require('os');
+// const jhipsterPackagejs = require('generator-jhipster/package.json');
 const jhipsterNodeConstants = require('../generator-nodejs-constants');
-const packagejs = require('../../package.json');
+const nodePackagejs = require('../../package.json');
 const writeFiles = require('./files').writeFiles;
 const prompts = require('./prompts');
 
@@ -15,7 +15,7 @@ module.exports = class extends ServerGenerator {
         const jhContext = (this.jhipsterContext = this.options.jhipsterContext);
 
         if (!jhContext) {
-            this.error(`This is a JHipster blueprint and should be used only like ${chalk.yellow('jhipster --blueprint nodejs')}`);
+            this.error(`This is a JHipster blueprint and should be used only like ${chalk.yellow('jhipster --blueprints nodejs')}`);
         }
 
         this.configOptions = jhContext.configOptions || {};
@@ -36,7 +36,7 @@ module.exports = class extends ServerGenerator {
                 this.log(`${chalk.yellow(' ██║ ╚████║')}${chalk.green(' ██║   ██║ ████████╗ ██║       ██████╔╝    ██║    ████████╗ ██║  ╚██╗')}`);
                 this.log(`${chalk.yellow(' ╚═╝  ╚═══╝')}${chalk.green(' ╚═╝   ╚═╝ ╚═══════╝ ╚═╝       ╚═════╝     ╚═╝    ╚═══════╝ ╚═╝   ╚═╝')}\n`);
                 this.log(chalk.white.bold('                            https://www.jhipster.tech\n'));
-                this.log(chalk.white('Welcome to NHipster (Jhipster NodeJS Official Blueprint) ') + chalk.yellow(`v${packagejs.version}`));
+                this.log(chalk.white('Welcome to NHipster (Jhipster NodeJS Official Blueprint) ') + chalk.yellow(`v${nodePackagejs.version}`));
                 this.log(chalk.white('This blueprint generates your backend in NodeJS with NestJS framework'));
 
                 this.log(
@@ -112,6 +112,9 @@ module.exports = class extends ServerGenerator {
                 this.testFrameworks =[];
 
                 /*
+                this.packagejs= jhipsterPackagejs;
+                this.jhipsterVersion=jhipsterPackagejs.version;
+
                 const configuration = this.getAllJhipsterConfig(this, true);
                 this.mongoProdDatabase = configuration.get('mongoProdDatabase');
                 */
@@ -159,20 +162,24 @@ module.exports = class extends ServerGenerator {
 
     get configuring() {
         const confPhaseFromJHipster = super._configuring();
-        const jhipsterConfigNodeSteps = {
+        /* const jhipsterConfigNodeSteps = {
             jhipsterNodeSaveConfig() {
                 const config = {
+                    serverPort: this.serverPort,
                     databaseType: this.databaseType,
                     devDatabaseType: this.devDatabaseType,
-                    prodDatabaseType: this.prodDatabaseType
+                    prodDatabaseType: this.prodDatabaseType,
+
+                   jhipsterVersion: this.jhipsterVersion
                 };
                 this.config.set(config);
             }
         };
-        return Object.assign(confPhaseFromJHipster, jhipsterConfigNodeSteps);
+         return Object.assign(confPhaseFromJHipster, jhipsterConfigNodeSteps);
+         */
 
         // Here we are not overriding this phase and hence its being handled by JHipster
-        // return confPhaseFromJHipster;
+        return confPhaseFromJHipster;
     }
 
     get default() {
@@ -195,21 +202,17 @@ module.exports = class extends ServerGenerator {
             jhipsterNodeEnd() {
                 this.log(chalk.green.bold('\nServer application generated successfully.\n'));
 
-                const executable = 'mvnw clean package -Pdev';
+                const executable = `${this.clientPackageManager} start:app`;
 
-                let logMsgComment = '';
-                const java = 'JAVA';
-                const serverREADME = 'server/README';
-                if (os.platform() === 'win32') {
-                    logMsgComment = ` (${chalk.yellow.bold(executable)} if using Windows Command Prompt)`;
-                }
+                const READMES = 'README.md and server/README.md';
+
                 this.log(
                     chalk.green(
-                        `Run your application:\n${chalk.yellow.bold(
-                            `./${executable}`
-                        )}${logMsgComment}.\n Otherwise, If you don't have ${chalk.yellow.bold(
-                            java
-                        )} installed, run the npm scripts explained under ${chalk.yellow.bold(serverREADME)}`
+                        `Run your application (after ${
+                            this.clientPackageManager
+                        } install in root folder and server folder) :\n ${chalk.yellow.bold(
+                            `${executable}`
+                        )}\nOtherwise, run the npm scripts explained under ${chalk.yellow.bold(READMES)}`
                     )
                 );
             }

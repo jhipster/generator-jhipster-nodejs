@@ -147,7 +147,13 @@ function writeFiles() {
         if (field.fieldIsEnum === true) {
             const fieldType = field.fieldType;
             const enumInfo = utils.buildEnumInfo(field, this.angularAppName, this.packageName, this.clientRootFolder);
-            this.template('src/domain/enumeration/Enum.ts.ejs', `src/domain/enumeration/${fieldType}.ts`, this, {}, enumInfo);
+            this.template(
+                `${SERVER_NODEJS_DIR}src/domain/enumeration/Enum.ts.ejs`,
+                `${SERVER_NODEJS_DIR}src/domain/enumeration/${fieldType}.ts`,
+                this,
+                {},
+                enumInfo
+            );
         }
     });
 

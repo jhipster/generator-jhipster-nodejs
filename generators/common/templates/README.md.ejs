@@ -46,7 +46,8 @@ This application is configured for Service Discovery and Configuration with <% i
 <%_ if (skipClient) { _%>
 To start your application in the dev profile, simply run:
 
-    <% if (buildTool === 'maven') { %>./mvnw<% } %><% if (buildTool === 'gradle'){ %>./gradlew<% } %>
+    cd server && <%= clientPackageManager %> install
+    <%= clientPackageManager %> start:app
 
 <%_ } _%>
 <%_ if (!skipClient) { _%>
@@ -211,66 +212,18 @@ will generate the file:
     create <%= SERVER_NODEJS_SRC_DIR %>/src/my-component/my-component.module.ts
 
 
-<%_ if (enableSwaggerCodegen) { _%>
-### Doing API-First development using openapi-generator
-
-[OpenAPI-Generator]() is configured for this application. You can generate API code from the `src/main/resources/swagger/api.yml` definition file by running:
-    <%_ if (buildTool === 'maven') { _%>
-```bash
-./mvnw generate-sources
-```
-    <%_ } _%>
-    <%_ if (buildTool === 'gradle') { _%>
-```bash
-./gradlew openApiGenerate
-```
-    <%_ } _%>
-Then implements the generated delegate classes with `@Service` classes.
-
-To edit the `api.yml` definition file, you can use a tool such as [Swagger-Editor](). Start a local instance of the swagger-editor using docker by running: `docker-compose -f src/main/docker/swagger-editor.yml up -d`. The editor will then be reachable at [http://localhost:7742](http://localhost:7742).
-
-Refer to [Doing API-First development][] for more details.
-<%_ } _%>
-
 ## Building and running
 
-You can run the application using mvnw command (if you have JAVA) or the npm standard scripts
-
-### With JAVA installed
-
 #### Running
 
 ```bash
-./mvnw clean package -Pdev
-```
-#### Building
-
-```bash
-./mvnw clean package -Pprod
-```
-
-### With node npm scripts
-
-<%_ if (!skipClient) { _%>
-
-As prerequisite, before you have to build the client code:
-    
-```bash
-<%= clientPackageManager %> build
-```
-<%_ } _%>
-
-#### Running
-
-
-```bash
-cd server && <%= clientPackageManager %> start
+<%= clientPackageManager %> start:app
 ```
 
 #### Building
 
 ```bash
-cd server && <%= clientPackageManager %> build
+<%= clientPackageManager %> build:app
 ```
 
 The build folder with all compiled sources will be **server/dist**.
@@ -285,7 +238,7 @@ Unit tests are run by [Jest][] and written with [Jasmine][]. They're located in 
     <%= clientPackageManager %> test
 
 <% if (protractorTests) { %>UI end-to-end tests are powered by [Protractor][], which is built on top of WebDriverJS. They're located in [<%= CLIENT_TEST_SRC_DIR %>e2e](<%= CLIENT_TEST_SRC_DIR %>e2e)
-and can be run by starting Spring Boot in one terminal (`<% if (buildTool === 'maven') { %>./mvnw spring-boot:run<% } else { %>./gradlew bootRun<% } %>`) and running the tests (`<%= clientPackageManager %> run e2e`) in a second one.<% } %>
+and can be run in terminal (`<%= clientPackageManager %> run e2e`)
 <% } %><% if (gatlingTests) { %>### Other tests
 
 Performance tests are run by [Gatling][] and written in Scala. They're located in [src/test/gatling](src/test/gatling).
@@ -293,6 +246,7 @@ Performance tests are run by [Gatling][] and written in Scala. They're located i
 To use those tests, you must install Gatling from [https://gatling.io/](https://gatling.io/).
 <% } %>
 For more information, refer to the [Running tests page][].
+<% } %>
 
 [JHipster Homepage and latest documentation]: <%= DOCUMENTATION_URL %>
 [JHipster <%= jhipsterVersion %> archive]: <%= DOCUMENTATION_ARCHIVE_URL %>
@@ -325,9 +279,4 @@ For more information, refer to the [Running tests page][].
 [Protractor]: https://angular.github.io/protractor/
 [Leaflet]: http://leafletjs.com/
 [DefinitelyTyped]: http://definitelytyped.org/
-<%_ } _%>
-<%_ if (enableSwaggerCodegen) { _%>
-[OpenAPI-Generator]: https://openapi-generator.tech
-[Swagger-Editor]: http://editor.swagger.io
-[Doing API-First development]: <%= DOCUMENTATION_ARCHIVE_URL %>/doing-api-first-development/
 <%_ } _%>

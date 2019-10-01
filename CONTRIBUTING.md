@@ -41,7 +41,7 @@ or
 
 `npm link "generator-jhipster" && npm link "generator-jhipster-nodejs"`
 
-( 🏁 Kudos, you have done it. It is the time to generate the application `jhipster --blueprint nodejs` )
+( 🏁 Kudos, you have done it. It is the time to generate the application `jhipster --blueprints nodejs` )
 
 ✨✨✨✨ You are rocking ✨✨✨✨
 

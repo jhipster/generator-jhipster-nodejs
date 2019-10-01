@@ -10,12 +10,13 @@ const fieldTypes = {
     Float: 'number',
     Double: 'number',
     BigDecimal: 'number',
-    String: '',
+    String: 'string',
     UUID: 'string',
-    LocalDate: 'string',
+    LocalDate: 'Date',
     Instant: 'Moment',
     ZonedDateTime: 'Moment',
     'byte[]': 'any',
+    text: 'string',
     ByteBuffer: 'any'
 };
 
@@ -26,7 +27,7 @@ module.exports = class extends EntityServerGenerator {
         const jhContext = (this.jhipsterContext = this.options.jhipsterContext);
 
         if (!jhContext) {
-            this.error(`This is a JHipster blueprint and should be used only like ${chalk.yellow('jhipster --blueprint nodejs')}`);
+            this.error(`This is a JHipster blueprint and should be used only like ${chalk.yellow('jhipster --blueprints nodejs')}`);
         }
 
         this.configOptions = jhContext.configOptions || {};
@@ -48,7 +49,7 @@ module.exports = class extends EntityServerGenerator {
         return super._end();
     }
 
-    getTsType(field) {
-        return field.fieldTypeBlobContent === 'text' ? 'string' : fieldTypes[field.fieldType] || 'any';
+    getTsType(fieldType) {
+        return fieldTypes[fieldType] || 'string';
     }
 };

@@ -2,7 +2,6 @@
 const chalk = require('chalk');
 // const constants = require('generator-jhipster/generators/generator-constants');
 const LanguagesGenerator = require('generator-jhipster/generators/languages');
-// const statistics = require('generator-jhipster/generators/statistics');
 
 module.exports = class extends LanguagesGenerator {
     constructor(args, opts) {
@@ -11,7 +10,7 @@ module.exports = class extends LanguagesGenerator {
         const jhContext = (this.jhipsterContext = this.options.jhipsterContext);
 
         if (!jhContext) {
-            this.error(`This is a JHipster blueprint and should be used only like ${chalk.yellow('jhipster --blueprint nodejs')}`);
+            this.error(`This is a JHipster blueprint and should be used only like ${chalk.yellow('jhipster --blueprints nodejs')}`);
         }
 
         this.configOptions = jhContext.configOptions || {};
