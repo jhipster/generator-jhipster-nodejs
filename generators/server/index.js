@@ -2,7 +2,6 @@
 const chalk = require('chalk');
 const ServerGenerator = require('generator-jhipster/generators/server');
 const jhipsterConstants = require('generator-jhipster/generators/generator-constants');
-const os = require('os');
 // const jhipsterPackagejs = require('generator-jhipster/package.json');
 const jhipsterNodeConstants = require('../generator-nodejs-constants');
 const nodePackagejs = require('../../package.json');
@@ -203,21 +202,17 @@ module.exports = class extends ServerGenerator {
             jhipsterNodeEnd() {
                 this.log(chalk.green.bold('\nServer application generated successfully.\n'));
 
-                const executable = 'mvnw clean package -Pdev';
+                const executable = `${this.clientPackageManager} start:app`;
 
-                let logMsgComment = '';
-                const java = 'JAVA';
-                const serverREADME = 'server/README';
-                if (os.platform() === 'win32') {
-                    logMsgComment = ` (${chalk.yellow.bold(executable)} if using Windows Command Prompt)`;
-                }
+                const READMES = 'README.md and server/README.md';
+
                 this.log(
                     chalk.green(
-                        `Run your application:\n${chalk.yellow.bold(
-                            `./${executable}`
-                        )}${logMsgComment}.\n Otherwise, If you don't have ${chalk.yellow.bold(
-                            java
-                        )} installed, run the npm scripts explained under ${chalk.yellow.bold(serverREADME)}`
+                        `Run your application (after ${
+                            this.clientPackageManager
+                        } install in root folder and server folder) :\n ${chalk.yellow.bold(
+                            `${executable}`
+                        )}\nOtherwise, run the npm scripts explained under ${chalk.yellow.bold(READMES)}`
                     )
                 );
             }

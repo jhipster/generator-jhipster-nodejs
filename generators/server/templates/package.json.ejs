@@ -25,6 +25,10 @@
   "cacheDirectories": [
     "node_modules"
   ],
+  "scripts": {
+    "build:app": "cd server && <%= clientPackageManager %> run build",
+    "start:app": "cd server && <%= clientPackageManager %> run start"
+  },
   "devDependencies": {
     <%_ otherModules.forEach(module => { _%>
     "<%= module.name %>": "<%= module.version %>",

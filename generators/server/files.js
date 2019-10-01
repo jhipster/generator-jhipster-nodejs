@@ -82,7 +82,7 @@ const serverFiles = {
         {
             templates: [
                 'package.json'
-                /* 'pom.xml',
+                /*
                 { file: '.mvn/wrapper/maven-wrapper.properties', method: 'copy', noEjs: true },
             */
             ]
