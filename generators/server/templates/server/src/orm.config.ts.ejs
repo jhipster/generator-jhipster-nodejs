@@ -27,6 +27,7 @@ if(process.env.NODE_ENV==='prod'){
     ormconfig = {
         name: 'default',
         type: '<%= prodDatabaseType %>',
+        database: '<%= baseName %>',
         url: '<%= prodDatabaseType %>://localhost:27017/<%= baseName %>',
         synchronize: true,
         logging: false,
