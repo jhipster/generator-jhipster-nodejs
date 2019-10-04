@@ -38,10 +38,11 @@ function askForMainServerSideOpts(meta) {
                     value: 'sqlite',
                     name: 'SQLite'
                 });
-                opts.push({
+                /* opts.push({
                     value: 'mongodb',
                     name: 'MongoDB'
                 });
+                */
                 opts.push({
                     value: 'mysql',
                     name: 'MySQL or MariaDB'

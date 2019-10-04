@@ -1,13 +1,26 @@
 import { TypeOrmModuleOptions } from '@nestjs/typeorm';
 
-let ormconfig: TypeOrmModuleOptions = {
+const commonConf = {
+    SYNCRONIZE: false,
+    ENTITIES: [__dirname + '/domain/*.entity{.ts,.js}'],
+    MIGRATIONS: [__dirname + '/migrations/**/*{.ts,.js}'],
+    CLI: {
+      migrationsDir: 'src/migrations',
+    },
+    MIGRATIONS_RUN: true,
+  };
+
+  let ormconfig: TypeOrmModuleOptions = {
     name: 'default',
-	type: 'sqlite',
+    type: 'sqlite',
     database: '../target/sqlite-dev-db.sql',
-    synchronize: true,
     logging: true,
-    entities: [__dirname + '/domain/*.entity{.ts,.js}'],
-};
+    synchronize: commonConf.SYNCRONIZE,
+    entities: commonConf.ENTITIES,
+    migrations: commonConf.MIGRATIONS,
+    cli: commonConf.CLI,
+    migrationsRun: commonConf.MIGRATIONS_RUN,
+  };
 
 <%_ if (prodDatabaseType === 'sqlite') { _%>
 
@@ -18,7 +31,11 @@ if(process.env.NODE_ENV==='prod'){
         database: '../target/sqlite-prod-db.sql',
         synchronize: true,
         logging: false,
-        entities: [__dirname + '/domain/*.entity{.ts,.js}'],
+        synchronize: commonConf.SYNCRONIZE,
+        entities: commonConf.ENTITIES,
+        migrations: commonConf.MIGRATIONS,
+        cli: commonConf.CLI,
+        migrationsRun: commonConf.MIGRATIONS_RUN,
     };
 }
 <%_ } else { _%>
@@ -28,10 +45,13 @@ if(process.env.NODE_ENV==='prod'){
         name: 'default',
         type: '<%= prodDatabaseType %>',
         database: '<%= baseName %>',
-        url: '<%= prodDatabaseType %>://localhost:27017/<%= baseName %>',
-        synchronize: true,
+        url: '<%= prodDatabaseType %>://<%= baseName %>:YOUR_PWD@localhost:27017/<%= baseName %>',
         logging: false,
-        entities: [__dirname + '/domain/*.entity{.ts,.js}'],
+        synchronize: commonConf.SYNCRONIZE,
+        entities: commonConf.ENTITIES,
+        migrations: commonConf.MIGRATIONS,
+        cli: commonConf.CLI,
+        migrationsRun: commonConf.MIGRATIONS_RUN,
     };
 }
 
