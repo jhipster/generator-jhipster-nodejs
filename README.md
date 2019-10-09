@@ -14,7 +14,7 @@
 
 # Greetings, nodejs Hipster!
 
-This project adds nodejs for your backend, **all pure typescript files generation, not JAVA REQUIREMENT AND CLASSES GENERATED!**, to the [JHipster](https://www.jhipster.tech/) application 😎. It is based on JHipster Blueprint 🔵, that is meant to be used in a JHipster application.
+This project adds nodejs for your backend, **all typescript files generation, not JAVA!**, to the [JHipster](https://www.jhipster.tech/) application 😎. It is based on JHipster Blueprint 🔵, that is meant to be used in a JHipster application.
 
 > The generator applies this standard configuration for the nodeJS app:
 
@@ -22,7 +22,7 @@ This project adds nodejs for your backend, **all pure typescript files generatio
 
 > 2. The app starts with four seed users (admin, basic user and anonymous roles), as standard jhipster monolithic app, with sqlite for dev and prod running
 
-> 3. The app uses [typeORM](https://github.com/nestjs/typeorm) and asks you a question if you don't want sqlite database in prod mode but using mongodb
+> 3. The app uses [typeORM](https://github.com/nestjs/typeorm) and asks you a question if you don't want sqlite database in prod mode but using onother sql db
 
 > 4. The app runs also as a full stack app including, for the monolitich choise, the angular client with the home page set for NHipster
 
@@ -85,16 +85,16 @@ yarn global upgrade generator-jhipster-nodejs
 ## 🚦 What we have now
 
 ✅ General App generation 
-   - `jhipster --blueprints nodejs`
+   - `jhipster --blueprint nodejs`
 
 ✅ Controller generation
-   - `jhipster spring-controller <controller-name> --blueprints nodejs`
+   - `jhipster spring-controller <controller-name> --blueprint nodejs`
   
 ✅ Entity generation
-   - `jhipster entity <entity-name> --blueprints nodejs`
+   - `jhipster entity <entity-name> --blueprint nodejs`
 
 ✅ JDL Entity model support generation
-   - `jhipster import-jdl my_file.jdl --blueprints nodejs`
+   - `jhipster import-jdl my_file.jdl --blueprint nodejs`
 
 ## ❤️ For community
 

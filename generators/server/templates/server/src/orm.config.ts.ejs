@@ -45,7 +45,7 @@ if(process.env.NODE_ENV==='prod'){
         name: 'default',
         type: '<%= prodDatabaseType %>',
         database: '<%= baseName %>',
-        url: '<%= prodDatabaseType %>://<%= baseName %>:YOUR_PWD@localhost:27017/<%= baseName %>',
+        url: '<%= prodDatabaseType %>://YOUR_USER:YOUR_PWD@localhost:27017/<%= baseName %>',
         logging: false,
         synchronize: commonConf.SYNCRONIZE,
         entities: commonConf.ENTITIES,

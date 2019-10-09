@@ -3,16 +3,15 @@
 
 # [1.0.0-alpha.3](https://github.com/jhipster/generator-jhipster-nodejs/tree/v1.0.0-alpha.3)
 
-- Add package.json template also for server generation without client [issue #49](https://github.com/jhipster/generator-jhipster-nodejs/issues/49)
-- Replace maven pom.xml (with JAVA requirement to run it) with a simple node script to manage profiles [issue #44](https://github.com/jhipster/generator-jhipster-nodejs/issues/44)
-- Enum generation error for import-jdl [issue #57](https://github.com/jhipster/generator-jhipster-nodejs/issues/57)
+- Remove maven with java optional requirement [issue #44](https://github.com/jhipster/generator-jhipster-nodejs/issues/44)
+- Enable TypeOrm migration schema and data for dev and prod [issue #36](https://github.com/jhipster/generator-jhipster-nodejs/issues/36)
 
 # [1.0.0-alpha.2](https://github.com/jhipster/generator-jhipster-nodejs/tree/v1.0.0-alpha.2)
 
 - Adding generic base scaffolder from the official blueprint generator
 - Running microservice or monolith project with default sqlite db
 - Import jdl: functional entity-server generator with simple options (no dto, no serviceImpl)
-- Typeorm mappings for both sql and mongodb 
+- Typeorm mappings for sql databases 
 - Rest API (with headers) compatible with other jhipster implementations
 - Spring Cloud Configuration client
 - Eureka client 

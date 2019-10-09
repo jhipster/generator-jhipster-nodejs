@@ -30,11 +30,12 @@ To contribute for the next featues, fork the repo and open a pull request regard
 - [x] Added controller generator (jhipster spring-controller _name_ command)
 - [x] Delete unuseful java questions not supported 
 - [x] Entity generator
-- [x] Automatic config in dev profile sqlite db and in prod mongodb or another db
+- [x] Automatic config in dev profile sqlite db and in prod another sql db
 - [x] All user and auth api with jwt integrated in angular ui
 - [x] Replaced mongoProdDatabase question with standard jhipster databaseType and with all db typeORM support
 - [x] Remove maven with option JAVA requirement
 - [x] Add package.json when no client
+- [x] Avoid reinsert seed db in restart app
 
 
 ## To DO for next release
@@ -42,7 +43,6 @@ To contribute for the next featues, fork the repo and open a pull request regard
 
 - [ ] Test prod database and update doc with react client
 - [ ] Encrypt user password in db
-- [ ] Avoid reinsert seed db in restart app
 - [ ] Languages subgenerator support i18n: translate home page for NHipster and remove spring boot resources message 
 - [ ] OAuth2 feature
 - [ ] Unit tests: both for the blueprint and for generated project
