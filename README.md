@@ -96,6 +96,10 @@ yarn global upgrade generator-jhipster-nodejs
 ✅ JDL Entity model support generation
    - `jhipster import-jdl my_file.jdl --blueprint nodejs`
 
+For the last, in the **examples-jdl** there are some examples of jdl models.
+
+> Please attention that SQLite does not support enum
+
 ## ❤️ For community
 
 Found an [issue](https://github.com/jhipster/generator-jhipster-nodejs/issues), check if is already opened or closed, otherwise open a new [feature or bug](https://github.com/jhipster/generator-jhipster-nodejs/issues/new/choose).
