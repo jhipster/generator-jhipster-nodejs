@@ -29,7 +29,6 @@ if(process.env.NODE_ENV==='prod'){
         name: 'default',
         type: 'sqlite',
         database: '../target/sqlite-prod-db.sql',
-        synchronize: true,
         logging: false,
         synchronize: commonConf.SYNCRONIZE,
         entities: commonConf.ENTITIES,

@@ -1,13 +1,17 @@
-import { getConnection, MigrationInterface, QueryRunner } from 'typeorm';
+import { MigrationInterface, QueryRunner } from 'typeorm';
 
 export class CreateTables1570200270081 implements MigrationInterface {
+  public async up(queryRunner: QueryRunner): Promise<any> {
 
-    public async up(queryRunner: QueryRunner): Promise<any> {
-      await getConnection().synchronize();
+    if (queryRunner.isTransactionActive) {
+      await queryRunner.commitTransaction();
     }
 
-    // tslint:disable-next-line
-    public async down(_: QueryRunner): Promise<any> {
-    }
 
+    await queryRunner.connection.synchronize();
+
+  }
+
+  // tslint:disable-next-line
+  public async down(queryRunner: QueryRunner): Promise<any> { }
 }
