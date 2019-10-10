@@ -5,11 +5,11 @@ export abstract class BaseEntity {
    @PrimaryGeneratedColumn('uuid')
    id?: string;
 
-   @Column()
+   @Column({ nullable: true })
    createdBy?: string;
    @Column({ nullable: true })
    createdDate?: Date;
-   @Column()
+   @Column({ nullable: true })
    lastModifiedBy?: string;
    @Column({ nullable: true })
    lastModifiedDate?: Date;

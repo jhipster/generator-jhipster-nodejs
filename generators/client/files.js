@@ -1,6 +1,7 @@
 const jhipsterConstants = require('generator-jhipster/generators/generator-constants');
 
 const ANGULAR_DIR = jhipsterConstants.ANGULAR_DIR;
+const REACT_DIR = jhipsterConstants.REACT_DIR;
 
 const clientFiles = {
     common: [
@@ -27,7 +28,19 @@ const clientFiles = {
                 {
                     file: 'angular/home/home.component.html',
                     method: 'processHtml',
-                    renameTo: () => `${ANGULAR_DIR}/home/home.component.html`
+                    renameTo: () => `${ANGULAR_DIR}home/home.component.html`
+                }
+            ]
+        }
+    ],
+    reactMain: [
+        {
+            condition: generator => generator.clientFramework === 'react',
+            templates: [
+                {
+                    file: 'react/home/home.tsx',
+                    method: 'processJsx',
+                    renameTo: () => `${REACT_DIR}modules/home/home.tsx`
                 }
             ]
         }
