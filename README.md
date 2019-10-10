@@ -24,7 +24,9 @@ This project adds nodejs for your backend, **all typescript files generation, no
 
 > 3. The app uses [typeORM](https://github.com/nestjs/typeorm) and asks you a question if you don't want sqlite database in prod mode but using onother sql db
 
-> 4. The app runs also as a full stack app including, for the monolitich choise, the angular client with the home page set for NHipster
+> 4. TypeORM is also used for the automatically migration and versioning of the database scripts
+
+> 5. The app runs also as a full stack app including, for the monolitich choise, the angular client with the home page set for NHipster
 
 <div align="center">
 		<img src="https://raw.githubusercontent.com/jhipster/generator-jhipster-nodejs/v1.0.0-alpha.2/nhipster-cli.png">
