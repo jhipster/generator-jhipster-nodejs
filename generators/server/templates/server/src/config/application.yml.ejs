@@ -1,7 +1,7 @@
 # ===================================================================
-# Spring Boot configuration.
+# Configuration.
 #
-# This configuration will be overridden by the Spring profile you use,
+# This configuration will be overridden by the NODE_ENV you use,
 # for example application-dev.yml if you use the "dev" profile.
 #
 # More information on profiles: https://www.jhipster.tech/profiles/
@@ -30,7 +30,6 @@ eureka:
     health-check-url-path: ${management.endpoints.web.base-path}/health
     metadata-map:
       zone: primary # This is needed for the load balancer
-      profile: ${spring.profiles.active}
       version: #project.version#
       git-version: ${git.commit.id.describe:}
       git-commit: ${git.commit.id.abbrev:}
@@ -70,15 +69,15 @@ jhipster:
     license:
     license-url:
 
-spring:
-  cloud:
-    config:
-      uri: http://admin:${jhipster.registry.password}@localhost:8761/config
-      # name of the config server's property source (file.yml) that we want to use
-      name: <%= baseName %>
-      profile: prod # profile(s) of the property source
-      label: master # toggle to switch to a different version of the configuration as stored in git
-      # it can be set to any label, branch or commit of the configuration source Git repository
+
+cloud:
+  config:
+    uri: http://admin:${jhipster.registry.password}@localhost:8761/config
+  # name of the config server's property source (file.yml) that we want to use
+    name: <%= baseName %>
+    profile: prod # profile(s) of the property source
+    label: master # toggle to switch to a different version of the configuration as stored in git
+    # it can be set to any label, branch or commit of the configuration source Git repository
 
 # ===================================================================
 # Application specific properties

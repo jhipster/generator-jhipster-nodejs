@@ -21,7 +21,7 @@ To contribute for the next featues, fork the repo and open a pull request regard
 - [x] Import jdl: functional entity-server generator with simple options (no dto, no serviceImpl)
 - [x] Typeorm mappings for both sql and mongodb 
 - [x] Rest API (with headers) compatible with other jhipster implementations
-- [x] Spring Cloud Configuration client
+- [x] Cloud Configuration client
 - [x] Eureka client (but there are some issues registering zuul routes in jhipster registry app)
 - [x] JWT authentication and role base method decorators
 - [x] Swagger documentation
