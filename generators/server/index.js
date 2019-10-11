@@ -78,12 +78,12 @@ module.exports = class extends ServerGenerator {
                 );
                 this.log(
                     chalk.green.bold(
-                        ' 3. TypeORM usage with SQLite development database\n'
+                        ' 3. TypeORM usage with SQLite development database and versioning/migration\n'
                     )
                 );
                 this.log(
                     chalk.green.bold(
-                        ' 4. Initial load data seed with users (using auth roles) integrated with the angular client (monolithic application type)\n'
+                        ' 4. Initial load data seed with users (using auth roles) integrated with the angular/react client\n'
                     )
                 );
                 this.log(

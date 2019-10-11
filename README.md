@@ -7,7 +7,7 @@
 
 <div align="center">
 	<a href="https://github.com/jhipster/generator-jhipster-nodejs">
-		<img width="160" height="200" src="https://raw.githubusercontent.com/jhipster/generator-jhipster-nodejs/v1.0.0-alpha.2/logo-nhipster.png">
+		<img width="160" height="200" src="https://raw.githubusercontent.com/jhipster/generator-jhipster-nodejs/v1.0.0-alpha.3/logo-nhipster.png">
 	</a>
 </div>
 
@@ -29,14 +29,14 @@ This project adds nodejs for your backend, **all typescript files generation, no
 > 5. The app runs also as a full stack app including, for the monolitich choise, the angular/react client with the home page set for NHipster and CRUD operation for entity generated with subgenerator and jdl import
 
 <div align="center">
-		<img src="https://raw.githubusercontent.com/jhipster/generator-jhipster-nodejs/v1.0.0-alpha.2/nhipster-cli.png">
+		<img src="https://raw.githubusercontent.com/jhipster/generator-jhipster-nodejs/v1.0.0-alpha.3/nhipster-cli.gif">
 </div>
 
 
-> A **generated example app** is [here](https://github.com/jhipster/jhipster-sample-app-nodejs/tree/v1.0.0-alpha.2) 
+> A **generated example app** is [here](https://github.com/jhipster/jhipster-sample-app-nodejs/tree/v1.0.0-alpha.3) 
 
 <div align="center">
-		<img src="https://raw.githubusercontent.com/jhipster/generator-jhipster-nodejs/v1.0.0-alpha.2/demo-full-app.gif">
+		<img src="https://raw.githubusercontent.com/jhipster/generator-jhipster-nodejs/v1.0.0-alpha.3/demo-full-app.gif">
 </div>
 
 
