@@ -2,7 +2,7 @@
  * This is the application and entity model for university elearning
  * default values: https://www.jhipster.tech/jdl/#annexes
  * Use "jhipster import-jdl example-1.jh --blueprints nodejs" to generate the entire application
- * Use jhipster 6.x (example 6.4.0)
+ * Use jhipster 6.x (example 6.4.1)
  */
 
 
