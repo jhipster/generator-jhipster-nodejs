@@ -11,6 +11,9 @@
 	</a>
 </div>
 
+> ## Notes
+>
+> For the features of the last release refers to [CHANGELOG.md](https://github.com/jhipster/generator-jhipster-nodejs/blob/master/CHANGELOG.md).
 
 # Greetings, nodejs Hipster!
 
@@ -18,15 +21,15 @@ This project adds nodejs for your backend, **all typescript files generation, no
 
 > The generator applies this standard configuration for the nodeJS app:
 
-> 1. NestJS base app with web controllers, [swagger doc](https://github.com/nestjs/swagger) and [jwt passport auth](https://github.com/nestjs/passport) services
+> * NestJS base app with web controllers, [swagger doc](https://github.com/nestjs/swagger) and [jwt passport auth](https://github.com/nestjs/passport) services
 
-> 2. The app starts with four seed users (admin, basic user and anonymous roles), as standard jhipster monolithic app, with SQLite for dev and configurable sql db for prod
+> * The app starts with four seed users (admin, basic user and anonymous roles), as standard jhipster monolithic app, with SQLite for dev and configurable sql db for prod
 
-> 3. The app uses [typeORM](https://github.com/nestjs/typeorm) and asks you a question if you don't want SQLite database in prod mode but using onother sql db
+> * The app uses [typeORM](https://github.com/nestjs/typeorm) and asks you a question if you don't want SQLite database in prod mode but using onother sql db
 
-> 4. TypeORM is also used for the automatically migration and versioning of the database scripts
+> * TypeORM is also used for the automatically migration and versioning of the database scripts
 
-> 5. The app runs also as a full stack app including, for the monolitich choise, the angular/react client with the home page set for NHipster and CRUD operations for entity generated with subgenerator and jdl import
+> * The app runs also as a full stack app including, for the monolitich choise, the angular/react client with the home page set for NHipster and CRUD operations for entity generated with subgenerator and jdl import
 
 <div align="center">
 		<img src="https://raw.githubusercontent.com/jhipster/generator-jhipster-nodejs/v1.0.0-alpha.3/nhipster-cli.gif">
@@ -108,7 +111,7 @@ Found an [issue](https://github.com/jhipster/generator-jhipster-nodejs/issues), 
 
 Interested in contributing, check out our [contributing guide](https://github.com/jhipster/generator-jhipster-nodejs/blob/master/CONTRIBUTING.md) to get started.
 
-Refers for contribution to [roadmap](https://github.com/jhipster/generator-jhipster-nodejs/blob/master/ROADMAP.md) or to [kanban board](https://github.com/jhipster/generator-jhipster-nodejs/projects/1?fullscreen=true).
+Refer for contribution to [roadmap](https://github.com/jhipster/generator-jhipster-nodejs/blob/master/ROADMAP.md) or to [kanban board](https://github.com/jhipster/generator-jhipster-nodejs/projects/1?fullscreen=true).
 
 Any questions [Angelo Manganiello](mailto:angelo.mang@libero.it).
 
