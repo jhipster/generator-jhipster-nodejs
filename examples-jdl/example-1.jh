@@ -2,7 +2,7 @@
  * This is the application and entity model for university elearning
  * default values: https://www.jhipster.tech/jdl/#annexes
  * Use "jhipster import-jdl example-1.jh --blueprints nodejs" to generate the entire application
- * Use jhipster 6.x (example 6.3.1)
+ * Use jhipster 6.x (example 6.4.0)
  */
 
 
@@ -63,22 +63,22 @@ entity SingleCourse {
 
 
 relationship ManyToMany {
-           
+
 	DemetraUser{coursetitle(title)} to SingleCourse{cfstudent(cf)},
 }
 
 
 /*
 relationship OneToMany {
-   
+
  DemetraUser{singlecourseteacher} to SingleCourse{cfteacher(cf) required}
-    
+
 }
  */
 
 // Set pagination options
 // paginate PostMessage with infinite-scroll
-paginate all with pagination
+// paginate all with pagination
 
 // Use Data Transfert Objects (DTO)
 // dto * with mapstruct

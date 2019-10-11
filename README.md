@@ -20,9 +20,9 @@ This project adds nodejs for your backend, **all typescript files generation, no
 
 > 1. NestJS base app with web controllers, [swagger doc](https://github.com/nestjs/swagger) and [jwt passport auth](https://github.com/nestjs/passport) services
 
-> 2. The app starts with four seed users (admin, basic user and anonymous roles), as standard jhipster monolithic app, with sqlite for dev and prod running
+> 2. The app starts with four seed users (admin, basic user and anonymous roles), as standard jhipster monolithic app, with SQLite for dev and configurable sql db for prod
 
-> 3. The app uses [typeORM](https://github.com/nestjs/typeorm) and asks you a question if you don't want sqlite database in prod mode but using onother sql db
+> 3. The app uses [typeORM](https://github.com/nestjs/typeorm) and asks you a question if you don't want SQLite database in prod mode but using onother sql db
 
 > 4. TypeORM is also used for the automatically migration and versioning of the database scripts
 

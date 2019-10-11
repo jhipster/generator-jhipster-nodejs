@@ -32,7 +32,7 @@
     "chalk": "2.4.2",
     "commander": "2.20.0",
     "ejs": "2.6.1",
-    "generator-jhipster": "6.3.1",
+    "generator-jhipster": "6.4.0",
     "glob": "7.1.4",
     "gulp-filter": "6.0.0",
     "insight": "0.10.3",

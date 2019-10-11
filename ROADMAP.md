@@ -7,9 +7,9 @@ To contribute for the next featues, fork the repo and open a pull request regard
 
 * Blueprint to generate monolitich/microservice app with NestJS basic templates
 * Swagger support
-* Entity ORM generation for prod database (mongodb) and dev database (default db is sqlite already configured)
+* Entity ORM generation for prod database (sql) and dev database (default db is sqlite already configured)
 * Basic security management with jwt
-* Maven simple orchestration to run server with client part in case of monolithic app with frontend code
+* Maven simple orchestration to run server with client part in case of monolithic app using frontend code
 * All subgenerators (without services)
 
 > Let it free to give advices or tips!
@@ -36,7 +36,7 @@ To contribute for the next featues, fork the repo and open a pull request regard
 - [x] Remove maven with option JAVA requirement
 - [x] Add package.json when no client
 - [x] Avoid reinsert seed db in restart app using typeORM migration
-- [x] Test prod mysql database and update doc with react client
+- [x] Test prod mysql database and update doc with angular/react client
 
 
 ## To DO for next release
@@ -49,7 +49,7 @@ To contribute for the next featues, fork the repo and open a pull request regard
 - [ ] Validation
 - [ ] Export json/yaml for swagger to integrate with jhipster gateway
 - [ ] Needs way more testing of different relations, combinations for entity
-- [ ] Different pagination options
+- [ ] pagination options in client
 - [ ] Elastic Search support
 - [ ] Search api
 - [ ] Other core/admin jhipster management api and services with sending email

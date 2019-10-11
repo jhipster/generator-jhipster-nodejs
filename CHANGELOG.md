@@ -6,7 +6,7 @@
 - Remove maven with java optional requirement [issue #44](https://github.com/jhipster/generator-jhipster-nodejs/issues/44)
 - Enable TypeOrm migration schema and data for dev and prod [issue #36](https://github.com/jhipster/generator-jhipster-nodejs/issues/36)
 - Test and information about prod database connection and running [issue #51](https://github.com/jhipster/generator-jhipster-nodejs/issues/51)
-- Support full generation with jdl for react client and test CRUD entity operations with dev and prod databases [issue #62](https://github.com/jhipster/generator-jhipster-nodejs/issues/51)
+- Support full generation with jdl for angular/react client and test CRUD entity operations with dev and prod databases [issue #62](https://github.com/jhipster/generator-jhipster-nodejs/issues/51)
 - Resolved bug of prod database not added from jdl [issue #61](https://github.com/jhipster/generator-jhipster-nodejs/issues/61)
 
 # [1.0.0-alpha.2](https://github.com/jhipster/generator-jhipster-nodejs/tree/v1.0.0-alpha.2)
