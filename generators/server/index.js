@@ -102,7 +102,6 @@ module.exports = class extends ServerGenerator {
                 this.websocket = jhipsterNodeConstants.WEB_SOCKET_NODEJS;
                 this.databaseType = jhipsterNodeConstants.DATABASE_TYPE_NODEJS;
                 this.devDatabaseType = jhipsterNodeConstants.DEV_DATABASE_TYPE_NODEJS;
-                this.prodDatabaseType = jhipsterNodeConstants.PROD_DATABASE_TYPE_NODEJS;
                 this.searchEngine = jhipsterNodeConstants.SEARCH_ENGINE_NODEJS;
                 this.messageBroker = jhipsterNodeConstants.MESSAGE_BROKER_NODEJS;
                 this.serviceDiscoveryType = jhipsterNodeConstants.SERVICE_DISCOVERY_TYPE_NODEJS;
@@ -162,24 +161,23 @@ module.exports = class extends ServerGenerator {
 
     get configuring() {
         const confPhaseFromJHipster = super._configuring();
-        /* const jhipsterConfigNodeSteps = {
+        const jhipsterConfigNodeSteps = {
             jhipsterNodeSaveConfig() {
                 const config = {
-                    serverPort: this.serverPort,
+                    /* serverPort: this.serverPort,
                     databaseType: this.databaseType,
-                    devDatabaseType: this.devDatabaseType,
                     prodDatabaseType: this.prodDatabaseType,
-
-                   jhipsterVersion: this.jhipsterVersion
+                    jhipsterVersion: this.jhipsterVersion,
+                    */
+                    devDatabaseType: this.devDatabaseType
                 };
                 this.config.set(config);
             }
         };
-         return Object.assign(confPhaseFromJHipster, jhipsterConfigNodeSteps);
-         */
+        return Object.assign(confPhaseFromJHipster, jhipsterConfigNodeSteps);
 
         // Here we are not overriding this phase and hence its being handled by JHipster
-        return confPhaseFromJHipster;
+        // return confPhaseFromJHipster;
     }
 
     get default() {

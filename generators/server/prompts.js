@@ -70,19 +70,20 @@ function askForMainServerSideOpts(meta) {
     const done = this.async();
 
     this.prompt(PROMPT).then(prompt => {
+        this.databaseType = 'sql';
+        this.devDatabaseType = 'sqlite';
+        this.prodDatabaseType = prompt.prodDatabaseType;
         this.serverPort = prompt.serverPort;
+
         if (this.serverPort === undefined) {
             this.serverPort = defaultPort;
         }
 
-        this.devDatabaseType = 'sqlite';
-        this.prodDatabaseType = prompt.prodDatabaseType;
-
+        /*
         if (this.prodDatabaseType === 'mongodb') {
             this.databaseType = 'mongodb';
-        } else {
-            this.databaseType = 'sql';
         }
+        */
 
         done();
     });
