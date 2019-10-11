@@ -61,14 +61,15 @@ export class <%= entityClass %>Controller {
     return created;
   }
 
-  @Put('/:id')
+  @Put('/')
   @ApiOperation({ title: 'Update <%= asEntity(entityInstance) %>' })
   @ApiResponse({
     status: 200,
     description: 'The record has been successfully updated.',
     type: <%= entityClass %>,
   })
-  put(@Req() req: Request, @Param('id') id: string, @Body() <%= asEntity(entityInstance) %>: <%= entityClass %>) {
+  put(@Req() req: Request, @Body() <%= asEntity(entityInstance) %>: <%= entityClass %>) {
+    const id = <%= asEntity(entityInstance) %>.id;
     HeaderUtil.addEntityCreatedHeaders(req.res, '<%= entityClass %>', id);
     return this.<%= asEntity(entityInstance) %>Repository.update(id, <%= asEntity(entityInstance) %>);
   }

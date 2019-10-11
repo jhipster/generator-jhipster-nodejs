@@ -36,12 +36,11 @@ To contribute for the next featues, fork the repo and open a pull request regard
 - [x] Remove maven with option JAVA requirement
 - [x] Add package.json when no client
 - [x] Avoid reinsert seed db in restart app using typeORM migration
+- [x] Test prod mysql database and update doc with react client
 
 
 ## To DO for next release
 
-
-- [ ] Test prod database and update doc with react client
 - [ ] Encrypt user password in db
 - [ ] Languages subgenerator support i18n: translate home page for NHipster and remove spring boot resources message 
 - [ ] OAuth2 feature

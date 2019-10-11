@@ -15,7 +15,7 @@ const commonConf = {
     type: 'sqlite',
     database: '../target/sqlite-dev-db.sql',
     logging: true,
-    synchronize: commonConf.SYNCRONIZE,
+    synchronize: true,
     entities: commonConf.ENTITIES,
     migrations: commonConf.MIGRATIONS,
     cli: commonConf.CLI,
@@ -39,7 +39,7 @@ if(process.env.NODE_ENV==='prod'){
 }
 <%_ } else { _%>
 
-if(process.env.NODE_ENV==='prod'){
+if(process.env.NODE_ENV === 'prod'){
     ormconfig = {
         name: 'default',
         type: '<%= prodDatabaseType %>',
