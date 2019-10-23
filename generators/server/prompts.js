@@ -38,7 +38,7 @@ function askForMainServerSideOpts(meta) {
                     value: 'jwt',
                     name: 'JWT authentication (stateless, with a token)'
                 });
-                 opts.push({
+                opts.push({
                     value: 'oauth2',
                     name: 'OAuth 2.0 / OIDC Authentication (stateful, works with Okta)'
                 });
