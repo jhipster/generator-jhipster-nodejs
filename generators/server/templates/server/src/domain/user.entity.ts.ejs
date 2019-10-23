@@ -16,7 +16,7 @@ export class User extends BaseEntity {
   @Column()
   lastName?: string;
   @ApiModelProperty({ example: 'user@localhost', description: 'User email' })
-  @Column()
+  @Column({ nullable: true })
   email?: string;
   @ApiModelProperty({ example: 'true', description: 'User activation' })
   @Column()

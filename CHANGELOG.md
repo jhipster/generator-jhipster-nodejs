@@ -1,5 +1,10 @@
+<a name="1.0.0-alpha.4"></a>
 <a name="1.0.0-alpha.3"></a>
 <a name="1.0.0-alpha.2"></a>
+
+# [1.0.0-alpha.4](https://github.com/jhipster/generator-jhipster-nodejs/tree/v1.0.0-alpha.4)
+
+- Support okta oauth2 security feature [issue #52](https://github.com/jhipster/generator-jhipster-nodejs/issues/52)
 
 # [1.0.0-alpha.3](https://github.com/jhipster/generator-jhipster-nodejs/tree/v1.0.0-alpha.3)
 
