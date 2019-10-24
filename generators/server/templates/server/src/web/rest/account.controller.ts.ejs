@@ -8,20 +8,21 @@ import { PageRequest, Page } from '../../domain/base/pagination.entity';
 import { User } from '../../domain/user.entity';
 import { HeaderUtil } from '../../client/header-util';
 import { LoggingInterceptor } from '../../client/interceptors/logging.interceptor';
-import { ApiBearerAuth, ApiUseTags, ApiResponse, ApiOperation } from '@nestjs/swagger';
+import {<%_ if (authenticationType === 'jwt') { _%> ApiBearerAuth, <%_ } _%> ApiUseTags, ApiResponse, ApiOperation } from '@nestjs/swagger';
 import { AuthService } from '../../service/auth.service';
 
 @Controller('api')
 @UseInterceptors(LoggingInterceptor)
+<%_ if (authenticationType === 'jwt') { _%>
 @UseGuards(AuthGuard, RolesGuard)
-@UseInterceptors(LoggingInterceptor)
 @ApiBearerAuth()
+<%_ } _%>
 @ApiUseTags('account-resource')
 export class AccountController {
   logger = new Logger('AccountController');
 
   constructor(private readonly authService: AuthService) { }
-
+  <%_ if (authenticationType === 'jwt') { _%>
   @Post('/register')
   @ApiOperation({ title: 'Register user' })
   @ApiResponse({
@@ -108,5 +109,24 @@ export class AccountController {
   async finishPasswordReset(@Req() req: Request, @Body() keyAndPassword: string, @Res() res: Response) {
     return res.sendStatus(201);
   }
+
+  <%_ } else if (authenticationType === 'oauth2') { _%>
+
+  @Get('/account')
+  @ApiOperation({ title: 'Get the current user if logged' })
+  @ApiResponse({
+    status: 200,
+    description: 'User retrieved',
+  })
+  async getAccount(@Req() req: any) {
+    const user: User = req.session.user;
+    if (user) {
+      return user;
+    }
+    return;
+
+  }
+
+  <%_ } _%>
 
 }

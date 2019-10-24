@@ -1,14 +1,20 @@
 
-import { Module } from '@nestjs/common';
+import { Module <%_ if (authenticationType === 'oauth2') { _%> , HttpModule <%_ } _%> } from '@nestjs/common';
 import { AuthService } from '../service/auth.service';
 import { UserModule } from '../module/user.module';
 import { PassportModule } from '@nestjs/passport';
+<%_ if (authenticationType === 'jwt') { _%>
 import { JwtModule } from '@nestjs/jwt';
-import { config } from '../config/config';
 import { JwtStrategy } from '../security/passport.jwt.strategy';
+import { UserJWTController} from '../web/rest/user.jwt.controller';
+<%_ } else if (authenticationType === 'oauth2') { _%>
+import { Oauth2Strategy } from '../security/passport.oauth2.strategy';
+import { UserOauth2Controller } from '../web/rest/user.oauth2.controller';
+<%_ } _%>
+import { config } from '../config/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthorityRepository } from '../repository/authority.repository';
-import { UserJWTController} from '../web/rest/user.jwt.controller';
+
 import { AuthController} from '../web/rest/auth.controller';
 import { AccountController } from '../web/rest/account.controller';
 
@@ -16,13 +22,29 @@ import { AccountController } from '../web/rest/account.controller';
   imports: [TypeOrmModule.forFeature([AuthorityRepository]),
   UserModule,
   PassportModule,
+  <%_ if (authenticationType === 'jwt') { _%>
     JwtModule.register({
       secret: config['jhipster.security.authentication.jwt.base64-secret'],
       signOptions: { expiresIn: '300s' },
     }),
+  <%_ } else if (authenticationType === 'oauth2') { _%>
+  HttpModule,
+  <%_ } _%>
   ],
-  controllers: [UserJWTController, AuthController, AccountController ],
-  providers: [AuthService, JwtStrategy],
+  controllers: [
+  <%_ if (authenticationType === 'jwt') { _%>
+  UserJWTController,
+  <%_ } else if (authenticationType === 'oauth2') { _%>
+  UserOauth2Controller,
+  <%_ } _%>
+  AuthController, AccountController ],
+  providers: [AuthService,
+  <%_ if (authenticationType === 'jwt') { _%>
+  JwtStrategy
+  <%_ } else if (authenticationType === 'oauth2') { _%>
+  Oauth2Strategy
+  <%_ } _%>
+  ],
   exports: [AuthService],
 })
 export class AuthModule {}

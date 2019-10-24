@@ -35,7 +35,6 @@ const serverFiles = {
                 'src/web/rest/auth.controller.ts',
                 'src/web/rest/management.controller.ts',
                 'src/web/rest/management.controller.spec.ts',
-                'src/web/rest/user.jwt.controller.ts',
                 'src/repository/user.repository.ts',
                 'src/repository/authority.repository.ts',
                 'src/module/user.module.ts',
@@ -54,14 +53,11 @@ const serverFiles = {
                 'src/security/role-type.ts',
                 'src/security/decorators/auth-user.decorator.ts',
                 'src/security/decorators/roles.decorator.ts',
-                'src/security/passport.jwt.strategy.ts',
-                'src/security/payload.interface.ts',
                 'src/security/index.ts',
                 'src/client/header-util.ts',
                 'src/client/interceptors/logging.interceptor.ts',
                 'src/service/auth.service.ts',
                 'src/service/user.service.ts',
-                'src/service/dto/user-login.dto.ts',
                 'src/main.ts',
                 'src/swagger.ts',
                 'src/app.module.ts',
@@ -79,14 +75,33 @@ const serverFiles = {
                 'tsconfig.json',
                 'README.md'
             ]
-        },
+        }
+    ],
+    other: [
         {
             templates: [
                 'package.json'
                 /*
-                { file: '.mvn/wrapper/maven-wrapper.properties', method: 'copy', noEjs: true },
-            */
+                    { file: '.mvn/wrapper/maven-wrapper.properties', method: 'copy', noEjs: true },
+                */
             ]
+        }
+    ],
+    jwt: [
+        {
+            condition: generator => generator.authenticationType === 'jwt',
+            templates: [
+                'src/web/rest/user.jwt.controller.ts',
+                'src/security/passport.jwt.strategy.ts',
+                'src/security/payload.interface.ts',
+                'src/service/dto/user-login.dto.ts'
+            ]
+        }
+    ],
+    oauth2: [
+        {
+            condition: generator => generator.authenticationType === 'oauth2',
+            templates: ['src/web/rest/user.oauth2.controller.ts', 'src/security/passport.oauth2.strategy.ts']
         }
     ]
 };

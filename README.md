@@ -7,7 +7,7 @@
 
 <div align="center">
 	<a href="https://github.com/jhipster/generator-jhipster-nodejs">
-		<img width="160" height="200" src="https://raw.githubusercontent.com/jhipster/generator-jhipster-nodejs/v1.0.0-alpha.3/logo-nhipster.png">
+		<img width="160" height="200" src="https://raw.githubusercontent.com/jhipster/generator-jhipster-nodejs/v1.0.0-alpha.4/logo-nhipster.png">
 	</a>
 </div>
 
@@ -21,7 +21,7 @@ This project adds nodejs for your backend, **all typescript files generation, no
 
 > The generator applies this standard configuration for the nodeJS app:
 
-> * NestJS base app with web controllers, [swagger doc](https://github.com/nestjs/swagger) and [jwt passport auth](https://github.com/nestjs/passport) services
+> * NestJS base app with web controllers, [swagger doc](https://github.com/nestjs/swagger) and [jwt or oauth2 passport auth](https://github.com/nestjs/passport) services
 
 > * The app starts with four seed users (admin, basic user and anonymous roles), as standard jhipster monolithic app, with SQLite for dev and configurable sql db for prod
 
@@ -32,14 +32,14 @@ This project adds nodejs for your backend, **all typescript files generation, no
 > * The app runs also as a full stack app including, for the monolitich choise, the angular/react client with the home page set for NHipster and CRUD operations for entity generated with subgenerator and jdl import
 
 <div align="center">
-		<img src="https://raw.githubusercontent.com/jhipster/generator-jhipster-nodejs/v1.0.0-alpha.3/nhipster-cli.gif">
+		<img src="https://raw.githubusercontent.com/jhipster/generator-jhipster-nodejs/v1.0.0-alpha.4/nhipster-cli.gif">
 </div>
 
 
-> A **generated example app** is [here](https://github.com/jhipster/jhipster-sample-app-nodejs/tree/v1.0.0-alpha.3) 
+> A **generated example app** is [here](https://github.com/jhipster/jhipster-sample-app-nodejs/tree/v1.0.0-alpha.4) 
 
 <div align="center">
-		<img src="https://raw.githubusercontent.com/jhipster/generator-jhipster-nodejs/v1.0.0-alpha.3/demo-full-app.gif">
+		<img src="https://raw.githubusercontent.com/jhipster/generator-jhipster-nodejs/v1.0.0-alpha.4/demo-full-app.gif">
 </div>
 
 
@@ -54,7 +54,7 @@ As this is a [JHipster](https://www.jhipster.tech/) blueprint, we expect you hav
 
 1. Make sure you have followed the [JHipster installation guide](https://www.jhipster.tech/installation) and that both `yeoman` and `jhipster` are installed.
 2. Install the package with `npm install -g generator-jhipster-nodejs`
-3. And generate the application with `jhipster --blueprint nodejs`
+3. And generate the application with `jhipster --blueprints nodejs`
 
 
 # Installation Details
@@ -90,16 +90,16 @@ yarn global upgrade generator-jhipster-nodejs
 ## 🚦 What we have now
 
 ✅ General App generation 
-   - `jhipster --blueprint nodejs`
+   - `jhipster --blueprints nodejs`
 
 ✅ Controller generation
-   - `jhipster spring-controller <controller-name> --blueprint nodejs`
+   - `jhipster spring-controller <controller-name> --blueprints nodejs`
   
 ✅ Entity generation
-   - `jhipster entity <entity-name> --blueprint nodejs`
+   - `jhipster entity <entity-name> --blueprints nodejs`
 
 ✅ JDL Entity model support generation
-   - `jhipster import-jdl my_file.jdl --blueprint nodejs`
+   - `jhipster import-jdl my_file.jdl --blueprints nodejs`
 
 For the last, in the **examples-jdl** there are some examples of jdl models.
 

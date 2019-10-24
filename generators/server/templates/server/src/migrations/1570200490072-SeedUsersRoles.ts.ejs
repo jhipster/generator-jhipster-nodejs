@@ -7,6 +7,7 @@ export class SeedUsersRoles1570200490072 implements MigrationInterface {
 
   role2: Authority = { name: 'ROLE_USER' };
 
+  <%_ if (authenticationType !== 'oauth2') { _%>
   user1: User = {
     login: 'system',
     password: 'system',
@@ -59,6 +60,8 @@ export class SeedUsersRoles1570200490072 implements MigrationInterface {
     lastModifiedBy: 'system'
   };
 
+  <%_ } _%>
+
   public async up(queryRunner: QueryRunner): Promise<any> {
 
 
@@ -69,6 +72,8 @@ export class SeedUsersRoles1570200490072 implements MigrationInterface {
       .into(Authority)
       .values([this.role1, this.role2])
       .execute();
+
+   <%_ if (authenticationType !== 'oauth2') { _%>
 
     await conn
       .createQueryBuilder()
@@ -88,7 +93,7 @@ export class SeedUsersRoles1570200490072 implements MigrationInterface {
       .relation(User, 'authorities')
       .of(this.user4)
       .add([this.role2]);
-
+    <%_ } _%>
 
   }
 
