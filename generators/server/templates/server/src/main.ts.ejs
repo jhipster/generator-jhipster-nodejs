@@ -36,7 +36,6 @@ async function bootstrap() {
       cookie: { secure: false, maxAge: 240000 }, // 4 minutes and session expires
     }),
   );
-  );
 
   app.use(passport.initialize());
   app.use(passport.session());

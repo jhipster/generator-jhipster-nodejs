@@ -18,16 +18,17 @@ export class ManagementController {
     status: 200,
     description: 'Check if the microservice is up',
   })
-  <%_ if (authenticationType === 'jwt') { _%>
-  async info(@Req() req: Request, @Res() res: Response) {
-    return res.status(200);
-  }
-  <%_ } else if (authenticationType === 'oauth2') { _%>
+  <%_ if (authenticationType === 'oauth2') { _%>
     async info(@Req() req: any) {
         return {
           'activeProfiles': 'no',
           'display-ribbon-on-profiles': 'no',
         };
+    }
+
+  <%_ } else { _%>
+    async info(@Req() req: Request, @Res() res: Response) {
+        return res.status(200);
     }
   <%_ } _%>
 

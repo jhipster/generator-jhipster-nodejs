@@ -3,13 +3,14 @@ const assert = require('yeoman-assert');
 const helpers = require('yeoman-test');
 
 describe('Subgenerator client of nodejs JHipster blueprint', () => {
-    describe('Sample test', () => {
+    describe('1-test', () => {
         before(done => {
             helpers
                 .run('generator-jhipster/generators/client')
                 .withOptions({
                     'from-cli': true,
                     skipInstall: true,
+                    skipServer: true,
                     blueprint: 'nodejs',
                     skipChecks: true
                 })
