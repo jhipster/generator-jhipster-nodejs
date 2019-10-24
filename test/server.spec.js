@@ -26,6 +26,7 @@ describe('Subgenerator server of nodejs JHipster blueprint', () => {
                 .withPrompts({
                     baseName: 'sampleMysql',
                     applicationType: 'monolith',
+                    authenticationType: 'jwt',
                     prodDatabaseType: 'mysql',
                     enableTranslation: true,
                     nativeLanguage: 'en',

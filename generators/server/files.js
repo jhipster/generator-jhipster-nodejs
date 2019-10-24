@@ -89,6 +89,7 @@ const serverFiles = {
     ],
     jwt: [
         {
+            path: SERVER_NODEJS_DIR,
             condition: generator => generator.authenticationType === 'jwt',
             templates: [
                 'src/web/rest/user.jwt.controller.ts',
@@ -100,6 +101,7 @@ const serverFiles = {
     ],
     oauth2: [
         {
+            path: SERVER_NODEJS_DIR,
             condition: generator => generator.authenticationType === 'oauth2',
             templates: ['src/web/rest/user.oauth2.controller.ts', 'src/security/passport.oauth2.strategy.ts']
         }
