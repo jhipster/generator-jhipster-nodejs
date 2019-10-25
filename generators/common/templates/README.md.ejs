@@ -112,6 +112,30 @@ Create a `ROLE_ADMIN` and `ROLE_USER` group and add users into them.
 Navigate to **API** > **Authorization Servers**, click the **Authorization Servers** tab and edit the default one. Click the **Claims** tab and **Add Claim**. Name it "groups", and include it in the ID Token. Set the value type to "Groups" and set the filter to be a Regex of `.*`.
 
 After making these changes, you should be good to go! If you have any issues, please post them to [Stack Overflow](https://stackoverflow.com/questions/tagged/jhipster). Make sure to tag your question with "jhipster" and "okta".
+
+<%_ } else if (authenticationType === 'jwt') { _%>
+
+## JWT authentication and authorization
+
+Congratulations! You've selected an excellent way to secure your NHipster application. If you're not sure what JSON Web Token (JWT) is, please see [What the Heck is JWT?](https://jwt.io/introduction/)
+
+Your app uses, to get and use the token, the `<%= SERVER_NODEJS_SRC_DIR %>/src/config/application.yml` settings:
+
+```yaml
+  ...
+  security:
+    authentication:
+        jwt:
+            # This token must be encoded using Base64 and be at least 256 bits long (you can type `openssl rand -base64 64` on your command line to generate a 512 bits one)
+            base64-secret: {yourSecret}
+            # Token is valid 24 hours
+            token-validity-in-seconds: 86400
+            token-validity-in-seconds-for-remember-me: 2592000
+```
+
+You can use the default secret created from the app, or change it. 
+So to get a token, you have to pass a POST request on the _api/authenticate_ url with **UserLoginDTO** as body.
+For this you can use **swagger ui** on **/api/v2/api-docs** path, or the client login page (if you have generated it).
 <%_ } _%>
 
 ### PWA Support

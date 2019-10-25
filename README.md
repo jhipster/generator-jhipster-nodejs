@@ -36,13 +36,14 @@ This project adds nodejs for your backend, **all typescript files generation, no
 </div>
 
 
-> A **generated example app** is [here](https://github.com/jhipster/jhipster-sample-app-nodejs/tree/v1.0.0-alpha.4) 
+> A **generated example app with JWT auth** is [here](https://github.com/jhipster/jhipster-sample-app-nodejs/tree/v1.0.0-alpha.4) 
 
 <div align="center">
 		<img src="https://raw.githubusercontent.com/jhipster/generator-jhipster-nodejs/v1.0.0-alpha.4/demo-full-app.gif">
 </div>
 
 
+> A **generated example app with Okta Oauth2** is [here](https://github.com/jhipster/jhipster-sample-app-nodejs-oauth2/tree/v1.0.0-alpha.4) 
 
 # Prerequisites
 
