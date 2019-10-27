@@ -66,7 +66,7 @@ function askForMainServerSideOpts(meta) {
                     name: 'MySQL or MariaDB'
                 });
                 opts.push({
-                    value: 'postgresql',
+                    value: 'postgres',
                     name: 'PostgreSQL or CockroachDB'
                 });
                 opts.push({

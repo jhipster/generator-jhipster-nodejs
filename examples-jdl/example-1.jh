@@ -22,7 +22,8 @@ application {
 		clientPackageManager npm,
 		useSass true,
 		skipUserManagement false,
-		enableTranslation false
+		enableTranslation false,
+        clientFramework react
 	}
 	entities *
 }
