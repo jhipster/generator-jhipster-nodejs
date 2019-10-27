@@ -106,7 +106,7 @@ For the last, in the **examples-jdl** there are some examples of jdl models.
 
 > Please attention that SQLite does not support enum
 
-## 🛠 Steps to develop a generator feeature and test it
+## 🛠 Steps to develop a generator feature and test it
 
 Shell steps:
 
@@ -129,7 +129,7 @@ Shell steps:
 Now you will develop under the **generator-jhipster-nodejs** that you have cloned with git.
 After finish, to generate the app and check your feature, run in **test-generation** folder:
 
-- jhipster --blueprints nodejs
+- ```jhipster --blueprints nodejs```
 
 ## ❤️ For community
 
