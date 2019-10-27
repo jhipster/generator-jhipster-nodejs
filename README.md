@@ -78,7 +78,7 @@ npm update -g generator-jhipster-nodejs
 
 To install this blueprint:
 
-```bash
+```
 yarn global add generator-jhipster-nodejs
 ```
 
@@ -105,6 +105,31 @@ yarn global upgrade generator-jhipster-nodejs
 For the last, in the **examples-jdl** there are some examples of jdl models.
 
 > Please attention that SQLite does not support enum
+
+## 🛠 Steps to develop a generator feeature and test it
+
+Shell steps:
+
+- ```git clone https://github.com/jhipster/generator-jhipster-nodejs.git```
+- ```cd generator-jhipster-nodejs```
+- ```git checkout -b feature/my-feature```
+- ```npm install``` 
+- ```npm link```
+- ```cd ..```
+- ```git clone https://github.com/jhipster/generator-jhipster.git```
+- ```cd generator-jhipster```
+- ```npm install``` 
+- ```npm link```
+- ```cd ..```
+- ```mkdir test-generation```
+- ```cd test-generation```
+- ```npm link generator-jhipster```
+- ```npm link generator-jhipster-nodejs```
+
+Now you will develop under the **generator-jhipster-nodejs** that you have cloned with git.
+After finish, to generate the app and check your feature, run in **test-generation** folder:
+
+- jhipster --blueprints nodejs
 
 ## ❤️ For community
 
