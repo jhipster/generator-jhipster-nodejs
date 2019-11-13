@@ -105,6 +105,12 @@ const serverFiles = {
             condition: generator => generator.authenticationType === 'oauth2',
             templates: ['src/web/rest/user.oauth2.controller.ts', 'src/security/passport.oauth2.strategy.ts']
         }
+    ],
+    keycloak: [
+        {
+            condition: generator => generator.authenticationType === 'oauth2',
+            templates: ['src/main/docker/keycloak.yml']
+        }
     ]
 };
 
