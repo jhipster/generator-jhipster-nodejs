@@ -148,6 +148,11 @@ Thanks goes to these wonderful people:
 
 <table><tr><td align="center"><a href="https://github.com/amanganiello90"><img src="https://avatars3.githubusercontent.com/u/20536757?s=400&v=4" width="100px;" alt="Angelo Manganiello (founder stream lead)"/><br/><sub><b>Angelo Manganiello</b><br/><b>(founder stream lead)</b></sub></a></td><td align="center"><a href="https://github.com/hadirsa"><img src="https://avatars2.githubusercontent.com/u/3942854?s=400&v=4" width="100px;" alt="Hadi Rasouli"/><br /><sub><b>Hadi Rasouli</b></sub></a></td><td align="center"><a href="https://github.com/ivangsa"><img src="https://avatars1.githubusercontent.com/u/1246876?s=400&v=4" width="100px;" alt="Iván García Sainz-Aja"/><br /><sub><b>Iván García Sainz-Aja</b></sub></a></td><td align="center"><a href="https://github.com/DanielFran"><img src="https://avatars1.githubusercontent.com/u/3706415?s=400&v=4" width="100px;" alt="Daniel Franco"/><br /><sub><b>Daniel Franco</b></sub></a></td></tr></table>
 
+# Special Thanks
+
+<div align="center">
+		<a href="[jetbrains]"><img src="https://raw.githubusercontent.com/jhipster/generator-jhipster-nodejs/v1.0.0-alpha.4/jetbrains.png"></a>
+</div>
 
 # License
 
@@ -162,3 +167,4 @@ Apache-2.0 © [Angelo Manganiello](https://github.com/amanganiello90)
 [daviddm-url]: https://david-dm.org/jhipster/generator-jhipster-nodejs
 [npmcharts-image]: https://img.shields.io/npm/dm/generator-jhipster-nodejs.svg?label=Downloads&style=flat
 [npmcharts-url]: https://npmcharts.com/compare/generator-jhipster-nodejs
+[jetbrains]: www.jetbrains.com/?from=generator-jhipster-nodejs
