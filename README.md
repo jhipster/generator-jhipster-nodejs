@@ -151,7 +151,7 @@ Thanks goes to these wonderful people:
 # Special Thanks
 
 <div align="center">
-		<a href="[jetbrains]"><img src="https://raw.githubusercontent.com/gpinolo/generator-jhipster-nodejs/feature/keycloak/jetbrains.png"></a>
+		<a href="www.jetbrains.com/?from=generator-jhipster-nodejs"><img src="https://raw.githubusercontent.com/gpinolo/generator-jhipster-nodejs/feature/keycloack/jetbrains.png"></a>
 </div>
 
 # License
@@ -167,4 +167,3 @@ Apache-2.0 © [Angelo Manganiello](https://github.com/amanganiello90)
 [daviddm-url]: https://david-dm.org/jhipster/generator-jhipster-nodejs
 [npmcharts-image]: https://img.shields.io/npm/dm/generator-jhipster-nodejs.svg?label=Downloads&style=flat
 [npmcharts-url]: https://npmcharts.com/compare/generator-jhipster-nodejs
-[jetbrains]: www.jetbrains.com/?from=generator-jhipster-nodejs
