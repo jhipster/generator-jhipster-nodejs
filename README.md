@@ -151,7 +151,7 @@ Thanks goes to these wonderful people:
 # Special Thanks
 
 <div align="center">
-		<a href="[jetbrains]"><img src="https://raw.githubusercontent.com/jhipster/generator-jhipster-nodejs/v1.0.0-alpha.4/jetbrains.png"></a>
+		<a href="[jetbrains]"><img src="https://raw.githubusercontent.com/gpinolo/generator-jhipster-nodejs/feature/keycloak/jetbrains.png"></a>
 </div>
 
 # License
