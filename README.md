@@ -152,13 +152,13 @@ Thanks goes to these wonderful people:
 
 <div align="left">
 		<a href="https://www.jetbrains.com/?from=generator-jhipster-nodejs">
-		  <img width="80" height="100" src="https://raw.githubusercontent.com/jhipster/generator-jhipster-nodejs/feature/keycloack/jetbrains.png">
+		  <img width="80" height="100" src="https://raw.githubusercontent.com/jhipster/generator-jhipster-nodejs/v1.0.0-beta.1/jetbrains.png">
 		</a>
 		<a href="https://code.visualstudio.com">
-		  <img width="100" height="100" src="https://raw.githubusercontent.com/jhipster/generator-jhipster-nodejs/feature/keycloack/visualstudio-code.png">
+		  <img width="100" height="100" src="https://raw.githubusercontent.com/jhipster/generator-jhipster-nodejs/v1.0.0-beta.1/visualstudio-code.png">
 		</a>
 		<a href="https://www.jhipster.tech">
-		  <img width="160" height="100" src="https://raw.githubusercontent.com/jhipster/generator-jhipster-nodejs/feature/keycloack/jhipster-logo.png">
+		  <img width="160" height="100" src="https://raw.githubusercontent.com/jhipster/generator-jhipster-nodejs/v1.0.0-beta.1/jhipster-logo.png">
 		</a>
 </div>
 
