@@ -7,7 +7,7 @@ const constants = require('../generators/generator-nodejs-constants');
 const SERVER_NODEJS_DIR = `${constants.SERVER_NODEJS_SRC_DIR}/`;
 
 describe('Subgenerator entity of nodejs JHipster blueprint', () => {
-    describe('Sample test', () => {
+    describe('1-test', () => {
         before(done => {
             helpers
                 .run('generator-jhipster/generators/entity')

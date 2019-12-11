@@ -3,13 +3,14 @@ const assert = require('yeoman-assert');
 const helpers = require('yeoman-test');
 
 describe('Subgenerator client of nodejs JHipster blueprint', () => {
-    describe('Sample test', () => {
+    describe('1-test', () => {
         before(done => {
             helpers
                 .run('generator-jhipster/generators/client')
                 .withOptions({
                     'from-cli': true,
                     skipInstall: true,
+                    skipServer: true,
                     blueprint: 'nodejs',
                     skipChecks: true
                 })
@@ -22,17 +23,12 @@ describe('Subgenerator client of nodejs JHipster blueprint', () => {
                 ])
                 .withPrompts({
                     baseName: 'sampleMysql',
-                    packageName: 'com.mycompany.myapp',
                     applicationType: 'monolith',
-                    databaseType: 'sql',
-                    devDatabaseType: 'h2Disk',
+                    authenticationType: 'jwt',
                     prodDatabaseType: 'mysql',
-                    cacheProvider: 'ehcache',
-                    authenticationType: 'session',
                     enableTranslation: true,
                     nativeLanguage: 'en',
                     languages: ['fr', 'de'],
-                    buildTool: 'maven',
                     rememberMeKey: '2bb60a80889aa6e6767e9ccd8714982681152aa5'
                 })
                 .on('end', done);

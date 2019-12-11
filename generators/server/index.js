@@ -73,7 +73,7 @@ module.exports = class extends ServerGenerator {
                 );
                 this.log(
                     chalk.green.bold(
-                        ' 2. JWT Passport security authentication\n'
+                        ' 2. JWT or OAuth2 Passport security authentication\n'
                     )
                 );
                 this.log(
@@ -107,7 +107,6 @@ module.exports = class extends ServerGenerator {
                 this.serviceDiscoveryType = jhipsterNodeConstants.SERVICE_DISCOVERY_TYPE_NODEJS;
                 this.buildTool = jhipsterNodeConstants.BUILD_TOOL_NODEJS;
                 this.enableSwaggerCodegen = jhipsterNodeConstants.ENABLE_SWAGGER_CODEGEN_NODEJS;
-                this.authenticationType = jhipsterNodeConstants.AUTHENTICATION_TYPE_NODEJS;
                 this.testFrameworks =[];
 
                 /*

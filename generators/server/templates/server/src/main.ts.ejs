@@ -9,6 +9,10 @@ import { Logger, ValidationPipe, ValidationError, BadRequestException } from '@n
 import * as express from 'express';
 import * as path from 'path';
 import * as fs from 'fs';
+<%_ if (authenticationType === 'oauth2') { _%>
+import passport = require('passport');
+import session = require('express-session');
+<%_ } _%>
 const logger: Logger = new Logger('Main');
 
 async function bootstrap() {
@@ -22,6 +26,20 @@ async function bootstrap() {
       exceptionFactory: (errors: ValidationError[]) => new BadRequestException('Validation error'),
     }),
   );
+
+  <%_ if (authenticationType === 'oauth2') { _%>
+  app.use(
+    session({
+      secret: config.get('jhipster.security.session.secret'),
+      resave: false,
+      saveUninitialized: true,
+      cookie: { secure: false, maxAge: 240000 }, // 4 minutes and session expires
+    }),
+  );
+
+  app.use(passport.initialize());
+  app.use(passport.session());
+  <%_ } _%>
 
   const staticClientPath = path.join(__dirname, '../dist/classes/static');
   if (fs.existsSync(staticClientPath)) {

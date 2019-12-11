@@ -1,22 +1,27 @@
-import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
+import { Injectable, HttpException, HttpStatus, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+<%_ if (authenticationType === 'jwt') { _%>
 import { JwtService } from '@nestjs/jwt';
-import { User } from '../domain/user.entity';
 import { UserLoginDTO } from '../service/dto/user-login.dto';
+import { Payload } from '../security/payload.interface';
 import { Authority } from '../domain/authority.entity';
+<%_ } _%>
+import { User } from '../domain/user.entity';
 import { AuthorityRepository } from '../repository/authority.repository';
 import { UserService } from '../service/user.service';
-import { Payload } from '../security/payload.interface';
-import { FindManyOptions } from 'typeorm';
 
 @Injectable()
 export class AuthService {
+    logger = new Logger('AuthService');
   constructor(
+    <%_ if (authenticationType === 'jwt') { _%>
     private readonly jwtService: JwtService,
+    <%_ } _%>
     @InjectRepository(AuthorityRepository) private authorityRepository: AuthorityRepository,
     private userService: UserService,
   ) {}
 
+  <%_ if (authenticationType === 'jwt') { _%>
   async login(userLogin: UserLoginDTO) {
     const loginUserName = userLogin.username;
     const loginPassword = userLogin.password;
@@ -50,4 +55,19 @@ export class AuthService {
     user.authorities = authorities;
     return user;
   }
+  <%_ } else if (authenticationType === 'oauth2') { _%>
+    async findUserOrSave(loginUser: User): Promise<User | undefined> {
+        let userFound = await this.userService.findByfields({ where: { login: loginUser.login }, relations: ['authorities'] });
+
+        if (!userFound) {
+          const authoritiesName = [];
+          loginUser.authorities.forEach(authority => authoritiesName.push({ name: authority }));
+          userFound = Object.assign({}, loginUser);
+          userFound.authorities = authoritiesName;
+          await this.userService.save(userFound);
+        }
+        return loginUser;
+      }
+
+  <%_ } _%>
 }

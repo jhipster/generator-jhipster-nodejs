@@ -25,7 +25,9 @@
   "dependencies": {
     "@nestjs/common": "6.5.3",
     "@nestjs/core": "6.5.3",
+    <%_ if (authenticationType === 'jwt') { _%>
     "@nestjs/jwt": "6.1.1",
+    <%_ } _%>
     "@nestjs/passport": "6.1.0",
     "@nestjs/platform-express": "6.5.3",
     "@nestjs/swagger": "3.1.0",
@@ -35,12 +37,15 @@
     "cloud-config-client": "1.4.2",
     "dotenv": "8.1.0",
     "eureka-js-client": "4.5.0",
+    <%_ if (authenticationType === 'oauth2') { _%>
+    "express-session": "1.17.0",
+    <%_ } _%>
     "js-yaml": "3.13.1",
     <%_ if (prodDatabaseType === 'mongodb') { _%>
         "mongodb": "3.3.0",
     <%_ } else if (prodDatabaseType === 'mysql') {_%>
         "mysql2": "1.7.0",
-    <%_ } else if (prodDatabaseType === 'postgresql') {_%>
+    <%_ } else if (prodDatabaseType === 'postgres') {_%>
         "pg": "7.12.1",
     <%_ } else if (prodDatabaseType === 'oracle') {_%>
         "oracledb": "4.0.1",
@@ -48,7 +53,11 @@
         "mssql": "5.1.0",
     <%_ } _%>
     "passport": "0.4.0",
+    <%_ if (authenticationType === 'jwt') { _%>
     "passport-jwt": "4.0.0",
+    <%_ } else if (authenticationType === 'oauth2') {_%>
+    "passport-oauth2": "1.5.0",
+    <%_ } _%>
     "reflect-metadata": "0.1.13",
     "rxjs": "6.5.2",
     "shelljs": "0.8.3",
@@ -61,7 +70,9 @@
     "@types/express": "4.17.1",
     "@types/jest": "24.0.18",
     "@types/node": "11.13.4",
+    <%_ if (authenticationType === 'jwt') { _%>
     "@types/passport-jwt": "3.0.1",
+    <%_ } _%>
     "@types/supertest": "2.0.7",
     "jest": "24.7.1",
     "nodemon": "1.19.1",

@@ -1,6 +1,6 @@
 {
   "name": "generator-jhipster-nodejs",
-  "version": "1.0.0-alpha.4",
+  "version": "1.0.0-beta.1",
   "description": "A NodeJS blueprint that creates the backend using NodeJS with NestJS framework",
   "keywords": [
     "yeoman-generator",
@@ -8,7 +8,7 @@
     "jhipster-6",
     "nodejs"
   ],
-  "homepage": "https://github.com/jhipster/generator-jhipster-nodejs#readme",
+  "homepage": "https://github.com/jhipster/generator-jhipster-nodejs",
   "author": {
     "name": "Angelo Manganiello",
     "email": "angelo.mang@libero.it",

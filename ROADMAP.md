@@ -8,8 +8,7 @@ To contribute for the next featues, fork the repo and open a pull request regard
 * Blueprint to generate monolitich/microservice app with NestJS basic templates
 * Swagger support
 * Entity ORM generation for prod database (sql) and dev database (default db is sqlite already configured)
-* Basic security management with jwt
-* Maven simple orchestration to run server with client part in case of monolithic app using frontend code
+* Basic security management with jwt and oauth2
 * All subgenerators (without services)
 
 > Let it free to give advices or tips!
@@ -37,13 +36,14 @@ To contribute for the next featues, fork the repo and open a pull request regard
 - [x] Add package.json when no client
 - [x] Avoid reinsert seed db in restart app using typeORM migration
 - [x] Test prod mysql database and update doc with angular/react client
-
+- [x] OAuth2 feature for Okta
 
 ## To DO for next release
 
 - [ ] Encrypt user password in db
+- [ ] OAuth2 feature for Keycloack
+- [ ] Integration test in the pipeline build
 - [ ] Languages subgenerator support i18n: translate home page for NHipster and remove spring boot resources message 
-- [ ] OAuth2 feature
 - [ ] Unit tests: both for the blueprint and for generated project
 - [ ] DTOs based rest api
 - [ ] Validation

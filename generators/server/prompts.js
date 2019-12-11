@@ -30,6 +30,24 @@ function askForMainServerSideOpts(meta) {
         },
         {
             type: 'list',
+            name: 'authenticationType',
+            message: `Which ${chalk.yellow('*type*')} of authentication would you like to use?`,
+            choices: response => {
+                const opts = [];
+                opts.push({
+                    value: 'jwt',
+                    name: 'JWT authentication (stateless, with a token)'
+                });
+                opts.push({
+                    value: 'oauth2',
+                    name: 'OAuth 2.0 / OIDC Authentication (stateful, works with Okta)'
+                });
+                return opts;
+            },
+            default: 0
+        },
+        {
+            type: 'list',
             name: 'prodDatabaseType',
             message: `Which ${chalk.yellow('*production*')} database would you like to use?`,
             choices: response => {
@@ -48,7 +66,7 @@ function askForMainServerSideOpts(meta) {
                     name: 'MySQL or MariaDB'
                 });
                 opts.push({
-                    value: 'postgresql',
+                    value: 'postgres',
                     name: 'PostgreSQL or CockroachDB'
                 });
                 opts.push({
@@ -74,6 +92,7 @@ function askForMainServerSideOpts(meta) {
         this.devDatabaseType = 'sqlite';
         this.prodDatabaseType = prompt.prodDatabaseType;
         this.serverPort = prompt.serverPort;
+        this.authenticationType = prompt.authenticationType;
 
         if (this.serverPort === undefined) {
             this.serverPort = defaultPort;

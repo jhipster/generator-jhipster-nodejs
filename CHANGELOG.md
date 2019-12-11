@@ -1,5 +1,11 @@
+<a name="1.0.0-beta.1"></a>
 <a name="1.0.0-alpha.3"></a>
 <a name="1.0.0-alpha.2"></a>
+
+# [1.0.0-beta.1](https://github.com/jhipster/generator-jhipster-nodejs/tree/v1.0.0-beta.1)
+
+- Support okta oauth2 security feature [issue #52](https://github.com/jhipster/generator-jhipster-nodejs/issues/52)
+- Bug postgres choose generated in typeorm as postegresql [issue #70](https://github.com/jhipster/generator-jhipster-nodejs/issues/70)
 
 # [1.0.0-alpha.3](https://github.com/jhipster/generator-jhipster-nodejs/tree/v1.0.0-alpha.3)
 

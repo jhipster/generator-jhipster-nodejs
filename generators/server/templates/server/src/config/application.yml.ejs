@@ -47,14 +47,28 @@ jhipster:
     name: '<%= baseName %>'
   registry:
     password: admin
-  # By default CORS is disabled. Uncomment to enable.
-  # cors:
-  #     allowed-origins: "*"
-  #     allowed-methods: "*"
-  #     allowed-headers: "*"
-  #     exposed-headers: "Authorization,Link,X-Total-Count"
-  #     allow-credentials: true
-  #     max-age: 1800
+  security:
+<%_ if (authenticationType === 'jwt') { _%>
+    authentication:
+      jwt:
+        # This token must be encoded using Base64 and be at least 256 bits long (you can type `openssl rand -base64 64` on your command line to generate a 512 bits one)
+        base64-secret: NDhjNjk1NTM3NWRlNjc1NDMwZjllNWFiMmVlYjQ4NzViYzY4MmY5ZWY2MzZhMzNiMTYxYmNlYjJkMWYwNDk0NDBlNDYwZThjMmFmNzAyNTQyOWYxMDhkM2QxYTQ3ZDFjM2I5YWU4YWVjOGRhNDc3MWE5OTExMzUyMjI3MDlmZWM=
+        # Token is valid 24 hours
+        token-validity-in-seconds: 86400
+        token-validity-in-seconds-for-remember-me: 2592000
+<%_ } else if (authenticationType === 'oauth2') { _%>
+    session:
+      secret: '<%= baseName %> session secret'
+    oauth2:
+      client:
+        provider:
+          oidc:
+            issuer-uri: https://your-server.okta.com/oauth2/default
+        registration:
+          oidc:
+            client-id: web_app
+            client-secret: web_app
+<%_ } _%>
   mail:
     from: <%= baseName %>@localhost
   swagger:
@@ -68,6 +82,7 @@ jhipster:
     contact-email:
     license:
     license-url:
+    path: /api/v2/api-docs
 
 
 cloud:

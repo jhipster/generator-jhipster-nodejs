@@ -8,15 +8,23 @@ export class Config {
   'server.port' = '<%= serverPort %>';
   'jhipster.clientApp.name' = '<%= baseName %>';
   'jhipster.registry.password' = 'admin';
+<%_ if (authenticationType === 'jwt') { _%>
   'jhipster.security.authentication.jwt.base64-secret' = '';
   'jhipster.security.authentication.jwt.token-validity-in-seconds' = 86400;
   'jhipster.security.authentication.jwt.token-validity-in-seconds-for-remember-me' = 2592000;
+<%_ } else if (authenticationType === 'oauth2') { _%>
+  'jhipster.security.session.secret' = '';
+  'jhipster.security.oauth2.client.provider.oidc.issuer-uri' = '';
+  'jhipster.security.oauth2.client.registration.oidc.client-id' = '';
+  'jhipster.security.oauth2.client.registration.oidc.client-secret' = '';
+<%_ } _%>
   'jhipster.mail.base-url' = 'http://127.0.0.1:${server.port}';
   'jhipster.mail.from' = '<%= baseName %>@localhost';
   'jhipster.swagger.default-include-pattern' = '/api/.*';
   'jhipster.swagger.title' = '<%= baseName %> API';
   'jhipster.swagger.description' = '<%= baseName %> API documentation';
   'jhipster.swagger.version' = '0.0.1';
+  'jhipster.swagger.path' = '/api/v2/api-docs';
   'eureka.client.enabled' = true;
   'eureka.client.healthcheck.enabled' = true;
   'eureka.client.fetch-registry' = true;
