@@ -16,9 +16,10 @@ matrix:
       env: 
         - JOB="TEST-INTEGRATION"
       before_install:
-        - npm install -g npm && chmod +x test-integration/00-install-all-jhipster.sh && chmod +x test-integration/01-generate-sample.sh
+        - npm install -g npm && chmod +x test-integration/00-install-all-jhipster.sh && chmod +x test-integration/01-generate-test-sample.sh
       install:
         - sh test-integration/00-install-all-jhipster.sh
       script:
-        - sh test-integration/01-generate-sample.sh
+        - sh test-integration/01-generate-test-sample.sh monolith-angular-jwt-dev
+        - sh test-integration/01-generate-test-sample.sh monolith-react-oauth2-dev
       
