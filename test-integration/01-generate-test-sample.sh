@@ -3,7 +3,7 @@
 set -e
 
 launchCurl() {
-    sleep 50
+    sleep 100
     retryCount=1
     maxRetry=10
     httpUrl="http://localhost:8081/$1/management/health"

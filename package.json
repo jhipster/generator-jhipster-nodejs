@@ -36,7 +36,6 @@
     "glob": "7.1.4",
     "gulp-filter": "6.0.0",
     "insight": "0.10.3",
-    "jhipster-core": "3.6.14",
     "js-yaml": "3.13.1",
     "lodash": "4.17.15",
     "meow": "5.0.0",
