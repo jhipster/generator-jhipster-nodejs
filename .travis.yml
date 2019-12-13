@@ -1,25 +1,15 @@
 sudo: true
-matrix:
+jobs:
   include:
-    - language: node_js
-      node_js: "12.13.0"
-      env: 
-        - JOB="BUILD"
-      before_install:
-        - npm install -g npm
-      install:
-        - npm install
-      script:
-        - npm test
-    - language: node_js
-      node_js: "12.13.0"
-      env: 
-        - JOB="TEST-INTEGRATION"
-      before_install:
-        - npm install -g npm && chmod +x test-integration/00-install-all-jhipster.sh && chmod +x test-integration/01-generate-test-sample.sh
-      install:
-        - sh test-integration/00-install-all-jhipster.sh
-      script:
-        - sh test-integration/01-generate-test-sample.sh monolith-angular-jwt-dev
-        - sh test-integration/01-generate-test-sample.sh monolith-react-oauth2-dev
-      
+     - language: node_js
+       node_js: "12.13.0"
+     - stage: build and test
+       install:
+         - npm install
+       script: npm test
+     - stage: test integration
+#       before_install:
+#         - chmod +x test-integration/00-install-all-jhipster.sh && chmod +x test-integration/01-generate-test-sample.sh
+       script: sh test-integration/00-install-all-jhipster.sh
+       script: sh test-integration/01-generate-test-sample.sh monolith-angular-jwt-dev
+       script: sh test-integration/01-generate-test-sample.sh monolith-react-oauth2-dev
