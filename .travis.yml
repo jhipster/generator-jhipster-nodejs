@@ -1,13 +1,24 @@
-os:
-    - linux
-language: node_js
-node_js:
-    - "12.13.0"
-before_install:
-    - npm install -g npm && chmod +x test-integration/00-install-all-jhipster.sh && chmod +x test-integration/01-generate-sample.sh
-install:
-    - npm install
-    - npm test
-    - sh test-integration/00-install-all-jhipster.sh
-script:
-    - sh test-integration/01-generate-sample.sh
+sudo: true
+matrix:
+  include:
+    - language: node_js
+      node_js: "12.13.0"
+      env: 
+        - JOB="BUILD"
+      before_install:
+        - npm install -g npm
+      install:
+        - npm install
+      script:
+        - npm test
+    - language: node_js
+      node_js: "12.13.0"
+      env: 
+        - JOB="TEST-INTEGRATION"
+      before_install:
+        - npm install -g npm && chmod +x test-integration/00-install-all-jhipster.sh && chmod +x test-integration/01-generate-sample.sh
+      install:
+        - sh test-integration/00-install-all-jhipster.sh
+      script:
+        - sh test-integration/01-generate-sample.sh
+      
