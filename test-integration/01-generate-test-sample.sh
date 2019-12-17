@@ -43,12 +43,18 @@ jhipster --blueprints nodejs --skip-git --skip-checks --force --no-insight
 echo "*** install server dependencies for : "$1
 cd server && npm install
 
+
+#-------------------------------------------------------------------------------
+# Fix lint client app
+#-------------------------------------------------------------------------------
+echo "*** fix lint app : "$1
+cd ..
+npm run lint:fix
+
 #-------------------------------------------------------------------------------
 # Run and test app
 #-------------------------------------------------------------------------------
 echo "*** run app : "$1
-cd ..
-cat tsconfig.json
 runApp
 launchCurl
 
