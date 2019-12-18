@@ -24,7 +24,7 @@ launchCurl() {
 }
 
 runApp() {
-    npm run start:app &
+    npm run start &
     echo $! > .pidRunApp
 }
 
