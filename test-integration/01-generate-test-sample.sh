@@ -24,7 +24,7 @@ launchCurl() {
 }
 
 runApp() {
-    npm run start &
+    npm run build &
     echo $! > .pidRunApp
 }
 
@@ -51,7 +51,7 @@ echo "*** run app : "$1
 #cd ..
 cat .yo-rc.json
 runApp
-launchCurl
+#launchCurl
 
 
 #-------------------------------------------------------------------------------
