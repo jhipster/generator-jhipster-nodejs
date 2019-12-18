@@ -24,7 +24,7 @@ launchCurl() {
 }
 
 runApp() {
-    npm run build &
+    npm run start &
     echo $! > .pidRunApp
 }
 
@@ -50,12 +50,13 @@ echo "*** install server dependencies for : "$1
 echo "*** run app : "$1
 #cd ..
 cat .yo-rc.json
-runApp
+npm build
+#runApp
 #launchCurl
 
 
 #-------------------------------------------------------------------------------
 # Kill app
 #-------------------------------------------------------------------------------
-echo "*** kill app : "$1
-kill $(cat .pidRunApp)
+#echo "*** kill app : "$1
+#kill $(cat .pidRunApp)
