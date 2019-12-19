@@ -8,7 +8,7 @@ set -e
 #-------------------------------------------------------------------------------
 
 echo "*** generator-jhipster: use last version"
-npm install -g generator-jhipster@6.4.1
+npm install -g generator-jhipster
 
 #-------------------------------------------------------------------------------
 # Install yeoman
@@ -18,8 +18,8 @@ npm install -g yo
 
 
 #-------------------------------------------------------------------------------
-# Install NHipster 
+# Install NHipster
 #-------------------------------------------------------------------------------
 
 echo "*** generator-jhipster-nodejs: use current branch version"
-npm install -g 
+npm install -g

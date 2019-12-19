@@ -24,7 +24,7 @@ launchCurl() {
 }
 
 runApp() {
-    npm run start &
+    npm run start:app &
     echo $! > .pidRunApp
 }
 
@@ -41,22 +41,21 @@ echo "*** changed directory in : test-integration/samples/"$1
 echo "*** run nodejs blueprint for : "$1
 jhipster --blueprints nodejs --skip-git --skip-checks --force --no-insight --skip-server
 echo "*** install server dependencies for : "$1
-#cd server && npm install
+cd server && npm install
 
 
 #-------------------------------------------------------------------------------
 # Run and test app
 #-------------------------------------------------------------------------------
 echo "*** run app : "$1
-#cd ..
-cat .yo-rc.json
-npm run build
-#runApp
-#launchCurl
+cd ..
+cat tsconfig.json
+runApp
+launchCurl
 
 
 #-------------------------------------------------------------------------------
 # Kill app
 #-------------------------------------------------------------------------------
-#echo "*** kill app : "$1
-#kill $(cat .pidRunApp)
+echo "*** kill app : "$1
+kill $(cat .pidRunApp)
