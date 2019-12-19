@@ -50,7 +50,7 @@ echo "*** install server dependencies for : "$1
 echo "*** run app : "$1
 #cd ..
 cat .yo-rc.json
-npm build
+npm run build
 #runApp
 #launchCurl
 
