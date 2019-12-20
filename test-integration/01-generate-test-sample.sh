@@ -39,7 +39,7 @@ echo "*** changed directory in : test-integration/samples/"$1
 # Run NHipster Generator
 #-------------------------------------------------------------------------------
 echo "*** run nodejs blueprint for : "$1
-jhipster --blueprints nodejs --skip-git --skip-checks --force --no-insight --skip-server
+jhipster --blueprints nodejs --skip-git --skip-checks --force --no-insight
 echo "*** install server dependencies for : "$1
 cd server && npm install
 
