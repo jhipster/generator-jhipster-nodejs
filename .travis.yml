@@ -9,8 +9,8 @@ jobs:
       script: npm test
     - stage:  integration test
       install: sh test-integration/00-install-all-jhipster.sh 
-      name: monolith-angular-jwt-dev test
-      script:  sh test-integration/01-generate-test-sample.sh monolith-angular-jwt-dev 
-    - script:  sh test-integration/01-generate-test-sample.sh monolith-react-oauth2-dev test
-      install: sh test-integration/00-install-all-jhipster.sh 
       name: monolith-react-oauth2-dev test
+      script:  sh test-integration/01-generate-test-sample.sh monolith-react-oauth2-dev test
+    - script:  sh test-integration/01-generate-test-sample.sh monolith-angular-jwt-dev test
+      install: sh test-integration/00-install-all-jhipster.sh 
+      name: monolith-angular-jwt-dev test
