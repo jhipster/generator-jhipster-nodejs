@@ -6,7 +6,7 @@ launchCurl() {
     sleep 100
     retryCount=1
     maxRetry=10
-    httpUrl="http://localhost:8081/$1/management/health"
+    httpUrl="http://localhost:8081/management/info"
     rep=$(curl -v "$httpUrl")
     status=$?
     while [ "$status" -ne 0 ] && [ "$retryCount" -le "$maxRetry" ]; do
@@ -42,7 +42,7 @@ echo "*** run nodejs blueprint for : "$1
 
 runOptions=""
 
-if [ "$2" == "import-jdl" ]; then
+if [ "$2" = "import-jdl" ]; then
   runOptions="import-jdl "$1".jdl"
 fi
 
