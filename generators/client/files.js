@@ -17,7 +17,8 @@ const clientFiles = {
             condition: generator => generator.clientFramework === 'react',
             templates: [
                 { file: 'react/tsconfig.json', renameTo: () => 'tsconfig.json' },
-                { file: 'react/package.json', renameTo: () => 'package.json' }
+                { file: 'react/package.json', renameTo: () => 'package.json' },
+                { file: 'react/.eslintrc.json', renameTo: () => '.eslintrc.json' }
             ]
         }
     ],
