@@ -22,5 +22,5 @@ npm install -g yo
 #-------------------------------------------------------------------------------
 
 echo "*** generator-jhipster-nodejs: use current branch version"
-# npm install -g
-npm link
+npm install -g
+# npm link

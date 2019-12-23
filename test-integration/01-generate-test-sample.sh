@@ -35,11 +35,6 @@ runApp() {
 cd test-integration/samples/$1
 echo "*** changed directory in : test-integration/samples/"$1
 
-#-------------------------------------------------------------------------------
-# Link NHipster in template directory
-#-------------------------------------------------------------------------------
-echo "*** link nodejs blueprint in : test-integration/samples/"$1
-npm link generator-jhipster-nodejs
 
 #-------------------------------------------------------------------------------
 # Run NHipster Generator
@@ -53,6 +48,16 @@ if [ "$2" = "import-jdl" ]; then
 fi
 
 jhipster $runOptions 
+
+echo "*** check if the generation is wrong for some default java classes created :"
+
+if [ -z $(find src -type f -name "*.java" ) ]; then
+      echo "generation ok"
+else
+      echo "wrong generation"
+      exit 1
+fi
+
 echo "*** install client dependencies for : "$1
 npm install
 echo "*** install server dependencies for : "$1
