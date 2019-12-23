@@ -30,6 +30,9 @@
     "start:app": "cd server && <%= clientPackageManager %> run start"
   },
   "devDependencies": {
+    <%_ otherModules.forEach(module => { _%>
+    "<%= module.name %>": "<%= module.version %>",
+    <%_ }); _%>
     "generator-jhipster": "<%= jhipsterVersion %>"
   },
   "engines": {

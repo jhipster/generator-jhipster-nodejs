@@ -36,17 +36,25 @@ cd test-integration/samples/$1
 echo "*** changed directory in : test-integration/samples/"$1
 
 #-------------------------------------------------------------------------------
+# Link NHipster in template directory
+#-------------------------------------------------------------------------------
+echo "*** link nodejs blueprint in : test-integration/samples/"$1
+npm link generator-jhipster-nodejs
+
+#-------------------------------------------------------------------------------
 # Run NHipster Generator
 #-------------------------------------------------------------------------------
 echo "*** run nodejs blueprint for : "$1
 
-runOptions="--blueprints nodejs --skip-git --skip-checks --force --no-insight"
+runOptions="--blueprints nodejs --skip-git --skip-checks --force --no-insight --skip-install"
 
 if [ "$2" = "import-jdl" ]; then
   runOptions="import-jdl "$1".jdl $runOptions"
 fi
 
 jhipster $runOptions 
+echo "*** install client dependencies for : "$1
+npm install
 echo "*** install server dependencies for : "$1
 cd server && npm install
 
