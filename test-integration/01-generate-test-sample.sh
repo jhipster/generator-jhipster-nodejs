@@ -3,12 +3,11 @@
 set -e
 
 launchCurl() {
-    sleep 110
+    sleep 100
     retryCount=1
     maxRetry=10
     httpUrl="http://localhost:8081/management/info"
     rep=$(curl -v "$httpUrl")
-    status=$?
     echo "status: "$status
     while [ "$status" -ne 0 ] && [ "$retryCount" -le "$maxRetry" ]; do
         echo "*** [$(date)] Application not reachable yet. Sleep and retry - retryCount =" $retryCount "/" $maxRetry
