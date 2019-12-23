@@ -46,6 +46,7 @@ if [ "$2" == "import-jdl" ]; then
   runOptions="import-jdl "$1".jdl"
 fi
 
+echo "var "$runOptions
 jhipster $runOptions --blueprints nodejs --skip-git --skip-checks --force --no-insight
 echo "*** install server dependencies for : "$1
 cd server && npm install
