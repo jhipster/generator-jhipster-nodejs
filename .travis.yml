@@ -10,7 +10,11 @@ jobs:
     - stage:  integration test
       install: sh test-integration/00-install-all-jhipster.sh 
       name: monolith-react-oauth2-dev test
-      script:  sh test-integration/01-generate-test-sample.sh monolith-react-oauth2-dev test
-    - script:  sh test-integration/01-generate-test-sample.sh monolith-angular-jwt-dev test
+      script:  sh test-integration/01-generate-test-sample.sh monolith-react-oauth2-dev 
+    - script:  sh test-integration/01-generate-test-sample.sh monolith-angular-jwt-dev 
       install: sh test-integration/00-install-all-jhipster.sh 
       name: monolith-angular-jwt-dev test
+    - script:  sh test-integration/01-generate-test-sample.sh monolith-react-jwt-sql-jdl import-jdl
+      install: sh test-integration/00-install-all-jhipster.sh 
+      name: monolith-react-jwt-sql-jdl test
+  

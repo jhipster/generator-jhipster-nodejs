@@ -1,6 +1,12 @@
+<a name="1.0.0-beta.2"></a>
 <a name="1.0.0-beta.1"></a>
 <a name="1.0.0-alpha.3"></a>
 <a name="1.0.0-alpha.2"></a>
+
+# [1.0.0-beta.2](https://github.com/jhipster/generator-jhipster-nodejs/tree/v1.0.0-beta.2)
+
+- Provide test integration for quality in travis [issue #77](https://github.com/jhipster/generator-jhipster-nodejs/issues/77)
+
 
 # [1.0.0-beta.1](https://github.com/jhipster/generator-jhipster-nodejs/tree/v1.0.0-beta.1)
 

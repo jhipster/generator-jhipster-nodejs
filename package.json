@@ -41,7 +41,6 @@
     "meow": "5.0.0",
     "mkdirp": "0.5.1",
     "pluralize": "8.0.0",
-    "prettier": "1.17.1",
     "randexp": "0.5.3",
     "semver": "6.1.1",
     "shelljs": "0.8.3",

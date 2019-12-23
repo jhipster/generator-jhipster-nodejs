@@ -37,12 +37,12 @@ To contribute for the next featues, fork the repo and open a pull request regard
 - [x] Avoid reinsert seed db in restart app using typeORM migration
 - [x] Test prod mysql database and update doc with angular/react client
 - [x] OAuth2 feature for Okta
+- [x] Integration test in the pipeline build
 
 ## To DO for next release
 
 - [ ] Encrypt user password in db
 - [ ] OAuth2 feature for Keycloack
-- [ ] Integration test in the pipeline build
 - [ ] Languages subgenerator support i18n: translate home page for NHipster and remove spring boot resources message 
 - [ ] Unit tests: both for the blueprint and for generated project
 - [ ] DTOs based rest api

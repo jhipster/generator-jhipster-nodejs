@@ -9,3 +9,7 @@ Those are described in `.yo-rc.json` files which is the descriptor file created 
 -   monolith-angular-jwt-dev
 -   monolith-react-oauth2-dev
 
+Instead, `-jdl` suffix folders contain `.jdl` files which is the model to create full app and entities:
+
+-   monolith-react-jwt-sql-jdl
+

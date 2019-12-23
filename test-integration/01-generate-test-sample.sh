@@ -39,7 +39,14 @@ echo "*** changed directory in : test-integration/samples/"$1
 # Run NHipster Generator
 #-------------------------------------------------------------------------------
 echo "*** run nodejs blueprint for : "$1
-jhipster --blueprints nodejs --skip-git --skip-checks --force --no-insight
+
+runOptions=""
+
+if [ "$2" == "import-jdl" ]; then
+  runOptions="import-jdl "$1".jdl"
+fi
+
+jhipster $runOptions --blueprints nodejs --skip-git --skip-checks --force --no-insight
 echo "*** install server dependencies for : "$1
 cd server && npm install
 
@@ -49,7 +56,6 @@ cd server && npm install
 #-------------------------------------------------------------------------------
 echo "*** run app : "$1
 cd ..
-cat .eslintrc.json
 runApp
 launchCurl
 
