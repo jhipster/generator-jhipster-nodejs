@@ -49,7 +49,7 @@ cd server && npm install
 #-------------------------------------------------------------------------------
 echo "*** run app : "$1
 cd ..
-cat tsconfig.json
+cat .eslintrc.json
 runApp
 launchCurl
 

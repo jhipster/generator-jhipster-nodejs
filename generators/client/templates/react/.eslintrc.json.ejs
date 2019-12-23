@@ -21,12 +21,18 @@
   "parserOptions": {
     "project": "./<% if (protractorTests) { %>tsconfig.e2e.json<% } else { %>tsconfig.json<% } %>"
   },
-  "settings": {
-    "import/resolver": {
-      "node": {
-        "extensions": [".js", ".jsx", ".ts", ".tsx"]
-      }
-    }
-  },
-  "rules": {}
+  "rules": {
+    "import/no-unresolved": "off",
+    "import/order": "off",
+    "prefer-template": "off",
+    "prettier/prettier": "off",
+    "import/prefer-default-export": "off",
+    "dot-notation": "off",
+    "no-else-return": "off",
+    "no-restricted-globals": "off",
+    "import/no-extraneous-dependencies": "off",
+    "prefer-promise-reject-errors": "off",
+    "no-useless-computed-key": "off",
+    "no-return-assign": "off"
+  }
 }
