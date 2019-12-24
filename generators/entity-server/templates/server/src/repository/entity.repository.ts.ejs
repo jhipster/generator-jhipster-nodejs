@@ -1,5 +1,5 @@
 import { EntityRepository, Repository } from 'typeorm';
-import <%= entityClass %> from '../domain/<%= entityModelFileName %>.entity';
+import <%= entityClass %> from '../domain/<%= entityFileName %>.entity';
 
 @EntityRepository(<%= entityClass %>)
 export class <%= entityClass %>Repository extends Repository<<%= entityClass %>> {}

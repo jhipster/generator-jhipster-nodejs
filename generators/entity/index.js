@@ -18,43 +18,6 @@ module.exports = class extends EntityGenerator {
     }
 
     get initializing() {
-        /**
-         * Any method beginning with _ can be reused from the superclass `EntityGenerator`
-         *
-         * There are multiple ways to customize a phase from JHipster.
-         *
-         * 1. Let JHipster handle a phase, blueprint doesnt override anything.
-         * ```
-         *      return super._initializing();
-         * ```
-         *
-         * 2. Override the entire phase, this is when the blueprint takes control of a phase
-         * ```
-         *      return {
-         *          myCustomInitPhaseStep() {
-         *              // Do all your stuff here
-         *          },
-         *          myAnotherCustomInitPhaseStep(){
-         *              // Do all your stuff here
-         *          }
-         *      };
-         * ```
-         *
-         * 3. Partially override a phase, this is when the blueprint gets the phase from JHipster and customizes it.
-         * ```
-         *      const phaseFromJHipster = super._initializing();
-         *      const myCustomPhaseSteps = {
-         *          displayLogo() {
-         *              // override the displayLogo method from the _initializing phase of JHipster
-         *          },
-         *          myCustomInitPhaseStep() {
-         *              // Do all your stuff here
-         *          },
-         *      }
-         *      return Object.assign(phaseFromJHipster, myCustomPhaseSteps);
-         * ```
-         */
-        // Here we are not overriding this phase and hence its being handled by JHipster
         return super._initializing();
     }
 
@@ -69,8 +32,47 @@ module.exports = class extends EntityGenerator {
     }
 
     get writing() {
-        // Here we are not overriding this phase and hence its being handled by JHipster
-        return super._writing();
+        return {
+            composeServer() {
+                const context = this.context;
+                if (context.skipServer) return;
+                const configOptions = this.configOptions;
+
+                this.composeWith(require.resolve('../entity-server'), {
+                    context,
+                    configOptions,
+                    force: context.options.force,
+                    debug: context.isDebugEnabled
+                });
+            },
+
+            composeClient() {
+                const context = this.context;
+                if (context.skipClient) return;
+                const configOptions = this.configOptions;
+
+                this.composeWith(require.resolve('../entity-client'), {
+                    context,
+                    configOptions,
+                    'skip-install': context.options['skip-install'],
+                    force: context.options.force,
+                    debug: context.isDebugEnabled
+                });
+            },
+
+            composeI18n() {
+                const context = this.context;
+                if (context.skipClient) return;
+                const configOptions = this.configOptions;
+                this.composeWith(require.resolve('../entity-i18n'), {
+                    context,
+                    configOptions,
+                    'skip-install': context.options['skip-install'],
+                    force: context.options.force,
+                    debug: context.isDebugEnabled
+                });
+            }
+        };
     }
 
     get install() {

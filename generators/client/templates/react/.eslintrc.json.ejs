@@ -17,22 +17,22 @@
  limitations under the License.
 -%>
 {
-  "name": "<%= dasherizedBaseName %>",
-  "version": "0.0.0",
-  "description": "Description for <%= baseName %>",
-  "private": true,
-  "license": "UNLICENSED",
-  "cacheDirectories": [
-    "node_modules"
-  ],
-  "scripts": {
-    "build:app": "cd server && <%= clientPackageManager %> run build",
-    "start:app": "cd server && <%= clientPackageManager %> run start"
+  "extends": ["jhipster-react"],
+  "parserOptions": {
+    "project": "./<% if (protractorTests) { %>tsconfig.e2e.json<% } else { %>tsconfig.json<% } %>"
   },
-  "devDependencies": {
-    "generator-jhipster": "<%= jhipsterVersion %>"
-  },
-  "engines": {
-    "node": ">=8.9.0"
+  "rules": {
+    "import/no-unresolved": "off",
+    "import/order": "off",
+    "prefer-template": "off",
+    "prettier/prettier": "off",
+    "import/prefer-default-export": "off",
+    "dot-notation": "off",
+    "no-else-return": "off",
+    "no-restricted-globals": "off",
+    "import/no-extraneous-dependencies": "off",
+    "prefer-promise-reject-errors": "off",
+    "no-useless-computed-key": "off",
+    "no-return-assign": "off"
   }
 }

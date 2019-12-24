@@ -1,16 +1,13 @@
 {
     "generator-jhipster-nodejs": {
-        "promptValues": {
-            "packageName": "com.mycompany.myapp"
-        },
         "applicationType": "monolith",
-        "baseName": "jhipsterBlueprint",
-        "packageName": "com.mycompany.myapp",
-        "packageFolder": "com/mycompany/myapp",
+        "baseName": "monolithAngularJwtApp",
+        "packageName": "com.jhipster.node",
+        "packageFolder": "com/jhipster/node",
         "serverPort": "8080",
         "authenticationType": "jwt",
-        "cacheProvider": "ehcache",
-        "enableHibernateCache": true,
+        "cacheProvider": "no",
+        "enableHibernateCache": false,
         "websocket": false,
         "databaseType": "sql",
         "devDatabaseType": "sqlite",
@@ -26,23 +23,12 @@
         "clientPackageManager": "npm"
     },
     "generator-jhipster": {
-        "promptValues": {
-            "nativeLanguage": "en"
-        },
         "applicationType": "monolith",
-        "baseName": "jhipsterBlueprint",
-        "testFrameworks": [
-            "gatling",
-            "protractor"
-        ],
+        "baseName": "monolithAngularJwtApp",
+        "testFrameworks": [],
         "jhiPrefix": "jhi",
-        "enableTranslation": true,
+        "enableTranslation": false,
         "clientPackageManager": "npm",
-        "nativeLanguage": "en",
-        "languages": [
-            "en",
-            "fr"
-        ],
         "blueprint": "generator-jhipster-nodejs"
     }
 }

@@ -53,84 +53,6 @@ const serverFiles = {
                 }
             ]
         }
-        // ,
-        // {
-        //     condition: generator => generator.jpaMetamodelFiltering,
-        //     path: SERVER_MAIN_SRC_DIR,
-        //     templates: [
-        //         {
-        //             file: 'service/dto/EntityCriteria.ts',
-        //             renameTo: generator => `${generator.packageFolder}/service/dto/${generator.entityClass}Criteria.ts`
-        //         },
-        //         {
-        //             file: 'service/EntityQueryService.ts',
-        //             renameTo: generator => `${generator.packageFolder}/service/${generator.entityClass}QueryService.ts`
-        //         }
-        //     ]
-        // }
-        //     ,
-        //     {
-        //         condition: generator => generator.searchEngine === 'elasticsearch',
-        //         path: SERVER_MAIN_SRC_DIR,
-        //         templates: [
-        //             {
-        //                 file: 'repository/search/EntitySearchRepository.ts',
-        //                 renameTo: generator => `${generator.packageFolder}/repository/search/${generator.entityClass}SearchRepository.ts`
-        //             }
-        //         ]
-        //     },
-        //     {
-        //         condition: generator => generator.reactive && ['mongodb', 'cassandra', 'couchbase'].includes(generator.databaseType),
-        //         path: SERVER_MAIN_SRC_DIR,
-        //         templates: [
-        //             {
-        //                 file: 'repository/reactive/EntityReactiveRepository.ts',
-        //                 renameTo: generator => `${generator.packageFolder}/repository/reactive/${generator.entityClass}ReactiveRepository.ts`
-        //             }
-        //         ]
-        //     },
-        //     {
-        //         condition: generator => generator.service === 'serviceImpl',
-        //         path: SERVER_MAIN_SRC_DIR,
-        //         templates: [
-        //             {
-        //                 file: 'service/EntityService.ts',
-        //                 renameTo: generator => `${generator.packageFolder}/service/${generator.entityClass}Service.ts`
-        //             },
-        //             {
-        //                 file: 'service/impl/EntityServiceImpl.ts',
-        //                 renameTo: generator => `${generator.packageFolder}/service/impl/${generator.entityClass}ServiceImpl.ts`
-        //             }
-        //         ]
-        //     },
-        //     {
-        //         condition: generator => generator.service === 'serviceClass',
-        //         path: SERVER_MAIN_SRC_DIR,
-        //         templates: [
-        //             {
-        //                 file: 'service/impl/EntityServiceImpl.ts',
-        //                 renameTo: generator => `${generator.packageFolder}/service/${generator.entityClass}Service.ts`
-        //             }
-        //         ]
-        //     },
-        //     {
-        //         condition: generator => generator.dto === 'mapstruct',
-        //         path: SERVER_MAIN_SRC_DIR,
-        //         templates: [
-        //             {
-        //                 file: 'service/dto/EntityDTO.ts',
-        //                 renameTo: generator => `${generator.packageFolder}/service/dto/${generator.asDto(generator.entityClass)}.ts`
-        //             },
-        //             {
-        //                 file: 'service/mapper/BaseEntityMapper.ts',
-        //                 renameTo: generator => `${generator.packageFolder}/service/mapper/EntityMapper.ts`
-        //             },
-        //             {
-        //                 file: 'service/mapper/EntityMapper.ts',
-        //                 renameTo: generator => `${generator.packageFolder}/service/mapper/${generator.entityClass}Mapper.ts`
-        //             }
-        //         ]
-        //     }
     ]
 };
 
@@ -139,24 +61,28 @@ module.exports = {
 };
 
 function writeFiles() {
-    if (this.skipServer) return;
+    return {
+        customEntityServerFiles() {
+            if (this.skipServer) return;
 
-    this.writeFilesToDisk(serverFiles, this, false);
+            this.writeFilesToDisk(serverFiles, this, false);
 
-    this.fields.forEach(field => {
-        if (field.fieldIsEnum === true) {
-            const fieldType = field.fieldType;
-            const enumInfo = utils.buildEnumInfo(field, this.angularAppName, this.packageName, this.clientRootFolder);
-            this.template(
-                `${SERVER_NODEJS_DIR}src/domain/enumeration/Enum.ts.ejs`,
-                `${SERVER_NODEJS_DIR}src/domain/enumeration/${fieldType}.ts`,
-                this,
-                {},
-                enumInfo
-            );
+            this.fields.forEach(field => {
+                if (field.fieldIsEnum === true) {
+                    const fieldType = field.fieldType;
+                    const enumInfo = utils.buildEnumInfo(field, this.angularAppName, this.packageName, this.clientRootFolder);
+                    this.template(
+                        `${SERVER_NODEJS_DIR}src/domain/enumeration/Enum.ts.ejs`,
+                        `${SERVER_NODEJS_DIR}src/domain/enumeration/${fieldType}.ts`,
+                        this,
+                        {},
+                        enumInfo
+                    );
+                }
+            });
+
+            utils.addEntityToAppModuleImport(this, this.entityClass, this.entityFileName);
+            utils.addEntityToAppModule(this, this.entityClass);
         }
-    });
-
-    utils.addEntityToAppModuleImport(this, this.entityClass, this.entityFileName);
-    utils.addEntityToAppModule(this, this.entityClass);
+    };
 }

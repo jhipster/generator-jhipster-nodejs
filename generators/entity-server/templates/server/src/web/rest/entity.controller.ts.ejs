@@ -2,9 +2,9 @@ import { Body, Controller, Delete, Get, HttpCode, Logger, Param, Post as PostMet
 import { InjectRepository } from '@nestjs/typeorm';
 import { ApiBearerAuth, ApiUseTags, ApiResponse, ApiOperation } from '@nestjs/swagger';
 import { Response, Request } from 'express';
-import <%= entityClass %> from '../../domain/<%= entityModelFileName %>.entity';
+import <%= entityClass %> from '../../domain/<%= entityFileName %>.entity';
 import { PageRequest, Page } from '../../domain/base/pagination.entity';
-import { <%= entityClass %>Repository } from '../../repository/<%= entityModelFileName %>.repository';
+import { <%= entityClass %>Repository } from '../../repository/<%= entityFileName %>.repository';
 import { AuthGuard, Roles, RolesGuard, RoleType } from '../../security';
 import { HeaderUtil } from '../../client/header-util';
 import { LoggingInterceptor } from '../../client/interceptors/logging.interceptor';
