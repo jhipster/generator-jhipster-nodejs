@@ -12,4 +12,5 @@ Those are described in `.yo-rc.json` files which is the descriptor file created 
 Instead, `-jdl` suffix folders contain `.jdl` files which is the model to create full app and entities:
 
 -   monolith-react-jwt-sql-jdl
+-   microservice-angular-oauth2-sql-jdl
 

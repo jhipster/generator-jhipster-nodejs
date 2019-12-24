@@ -8,7 +8,7 @@ launchCurl() {
     maxRetry=10
     httpUrl="http://localhost:8081/management/info"
     rep=$(curl -v "$httpUrl")
-    echo "status: "$status
+    status=$?
     while [ "$status" -ne 0 ] && [ "$retryCount" -le "$maxRetry" ]; do
         echo "*** [$(date)] Application not reachable yet. Sleep and retry - retryCount =" $retryCount "/" $maxRetry
         retryCount=$((retryCount+1))
@@ -48,6 +48,11 @@ if [ "$2" = "import-jdl" ]; then
 fi
 
 jhipster $runOptions
+
+if [ "$2" = "post-import-jdl" ]; then
+  echo "*** run import jdl after generation for : "$1
+  jhipster import-jdl $1.jdl $runOptions
+fi
 
 echo "*** check if the generation is wrong for some default java classes created :"
 
