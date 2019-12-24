@@ -3,7 +3,7 @@
 set -e
 
 launchCurl() {
-    sleep 100
+    sleep 80
     retryCount=1
     maxRetry=10
     httpUrl="http://localhost:8081/management/info"
@@ -47,7 +47,7 @@ if [ "$2" = "import-jdl" ]; then
   runOptions="import-jdl "$1".jdl $runOptions"
 fi
 
-jhipster $runOptions 
+jhipster $runOptions
 
 echo "*** check if the generation is wrong for some default java classes created :"
 
