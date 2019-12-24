@@ -27,14 +27,17 @@ module.exports = class extends AppGenerator {
 
     get configuring() {
         const configuringPhaseFromJHipster = super._configuring();
+        /*
         configuringPhaseFromJHipster.askFori18n = {};
+        */
         return configuringPhaseFromJHipster;
     }
 
     get default() {
         const defaultPhaseFromJHipster = super._default();
-        defaultPhaseFromJHipster.askForTestOpts = {};
+        /* defaultPhaseFromJHipster.askForTestOpts = {};
         defaultPhaseFromJHipster.askForMoreModules = {};
+        */
         return defaultPhaseFromJHipster;
     }
 
