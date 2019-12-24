@@ -37,11 +37,7 @@ module.exports = class extends EntityServerGenerator {
     }
 
     get writing() {
-        return {
-            writeAdditionalFile() {
-                writeFiles.call(this);
-            }
-        };
+        return writeFiles();
     }
 
     get end() {
