@@ -1,7 +1,7 @@
 {
   "generator-jhipster-nodejs": {
     "applicationType": "microservice",
-    "baseName": "microserviceAngularOauth2SqlJdlApp",
+    "baseName": "microserviceOauth2SqlJdlApp",
     "packageName": "com.jhipster.node",
     "packageFolder": "com/jhipster/node",
     "serverPort": "8081",
@@ -18,22 +18,16 @@
     "buildTool": "maven",
     "enableSwaggerCodegen": false,
     "embeddableLaunchScript": false,
-    "useSass": true,
-    "clientFramework": "angularX",
-    "clientTheme": "none",
-    "clientThemeVariant": "",
-    "clientPackageManager": "npm",
     "enableTranslation": false
   },
   "generator-jhipster": {
     "applicationType": "microservice",
-    "baseName": "microserviceAngularOauth2SqlJdlApp",
+    "baseName": "microserviceOauth2SqlJdlApp",
     "testFrameworks": [],
     "jhiPrefix": "jhi",
     "entitySuffix": "",
     "dtoSuffix": "DTO",
     "enableTranslation": false,
-    "clientPackageManager": "npm",
     "blueprint": "generator-jhipster-nodejs"
   }
 }

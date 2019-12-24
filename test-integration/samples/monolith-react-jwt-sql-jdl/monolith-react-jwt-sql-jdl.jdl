@@ -17,7 +17,6 @@ application {
 		authenticationType jwt,
 		databaseType sql,
 		prodDatabaseType mssql,
-		buildTool maven,
 		serviceDiscoveryType false,
 		clientPackageManager npm,
 		useSass true,

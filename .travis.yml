@@ -17,7 +17,7 @@ jobs:
     - script:  sh test-integration/01-generate-test-sample.sh monolith-react-jwt-sql-jdl import-jdl
       install: sh test-integration/00-install-all-jhipster.sh
       name: monolith-react-jwt-sql-jdl test
-    - script:  sh test-integration/01-generate-test-sample.sh microservice-angular-oauth2-sql-jdl post-import-jdl
+    - script:  sh test-integration/01-generate-test-sample.sh microservice-oauth2-sql-jdl post-import-jdl
       install: sh test-integration/00-install-all-jhipster.sh
-      name: microservice-angular-oauth2-sql-jdl test
+      name: microservice-oauth2-sql-jdl test
 
