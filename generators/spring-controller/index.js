@@ -44,10 +44,6 @@ module.exports = class extends SpringControllerGenerator {
     }
 
     get writing() {
-        return {
-            writeAdditionalFile() {
-                writeFiles.call(this);
-            }
-        };
+        return writeFiles();
     }
 };

@@ -49,10 +49,14 @@ module.exports = {
 };
 
 function writeFiles() {
-    if (this.skipServer) return;
+    return {
+        customControllerServerFiles() {
+            if (this.skipServer) return;
 
-    this.writeFilesToDisk(serverFiles, this, false);
+            this.writeFilesToDisk(serverFiles, this, false);
 
-    utils.addControllerToAppModuleImport(this, this.controllerClass, this.controllerFileName);
-    utils.addControllerToAppModule(this, this.controllerClass);
+            utils.addControllerToAppModuleImport(this, this.controllerClass, this.controllerFileName);
+            utils.addControllerToAppModule(this, this.controllerClass);
+        }
+    };
 }
