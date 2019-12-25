@@ -16,8 +16,13 @@ module.exports = class extends AppGenerator {
     }
 
     get initializing() {
-        // Here we are not overriding this phase and hence its being handled by JHipster
-        return this._initializing();
+        const initPhaseFromJHipster = this._initializing();
+
+        const jhipsterInitAppPhaseSteps = {
+            displayLogo() {}
+        };
+
+        return Object.assign(initPhaseFromJHipster, jhipsterInitAppPhaseSteps);
     }
 
     get prompting() {
@@ -27,18 +32,59 @@ module.exports = class extends AppGenerator {
 
     get configuring() {
         const configuringPhaseFromJHipster = super._configuring();
-        /*
-        configuringPhaseFromJHipster.askFori18n = {};
-        */
-        return configuringPhaseFromJHipster;
+
+        const jhipsterConfigureAppPhaseSteps = {
+            composeServer() {
+                if (this.skipServer) return;
+                const options = this.options;
+                const configOptions = this.configOptions;
+
+                this.composeWith(require.resolve('../server'), {
+                    ...options,
+                    configOptions,
+                    'client-hook': !this.skipClient,
+                    debug: this.isDebugEnabled
+                });
+            },
+
+            composeClient() {
+                if (this.skipClient) return;
+                const options = this.options;
+                const configOptions = this.configOptions;
+
+                this.composeWith(require.resolve('../client'), {
+                    ...options,
+                    configOptions,
+                    debug: this.isDebugEnabled
+                });
+            },
+
+            composeCommon() {
+                const options = this.options;
+                const configOptions = this.configOptions;
+
+                this.composeWith(require.resolve('../common'), {
+                    ...options,
+                    'client-hook': !this.skipClient,
+                    configOptions,
+                    debug: this.isDebugEnabled
+                });
+            },
+
+            askFori18n: {}
+        };
+
+        return Object.assign(configuringPhaseFromJHipster, jhipsterConfigureAppPhaseSteps);
     }
 
     get default() {
         const defaultPhaseFromJHipster = super._default();
-        /* defaultPhaseFromJHipster.askForTestOpts = {};
-        defaultPhaseFromJHipster.askForMoreModules = {};
-        */
-        return defaultPhaseFromJHipster;
+        const jhipsterConfigureAppPhaseSteps = {
+            askForTestOpts: {},
+            askForMoreModules: {}
+        };
+
+        return Object.assign(defaultPhaseFromJHipster, jhipsterConfigureAppPhaseSteps);
     }
 
     get writing() {
