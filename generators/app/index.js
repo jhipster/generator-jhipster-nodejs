@@ -92,10 +92,20 @@ module.exports = class extends AppGenerator {
 
             },
             /* eslint-enable */
+            // remove jhipster standard java requirement not used in this blueprint
+            validateJava() {},
             customSettings() {
                 this.skipI18n = true;
                 this.testFrameworks = [];
                 this.enableTranslation = false;
+
+                // read jhipster values properties From .yo-rc.json
+                if (fs.existsSync(yoRc)) {
+                    const jhipsterYoRc = JSON.parse(fs.readFileSync(yoRc))['generator-jhipster'];
+                    if (jhipsterYoRc && jhipsterYoRc.applicationType) this.applicationType = jhipsterYoRc.applicationType;
+                    if (jhipsterYoRc && jhipsterYoRc.baseName) this.baseName = jhipsterYoRc.baseName;
+                    if (this.applicationType && this.baseName) this.existingProject = true;
+                }
             }
         };
 
