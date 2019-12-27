@@ -5,6 +5,7 @@
 
 # [1.0.0-beta.2](https://github.com/jhipster/generator-jhipster-nodejs/tree/v1.0.0-beta.2)
 
+- Disable testFramework and internationalization prompt questions with main app customization [issue #60](https://github.com/jhipster/generator-jhipster-nodejs/issues/60)
 - Provide test integration for quality in travis [issue #77](https://github.com/jhipster/generator-jhipster-nodejs/issues/77)
 
 

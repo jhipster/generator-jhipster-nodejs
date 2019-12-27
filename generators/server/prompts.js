@@ -32,54 +32,26 @@ function askForMainServerSideOpts(meta) {
             type: 'list',
             name: 'authenticationType',
             message: `Which ${chalk.yellow('*type*')} of authentication would you like to use?`,
-            choices: response => {
-                const opts = [];
-                opts.push({
-                    value: 'jwt',
-                    name: 'JWT authentication (stateless, with a token)'
-                });
-                opts.push({
-                    value: 'oauth2',
-                    name: 'OAuth 2.0 / OIDC Authentication (stateful, works with Okta)'
-                });
-                return opts;
-            },
-            default: 0
+            choices: [
+                { value: 'jwt', name: 'JWT authentication (stateless, with a token)' },
+                { value: 'oauth2', name: 'OAuth 2.0 / OIDC Authentication (stateful, works with Okta)' }
+            ],
+            default: 'jwt'
         },
         {
             type: 'list',
             name: 'prodDatabaseType',
             message: `Which ${chalk.yellow('*production*')} database would you like to use?`,
-            choices: response => {
-                const opts = [];
-                opts.push({
-                    value: 'sqlite',
-                    name: 'SQLite'
-                });
-                /* opts.push({
-                    value: 'mongodb',
-                    name: 'MongoDB'
-                });
-                */
-                opts.push({
-                    value: 'mysql',
-                    name: 'MySQL or MariaDB'
-                });
-                opts.push({
-                    value: 'postgres',
-                    name: 'PostgreSQL or CockroachDB'
-                });
-                opts.push({
-                    value: 'oracle',
-                    name: 'Oracle (Please follow our documentation to use the Oracle proprietary driver)'
-                });
-                opts.push({
-                    value: 'mssql',
-                    name: 'Microsoft SQL Server'
-                });
-                return opts;
-            },
-            default: 0
+            choices: [
+                { value: 'sqlite', name: 'SQLite' },
+                /* {   value: 'mongodb',
+                name: 'MongoDB' }, */
+                { value: 'mysql', name: 'MySQL or MariaDB' },
+                { value: 'postgres', name: 'PostgreSQL or CockroachDB' },
+                { value: 'oracle', name: 'Oracle (Please follow our documentation to use the Oracle proprietary driver)' },
+                { value: 'mssql', name: 'Microsoft SQL Server' }
+            ],
+            default: 'sqlite'
         }
     ];
 

@@ -38,6 +38,7 @@ To contribute for the next featues, fork the repo and open a pull request regard
 - [x] Test prod mysql database and update doc with angular/react client
 - [x] OAuth2 feature for Okta
 - [x] Integration test in the pipeline build
+- [x] Remove all java references customizing main app generator
 
 ## To DO for next release
 

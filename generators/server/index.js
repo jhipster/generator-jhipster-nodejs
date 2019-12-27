@@ -2,9 +2,7 @@
 const chalk = require('chalk');
 const ServerGenerator = require('generator-jhipster/generators/server');
 const jhipsterConstants = require('generator-jhipster/generators/generator-constants');
-// const jhipsterPackagejs = require('generator-jhipster/package.json');
 const jhipsterNodeConstants = require('../generator-nodejs-constants');
-const nodePackagejs = require('../../package.json');
 const writeFiles = require('./files').writeFiles;
 const prompts = require('./prompts');
 
@@ -26,76 +24,7 @@ module.exports = class extends ServerGenerator {
     get initializing() {
         const initPhaseFromJHipster = super._initializing();
         const jhipsterInitNodePhaseSteps = {
-            /* eslint-disable */
-            displayNHipsterLogo() {
-                this.log('\n');
-                this.log(`${chalk.yellow(' ███╗   ██╗')}${chalk.green(' ██╗   ██╗ ████████╗ ███████╗   ██████╗ ████████╗ ████████╗ ███████╗')}`);
-                this.log(`${chalk.yellow(' ████╗  ██║')}${chalk.green(' ██║   ██║ ╚══██╔══╝ ██╔═══██╗ ██╔════╝ ╚══██╔══╝ ██╔═════╝ ██╔═══██╗')}`);
-                this.log(`${chalk.yellow(' ██╔██╗ ██║')}${chalk.green(' ████████║    ██║    ███████╔╝ ╚█████╗     ██║    ██████╗   ███████╔╝')}`);
-                this.log(`${chalk.yellow(' ██║╚██╗██║')}${chalk.green(' ██╔═══██║    ██║    ██╔════╝   ╚═══██╗    ██║    ██╔═══╝   ██╔══██║')}`);
-                this.log(`${chalk.yellow(' ██║ ╚████║')}${chalk.green(' ██║   ██║ ████████╗ ██║       ██████╔╝    ██║    ████████╗ ██║  ╚██╗')}`);
-                this.log(`${chalk.yellow(' ╚═╝  ╚═══╝')}${chalk.green(' ╚═╝   ╚═╝ ╚═══════╝ ╚═╝       ╚═════╝     ╚═╝    ╚═══════╝ ╚═╝   ╚═╝')}\n`);
-                this.log(chalk.white.bold('                            https://www.jhipster.tech\n'));
-                this.log(chalk.white('Welcome to NHipster (Jhipster NodeJS Official Blueprint) ') + chalk.yellow(`v${nodePackagejs.version}`));
-                this.log(chalk.white('This blueprint generates your backend in NodeJS with NestJS framework'));
-
-                this.log(
-                    chalk.green(
-                        ' _______________________________________________________________________________________________________________\n'
-                    )
-                );
-                this.log(
-                    chalk.white(
-                        `  For any questions or improvements refer to the stream lead at ${chalk.yellow('https://github.com/amanganiello90')}`
-                    )
-                );
-                this.log(
-                    chalk.white(
-                        `  If you find NHipster useful, support and star the project at ${chalk.yellow(
-                            'https://github.com/jhipster/generator-jhipster-nodejs'
-                        )}`
-                    )
-                );
-                this.log(
-                    chalk.green(
-                        ' _______________________________________________________________________________________________________________\n'
-                    )
-                );
-                this.log(
-                    chalk.green.bold(
-                        ' This NodeJS blueprint use these following configurations:\n'
-                    )
-                );
-                this.log(
-                    chalk.green.bold(
-                        ' 1. NestJS Framework with swagger doc\n'
-                    )
-                );
-                this.log(
-                    chalk.green.bold(
-                        ' 2. JWT or OAuth2 Passport security authentication\n'
-                    )
-                );
-                this.log(
-                    chalk.green.bold(
-                        ' 3. TypeORM usage with SQLite development database and versioning/migration\n'
-                    )
-                );
-                this.log(
-                    chalk.green.bold(
-                        ' 4. Initial load data seed with users (using auth roles) integrated with the angular/react client\n'
-                    )
-                );
-                this.log(
-                    chalk.green.bold(
-                        ' 5. Eureka JS client registry\n'
-                    )
-                );
-
-            },
-
             setupNodeServerconsts() {
-
                 this.packageName = jhipsterNodeConstants.PACKAGE_NAME_NODEJS;
                 this.cacheProvider = jhipsterNodeConstants.CACHE_PROVIDER_NODEJS;
                 this.enableHibernateCache = jhipsterNodeConstants.ENABLE_HIBERNATE_CACHE_NODEJS;
@@ -107,7 +36,7 @@ module.exports = class extends ServerGenerator {
                 this.serviceDiscoveryType = jhipsterNodeConstants.SERVICE_DISCOVERY_TYPE_NODEJS;
                 this.buildTool = jhipsterNodeConstants.BUILD_TOOL_NODEJS;
                 this.enableSwaggerCodegen = jhipsterNodeConstants.ENABLE_SWAGGER_CODEGEN_NODEJS;
-                this.testFrameworks =[];
+                this.testFrameworks = [];
 
                 /*
                 this.packagejs= jhipsterPackagejs;
@@ -117,9 +46,8 @@ module.exports = class extends ServerGenerator {
                 this.mongoProdDatabase = configuration.get('mongoProdDatabase');
                 */
             }
-
         };
-        /* eslint-enable */
+
         return Object.assign(initPhaseFromJHipster, jhipsterInitNodePhaseSteps);
 
         //  return initPhaseFromJHipster;
