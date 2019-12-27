@@ -2,12 +2,25 @@
 const chalk = require('chalk');
 const AppGenerator = require('generator-jhipster/generators/app');
 const jhipsterPackagejs = require('generator-jhipster/package.json');
-const fs = require('fs');
 const nodePackagejs = require('../../package.json');
 
-const yoRc = '.yo-rc.json';
-
 module.exports = class extends AppGenerator {
+    /**
+     * Override yeoman standard storage function for yo-rc.json.
+     * @return {String} The name of the root generator
+     */
+    rootGeneratorName() {
+        return jhipsterPackagejs.name;
+    }
+
+    /**
+     * Override yeoman standard storage function for yo-rc.json.
+     * @return {String} The version of the root generator
+     */
+    rootGeneratorVersion() {
+        return jhipsterPackagejs.version;
+    }
+
     constructor(args, opts) {
         super(args, Object.assign({ fromBlueprint: true }, opts)); // fromBlueprint variable is important
 
@@ -94,18 +107,11 @@ module.exports = class extends AppGenerator {
             /* eslint-enable */
             // remove jhipster standard java requirement not used in this blueprint
             validateJava() {},
+
             customSettings() {
                 this.skipI18n = true;
                 this.testFrameworks = [];
                 this.enableTranslation = false;
-
-                // read jhipster values properties From .yo-rc.json
-                if (fs.existsSync(yoRc)) {
-                    const jhipsterYoRc = JSON.parse(fs.readFileSync(yoRc))['generator-jhipster'];
-                    if (jhipsterYoRc && jhipsterYoRc.applicationType) this.applicationType = jhipsterYoRc.applicationType;
-                    if (jhipsterYoRc && jhipsterYoRc.baseName) this.baseName = jhipsterYoRc.baseName;
-                    if (this.applicationType && this.baseName) this.existingProject = true;
-                }
             }
         };
 
@@ -165,9 +171,10 @@ module.exports = class extends AppGenerator {
     get default() {
         const defaultPhaseFromJHipster = super._default();
         const jhipsterConfigureAppPhaseSteps = {
-            saveConfig() {
+            /* saveConfig() {
                 // remove old update in yo-rc.json
             },
+            */
             askForTestOpts: {},
             askForMoreModules: {}
         };
@@ -198,47 +205,6 @@ module.exports = class extends AppGenerator {
         };
 
         return Object.assign(writingPhaseFromJHipster, jhipsterWritingAppPhaseSteps);
-    }
-
-    get conflicts() {
-        // priority phase after writing to update yo-rc.json (override from standard jhipster default saveConfig)
-        const NodeAppConflictsPhaseSteps = {
-            saveConfig() {
-                const creationTimestamp = this.parseCreationTimestamp() || this.config.get('creationTimestamp') || new Date().getTime();
-
-                const standardJhipsterConfig = {
-                    jhipsterVersion: jhipsterPackagejs.version,
-                    creationTimestamp,
-                    applicationType: this.applicationType,
-                    baseName: this.baseName,
-                    testFrameworks: this.testFrameworks,
-                    jhiPrefix: this.jhiPrefix,
-                    entitySuffix: this.entitySuffix,
-                    dtoSuffix: this.dtoSuffix,
-                    skipCheckLengthOfIdentifier: this.skipCheckLengthOfIdentifier,
-                    enableTranslation: this.enableTranslation,
-                    clientPackageManager: this.clientPackageManager
-                };
-
-                if (this.enableTranslation) {
-                    standardJhipsterConfig.nativeLanguage = this.nativeLanguage;
-                    standardJhipsterConfig.languages = this.languages;
-                }
-                this.blueprints && (standardJhipsterConfig.blueprints = this.blueprints);
-                this.blueprintVersion && (standardJhipsterConfig.blueprintVersion = this.blueprintVersion);
-                this.reactive && (standardJhipsterConfig.reactive = this.reactive);
-                this.skipClient && (standardJhipsterConfig.skipClient = true);
-                this.skipServer && (standardJhipsterConfig.skipServer = true);
-                this.skipUserManagement && (standardJhipsterConfig.skipUserManagement = true);
-                this.skipFakeData && (standardJhipsterConfig.skipFakeData = true);
-
-                const updateYoRc = JSON.parse(fs.readFileSync(yoRc));
-                updateYoRc['generator-jhipster'] = standardJhipsterConfig;
-                fs.writeFileSync(yoRc, JSON.stringify(updateYoRc, null, 4));
-            }
-        };
-
-        return NodeAppConflictsPhaseSteps;
     }
 
     get end() {
