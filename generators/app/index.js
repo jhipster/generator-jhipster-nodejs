@@ -2,10 +2,10 @@
 const chalk = require('chalk');
 const AppGenerator = require('generator-jhipster/generators/app');
 const jhipsterPackagejs = require('generator-jhipster/package.json');
+const fs = require('fs');
 const nodePackagejs = require('../../package.json');
-/* const fs = require('fs');
+
 const yoRc = '.yo-rc.json';
-*/
 
 module.exports = class extends AppGenerator {
     constructor(args, opts) {
@@ -90,8 +90,13 @@ module.exports = class extends AppGenerator {
                     )
                 );
 
-            }
+            },
             /* eslint-enable */
+            customSettings() {
+                this.skipI18n = true;
+                this.testFrameworks = [];
+                this.enableTranslation = false;
+            }
         };
 
         return Object.assign(initPhaseFromJHipster, jhipsterInitAppPhaseSteps);
@@ -141,9 +146,7 @@ module.exports = class extends AppGenerator {
                     configOptions,
                     debug: this.isDebugEnabled
                 });
-            },
-
-            askFori18n: {}
+            }
         };
 
         return Object.assign(configuringPhaseFromJHipster, jhipsterConfigureAppPhaseSteps);
@@ -153,39 +156,7 @@ module.exports = class extends AppGenerator {
         const defaultPhaseFromJHipster = super._default();
         const jhipsterConfigureAppPhaseSteps = {
             saveConfig() {
-                const creationTimestamp = this.parseCreationTimestamp() || this.config.get('creationTimestamp') || new Date().getTime();
-
-                const config = {
-                    'generator-jhipster': {
-                        jhipsterVersion: jhipsterPackagejs.version,
-                        creationTimestamp,
-                        applicationType: this.applicationType,
-                        baseName: this.baseName,
-                        testFrameworks: this.testFrameworks,
-                        jhiPrefix: this.jhiPrefix,
-                        entitySuffix: this.entitySuffix,
-                        dtoSuffix: this.dtoSuffix,
-                        skipCheckLengthOfIdentifier: this.skipCheckLengthOfIdentifier,
-                        otherModules: this.otherModules,
-                        enableTranslation: this.enableTranslation,
-                        clientPackageManager: this.clientPackageManager
-                    }
-                };
-
-                if (this.enableTranslation) {
-                    config.nativeLanguage = this.nativeLanguage;
-                    config.languages = this.languages;
-                }
-                this.blueprints && (config.blueprints = this.blueprints);
-                this.blueprintVersion && (config.blueprintVersion = this.blueprintVersion);
-                this.reactive && (config.reactive = this.reactive);
-                this.skipClient && (config.skipClient = true);
-                this.skipServer && (config.skipServer = true);
-                this.skipUserManagement && (config.skipUserManagement = true);
-                this.skipFakeData && (config.skipFakeData = true);
-                this.config.set(config);
-
-                // if (!fs.existsSync(yoRc)) fs.writeFileSync(yoRc, JSON.stringify(config, null, 4));
+                // remove old update in yo-rc.json
             },
             askForTestOpts: {},
             askForMoreModules: {}
@@ -217,6 +188,47 @@ module.exports = class extends AppGenerator {
         };
 
         return Object.assign(writingPhaseFromJHipster, jhipsterWritingAppPhaseSteps);
+    }
+
+    get conflicts() {
+        // priority phase after writing to update yo-rc.json (override from standard jhipster default saveConfig)
+        const NodeAppConflictsPhaseSteps = {
+            saveConfig() {
+                const creationTimestamp = this.parseCreationTimestamp() || this.config.get('creationTimestamp') || new Date().getTime();
+
+                const standardJhipsterConfig = {
+                    jhipsterVersion: jhipsterPackagejs.version,
+                    creationTimestamp,
+                    applicationType: this.applicationType,
+                    baseName: this.baseName,
+                    testFrameworks: this.testFrameworks,
+                    jhiPrefix: this.jhiPrefix,
+                    entitySuffix: this.entitySuffix,
+                    dtoSuffix: this.dtoSuffix,
+                    skipCheckLengthOfIdentifier: this.skipCheckLengthOfIdentifier,
+                    enableTranslation: this.enableTranslation,
+                    clientPackageManager: this.clientPackageManager
+                };
+
+                if (this.enableTranslation) {
+                    standardJhipsterConfig.nativeLanguage = this.nativeLanguage;
+                    standardJhipsterConfig.languages = this.languages;
+                }
+                this.blueprints && (standardJhipsterConfig.blueprints = this.blueprints);
+                this.blueprintVersion && (standardJhipsterConfig.blueprintVersion = this.blueprintVersion);
+                this.reactive && (standardJhipsterConfig.reactive = this.reactive);
+                this.skipClient && (standardJhipsterConfig.skipClient = true);
+                this.skipServer && (standardJhipsterConfig.skipServer = true);
+                this.skipUserManagement && (standardJhipsterConfig.skipUserManagement = true);
+                this.skipFakeData && (standardJhipsterConfig.skipFakeData = true);
+
+                const updateYoRc = JSON.parse(fs.readFileSync(yoRc));
+                updateYoRc['generator-jhipster'] = standardJhipsterConfig;
+                fs.writeFileSync(yoRc, JSON.stringify(updateYoRc, null, 4));
+            }
+        };
+
+        return NodeAppConflictsPhaseSteps;
     }
 
     get end() {
