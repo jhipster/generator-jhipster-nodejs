@@ -6,19 +6,12 @@ const nodePackagejs = require('../../package.json');
 
 module.exports = class extends AppGenerator {
     /**
-     * Override yeoman standard storage function for yo-rc.json.
+     * Override yeoman standard storage function for yo-rc.json
+     *  in order to save variables in generator-jhipster key.
      * @return {String} The name of the root generator
      */
     rootGeneratorName() {
         return jhipsterPackagejs.name;
-    }
-
-    /**
-     * Override yeoman standard storage function for yo-rc.json.
-     * @return {String} The version of the root generator
-     */
-    rootGeneratorVersion() {
-        return jhipsterPackagejs.version;
     }
 
     constructor(args, opts) {
