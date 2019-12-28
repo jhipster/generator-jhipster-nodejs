@@ -1,8 +1,6 @@
 # generator-jhipster-nodejs
 [![NPM version][npm-image]][npm-url] [![Build Status][travis-image]][travis-url] [![Dependency Status][daviddm-image]][daviddm-url] [![Gitter](https://badges.gitter.im/generator-jhipster-nodejs/community.svg)](https://gitter.im/generator-jhipster-nodejs/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge) [![Downloads][npmcharts-image]][npmcharts-url]
 
-> ## 🛠 Mode: Just Released :smile_cat: :smile_cat: :smile_cat:
->
 > Generator-jhipster-nodejs, the _official NodeJS blueprint_ that uses [NestJS Typescript Framework](https://nestjs.com/) for your **backend**. We encourage you to use it and give us your feedback.
 
 <div align="center">
