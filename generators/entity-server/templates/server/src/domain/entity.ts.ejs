@@ -81,7 +81,7 @@ export default class <%= asEntity(entityClass) %> extends BaseEntity  {
     <%_ if (!hasDto && typeof fields[idx].javadoc != 'undefined') { _%>
     @ApiModelProperty({type: '', description: '<%- formatAsApiDescription(fields[idx].javadoc) %>'<% if (required) { %>, required: true<% } %>})
     <%_ } _%>
-    <%_ if (fields[idx].fieldIsEnum) { _%>
+        <%_ if (fields[idx].fieldIsEnum) { _%>
     @Column({type: 'enum', name: '<%-fieldNameAsDatabaseColumn %>', enum: <%= fieldType %>})
         <%_ } else if (['Instant', 'ZonedDateTime', 'LocalDate'].includes(fieldType)) { _%>
     @Column({<%_ if(fieldColumnType) { _%> type: '<%-fieldColumnType%>' ,<%_ }_%> name: "<%-fieldNameAsDatabaseColumn %>"<% if (required) { %>, nullable: false<% } %><% if (unique) { %>, unique: true<% } %>})
@@ -90,7 +90,11 @@ export default class <%= asEntity(entityClass) %> extends BaseEntity  {
         <%_ } else { _%>
     @Column({<%_ if(fieldColumnType) { _%> type: '<%-fieldColumnType%>' ,<%_ }_%>  name: "<%-fieldNameAsDatabaseColumn %>"<% if (fieldValidate === true) { %><% if (fieldValidateRules.includes('maxlength')) { %>, length: <%= fieldValidateRulesMaxlength %><% } %><% if (required) { %>, nullable: false<% } %><% if (unique) { %>, unique: true<% } %><% } %>})
         <%_ } _%>
+        <%_ if (fields[idx].fieldIsEnum) { _%>
+    <%= fieldName %>: <%= fieldType %>;        
+        <%_ } else { _%>  
     <%= fieldName %>: <%= getTsType(fieldType) %>;
+        <%_ } _%>
 
     <%_ if ((fieldType === 'byte[]' || fieldType === 'ByteBuffer') && fieldTypeBlobContent !== 'text') { _%>
     @Column({name: '<%-fieldNameAsDatabaseColumn %>_content_type'})

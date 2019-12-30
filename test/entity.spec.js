@@ -86,7 +86,7 @@ describe('Subgenerator entity of nodejs JHipster blueprint', () => {
 
             // Gender enum field
             assert.fileContent(greatEntityPath, "@Column({ type: 'enum', name: 'gender', enum: Gender })");
-            assert.fileContent(greatEntityPath, 'gender: any;');
+            assert.fileContent(greatEntityPath, 'gender: Gender;');
 
             // address String required field
             assert.fileContent(greatEntityPath, "@Column({ name: 'address', nullable: false })");
