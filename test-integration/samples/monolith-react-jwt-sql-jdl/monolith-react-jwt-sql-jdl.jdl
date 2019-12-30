@@ -57,13 +57,13 @@ entity SingleCourse {
 	isnotonlyfordegree Boolean required,
 	cfu Integer,
 	courseimage Blob,
-        amount BigDecimal
+	amount BigDecimal
 }
 
 entity Activity {
 	name UUID unique,
 	description String,
-        number Double,
+	number Double,
 	creationtime Instant
 
 }

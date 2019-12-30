@@ -85,7 +85,7 @@ export default class <%= asEntity(entityClass) %> extends BaseEntity  {
         <%_ } else if (['Instant', 'ZonedDateTime', 'LocalDate'].includes(fieldType)) { _%>
     @Column({name: "<%-fieldNameAsDatabaseColumn %>"<% if (required) { %>, nullable: false<% } %><% if (unique) { %>, unique: true<% } %>})
         <%_ } else if (fieldType === 'BigDecimal') { _%>
-    @Column({name: "<%-fieldNameAsDatabaseColumn %>", precision = 10, scale = 2<% if (required) { %>, nullable: false<% } %><% if (unique) { %>, unique: true<% } %>})
+    @Column({name: "<%-fieldNameAsDatabaseColumn %>", precision : 10, scale : 2<% if (required) { %>, nullable: false<% } %><% if (unique) { %>, unique: true<% } %>})
         <%_ } else { _%>
     @Column({name: "<%-fieldNameAsDatabaseColumn %>"<% if (fieldValidate === true) { %><% if (fieldValidateRules.includes('maxlength')) { %>, length: <%= fieldValidateRulesMaxlength %><% } %><% if (required) { %>, nullable: false<% } %><% if (unique) { %>, unique: true<% } %><% } %>})
         <%_ } _%>
@@ -122,11 +122,11 @@ export default class <%= asEntity(entityClass) %> extends BaseEntity  {
             <%_ }_%>
     <%_ }
         if (relationshipType === 'one-to-many') {_%>
-    @OneToMany(type => <%= relationship.otherEntityAngularName %>, other => other.<%= relationshipFieldNamePlural %>)
+    @OneToMany(type => <%= relationship.otherEntityAngularName %>, other => other.<%= otherEntityRelationshipName %>)
     <%= relationshipFieldNamePlural %>: <%= relationship.otherEntityAngularName %>[];
 
     <%_ } else if (relationshipType === 'many-to-one') { _%>
-    @ManyToOne(type => <%= relationship.otherEntityAngularName %>, other => other.<%= relationshipFieldName %>)
+    @ManyToOne(type => <%= relationship.otherEntityAngularName %>, other => other.<%= otherEntityRelationshipNamePlural %>)
     <%= relationshipFieldName %>: <%= relationship.otherEntityAngularName %>;
 
     <%_ } else if (relationshipType === 'many-to-many') { _%>
@@ -141,7 +141,7 @@ export default class <%= asEntity(entityClass) %> extends BaseEntity  {
     <%= relationshipFieldNamePlural %>: <%= relationship.otherEntityAngularName %>[];
 
     <%_ } else { _%>
-    @OneToOne(type => <%= relationship.otherEntityAngularName %>, other => other.<%= entityInstance %>)
+    @OneToOne(type => <%= relationship.otherEntityAngularName %>, other => other.<%= otherEntityRelationshipName%>)
     <%_ if (ownerSide === true) { _%>@JoinColumn()<%_ } _%>
     <%= relationshipFieldName %>: <%= relationship.otherEntityAngularName %>;
 

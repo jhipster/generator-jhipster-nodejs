@@ -9,7 +9,7 @@ const fieldTypes = {
     Long: 'long',
     Float: 'float',
     Double: 'double',
-    BigDecimal: 'decimal',
+    BigDecimal: 'Decimal',
     String: 'string',
     UUID: 'string',
     LocalDate: 'Date',
