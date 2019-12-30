@@ -29,14 +29,6 @@ application {
 
 // JDL definition entity for application
 
-entity DemetraUser {
-	gender String required,
-	address String required,
-	borndate LocalDate required,
-	cf String required unique,
-	usertype String required
-}
-
 /*
 
 enum Gender {
@@ -50,11 +42,22 @@ TEACHER
 }
  */
 
+entity DemetraUser {
+	gender String required,
+	address String required,
+	borndate LocalDate required,
+	cf String required unique,
+	usertype String required,
+	profileimage ImageBlob
+}
+
+
 entity SingleCourse {
 	title String required unique,
 	description String,
 	isnotonlyfordegree Boolean required,
-	cfu Integer
+	cfu Integer,
+	courseimage Blob
 }
 
 relationship ManyToMany {

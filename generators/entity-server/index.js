@@ -5,19 +5,21 @@ const writeFiles = require('./files').writeFiles;
 
 const fieldTypes = {
     Boolean: 'boolean',
-    Integer: 'number',
-    Long: 'number',
-    Float: 'number',
-    Double: 'number',
-    BigDecimal: 'number',
+    Integer: 'integer',
+    Long: 'long',
+    Float: 'float',
+    Double: 'double',
+    BigDecimal: 'decimal',
     String: 'string',
     UUID: 'string',
     LocalDate: 'Date',
-    Instant: 'Moment',
-    ZonedDateTime: 'Moment',
-    'byte[]': 'any',
-    text: 'string',
-    ByteBuffer: 'any'
+    Instant: 'timestamp',
+    ZonedDateTime: 'datetime',
+    text: 'text',
+    AnyBlob: 'blob',
+    ImageBlob: 'blob',
+    Blob: 'blob',
+    TextBlob: 'blob'
 };
 
 module.exports = class extends EntityServerGenerator {
@@ -31,9 +33,6 @@ module.exports = class extends EntityServerGenerator {
         }
 
         this.configOptions = jhContext.configOptions || {};
-        if (jhContext.databaseType === 'cassandra') {
-            this.pkType = 'UUID';
-        }
     }
 
     get writing() {
@@ -46,6 +45,6 @@ module.exports = class extends EntityServerGenerator {
     }
 
     getTsType(fieldType) {
-        return fieldTypes[fieldType] || 'string';
+        return fieldTypes[fieldType] || 'any';
     }
 };

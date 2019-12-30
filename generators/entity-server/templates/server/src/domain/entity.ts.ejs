@@ -19,15 +19,7 @@
 <%
 let importApiModelProperty = true;
 let hasDto = dto === 'mapstruct';
-let isUsingMapsId = false;
-const uniqueEnums = {};
-for (idx in fields) {
-    if (fields[idx].fieldIsEnum && (
-            !uniqueEnums[fields[idx].fieldType] || (uniqueEnums[fields[idx].fieldType] && fields[idx].fieldValues.length !== 0))) {
-        uniqueEnums[fields[idx].fieldType] = fields[idx].fieldType;
-    }
-}
-%>
+const uniqueEnums = {}; %><%- include imports -%>
 
 import { Entity, Column, PrimaryGeneratedColumn, JoinColumn, OneToOne, ManyToOne, OneToMany, ManyToMany, JoinTable } from 'typeorm';
 import { BaseEntity } from './base/base.entity';
