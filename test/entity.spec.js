@@ -59,7 +59,7 @@ describe('Subgenerator entity of nodejs JHipster blueprint', () => {
         });
     });
 
-    describe('2-greatEntity with fields test', () => {
+    describe('2-GreatEntity json entity with fields test', () => {
         before(done => {
             getPreCondition()
                 .withArguments(['GreatEntity'])
@@ -67,10 +67,82 @@ describe('Subgenerator entity of nodejs JHipster blueprint', () => {
                 .on('end', done);
         });
 
-        it('does creates entity files', () => {
+        it('does creates entity file with enum and fields validated', () => {
             // Adds your tests here
             assert.file('.jhipster/GreatEntity.json');
-            assert.file(`${SERVER_NODEJS_DIR}src/domain/great-entity.entity.ts`);
+
+            const genderEnumPath = `${SERVER_NODEJS_DIR}src/domain/enumeration/Gender.ts`;
+            const greatEntityPath = `${SERVER_NODEJS_DIR}src/domain/great-entity.entity.ts`;
+
+            assert.file(genderEnumPath);
+            assert.file(greatEntityPath);
+
+            // Gender enum class
+            assert.fileContent(genderEnumPath, 'export enum Gender');
+
+            // name UUID unique field
+            assert.fileContent(greatEntityPath, "@Column({ name: 'name', unique: true })");
+            assert.fileContent(greatEntityPath, 'name: string;');
+
+            // Gender enum field
+            assert.fileContent(greatEntityPath, "@Column({ type: 'enum', name: 'gender', enum: Gender })");
+            assert.fileContent(greatEntityPath, 'gender: any;');
+
+            // address String required field
+            assert.fileContent(greatEntityPath, "@Column({ name: 'address', nullable: false })");
+            assert.fileContent(greatEntityPath, 'address: string;');
+
+            // istrue Boolean required field
+            assert.fileContent(greatEntityPath, "@Column({ type: 'boolean', name: 'istrue' })");
+            assert.fileContent(greatEntityPath, 'istrue: boolean;');
+
+            // borndate LocalDate required field
+            assert.fileContent(greatEntityPath, "@Column({ type: 'date', name: 'borndate', nullable: false })");
+            assert.fileContent(greatEntityPath, 'borndate: any;');
+
+            // profileimage Blob field
+            assert.fileContent(greatEntityPath, "@Column({ type: 'blob', name: 'profileimage' })");
+            assert.fileContent(greatEntityPath, 'profileimage: any;');
+
+            // storage AnyBlob field
+            assert.fileContent(greatEntityPath, "@Column({ type: 'blob', name: 'storage' })");
+            assert.fileContent(greatEntityPath, 'storage: any;');
+
+            // datafile TextBlob field
+            assert.fileContent(greatEntityPath, "@Column({ type: 'blob', name: 'datafile' })");
+            assert.fileContent(greatEntityPath, 'datafile: any;');
+
+            // image Blob field
+            assert.fileContent(greatEntityPath, "@Column({ type: 'blob', name: 'image' })");
+            assert.fileContent(greatEntityPath, 'image: any;');
+
+            // amount BigDecimal field
+            assert.fileContent(greatEntityPath, "@Column({ type: 'decimal', name: 'amount', precision: 10, scale: 2 })");
+            assert.fileContent(greatEntityPath, 'amount: number;');
+
+            // cfu Integer field
+            assert.fileContent(greatEntityPath, "@Column({ type: 'integer', name: 'cfu' })");
+            assert.fileContent(greatEntityPath, 'cfu: number;');
+
+            // mynumber Double field
+            assert.fileContent(greatEntityPath, "@Column({ type: 'double', name: 'mynumber' })");
+            assert.fileContent(greatEntityPath, 'mynumber: number;');
+
+            // count Long field
+            assert.fileContent(greatEntityPath, "@Column({ type: 'long', name: 'count' })");
+            assert.fileContent(greatEntityPath, 'count: number;');
+
+            // cent Float field
+            assert.fileContent(greatEntityPath, "@Column({ type: 'float', name: 'cent' })");
+            assert.fileContent(greatEntityPath, 'cent: number;');
+
+            // creationtime Instant field
+            assert.fileContent(greatEntityPath, "@Column({ type: 'timestamp', name: 'creationtime' })");
+            assert.fileContent(greatEntityPath, 'creationtime: any;');
+
+            // deathtime ZonedDateTime field
+            assert.fileContent(greatEntityPath, "@Column({ type: 'datetime', name: 'deathtime' })");
+            assert.fileContent(greatEntityPath, 'deathtime: any;');
         });
     });
 });
