@@ -12,7 +12,7 @@ function getPreCondition() {
         .withOptions({
             'from-cli': true,
             skipInstall: true,
-            blueprint: 'nodejs',
+            blueprints: 'nodejs',
             skipChecks: true
         })
         .withGenerators([
@@ -27,11 +27,7 @@ function getPreCondition() {
 const commonPrompt = {
     baseName: 'sampleMysql',
     applicationType: 'monolith',
-    prodDatabaseType: 'mysql',
-    enableTranslation: true,
-    nativeLanguage: 'en',
-    languages: ['fr', 'de'],
-    rememberMeKey: '2bb60a80889aa6e6767e9ccd8714982681152aa5'
+    prodDatabaseType: 'mysql'
 };
 
 describe('Subgenerator server of nodejs JHipster blueprint', () => {
