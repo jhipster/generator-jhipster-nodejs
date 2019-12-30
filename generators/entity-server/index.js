@@ -5,11 +5,11 @@ const writeFiles = require('./files').writeFiles;
 
 const fieldTypes = {
     Boolean: 'boolean',
-    Integer: 'integer',
-    Long: 'long',
-    Float: 'float',
-    Double: 'double',
-    BigDecimal: 'Decimal',
+    Integer: 'number',
+    Long: 'number',
+    Float: 'number',
+    Double: 'number',
+    BigDecimal: 'number',
     String: 'string',
     UUID: 'string',
     LocalDate: 'Date',
@@ -20,6 +20,25 @@ const fieldTypes = {
     Blob: 'Blob',
     TextBlob: 'Blob',
     'byte[]': 'Blob'
+};
+
+const dbTypes = {
+    Boolean: 'boolean',
+    Integer: 'integer',
+    Long: 'long',
+    Float: 'float',
+    Double: 'double',
+    BigDecimal: 'decimal',
+    String: 'string',
+    UUID: 'string',
+    LocalDate: 'date',
+    Instant: 'timestamp',
+    ZonedDateTime: 'datetime',
+    AnyBlob: 'blob',
+    ImageBlob: 'blob',
+    Blob: 'blob',
+    TextBlob: 'blob',
+    'byte[]': 'blob'
 };
 
 module.exports = class extends EntityServerGenerator {
@@ -46,5 +65,9 @@ module.exports = class extends EntityServerGenerator {
 
     getTsType(fieldType) {
         return fieldTypes[fieldType] || 'any';
+    }
+
+    addDbType(fieldType) {
+        return dbTypes[fieldType];
     }
 };

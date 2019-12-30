@@ -68,6 +68,7 @@ export default class <%= asEntity(entityClass) %> extends BaseEntity  {
     const fieldName = fields[idx].fieldName;
     const fieldNameUnderscored = fields[idx].fieldNameUnderscored;
     const fieldNameAsDatabaseColumn = fields[idx].fieldNameAsDatabaseColumn;
+    const fieldColumnType=addDbType(fieldType);
     if (fieldValidate === true) {
         if (fieldValidateRules.includes('required')) {
             required = true;
@@ -81,13 +82,13 @@ export default class <%= asEntity(entityClass) %> extends BaseEntity  {
     @ApiModelProperty({type: '', description: '<%- formatAsApiDescription(fields[idx].javadoc) %>'<% if (required) { %>, required: true<% } %>})
     <%_ } _%>
     <%_ if (fields[idx].fieldIsEnum) { _%>
-    @Column({name: '<%-fieldNameAsDatabaseColumn %>', type: 'enum', enum: <%= fieldType %>})
+    @Column({type: 'enum', name: '<%-fieldNameAsDatabaseColumn %>', enum: <%= fieldType %>})
         <%_ } else if (['Instant', 'ZonedDateTime', 'LocalDate'].includes(fieldType)) { _%>
-    @Column({name: "<%-fieldNameAsDatabaseColumn %>"<% if (required) { %>, nullable: false<% } %><% if (unique) { %>, unique: true<% } %>})
+    @Column({<%_ if(fieldColumnType) { _%> type: '<%-fieldColumnType%>' ,<%_ }_%> name: "<%-fieldNameAsDatabaseColumn %>"<% if (required) { %>, nullable: false<% } %><% if (unique) { %>, unique: true<% } %>})
         <%_ } else if (fieldType === 'BigDecimal') { _%>
-    @Column({name: "<%-fieldNameAsDatabaseColumn %>", precision : 10, scale : 2<% if (required) { %>, nullable: false<% } %><% if (unique) { %>, unique: true<% } %>})
+    @Column({<%_ if(fieldColumnType) { _%> type: '<%-fieldColumnType%>' ,<%_ }_%> name: "<%-fieldNameAsDatabaseColumn %>", precision : 10, scale : 2<% if (required) { %>, nullable: false<% } %><% if (unique) { %>, unique: true<% } %>})
         <%_ } else { _%>
-    @Column({name: "<%-fieldNameAsDatabaseColumn %>"<% if (fieldValidate === true) { %><% if (fieldValidateRules.includes('maxlength')) { %>, length: <%= fieldValidateRulesMaxlength %><% } %><% if (required) { %>, nullable: false<% } %><% if (unique) { %>, unique: true<% } %><% } %>})
+    @Column({<%_ if(fieldColumnType) { _%> type: '<%-fieldColumnType%>' ,<%_ }_%>  name: "<%-fieldNameAsDatabaseColumn %>"<% if (fieldValidate === true) { %><% if (fieldValidateRules.includes('maxlength')) { %>, length: <%= fieldValidateRulesMaxlength %><% } %><% if (required) { %>, nullable: false<% } %><% if (unique) { %>, unique: true<% } %><% } %>})
         <%_ } _%>
     <%= fieldName %>: <%= getTsType(fieldType) %>;
 
