@@ -1,7 +1,7 @@
 /*
  * This is the application and entity model for university elearning
  * default values: https://www.jhipster.tech/jdl/#annexes
- * Use "jhipster import-jdl example-1.jh --blueprints nodejs" to generate the entire application
+ * Use "jhipster import-jdl model-name.jdl --blueprints nodejs" to generate the entire application
  * Use jhipster 6.x (example 6.6.0)
  * relationship info: https://www.jhipster.tech/managing-relationships/
  */
@@ -51,13 +51,25 @@ entity DemetraUser {
 	profileimage ImageBlob
 }
 
-
 entity SingleCourse {
 	title String required unique,
 	description String,
 	isnotonlyfordegree Boolean required,
 	cfu Integer,
-	courseimage Blob
+	courseimage Blob,
+        amount BigDecimal
+}
+
+entity Activity {
+	name UUID unique,
+	description String,
+        number Double,
+	creationtime Instant
+
+}
+
+relationship OneToOne {
+	Activity to SingleCourse
 }
 
 relationship ManyToMany {
@@ -70,11 +82,13 @@ relationship ManyToMany {
 	},
 }
 
-/*
 relationship OneToMany {
 
-DemetraUser{singlecourseteacher} to SingleCourse{cfteacher(cf) required}
+	DemetraUser {
+		singlecourseteacher
+	}
+	to SingleCourse {
+		cfteacher(cf)required
+	}
 
 }
- */
-

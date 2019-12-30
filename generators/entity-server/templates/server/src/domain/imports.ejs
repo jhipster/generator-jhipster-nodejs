@@ -50,4 +50,13 @@ for (idx in fields) {
         uniqueEnums[fields[idx].fieldType] = fields[idx].fieldType;
     }
 }
+
+for (idx in relationships) {
+    const relationship = relationships[idx];
+    if (!uniqueEntities[relationship.otherEntityAngularName]) {
+        uniqueEntities[relationship.otherEntityAngularName] = relationship.otherEntityFileName;
+    }
+
+}
+
 %>

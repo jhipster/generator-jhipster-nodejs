@@ -13,13 +13,13 @@ const fieldTypes = {
     String: 'string',
     UUID: 'string',
     LocalDate: 'Date',
-    Instant: 'timestamp',
-    ZonedDateTime: 'datetime',
-    text: 'text',
-    AnyBlob: 'blob',
-    ImageBlob: 'blob',
-    Blob: 'blob',
-    TextBlob: 'blob'
+    Instant: 'Timestamp',
+    ZonedDateTime: 'Datetime',
+    AnyBlob: 'Blob',
+    ImageBlob: 'Blob',
+    Blob: 'Blob',
+    TextBlob: 'Blob',
+    'byte[]': 'Blob'
 };
 
 module.exports = class extends EntityServerGenerator {
