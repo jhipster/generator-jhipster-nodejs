@@ -11,7 +11,7 @@ describe('Subgenerator client of nodejs JHipster blueprint', () => {
                     'from-cli': true,
                     skipInstall: true,
                     skipServer: true,
-                    blueprint: 'nodejs',
+                    blueprints: 'nodejs',
                     skipChecks: true
                 })
                 .withGenerators([

@@ -18,7 +18,7 @@ describe('Subgenerator nestjs-controller of nodejs JHipster blueprint', () => {
                 .withOptions({
                     'from-cli': true,
                     skipInstall: true,
-                    blueprint: 'nodejs',
+                    blueprints: 'nodejs',
                     skipChecks: true
                 })
                 .withGenerators([

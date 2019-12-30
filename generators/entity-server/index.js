@@ -11,13 +11,24 @@ const fieldTypes = {
     Double: 'number',
     BigDecimal: 'number',
     String: 'string',
-    UUID: 'string',
-    LocalDate: 'Date',
-    Instant: 'Moment',
-    ZonedDateTime: 'Moment',
-    'byte[]': 'any',
-    text: 'string',
-    ByteBuffer: 'any'
+    UUID: 'string'
+};
+
+const dbTypes = {
+    Boolean: 'boolean',
+    Integer: 'integer',
+    Long: 'long',
+    Float: 'float',
+    Double: 'double',
+    BigDecimal: 'decimal',
+    LocalDate: 'date',
+    Instant: 'timestamp',
+    ZonedDateTime: 'datetime',
+    AnyBlob: 'blob',
+    ImageBlob: 'blob',
+    Blob: 'blob',
+    TextBlob: 'blob',
+    'byte[]': 'blob'
 };
 
 module.exports = class extends EntityServerGenerator {
@@ -31,9 +42,6 @@ module.exports = class extends EntityServerGenerator {
         }
 
         this.configOptions = jhContext.configOptions || {};
-        if (jhContext.databaseType === 'cassandra') {
-            this.pkType = 'UUID';
-        }
     }
 
     get writing() {
@@ -46,6 +54,10 @@ module.exports = class extends EntityServerGenerator {
     }
 
     getTsType(fieldType) {
-        return fieldTypes[fieldType] || 'string';
+        return fieldTypes[fieldType] || 'any';
+    }
+
+    addDbType(fieldType) {
+        return dbTypes[fieldType];
     }
 };

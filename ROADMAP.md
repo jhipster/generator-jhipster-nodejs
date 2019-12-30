@@ -32,13 +32,14 @@ To contribute for the next featues, fork the repo and open a pull request regard
 - [x] Automatic config in dev profile sqlite db and in prod another sql db
 - [x] All user and auth api with jwt integrated in angular ui
 - [x] Replaced mongoProdDatabase question with standard jhipster databaseType and with all db typeORM support
-- [x] Remove maven with option JAVA requirement
+- [x] Remove maven with JAVA requirement option
 - [x] Add package.json when no client
 - [x] Avoid reinsert seed db in restart app using typeORM migration
 - [x] Test prod mysql database and update doc with angular/react client
 - [x] OAuth2 feature for Okta
 - [x] Integration test in the pipeline build
 - [x] Remove all java references customizing main app generator
+- [x] Needs way more testing of different relations, combinations for entity
 
 ## To DO for next release
 
@@ -49,7 +50,6 @@ To contribute for the next featues, fork the repo and open a pull request regard
 - [ ] DTOs based rest api
 - [ ] Validation
 - [ ] Export json/yaml for swagger to integrate with jhipster gateway
-- [ ] Needs way more testing of different relations, combinations for entity
 - [ ] pagination options in client
 - [ ] Elastic Search support
 - [ ] Search api

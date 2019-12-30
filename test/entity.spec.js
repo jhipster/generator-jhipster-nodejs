@@ -6,33 +6,41 @@ const constants = require('../generators/generator-nodejs-constants');
 
 const SERVER_NODEJS_DIR = `${constants.SERVER_NODEJS_SRC_DIR}/`;
 
+// initial precondition for all tests
+function getPreCondition() {
+    return helpers
+        .run('generator-jhipster/generators/entity')
+        .inTmpDir(dir => {
+            fse.copySync(path.join(__dirname, '../test/templates/ngx-blueprint'), dir);
+            fse.copySync(path.join(__dirname, '../test/templates/.jhipster'), `${dir}/.jhipster`);
+            fse.copySync(path.join(__dirname, '../test/templates/server'), `${dir}/server`);
+        })
+        .withOptions({
+            'from-cli': true,
+            skipInstall: true,
+            blueprints: 'nodejs',
+            skipChecks: true,
+            regenerate: true,
+            force: true
+        })
+        .withGenerators([
+            [
+                require('../generators/entity/index.js'), // eslint-disable-line global-require
+                'jhipster-nodejs:entity',
+                path.join(__dirname, '../generators/entity/index.js')
+            ],
+            [
+                require('../generators/entity-server/index.js'), // eslint-disable-line global-require
+                'jhipster-nodejs:entity-server',
+                path.join(__dirname, '../generators/entity-server/index.js')
+            ]
+        ]);
+}
+
 describe('Subgenerator entity of nodejs JHipster blueprint', () => {
-    describe('1-test', () => {
+    describe('1-foo entity without fields test', () => {
         before(done => {
-            helpers
-                .run('generator-jhipster/generators/entity')
-                .inTmpDir(dir => {
-                    fse.copySync(path.join(__dirname, '../test/templates/ngx-blueprint'), dir);
-                    fse.copySync(path.join(__dirname, '../test/templates/server'), `${dir}/server`);
-                })
-                .withOptions({
-                    'from-cli': true,
-                    skipInstall: true,
-                    blueprint: 'nodejs',
-                    skipChecks: true
-                })
-                .withGenerators([
-                    [
-                        require('../generators/entity/index.js'), // eslint-disable-line global-require
-                        'jhipster-nodejs:entity',
-                        path.join(__dirname, '../generators/entity/index.js')
-                    ],
-                    [
-                        require('../generators/entity-server/index.js'), // eslint-disable-line global-require
-                        'jhipster-nodejs:entity-server',
-                        path.join(__dirname, '../generators/entity-server/index.js')
-                    ]
-                ])
+            getPreCondition()
                 .withArguments(['foo'])
                 .withPrompts({
                     fieldAdd: false,
@@ -48,6 +56,93 @@ describe('Subgenerator entity of nodejs JHipster blueprint', () => {
             // Adds your tests here
             assert.file('.jhipster/Foo.json');
             assert.file(`${SERVER_NODEJS_DIR}src/domain/foo.entity.ts`);
+        });
+    });
+
+    describe('2-GreatEntity json entity with fields test', () => {
+        before(done => {
+            getPreCondition()
+                .withArguments(['GreatEntity'])
+                .withPrompts({})
+                .on('end', done);
+        });
+
+        it('does creates entity file with enum and fields validated', () => {
+            // Adds your tests here
+            assert.file('.jhipster/GreatEntity.json');
+
+            const genderEnumPath = `${SERVER_NODEJS_DIR}src/domain/enumeration/Gender.ts`;
+            const greatEntityPath = `${SERVER_NODEJS_DIR}src/domain/great-entity.entity.ts`;
+
+            assert.file(genderEnumPath);
+            assert.file(greatEntityPath);
+
+            // Gender enum class
+            assert.fileContent(genderEnumPath, 'export enum Gender');
+
+            // name UUID unique field
+            assert.fileContent(greatEntityPath, "@Column({ name: 'name', unique: true })");
+            assert.fileContent(greatEntityPath, 'name: string;');
+
+            // Gender enum field
+            assert.fileContent(greatEntityPath, "@Column({ type: 'enum', name: 'gender', enum: Gender })");
+            assert.fileContent(greatEntityPath, 'gender: Gender;');
+
+            // address String required field
+            assert.fileContent(greatEntityPath, "@Column({ name: 'address', nullable: false })");
+            assert.fileContent(greatEntityPath, 'address: string;');
+
+            // istrue Boolean required field
+            assert.fileContent(greatEntityPath, "@Column({ type: 'boolean', name: 'istrue' })");
+            assert.fileContent(greatEntityPath, 'istrue: boolean;');
+
+            // borndate LocalDate required field
+            assert.fileContent(greatEntityPath, "@Column({ type: 'date', name: 'borndate', nullable: false })");
+            assert.fileContent(greatEntityPath, 'borndate: any;');
+
+            // profileimage Blob field
+            assert.fileContent(greatEntityPath, "@Column({ type: 'blob', name: 'profileimage' })");
+            assert.fileContent(greatEntityPath, 'profileimage: any;');
+
+            // storage AnyBlob field
+            assert.fileContent(greatEntityPath, "@Column({ type: 'blob', name: 'storage' })");
+            assert.fileContent(greatEntityPath, 'storage: any;');
+
+            // datafile TextBlob field
+            assert.fileContent(greatEntityPath, "@Column({ type: 'blob', name: 'datafile' })");
+            assert.fileContent(greatEntityPath, 'datafile: any;');
+
+            // image Blob field
+            assert.fileContent(greatEntityPath, "@Column({ type: 'blob', name: 'image' })");
+            assert.fileContent(greatEntityPath, 'image: any;');
+
+            // amount BigDecimal field
+            assert.fileContent(greatEntityPath, "@Column({ type: 'decimal', name: 'amount', precision: 10, scale: 2 })");
+            assert.fileContent(greatEntityPath, 'amount: number;');
+
+            // cfu Integer field
+            assert.fileContent(greatEntityPath, "@Column({ type: 'integer', name: 'cfu' })");
+            assert.fileContent(greatEntityPath, 'cfu: number;');
+
+            // mynumber Double field
+            assert.fileContent(greatEntityPath, "@Column({ type: 'double', name: 'mynumber' })");
+            assert.fileContent(greatEntityPath, 'mynumber: number;');
+
+            // count Long field
+            assert.fileContent(greatEntityPath, "@Column({ type: 'long', name: 'count' })");
+            assert.fileContent(greatEntityPath, 'count: number;');
+
+            // cent Float field
+            assert.fileContent(greatEntityPath, "@Column({ type: 'float', name: 'cent' })");
+            assert.fileContent(greatEntityPath, 'cent: number;');
+
+            // creationtime Instant field
+            assert.fileContent(greatEntityPath, "@Column({ type: 'timestamp', name: 'creationtime' })");
+            assert.fileContent(greatEntityPath, 'creationtime: any;');
+
+            // deathtime ZonedDateTime field
+            assert.fileContent(greatEntityPath, "@Column({ type: 'datetime', name: 'deathtime' })");
+            assert.fileContent(greatEntityPath, 'deathtime: any;');
         });
     });
 });

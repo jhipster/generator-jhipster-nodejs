@@ -16,32 +16,25 @@
  See the License for the specific language governing permissions and
  limitations under the License.
 -%>
-<%
-let importApiModelProperty = true;
-let hasDto = dto === 'mapstruct';
-let isUsingMapsId = false;
-const uniqueEnums = {};
-for (idx in fields) {
-    if (fields[idx].fieldIsEnum && (
-            !uniqueEnums[fields[idx].fieldType] || (uniqueEnums[fields[idx].fieldType] && fields[idx].fieldValues.length !== 0))) {
-        uniqueEnums[fields[idx].fieldType] = fields[idx].fieldType;
-    }
-}
-%>
-
 import { Entity, Column, PrimaryGeneratedColumn, JoinColumn, OneToOne, ManyToOne, OneToMany, ManyToMany, JoinTable } from 'typeorm';
 import { BaseEntity } from './base/base.entity';
+<%
+let importApiModelProperty = true;
+let importJsonIgnore = false;
+let importJsonIgnoreProperties = false;
+let importSet = false;
+let hasDto = dto === 'mapstruct';
+const uniqueEntities = {};
+const uniqueEnums = {}; %><%- include imports -%>
 <%_ if (!hasDto && importApiModelProperty === true) { _%>
 import { ApiModelProperty } from '@nestjs/swagger';
 <%_ } if (validation) { _%>
 import {validate, Contains, IsInt, Length, IsEmail, IsFQDN, IsDate, Min, Max} from "class-validator";
 <%_ } _%>
 
-<%_for (idx in relationships) {
-    const relationship = relationships[idx];
-_%>
-import <%= relationship.otherEntityAngularName %> from './<%= relationship.otherEntityFileName %>.entity';
-<%_ } _%>
+<%_ Object.keys(uniqueEntities).forEach(function(entityClass) { _%>
+import <%= entityClass %> from './<%= uniqueEntities[entityClass] %>.entity';
+<%_ }); _%>
 <%_ Object.keys(uniqueEnums).forEach(function(element) { _%>
 import { <%= element %> } from './enumeration/<%= element %>';
 <%_ }); _%>
@@ -75,6 +68,7 @@ export default class <%= asEntity(entityClass) %> extends BaseEntity  {
     const fieldName = fields[idx].fieldName;
     const fieldNameUnderscored = fields[idx].fieldNameUnderscored;
     const fieldNameAsDatabaseColumn = fields[idx].fieldNameAsDatabaseColumn;
+    const fieldColumnType=addDbType(fieldType);
     if (fieldValidate === true) {
         if (fieldValidateRules.includes('required')) {
             required = true;
@@ -87,16 +81,20 @@ export default class <%= asEntity(entityClass) %> extends BaseEntity  {
     <%_ if (!hasDto && typeof fields[idx].javadoc != 'undefined') { _%>
     @ApiModelProperty({type: '', description: '<%- formatAsApiDescription(fields[idx].javadoc) %>'<% if (required) { %>, required: true<% } %>})
     <%_ } _%>
-    <%_ if (fields[idx].fieldIsEnum) { _%>
-    @Column({name: '<%-fieldNameAsDatabaseColumn %>', type: 'enum', enum: <%= fieldType %>})
+        <%_ if (fields[idx].fieldIsEnum) { _%>
+    @Column({type: 'enum', name: '<%-fieldNameAsDatabaseColumn %>', enum: <%= fieldType %>})
         <%_ } else if (['Instant', 'ZonedDateTime', 'LocalDate'].includes(fieldType)) { _%>
-    @Column({name: "<%-fieldNameAsDatabaseColumn %>"<% if (required) { %>, nullable: false<% } %><% if (unique) { %>, unique: true<% } %>})
+    @Column({<%_ if(fieldColumnType) { _%> type: '<%-fieldColumnType%>' ,<%_ }_%> name: "<%-fieldNameAsDatabaseColumn %>"<% if (required) { %>, nullable: false<% } %><% if (unique) { %>, unique: true<% } %>})
         <%_ } else if (fieldType === 'BigDecimal') { _%>
-    @Column({name: "<%-fieldNameAsDatabaseColumn %>", precision = 10, scale = 2<% if (required) { %>, nullable: false<% } %><% if (unique) { %>, unique: true<% } %>})
+    @Column({<%_ if(fieldColumnType) { _%> type: '<%-fieldColumnType%>' ,<%_ }_%> name: "<%-fieldNameAsDatabaseColumn %>", precision : 10, scale : 2<% if (required) { %>, nullable: false<% } %><% if (unique) { %>, unique: true<% } %>})
         <%_ } else { _%>
-    @Column({name: "<%-fieldNameAsDatabaseColumn %>"<% if (fieldValidate === true) { %><% if (fieldValidateRules.includes('maxlength')) { %>, length: <%= fieldValidateRulesMaxlength %><% } %><% if (required) { %>, nullable: false<% } %><% if (unique) { %>, unique: true<% } %><% } %>})
+    @Column({<%_ if(fieldColumnType) { _%> type: '<%-fieldColumnType%>' ,<%_ }_%>  name: "<%-fieldNameAsDatabaseColumn %>"<% if (fieldValidate === true) { %><% if (fieldValidateRules.includes('maxlength')) { %>, length: <%= fieldValidateRulesMaxlength %><% } %><% if (required) { %>, nullable: false<% } %><% if (unique) { %>, unique: true<% } %><% } %>})
         <%_ } _%>
+        <%_ if (fields[idx].fieldIsEnum) { _%>
+    <%= fieldName %>: <%= fieldType %>;        
+        <%_ } else { _%>  
     <%= fieldName %>: <%= getTsType(fieldType) %>;
+        <%_ } _%>
 
     <%_ if ((fieldType === 'byte[]' || fieldType === 'ByteBuffer') && fieldTypeBlobContent !== 'text') { _%>
     @Column({name: '<%-fieldNameAsDatabaseColumn %>_content_type'})
@@ -129,11 +127,11 @@ export default class <%= asEntity(entityClass) %> extends BaseEntity  {
             <%_ }_%>
     <%_ }
         if (relationshipType === 'one-to-many') {_%>
-    @OneToMany(type => <%= relationship.otherEntityAngularName %>, other => other.<%= entityInstance %>)
+    @OneToMany(type => <%= relationship.otherEntityAngularName %>, other => other.<%= otherEntityRelationshipName %>)
     <%= relationshipFieldNamePlural %>: <%= relationship.otherEntityAngularName %>[];
 
     <%_ } else if (relationshipType === 'many-to-one') { _%>
-    @ManyToOne(type => <%= relationship.otherEntityAngularName %>, other => other.<%= relationshipFieldNamePlural %>)
+    @ManyToOne(type => <%= relationship.otherEntityAngularName %>, other => other.<%= otherEntityRelationshipNamePlural %>)
     <%= relationshipFieldName %>: <%= relationship.otherEntityAngularName %>;
 
     <%_ } else if (relationshipType === 'many-to-many') { _%>
@@ -148,9 +146,9 @@ export default class <%= asEntity(entityClass) %> extends BaseEntity  {
     <%= relationshipFieldNamePlural %>: <%= relationship.otherEntityAngularName %>[];
 
     <%_ } else { _%>
-    @OneToOne(type => <%= relationship.otherEntityAngularName %>, other => other.<%= entityInstance %>)
-    <%_ if (ownerSide) { _%>@JoinColumn()<%_ } _%>
-    <%= relationshipFieldName %>: <%= asEntity(otherEntityNameCapitalized) %>;
+    @OneToOne(type => <%= relationship.otherEntityAngularName %>, other => other.<%= otherEntityRelationshipName%>)
+    <%_ if (ownerSide === true) { _%>@JoinColumn()<%_ } _%>
+    <%= relationshipFieldName %>: <%= relationship.otherEntityAngularName %>;
 
     <%_ }
     } _%>
