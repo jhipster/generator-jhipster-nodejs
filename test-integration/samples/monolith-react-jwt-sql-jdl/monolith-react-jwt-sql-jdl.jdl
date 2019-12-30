@@ -64,7 +64,7 @@ entity Activity {
 	name UUID unique,
 	description String,
 	number Double,
-	creationtime Instant
+	creationtime ZonedDateTime
 
 }
 

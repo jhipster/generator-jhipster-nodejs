@@ -11,15 +11,7 @@ const fieldTypes = {
     Double: 'number',
     BigDecimal: 'number',
     String: 'string',
-    UUID: 'string',
-    LocalDate: 'Date',
-    Instant: 'Timestamp',
-    ZonedDateTime: 'Datetime',
-    AnyBlob: 'Blob',
-    ImageBlob: 'Blob',
-    Blob: 'Blob',
-    TextBlob: 'Blob',
-    'byte[]': 'Blob'
+    UUID: 'string'
 };
 
 const dbTypes = {
@@ -29,8 +21,6 @@ const dbTypes = {
     Float: 'float',
     Double: 'double',
     BigDecimal: 'decimal',
-    String: 'string',
-    UUID: 'string',
     LocalDate: 'date',
     Instant: 'timestamp',
     ZonedDateTime: 'datetime',
