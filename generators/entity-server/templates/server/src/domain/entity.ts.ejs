@@ -35,8 +35,8 @@ import {validate, Contains, IsInt, Length, IsEmail, IsFQDN, IsDate, Min, Max} fr
 <%_ Object.keys(uniqueEntities).forEach(function(entityClass) { _%>
 import <%= entityClass %> from './<%= uniqueEntities[entityClass] %>.entity';
 <%_ }); _%>
-<%_ Object.keys(uniqueEnums).forEach(function(element) { _%>
-import { <%= element %> } from './enumeration/<%= element %>';
+<%_ Object.keys(uniqueEnums).forEach(function(enumClass) { _%>
+import { <%= enumClass %> } from './enumeration/<%= uniqueEnums[enumClass] %>';
 <%_ }); _%>
 
 <%_ if (typeof javadoc == 'undefined') { _%>

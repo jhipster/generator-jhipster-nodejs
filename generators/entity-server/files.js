@@ -1,3 +1,4 @@
+const _ = require('lodash');
 const constants = require('../generator-nodejs-constants');
 
 const SERVER_NODEJS_DIR = `${constants.SERVER_NODEJS_SRC_DIR}/`;
@@ -50,11 +51,11 @@ function writeFiles() {
 
             this.fields.forEach(field => {
                 if (field.fieldIsEnum === true) {
-                    const fieldType = field.fieldType;
+                    const enumFileName = _.kebabCase(field.fieldType);
                     const enumInfo = utils.buildEnumInfo(field, this.angularAppName, this.packageName, this.clientRootFolder);
                     this.template(
                         `${SERVER_NODEJS_DIR}src/domain/enumeration/Enum.ts.ejs`,
-                        `${SERVER_NODEJS_DIR}src/domain/enumeration/${fieldType}.ts`,
+                        `${SERVER_NODEJS_DIR}src/domain/enumeration/${enumFileName}.ts`,
                         this,
                         {},
                         enumInfo

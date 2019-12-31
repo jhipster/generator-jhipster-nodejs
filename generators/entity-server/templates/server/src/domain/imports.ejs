@@ -47,7 +47,7 @@ for (idx in relationships) {
 for (idx in fields) {
     if (fields[idx].fieldIsEnum && (
             !uniqueEnums[fields[idx].fieldType] || (uniqueEnums[fields[idx].fieldType] && fields[idx].fieldValues.length !== 0))) {
-        uniqueEnums[fields[idx].fieldType] = fields[idx].fieldType;
+        uniqueEnums[fields[idx].fieldType] = _.kebabCase(fields[idx].fieldType);
     }
 }
 

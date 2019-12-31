@@ -71,7 +71,7 @@ describe('Subgenerator entity of nodejs JHipster blueprint', () => {
             // Adds your tests here
             assert.file('.jhipster/GreatEntity.json');
 
-            const genderEnumPath = `${SERVER_NODEJS_DIR}src/domain/enumeration/Gender.ts`;
+            const genderEnumPath = `${SERVER_NODEJS_DIR}src/domain/enumeration/gender.ts`;
             const greatEntityPath = `${SERVER_NODEJS_DIR}src/domain/great-entity.entity.ts`;
 
             assert.file(genderEnumPath);
@@ -79,6 +79,9 @@ describe('Subgenerator entity of nodejs JHipster blueprint', () => {
 
             // Gender enum class
             assert.fileContent(genderEnumPath, 'export enum Gender');
+
+            // import enum in entity
+            assert.fileContent(greatEntityPath, "import { Gender } from './enumeration/gender';");
 
             // name UUID unique field
             assert.fileContent(greatEntityPath, "@Column({ name: 'name', unique: true })");
