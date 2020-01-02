@@ -23,3 +23,5 @@ package-lock.json
 .settings
 test/**/*.png
 *.tgz
+.nyc_output
+coverage
