@@ -4,7 +4,7 @@ const ServerGenerator = require('generator-jhipster/generators/server');
 const jhipsterConstants = require('generator-jhipster/generators/generator-constants');
 const jhipsterNodeConstants = require('../generator-nodejs-constants');
 const writeFiles = require('./files').writeFiles;
-const prompts = require('./prompts');
+prompts = require('./prompts');
 
 module.exports = class extends ServerGenerator {
     constructor(args, opts) {
