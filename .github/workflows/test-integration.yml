@@ -37,6 +37,6 @@ jobs:
          - name: git history
            run: git --no-pager log -n 10 --graph --pretty='%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue) <%an>%Creset' --abbrev-commit  
          - name: prepare jhipster env
-           run: test-integration/00-install-all-jhipster.sh
+           run: sudo test-integration/00-install-all-jhipster.sh
          - name: 'GENERATION NHipster app'
-           run: test-integration/01-generate-test-sample.sh JHI_APP JHI_ARG
+           run: sudo test-integration/01-generate-test-sample.sh JHI_APP JHI_ARG
