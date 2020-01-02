@@ -70,6 +70,7 @@
   "scripts": {
     "lint": "eslint .",
     "lint-fix": "npm run lint -- --fix",
+    "pretest": "npm run lint",
     "sonar:scanner": "sonar-scanner",
     "test": "npm run test:unit -- test/*.spec.js",
     "test:unit": "nyc --reporter=lcov --reporter=text-lcov mocha --timeout 20000 --slow 0",
