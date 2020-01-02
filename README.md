@@ -1,5 +1,5 @@
 # generator-jhipster-nodejs
-[![NPM version][npm-image]][npm-url] [![Build Status][travis-image]][travis-url] [![Dependency Status][daviddm-image]][daviddm-url] [![Gitter](https://badges.gitter.im/generator-jhipster-nodejs/community.svg)](https://gitter.im/generator-jhipster-nodejs/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge) [![Downloads][npmcharts-image]][npmcharts-url]
+[![NPM version][npm-image]][npm-url] [![Dependency Status][daviddm-image]][daviddm-url] [![Generator Build Status][github-actions-generator-image]][github-actions-url] [![Gitter](https://badges.gitter.im/generator-jhipster-nodejs/community.svg)](https://gitter.im/generator-jhipster-nodejs/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge) [![Downloads][npmcharts-image]][npmcharts-url]
 
 > Generator-jhipster-nodejs, the _official NodeJS blueprint_ that uses [NestJS Typescript Framework](https://nestjs.com/) for your **backend**. We encourage you to use it and give us your feedback.
 
@@ -167,8 +167,8 @@ Apache-2.0 © [Angelo Manganiello](https://github.com/amanganiello90)
 
 [npm-image]: https://img.shields.io/npm/v/generator-jhipster-nodejs.svg
 [npm-url]: https://npmjs.org/package/generator-jhipster-nodejs
-[travis-image]: https://travis-ci.com/jhipster/generator-jhipster-nodejs.svg?branch=master
-[travis-url]: https://travis-ci.com/jhipster/generator-jhipster-nodejs
+[github-actions-generator-image]: https://github.com/jhipster/generator-jhipster-nodejs/workflows/Generator/badge.svg
+[github-actions-url]: https://github.com/jhipster/generator-jhipster-nodejs/actions
 [daviddm-image]: https://david-dm.org/jhipster/generator-jhipster-nodejs.svg?theme=shields.io
 [daviddm-url]: https://david-dm.org/jhipster/generator-jhipster-nodejs
 [npmcharts-image]: https://img.shields.io/npm/dm/generator-jhipster-nodejs.svg?label=Downloads&style=flat
