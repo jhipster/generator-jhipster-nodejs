@@ -64,9 +64,9 @@ else
 fi
 
 echo "*** install client dependencies for : "$1
-npm install
+sudo npm install
 echo "*** install server dependencies for : "$1
-cd server && npm install
+cd server && sudo npm install
 
 
 #-------------------------------------------------------------------------------
