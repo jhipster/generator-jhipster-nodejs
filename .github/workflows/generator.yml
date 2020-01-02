@@ -1,28 +1,25 @@
 name: Node CI
 
-on: [push]
+on: [push, pull_request]
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
-
     strategy:
       matrix:
         node-version: [12.14.0]
-
     steps:
     - uses: actions/checkout@v1
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v1
       with:
         node-version: ${{ matrix.node-version }}
-    - name: npm install, build, and test
+    - name: SonarCloud Scan
+      uses: SonarSource/sonarcloud-github-action@v1.1
+    - name: install and unit test
       run: |
-        npm ci
-        npm run build --if-present
+        npm install
         npm test
       env:
         CI: true
-    - name: SonarCloud Scan
-      uses: SonarSource/sonarcloud-github-action@v1.1
+   
