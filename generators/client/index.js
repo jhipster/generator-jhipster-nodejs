@@ -27,12 +27,7 @@ module.exports = class extends ClientGenerator {
             setupCustomClientConsts() {
                 this.SERVER_NODEJS_SRC_DIR = constants.SERVER_NODEJS_SRC_DIR;
                 // this.packagejs = jhipsterPackagejs;
-            } /* ,
-            customSettings() {
-                this.skipI18n = true;
-                this.testFrameworks = [];
-                this.enableTranslation = false;
-            } */
+            }
         };
         return Object.assign(initPhaseFromJHipster, initNodeClientPhaseSteps);
     }
@@ -47,8 +42,12 @@ module.exports = class extends ClientGenerator {
     }
 
     get default() {
-        // Here we are not overriding this phase and hence its being handled by JHipster
-        return super._default();
+        const defaultPhaseFromJHipster = super._default();
+        const defaultNodeClientPhaseSteps = {
+            // disable languages
+            composeLanguages() {}
+        };
+        return Object.assign(defaultPhaseFromJHipster, defaultNodeClientPhaseSteps);
     }
 
     get writing() {

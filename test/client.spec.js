@@ -27,10 +27,7 @@ const commonPrompt = {
     applicationType: 'monolith',
     authenticationType: 'jwt',
     prodDatabaseType: 'mysql',
-    enableTranslation: true,
-    nativeLanguage: 'en',
-    languages: ['fr', 'de'],
-    clientTheme: 'none'                 
+    clientTheme: 'none'
 };
 
 describe('Subgenerator client of nodejs JHipster blueprint', () => {
