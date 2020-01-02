@@ -27,25 +27,17 @@ module.exports = class extends ClientGenerator {
             setupCustomClientConsts() {
                 this.SERVER_NODEJS_SRC_DIR = constants.SERVER_NODEJS_SRC_DIR;
                 // this.packagejs = jhipsterPackagejs;
-            }
+            } /* ,
+            customSettings() {
+                this.skipI18n = true;
+                this.testFrameworks = [];
+                this.enableTranslation = false;
+            } */
         };
         return Object.assign(initPhaseFromJHipster, initNodeClientPhaseSteps);
-
-        // Here we are not overriding this phase and hence its being handled by JHipster
-        // return super._initializing();
     }
 
     get prompting() {
-        // The prompting phase is being overriden so that we can ask our own questions
-        /*
-        return {
-            askForClientSideOpts: prompts.askForClientSideOpts,
-            setSharedConfigOptions() {
-                 this.configOptions.clientFramework = this.clientFramework;
-            }
-        };
-        */
-        // If the prompts need to be overriden then use the code commented out above instead
         return super._prompting();
     }
 
@@ -60,7 +52,6 @@ module.exports = class extends ClientGenerator {
     }
 
     get writing() {
-        // const phaseFromJHipster = super._writing();
         const phaseFromJHipster = super._writing();
         const jhipsterNodeClientPhaseSteps = writeFiles();
         return Object.assign(phaseFromJHipster, jhipsterNodeClientPhaseSteps);

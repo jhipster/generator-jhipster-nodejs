@@ -11,9 +11,7 @@ function getPreCondition() {
             skipInstall: true,
             skipServer: true,
             blueprints: 'nodejs',
-            skipChecks: true,
-            db: 'mysql',
-            auth: 'jwt'
+            skipChecks: true
         })
         .withGenerators([
             [
@@ -26,7 +24,13 @@ function getPreCondition() {
 
 const commonPrompt = {
     baseName: 'sampleMysql',
-    clientTheme: 'none'
+    applicationType: 'monolith',
+    authenticationType: 'jwt',
+    prodDatabaseType: 'mysql',
+    enableTranslation: true,
+    nativeLanguage: 'en',
+    languages: ['fr', 'de'],
+    clientTheme: 'none'                 
 };
 
 describe('Subgenerator client of nodejs JHipster blueprint', () => {
