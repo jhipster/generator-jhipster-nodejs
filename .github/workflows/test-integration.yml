@@ -39,4 +39,4 @@ jobs:
          - name: prepare jhipster env
            run: sudo sh test-integration/00-install-all-jhipster.sh
          - name: 'GENERATION NHipster app'
-           run: sudo sh test-integration/01-generate-test-sample.sh JHI_APP JHI_ARG
+           run: sudo sh test-integration/01-generate-test-sample.sh $JHI_APP $JHI_ARG
