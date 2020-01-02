@@ -20,8 +20,8 @@ jobs:
       run: git --no-pager log -n 10 --graph --pretty='%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue) <%an>%Creset' --abbrev-commit  
     - run: npm ci
     - run: npm test
-    - name: 'Run sonar analysis'
-      uses: SonarSource/sonarcloud-github-action@v1.1
+    - name: Run npm sonar:scanner
+      run: npm run sonar:scanner
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
