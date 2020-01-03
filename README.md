@@ -4,7 +4,11 @@
 [![Generator Build Status][github-actions-generator-ci-image]][github-actions-url]
 [![Generator Test Status][github-actions-generator-test-image]][github-actions-url]
 [![Sonar Cloud Quality Gate][sonar-gate-image]][sonar-url]
-[![Sonar Cloud Coverage][sonar-coverage-image]][sonar-coverage-url]
+[![Sonar Cloud Coverage Rate][sonar-coverage-image]][sonar-coverage-url]
+[![Sonar Cloud Reliability Rate][sonar-reliability-image]][sonar-url]
+[![Sonar Cloud Security Rate][sonar-security-image]][sonar-url]
+[![Sonar Cloud Maintainability Rate][sonar-maintainability-image]][sonar-url]
+[![Sonar Cloud Duplicated Code][sonar-duplication-image]][sonar-url]
 [![Gitter][gitter-image]][gitter-url]
 [![Downloads][npmcharts-image]][npmcharts-url]
 
@@ -181,6 +185,10 @@ Apache-2.0 © [Angelo Manganiello](https://github.com/amanganiello90)
 [sonar-coverage-url]: https://sonarcloud.io/component_measures?branch=master&id=jhipster_generator-jhipster-nodejs&metric=coverage&view=list
 [sonar-gate-image]: https://sonarcloud.io/api/project_badges/measure?branch=master&project=jhipster_generator-jhipster-nodejs&metric=alert_status
 [sonar-coverage-image]: https://sonarcloud.io/api/project_badges/measure?branch=master&project=jhipster_generator-jhipster-nodejs&metric=coverage
+[sonar-reliability-image]: https://sonarcloud.io/api/project_badges/measure?branch=master&project=jhipster_generator-jhipster-nodejs&metric=reliability_rating
+[sonar-security-image]: https://sonarcloud.io/api/project_badges/measure?branch=master&project=jhipster_generator-jhipster-nodejs&metric=security_rating
+[sonar-maintainability-image]: https://sonarcloud.io/api/project_badges/measure?branch=master&project=jhipster_generator-jhipster-nodejs&metric=sqale_rating
+[sonar-duplication-image]: https://sonarcloud.io/api/project_badges/measure?branch=master&project=jhipster_generator-jhipster-nodejs&metric=duplicated_lines_density
 [daviddm-image]: https://david-dm.org/jhipster/generator-jhipster-nodejs.svg?theme=shields.io
 [daviddm-url]: https://david-dm.org/jhipster/generator-jhipster-nodejs
 [npmcharts-image]: https://img.shields.io/npm/dm/generator-jhipster-nodejs.svg?label=Downloads&style=flat
