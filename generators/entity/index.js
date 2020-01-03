@@ -51,7 +51,7 @@ module.exports = class extends EntityGenerator {
                 if (context.skipClient) return;
                 const configOptions = this.configOptions;
 
-                this.composeWith(require.resolve('../entity-client'), {
+                this.composeWith(require.resolve('generator-jhipster/generators/entity-client'), {
                     context,
                     configOptions,
                     'skip-install': context.options['skip-install'],
@@ -64,7 +64,7 @@ module.exports = class extends EntityGenerator {
                 const context = this.context;
                 if (context.skipClient) return;
                 const configOptions = this.configOptions;
-                this.composeWith(require.resolve('../entity-i18n'), {
+                this.composeWith(require.resolve('generator-jhipster/generators/entity-i18n'), {
                     context,
                     configOptions,
                     'skip-install': context.options['skip-install'],
