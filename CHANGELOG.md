@@ -5,6 +5,7 @@
 
 # [1.0.0-beta.2](https://github.com/jhipster/generator-jhipster-nodejs/tree/v1.0.0-beta.2)
 
+- Support code quality and coverage reports on SonarCloud for the generator [issue #85](https://github.com/jhipster/generator-jhipster-nodejs/issues/85)
 - Migrating pipeline from travis to GitHub Actions [issue #86](https://github.com/jhipster/generator-jhipster-nodejs/issues/86)
 - Testing entity relationship combinations with support for almost database field types [issue #81](https://github.com/jhipster/generator-jhipster-nodejs/issues/81)
 - Support blob types for the entity [issue #68](https://github.com/jhipster/generator-jhipster-nodejs/issues/68)

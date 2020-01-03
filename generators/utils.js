@@ -10,6 +10,12 @@ module.exports = {
     buildEnumInfo
 };
 
+/**
+ * add entity import to app module
+ * @param {any} generator
+ * @param {string} entityClass
+ * @param {string} entityFileName
+ */
 function addEntityToAppModuleImport(generator, entityClass, entityFileName) {
     jhipsterUtils.rewriteFile(
         {
@@ -21,6 +27,11 @@ function addEntityToAppModuleImport(generator, entityClass, entityFileName) {
     );
 }
 
+/**
+ * add entity module to app module
+ * @param {any} generator
+ * @param {string} entityClass
+ */
 function addEntityToAppModule(generator, entityClass) {
     jhipsterUtils.rewriteFile(
         {
@@ -32,6 +43,12 @@ function addEntityToAppModule(generator, entityClass) {
     );
 }
 
+/**
+ * add controller import to app module
+ * @param {any} generator
+ * @param {string} controllerClass
+ * @param {string} controllerFileName
+ */
 function addControllerToAppModuleImport(generator, controllerClass, controllerFileName) {
     jhipsterUtils.rewriteFile(
         {
@@ -43,6 +60,11 @@ function addControllerToAppModuleImport(generator, controllerClass, controllerFi
     );
 }
 
+/**
+ * add controller module to app module
+ * @param {any} generator
+ * @param {string} controllerClass
+ */
 function addControllerToAppModule(generator, controllerClass) {
     jhipsterUtils.rewriteFile(
         {
@@ -59,6 +81,7 @@ function addControllerToAppModule(generator, controllerClass) {
  * @param {any} field : entity field
  * @param {string} angularAppName
  * @param {string} packageName
+ * @param {string} clientRootFolder
  */
 function buildEnumInfo(field, angularAppName, packageName, clientRootFolder) {
     const fieldType = field.fieldType;
