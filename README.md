@@ -3,7 +3,8 @@
 [![Dependency Status][daviddm-image]][daviddm-url]
 [![Generator Build Status][github-actions-generator-ci-image]][github-actions-url]
 [![Generator Test Status][github-actions-generator-test-image]][github-actions-url]
-[![Sonar Cloud Quality Gate][sonar-image]][sonar-url]
+[![Sonar Cloud Quality Gate][sonar-gate-image]][sonar-url]
+[![Sonar Cloud Coverage][sonar-coverage-image]][sonar-url]
 [![Gitter][gitter-image]][gitter-url]
 [![Downloads][npmcharts-image]][npmcharts-url]
 
@@ -177,7 +178,8 @@ Apache-2.0 © [Angelo Manganiello](https://github.com/amanganiello90)
 [github-actions-generator-test-image]:https://github.com/jhipster/generator-jhipster-nodejs/workflows/Test%20integration/badge.svg
 [github-actions-url]: https://github.com/jhipster/generator-jhipster-nodejs/actions
 [sonar-url]: https://sonarcloud.io/dashboard?id=jhipster_generator-jhipster-nodejs
-[sonar-image]: https://sonarcloud.io/api/project_badges/measure?project=jhipster_generator-jhipster-nodejs&metric=alert_status
+[sonar-gate-image]: https://sonarcloud.io/api/project_badges/measure?project=jhipster_generator-jhipster-nodejs&metric=alert_status
+[sonar-coverage-image]: https://sonarcloud.io/api/project_badges/measure?project=jhipster_generator-jhipster-nodejs&metric=coverage
 [daviddm-image]: https://david-dm.org/jhipster/generator-jhipster-nodejs.svg?theme=shields.io
 [daviddm-url]: https://david-dm.org/jhipster/generator-jhipster-nodejs
 [npmcharts-image]: https://img.shields.io/npm/dm/generator-jhipster-nodejs.svg?label=Downloads&style=flat
