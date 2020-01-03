@@ -174,8 +174,8 @@ Apache-2.0 © [Angelo Manganiello](https://github.com/amanganiello90)
 
 [npm-image]: https://img.shields.io/npm/v/generator-jhipster-nodejs.svg
 [npm-url]: https://npmjs.org/package/generator-jhipster-nodejs
-[github-actions-generator-ci-image]: https://github.com/jhipster/generator-jhipster-nodejs/workflows/Generator/badge.svg
-[github-actions-generator-test-image]:https://github.com/jhipster/generator-jhipster-nodejs/workflows/Test%20integration/badge.svg
+[github-actions-generator-ci-image]: https://github.com/jhipster/generator-jhipster-nodejs/workflows/Generator%20CI/badge.svg
+[github-actions-generator-test-image]: https://github.com/jhipster/generator-jhipster-nodejs/workflows/Test%20Integration/badge.svg
 [github-actions-url]: https://github.com/jhipster/generator-jhipster-nodejs/actions
 [sonar-url]: https://sonarcloud.io/dashboard?id=jhipster_generator-jhipster-nodejs
 [sonar-gate-image]: https://sonarcloud.io/api/project_badges/measure?project=jhipster_generator-jhipster-nodejs&metric=alert_status
