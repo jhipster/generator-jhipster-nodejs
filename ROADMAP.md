@@ -40,13 +40,15 @@ To contribute for the next featues, fork the repo and open a pull request regard
 - [x] Integration test in the pipeline build
 - [x] Remove all java references customizing main app generator
 - [x] Needs way more testing of different relations, combinations for entity
+- [x] Pipelines migrations from travis to GitHub Actions
+- [x] Unit tests for all generators and sonar quality with coverage
 
 ## To DO for next release
 
 - [ ] Encrypt user password in db
 - [ ] OAuth2 feature for Keycloack
 - [ ] Languages subgenerator support i18n: translate home page for NHipster and remove spring boot resources message 
-- [ ] Unit tests: both for the blueprint and for generated project
+- [ ] Unit tests for generated project
 - [ ] DTOs based rest api
 - [ ] Validation
 - [ ] Export json/yaml for swagger to integrate with jhipster gateway
