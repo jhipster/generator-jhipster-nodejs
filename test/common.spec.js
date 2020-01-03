@@ -30,9 +30,9 @@ describe('Subgenerator common of nodejs JHipster blueprint', () => {
                 .on('end', done);
         });
 
-        it('it works', () => {
+        it('app exists with custom generator-jhipster-nodejs string in the README.md', () => {
             // Adds your tests here
-            assert.textEqual('Write your own tests!', 'Write your own tests!');
+            assert.fileContent('README.md', 'https://github.com/jhipster/generator-jhipster-nodejs');
         });
     });
 });
