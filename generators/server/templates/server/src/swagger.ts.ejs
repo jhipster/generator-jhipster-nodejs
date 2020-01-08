@@ -2,7 +2,7 @@ import { Logger, INestApplication } from '@nestjs/common';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { config } from './config/config';
 
-export function setupSwagger(app: INestApplication) {
+export function setupSwagger(app: INestApplication): any {
 
   const logger: Logger = new Logger('Swagger');
   const swaggerEndpoint = config.get('jhipster.swagger.path');

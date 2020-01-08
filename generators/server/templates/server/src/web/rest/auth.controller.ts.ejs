@@ -1,6 +1,4 @@
-import { Body, Controller, Delete, Get, HttpCode, Logger, Param, Post, Put, Query, Res, UseGuards, Req, UseInterceptors } from '@nestjs/common';
-import { Response, Request } from 'express';
-import { Authority } from '../../domain/authority.entity';
+import { Controller, Get, Logger, UseGuards, Req, UseInterceptors } from '@nestjs/common';
 import { User } from '../../domain/user.entity';
 import { AuthGuard, Roles, RolesGuard, RoleType } from '../../security';
 import { LoggingInterceptor } from '../../client/interceptors/logging.interceptor';
@@ -27,11 +25,11 @@ export class AuthController {
   @ApiResponse({
     status: 200,
     description: 'List all user roles',
-    type: String,
+    type: string,
     isArray: true,
   })
   @Roles(RoleType.ADMIN)
-  async getAuthorities(@Req() req: any) {
+  async getAuthorities(@Req() req: any): any {
     const user: User = req.user;
     return user.authorities;
   }

@@ -1,4 +1,3 @@
-// tslint:disable-next-line: no-var-requires
 require('dotenv').config({ path: '.env' });
 import { NestFactory } from '@nestjs/core';
 import cloudConfigClient from 'cloud-config-client';
@@ -15,7 +14,7 @@ import session = require('express-session');
 <%_ } _%>
 const logger: Logger = new Logger('Main');
 
-async function bootstrap() {
+async function bootstrap(): any {
   loadCloudConfig();
   registerAsEurekaService();
 
@@ -53,7 +52,7 @@ async function bootstrap() {
   logger.log(`Application listening on port ${config.get('server.port')}`);
 }
 
-async function loadCloudConfig() {
+async function loadCloudConfig(): any {
   const useJHipsterRegistry = false && config.get('eureka.client.enabled');
   if (useJHipsterRegistry) {
     const endpoint = config.get('cloud.config.uri') || 'http://admin:admin@localhost:8761/config';
@@ -73,7 +72,7 @@ async function loadCloudConfig() {
   }
 }
 
-async function registerAsEurekaService() {
+async function registerAsEurekaService(): any {
   const useJHipsterRegistry = false && config.get('eureka.client.enabled');
   if (useJHipsterRegistry) {
     logger.log(`Registering with eureka ${config.get('cloud.config.uri')}`);
