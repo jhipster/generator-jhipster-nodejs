@@ -15,7 +15,7 @@
     "start:prod": "npm run copy-resources && node dist/main.js",
     "start": "npm run clean && npm run copy-resources && nodemon --watch src -e ts,tsx --exec ts-node src/main.ts",
     "lint": "tslint -p tsconfig.json -c tslint.json",
-    "lint-fix": "tslint --fix -p tsconfig.json -c tslint.json",
+    "lint:fix": "tslint --fix -p tsconfig.json -c tslint.json",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
