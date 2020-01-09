@@ -49,11 +49,6 @@ import { <%= enumClass %> } from './enumeration/<%= uniqueEnums[enumClass] %>';
 @Entity('<%= entityTableName %>')
 export default class <%= asEntity(entityClass) %> extends BaseEntity  {
 
-    /*
-    @PrimaryGeneratedColumn()
-    id: <%= pkType === 'String'? 'string' : 'number' %>;
-    */
-
 <%_ for (idx in fields) {
     if (typeof fields[idx].javadoc !== 'undefined') { _%>
 <%- formatAsFieldJavadoc(fields[idx].javadoc) %>

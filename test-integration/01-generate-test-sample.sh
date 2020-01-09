@@ -39,5 +39,13 @@ fi
 
 echo "*** install client dependencies for : "$1
 sudo npm install
+if [ $? -ne 0 ]; then
+        echo "*** failed client install"
+        exit 1
+fi
 echo "*** install server dependencies for : "$1
 cd server && sudo npm install
+if [ $? -ne 0 ]; then
+        echo "*** failed server install"
+        exit 1
+fi

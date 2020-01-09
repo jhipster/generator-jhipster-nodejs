@@ -32,7 +32,7 @@ export class User extends BaseEntity {
   @ApiModelProperty({ example: 'user', description: 'User password' })
   @Column()
   password?: string;
-  @Column()
+  @Column({ nullable: true })
   imageUrl?: string;
   @Column({ nullable: true })
   activationKey?: string;
