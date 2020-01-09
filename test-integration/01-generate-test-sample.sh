@@ -2,6 +2,8 @@
 
 set -e
 
+RED='\033[0;31m'
+GREEN='\033[0;32m'
 
 #-------------------------------------------------------------------------------
 # Change in template directory
@@ -31,21 +33,21 @@ fi
 echo "*** check if the generation is wrong for some default java classes created :"
 
 if [ -z $(find src -type f -name "*.java" ) ]; then
-      echo "generation ok"
+      echo "${GREEN}generation ok"
 else
-      echo "wrong generation"
+      echo "${RED}wrong generation"
       exit 1
 fi
 
 echo "*** install client dependencies for : "$1
 sudo npm install
 if [ $? -ne 0 ]; then
-        echo "*** failed client install"
-        exit 1
+  echo "${RED}failed client install"
+  exit 1
 fi
 echo "*** install server dependencies for : "$1
 cd server && sudo npm install
 if [ $? -ne 0 ]; then
-        echo "*** failed server install"
-        exit 1
+  echo "${RED}failed server install"
+  exit 1
 fi

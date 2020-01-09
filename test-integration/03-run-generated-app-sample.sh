@@ -2,6 +2,8 @@
 
 set -e
 
+RED='\033[0;31m'
+
 launchCurl() {
     sleep 100
     retryCount=1
@@ -18,7 +20,7 @@ launchCurl() {
     done
 
     if [ "$status" -ne 0 ]; then
-        echo "*** [$(date)] Not connected after" $retryCount " retries."
+        echo "${RED}[$(date)] Not connected after" $retryCount " retries."
         exit 1
     fi
 }

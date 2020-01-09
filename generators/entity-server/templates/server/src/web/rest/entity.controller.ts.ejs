@@ -1,7 +1,7 @@
-import { Body, Controller, Delete, Get, Logger, Param, Post as PostMethod, Put, Query, Res, UseGuards, Req, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Logger, Param, Post as PostMethod, Put, UseGuards, Req, UseInterceptors } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ApiBearerAuth, ApiUseTags, ApiResponse, ApiOperation } from '@nestjs/swagger';
-import { Response, Request } from 'express';
+import { Request } from 'express';
 import <%= entityClass %> from '../../domain/<%= entityFileName %>.entity';
 import { PageRequest, Page } from '../../domain/base/pagination.entity';
 import { <%= entityClass %>Repository } from '../../repository/<%= entityFileName %>.repository';
