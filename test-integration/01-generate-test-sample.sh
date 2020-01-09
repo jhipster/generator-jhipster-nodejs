@@ -2,32 +2,6 @@
 
 set -e
 
-launchCurl() {
-    sleep 100
-    retryCount=1
-    maxRetry=10
-    httpUrl="http://localhost:8081/management/info"
-    rep=$(curl -v "$httpUrl")
-    status=$?
-    while [ "$status" -ne 0 ] && [ "$retryCount" -le "$maxRetry" ]; do
-        echo "*** [$(date)] Application not reachable yet. Sleep and retry - retryCount =" $retryCount "/" $maxRetry
-        retryCount=$((retryCount+1))
-        sleep 10
-        rep=$(curl -v "$httpUrl")
-        status=$?
-    done
-
-    if [ "$status" -ne 0 ]; then
-        echo "*** [$(date)] Not connected after" $retryCount " retries."
-        exit 1
-    fi
-}
-
-runApp() {
-    npm run start:app &
-    echo $! > .pidRunApp
-}
-
 
 #-------------------------------------------------------------------------------
 # Change in template directory
@@ -67,27 +41,3 @@ echo "*** install client dependencies for : "$1
 sudo npm install
 echo "*** install server dependencies for : "$1
 cd server && sudo npm install
-
-
-#-------------------------------------------------------------------------------
-# Run unit test 
-#-------------------------------------------------------------------------------
-echo "*** run unit test in client for : "$1
-npm run lint:fix && npm test
-echo "*** run unit test in server for : "$1
-cd server && npm run lint:fix && npm test
-
-#-------------------------------------------------------------------------------
-# Run and test app
-#-------------------------------------------------------------------------------
-echo "*** run app : "$1
-cd ..
-runApp
-launchCurl
-
-
-#-------------------------------------------------------------------------------
-# Kill app
-#-------------------------------------------------------------------------------
-echo "*** kill app : "$1
-kill $(cat .pidRunApp)
