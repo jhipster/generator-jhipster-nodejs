@@ -1,3 +1,4 @@
+/* eslint-disable max-classes-per-file */
 import { BaseEntity } from './base.entity';
 import { Type, Expose as JsonProperty } from 'class-transformer';
 
@@ -10,7 +11,7 @@ export class Sort {
     }
   }
 
-  asOrder() {
+  asOrder(): any {
     const order = {};
     order[this.property] = this.direction;
     return order;

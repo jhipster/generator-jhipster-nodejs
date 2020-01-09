@@ -91,8 +91,8 @@ export default class <%= asEntity(entityClass) %> extends BaseEntity  {
     @Column({<%_ if(fieldColumnType) { _%> type: '<%-fieldColumnType%>' ,<%_ }_%>  name: "<%-fieldNameAsDatabaseColumn %>"<% if (fieldValidate === true) { %><% if (fieldValidateRules.includes('maxlength')) { %>, length: <%= fieldValidateRulesMaxlength %><% } %><% if (required) { %>, nullable: false<% } %><% if (unique) { %>, unique: true<% } %><% } %>})
         <%_ } _%>
         <%_ if (fields[idx].fieldIsEnum) { _%>
-    <%= fieldName %>: <%= fieldType %>;        
-        <%_ } else { _%>  
+    <%= fieldName %>: <%= fieldType %>;
+        <%_ } else { _%>
     <%= fieldName %>: <%= getTsType(fieldType) %>;
         <%_ } _%>
 
@@ -126,6 +126,7 @@ export default class <%= asEntity(entityClass) %> extends BaseEntity  {
     @ApiModelProperty({description = "<%- formatAsApiDescription(relationships.javadoc) %>"})
             <%_ }_%>
     <%_ }
+    // eslint-disable-next-line
         if (relationshipType === 'one-to-many') {_%>
     @OneToMany(type => <%= relationship.otherEntityAngularName %>, other => other.<%= otherEntityRelationshipName %>)
     <%= relationshipFieldNamePlural %>: <%= relationship.otherEntityAngularName %>[];

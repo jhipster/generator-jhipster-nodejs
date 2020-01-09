@@ -94,7 +94,7 @@ const config = new Config({ ...objectToArray(yamlConfig), ...objectToArray(envYa
 
 export { config };
 
-function objectToArray(source, currentKey?, target?) {
+function objectToArray(source, currentKey?, target?): any {
   target = target || {};
   for (const property in source) {
     if (source.hasOwnProperty(property)) {
@@ -111,7 +111,7 @@ function objectToArray(source, currentKey?, target?) {
   return target;
 }
 
-function ipAddress() {
+function ipAddress(): any {
   const interfaces = require('os').networkInterfaces();
   for (const dev in interfaces) {
     if (interfaces.hasOwnProperty(dev)) {

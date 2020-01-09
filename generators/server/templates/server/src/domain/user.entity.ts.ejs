@@ -24,6 +24,7 @@ export class User extends BaseEntity {
   @Column()
   langKey?: string;
 
+  // eslint-disable-next-line
   @ManyToMany(type => Authority)
   @JoinTable()
   authorities?: string[];

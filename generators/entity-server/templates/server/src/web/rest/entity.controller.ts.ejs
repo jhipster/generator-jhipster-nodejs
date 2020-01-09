@@ -56,8 +56,9 @@ export class <%= entityClass %>Controller {
   })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
   async post(@Req() req: Request, @Body() <%= asEntity(entityInstance) %>: <%= entityClass %>): Promise<any>  {
+    const created = await this.<%= asEntity(entityInstance) %>Repository.save(<%= asEntity(entityInstance) %>);
     HeaderUtil.addEntityCreatedHeaders(req.res, '<%= entityClass %>', created.id);
-    return await this.<%= asEntity(entityInstance) %>Repository.save(<%= asEntity(entityInstance) %>);
+    return created;
   }
 
   @Put('/')
