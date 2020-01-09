@@ -33,21 +33,21 @@ fi
 echo "*** check if the generation is wrong for some default java classes created :"
 
 if [ -z $(find src -type f -name "*.java" ) ]; then
-      echo "${GREEN}generation ok"
+      echo "${GREEN}GENERATION OK"
 else
-      echo "${RED}wrong generation"
+      echo "${RED}WRONG GENERATION"
       exit 1
 fi
 
 echo "*** install client dependencies for : "$1
 sudo npm install
 if [ $? -ne 0 ]; then
-  echo "${RED}failed client install"
+  echo "${RED}FAILED CLIENT INSTALL"
   exit 1
 fi
 echo "*** install server dependencies for : "$1
 cd server && sudo npm install
 if [ $? -ne 0 ]; then
-  echo "${RED}failed server install"
+  echo "${RED}FAILED SERVER INSTALL"
   exit 1
 fi

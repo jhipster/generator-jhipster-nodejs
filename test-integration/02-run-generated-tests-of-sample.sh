@@ -18,12 +18,12 @@ echo "*** changed directory in : test-integration/samples/"$1
 echo "*** run unit test in client for : "$1
 npm run lint:fix && npm test
 if [ $? -ne 0 ]; then
-  echo "${RED}failed server unit test command"
+  echo "${RED}FAILED CLIENT UNIT TEST COMMAND"
   exit 1
 fi
 echo "*** run unit test in server for : "$1
 cd server && npm run lint:fix && npm test
 if [ $? -ne 0 ]; then
-  echo "${RED}failed client unit test command"
+  echo "${RED}FAILED SERVER UNIT TEST COMMAND"
   exit 1
 fi
