@@ -25,7 +25,7 @@ export class AccountController {
     description: 'Registered user',
     type: User,
   })
-  async registerAccount(@Req() req: Request, @Body() user: User, @Res() res: Response): Promise<any> {
+  registerAccount(@Req() req: Request, @Body() user: User, @Res() res: Response): any {
     return res.sendStatus(201);
   }
 
@@ -35,7 +35,7 @@ export class AccountController {
     status: 200,
     description: 'activated',
   })
-  async activateAccount(@Param() key: string, @Res() res: Response): Promise<any>{
+  activateAccount(@Param() key: string, @Res() res: Response): any{
     return res.sendStatus(200);
   }
 
@@ -45,7 +45,7 @@ export class AccountController {
     status: 200,
     description: 'login authenticated',
   })
-  async isAuthenticated(@Req() req: Request): Promise<any> {
+  isAuthenticated(@Req() req: Request): any {
     const user: User = req.user;
     return user.login;
   }
@@ -68,7 +68,7 @@ export class AccountController {
     description: 'user info updated',
     type: User,
   })
-  async saveAccount(@Req() req: Request, @Body() user: User, @Res() res: Response): Promise<any> {
+  saveAccount(@Req() req: Request, @Body() user: User, @Res() res: Response): any {
     return res.sendStatus(201);
   }
 
@@ -79,7 +79,7 @@ export class AccountController {
     description: 'user password changed',
     type: User,
   })
-  async changePassword(@Req() req: Request, @Body() user: User, @Res() res: Response): Promise<any> {
+  changePassword(@Req() req: Request, @Body() user: User, @Res() res: Response): any {
     return res.sendStatus(201);
   }
 
@@ -90,7 +90,7 @@ export class AccountController {
     description: 'mail to reset password sent',
     type: 'string',
   })
-  async requestPasswordReset(@Req() req: Request, @Body() email: string, @Res() res: Response): Promise<any> {
+  requestPasswordReset(@Req() req: Request, @Body() email: string, @Res() res: Response): any {
     return res.sendStatus(201);
   }
 
@@ -101,7 +101,7 @@ export class AccountController {
     description: 'password reset',
     type: 'string',
   })
-  async finishPasswordReset(@Req() req: Request, @Body() keyAndPassword: string, @Res() res: Response): Promise<any> {
+  finishPasswordReset(@Req() req: Request, @Body() keyAndPassword: string, @Res() res: Response): any {
     return res.sendStatus(201);
   }
 
@@ -113,12 +113,12 @@ export class AccountController {
     status: 200,
     description: 'User retrieved',
   })
-  async getAccount(@Req() req: any): Promise<any> {
+  getAccount(@Req() req: any): any {
     const user: User = req.session.user;
     if (user) {
       return user;
     }
-    return;
+    return {};
 
   }
 

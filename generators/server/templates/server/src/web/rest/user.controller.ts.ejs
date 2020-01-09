@@ -50,9 +50,8 @@ export class UserController {
   })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
   async createUser(@Req() req: Request, @Body() user: User): Promise<any> {
-    const created = await this.userService.save(user);
     HeaderUtil.addEntityCreatedHeaders(req.res, 'User', created.id);
-    return created;
+    return await this.userService.save(user);
   }
 
   @Put('/')
@@ -86,7 +85,7 @@ export class UserController {
   })
   @Roles(RoleType.ADMIN)
   async deleteUser(@Req() req: Request, @Param('login') loginValue: string): Promise<any> {
-    await this.userService.delete({ login: loginValue });
     HeaderUtil.addEntityDeletedHeaders(req.res, 'User', loginValue);
+    return await this.userService.delete({ login: loginValue });
   }
 }

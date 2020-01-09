@@ -43,8 +43,8 @@ export class <%= entityClass %>Controller {
     description: 'The found record',
     type: <%= entityClass %>,
   })
-  getOne(@Param('id') id: string): Promise<any>  {
-    return this.<%= asEntity(entityInstance) %>Repository.findOne(id);
+  async getOne(@Param('id') id: string): Promise<any>  {
+    return await this.<%= asEntity(entityInstance) %>Repository.findOne(id);
   }
 
   @PostMethod('/')
@@ -56,9 +56,8 @@ export class <%= entityClass %>Controller {
   })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
   async post(@Req() req: Request, @Body() <%= asEntity(entityInstance) %>: <%= entityClass %>): Promise<any>  {
-    const created = await this.<%= asEntity(entityInstance) %>Repository.save(<%= asEntity(entityInstance) %>);
     HeaderUtil.addEntityCreatedHeaders(req.res, '<%= entityClass %>', created.id);
-    return created;
+    return await this.<%= asEntity(entityInstance) %>Repository.save(<%= asEntity(entityInstance) %>);
   }
 
   @Put('/')
@@ -68,10 +67,10 @@ export class <%= entityClass %>Controller {
     description: 'The record has been successfully updated.',
     type: <%= entityClass %>,
   })
-  put(@Req() req: Request, @Body() <%= asEntity(entityInstance) %>: <%= entityClass %>): Promise<any>  {
+  async put(@Req() req: Request, @Body() <%= asEntity(entityInstance) %>: <%= entityClass %>): Promise<any>  {
     const id = <%= asEntity(entityInstance) %>.id;
     HeaderUtil.addEntityCreatedHeaders(req.res, '<%= entityClass %>', id);
-    return this.<%= asEntity(entityInstance) %>Repository.update(id, <%= asEntity(entityInstance) %>);
+    return await this.<%= asEntity(entityInstance) %>Repository.update(id, <%= asEntity(entityInstance) %>);
   }
 
   @Delete('/:id')
@@ -80,8 +79,8 @@ export class <%= entityClass %>Controller {
     status: 204,
     description: 'The record has been successfully deleted.',
   })
-  remove(@Req() req: Request, @Param('id') id: string): Promise<any>  {
-    this.<%= asEntity(entityInstance) %>Repository.delete(id);
+  async remove(@Req() req: Request, @Param('id') id: string): Promise<any>  {
     HeaderUtil.addEntityDeletedHeaders(req.res, '<%= entityClass %>', id);
+    return await this.<%= asEntity(entityInstance) %>Repository.delete(id);
   }
 }

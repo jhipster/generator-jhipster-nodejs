@@ -22,7 +22,7 @@ export class <%= controllerClass %>Controller {
     description: 'List all records'
   })
   async getAll(@Req() req: Request): Promise<any>  {
-   return;
+   return new Promise();
   }
 
   @Get('/:id')
@@ -30,9 +30,9 @@ export class <%= controllerClass %>Controller {
     status: 200,
     description: 'The found record'
   })
-  getOne(@Param('id') id: string): Promise<any>  {
-    return;
-  }
+  async getOne(@Param('id') id: string): Promise<any>  {
+    return new Promise();
+}
 
   @PostMethod('/')
   @ApiOperation({ title: 'Create ' })
@@ -42,8 +42,8 @@ export class <%= controllerClass %>Controller {
   })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
   async post(@Req() req: Request, @Body() any: any): Promise<any>  {
-    return;
-  }
+    return new Promise();
+}
 
   @Put('/')
   @ApiOperation({ title: 'Update ' })
@@ -51,9 +51,9 @@ export class <%= controllerClass %>Controller {
     status: 200,
     description: 'The record has been successfully updated.'
   })
-  put(@Req() req: Request, @Body() any: any): Promise<any> {
-    return;
-  }
+  async put(@Req() req: Request, @Body() any: any): Promise<any> {
+    return new Promise();
+}
 
   @Delete('/:id')
   @ApiOperation({ title: 'Delete ' })
@@ -61,7 +61,7 @@ export class <%= controllerClass %>Controller {
     status: 204,
     description: 'The record has been successfully deleted.',
   })
-  remove(@Req() req: Request, @Param('id') id: string): Promise<any>  {
-   return;
+  async remove(@Req() req: Request, @Param('id') id: string): Promise<any>  {
+   return new Promise();
   }
 }

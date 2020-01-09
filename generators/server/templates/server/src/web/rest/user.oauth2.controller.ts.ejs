@@ -24,7 +24,7 @@ export class UserOauth2Controller {
     status: 200,
     description: 'Redirect oauth2 oidc after login',
   })
-  async redirect(@Req() req: any, @Res() res: any): Promise<any> {
+  redirect(@Req() req: any, @Res() res: any): any {
     res.session = req.session;
     res.session.user = req.user;
     res.session.idToken = req.idToken;

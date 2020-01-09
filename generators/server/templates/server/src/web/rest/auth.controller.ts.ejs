@@ -29,7 +29,7 @@ export class AuthController {
     isArray: true,
   })
   @Roles(RoleType.ADMIN)
-  async getAuthorities(@Req() req: any): Promise<any> {
+  getAuthorities(@Req() req: any): any {
     const user: User = req.user;
     return user.authorities;
   }
