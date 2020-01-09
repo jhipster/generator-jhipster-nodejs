@@ -27,7 +27,9 @@
   ],
   "scripts": {
     "build:app": "cd server && <%= clientPackageManager %> run build",
-    "start:app": "cd server && <%= clientPackageManager %> run start"
+    "lint:fix": "echo \"INFO: no client found\"",
+    "start:app": "cd server && <%= clientPackageManager %> run start",
+    "test": "echo \"INFO: no client test found\""
   },
   "devDependencies": {
     "generator-jhipster": "<%= jhipsterVersion %>"
