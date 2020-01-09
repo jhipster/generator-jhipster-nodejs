@@ -15,7 +15,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     });
   }
 
-  validate(payload: Payload, done: VerifiedCallback): VerifiedCallback {
+ async validate(payload: Payload, done: VerifiedCallback): Promise<any> {
     const user = await this.authService.validateUser(payload);
     if (!user) {
       return done(new UnauthorizedException({ message: 'user does not exist' }), false);

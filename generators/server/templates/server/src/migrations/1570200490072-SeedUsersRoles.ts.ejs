@@ -1,5 +1,7 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
+<%_ if (authenticationType !== 'oauth2') { _%>
 import { User } from '../domain/user.entity';
+<%_ } _%>
 import { Authority } from '../domain/authority.entity';
 
 export class SeedUsersRoles1570200490072 implements MigrationInterface {

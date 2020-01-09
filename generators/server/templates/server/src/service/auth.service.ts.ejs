@@ -1,4 +1,4 @@
-import { Injectable, HttpException, HttpStatus, Logger } from '@nestjs/common';
+import { Injectable, <%_ if (authenticationType === 'jwt') { _%> HttpException, HttpStatus,  <%_ } _%>  Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 <%_ if (authenticationType === 'jwt') { _%>
 import { JwtService } from '@nestjs/jwt';

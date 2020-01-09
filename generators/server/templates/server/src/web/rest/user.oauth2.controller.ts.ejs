@@ -1,5 +1,4 @@
 import { Controller, Get, Logger, Post, Res, UseGuards, Req, UseInterceptors } from '@nestjs/common';
-import { Request } from 'express';
 import { AuthService } from '../../service/auth.service';
 import { LoggingInterceptor } from '../../client/interceptors/logging.interceptor';
 import { ApiUseTags, ApiResponse, ApiOperation, ApiExcludeEndpoint } from '@nestjs/swagger';
@@ -41,7 +40,7 @@ export class UserOauth2Controller {
     status: 200,
     description: 'Redirect to login oauth2 oidc',
   })
-  async loginAuthOidc(@Req() req: Request): Promise<any> {
+  loginAuthOidc(): void {
     return;
   }
 
@@ -52,7 +51,7 @@ export class UserOauth2Controller {
     status: 201,
     description: 'Logout oauth2 oidc',
   })
-  async logoutAuthOidc(@Req() req: any): Promise<any> {
+  logoutAuthOidc(@Req() req: any): any {
     let idTokenFromSession;
     if (req.session.user) {
       idTokenFromSession = req.session.user.idToken;

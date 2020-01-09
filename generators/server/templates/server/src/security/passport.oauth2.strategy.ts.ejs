@@ -1,7 +1,6 @@
 import Strategy = require('passport-oauth2');
 import { PassportStrategy } from '@nestjs/passport';
-import { Injectable, Inject, UnauthorizedException, Logger, HttpService } from '@nestjs/common';
-import { Request } from 'express';
+import { Injectable, UnauthorizedException, Logger, HttpService } from '@nestjs/common';
 import { config } from '../config/config';
 import { AuthService } from '../service/auth.service';
 
@@ -34,7 +33,7 @@ export class Oauth2Strategy extends PassportStrategy(Strategy) {
     });
   }
 
-  async userProfile(accessToken: any, done: any) {
+  async userProfile(accessToken: any, done: any): Promise<any> {
     // roles with id http://dev-281272.okta.com/api/v1/users/<id>/roles
     // id in http://dev-281272.okta.com/api/v1/users/me
     return await this.httpService.get(`${issuerUri}/v1/userinfo`, {

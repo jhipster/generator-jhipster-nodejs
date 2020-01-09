@@ -1,6 +1,8 @@
-import { Body, Controller, Get, Logger, Param, Post, Res, UseGuards, Req, UseInterceptors } from '@nestjs/common';
+import { <%_ if (authenticationType === 'jwt') { _%> Body, Param, Post, Res, UseGuards, <%_ } _%> Controller, Get, Logger, Req, UseInterceptors } from '@nestjs/common';
+<%_ if (authenticationType === 'jwt') { _%>
 import { Response, Request } from 'express';
 import { AuthGuard, RolesGuard } from '../../security';
+<%_ } _%>
 import { User } from '../../domain/user.entity';
 import { LoggingInterceptor } from '../../client/interceptors/logging.interceptor';
 import {<%_ if (authenticationType === 'jwt') { _%> ApiBearerAuth, <%_ } _%> ApiUseTags, ApiResponse, ApiOperation } from '@nestjs/swagger';
