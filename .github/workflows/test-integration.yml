@@ -1,42 +1,42 @@
 name: Test Integration
 on: [push, pull_request]
 jobs:
-  applications:
+    applications:
         name: ${{ matrix.app-type }}
         runs-on: ${{ matrix.os }}
         if: "!contains(github.event.head_commit.message, '[ci skip]') && !contains(github.event.head_commit.message, '[skip ci]')"
         timeout-minutes: 20
         strategy:
-          fail-fast: false
-          matrix:
-            node_version: [12.14.0]
-            os: [ubuntu-latest]
-            app-type:
-              - monolith-react-oauth2-dev
-              - monolith-angular-jwt-dev
-              - monolith-react-jwt-sql-jdl
-              - microservice-oauth2-sql-jdl
-            include:
-              - app-type: monolith-react-oauth2-dev
-                arg: no
-              - app-type: monolith-angular-jwt-dev
-                arg: no
-              - app-type: monolith-react-jwt-sql-jdl
-                arg: import-jdl
-              - app-type: microservice-oauth2-sql-jdl
-                arg: post-import-jdl
+            fail-fast: false
+            matrix:
+                node_version: [12.14.0]
+                os: [ubuntu-latest]
+                app-type:
+                    - monolith-react-oauth2-dev
+                    - monolith-angular-jwt-dev
+                    - monolith-react-jwt-sql-jdl
+                    - microservice-oauth2-sql-jdl
+                include:
+                    - app-type: monolith-react-oauth2-dev
+                      arg: no
+                    - app-type: monolith-angular-jwt-dev
+                      arg: no
+                    - app-type: monolith-react-jwt-sql-jdl
+                      arg: import-jdl
+                    - app-type: microservice-oauth2-sql-jdl
+                      arg: post-import-jdl
         env:
-          JHI_APP: ${{ matrix.app-type }}
-          JHI_ARG: ${{ matrix.arg }}
-                      
+            JHI_APP: ${{ matrix.app-type }}
+            JHI_ARG: ${{ matrix.arg }}
+
         steps:
-         - uses: actions/checkout@v1
-         - uses: actions/setup-node@v1
-           with:
-             node-version: ${{ matrix.node-version }}   
-         - name: git history
-           run: git --no-pager log -n 10 --graph --pretty='%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue) <%an>%Creset' --abbrev-commit  
-         - name: prepare jhipster env
-           run: sudo sh test-integration/00-install-all-jhipster.sh
-         - name: 'GENERATION NHipster app'
-           run: sudo sh test-integration/01-generate-test-sample.sh $JHI_APP $JHI_ARG
+            - uses: actions/checkout@v1
+            - uses: actions/setup-node@v1
+              with:
+                  node-version: ${{ matrix.node-version }}
+            - name: git history
+              run: git --no-pager log -n 10 --graph --pretty='%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue) <%an>%Creset' --abbrev-commit
+            - name: prepare jhipster env
+              run: sudo sh test-integration/00-install-all-jhipster.sh
+            - name: 'GENERATION NHipster app'
+              run: sudo sh test-integration/01-generate-test-sample.sh $JHI_APP $JHI_ARG

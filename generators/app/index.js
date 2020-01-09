@@ -33,14 +33,30 @@ module.exports = class extends AppGenerator {
             /* eslint-disable */
             displayLogo() {
                 this.log('\n');
-                this.log(`${chalk.yellow(' ███╗   ██╗')}${chalk.green(' ██╗   ██╗ ████████╗ ███████╗   ██████╗ ████████╗ ████████╗ ███████╗')}`);
-                this.log(`${chalk.yellow(' ████╗  ██║')}${chalk.green(' ██║   ██║ ╚══██╔══╝ ██╔═══██╗ ██╔════╝ ╚══██╔══╝ ██╔═════╝ ██╔═══██╗')}`);
-                this.log(`${chalk.yellow(' ██╔██╗ ██║')}${chalk.green(' ████████║    ██║    ███████╔╝ ╚█████╗     ██║    ██████╗   ███████╔╝')}`);
-                this.log(`${chalk.yellow(' ██║╚██╗██║')}${chalk.green(' ██╔═══██║    ██║    ██╔════╝   ╚═══██╗    ██║    ██╔═══╝   ██╔══██║')}`);
-                this.log(`${chalk.yellow(' ██║ ╚████║')}${chalk.green(' ██║   ██║ ████████╗ ██║       ██████╔╝    ██║    ████████╗ ██║  ╚██╗')}`);
-                this.log(`${chalk.yellow(' ╚═╝  ╚═══╝')}${chalk.green(' ╚═╝   ╚═╝ ╚═══════╝ ╚═╝       ╚═════╝     ╚═╝    ╚═══════╝ ╚═╝   ╚═╝')}\n`);
+                this.log(
+                    `${chalk.yellow(' ███╗   ██╗')}${chalk.green(' ██╗   ██╗ ████████╗ ███████╗   ██████╗ ████████╗ ████████╗ ███████╗')}`
+                );
+                this.log(
+                    `${chalk.yellow(' ████╗  ██║')}${chalk.green(' ██║   ██║ ╚══██╔══╝ ██╔═══██╗ ██╔════╝ ╚══██╔══╝ ██╔═════╝ ██╔═══██╗')}`
+                );
+                this.log(
+                    `${chalk.yellow(' ██╔██╗ ██║')}${chalk.green(' ████████║    ██║    ███████╔╝ ╚█████╗     ██║    ██████╗   ███████╔╝')}`
+                );
+                this.log(
+                    `${chalk.yellow(' ██║╚██╗██║')}${chalk.green(' ██╔═══██║    ██║    ██╔════╝   ╚═══██╗    ██║    ██╔═══╝   ██╔══██║')}`
+                );
+                this.log(
+                    `${chalk.yellow(' ██║ ╚████║')}${chalk.green(' ██║   ██║ ████████╗ ██║       ██████╔╝    ██║    ████████╗ ██║  ╚██╗')}`
+                );
+                this.log(
+                    `${chalk.yellow(' ╚═╝  ╚═══╝')}${chalk.green(
+                        ' ╚═╝   ╚═╝ ╚═══════╝ ╚═╝       ╚═════╝     ╚═╝    ╚═══════╝ ╚═╝   ╚═╝'
+                    )}\n`
+                );
                 this.log(chalk.white.bold('                            https://www.jhipster.tech\n'));
-                this.log(chalk.white('Welcome to NHipster (Jhipster NodeJS Official Blueprint) ') + chalk.yellow(`v${nodePackagejs.version}`));
+                this.log(
+                    chalk.white('Welcome to NHipster (Jhipster NodeJS Official Blueprint) ') + chalk.yellow(`v${nodePackagejs.version}`)
+                );
                 this.log(chalk.white('This blueprint generates your backend in NodeJS with NestJS framework'));
 
                 this.log(
@@ -50,7 +66,9 @@ module.exports = class extends AppGenerator {
                 );
                 this.log(
                     chalk.white(
-                        `  For any questions or improvements refer to the stream lead at ${chalk.yellow('https://github.com/amanganiello90')}`
+                        `  For any questions or improvements refer to the stream lead at ${chalk.yellow(
+                            'https://github.com/amanganiello90'
+                        )}`
                     )
                 );
                 this.log(
@@ -65,37 +83,14 @@ module.exports = class extends AppGenerator {
                         ' _______________________________________________________________________________________________________________\n'
                     )
                 );
+                this.log(chalk.green.bold(' This NodeJS blueprint use these following configurations:\n'));
+                this.log(chalk.green.bold(' 1. NestJS Framework with swagger doc\n'));
+                this.log(chalk.green.bold(' 2. JWT or OAuth2 Passport security authentication\n'));
+                this.log(chalk.green.bold(' 3. TypeORM usage with SQLite development database and versioning/migration\n'));
                 this.log(
-                    chalk.green.bold(
-                        ' This NodeJS blueprint use these following configurations:\n'
-                    )
+                    chalk.green.bold(' 4. Initial load data seed with users (using auth roles) integrated with the angular/react client\n')
                 );
-                this.log(
-                    chalk.green.bold(
-                        ' 1. NestJS Framework with swagger doc\n'
-                    )
-                );
-                this.log(
-                    chalk.green.bold(
-                        ' 2. JWT or OAuth2 Passport security authentication\n'
-                    )
-                );
-                this.log(
-                    chalk.green.bold(
-                        ' 3. TypeORM usage with SQLite development database and versioning/migration\n'
-                    )
-                );
-                this.log(
-                    chalk.green.bold(
-                        ' 4. Initial load data seed with users (using auth roles) integrated with the angular/react client\n'
-                    )
-                );
-                this.log(
-                    chalk.green.bold(
-                        ' 5. Eureka JS client registry\n'
-                    )
-                );
-
+                this.log(chalk.green.bold(' 5. Eureka JS client registry\n'));
             },
             /* eslint-enable */
             // remove jhipster standard java requirement not used in this blueprint

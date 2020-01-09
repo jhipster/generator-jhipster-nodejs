@@ -13,4 +13,3 @@ Instead, `-jdl` suffix folders contain `.jdl` files which is the model to create
 
 -   monolith-react-jwt-sql-jdl
 -   microservice-oauth2-sql-jdl
-

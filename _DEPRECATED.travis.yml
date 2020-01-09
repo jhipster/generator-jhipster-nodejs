@@ -1,23 +1,22 @@
 os: linux
 language: node_js
-node_js: "12.14.0"
+node_js: '12.14.0'
 jobs:
-  include:
-    - stage: build and unit test
-      install: npm install
-      name: unit test
-      script: npm test
-    - stage:  integration test
-      install: sh test-integration/00-install-all-jhipster.sh
-      name: monolith-react-oauth2-dev test
-      script:  sh test-integration/01-generate-test-sample.sh monolith-react-oauth2-dev
-    - script:  sh test-integration/01-generate-test-sample.sh monolith-angular-jwt-dev
-      install: sh test-integration/00-install-all-jhipster.sh
-      name: monolith-angular-jwt-dev test
-    - script:  sh test-integration/01-generate-test-sample.sh monolith-react-jwt-sql-jdl import-jdl
-      install: sh test-integration/00-install-all-jhipster.sh
-      name: monolith-react-jwt-sql-jdl test
-    - script:  sh test-integration/01-generate-test-sample.sh microservice-oauth2-sql-jdl post-import-jdl
-      install: sh test-integration/00-install-all-jhipster.sh
-      name: microservice-oauth2-sql-jdl test
-
+    include:
+        - stage: build and unit test
+          install: npm install
+          name: unit test
+          script: npm test
+        - stage: integration test
+          install: sh test-integration/00-install-all-jhipster.sh
+          name: monolith-react-oauth2-dev test
+          script: sh test-integration/01-generate-test-sample.sh monolith-react-oauth2-dev
+        - script: sh test-integration/01-generate-test-sample.sh monolith-angular-jwt-dev
+          install: sh test-integration/00-install-all-jhipster.sh
+          name: monolith-angular-jwt-dev test
+        - script: sh test-integration/01-generate-test-sample.sh monolith-react-jwt-sql-jdl import-jdl
+          install: sh test-integration/00-install-all-jhipster.sh
+          name: monolith-react-jwt-sql-jdl test
+        - script: sh test-integration/01-generate-test-sample.sh microservice-oauth2-sql-jdl post-import-jdl
+          install: sh test-integration/00-install-all-jhipster.sh
+          name: microservice-oauth2-sql-jdl test
