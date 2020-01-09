@@ -16,7 +16,7 @@ export class ManagementController {
     status: 200,
     description: 'Check if the microservice is up',
   })
-    async info(@Req() req: any): any {
+     info(@Req() req: any): any {
         return {
           'activeProfiles': 'no',
           'display-ribbon-on-profiles': 'no',

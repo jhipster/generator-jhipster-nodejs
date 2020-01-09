@@ -1,9 +1,9 @@
-import { Body, Controller, Delete, Get, HttpCode, Logger, Param, Post, Put, Query, Res, UseGuards, Req, UseInterceptors } from '@nestjs/common';
-import { Response, Request } from 'express';
+import { Controller, Get, Logger, Post, Res, UseGuards, Req, UseInterceptors } from '@nestjs/common';
+import { Request } from 'express';
 import { AuthService } from '../../service/auth.service';
 import { LoggingInterceptor } from '../../client/interceptors/logging.interceptor';
 import { ApiUseTags, ApiResponse, ApiOperation, ApiExcludeEndpoint } from '@nestjs/swagger';
-import { AuthGuard, Roles, RolesGuard, RoleType } from '../../security';
+import { AuthGuard, RolesGuard } from '../../security';
 import { config } from '../../config/config';
 
 const issuerUri = config.get('jhipster.security.oauth2.client.provider.oidc.issuer-uri');
@@ -24,7 +24,7 @@ export class UserOauth2Controller {
     status: 200,
     description: 'Redirect oauth2 oidc after login',
   })
-  async redirect(@Req() req: any, @Res() res: any) {
+  async redirect(@Req() req: any, @Res() res: any): Promise<any> {
     res.session = req.session;
     res.session.user = req.user;
     res.session.idToken = req.idToken;
@@ -41,7 +41,7 @@ export class UserOauth2Controller {
     status: 200,
     description: 'Redirect to login oauth2 oidc',
   })
-  async loginAuthOidc(@Req() req: Request) {
+  async loginAuthOidc(@Req() req: Request): Promise<any> {
     return;
   }
 
@@ -52,7 +52,7 @@ export class UserOauth2Controller {
     status: 201,
     description: 'Logout oauth2 oidc',
   })
-  async logoutAuthOidc(@Req() req: any) {
+  async logoutAuthOidc(@Req() req: any): Promise<any> {
     let idTokenFromSession;
     if (req.session.user) {
       idTokenFromSession = req.session.user.idToken;
