@@ -104,7 +104,6 @@ export default class <%= asEntity(entityClass) %> extends BaseEntity  {
     @ApiModelProperty({description = "<%- formatAsApiDescription(relationships.javadoc) %>"})
             <%_ }_%>
     <%_ }
-    // eslint-disable-next-line
         if (relationshipType === 'one-to-many') {_%>
     @OneToMany(type => <%= relationship.otherEntityAngularName %>, other => other.<%= otherEntityRelationshipName %>)
     <%= relationshipFieldNamePlural %>: <%= relationship.otherEntityAngularName %>[];
