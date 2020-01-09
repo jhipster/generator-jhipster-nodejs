@@ -88,7 +88,7 @@ export class AccountController {
   @ApiResponse({
     status: 201,
     description: 'mail to reset password sent',
-    type: string,
+    type: 'string',
   })
   async requestPasswordReset(@Req() req: Request, @Body() email: string, @Res() res: Response): Promise<any> {
     return res.sendStatus(201);
@@ -99,7 +99,7 @@ export class AccountController {
   @ApiResponse({
     status: 201,
     description: 'password reset',
-    type: string,
+    type: 'string',
   })
   async finishPasswordReset(@Req() req: Request, @Body() keyAndPassword: string, @Res() res: Response): Promise<any> {
     return res.sendStatus(201);

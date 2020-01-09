@@ -25,7 +25,7 @@ export class AuthController {
   @ApiResponse({
     status: 200,
     description: 'List all user roles',
-    type: string,
+    type: 'string',
     isArray: true,
   })
   @Roles(RoleType.ADMIN)

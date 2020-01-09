@@ -1,10 +1,8 @@
-import { Body, Controller, Delete, Get, HttpCode, Logger, Param, Post as PostMethod, Put, Query, Res, UseGuards, Req, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Logger, Param, Post as PostMethod, Put, Res, UseGuards, Req, UseInterceptors } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ApiBearerAuth, ApiUseTags, ApiResponse, ApiOperation } from '@nestjs/swagger';
 import { Response, Request } from 'express';
-import { PageRequest, Page } from '../../domain/base/pagination.entity';
 import { AuthGuard, Roles, RolesGuard, RoleType } from '../../security';
-import { HeaderUtil } from '../../client/header-util';
 import { LoggingInterceptor } from '../../client/interceptors/logging.interceptor';
 
 @Controller('api/<%= controllerFileName %>s')
@@ -23,7 +21,7 @@ export class <%= controllerClass %>Controller {
     status: 200,
     description: 'List all records'
   })
-  async getAll(@Req() req: Request) {
+  async getAll(@Req() req: Request): Promise<any>  {
    return;
   }
 
@@ -32,7 +30,7 @@ export class <%= controllerClass %>Controller {
     status: 200,
     description: 'The found record'
   })
-  getOne(@Param('id') id: string) {
+  getOne(@Param('id') id: string): Promise<any>  {
     return;
   }
 
@@ -43,7 +41,7 @@ export class <%= controllerClass %>Controller {
     description: 'The record has been successfully created.'
   })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
-  async post(@Req() req: Request, @Body() any: any) {
+  async post(@Req() req: Request, @Body() any: any): Promise<any>  {
     return;
   }
 
@@ -53,7 +51,7 @@ export class <%= controllerClass %>Controller {
     status: 200,
     description: 'The record has been successfully updated.'
   })
-  put(@Req() req: Request, @Body() any: any) {
+  put(@Req() req: Request, @Body() any: any): Promise<any> {
     return;
   }
 
@@ -63,7 +61,7 @@ export class <%= controllerClass %>Controller {
     status: 204,
     description: 'The record has been successfully deleted.',
   })
-  remove(@Req() req: Request, @Param('id') id: string) {
+  remove(@Req() req: Request, @Param('id') id: string): Promise<any>  {
    return;
   }
 }

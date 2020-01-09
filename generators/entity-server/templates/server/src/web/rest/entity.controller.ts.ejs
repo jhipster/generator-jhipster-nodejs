@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, HttpCode, Logger, Param, Post as PostMethod, Put, Query, Res, UseGuards, Req, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Logger, Param, Post as PostMethod, Put, Query, Res, UseGuards, Req, UseInterceptors } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ApiBearerAuth, ApiUseTags, ApiResponse, ApiOperation } from '@nestjs/swagger';
 import { Response, Request } from 'express';
@@ -26,7 +26,7 @@ export class <%= entityClass %>Controller {
     description: 'List all records',
     type: <%= entityClass %>,
   })
-  async getAll(@Req() req: Request) {
+  async getAll(@Req() req: Request): Promise<any>  {
     const pageRequest: PageRequest = new PageRequest(req.query.page, req.query.size, req.query.sort);
     const [results, count] = await this.<%= asEntity(entityInstance) %>Repository.findAndCount({
       skip: +pageRequest.page * pageRequest.size,
@@ -43,7 +43,7 @@ export class <%= entityClass %>Controller {
     description: 'The found record',
     type: <%= entityClass %>,
   })
-  getOne(@Param('id') id: string) {
+  getOne(@Param('id') id: string): Promise<any>  {
     return this.<%= asEntity(entityInstance) %>Repository.findOne(id);
   }
 
@@ -55,7 +55,7 @@ export class <%= entityClass %>Controller {
     type: <%= entityClass %>,
   })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
-  async post(@Req() req: Request, @Body() <%= asEntity(entityInstance) %>: <%= entityClass %>) {
+  async post(@Req() req: Request, @Body() <%= asEntity(entityInstance) %>: <%= entityClass %>): Promise<any>  {
     const created = await this.<%= asEntity(entityInstance) %>Repository.save(<%= asEntity(entityInstance) %>);
     HeaderUtil.addEntityCreatedHeaders(req.res, '<%= entityClass %>', created.id);
     return created;
@@ -68,7 +68,7 @@ export class <%= entityClass %>Controller {
     description: 'The record has been successfully updated.',
     type: <%= entityClass %>,
   })
-  put(@Req() req: Request, @Body() <%= asEntity(entityInstance) %>: <%= entityClass %>) {
+  put(@Req() req: Request, @Body() <%= asEntity(entityInstance) %>: <%= entityClass %>): Promise<any>  {
     const id = <%= asEntity(entityInstance) %>.id;
     HeaderUtil.addEntityCreatedHeaders(req.res, '<%= entityClass %>', id);
     return this.<%= asEntity(entityInstance) %>Repository.update(id, <%= asEntity(entityInstance) %>);
@@ -80,7 +80,7 @@ export class <%= entityClass %>Controller {
     status: 204,
     description: 'The record has been successfully deleted.',
   })
-  remove(@Req() req: Request, @Param('id') id: string) {
+  remove(@Req() req: Request, @Param('id') id: string): Promise<any>  {
     this.<%= asEntity(entityInstance) %>Repository.delete(id);
     HeaderUtil.addEntityDeletedHeaders(req.res, '<%= entityClass %>', id);
   }
