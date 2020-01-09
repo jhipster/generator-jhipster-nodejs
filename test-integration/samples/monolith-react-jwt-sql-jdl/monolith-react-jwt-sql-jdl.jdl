@@ -63,7 +63,7 @@ entity SingleCourse {
 entity Activity {
 	name UUID unique,
 	description String,
-	number Double,
+	mynumber Double,
 	creationtime ZonedDateTime
 
 }
