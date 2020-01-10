@@ -1,6 +1,6 @@
 import { Body, Controller, Delete, Get, Logger, Param, Post as PostMethod, Put, UseGuards, Req, UseInterceptors } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { ApiBearerAuth, ApiUseTags, ApiResponse, ApiOperation } from '@nestjs/swagger';
+import {<%_ if (authenticationType === 'jwt') { _%> ApiBearerAuth, <%_ } else if (authenticationType === 'oauth2') { _%> ApiOAuth2Auth, <%_ } _%> ApiUseTags, ApiResponse, ApiOperation } from '@nestjs/swagger';
 import { Request } from 'express';
 import <%= entityClass %> from '../../domain/<%= entityFileName %>.entity';
 import { PageRequest, Page } from '../../domain/base/pagination.entity';
@@ -12,7 +12,11 @@ import { LoggingInterceptor } from '../../client/interceptors/logging.intercepto
 @Controller('api/<%= entityApiUrl %>')
 @UseGuards(AuthGuard, RolesGuard)
 @UseInterceptors(LoggingInterceptor)
+<%_ if (authenticationType === 'jwt') { _%>
 @ApiBearerAuth()
+<%_ } else if (authenticationType === 'oauth2') { _%>
+@ApiOAuth2Auth()
+<%_ } _%>
 @ApiUseTags('<%= entityApiUrl %>')
 export class <%= entityClass %>Controller {
   logger = new Logger('<%= entityClass %>Controller');
