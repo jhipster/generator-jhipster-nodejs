@@ -43,7 +43,6 @@ function askForMainServerSideOpts(meta) {
             name: 'prodDatabaseType',
             message: `Which ${chalk.yellow('*production*')} database would you like to use?`,
             choices: [
-                { value: 'sqlite', name: 'SQLite' },
                 /* {   value: 'mongodb',
                 name: 'MongoDB' }, */
                 { value: 'mysql', name: 'MySQL or MariaDB' },
@@ -51,7 +50,7 @@ function askForMainServerSideOpts(meta) {
                 { value: 'oracle', name: 'Oracle (Please follow our documentation to use the Oracle proprietary driver)' },
                 { value: 'mssql', name: 'Microsoft SQL Server' }
             ],
-            default: 'sqlite'
+            default: 'mysql'
         }
     ];
 

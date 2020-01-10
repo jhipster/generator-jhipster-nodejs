@@ -35,7 +35,7 @@ This project adds nodejs for your backend, **all typescript files generation, no
 
 > -   The app starts with four seed users (admin, basic user and anonymous roles), as standard jhipster monolithic app, with SQLite for dev and configurable sql db for prod
 
-> -   The app uses [typeORM](https://github.com/nestjs/typeorm) and asks you a question if you don't want SQLite database in prod mode but using onother sql db
+> -   The app uses [typeORM](https://github.com/nestjs/typeorm) and asks you a question for onother sql db
 
 > -   TypeORM is also used for the automatically migration and versioning of the database scripts
 
