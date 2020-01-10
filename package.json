@@ -61,6 +61,7 @@
         "jsdoc": "3.6.3",
         "mocha": "6.1.4",
         "nyc": "15.0.0",
+        "pre-commit": "1.2.2",
         "prettier": "1.17.1",
         "sinon": "7.3.2",
         "sonarqube-scanner": "2.5.0",
@@ -84,6 +85,9 @@
         "release:minor": "npm version minor -a -m \"Update to %s\" && npm run release",
         "release:major": "npm version major -a -m \"Update to %s\" && npm run release"
     },
+    "pre-commit": [
+        "lint"
+    ],
     "engines": {
         "node": ">=8.10.0",
         "npm": ">=5.6.0"
