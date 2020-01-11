@@ -52,6 +52,7 @@ const serverFiles = {
                 'nest-cli.json',
                 '.env',
                 '.server.eslintrc.json',
+                '.server.eslintignore',
                 'package.json',
                 'tsconfig.json',
                 'README.md'

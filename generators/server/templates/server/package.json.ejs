@@ -14,7 +14,7 @@
     "start:debug": "npm run copy-resources && tsc-watch -p tsconfig.build.json --onSuccess \"node --inspect-brk dist/main.js\"",
     "start:prod": "npm run copy-resources && node dist/main.js",
     "start": "npm run clean && npm run copy-resources && nodemon --watch src -e ts,tsx --exec ts-node src/main.ts",
-    "lint": "eslint . --no-eslintrc --config .server.eslintrc.json --ext .js,.ts",
+    "lint": "eslint . --ignore-path .server.eslintignore --no-eslintrc --config .server.eslintrc.json --ext .js,.ts",
     "lint:fix": "npm run lint -- --fix",
     "test": "npm run lint && jest",
     "test:watch": "jest --watch",

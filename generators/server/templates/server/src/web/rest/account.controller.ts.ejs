@@ -115,12 +115,12 @@ export class AccountController {
     status: 200,
     description: 'User retrieved',
   })
-  getAccount(@Req() req: any): any {
+  getAccount(@Req() req: any): any | void {
     const user: User = req.session.user;
     if (user) {
       return user;
     }
-    return {};
+    return ;
 
   }
 
