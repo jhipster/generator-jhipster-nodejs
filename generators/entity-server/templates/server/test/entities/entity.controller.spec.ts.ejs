@@ -1,5 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { <%= entityClass %>Controller } from './<%= entityFileName %>.controller';
+import { <%= entityClass %>Controller } from '../../src/web/rest/<%= entityFileName %>.controller';
+import { <%= entityClass %>Repository } from '../../src/repository/<%= entityFileName %>.repository';
 
 describe('<%= entityClass %> Controller', () => {
   let controller: <%= entityClass %>Controller;
@@ -7,6 +8,7 @@ describe('<%= entityClass %> Controller', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [<%= entityClass %>Controller],
+      providers: [<%= entityClass %>Repository]
     }).compile();
 
     controller = module.get<<%= entityClass %>Controller>(<%= entityClass %>Controller);

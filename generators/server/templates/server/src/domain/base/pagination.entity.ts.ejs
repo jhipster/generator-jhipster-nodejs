@@ -1,3 +1,4 @@
+/* eslint-disable max-classes-per-file */
 import { BaseEntity } from './base.entity';
 import { Type, Expose as JsonProperty } from 'class-transformer';
 
@@ -10,14 +11,13 @@ export class Sort {
     }
   }
 
-  asOrder() {
+  asOrder(): any {
     const order = {};
     order[this.property] = this.direction;
     return order;
   }
 }
 
-// tslint:disable-next-line: max-classes-per-file
 export class PageRequest {
   @JsonProperty()
   page: number = 0;
@@ -33,7 +33,6 @@ export class PageRequest {
   }
 }
 
-// tslint:disable-next-line: max-classes-per-file
 export class Page<T extends BaseEntity> {
   constructor(public content: T[], public total: number, public pageable: PageRequest) {}
 }

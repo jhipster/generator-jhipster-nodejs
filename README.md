@@ -1,5 +1,6 @@
 # generator-jhipster-nodejs
-[![NPM version][npm-image]][npm-url] 
+
+[![NPM version][npm-image]][npm-url]
 [![Dependency Status][daviddm-image]][daviddm-url]
 [![Generator Build Status][github-actions-generator-ci-image]][github-actions-url]
 [![Generator Test Status][github-actions-generator-test-image]][github-actions-url]
@@ -30,42 +31,39 @@ This project adds nodejs for your backend, **all typescript files generation, no
 
 > The generator applies this standard configuration for the nodeJS app:
 
-> * NestJS base app with web controllers, [swagger doc](https://github.com/nestjs/swagger) and [jwt or oauth2 passport auth](https://github.com/nestjs/passport) services
+> -   NestJS base app with web controllers, [swagger doc](https://github.com/nestjs/swagger) and [jwt or oauth2 passport auth](https://github.com/nestjs/passport) services
 
-> * The app starts with four seed users (admin, basic user and anonymous roles), as standard jhipster monolithic app, with SQLite for dev and configurable sql db for prod
+> -   The app starts with four seed users (admin, basic user and anonymous roles), as standard jhipster monolithic app, with SQLite for dev and configurable sql db for prod
 
-> * The app uses [typeORM](https://github.com/nestjs/typeorm) and asks you a question if you don't want SQLite database in prod mode but using onother sql db
+> -   The app uses [typeORM](https://github.com/nestjs/typeorm) and asks you a question for onother sql db
 
-> * TypeORM is also used for the automatically migration and versioning of the database scripts
+> -   TypeORM is also used for the automatically migration and versioning of the database scripts
 
-> * The app runs also as a full stack app including, for the monolitich choise, the angular/react client with the home page set for NHipster and CRUD operations for entity generated with subgenerator and jdl import
+> -   The app runs also as a full stack app including, for the monolitich choise, the angular/react client with the home page set for NHipster and CRUD operations for entity generated with subgenerator and jdl import
 
 <div align="center">
 		<img src="https://raw.githubusercontent.com/jhipster/generator-jhipster-nodejs/v1.0.0-beta.1/nhipster-cli.gif">
 </div>
 
-
-> A **generated example app with JWT auth** is [here](https://github.com/jhipster/jhipster-sample-app-nodejs/tree/v1.0.0-beta.1) 
+> A **generated example app with JWT auth** is [here](https://github.com/jhipster/jhipster-sample-app-nodejs/tree/v1.0.0-beta.1)
 
 <div align="center">
 		<img src="https://raw.githubusercontent.com/jhipster/generator-jhipster-nodejs/v1.0.0-beta.1/demo-full-app.gif">
 </div>
 
-
-> A **generated example app with Okta Oauth2** is [here](https://github.com/jhipster/jhipster-sample-app-nodejs-oauth2/tree/v1.0.0-beta.1) 
+> A **generated example app with Okta Oauth2** is [here](https://github.com/jhipster/jhipster-sample-app-nodejs-oauth2/tree/v1.0.0-beta.1)
 
 # Prerequisites
 
 As this is a [JHipster](https://www.jhipster.tech/) blueprint, we expect you have JHipster and its related tools already installed:
 
-- [Installing JHipster](https://www.jhipster.tech/installation/)
+-   [Installing JHipster](https://www.jhipster.tech/installation/)
 
 # 🚀 How to get started
 
 1. Make sure you have followed the [JHipster installation guide](https://www.jhipster.tech/installation) and that both `yeoman` and `jhipster` are installed.
 2. Install the package with `npm install -g generator-jhipster-nodejs`
 3. And generate the application with `jhipster --blueprints nodejs`
-
 
 # Installation Details
 
@@ -99,17 +97,21 @@ yarn global upgrade generator-jhipster-nodejs
 
 ## 🚦 What we have now
 
-✅ General App generation 
-   - `jhipster --blueprints nodejs`
+✅ General App generation
+
+-   `jhipster --blueprints nodejs`
 
 ✅ Controller generation
-   - `jhipster spring-controller <controller-name> --blueprints nodejs`
-  
+
+-   `jhipster spring-controller <controller-name> --blueprints nodejs`
+
 ✅ Entity generation
-   - `jhipster entity <entity-name> --blueprints nodejs`
+
+-   `jhipster entity <entity-name> --blueprints nodejs`
 
 ✅ JDL Entity model support generation
-   - `jhipster import-jdl my_file.jdl --blueprints nodejs`
+
+-   `jhipster import-jdl my_file.jdl --blueprints nodejs`
 
 For the last, in the **test-integration/samples/FOLDER_NAME-jdl** there are some examples of jdl models.
 
@@ -119,26 +121,26 @@ For the last, in the **test-integration/samples/FOLDER_NAME-jdl** there are some
 
 Shell steps:
 
-- ```git clone https://github.com/jhipster/generator-jhipster-nodejs.git```
-- ```cd generator-jhipster-nodejs```
-- ```git checkout -b feature/my-feature```
-- ```npm install``` 
-- ```npm link```
-- ```cd ..```
-- ```git clone https://github.com/jhipster/generator-jhipster.git```
-- ```cd generator-jhipster```
-- ```npm install``` 
-- ```npm link```
-- ```cd ..```
-- ```mkdir test-generation```
-- ```cd test-generation```
-- ```npm link generator-jhipster```
-- ```npm link generator-jhipster-nodejs```
+-   `git clone https://github.com/jhipster/generator-jhipster-nodejs.git`
+-   `cd generator-jhipster-nodejs`
+-   `git checkout -b feature/my-feature`
+-   `npm install`
+-   `npm link`
+-   `cd ..`
+-   `git clone https://github.com/jhipster/generator-jhipster.git`
+-   `cd generator-jhipster`
+-   `npm install`
+-   `npm link`
+-   `cd ..`
+-   `mkdir test-generation`
+-   `cd test-generation`
+-   `npm link generator-jhipster`
+-   `npm link generator-jhipster-nodejs`
 
 Now you will develop under the **generator-jhipster-nodejs** that you have cloned with git.
 After finish, to generate the app and check your feature, run in **test-generation** folder:
 
-- ```jhipster --blueprints nodejs```
+-   `jhipster --blueprints nodejs`
 
 ## ❤️ For community
 
@@ -149,7 +151,6 @@ Interested in contributing, check out our [contributing guide](https://github.co
 Refer for contribution to [roadmap](https://github.com/jhipster/generator-jhipster-nodejs/blob/master/ROADMAP.md) or to [kanban board](https://github.com/jhipster/generator-jhipster-nodejs/projects/1?fullscreen=true).
 
 Any questions [Angelo Manganiello](mailto:angelo.mang@libero.it).
-
 
 # Contributors ✨
 
@@ -174,7 +175,6 @@ Thanks goes to these wonderful people:
 # License
 
 Apache-2.0 © [Angelo Manganiello](https://github.com/amanganiello90)
-
 
 [npm-image]: https://img.shields.io/npm/v/generator-jhipster-nodejs.svg
 [npm-url]: https://npmjs.org/package/generator-jhipster-nodejs

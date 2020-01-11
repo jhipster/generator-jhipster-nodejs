@@ -1,4 +1,4 @@
-import { CanActivate, ExecutionContext, Injectable, Logger } from '@nestjs/common';
+import { ExecutionContext, Injectable, Logger } from '@nestjs/common';
 import { AuthGuard as NestAuthGuard } from '@nestjs/passport';
 
 @Injectable()
@@ -6,7 +6,7 @@ export class AuthGuard extends NestAuthGuard('<%= authenticationType %>') {
 
     logger = new Logger('authGuard');
 
-    canActivate(context: ExecutionContext) {
+    canActivate(context: ExecutionContext): any {
     <%_ if (authenticationType === 'oauth2') { _%>
       const request = context.switchToHttp().getRequest();
 

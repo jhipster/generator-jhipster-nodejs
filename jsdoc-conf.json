@@ -3,10 +3,7 @@
         "allowUnknownTags": true
     },
     "source": {
-        "include": [
-            "generators/generator-nodejs-constants.js",
-            "generators/utils.js"
-        ]
+        "include": ["generators/generator-nodejs-constants.js", "generators/utils.js"]
     },
     "plugins": [],
     "templates": {

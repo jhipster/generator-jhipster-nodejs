@@ -11,7 +11,9 @@ import { UserJWTController} from '../web/rest/user.jwt.controller';
 import { Oauth2Strategy } from '../security/passport.oauth2.strategy';
 import { UserOauth2Controller } from '../web/rest/user.oauth2.controller';
 <%_ } _%>
+<%_ if (authenticationType === 'jwt') { _%>
 import { config } from '../config/config';
+<%_ } _%>
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthorityRepository } from '../repository/authority.repository';
 

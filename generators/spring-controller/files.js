@@ -13,12 +13,12 @@ const serverFiles = {
             path: SERVER_NODEJS_DIR,
             templates: [
                 {
-                    file: 'src/web/rest/entity.controller.ts',
+                    file: 'src/web/rest/resource.controller.ts',
                     renameTo: generator => `src/web/rest/${generator.controllerFileName}.controller.ts`
                 },
                 {
-                    file: 'src/web/rest/entity.controller.spec.ts',
-                    renameTo: generator => `src/web/rest/${generator.controllerFileName}.controller.spec.ts`
+                    file: 'test/controllers/resource.controller.spec.ts',
+                    renameTo: generator => `test/controllers/${generator.controllerFileName}.controller.spec.ts`
                 }
             ]
         }

@@ -1,0 +1,76 @@
+import { Body, Controller, Delete, Get, Logger, Param, Post as PostMethod, Put, UseGuards, Req, UseInterceptors } from '@nestjs/common';
+import {<%_ if (authenticationType === 'jwt') { _%> ApiBearerAuth, <%_ } else if (authenticationType === 'oauth2') { _%> ApiOAuth2Auth, <%_ } _%>  ApiUseTags, ApiResponse, ApiOperation } from '@nestjs/swagger';
+import { Request } from 'express';
+import { AuthGuard, Roles, RolesGuard, RoleType } from '../../security';
+import { LoggingInterceptor } from '../../client/interceptors/logging.interceptor';
+
+@Controller('api/<%= controllerFileName %>s')
+@UseGuards(AuthGuard, RolesGuard)
+@UseInterceptors(LoggingInterceptor)
+<%_ if (authenticationType === 'jwt') { _%>
+@ApiBearerAuth()
+<%_ } else if (authenticationType === 'oauth2') { _%>
+@ApiOAuth2Auth()
+<%_ } _%>
+@ApiUseTags('<%= controllerFileName %>s')
+export class <%= controllerClass %>Controller {
+  logger = new Logger('<%= controllerClass %>Controller');
+
+  @Get('/')
+  @Roles(RoleType.USER)
+  @ApiResponse({
+    status: 200,
+    description: 'List all records'
+  })
+  async getAll(@Req() req: Request): Promise<any>  {
+    this.logger.log(req);
+    return new Promise <any> (() => {'to implement'});
+  }
+
+  @Get('/:id')
+  @ApiResponse({
+    status: 200,
+    description: 'The found record'
+  })
+  async getOne(@Param('id') id: string): Promise<any>  {
+    this.logger.log(id);
+    return new Promise <any> (() => {'to implement'});
+}
+
+  @PostMethod('/')
+  @ApiOperation({ title: 'Create ' })
+  @ApiResponse({
+    status: 201,
+    description: 'The record has been successfully created.'
+  })
+  @ApiResponse({ status: 403, description: 'Forbidden.' })
+  async post(@Req() req: Request, @Body() bodyReq: any): Promise<any>  {
+    this.logger.log(req);
+    this.logger.log(bodyReq);
+    return new Promise <any> (() => {'to implement'});
+}
+
+  @Put('/')
+  @ApiOperation({ title: 'Update ' })
+  @ApiResponse({
+    status: 200,
+    description: 'The record has been successfully updated.'
+  })
+  async put(@Req() req: Request, @Body() bodyReq: any): Promise<any> {
+    this.logger.log(req);
+    this.logger.log(bodyReq);
+    return new Promise <any> (() => {'to implement'});
+}
+
+  @Delete('/:id')
+  @ApiOperation({ title: 'Delete ' })
+  @ApiResponse({
+    status: 204,
+    description: 'The record has been successfully deleted.',
+  })
+  async remove(@Req() req: Request, @Param('id') id: string): Promise<any>  {
+    this.logger.log(req);
+    this.logger.log(id);
+    return new Promise <any> (() => {'to implement'});
+  }
+}

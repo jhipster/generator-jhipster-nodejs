@@ -1,21 +1,4 @@
-<%#
- Copyright 2013-2020 the original author or authors from the JHipster project.
-
- This file is part of the JHipster project, see https://www.jhipster.tech/
- for more information.
-
- Licensed under the Apache License, Version 2.0 (the "License");
- you may not use this file except in compliance with the License.
- You may obtain a copy of the License at
-
-      http://www.apache.org/licenses/LICENSE-2.0
-
- Unless required by applicable law or agreed to in writing, software
- distributed under the License is distributed on an "AS IS" BASIS,
- WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- See the License for the specific language governing permissions and
- limitations under the License.
--%>
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { Entity, Column, PrimaryGeneratedColumn, JoinColumn, OneToOne, ManyToOne, OneToMany, ManyToMany, JoinTable } from 'typeorm';
 import { BaseEntity } from './base/base.entity';
 <%
@@ -48,11 +31,6 @@ import { <%= enumClass %> } from './enumeration/<%= uniqueEnums[enumClass] %>';
 <%_ } _%>
 @Entity('<%= entityTableName %>')
 export default class <%= asEntity(entityClass) %> extends BaseEntity  {
-
-    /*
-    @PrimaryGeneratedColumn()
-    id: <%= pkType === 'String'? 'string' : 'number' %>;
-    */
 
 <%_ for (idx in fields) {
     if (typeof fields[idx].javadoc !== 'undefined') { _%>
@@ -91,8 +69,8 @@ export default class <%= asEntity(entityClass) %> extends BaseEntity  {
     @Column({<%_ if(fieldColumnType) { _%> type: '<%-fieldColumnType%>' ,<%_ }_%>  name: "<%-fieldNameAsDatabaseColumn %>"<% if (fieldValidate === true) { %><% if (fieldValidateRules.includes('maxlength')) { %>, length: <%= fieldValidateRulesMaxlength %><% } %><% if (required) { %>, nullable: false<% } %><% if (unique) { %>, unique: true<% } %><% } %>})
         <%_ } _%>
         <%_ if (fields[idx].fieldIsEnum) { _%>
-    <%= fieldName %>: <%= fieldType %>;        
-        <%_ } else { _%>  
+    <%= fieldName %>: <%= fieldType %>;
+        <%_ } else { _%>
     <%= fieldName %>: <%= getTsType(fieldType) %>;
         <%_ } _%>
 

@@ -53,11 +53,11 @@ export class Config {
     this.addAll(properties);
   }
 
-  public get(key: string) {
+  public get(key: string): any {
     return this[key];
   }
 
-  public addAll(properties) {
+  public addAll(properties): any {
     properties = objectToArray(properties);
     for (const property in properties) {
       if (properties.hasOwnProperty(property)) {
@@ -67,7 +67,7 @@ export class Config {
     this.postProcess();
   }
 
-  public postProcess() {
+  public postProcess(): any {
     const variables = { ...this, ...process.env };
     for (const property in this) {
       if (this.hasOwnProperty(property)) {
@@ -78,7 +78,7 @@ export class Config {
     }
   }
 
-  private processTemplate(template, variables) {
+  private processTemplate(template, variables): any {
     // console.log(template);
     if (typeof template === 'string') {
       return template.replace(new RegExp('\\${[^{]+}', 'g'), name => variables[name.substring(2, name.length - 1)]);
@@ -94,7 +94,7 @@ const config = new Config({ ...objectToArray(yamlConfig), ...objectToArray(envYa
 
 export { config };
 
-function objectToArray(source, currentKey?, target?) {
+function objectToArray(source, currentKey?, target?): any {
   target = target || {};
   for (const property in source) {
     if (source.hasOwnProperty(property)) {
@@ -111,7 +111,7 @@ function objectToArray(source, currentKey?, target?) {
   return target;
 }
 
-function ipAddress() {
+function ipAddress(): any {
   const interfaces = require('os').networkInterfaces();
   for (const dev in interfaces) {
     if (interfaces.hasOwnProperty(dev)) {

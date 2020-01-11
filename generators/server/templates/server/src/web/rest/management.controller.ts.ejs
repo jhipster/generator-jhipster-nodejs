@@ -1,6 +1,4 @@
-import { Body, Controller, Get, HttpCode, Logger, Param, Query, UseGuards, Req, UseInterceptors } from '@nestjs/common';
-import { Response, Request } from 'express';
-import { Authority } from '../../domain/authority.entity';
+import { Controller, Get, Logger, UseInterceptors } from '@nestjs/common';
 import { LoggingInterceptor } from '../../client/interceptors/logging.interceptor';
 import { ApiUseTags, ApiResponse, ApiOperation, ApiExcludeEndpoint } from '@nestjs/swagger';
 
@@ -18,7 +16,7 @@ export class ManagementController {
     status: 200,
     description: 'Check if the microservice is up',
   })
-    async info(@Req() req: any) {
+     info(): any {
         return {
           'activeProfiles': 'no',
           'display-ribbon-on-profiles': 'no',

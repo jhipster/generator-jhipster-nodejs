@@ -1,7 +1,6 @@
 import { Authority } from './authority.entity';
 import { Entity, Column, ManyToMany, JoinTable } from 'typeorm';
 import { BaseEntity } from './base/base.entity';
-import { Exclude as JsonIgnore } from 'class-transformer';
 import { ApiModelProperty } from '@nestjs/swagger';
 
 @Entity('jhi_user')
@@ -25,6 +24,7 @@ export class User extends BaseEntity {
   @Column()
   langKey?: string;
 
+  // eslint-disable-next-line
   @ManyToMany(type => Authority)
   @JoinTable()
   authorities?: string[];
@@ -32,7 +32,7 @@ export class User extends BaseEntity {
   @ApiModelProperty({ example: 'user', description: 'User password' })
   @Column()
   password?: string;
-  @Column()
+  @Column({ nullable: true })
   imageUrl?: string;
   @Column({ nullable: true })
   activationKey?: string;
