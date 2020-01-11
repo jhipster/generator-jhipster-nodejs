@@ -49,7 +49,7 @@ To contribute for the next featues, fork the repo and open a pull request regard
 -   [ ] Encrypt user password in db
 -   [ ] OAuth2 feature for Keycloack
 -   [ ] Languages subgenerator support i18n: translate home page for NHipster and remove spring boot resources message
--   [ ] Unit tests for generated project
+-   [ ] e2e tests for generated project
 -   [ ] DTOs based rest api
 -   [ ] Validation
 -   [ ] Export json/yaml for swagger to integrate with jhipster gateway
