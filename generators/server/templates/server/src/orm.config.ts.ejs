@@ -5,12 +5,12 @@ const commonConf = {
     ENTITIES: [__dirname + '/domain/*.entity{.ts,.js}'],
     MIGRATIONS: [__dirname + '/migrations/**/*{.ts,.js}'],
     CLI: {
-      migrationsDir: 'src/migrations',
+        migrationsDir: 'src/migrations',
     },
     MIGRATIONS_RUN: true,
-  };
+};
 
-  let ormconfig: TypeOrmModuleOptions = {
+let ormconfig: TypeOrmModuleOptions = {
     name: 'default',
     type: 'sqlite',
     database: '../target/sqlite-dev-db.sql',
@@ -20,26 +20,10 @@ const commonConf = {
     migrations: commonConf.MIGRATIONS,
     cli: commonConf.CLI,
     migrationsRun: commonConf.MIGRATIONS_RUN,
-  };
+};
 
-<%_ if (prodDatabaseType === 'sqlite') { _%>
 
-if(process.env.NODE_ENV==='prod'){
-    ormconfig = {
-        name: 'default',
-        type: 'sqlite',
-        database: '../target/sqlite-prod-db.sql',
-        logging: false,
-        synchronize: commonConf.SYNCRONIZE,
-        entities: commonConf.ENTITIES,
-        migrations: commonConf.MIGRATIONS,
-        cli: commonConf.CLI,
-        migrationsRun: commonConf.MIGRATIONS_RUN,
-    };
-}
-<%_ } else { _%>
-
-if(process.env.NODE_ENV === 'prod'){
+if (process.env.NODE_ENV === 'prod') {
     ormconfig = {
         name: 'default',
         type: '<%= prodDatabaseType %>',
@@ -54,6 +38,20 @@ if(process.env.NODE_ENV === 'prod'){
     };
 }
 
-<%_ } _%>
+if (process.env.NODE_ENV === 'test') {
+  ormconfig = {
+      name: 'default',
+      type: 'sqlite',
+      database: ':memory:',
+      logging: true,
+      synchronize: true,
+      entities: commonConf.ENTITIES,
+      migrations: commonConf.MIGRATIONS,
+      cli: commonConf.CLI,
+      migrationsRun: commonConf.MIGRATIONS_RUN,
+  };
+}
+
+
 
 export { ormconfig };
