@@ -17,7 +17,7 @@
 
 <div align="center">
 	<a href="https://github.com/jhipster/generator-jhipster-nodejs">
-		<img width="160" height="200" src="https://raw.githubusercontent.com/jhipster/generator-jhipster-nodejs/v1.0.0-beta.1/logo-nhipster.png">
+		<img width="160" height="200" src="https://raw.githubusercontent.com/jhipster/generator-jhipster-nodejs/v1.0.0-beta.2/logo-nhipster.png">
 	</a>
 </div>
 
@@ -42,16 +42,16 @@ This project adds nodejs for your backend, **all typescript files generation, no
 > -   The app runs also as a full stack app including, for the monolitich choise, the angular/react client with the home page set for NHipster and CRUD operations for entity generated with subgenerator and jdl import
 
 <div align="center">
-		<img src="https://raw.githubusercontent.com/jhipster/generator-jhipster-nodejs/v1.0.0-beta.1/nhipster-cli.gif">
+		<img src="https://raw.githubusercontent.com/jhipster/generator-jhipster-nodejs/v1.0.0-beta.2/nhipster-cli.gif">
 </div>
 
-> A **generated example app with JWT auth** is [here](https://github.com/jhipster/jhipster-sample-app-nodejs/tree/v1.0.0-beta.1)
+> A **generated example app with JWT auth** is [here](https://github.com/jhipster/jhipster-sample-app-nodejs/tree/v1.0.0-beta.2)
 
 <div align="center">
-		<img src="https://raw.githubusercontent.com/jhipster/generator-jhipster-nodejs/v1.0.0-beta.1/demo-full-app.gif">
+		<img src="https://raw.githubusercontent.com/jhipster/generator-jhipster-nodejs/v1.0.0-beta.2/demo-full-app.gif">
 </div>
 
-> A **generated example app with Okta Oauth2** is [here](https://github.com/jhipster/jhipster-sample-app-nodejs-oauth2/tree/v1.0.0-beta.1)
+> A **generated example app with Okta Oauth2** is [here](https://github.com/jhipster/jhipster-sample-app-nodejs-oauth2/tree/v1.0.0-beta.2)
 
 # Prerequisites
 
@@ -162,13 +162,13 @@ Thanks goes to these wonderful people:
 
 <div align="left">
 		<a href="https://www.jetbrains.com/?from=generator-jhipster-nodejs">
-		  <img width="80" height="100" src="https://raw.githubusercontent.com/jhipster/generator-jhipster-nodejs/v1.0.0-beta.1/jetbrains.png">
+		  <img width="80" height="100" src="https://raw.githubusercontent.com/jhipster/generator-jhipster-nodejs/v1.0.0-beta.2/jetbrains.png">
 		</a>
 		<a href="https://code.visualstudio.com">
-		  <img width="100" height="100" src="https://raw.githubusercontent.com/jhipster/generator-jhipster-nodejs/v1.0.0-beta.1/visualstudio-code.png">
+		  <img width="100" height="100" src="https://raw.githubusercontent.com/jhipster/generator-jhipster-nodejs/v1.0.0-beta.2/visualstudio-code.png">
 		</a>
 		<a href="https://www.jhipster.tech">
-		  <img width="160" height="100" src="https://raw.githubusercontent.com/jhipster/generator-jhipster-nodejs/v1.0.0-beta.1/jhipster-logo.png">
+		  <img width="160" height="100" src="https://raw.githubusercontent.com/jhipster/generator-jhipster-nodejs/v1.0.0-beta.2/jhipster-logo.png">
 		</a>
 </div>
 
