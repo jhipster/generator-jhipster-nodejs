@@ -5,6 +5,8 @@
 
 # [1.0.0-beta.2](https://github.com/jhipster/generator-jhipster-nodejs/tree/v1.0.0-beta.2)
 
+-   Exclude server TS files from client lint and test increasing quality on the generated [issue #83](https://github.com/jhipster/generator-jhipster-nodejs/issues/83)
+-   Consider migrating from TSLint to ESLint for the generated part [issue #55](https://github.com/jhipster/generator-jhipster-nodejs/issues/55)
 -   Support code quality and coverage reports on SonarCloud for the generator [issue #85](https://github.com/jhipster/generator-jhipster-nodejs/issues/85)
 -   Migrating pipeline from travis to GitHub Actions [issue #86](https://github.com/jhipster/generator-jhipster-nodejs/issues/86)
 -   Testing entity relationship combinations with support for almost database field types [issue #81](https://github.com/jhipster/generator-jhipster-nodejs/issues/81)
