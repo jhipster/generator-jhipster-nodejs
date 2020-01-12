@@ -111,6 +111,10 @@ yarn global upgrade generator-jhipster-nodejs
 
 -   `jhipster spring-controller <controller-name> --blueprints nodejs`
 
+✅ Service generation
+
+-   `jhipster spring-service <service-name> --blueprints nodejs`
+
 ✅ Entity generation
 
 -   `jhipster entity <entity-name> --blueprints nodejs`

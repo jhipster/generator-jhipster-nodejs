@@ -38,6 +38,10 @@ describe('Subgenerator nestjs-controller of nodejs JHipster blueprint', () => {
         it('app exists with foo controller ts file', () => {
             // Adds your tests here
             assert.file(`${SERVER_NODEJS_DIR}src/web/rest/foo.controller.ts`);
+
+            const testControllerPath = `${SERVER_NODEJS_DIR}test/web/rest/foo.controller.spec.ts`;
+            assert.file(testControllerPath);
+            assert.fileContent(testControllerPath, 'FooController');
         });
     });
 });

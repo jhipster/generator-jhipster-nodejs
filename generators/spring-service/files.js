@@ -17,7 +17,7 @@ const serverFiles = {
                     renameTo: generator => `src/service/${generator.serviceFileName}.service.ts`
                 },
                 {
-                    file: 'test/services/resource.service.spec.ts',
+                    file: 'test/service/resource.service.spec.ts',
                     renameTo: generator => `test/service/${generator.serviceFileName}.service.spec.ts`
                 }
             ]

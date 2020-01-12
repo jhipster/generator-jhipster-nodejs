@@ -6,6 +6,7 @@
 
 # [1.0.0](https://github.com/jhipster/generator-jhipster-nodejs/tree/v1.0.0)
 
+-   Provide service generator [issue #94](https://github.com/jhipster/generator-jhipster-nodejs/issues/94)
 -   Check controller generator with lint and tests [issue #92](https://github.com/jhipster/generator-jhipster-nodejs/issues/92)
 
 # [1.0.0-beta.2](https://github.com/jhipster/generator-jhipster-nodejs/tree/v1.0.0-beta.2)
