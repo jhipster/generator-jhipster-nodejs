@@ -1,7 +1,7 @@
 const constants = require('../generator-nodejs-constants');
 
 const SERVER_NODEJS_DIR = `${constants.SERVER_NODEJS_SRC_DIR}/`;
-// const utils = require('../utils');
+const utils = require('../utils');
 
 /**
  * The default is to use a file path string. It implies use of the template method.
@@ -14,11 +14,11 @@ const serverFiles = {
             templates: [
                 {
                     file: 'src/service/resource.service.ts',
-                    renameTo: generator => `src/services/${generator.controllerFileName}.service.ts`
+                    renameTo: generator => `src/service/${generator.serviceFileName}.service.ts`
                 },
                 {
                     file: 'test/services/resource.service.spec.ts',
-                    renameTo: generator => `test/services/${generator.controllerFileName}.service.spec.ts`
+                    renameTo: generator => `test/service/${generator.serviceFileName}.service.spec.ts`
                 }
             ]
         }
@@ -36,8 +36,8 @@ function writeFiles() {
 
             this.writeFilesToDisk(serverFiles, this, false);
 
-            //  utils.addControllerToAppModuleImport(this, this.controllerClass, this.controllerFileName);
-            //  utils.addControllerToAppModule(this, this.controllerClass);
+            utils.addServiceToAppModuleImport(this, this.serviceClass, this.serviceFileName);
+            utils.addServiceToAppModule(this, this.serviceClass);
         }
     };
 }

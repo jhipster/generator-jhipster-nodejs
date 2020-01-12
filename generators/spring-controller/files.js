@@ -17,8 +17,8 @@ const serverFiles = {
                     renameTo: generator => `src/web/rest/${generator.controllerFileName}.controller.ts`
                 },
                 {
-                    file: 'test/controllers/resource.controller.spec.ts',
-                    renameTo: generator => `test/controllers/${generator.controllerFileName}.controller.spec.ts`
+                    file: 'test/controller/resource.controller.spec.ts',
+                    renameTo: generator => `test/controller/${generator.controllerFileName}.controller.spec.ts`
                 }
             ]
         }

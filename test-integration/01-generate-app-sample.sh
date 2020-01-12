@@ -14,8 +14,8 @@ echo "*** changed directory in : test-integration/samples/"$1
 #-------------------------------------------------------------------------------
 # Link nodejs blueprint in folder
 #-------------------------------------------------------------------------------
-echo "*** link nodejs blueprint in : test-integration/samples/"$1
-sudo npm link generator-jhipster-nodejs
+# echo "*** link nodejs blueprint in : test-integration/samples/"$1
+# sudo npm link generator-jhipster-nodejs
 
 #-------------------------------------------------------------------------------
 # Run NHipster Generator

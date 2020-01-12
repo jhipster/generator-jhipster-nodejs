@@ -7,6 +7,8 @@ module.exports = {
     addEntityToAppModule,
     addControllerToAppModuleImport,
     addControllerToAppModule,
+    addServiceToAppModuleImport,
+    addServiceToAppModule,
     buildEnumInfo
 };
 
@@ -71,6 +73,39 @@ function addControllerToAppModule(generator, controllerClass) {
             file: `${constants.SERVER_NODEJS_SRC_DIR}/src/app.module.ts`,
             needle: 'jhipster-needle-add-controller-module-to-main',
             splicable: [`${controllerClass}Controller,`]
+        },
+        generator
+    );
+}
+
+/**
+ * add service import to app module
+ * @param {any} generator
+ * @param {string} serviceClass
+ * @param {string} serviceFileName
+ */
+function addServiceToAppModuleImport(generator, serviceClass, serviceFileName) {
+    jhipsterUtils.rewriteFile(
+        {
+            file: `${constants.SERVER_NODEJS_SRC_DIR}/src/app.module.ts`,
+            needle: 'jhipster-needle-add-service-module-to-main-import',
+            splicable: [`import { ${serviceClass}Service } from './service/${serviceFileName}.service';`]
+        },
+        generator
+    );
+}
+
+/**
+ * add service module to app module
+ * @param {any} generator
+ * @param {string} serviceClass
+ */
+function addServiceToAppModule(generator, serviceClass) {
+    jhipsterUtils.rewriteFile(
+        {
+            file: `${constants.SERVER_NODEJS_SRC_DIR}/src/app.module.ts`,
+            needle: 'jhipster-needle-add-service-module-to-main',
+            splicable: [`${serviceClass}Service,`]
         },
         generator
     );
