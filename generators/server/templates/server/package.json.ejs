@@ -16,9 +16,8 @@
     "start": "npm run clean && npm run copy-resources && nodemon --watch src -e ts,tsx --exec ts-node src/main.ts",
     "lint": "eslint . --ignore-path .server.eslintignore --no-eslintrc --config .server.eslintrc.json --ext .js,.ts",
     "lint:fix": "npm run lint -- --fix",
-    "test": "npm run lint && jest",
+    "test": "npm run lint && jest --coverage",
     "test:watch": "jest --watch",
-    "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./e2e/jest.e2e.config.json"
   },
@@ -98,8 +97,7 @@
       "json",
       "ts"
     ],
-    "rootDir": "test",
-    "testRegex": ".spec.ts$",
+    "testRegex": "(/test/.*|\\.(spec))\\.(ts|js)$",
     "transform": {
       "^.+\\.(t|j)s$": "ts-jest"
     },
