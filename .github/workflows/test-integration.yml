@@ -40,10 +40,10 @@ jobs:
               run: sudo sh test-integration/00-install-all-jhipster.sh
             - name: 'GENERATE NHipster app'
               run: sudo sh test-integration/01-generate-app-sample.sh $JHI_APP $JHI_ARG
-            #          - name: 'GENERATE bar SERVER SERVICE'
-            #            run: sudo sh test-integration/02-generate-component-sample.sh $JHI_APP service bar
-            # - name: 'GENERATE foo SERVER CONTROLLER'
-            #   run: sudo sh test-integration/02-generate-component-sample.sh $JHI_APP controller foo
+            - name: 'GENERATE bar SERVER SERVICE'
+              run: sudo sh test-integration/02-generate-component-sample.sh $JHI_APP service bar
+            - name: 'GENERATE foo SERVER CONTROLLER'
+              run: sudo sh test-integration/02-generate-component-sample.sh $JHI_APP controller foo
             - name: 'INSTALL DEPENDENCIES of generated app'
               run: sudo sh test-integration/03-install-dependencies-app-sample.sh $JHI_APP
             - name: 'RUN UNIT TESTS of generated app'

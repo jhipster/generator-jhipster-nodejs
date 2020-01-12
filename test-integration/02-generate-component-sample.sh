@@ -12,6 +12,12 @@ GREEN='\033[0;32m'
 cd test-integration/samples/$1
 echo "*** changed directory in : test-integration/samples/"$1
 
+#-------------------------------------------------------------------------------
+# Link nodejs blueprint in folder
+#-------------------------------------------------------------------------------
+echo "*** link nodejs blueprint in : test-integration/samples/"$1
+sudo npm link generator-jhipster-nodejs
+
 
 #-------------------------------------------------------------------------------
 # Generate component (service or controller)
@@ -27,7 +33,7 @@ jhipster $runOptions
 
 echo "*** check if the "$2 "generation is wrong :"
 
-if [ -z $(find server/src -type f -name "$3.$2.ts" ) ]; then
+if [ -z $(find server/src -name "$3.$2.ts" ) ]; then
       echo "${GREEN}GENERATION OK"
 else
       echo "${RED}WRONG GENERATION"
