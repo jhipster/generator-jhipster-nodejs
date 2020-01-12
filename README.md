@@ -25,6 +25,14 @@
 >
 > For the features of the last release refers to [CHANGELOG.md](https://github.com/jhipster/generator-jhipster-nodejs/blob/master/CHANGELOG.md).
 
+> ## Demo
+>
+> The UI is inherited from standard jhipster app client. So only backend generation changes.
+> For this, a live app running is less useful than the code and the app structure show in:
+>
+> -   **The sample repo app with** [react client and okta oauth2](https://github.com/jhipster/jhipster-sample-app-nodejs-oauth2/tree/v1.0.0-beta.2)
+> -   **The sample repo app with** [angulr client and jwt auth](https://github.com/jhipster/jhipster-sample-app-nodejs/tree/v1.0.0-beta.2)
+
 # Greetings, nodejs Hipster!
 
 This project adds nodejs for your backend, **all typescript files generation, not JAVA!**, to the [JHipster](https://www.jhipster.tech/) application 😎. It is based on JHipster Blueprint 🔵, that is meant to be used in a JHipster application.
@@ -45,13 +53,11 @@ This project adds nodejs for your backend, **all typescript files generation, no
 		<img src="https://raw.githubusercontent.com/jhipster/generator-jhipster-nodejs/v1.0.0-beta.2/nhipster-cli.gif">
 </div>
 
-> A **generated example app with JWT auth** is [here](https://github.com/jhipster/jhipster-sample-app-nodejs/tree/v1.0.0-beta.2)
+> A **previous of a jwt auth app:**
 
 <div align="center">
 		<img src="https://raw.githubusercontent.com/jhipster/generator-jhipster-nodejs/v1.0.0-beta.2/demo-full-app.gif">
 </div>
-
-> A **generated example app with Okta Oauth2** is [here](https://github.com/jhipster/jhipster-sample-app-nodejs-oauth2/tree/v1.0.0-beta.2)
 
 # Prerequisites
 
@@ -104,6 +110,10 @@ yarn global upgrade generator-jhipster-nodejs
 ✅ Controller generation
 
 -   `jhipster spring-controller <controller-name> --blueprints nodejs`
+
+✅ Service generation
+
+-   `jhipster spring-service <service-name> --blueprints nodejs`
 
 ✅ Entity generation
 

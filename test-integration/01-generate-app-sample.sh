@@ -11,11 +11,16 @@ GREEN='\033[0;32m'
 cd test-integration/samples/$1
 echo "*** changed directory in : test-integration/samples/"$1
 
+#-------------------------------------------------------------------------------
+# Link nodejs blueprint in folder
+#-------------------------------------------------------------------------------
+# echo "*** link nodejs blueprint in : test-integration/samples/"$1
+# sudo npm link generator-jhipster-nodejs
 
 #-------------------------------------------------------------------------------
 # Run NHipster Generator
 #-------------------------------------------------------------------------------
-echo "*** run nodejs blueprint for : "$1
+echo "*** run generation app with nodejs blueprint for : "$1
 
 runOptions="--blueprints nodejs --skip-git --skip-checks --force --no-insight --skip-install"
 
@@ -39,15 +44,4 @@ else
       exit 1
 fi
 
-echo "*** install client dependencies for : "$1
-sudo npm install
-if [ $? -ne 0 ]; then
-  echo "${RED}FAILED CLIENT INSTALL"
-  exit 1
-fi
-echo "*** install server dependencies for : "$1
-cd server && sudo npm install
-if [ $? -ne 0 ]; then
-  echo "${RED}FAILED SERVER INSTALL"
-  exit 1
-fi
+

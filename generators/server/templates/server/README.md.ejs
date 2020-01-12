@@ -38,7 +38,7 @@ $ npm install
 
 ### Define your prod database
 
-If you have selected another database that is not sqlite,
+For prod database configuration,
 in [src/orm.config.ts](src/orm.config.ts) change your **url** connection:
 
 
@@ -113,11 +113,12 @@ $ npm run lint
 # fix lint issues
 $ npm run lint:fix
 
-# e2e tests
+# test coverage of unit tests
+$ npm run test:cov
+
+# e2e tests with full app coverage report
 $ npm run test:e2e
 
-# test coverage
-$ npm run test:cov
 ```
 
 ## Support

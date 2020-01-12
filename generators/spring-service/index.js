@@ -1,6 +1,8 @@
 /* eslint-disable consistent-return */
 const chalk = require('chalk');
+const _ = require('lodash');
 const SpringServiceGenerator = require('generator-jhipster/generators/spring-service');
+const writeFiles = require('./files').writeFiles;
 
 module.exports = class extends SpringServiceGenerator {
     constructor(args, opts) {
@@ -16,12 +18,24 @@ module.exports = class extends SpringServiceGenerator {
     }
 
     get initializing() {
-        return super._initializing();
+        const initPhaseFromJHipster = super._initializing();
+        const initNodeServicePhaseSteps = {
+            // variables to use in templates
+            setupCustomNodeConsts() {
+                this.serviceFileName = this.name;
+                this.serviceClass = _.upperFirst(this.name);
+            }
+        };
+        return Object.assign(initPhaseFromJHipster, initNodeServicePhaseSteps);
+
+        // Here we are not overriding this phase and hence its being handled by JHipster
+        // return super._initializing();
     }
 
     get prompting() {
+        return null;
         // Here we are not overriding this phase and hence its being handled by JHipster
-        return super._prompting();
+        // return super._prompting();
     }
 
     get default() {
@@ -30,7 +44,6 @@ module.exports = class extends SpringServiceGenerator {
     }
 
     get writing() {
-        // The writing phase is being overriden so that we can write our own templates as well.
-        return null;
+        return writeFiles();
     }
 };

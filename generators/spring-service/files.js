@@ -13,12 +13,12 @@ const serverFiles = {
             path: SERVER_NODEJS_DIR,
             templates: [
                 {
-                    file: 'src/web/rest/resource.controller.ts',
-                    renameTo: generator => `src/web/rest/${generator.controllerFileName}.controller.ts`
+                    file: 'src/service/resource.service.ts',
+                    renameTo: generator => `src/service/${generator.serviceFileName}.service.ts`
                 },
                 {
-                    file: 'test/web/rest/resource.controller.spec.ts',
-                    renameTo: generator => `test/web/rest/${generator.controllerFileName}.controller.spec.ts`
+                    file: 'test/service/resource.service.spec.ts',
+                    renameTo: generator => `test/service/${generator.serviceFileName}.service.spec.ts`
                 }
             ]
         }
@@ -31,13 +31,13 @@ module.exports = {
 
 function writeFiles() {
     return {
-        customControllerServerFiles() {
+        customServiceServerFiles() {
             if (this.skipServer) return;
 
             this.writeFilesToDisk(serverFiles, this, false);
 
-            utils.addControllerToAppModuleImport(this, this.controllerClass, this.controllerFileName);
-            utils.addControllerToAppModule(this, this.controllerClass);
+            utils.addServiceToAppModuleImport(this, this.serviceClass, this.serviceFileName);
+            utils.addServiceToAppModule(this, this.serviceClass);
         }
     };
 }
