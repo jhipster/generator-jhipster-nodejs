@@ -20,7 +20,7 @@ echo "*** changed directory in : test-integration/samples/"$1
 #-------------------------------------------------------------------------------
 echo "*** run generation" $2 $3 "with nodejs blueprint for : "$1
 
-componentGenerator="spring-"$2 $3
+componentGenerator="spring-$2 $3"
 runOptions="--blueprints nodejs --skip-git --skip-checks --force --no-insight --skip-install"
 
 jhipster $componentGenerator $runOptions
