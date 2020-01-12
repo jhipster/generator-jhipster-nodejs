@@ -33,9 +33,9 @@ jhipster $runOptions
 
 echo "*** check if the "$2 "generation is wrong :"
 
-if [ -z $(find server/src -name "$3.$2.ts" ) ]; then
-      echo "${GREEN}GENERATION OK"
-else
+if [ -z $(find server/src -type f -name "$3.$2.ts" ) ]; then
       echo "${RED}WRONG GENERATION"
       exit 1
+else
+      echo "${GREEN}GENERATION OK"
 fi
