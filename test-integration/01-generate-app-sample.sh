@@ -39,15 +39,4 @@ else
       exit 1
 fi
 
-echo "*** install client dependencies for : "$1
-sudo npm install
-if [ $? -ne 0 ]; then
-  echo "${RED}FAILED CLIENT INSTALL"
-  exit 1
-fi
-echo "*** install server dependencies for : "$1
-cd server && sudo npm install
-if [ $? -ne 0 ]; then
-  echo "${RED}FAILED SERVER INSTALL"
-  exit 1
-fi
+

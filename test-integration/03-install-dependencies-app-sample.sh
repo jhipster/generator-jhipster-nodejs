@@ -1,3 +1,4 @@
+
 #!/bin/bash
 
 set -e
@@ -14,22 +15,18 @@ echo "*** changed directory in : test-integration/samples/"$1
 
 
 #-------------------------------------------------------------------------------
-# Generate component (service or controller)
-# $2 : service or controller
-# $3 : name
+# Install app dependencies
 #-------------------------------------------------------------------------------
-echo "*** run generation" $2 $3 "with nodejs blueprint for : "$1
 
-componentGenerator="spring-$2 $3"
-runOptions="$componentGenerator --blueprints nodejs --force"
-
-jhipster $runOptions
-
-echo "*** check if the "$2 "generation is wrong :"
-
-if [ -z $(find server/src -type f -name "$3.$2.ts" ) ]; then
-      echo "${GREEN}GENERATION OK"
-else
-      echo "${RED}WRONG GENERATION"
-      exit 1
+echo "*** install client dependencies for : "$1
+sudo npm install
+if [ $? -ne 0 ]; then
+  echo "${RED}FAILED CLIENT INSTALL"
+  exit 1
+fi
+echo "*** install server dependencies for : "$1
+cd server && sudo npm install
+if [ $? -ne 0 ]; then
+  echo "${RED}FAILED SERVER INSTALL"
+  exit 1
 fi
