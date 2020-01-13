@@ -47,6 +47,7 @@ const serverFiles = {
                 'scripts/copy-resources.ts',
                 'tsconfig.build.json',
                 'e2e/app.e2e-spec.ts',
+                'e2e/user.e2e-spec.ts',
                 'e2e/jest.e2e.config.json',
                 'test/admin/management.controller.spec.ts',
                 'nest-cli.json',
