@@ -6,23 +6,23 @@ import { ApiModelProperty } from '@nestjs/swagger';
 @Entity('jhi_user')
 export class User extends BaseEntity {
   @ApiModelProperty({ example: 'user', description: 'User login' })
-  @Column()
-  login?: string;
+  @Column({ unique: true })
+  login: string;
   @ApiModelProperty({ example: 'User', description: 'User first name' })
   @Column()
-  firstName?: string;
+  firstName: string;
   @ApiModelProperty({ example: 'User', description: 'User last name' })
   @Column()
-  lastName?: string;
+  lastName: string;
   @ApiModelProperty({ example: 'user@localhost', description: 'User email' })
   @Column({ nullable: true })
   email?: string;
   @ApiModelProperty({ example: 'true', description: 'User activation' })
   @Column()
-  activated?: boolean;
+  activated: boolean;
   @ApiModelProperty({ example: 'en', description: 'User language' })
   @Column()
-  langKey?: string;
+  langKey: string;
 
   // eslint-disable-next-line
   @ManyToMany(type => Authority)
@@ -31,7 +31,7 @@ export class User extends BaseEntity {
 
   @ApiModelProperty({ example: 'user', description: 'User password' })
   @Column()
-  password?: string;
+  password: string;
   @Column({ nullable: true })
   imageUrl?: string;
   @Column({ nullable: true })

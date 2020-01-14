@@ -30,7 +30,7 @@ export class <%= entityClass %>Controller {
     description: 'List all records',
     type: <%= entityClass %>,
   })
-  async getAll(@Req() req: Request): Promise<any>  {
+  async getAll(@Req() req: Request): Promise<<%= entityClass %> []>  {
     const pageRequest: PageRequest = new PageRequest(req.query.page, req.query.size, req.query.sort);
     const [results, count] = await this.<%= asEntity(entityInstance) %>Repository.findAndCount({
       skip: +pageRequest.page * pageRequest.size,
@@ -47,7 +47,7 @@ export class <%= entityClass %>Controller {
     description: 'The found record',
     type: <%= entityClass %>,
   })
-  async getOne(@Param('id') id: string): Promise<any>  {
+  async getOne(@Param('id') id: string): Promise<<%= entityClass %>>  {
     return await this.<%= asEntity(entityInstance) %>Repository.findOne(id);
   }
 
@@ -59,7 +59,7 @@ export class <%= entityClass %>Controller {
     type: <%= entityClass %>,
   })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
-  async post(@Req() req: Request, @Body() <%= asEntity(entityInstance) %>: <%= entityClass %>): Promise<any>  {
+  async post(@Req() req: Request, @Body() <%= asEntity(entityInstance) %>: <%= entityClass %>): Promise<<%= entityClass %>>  {
     const created = await this.<%= asEntity(entityInstance) %>Repository.save(<%= asEntity(entityInstance) %>);
     HeaderUtil.addEntityCreatedHeaders(req.res, '<%= entityClass %>', created.id);
     return created;
@@ -72,10 +72,9 @@ export class <%= entityClass %>Controller {
     description: 'The record has been successfully updated.',
     type: <%= entityClass %>,
   })
-  async put(@Req() req: Request, @Body() <%= asEntity(entityInstance) %>: <%= entityClass %>): Promise<any>  {
-    const id = <%= asEntity(entityInstance) %>.id;
-    HeaderUtil.addEntityCreatedHeaders(req.res, '<%= entityClass %>', id);
-    return await this.<%= asEntity(entityInstance) %>Repository.update(id, <%= asEntity(entityInstance) %>);
+  async put(@Req() req: Request, @Body() <%= asEntity(entityInstance) %>: <%= entityClass %>): Promise<<%= entityClass %>>  {
+    HeaderUtil.addEntityCreatedHeaders(req.res, '<%= entityClass %>', <%= asEntity(entityInstance) %>.id);
+    return await this.<%= asEntity(entityInstance) %>Repository.save(<%= asEntity(entityInstance) %>);
   }
 
   @Delete('/:id')
@@ -84,8 +83,9 @@ export class <%= entityClass %>Controller {
     status: 204,
     description: 'The record has been successfully deleted.',
   })
-  async remove(@Req() req: Request, @Param('id') id: string): Promise<any>  {
+  async remove(@Req() req: Request, @Param('id') id: string): Promise<<%= entityClass %>>  {
     HeaderUtil.addEntityDeletedHeaders(req.res, '<%= entityClass %>', id);
-    return await this.<%= asEntity(entityInstance) %>Repository.delete(id);
+    const toDelete = await this.<%= asEntity(entityInstance) %>Repository.findOne(id);
+    return await this.<%= asEntity(entityInstance) %>Repository.remove(toDelete);
   }
 }
