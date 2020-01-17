@@ -32,6 +32,10 @@ const serverFiles = {
                 {
                     file: 'test/entities/entity.controller.spec.ts',
                     renameTo: generator => `test/entities/${generator.entityFileName}.controller.spec.ts`
+                },
+                {
+                    file: 'e2e/entity.e2e-spec.ts',
+                    renameTo: generator => `e2e/${generator.entityFileName}.e2e-spec.ts`
                 }
             ]
         }

@@ -1,0 +1,39 @@
+import { Test, TestingModule } from '@nestjs/testing';
+import request = require('supertest');
+import { AppModule } from '../src/app.module';
+import { INestApplication } from '@nestjs/common';
+import { AuthGuard } from '../src/security/guards/auth.guard';
+import { RolesGuard } from '../src/security/guards/roles.guard';
+
+describe('<%= entityClass %> Controller', () => {
+    let app: INestApplication;
+
+    const authGuard = { canActivate: (): any => true };
+    const rolesGuard = { canActivate: (): any => true };
+
+    beforeEach(async () => {
+        const moduleFixture: TestingModule = await Test.createTestingModule({
+            imports: [AppModule],
+        }).overrideGuard(AuthGuard)
+        .useValue(authGuard)
+        .overrideGuard(RolesGuard)
+        .useValue(rolesGuard)
+        .compile();
+
+        app = moduleFixture.createNestApplication();
+        await app.init();
+    });
+
+    it('/GET all <%= entityFileName %>s ', () => {
+
+         request(app.getHttpServer())
+        .get('/api/<%= entityFileName %>s')
+        .expect(200)
+    }
+    );
+
+    afterEach(async () => {
+        await app.close();
+    });
+});
+
