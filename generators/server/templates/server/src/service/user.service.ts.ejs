@@ -28,7 +28,7 @@ export class UserService {
     options.relations = ['authorities'];
     const resultList = await this.userRepository.findAndCount(options);
     const users: User[] = [];
-    if(resultList && resultList[0]) {
+    if (resultList && resultList[0]) {
       resultList[0].forEach(user => users.push(this.flatAuthorities(user)));
       resultList[0] = users;
     }
@@ -36,24 +36,33 @@ export class UserService {
   }
 
   async save(user: User): Promise<User | undefined> {
+    user = this.convertInAuthorities(user);
     const result = await this.userRepository.save(user);
     return this.flatAuthorities(result);
   }
 
   async update(user: User): Promise<User | undefined> {
-    const result = await this.userRepository.save(user);
-    return this.flatAuthorities(result);
+    return await this.save(user);
   }
 
   async delete(user: User): Promise<User | undefined> {
     return await this.userRepository.remove(user);
   }
 
-  private flatAuthorities (user: any): User {
+  private flatAuthorities(user: any): User {
     if (user && user.authorities) {
-    const authorities: string[] = [];
-    user.authorities.forEach(authority => authorities.push(authority.name));
-    user.authorities = authorities;
+      const authorities: string[] = [];
+      user.authorities.forEach(authority => authorities.push(authority.name));
+      user.authorities = authorities;
+    }
+    return user;
+  }
+
+  private convertInAuthorities(user: any): User {
+    if (user && user.authorities) {
+      const authorities: any[] = [];
+      user.authorities.forEach(authority => authorities.push({ name: authority }));
+      user.authorities = authorities;
     }
     return user;
   }

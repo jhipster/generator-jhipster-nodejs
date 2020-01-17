@@ -29,7 +29,7 @@ export class User extends BaseEntity {
   @ManyToMany(type => Authority)
   @JoinTable()
   @ApiModelProperty({ isArray: true, enum: ['ROLE_USER', 'ROLE_ADMIN', 'ROLE_ANONYMOUS'], description: 'Array of permissions' })
-  authorities?: string[];
+  authorities?: any[];
 
   @ApiModelProperty({ example: 'myuser', description: 'User password' })
   @Column()
