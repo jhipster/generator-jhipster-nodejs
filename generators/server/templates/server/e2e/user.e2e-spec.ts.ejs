@@ -12,8 +12,8 @@ describe('User', () => {
     let app: INestApplication;
     let repository: UserRepository;
 
-    const authGuard = { canActivate: (): any => true };
-    const rolesGuard = { canActivate: (): any => true };
+    const authGuardMock = { canActivate: (): any => true };
+    const rolesGuardMock = { canActivate: (): any => true };
 
     const testUser: User = {
         login: 'userTestLogin',
@@ -34,9 +34,9 @@ describe('User', () => {
             imports: [AppModule],
         })
             .overrideGuard(AuthGuard)
-            .useValue(authGuard)
+            .useValue(authGuardMock)
             .overrideGuard(RolesGuard)
-            .useValue(rolesGuard)
+            .useValue(rolesGuardMock)
             .compile();
 
         app = moduleFixture.createNestApplication();
