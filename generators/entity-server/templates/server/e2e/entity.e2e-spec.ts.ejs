@@ -24,10 +24,10 @@ describe('<%= entityClass %> Controller', () => {
         await app.init();
     });
 
-    it('/GET all <%= entityFileName %>s ', () => {
+    it('/GET all <%= entityApiUrl %> ', () => {
 
          request(app.getHttpServer())
-        .get('/api/<%= entityFileName %>s')
+        .get('/api/<%= entityApiUrl %>')
         .expect(200)
     }
     );

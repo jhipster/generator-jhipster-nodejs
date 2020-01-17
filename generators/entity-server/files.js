@@ -26,12 +26,12 @@ const serverFiles = {
                     renameTo: generator => `src/repository/${generator.entityFileName}.repository.ts`
                 },
                 {
-                    file: 'src/web/rest/entity.controller.ts',
-                    renameTo: generator => `src/web/rest/${generator.entityFileName}.controller.ts`
+                    file: 'src/service/entity.service.ts',
+                    renameTo: generator => `src/service/${generator.entityFileName}.service.ts`
                 },
                 {
-                    file: 'test/entities/entity.controller.spec.ts',
-                    renameTo: generator => `test/entities/${generator.entityFileName}.controller.spec.ts`
+                    file: 'src/web/rest/entity.controller.ts',
+                    renameTo: generator => `src/web/rest/${generator.entityFileName}.controller.ts`
                 },
                 {
                     file: 'e2e/entity.e2e-spec.ts',

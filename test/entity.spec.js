@@ -57,12 +57,12 @@ describe('Subgenerator entity of nodejs JHipster blueprint', () => {
             assert.file('.jhipster/Foo.json');
             assert.file(`${SERVER_NODEJS_DIR}src/domain/foo.entity.ts`);
             assert.file(`${SERVER_NODEJS_DIR}src/repository/foo.repository.ts`);
+            assert.file(`${SERVER_NODEJS_DIR}src/service/foo.service.ts`);
             assert.file(`${SERVER_NODEJS_DIR}src/web/rest/foo.controller.ts`);
 
-            const testControllerPath = `${SERVER_NODEJS_DIR}test/entities/foo.controller.spec.ts`;
+            const testControllerPath = `${SERVER_NODEJS_DIR}e2e/foo.e2e-spec.ts`;
             assert.file(testControllerPath);
-            assert.fileContent(testControllerPath, 'FooRepository');
-            assert.fileContent(testControllerPath, 'FooController');
+            // assert.fileContent(testControllerPath, 'FooService');
         });
     });
 
