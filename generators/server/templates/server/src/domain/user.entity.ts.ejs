@@ -5,16 +5,16 @@ import { ApiModelProperty } from '@nestjs/swagger';
 
 @Entity('jhi_user')
 export class User extends BaseEntity {
-  @ApiModelProperty({ example: 'user', description: 'User login' })
+  @ApiModelProperty({ uniqueItems: true, example: 'myuser', description: 'User login' })
   @Column({ unique: true })
   login: string;
-  @ApiModelProperty({ example: 'User', description: 'User first name' })
+  @ApiModelProperty({ example: 'MyUser', description: 'User first name' })
   @Column()
   firstName: string;
-  @ApiModelProperty({ example: 'User', description: 'User last name' })
+  @ApiModelProperty({ example: 'MyUser', description: 'User last name' })
   @Column()
   lastName: string;
-  @ApiModelProperty({ example: 'user@localhost', description: 'User email' })
+  @ApiModelProperty({ example: 'myuser@localhost', description: 'User email' })
   @Column({ nullable: true })
   email?: string;
   @ApiModelProperty({ example: 'true', description: 'User activation' })
@@ -24,12 +24,14 @@ export class User extends BaseEntity {
   @Column()
   langKey: string;
 
+
   // eslint-disable-next-line
   @ManyToMany(type => Authority)
   @JoinTable()
+  @ApiModelProperty({ isArray: true, enum: ['ROLE_USER', 'ROLE_ADMIN', 'ROLE_ANONYMOUS'], description: 'Array of permissions' })
   authorities?: string[];
 
-  @ApiModelProperty({ example: 'user', description: 'User password' })
+  @ApiModelProperty({ example: 'myuser', description: 'User password' })
   @Column()
   password: string;
   @Column({ nullable: true })

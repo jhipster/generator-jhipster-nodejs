@@ -34,7 +34,7 @@ export class UserController {
       const [results, count] = await this.userService.findAndCount({
           skip: +pageRequest.page * pageRequest.size,
           take: +pageRequest.size,
-          order: pageRequest.sort.asOrder(),
+          order: pageRequest.sort.asOrder()
       });
       HeaderUtil.addPaginationHeaders(req.res, new Page(results, count, pageRequest));
       return results;
