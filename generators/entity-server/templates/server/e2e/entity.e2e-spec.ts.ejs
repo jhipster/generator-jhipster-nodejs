@@ -25,7 +25,7 @@ describe('<%= entityClass %> Controller', () => {
         const moduleFixture: TestingModule = await Test.createTestingModule({
             imports: [AppModule],
         }).overrideGuard(AuthGuard)
-        .useValue(authGuardMOck)
+        .useValue(authGuardMock)
         .overrideGuard(RolesGuard)
         .useValue(rolesGuardMock)
         .compile();
