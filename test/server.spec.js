@@ -24,6 +24,13 @@ function getPreCondition() {
         ]);
 }
 
+function commonAssertion() {
+    assert.file(`${SERVER_NODEJS_DIR}src/app.module.ts`);
+    assert.file(`${SERVER_NODEJS_DIR}e2e/app.e2e-spec.ts`);
+    assert.file(`${SERVER_NODEJS_DIR}e2e/user.e2e-spec.ts`);
+    assert.file(`${SERVER_NODEJS_DIR}e2e/jest.e2e.config.json`);
+}
+
 const commonPrompt = {
     baseName: 'sampleMysql',
     applicationType: 'monolith',
@@ -42,7 +49,7 @@ describe('Subgenerator server of nodejs JHipster blueprint', () => {
         });
 
         it('app exists with jwt files', () => {
-            assert.file(`${SERVER_NODEJS_DIR}src/app.module.ts`);
+            commonAssertion();
             assert.file(`${SERVER_NODEJS_DIR}src/web/rest/user.jwt.controller.ts`);
             assert.file(`${SERVER_NODEJS_DIR}src/service/dto/user-login.dto.ts`);
             assert.file(`${SERVER_NODEJS_DIR}src/security/passport.jwt.strategy.ts`);
@@ -62,7 +69,7 @@ describe('Subgenerator server of nodejs JHipster blueprint', () => {
         });
 
         it('app exists with oauth2 files', () => {
-            assert.file(`${SERVER_NODEJS_DIR}src/app.module.ts`);
+            commonAssertion();
             assert.file(`${SERVER_NODEJS_DIR}src/web/rest/user.oauth2.controller.ts`);
             assert.file(`${SERVER_NODEJS_DIR}src/security/passport.oauth2.strategy.ts`);
             assert.noFile(`${SERVER_NODEJS_DIR}src/security/payload.interface.ts`);
