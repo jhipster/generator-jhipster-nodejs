@@ -22,7 +22,7 @@ echo "*** changed directory in : test-integration/samples/"$1
 #-------------------------------------------------------------------------------
 echo "*** run generation app with nodejs blueprint for : "$1
 
-runOptions="--blueprints nodejs --skip-git --skip-checks --force --no-insight --skip-install"
+runOptions="--blueprints nodejs --skip-checks --force --no-insight --skip-install"
 
 if [ "$2" = "import-jdl" ]; then
   runOptions="import-jdl "$1".jdl $runOptions"
