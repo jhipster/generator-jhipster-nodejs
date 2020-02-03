@@ -1,16 +1,23 @@
 import * as shell from 'shelljs';
 import * as fs from 'fs';
 
-const out = 'dist';
-if (!fs.existsSync(out)) {
-  fs.mkdirSync(out);
-  fs.mkdirSync(out + '/config');
-}
+let out = 'dist';
+createFolderIfNotExist(out);
+
+out = out + '/config';
+
+createFolderIfNotExist(out);
 
 shell.cp('-R', 'src/config/*.yml', 'dist/config');
 
 const clientDist = __dirname + '/../../target/classes';
 
 if (fs.existsSync(clientDist)) {
-  shell.cp('-R', clientDist, out);
+    shell.cp('-R', clientDist, out);
+}
+
+function createFolderIfNotExist(outDir: string): void {
+    if (!fs.existsSync(outDir)) {
+        fs.mkdirSync(outDir);
+    }
 }
