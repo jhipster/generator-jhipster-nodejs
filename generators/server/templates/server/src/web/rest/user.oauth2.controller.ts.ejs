@@ -3,7 +3,7 @@ import { AuthService } from '../../service/auth.service';
 import { LoggingInterceptor } from '../../client/interceptors/logging.interceptor';
 import { ApiUseTags, ApiResponse, ApiOperation, ApiExcludeEndpoint } from '@nestjs/swagger';
 import { AuthGuard, RolesGuard } from '../../security';
-import { config } from '../../config/config';
+import { config } from '../../config';
 
 const issuerUri = config.get('jhipster.security.oauth2.client.provider.oidc.issuer-uri');
 

@@ -87,8 +87,8 @@ export class Config {
   }
 }
 
-const yamlConfig = yaml.safeLoad(fs.readFileSync(__dirname + '/application.yml', 'utf8'));
-const envYamlConfig = yaml.safeLoad(fs.readFileSync(__dirname + `/application-${process.env.NODE_ENV}.yml`, 'utf8'));
+const yamlConfig = yaml.safeLoad(fs.readFileSync(__dirname + '/config/application.yml', 'utf8'));
+const envYamlConfig = yaml.safeLoad(fs.readFileSync(__dirname + `/config/application-${process.env.NODE_ENV}.yml`, 'utf8'));
 
 const config = new Config({ ...objectToArray(yamlConfig), ...objectToArray(envYamlConfig), ipAddress: ipAddress() });
 
