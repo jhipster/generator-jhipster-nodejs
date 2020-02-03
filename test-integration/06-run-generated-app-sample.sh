@@ -6,7 +6,7 @@ RED='\033[0;31m'
 
 launchCurl() {
     if [ "$2" = "build" ]; then
-      sleep 20
+      sleep 10
     else
       sleep 100
     fi

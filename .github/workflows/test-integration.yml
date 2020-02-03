@@ -18,9 +18,9 @@ jobs:
                     - microservice-oauth2-sql-jdl
                 include:
                     - app-type: monolith-react-oauth2-dev
-                      arg: no
+                      arg: 'no'
                     - app-type: monolith-angular-jwt-dev
-                      arg: no
+                      arg: 'no'
                     - app-type: monolith-react-jwt-sql-jdl
                       arg: import-jdl
                     - app-type: microservice-oauth2-sql-jdl
@@ -50,7 +50,8 @@ jobs:
               run: sudo sh test-integration/04-run-generated-unit-tests-of-sample.sh $JHI_APP
             - name: 'RUN E2E TESTS of generated app'
               run: sudo sh test-integration/05-run-generated-e2e-tests-of-sample.sh $JHI_APP
-            - name: 'BUILD AND RUN APP'
+            - name: 'BUILD AND RUN SERVER APP'
               run: sudo sh test-integration/06-run-generated-app-sample.sh $JHI_APP build
             - name: 'START APP'
+              if: env.JHI_APP != 'monolith-react-jwt-sql-jdl'
               run: sudo sh test-integration/06-run-generated-app-sample.sh $JHI_APP run
