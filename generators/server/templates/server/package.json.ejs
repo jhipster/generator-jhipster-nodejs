@@ -7,12 +7,13 @@
   "scripts": {
     "clean": "rimraf dist",
     "build": "npm run clean && tsc -p tsconfig.build.json && npm run copy-resources",
+	"build:prod": "webpack --config webpack.server.prod.config.js",
     "copy-resources": "ts-node scripts/copy-resources.ts",
     "format": "prettier --write \"src/**/*.ts\"",
     "start:node": "npm run copy-resources && ts-node -r tsconfig-paths/register src/main.ts",
-    "start:dev": "npm run copy-resources && tsc-watch -p tsconfig.build.json --onSuccess \"node dist/main.js\"",
-    "start:debug": "npm run copy-resources && tsc-watch -p tsconfig.build.json --onSuccess \"node --inspect-brk dist/main.js\"",
-    "start:prod": "npm run copy-resources && node dist/main.js",
+    "start:dev": "npm run copy-resources && tsc-watch -p tsconfig.build.json --onSuccess \"node dist/src/main.js\"",
+    "start:debug": "npm run copy-resources && tsc-watch -p tsconfig.build.json --onSuccess \"node --inspect-brk dist/src/main.js\"",
+    "start:prod": "npm run copy-resources && node dist/src/main.js",
     "start": "npm run clean && npm run copy-resources && nodemon --watch src -e ts,tsx --exec ts-node src/main.ts",
     "lint": "eslint . --ignore-path .server.eslintignore --no-eslintrc --config .server.eslintrc.json --ext .js,.ts",
     "lint:fix": "npm run lint -- --fix",
@@ -90,7 +91,8 @@
     "tsc-watch": "2.2.1",
     "tsconfig-paths": "3.8.0",
     "tslint": "5.20.1",
-    "typescript": "3.4.3"
+    "typescript": "3.4.3",
+	"webpack": "4.41.5"
   },
   "jest": {
     "moduleFileExtensions": [

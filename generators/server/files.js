@@ -55,7 +55,8 @@ const serverFiles = {
                 '.server.eslintignore',
                 'package.json',
                 'tsconfig.json',
-                'README.md'
+                'README.md',
+                'webpack.server.prod.config.js'
             ]
         }
     ],
