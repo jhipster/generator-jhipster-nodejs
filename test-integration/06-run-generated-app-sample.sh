@@ -3,10 +3,13 @@
 set -e
 
 RED='\033[0;31m'
-RUN_COMMAND='npm run start:app'
 
 launchCurl() {
-    sleep 100
+    if [ "$2" = "build" ]; then
+      sleep 20
+    else
+      sleep 100
+    fi
     retryCount=1
     maxRetry=10
     httpUrl="http://localhost:8081/management/info"
@@ -26,8 +29,13 @@ launchCurl() {
     fi
 }
 
+runOnlyServerApp() {
+    set NODE_ENV=dev&& node dist/main.js &
+    echo $! > .pidRunApp
+}
+
 runApp() {
-     "${RUN_COMMAND}" &
+     npm run start:app &
     echo $! > .pidRunApp
 }
 
@@ -42,12 +50,16 @@ echo "*** changed directory in : test-integration/samples/"$1
 # Run and test app
 #-------------------------------------------------------------------------------
 if [ "$2" = "build" ]; then
-  echo "*** build for : "$1
-  RUN_COMMAND='set NODE_ENV=dev&& node server/dist/main'
-  npm run build:app
+  echo "*** only server build in : "$1
+  cd server
+  npm run build
+  echo "*** run server main app in dist : "$1
+  runOnlyServerApp
+else
+  echo "*** run full app in : "$1
+  runApp
 fi
-echo "*** run app : "$1
-runApp
+
 launchCurl
 
 
