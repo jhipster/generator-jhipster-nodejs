@@ -3,6 +3,7 @@
 set -e
 
 RED='\033[0;31m'
+RUN_COMMAND='npm run start:app'
 
 launchCurl() {
     sleep 100
@@ -26,7 +27,7 @@ launchCurl() {
 }
 
 runApp() {
-    npm run start:app &
+     "${RUN_COMMAND}" &
     echo $! > .pidRunApp
 }
 
@@ -40,6 +41,11 @@ echo "*** changed directory in : test-integration/samples/"$1
 #-------------------------------------------------------------------------------
 # Run and test app
 #-------------------------------------------------------------------------------
+if [ "$2" = "build" ]; then
+  echo "*** build for : "$1
+  RUN_COMMAND='set NODE_ENV=dev&& node server/dist/main'
+  npm run build:app
+fi
 echo "*** run app : "$1
 runApp
 launchCurl

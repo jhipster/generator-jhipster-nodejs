@@ -50,5 +50,7 @@ jobs:
               run: sudo sh test-integration/04-run-generated-unit-tests-of-sample.sh $JHI_APP
             - name: 'RUN E2E TESTS of generated app'
               run: sudo sh test-integration/05-run-generated-e2e-tests-of-sample.sh $JHI_APP
-            - name: 'RUN APP'
-              run: sudo sh test-integration/06-run-generated-app-sample.sh $JHI_APP
+            - name: 'BUILD AND RUN APP'
+              run: sudo sh test-integration/06-run-generated-app-sample.sh $JHI_APP build
+            - name: 'START APP'
+              run: sudo sh test-integration/06-run-generated-app-sample.sh $JHI_APP run
