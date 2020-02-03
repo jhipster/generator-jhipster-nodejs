@@ -1,7 +1,7 @@
 import Strategy = require('passport-oauth2');
 import { PassportStrategy } from '@nestjs/passport';
 import { Injectable, UnauthorizedException, Logger, HttpService } from '@nestjs/common';
-import { config } from '../config/config';
+import { config } from '../config';
 import { AuthService } from '../service/auth.service';
 
 const issuerUri = config.get('jhipster.security.oauth2.client.provider.oidc.issuer-uri');

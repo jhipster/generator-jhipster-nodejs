@@ -1,4 +1,4 @@
-import { config } from '../config/config';
+import { config } from '../config';
 import { Response } from 'express';
 import { Page } from '../domain/base/pagination.entity';
 

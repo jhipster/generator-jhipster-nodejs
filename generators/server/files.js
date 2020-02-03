@@ -21,7 +21,7 @@ const serverFiles = {
                 'src/module/auth.module.ts',
                 'src/config/application-dev.yml',
                 'src/config/application-test.yml',
-                'src/config/config.ts',
+                'src/config.ts',
                 'src/config/application-prod.yml',
                 'src/config/application.yml',
                 'src/domain/base/pagination.entity.ts',
@@ -56,7 +56,8 @@ const serverFiles = {
                 '.server.eslintignore',
                 'package.json',
                 'tsconfig.json',
-                'README.md'
+                'README.md',
+                'webpack.server.prod.config.js'
             ]
         }
     ],
