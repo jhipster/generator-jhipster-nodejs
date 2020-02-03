@@ -53,10 +53,10 @@ export class UserOauth2Controller {
   })
   logoutAuthOidc(@Req() req: any): any {
     let idTokenFromSession;
-    if (req.session.user) {
+    if (req.session && req.session.user) {
       idTokenFromSession = req.session.user.idToken;
+      req.session.destroy();
     }
-    req.session.destroy();
     return { idToken: idTokenFromSession, logoutUrl: `${issuerUri}/v1/logout` };
   }
 

@@ -10,7 +10,7 @@ To contribute for the next featues, fork the repo and open a pull request regard
 -   Swagger support
 -   Entity ORM generation for prod database (sql) and dev database (default db is sqlite already configured)
 -   Basic security management with jwt and oauth2
--   All subgenerators (without services)
+-   All subgenerators
 
 > Let it free to give advices or tips!
 
@@ -43,13 +43,14 @@ To contribute for the next featues, fork the repo and open a pull request regard
 -   [x] Needs way more testing of different relations, combinations for entity
 -   [x] Pipelines migrations from travis to GitHub Actions
 -   [x] Unit tests for all generators and sonar quality with coverage
+-   [x] e2e tests for generated project
+-   [x] Added service generator (jhipster spring-service _name_ command)
 
 ## To DO for next release
 
 -   [ ] Encrypt user password in db
 -   [ ] OAuth2 feature for Keycloack
 -   [ ] Languages subgenerator support i18n: translate home page for NHipster and remove spring boot resources message
--   [ ] e2e tests for generated project
 -   [ ] DTOs based rest api
 -   [ ] Validation
 -   [ ] Export json/yaml for swagger to integrate with jhipster gateway

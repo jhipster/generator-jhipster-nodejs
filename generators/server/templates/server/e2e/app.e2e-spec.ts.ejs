@@ -19,8 +19,15 @@ describe('App', () => {
         password: 'system',
         rememberMe: true
     };
-<%_ } _%>
-
+<%_ } else if (authenticationType === 'oauth2') { _%>
+    const testUserLogin: any = {
+        session: {
+            user: {
+                username: 'system'
+            }
+        }
+    };
+<%_ }_%>
 
     beforeEach(async () => {
         const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -39,12 +46,11 @@ describe('App', () => {
     <%_ if (authenticationType === 'jwt') { _%>
     it('/POST security jwt adding OK', () => request(app.getHttpServer())
         .post('/api/authenticate')
-        .send({testUserLogin})
     <%_ } else if (authenticationType === 'oauth2') { _%>
     it('/POST security oauth2 adding OK', () => request(app.getHttpServer())
         .post('/api/logout')
-        .send({'user':{}})
     <%_ } _%>
+        .send(testUserLogin)
         .expect(201));
 
     afterEach(async () => {

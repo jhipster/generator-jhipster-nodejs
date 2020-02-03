@@ -1,11 +1,13 @@
-<a name="1.0.0"></a>
+<a name="1.0.0-beta.3"></a>
 <a name="1.0.0-beta.2"></a>
 <a name="1.0.0-beta.1"></a>
 <a name="1.0.0-alpha.3"></a>
 <a name="1.0.0-alpha.2"></a>
 
-# [1.0.0](https://github.com/jhipster/generator-jhipster-nodejs/tree/v1.0.0)
+# [1.0.0-beta.3](https://github.com/jhipster/generator-jhipster-nodejs/tree/v1.0.0-beta.3)
 
+-   Add e2e tests for generated server project [issue #91](https://github.com/jhipster/generator-jhipster-nodejs/issues/91)
+-   Problems with running prod build [issue #99](https://github.com/jhipster/generator-jhipster-nodejs/issues/99)
 -   Provide service generator [issue #94](https://github.com/jhipster/generator-jhipster-nodejs/issues/94)
 -   Check controller generator with lint and tests [issue #92](https://github.com/jhipster/generator-jhipster-nodejs/issues/92)
 
