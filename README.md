@@ -31,7 +31,13 @@
 > For this, a live app running is less useful than the code and the app structure show in:
 >
 > -   **The sample repo app with** [react client and okta oauth2](https://github.com/jhipster/jhipster-sample-app-nodejs-oauth2/tree/v1.0.0-beta.2)
-> -   **The sample repo app with** [angulr client and jwt auth](https://github.com/jhipster/jhipster-sample-app-nodejs/tree/v1.0.0-beta.2)
+> -   **The sample repo app with** [angular client and jwt auth](https://github.com/jhipster/jhipster-sample-app-nodejs/tree/v1.0.0-beta.2)
+
+<div align="center">
+	<a href="https://github.com/jhipster/generator-jhipster-nodejs">
+		<img src="https://raw.githubusercontent.com/jhipster/generator-jhipster-nodejs/v1.0.0-beta.3/nhipster-cli-logo.png">
+	</a>
+</div>
 
 # Greetings, nodejs Hipster!
 

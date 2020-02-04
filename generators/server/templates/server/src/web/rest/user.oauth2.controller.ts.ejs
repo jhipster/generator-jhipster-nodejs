@@ -3,7 +3,7 @@ import { AuthService } from '../../service/auth.service';
 import { LoggingInterceptor } from '../../client/interceptors/logging.interceptor';
 import { ApiUseTags, ApiResponse, ApiOperation, ApiExcludeEndpoint } from '@nestjs/swagger';
 import { AuthGuard, RolesGuard } from '../../security';
-import { config } from '../../config/config';
+import { config } from '../../config';
 
 const issuerUri = config.get('jhipster.security.oauth2.client.provider.oidc.issuer-uri');
 
@@ -53,10 +53,10 @@ export class UserOauth2Controller {
   })
   logoutAuthOidc(@Req() req: any): any {
     let idTokenFromSession;
-    if (req.session.user) {
+    if (req.session && req.session.user) {
       idTokenFromSession = req.session.user.idToken;
+      req.session.destroy();
     }
-    req.session.destroy();
     return { idToken: idTokenFromSession, logoutUrl: `${issuerUri}/v1/logout` };
   }
 

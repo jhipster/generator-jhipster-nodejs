@@ -51,15 +51,12 @@ export class AuthService {
   }
 
   async findUserWithAuthById(userId: string): Promise<User | undefined> {
-    const user = await this.userService.findByfields({ where: { id: userId }, relations: ['authorities'] });
-    const authorities: string[] = [];
-    user.authorities.forEach(authority => authorities.push(authority.name));
-    user.authorities = authorities;
+    const user: any = await this.userService.findByfields({ where: { id: userId } });
     return user;
   }
   <%_ } else if (authenticationType === 'oauth2') { _%>
     async findUserOrSave(loginUser: User): Promise<User | undefined> {
-        let userFound = await this.userService.findByfields({ where: { login: loginUser.login }, relations: ['authorities'] });
+        let userFound = await this.userService.findByfields({ where: { login: loginUser.login } });
 
         if (!userFound) {
           const authoritiesName = [];

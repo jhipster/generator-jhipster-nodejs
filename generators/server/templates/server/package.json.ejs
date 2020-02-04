@@ -7,6 +7,7 @@
   "scripts": {
     "clean": "rimraf dist",
     "build": "npm run clean && tsc -p tsconfig.build.json && npm run copy-resources",
+	  "webpack:prod": "webpack --config webpack.server.prod.config.js",
     "copy-resources": "ts-node scripts/copy-resources.ts",
     "format": "prettier --write \"src/**/*.ts\"",
     "start:node": "npm run copy-resources && ts-node -r tsconfig-paths/register src/main.ts",
@@ -90,7 +91,8 @@
     "tsc-watch": "2.2.1",
     "tsconfig-paths": "3.8.0",
     "tslint": "5.20.1",
-    "typescript": "3.4.3"
+    "typescript": "3.4.3",
+	  "webpack": "4.41.5"
   },
   "jest": {
     "moduleFileExtensions": [

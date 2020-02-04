@@ -3,7 +3,7 @@ import { NestFactory } from '@nestjs/core';
 import cloudConfigClient from 'cloud-config-client';
 import { AppModule } from './app.module';
 import { setupSwagger } from './swagger';
-import { config } from './config/config';
+import { config } from './config';
 import { Logger, ValidationPipe, BadRequestException } from '@nestjs/common';
 import * as express from 'express';
 import * as path from 'path';

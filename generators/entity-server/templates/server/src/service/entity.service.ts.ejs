@@ -1,0 +1,38 @@
+import { Injectable, Logger } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { FindManyOptions, FindOneOptions } from 'typeorm';
+import  <%= entityClass %>  from '../domain/<%= entityFileName %>.entity';
+import { <%= entityClass %>Repository } from '../repository/<%= entityFileName %>.repository';
+
+
+@Injectable()
+export class <%= entityClass %>Service {
+    logger = new Logger('<%= entityClass %>Service');
+
+    constructor(@InjectRepository(<%= entityClass %>Repository) private <%= asEntity(entityInstance) %>Repository: <%= entityClass %>Repository) {}
+
+      async findById(id: string): Promise<<%= entityClass %> | undefined> {
+        return await this.<%= asEntity(entityInstance) %>Repository.findOne(id);
+      }
+
+      async findByfields(options: FindOneOptions<<%= entityClass %>>): Promise<<%= entityClass %> | undefined> {
+        return await this.<%= asEntity(entityInstance) %>Repository.findOne(options);
+      }
+
+      async findAndCount(options: FindManyOptions<<%= entityClass %>>): Promise<[<%= entityClass %>[], number]> {
+        return await this.<%= asEntity(entityInstance) %>Repository.findAndCount(options);
+      }
+
+      async save(<%= asEntity(entityInstance) %>: <%= entityClass %>): Promise<<%= entityClass %> | undefined> {
+        return await this.<%= asEntity(entityInstance) %>Repository.save(<%= asEntity(entityInstance) %>);
+      }
+
+      async update(<%= asEntity(entityInstance) %>: <%= entityClass %>): Promise<<%= entityClass %> | undefined> {
+        return await this.save(<%= asEntity(entityInstance) %>);
+      }
+
+      async delete(<%= asEntity(entityInstance) %>: <%= entityClass %>): Promise<<%= entityClass %> | undefined> {
+        return await this.<%= asEntity(entityInstance) %>Repository.remove(<%= asEntity(entityInstance) %>);
+      }
+
+}

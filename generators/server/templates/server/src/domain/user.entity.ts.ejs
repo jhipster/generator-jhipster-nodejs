@@ -5,33 +5,35 @@ import { ApiModelProperty } from '@nestjs/swagger';
 
 @Entity('jhi_user')
 export class User extends BaseEntity {
-  @ApiModelProperty({ example: 'user', description: 'User login' })
+  @ApiModelProperty({ uniqueItems: true, example: 'myuser', description: 'User login' })
+  @Column({ unique: true })
+  login: string;
+  @ApiModelProperty({ example: 'MyUser', description: 'User first name' })
   @Column()
-  login?: string;
-  @ApiModelProperty({ example: 'User', description: 'User first name' })
+  firstName: string;
+  @ApiModelProperty({ example: 'MyUser', description: 'User last name' })
   @Column()
-  firstName?: string;
-  @ApiModelProperty({ example: 'User', description: 'User last name' })
-  @Column()
-  lastName?: string;
-  @ApiModelProperty({ example: 'user@localhost', description: 'User email' })
+  lastName: string;
+  @ApiModelProperty({ example: 'myuser@localhost', description: 'User email' })
   @Column({ nullable: true })
   email?: string;
   @ApiModelProperty({ example: 'true', description: 'User activation' })
   @Column()
-  activated?: boolean;
+  activated: boolean;
   @ApiModelProperty({ example: 'en', description: 'User language' })
   @Column()
-  langKey?: string;
+  langKey: string;
+
 
   // eslint-disable-next-line
   @ManyToMany(type => Authority)
   @JoinTable()
-  authorities?: string[];
+  @ApiModelProperty({ isArray: true, enum: ['ROLE_USER', 'ROLE_ADMIN', 'ROLE_ANONYMOUS'], description: 'Array of permissions' })
+  authorities?: any[];
 
-  @ApiModelProperty({ example: 'user', description: 'User password' })
+  @ApiModelProperty({ example: 'myuser', description: 'User password' })
   @Column()
-  password?: string;
+  password: string;
   @Column({ nullable: true })
   imageUrl?: string;
   @Column({ nullable: true })

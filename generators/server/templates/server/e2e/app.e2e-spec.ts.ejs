@@ -2,6 +2,9 @@ import { Test, TestingModule } from '@nestjs/testing';
 import request = require('supertest');
 import { AppModule } from '../src/app.module';
 import { INestApplication } from '@nestjs/common';
+<%_ if (authenticationType === 'jwt') { _%>
+import { UserLoginDTO } from '../src/service/dto/user-login.dto';
+<%_ } _%>
 
 describe('App', () => {
     let app: INestApplication;
@@ -10,7 +13,21 @@ describe('App', () => {
         'activeProfiles': 'no',
         'display-ribbon-on-profiles': 'no',
     };
-
+<%_  if (authenticationType === 'jwt') { _%>
+    const testUserLogin: UserLoginDTO = {
+        username: 'system',
+        password: 'system',
+        rememberMe: true
+    };
+<%_ } else if (authenticationType === 'oauth2') { _%>
+    const testUserLogin: any = {
+        session: {
+            user: {
+                username: 'system'
+            }
+        }
+    };
+<%_ }_%>
 
     beforeEach(async () => {
         const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -26,7 +43,17 @@ describe('App', () => {
         .expect(200)
         .expect(infoService));
 
-    afterAll(async () => {
+    <%_ if (authenticationType === 'jwt') { _%>
+    it('/POST security jwt adding OK', () => request(app.getHttpServer())
+        .post('/api/authenticate')
+    <%_ } else if (authenticationType === 'oauth2') { _%>
+    it('/POST security oauth2 adding OK', () => request(app.getHttpServer())
+        .post('/api/logout')
+    <%_ } _%>
+        .send(testUserLogin)
+        .expect(201));
+
+    afterEach(async () => {
         await app.close();
     });
 });
