@@ -78,10 +78,16 @@ $ set NODE_ENV=prod&& npm run build && npm run start:prod
 
 # run production build with node
 $ set NODE_ENV=prod&& node dist/main.js
+
+# build production bundle with webpack
+$ npm run webpack:prod
+
+# run production bundle with node (not require node_modules folder)
+$ node dist/bundle.js
 ```
 
 > You can specify dev or prod NODE_ENV value (default is dev as indicated in [.env](.env))
-
+> The webpack build bundle automatically is configured for prod env, and **can run without node_modules**
 ## Lint
 
 ```bash
