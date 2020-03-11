@@ -52,6 +52,10 @@ relationship OneToOne {
 	Activity to SingleCourse
 }
 
+relationship ManyToOne {
+	Activity {demetrauser} to DemetraUser
+}
+
 relationship ManyToMany {
 
 	DemetraUser {
