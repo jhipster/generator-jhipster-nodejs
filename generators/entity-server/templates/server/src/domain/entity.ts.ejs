@@ -94,10 +94,7 @@ export default class <%= asEntity(entityClass) %> extends BaseEntity  {
         const relationshipRequired = relationships[idx].relationshipRequired;
         const otherEntityNameCapitalized = relationships[idx].otherEntityNameCapitalized;
         const ownerSide = relationships[idx].ownerSide;
-        const useJPADerivedIdentifier = relationships[idx].useJPADerivedIdentifier;
-        if (otherEntityRelationshipName) {
-            mappedBy = otherEntityRelationshipName.charAt(0).toLowerCase() + otherEntityRelationshipName.slice(1)
-        }
+
         if (typeof relationships.javadoc != 'undefined') { _%>
 <%- formatAsFieldJavadoc(relationships.javadoc) %>
             <%_ if (!hasDto) { _%>
@@ -109,7 +106,7 @@ export default class <%= asEntity(entityClass) %> extends BaseEntity  {
     <%= relationshipFieldNamePlural %>: <%= relationship.otherEntityAngularName %>[];
 
     <%_ } else if (relationshipType === 'many-to-one') { _%>
-    @ManyToOne(type => <%= relationship.otherEntityAngularName %>, other => other.<%= otherEntityRelationshipNamePlural %>)
+    @ManyToOne(type => <%= relationship.otherEntityAngularName %> <%_ if (ownerSide === true) { _%>, other => other.<%= otherEntityRelationshipNamePlural %>  <%_ } _%>)
     <%= relationshipFieldName %>: <%= relationship.otherEntityAngularName %>;
 
     <%_ } else if (relationshipType === 'many-to-many') { _%>
