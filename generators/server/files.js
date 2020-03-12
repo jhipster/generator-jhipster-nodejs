@@ -64,7 +64,9 @@ const serverFiles = {
     other: [
         {
             templates: [
-                'package.json'
+                'package.json',
+                'src/main/docker/dockerfile',
+                'src/main/docker/app.yml'
                 /*
                     { file: '.mvn/wrapper/maven-wrapper.properties', method: 'copy', noEjs: true },
                 */
@@ -88,6 +90,12 @@ const serverFiles = {
             path: SERVER_NODEJS_DIR,
             condition: generator => generator.authenticationType === 'oauth2',
             templates: ['src/web/rest/user.oauth2.controller.ts', 'src/security/passport.oauth2.strategy.ts']
+        }
+    ],
+    keycloak: [
+        {
+            condition: generator => generator.authenticationType === 'oauth2',
+            templates: ['src/main/docker/keycloak.yml']
         }
     ]
 };
