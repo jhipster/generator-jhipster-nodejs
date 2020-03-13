@@ -65,7 +65,7 @@ const serverFiles = {
         {
             templates: [
                 'package.json',
-                'src/main/docker/dockerfile',
+                'src/main/docker/Dockerfile',
                 'src/main/docker/app.yml'
                 /*
                     { file: '.mvn/wrapper/maven-wrapper.properties', method: 'copy', noEjs: true },
