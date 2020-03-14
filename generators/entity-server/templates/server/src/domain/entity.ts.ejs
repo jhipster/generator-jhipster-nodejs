@@ -7,6 +7,7 @@ let importJsonIgnore = false;
 let importJsonIgnoreProperties = false;
 let importSet = false;
 let hasDto = dto === 'mapstruct';
+let isUserRelationship = false;
 const uniqueEntities = {};
 const uniqueEnums = {}; %><%- include imports -%>
 <%_ if (!hasDto && importApiModelProperty === true) { _%>
@@ -21,6 +22,10 @@ import <%= entityClass %> from './<%= uniqueEntities[entityClass] %>.entity';
 <%_ Object.keys(uniqueEnums).forEach(function(enumClass) { _%>
 import { <%= enumClass %> } from './enumeration/<%= uniqueEnums[enumClass] %>';
 <%_ }); _%>
+
+<%_ if (isUserRelationship === true) { _%>
+import { User } from './user.entity';
+<%_ } _%>
 
 <%_ if (typeof javadoc == 'undefined') { _%>
 /**
@@ -102,11 +107,11 @@ export default class <%= asEntity(entityClass) %> extends BaseEntity  {
             <%_ }_%>
     <%_ }
         if (relationshipType === 'one-to-many') {_%>
-    @OneToMany(type => <%= relationship.otherEntityAngularName %>, other => other.<%= otherEntityRelationshipName %>)
+    @OneToMany(type => <%= relationship.otherEntityAngularName %> <%_ if (isUserRelationship === false) { _%>, other => other.<%= otherEntityRelationshipName %><%_ } _%>)
     <%= relationshipFieldNamePlural %>: <%= relationship.otherEntityAngularName %>[];
 
     <%_ } else if (relationshipType === 'many-to-one') { _%>
-    @ManyToOne(type => <%= relationship.otherEntityAngularName %> <%_ if (ownerSide === true) { _%>, other => other.<%= otherEntityRelationshipNamePlural %>  <%_ } _%>)
+    @ManyToOne(type => <%= relationship.otherEntityAngularName %> <%_ if (ownerSide === true && isUserRelationship === false ) { _%>, other => other.<%= otherEntityRelationshipNamePlural %>  <%_ } _%>)
     <%= relationshipFieldName %>: <%= relationship.otherEntityAngularName %>;
 
     <%_ } else if (relationshipType === 'many-to-many') { _%>
@@ -121,7 +126,7 @@ export default class <%= asEntity(entityClass) %> extends BaseEntity  {
     <%= relationshipFieldNamePlural %>: <%= relationship.otherEntityAngularName %>[];
 
     <%_ } else { _%>
-    @OneToOne(type => <%= relationship.otherEntityAngularName %>, other => other.<%= otherEntityRelationshipName%>)
+    @OneToOne(type => <%= relationship.otherEntityAngularName %>  <%_ if (isUserRelationship === false) { _%>, other => other.<%= otherEntityRelationshipName%> <%_ } _%>)
     <%_ if (ownerSide === true) { _%>@JoinColumn()<%_ } _%>
     <%= relationshipFieldName %>: <%= relationship.otherEntityAngularName %>;
 
