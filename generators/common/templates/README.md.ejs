@@ -46,7 +46,7 @@ This application is configured for Service Discovery and Configuration with <% i
 <%_ if (skipClient) { _%>
 To start your application in the dev profile, simply run:
 
-    cd server && <%= clientPackageManager %> install
+    cd <%= SERVER_NODEJS_SRC_DIR %> && <%= clientPackageManager %> install
     <%= clientPackageManager %> start:app
 
 <%_ } _%>
@@ -64,14 +64,14 @@ After installing Node, you should be able to run the following command to instal
 You will only need to run this command when dependencies change in [package.json](package.json).
 
     <%= clientPackageManager %> install
-    cd server && <%= clientPackageManager %> install
+    cd <%= SERVER_NODEJS_SRC_DIR %> && <%= clientPackageManager %> install
 
 We use <%= clientPackageManager %> scripts and [Webpack][] as our build system.
 
 Run the following commands in two separate terminals to create a blissful development experience where your browser
 auto-refreshes when files change on your hard drive.
 
-    cd server && <%= clientPackageManager %> start
+    cd <%= SERVER_NODEJS_SRC_DIR %> && <%= clientPackageManager %> start
     <%= clientPackageManager %> start
 
 <%= clientPackageMngrName %> is also used to manage CSS and JavaScript dependencies used in this application. You can upgrade dependencies by
@@ -133,7 +133,7 @@ Your app uses, to get and use the token, the `<%= SERVER_NODEJS_SRC_DIR %>/src/c
             token-validity-in-seconds-for-remember-me: 2592000
 ```
 
-You can use the default secret created from the app, or change it. 
+You can use the default secret created from the app, or change it.
 So to get a token, you have to pass a POST request on the _api/authenticate_ url with **UserLoginDTO** as body.
 For this you can use **swagger ui** on **/api/v2/api-docs** path, or the client login page (if you have generated it).
 <%_ } _%>
@@ -225,9 +225,9 @@ will generate the file:
 <%= clientPackageManager %> build:app
 ```
 
-The build folder with all compiled sources will be **server/dist**.
+The build folder with all compiled sources will be **<%= SERVER_NODEJS_SRC_DIR %>/dist**.
 
-> For more explanation about full stack server/client build refer to [server/README.md](server/README.md)
+> For more explanation about full stack server/client build refer to [<%= SERVER_NODEJS_SRC_DIR %>/README.md](<%= SERVER_NODEJS_SRC_DIR %>/README.md)
 
 <% if (!skipClient) { %>
 ### Client tests

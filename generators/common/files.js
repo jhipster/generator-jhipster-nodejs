@@ -6,7 +6,12 @@ const commonFiles = {
                 {
                     file: 'gitignore',
                     renameTo: () => '.gitignore'
-                }
+                },
+                {
+                    file: 'dockerignore',
+                    renameTo: () => '.dockerignore'
+                },
+                'Dockerfile'
             ]
         }
     ]
