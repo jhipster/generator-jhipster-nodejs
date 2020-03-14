@@ -44,6 +44,8 @@ async function bootstrap(): Promise<void> {
   if (fs.existsSync(staticClientPath)) {
     app.use(express.static(staticClientPath));
     logger.log(`Serving static client resources on ${staticClientPath}`);
+  } else {
+    logger.log(`No client it has been found`);
   }
 
   setupSwagger(app);
