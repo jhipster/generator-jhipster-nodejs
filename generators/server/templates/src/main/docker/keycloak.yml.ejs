@@ -28,7 +28,6 @@ services:
             - KEYCLOAK_PASSWORD=admin
             - DB_VENDOR=h2
             - NODE_CLIENT_PROVIDER_OIDC_ISSUER_URI=http://keycloak:9080/auth/realms/jhipster
-            - NODE_CLIENT_PROVIDER_OIDC_CALLBACK_URL=http://<%= baseName.toLowerCase() %>-app:8081/login/oauth2/code/oidc
         ports:
             - 9080:9080
             - 9443:9443
