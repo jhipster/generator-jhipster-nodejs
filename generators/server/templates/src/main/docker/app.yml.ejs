@@ -20,9 +20,13 @@ version: '<%= DOCKER_COMPOSE_FORMAT_VERSION %>'
 services:
     <%= baseName.toLowerCase() %>-app:
         build: ../../..
+        environment:
+            <%_ if (authenticationType === 'oauth2') { _%>
+            - NODE_CLIENT_PROVIDER_OIDC_ISSUER_URI=http://keycloak_1:9080/auth/realms/jhipster
+            <%_ } _%>
         <%_ if (applicationType === 'monolith' || applicationType === 'gateway') { _%>
         ports:
-            - <%= serverPort %>:<%= serverPort %>
+            - <%= serverPort %>:<%= serverPort %>:
         <%_ } _%>
     <%_ if (authenticationType === 'oauth2' && applicationType !== 'microservice') { _%>
     keycloak:
