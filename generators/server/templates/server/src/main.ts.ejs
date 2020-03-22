@@ -13,7 +13,7 @@ import passport = require('passport');
 import session = require('express-session');
 <%_ } _%>
 const logger: Logger = new Logger('Main');
-const port = config.get('server.port');
+const port = process.env.NODE_SERVER_PORT || config.get('server.port');
 
 async function bootstrap(): Promise<void> {
   loadCloudConfig();
