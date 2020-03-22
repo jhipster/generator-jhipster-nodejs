@@ -3,9 +3,7 @@ import { AuthService } from '../../service/auth.service';
 import { LoggingInterceptor } from '../../client/interceptors/logging.interceptor';
 import { ApiUseTags, ApiResponse, ApiOperation, ApiExcludeEndpoint } from '@nestjs/swagger';
 import { AuthGuard, RolesGuard } from '../../security';
-import { config } from '../../config';
-
-const issuerUri = config.get('jhipster.security.oauth2.client.provider.oidc.issuer-uri');
+import { oauth2Config } from '../../security/oauth2.config';
 
 @Controller()
 @UseInterceptors(LoggingInterceptor)
@@ -27,7 +25,10 @@ export class UserOauth2Controller {
     res.session = req.session;
     res.session.user = req.user;
     res.session.idToken = req.idToken;
-    const url = req.session.url;
+    let url = '/';
+    if (oauth2Config.isOktaProvider) {
+        url = req.session.url;
+    }
     return res.redirect(url || '/');
 
   }
@@ -57,7 +58,7 @@ export class UserOauth2Controller {
       idTokenFromSession = req.session.user.idToken;
       req.session.destroy();
     }
-    return { idToken: idTokenFromSession, logoutUrl: `${issuerUri}/v1/logout` };
+    return { idToken: idTokenFromSession, logoutUrl: oauth2Config.logoutUrl };
   }
 
 }

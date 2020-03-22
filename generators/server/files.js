@@ -88,13 +88,21 @@ const serverFiles = {
         {
             path: SERVER_NODEJS_DIR,
             condition: generator => generator.authenticationType === 'oauth2',
-            templates: ['src/web/rest/user.oauth2.controller.ts', 'src/security/passport.oauth2.strategy.ts']
+            templates: [
+                'src/web/rest/user.oauth2.controller.ts',
+                'src/security/passport.oauth2.strategy.ts',
+                'src/security/oauth2.config.ts'
+            ]
         }
     ],
     keycloak: [
         {
             condition: generator => generator.authenticationType === 'oauth2',
-            templates: ['src/main/docker/keycloak.yml']
+            templates: [
+                'src/main/docker/keycloak.yml',
+                'src/main/docker/realm-config/jhipster-realm.json',
+                'src/main/docker/realm-config/jhipster-users-0.json'
+            ]
         }
     ]
 };

@@ -13,6 +13,7 @@ import passport = require('passport');
 import session = require('express-session');
 <%_ } _%>
 const logger: Logger = new Logger('Main');
+const port = process.env.NODE_SERVER_PORT || config.get('server.port');
 
 async function bootstrap(): Promise<void> {
   loadCloudConfig();
@@ -50,8 +51,8 @@ async function bootstrap(): Promise<void> {
 
   setupSwagger(app);
 
-  await app.listen(config.get('server.port'));
-  logger.log(`Application listening on port ${config.get('server.port')}`);
+  await app.listen(port);
+  logger.log(`Application listening on port ${port}`);
 }
 
 async function loadCloudConfig(): Promise<void> {
@@ -87,11 +88,11 @@ function registerAsEurekaService(): void {
         hostName: config.get('ipAddress') || 'localhost',
         ipAddr: config.get('ipAddress') || '127.0.0.1',
         port: {
-          '$': config.get('server.port'),
+          '$': port,
           '@enabled': 'true',
         },
         vipAddress: config.get('ipAddress') || 'localhost',
-        statusPageUrl: `http://${config.get('ipAddress')}:${config.get('server.port')}/`,
+        statusPageUrl: `http://${config.get('ipAddress')}:${port}/`,
         dataCenterInfo: {
           '@class': 'com.netflix.appinfo.InstanceInfo$DefaultDataCenterInfo',
           'name': 'MyOwn',

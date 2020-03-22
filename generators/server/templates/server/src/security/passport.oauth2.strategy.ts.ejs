@@ -3,11 +3,11 @@ import { PassportStrategy } from '@nestjs/passport';
 import { Injectable, UnauthorizedException, Logger, HttpService } from '@nestjs/common';
 import { config } from '../config';
 import { AuthService } from '../service/auth.service';
+import { oauth2Config } from './oauth2.config';
 
-const issuerUri = config.get('jhipster.security.oauth2.client.provider.oidc.issuer-uri');
 const clientID = config.get('jhipster.security.oauth2.client.registration.oidc.client-id');
 const clientSecret = config.get('jhipster.security.oauth2.client.registration.oidc.client-secret');
-const port = config.get('server.port');
+
 
 @Injectable()
 export class Oauth2Strategy extends PassportStrategy(Strategy) {
@@ -17,11 +17,11 @@ export class Oauth2Strategy extends PassportStrategy(Strategy) {
   constructor(private readonly authService: AuthService, private readonly httpService: HttpService) {
 
     super({
-      authorizationURL: `${issuerUri}/v1/authorize`,
-      tokenURL: `${issuerUri}/v1/token`,
+      authorizationURL: oauth2Config.authorizationURL,
+      tokenURL: oauth2Config.tokenURL,
       clientID: `${clientID}`,
       clientSecret: `${clientSecret}`,
-      callbackURL: `http://localhost:${port}/login/oauth2/code/oidc`,
+      callbackURL: oauth2Config.callbackURL,
       scope: 'openid profile',
       state: true,
       pkce: true,
@@ -36,7 +36,7 @@ export class Oauth2Strategy extends PassportStrategy(Strategy) {
   async userProfile(accessToken: any, done: any): Promise<any> {
     // roles with id http://dev-281272.okta.com/api/v1/users/<id>/roles
     // id in http://dev-281272.okta.com/api/v1/users/me
-    return await this.httpService.get(`${issuerUri}/v1/userinfo`, {
+    return await this.httpService.get(oauth2Config.userInfoUrl, {
       headers: {
         // Include the token in the Authorization header
         Authorization: 'Bearer ' + accessToken,
