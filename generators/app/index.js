@@ -1,18 +1,20 @@
 /* eslint-disable consistent-return */
 const chalk = require('chalk');
 const AppGenerator = require('generator-jhipster/generators/app');
-const jhipsterPackagejs = require('generator-jhipster/package.json');
+// const jhipsterPackagejs = require('generator-jhipster/package.json');
 const nodePackagejs = require('../../package.json');
 
 module.exports = class extends AppGenerator {
     /**
      * Override yeoman standard storage function for yo-rc.json
      *  in order to save variables in generator-jhipster key.
+     * To resolve bug of jhipster 6.6.0
      * @return {String} The name of the root generator
-     */
+
     rootGeneratorName() {
         return jhipsterPackagejs.name;
     }
+    */
 
     constructor(args, opts) {
         super(args, Object.assign({ fromBlueprint: true }, opts)); // fromBlueprint variable is important

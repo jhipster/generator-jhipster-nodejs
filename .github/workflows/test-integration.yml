@@ -53,5 +53,5 @@ jobs:
             - name: 'BUILD AND RUN SERVER APP'
               run: sudo sh test-integration/06-run-generated-app-sample.sh $JHI_APP build
             - name: 'START APP'
-              if: env.JHI_APP != 'monolith-react-jwt-sql-jdl'
+            #  if: env.JHI_APP != 'monolith-react-jwt-sql-jdl'
               run: sudo sh test-integration/06-run-generated-app-sample.sh $JHI_APP run

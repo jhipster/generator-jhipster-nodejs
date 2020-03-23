@@ -32,15 +32,16 @@
         "suppressImplicitAnyIndexErrors": true,
         "outDir": "<%= DIST_DIR %>app",
         "lib": ["es7", "dom"],
-        "typeRoots": [
-            "node_modules/@types"
-        ],
         "baseUrl": "./",
         "paths": {
             "app/*": ["<%= MAIN_SRC_DIR %>app/*"]
         },
-        "importHelpers": true,
-        "allowJs": true
+        "importHelpers": true
+    },
+    "angularCompilerOptions": {
+      "genDir": "<%= AOT_DIR %>",
+      "fullTemplateTypeCheck": true,
+      "preserveWhitespaces": true
     },
     "include": [
         "<%= MAIN_SRC_DIR %>app",
