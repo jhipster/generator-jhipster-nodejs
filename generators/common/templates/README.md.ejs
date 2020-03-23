@@ -272,8 +272,9 @@ docker-compose -f src/main/docker/sonar.yml up -d
 ```
 
 You can run a Sonar analysis with using the [sonar-scanner](https://docs.sonarqube.org/display/SCAN/Analyzing+with+SonarQube+Scanner).
-Then, run a Sonar analysis:
+Then, run a Sonar analysis in the <%= SERVER_NODEJS_SRC_DIR %> folder:
 
+    npm run sonar:scanner
 
 For more information, refer to the [Code quality page][].
 
