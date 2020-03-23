@@ -57,7 +57,8 @@ const serverFiles = {
                 'package.json',
                 'tsconfig.json',
                 'README.md',
-                'webpack.server.prod.config.js'
+                'webpack.server.prod.config.js',
+                'sonar-project.properties'
             ]
         }
     ],
@@ -65,7 +66,8 @@ const serverFiles = {
         {
             templates: [
                 'package.json',
-                'src/main/docker/app.yml'
+                'src/main/docker/app.yml',
+                'src/main/docker/sonar.yml'
                 /*
                     { file: '.mvn/wrapper/maven-wrapper.properties', method: 'copy', noEjs: true },
                 */
