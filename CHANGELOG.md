@@ -9,6 +9,7 @@
 
 -   Copying node modules - support webpack bundle [issue #100](https://github.com/jhipster/generator-jhipster-nodejs/issues/100)
 -   ManyToOne relationship error generation [issue #106](https://github.com/jhipster/generator-jhipster-nodejs/issues/106)
+-   Problem with jdl relationships between default User jhipster entity [issue #110](https://github.com/jhipster/generator-jhipster-nodejs/issues/110)
 -   Support Keycloak docker image and configuration for oauth2 [issue #64](https://github.com/jhipster/generator-jhipster-nodejs/issues/64)
 
 # [1.0.0-beta.3](https://github.com/jhipster/generator-jhipster-nodejs/tree/v1.0.0-beta.3)

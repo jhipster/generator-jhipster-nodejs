@@ -53,7 +53,10 @@ for (idx in fields) {
 
 for (idx in relationships) {
     const relationship = relationships[idx];
-    if (!uniqueEntities[relationship.otherEntityAngularName]) {
+    if (relationship.otherEntityAngularName === 'User'){
+        isUserRelationship = true;
+    }
+    else if (!uniqueEntities[relationship.otherEntityAngularName]) {
         uniqueEntities[relationship.otherEntityAngularName] = relationship.otherEntityFileName;
     }
 
