@@ -79,7 +79,6 @@ specifying a newer version in [package.json](package.json). You can also run `<%
 Add the `help` flag on any command to see how you can use it. For example, `<%= clientPackageManager %> help update`.
 
 The `<%= clientPackageManager %> run` command will list all of the scripts available to run for this project.
-<%_ if (authenticationType === 'oauth2') { _%>
 
 ## Using Docker to simplify development (optional)
 
@@ -89,7 +88,9 @@ You can also fully dockerize your application and all the services that it depen
 For this run:
     docker-compose -f src/main/docker/app.yml up -d
 
+For more information refer to [Using Docker and Docker-Compose][], this page also contains information on the docker-compose sub-generator (`jhipster docker-compose`), which is able to generate docker configurations for one or several JHipster applications.
 
+<%_ if (authenticationType === 'oauth2') { _%>
 ## OAuth 2.0 / OpenID Connect
 
 Congratulations! You've selected an excellent way to secure your NHipster application. If you're not sure what OAuth and OpenID Connect (OIDC) are, please see [What the Heck is OAuth?](https://developer.okta.com/blog/2017/06/21/what-the-heck-is-oauth)
@@ -261,6 +262,20 @@ To use those tests, you must install Gatling from [https://gatling.io/](https://
 <% } %>
 For more information, refer to the [Running tests page][].
 <% } %>
+
+### Code quality
+
+Sonar is used to analyse code quality. You can start a local Sonar server (accessible on http://localhost:9001) with:
+
+```
+docker-compose -f src/main/docker/sonar.yml up -d
+```
+
+You can run a Sonar analysis with using the [sonar-scanner](https://docs.sonarqube.org/display/SCAN/Analyzing+with+SonarQube+Scanner).
+Then, run a Sonar analysis:
+
+
+For more information, refer to the [Code quality page][].
 
 [JHipster Homepage and latest documentation]: <%= DOCUMENTATION_URL %>
 [JHipster <%= jhipsterVersion %> archive]: <%= DOCUMENTATION_ARCHIVE_URL %>
