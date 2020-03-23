@@ -12,6 +12,7 @@
 -   Problem with jdl relationships between default User jhipster entity [issue #110](https://github.com/jhipster/generator-jhipster-nodejs/issues/110)
 -   Support Keycloak docker image and configuration for oauth2 [issue #64](https://github.com/jhipster/generator-jhipster-nodejs/issues/64)
 -   Add Sonar configuration to analyze and publish generated project for backend [issue #87](https://github.com/jhipster/generator-jhipster-nodejs/issues/87)
+-   Update with last jhipster version and add blueprint as devDependency project [issue #111](https://github.com/jhipster/generator-jhipster-nodejs/issues/111)
 
 # [1.0.0-beta.3](https://github.com/jhipster/generator-jhipster-nodejs/tree/v1.0.0-beta.3)
 

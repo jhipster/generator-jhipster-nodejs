@@ -1,21 +1,10 @@
 /* eslint-disable consistent-return */
 const chalk = require('chalk');
 const AppGenerator = require('generator-jhipster/generators/app');
-// const jhipsterPackagejs = require('generator-jhipster/package.json');
 const nodePackagejs = require('../../package.json');
+const nodePromptApp = require('./prompts.js');
 
 module.exports = class extends AppGenerator {
-    /**
-     * Override yeoman standard storage function for yo-rc.json
-     *  in order to save variables in generator-jhipster key.
-     * To resolve bug of jhipster 6.6.0
-     * @return {String} The name of the root generator
-
-    rootGeneratorName() {
-        return jhipsterPackagejs.name;
-    }
-    */
-
     constructor(args, opts) {
         super(args, Object.assign({ fromBlueprint: true }, opts)); // fromBlueprint variable is important
 
@@ -31,7 +20,7 @@ module.exports = class extends AppGenerator {
     get initializing() {
         const initPhaseFromJHipster = this._initializing();
 
-        const jhipsterInitAppPhaseSteps = {
+        const nodeInitAppPhaseSteps = {
             /* eslint-disable */
             displayLogo() {
                 this.log('\n');
@@ -105,12 +94,16 @@ module.exports = class extends AppGenerator {
             }
         };
 
-        return Object.assign(initPhaseFromJHipster, jhipsterInitAppPhaseSteps);
+        return Object.assign(initPhaseFromJHipster, nodeInitAppPhaseSteps);
     }
 
     get prompting() {
-        // If the prompts need to be overriden then use the code commented out above instead
-        return super._prompting();
+        const promptPhaseFromJHipster = super._prompting();
+        return {
+            askForInsightOptIn: promptPhaseFromJHipster.askForInsightOptIn,
+            askForApplicationType: nodePromptApp.askForApplicationType,
+            askForModuleName: promptPhaseFromJHipster.askForModuleName
+        };
     }
 
     get configuring() {
@@ -165,8 +158,8 @@ module.exports = class extends AppGenerator {
                 // remove old update in yo-rc.json
             },
             */
-            askForTestOpts: {},
-            askForMoreModules: {}
+            askForTestOpts: {}
+            // askForMoreModules: {}
         };
 
         return Object.assign(defaultPhaseFromJHipster, jhipsterConfigureAppPhaseSteps);

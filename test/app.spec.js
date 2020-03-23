@@ -28,7 +28,7 @@ describe('Main app generator of nodejs JHipster blueprint', () => {
                     ]
                 ])
                 .withPrompts({
-                    actionAdd: false
+                    applicationType: 'monolith'
                 })
                 .on('end', done);
         });
