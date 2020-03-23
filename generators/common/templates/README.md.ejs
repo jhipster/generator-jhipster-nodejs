@@ -46,7 +46,7 @@ This application is configured for Service Discovery and Configuration with <% i
 <%_ if (skipClient) { _%>
 To start your application in the dev profile, simply run:
 
-    cd server && <%= clientPackageManager %> install
+    cd <%= SERVER_NODEJS_SRC_DIR %> && <%= clientPackageManager %> install
     <%= clientPackageManager %> start:app
 
 <%_ } _%>
@@ -64,14 +64,14 @@ After installing Node, you should be able to run the following command to instal
 You will only need to run this command when dependencies change in [package.json](package.json).
 
     <%= clientPackageManager %> install
-    cd server && <%= clientPackageManager %> install
+    cd <%= SERVER_NODEJS_SRC_DIR %> && <%= clientPackageManager %> install
 
 We use <%= clientPackageManager %> scripts and [Webpack][] as our build system.
 
 Run the following commands in two separate terminals to create a blissful development experience where your browser
 auto-refreshes when files change on your hard drive.
 
-    cd server && <%= clientPackageManager %> start
+    cd <%= SERVER_NODEJS_SRC_DIR %> && <%= clientPackageManager %> start
     <%= clientPackageManager %> start
 
 <%= clientPackageMngrName %> is also used to manage CSS and JavaScript dependencies used in this application. You can upgrade dependencies by
@@ -81,9 +81,24 @@ Add the `help` flag on any command to see how you can use it. For example, `<%= 
 The `<%= clientPackageManager %> run` command will list all of the scripts available to run for this project.
 <%_ if (authenticationType === 'oauth2') { _%>
 
+## Using Docker to simplify development (optional)
+
+You can use Docker to improve your JHipster development experience. A number of docker-compose configuration are available in the [src/main/docker](src/main/docker) folder to launch required third party services.
+You can also fully dockerize your application and all the services that it depends on.
+
+For this run:
+    docker-compose -f src/main/docker/app.yml up -d
+
+
 ## OAuth 2.0 / OpenID Connect
 
 Congratulations! You've selected an excellent way to secure your NHipster application. If you're not sure what OAuth and OpenID Connect (OIDC) are, please see [What the Heck is OAuth?](https://developer.okta.com/blog/2017/06/21/what-the-heck-is-oauth)
+
+To log in to your app, you'll need to have [Keycloak](https://keycloak.org) up and running. The JHipster Team has created a Docker container for you that has the default users and roles. Start Keycloak using the following command.
+
+```
+docker-compose -f src/main/docker/keycloak.yml up
+```
 
 ### Okta
 
@@ -133,7 +148,7 @@ Your app uses, to get and use the token, the `<%= SERVER_NODEJS_SRC_DIR %>/src/c
             token-validity-in-seconds-for-remember-me: 2592000
 ```
 
-You can use the default secret created from the app, or change it. 
+You can use the default secret created from the app, or change it.
 So to get a token, you have to pass a POST request on the _api/authenticate_ url with **UserLoginDTO** as body.
 For this you can use **swagger ui** on **/api/v2/api-docs** path, or the client login page (if you have generated it).
 <%_ } _%>
@@ -225,9 +240,9 @@ will generate the file:
 <%= clientPackageManager %> build:app
 ```
 
-The build folder with all compiled sources will be **server/dist**.
+The build folder with all compiled sources will be **<%= SERVER_NODEJS_SRC_DIR %>/dist**.
 
-> For more explanation about full stack server/client build refer to [server/README.md](server/README.md)
+> For more explanation about full stack server/client build refer to [<%= SERVER_NODEJS_SRC_DIR %>/README.md](<%= SERVER_NODEJS_SRC_DIR %>/README.md)
 
 <% if (!skipClient) { %>
 ### Client tests
