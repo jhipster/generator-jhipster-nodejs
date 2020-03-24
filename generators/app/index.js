@@ -99,11 +99,7 @@ module.exports = class extends AppGenerator {
 
     get prompting() {
         const promptPhaseFromJHipster = super._prompting();
-        return {
-            askForInsightOptIn: promptPhaseFromJHipster.askForInsightOptIn,
-            askForApplicationType: nodePromptApp.askForApplicationType,
-            askForModuleName: promptPhaseFromJHipster.askForModuleName
-        };
+        return Object.assign(promptPhaseFromJHipster, nodePromptApp);
     }
 
     get configuring() {

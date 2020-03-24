@@ -1,19 +1,24 @@
 const path = require('path');
-const fse = require('fs-extra');
 const assert = require('yeoman-assert');
 const helpers = require('yeoman-test');
 const constants = require('../generators/generator-nodejs-constants');
 
 const SERVER_NODEJS_DIR = `${constants.SERVER_NODEJS_SRC_DIR}/`;
 
+const prompt = {
+    baseName: 'sampleMysql',
+    applicationType: 'monolith',
+    authenticationType: 'jwt',
+    prodDatabaseType: 'mysql',
+    clientFramework: 'angularX',
+    clientTheme: 'none'
+};
+
 describe('Main app generator of nodejs JHipster blueprint', () => {
     describe('1-test', () => {
         before(done => {
             helpers
                 .run('generator-jhipster/generators/app')
-                .inTmpDir(dir => {
-                    fse.copySync(path.join(__dirname, '../test/templates/ngx-blueprint'), dir);
-                })
                 .withOptions({
                     'from-cli': true,
                     skipInstall: true,
@@ -28,7 +33,7 @@ describe('Main app generator of nodejs JHipster blueprint', () => {
                     ]
                 ])
                 .withPrompts({
-                    applicationType: 'monolith'
+                    prompt
                 })
                 .on('end', done);
         });
