@@ -32,7 +32,7 @@
         "chalk": "2.4.2",
         "commander": "2.20.0",
         "ejs": "2.6.1",
-        "generator-jhipster": "6.6.0",
+        "generator-jhipster": "6.8.0",
         "glob": "7.1.4",
         "gulp-filter": "6.0.0",
         "insight": "0.10.3",
@@ -45,8 +45,8 @@
         "semver": "6.1.1",
         "shelljs": "0.8.3",
         "through2": "3.0.1",
-        "yeoman-environment": "2.3.4",
-        "yeoman-generator": "4.0.1",
+        "yeoman-environment": "2.8.0",
+        "yeoman-generator": "4.6.0",
         "yo": "3.1.1"
     },
     "devDependencies": {
@@ -66,7 +66,7 @@
         "sinon": "7.3.2",
         "sonarqube-scanner": "2.5.0",
         "yeoman-assert": "3.1.1",
-        "yeoman-test": "2.0.0"
+        "yeoman-test": "2.2.0"
     },
     "scripts": {
         "prettier:format": "prettier --write \"{,**/}*.{js,json,md,yml}\"",
