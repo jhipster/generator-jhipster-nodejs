@@ -1,9 +1,14 @@
+<a name="1.0.1"></a>
 <a name="1.0.0"></a>
 <a name="1.0.0-beta.3"></a>
 <a name="1.0.0-beta.2"></a>
 <a name="1.0.0-beta.1"></a>
 <a name="1.0.0-alpha.3"></a>
 <a name="1.0.0-alpha.2"></a>
+
+# [1.0.1](https://github.com/jhipster/generator-jhipster-nodejs/tree/v1.0.1)
+
+-   https://github.com/jhipster/generator-jhipster-nodejs/issues/118 [issue #118](https://github.com/jhipster/generator-jhipster-nodejs/issues/118)
 
 # [1.0.0](https://github.com/jhipster/generator-jhipster-nodejs/tree/v1.0.0)
 

@@ -45,7 +45,7 @@ To contribute for the next featues, fork the repo and open a pull request regard
 -   [x] Unit tests for all generators and sonar quality with coverage
 -   [x] e2e tests for generated project
 -   [x] Added service generator (jhipster spring-service _name_ command)
--   [ ] OAuth2 feature for Keycloack
+-   [x] OAuth2 feature for Keycloack
 
 ## To DO for next release
 

@@ -51,9 +51,18 @@ const serverFiles = {
                 'e2e/jest.e2e.config.json',
                 'test/admin/management.controller.spec.ts',
                 'nest-cli.json',
-                '.env',
-                '.server.eslintrc.json',
-                '.server.eslintignore',
+                {
+                    file: 'env',
+                    renameTo: () => '.env'
+                },
+                {
+                    file: 'server.eslintrc.json',
+                    renameTo: () => '.server.eslintrc.json'
+                },
+                {
+                    file: 'server.eslintignore',
+                    renameTo: () => '.server.eslintignore'
+                },
                 'package.json',
                 'tsconfig.json',
                 'README.md',
