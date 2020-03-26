@@ -17,7 +17,7 @@
 
 <div align="center">
 	<a href="https://github.com/jhipster/generator-jhipster-nodejs">
-		<img width="160" height="200" src="https://raw.githubusercontent.com/jhipster/generator-jhipster-nodejs/v1.0.0/logo-nhipster.png">
+		<img width="160" height="200" src="https://raw.githubusercontent.com/jhipster/generator-jhipster-nodejs/v1.0.1/logo-nhipster.png">
 	</a>
 </div>
 
@@ -30,12 +30,12 @@
 > The UI is inherited from standard jhipster app client. So only backend generation changes.
 > For this, a live app running is less useful than the code and the app structure show in:
 >
-> -   **The sample repo app with** [react client and okta oauth2](https://github.com/jhipster/jhipster-sample-app-nodejs-oauth2/tree/v1.0.0)
-> -   **The sample repo app with** [angular client and jwt auth](https://github.com/jhipster/jhipster-sample-app-nodejs/tree/v1.0.0)
+> -   **The sample repo app with** [react client and okta oauth2](https://github.com/jhipster/jhipster-sample-app-nodejs-oauth2/tree/v1.0.1)
+> -   **The sample repo app with** [angular client and jwt auth](https://github.com/jhipster/jhipster-sample-app-nodejs/tree/v1.0.1)
 
 <div align="center">
 	<a href="https://github.com/jhipster/generator-jhipster-nodejs">
-		<img src="https://raw.githubusercontent.com/jhipster/generator-jhipster-nodejs/v1.0.0/nhipster-cli-logo.png">
+		<img src="https://raw.githubusercontent.com/jhipster/generator-jhipster-nodejs/v1.0.1/nhipster-cli-logo.png">
 	</a>
 </div>
 
@@ -56,13 +56,13 @@ This project adds nodejs for your backend, **all typescript files generation, no
 > -   The app runs also as a full stack app including, for the monolitich choise, the angular/react client with the home page set for NHipster and CRUD operations for entity generated with subgenerator and jdl import
 
 <div align="center">
-		<img src="https://raw.githubusercontent.com/jhipster/generator-jhipster-nodejs/v1.0.0/nhipster-cli.gif">
+		<img src="https://raw.githubusercontent.com/jhipster/generator-jhipster-nodejs/v1.0.1/nhipster-cli.gif">
 </div>
 
 > A **previous of a jwt auth app:**
 
 <div align="center">
-		<img src="https://raw.githubusercontent.com/jhipster/generator-jhipster-nodejs/v1.0.0/demo-full-app.gif">
+		<img src="https://raw.githubusercontent.com/jhipster/generator-jhipster-nodejs/v1.0.1/demo-full-app.gif">
 </div>
 
 # Prerequisites
@@ -178,13 +178,13 @@ Thanks goes to these wonderful people:
 
 <div align="left">
 		<a href="https://www.jetbrains.com/?from=generator-jhipster-nodejs">
-		  <img width="80" height="100" src="https://raw.githubusercontent.com/jhipster/generator-jhipster-nodejs/v1.0.0/jetbrains.png">
+		  <img width="80" height="100" src="https://raw.githubusercontent.com/jhipster/generator-jhipster-nodejs/v1.0.1/jetbrains.png">
 		</a>
 		<a href="https://code.visualstudio.com">
-		  <img width="100" height="100" src="https://raw.githubusercontent.com/jhipster/generator-jhipster-nodejs/v1.0.0/visualstudio-code.png">
+		  <img width="100" height="100" src="https://raw.githubusercontent.com/jhipster/generator-jhipster-nodejs/v1.0.1/visualstudio-code.png">
 		</a>
 		<a href="https://www.jhipster.tech">
-		  <img width="160" height="100" src="https://raw.githubusercontent.com/jhipster/generator-jhipster-nodejs/v1.0.0/jhipster-logo.png">
+		  <img width="160" height="100" src="https://raw.githubusercontent.com/jhipster/generator-jhipster-nodejs/v1.0.1/jhipster-logo.png">
 		</a>
 </div>
 

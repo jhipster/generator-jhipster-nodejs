@@ -8,7 +8,7 @@
 
 # [1.0.1](https://github.com/jhipster/generator-jhipster-nodejs/tree/v1.0.1)
 
--   https://github.com/jhipster/generator-jhipster-nodejs/issues/118 [issue #118](https://github.com/jhipster/generator-jhipster-nodejs/issues/118)
+-   Installation on Windows can not copy file with prefix "." [issue #118](https://github.com/jhipster/generator-jhipster-nodejs/issues/118)
 
 # [1.0.0](https://github.com/jhipster/generator-jhipster-nodejs/tree/v1.0.0)
 
