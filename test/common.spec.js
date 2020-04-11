@@ -17,6 +17,9 @@ describe('Subgenerator common of nodejs JHipster blueprint', () => {
                     blueprints: 'nodejs',
                     skipChecks: true
                 })
+                .withArguments({
+                    languages: ['en', 'vi']
+                })
                 .withGenerators([
                     [
                         require('../generators/common/index.js'), // eslint-disable-line global-require

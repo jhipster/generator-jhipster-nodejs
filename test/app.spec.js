@@ -34,6 +34,9 @@ describe('Main app generator of nodejs JHipster blueprint', () => {
                     blueprints: 'nodejs',
                     skipChecks: true
                 })
+                .withArguments({
+                    languages: ['en', 'vi']
+                })
                 .withGenerators([
                     [
                         require('../generators/app/index.js'), // eslint-disable-line global-require
@@ -67,6 +70,9 @@ describe('Main app generator of nodejs JHipster blueprint', () => {
                     auth: 'jwt',
                     skipChecks: true
                 })
+                .withArguments({
+                    languages: ['en', 'vi']
+                })
                 .withGenerators([
                     [
                         require('../generators/app/index.js'), // eslint-disable-line global-require
@@ -97,6 +103,9 @@ describe('Main app generator of nodejs JHipster blueprint', () => {
                     skipInstall: true,
                     blueprints: 'nodejs',
                     skipChecks: true
+                })
+                .withArguments({
+                    languages: ['en', 'vi']
                 })
                 .withGenerators([
                     [

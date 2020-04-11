@@ -38,6 +38,9 @@ describe('Subgenerator client of nodejs JHipster blueprint', () => {
                     commonPrompt,
                     clientFramework: 'angularX'
                 })
+                .withArguments({
+                    languages: ['en', 'vi']
+                })
                 .on('end', done);
         });
 
@@ -53,6 +56,9 @@ describe('Subgenerator client of nodejs JHipster blueprint', () => {
                 .withPrompts({
                     commonPrompt,
                     clientFramework: 'react'
+                })
+                .withArguments({
+                    languages: ['en', 'vi']
                 })
                 .on('end', done);
         });
