@@ -67,8 +67,46 @@ module.exports = class extends LanguagesGenerator {
     }
 
     get default() {
-        // Here we are not overriding this phase and hence its being handled by JHipster
-        return super._default();
+        const phaseFromJHipster = super._default();
+        const myCustomPhaseSteps = {
+            getSharedConfigOptions() {
+                if (this.configOptions.applicationType) {
+                    this.applicationType = this.configOptions.applicationType;
+                }
+                if (this.configOptions.baseName) {
+                    this.baseName = this.configOptions.baseName;
+                }
+                if (this.configOptions.websocket !== undefined) {
+                    this.websocket = this.configOptions.websocket;
+                }
+                if (this.configOptions.databaseType) {
+                    this.databaseType = this.configOptions.databaseType;
+                }
+                if (this.configOptions.searchEngine !== undefined) {
+                    this.searchEngine = this.configOptions.searchEngine;
+                }
+                if (this.configOptions.messageBroker !== undefined) {
+                    this.messageBroker = this.configOptions.messageBroker;
+                }
+                if (this.configOptions.enableTranslation) {
+                    this.enableTranslation = this.configOptions.enableTranslation;
+                }
+                if (this.configOptions.nativeLanguage) {
+                    this.nativeLanguage = this.configOptions.nativeLanguage;
+                }
+                if (this.configOptions.skipClient) {
+                    this.skipClient = this.configOptions.skipClient;
+                }
+
+                // disable languages
+                this.skipServer = true;
+
+                if (this.configOptions.clientFramework) {
+                    this.clientFramework = this.configOptions.clientFramework;
+                }
+            }
+        };
+        return Object.assign(phaseFromJHipster, myCustomPhaseSteps);
     }
 
     get writing() {
