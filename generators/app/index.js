@@ -88,7 +88,7 @@ module.exports = class extends AppGenerator {
             validateJava() {},
 
             customSettings() {
-                this.skipI18n = true;
+                this.skipI18n = false;
                 this.testFrameworks = [];
                 this.enableTranslation = false;
             }

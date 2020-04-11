@@ -42,12 +42,13 @@ module.exports = class extends ClientGenerator {
     }
 
     get default() {
-        const defaultPhaseFromJHipster = super._default();
-        const defaultNodeClientPhaseSteps = {
-            // disable languages
-            composeLanguages() {}
-        };
-        return Object.assign(defaultPhaseFromJHipster, defaultNodeClientPhaseSteps);
+        // const defaultPhaseFromJHipster = super._default();
+        // const defaultNodeClientPhaseSteps = {
+        //     // disable languages
+        //     composeLanguages() {}
+        // };
+        // return Object.assign(defaultPhaseFromJHipster, defaultNodeClientPhaseSteps);
+        return super._default();
     }
 
     get writing() {
