@@ -1,3 +1,4 @@
+<a name="1.x"></a>
 <a name="1.0.1"></a>
 <a name="1.0.0"></a>
 <a name="1.0.0-beta.3"></a>
@@ -5,6 +6,10 @@
 <a name="1.0.0-beta.1"></a>
 <a name="1.0.0-alpha.3"></a>
 <a name="1.0.0-alpha.2"></a>
+
+# [1.x](https://github.com/jhipster/generator-jhipster-nodejs/tree/v1.x)
+
+-   User controller error for old express-serve-static-core [issue #20](https://github.com/jhipster/generator-jhipster-nodejs/issues/120)
 
 # [1.0.1](https://github.com/jhipster/generator-jhipster-nodejs/tree/v1.0.1)
 
