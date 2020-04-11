@@ -28,7 +28,7 @@
 > ## Demo
 >
 > The UI is inherited from standard jhipster app client. So only backend generation changes.
-> For this, a live app running is less useful than the code and the app structure show in:
+> For this, a live app running is less useful than the code and the app structure shows in:
 >
 > -   **The sample repo app with** [react client and okta oauth2](https://github.com/jhipster/jhipster-sample-app-nodejs-oauth2/tree/v1.0.1)
 > -   **The sample repo app with** [angular client and jwt auth](https://github.com/jhipster/jhipster-sample-app-nodejs/tree/v1.0.1)
@@ -172,7 +172,7 @@ Any questions [Angelo Manganiello](mailto:angelo.mang@libero.it).
 
 Thanks goes to these wonderful people:
 
-<table><tr><td align="center"><a href="https://github.com/amanganiello90"><img src="https://avatars3.githubusercontent.com/u/20536757?s=400&v=4" width="100px;" alt="Angelo Manganiello (founder stream lead)"/><br/><sub><b>Angelo Manganiello</b><br/><b>(founder stream lead)</b></sub></a></td><td align="center"><a href="https://github.com/hadirsa"><img src="https://avatars2.githubusercontent.com/u/3942854?s=400&v=4" width="100px;" alt="Hadi Rasouli"/><br /><sub><b>Hadi Rasouli</b></sub></a></td><td align="center"><a href="https://github.com/ivangsa"><img src="https://avatars1.githubusercontent.com/u/1246876?s=400&v=4" width="100px;" alt="Iván García Sainz-Aja"/><br /><sub><b>Iván García Sainz-Aja</b></sub></a></td><td align="center"><a href="https://github.com/DanielFran"><img src="https://avatars1.githubusercontent.com/u/3706415?s=400&v=4" width="100px;" alt="Daniel Franco"/><br /><sub><b>Daniel Franco</b></sub></a></td></tr></table>
+<table><tr><td align="center"><a href="https://github.com/amanganiello90"><img src="https://avatars3.githubusercontent.com/u/20536757?s=400" width="100px;" alt="Angelo Manganiello (founder stream lead)"/><br/><sub><b>Angelo Manganiello</b><br/><b>(founder stream lead)</b></sub></a></td><td align="center"><a href="https://github.com/hadirsa"><img src="https://avatars2.githubusercontent.com/u/3942854?s=400" width="100px;" alt="Hadi Rasouli"/><br /><sub><b>Hadi Rasouli</b></sub></a></td><td align="center"><a href="https://github.com/ivangsa"><img src="https://avatars1.githubusercontent.com/u/1246876?s=400" width="100px;" alt="Iván García Sainz-Aja"/><br /><sub><b>Iván García Sainz-Aja</b></sub></a></td><td align="center"><a href="https://github.com/DanielFran"><img src="https://avatars1.githubusercontent.com/u/3706415?s=400" width="100px;" alt="Daniel Franco"/><br /><sub><b>Daniel Franco</b></sub></a></td><td align="center"><a href="https://github.com/Aragonbn90"><img src="https://avatars2.githubusercontent.com/u/4463823?s=400" width="100px;" alt="Ed Pham"/><br /><sub><b>Ed Pham</b></sub></a></td></tr></table>
 
 # Special Thanks
 
