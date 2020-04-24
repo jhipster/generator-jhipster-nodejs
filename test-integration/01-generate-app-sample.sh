@@ -35,9 +35,9 @@ if [ "$2" = "post-import-jdl" ]; then
   jhipster import-jdl $1.jdl $runOptions
 fi
 
-echo "*** check if the generation is wrong for some default java classes created :"
+echo "*** check if the generation is wrong for some default typescript classes created :"
 
-if [ -z $(find src -type f -name "*.java" ) ]; then
+if [ -z "$(find src -type f -name '*.ts')" ]; then
       echo "${GREEN}GENERATION OK"
 else
       echo "${RED}WRONG GENERATION"
