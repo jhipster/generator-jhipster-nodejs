@@ -7,7 +7,7 @@
 <a name="1.0.0-alpha.3"></a>
 <a name="1.0.0-alpha.2"></a>
 
-# [1.0.2](https://github.com/jhipster/generator-jhipster-nodejs/tree/v1.x)
+# [1.0.2](https://github.com/jhipster/generator-jhipster-nodejs/tree/v1.0.2)
 
 -   Entity not saved with relationship for many-to-one [issue #125](https://github.com/jhipster/generator-jhipster-nodejs/issues/125)
 -   User controller error for old express-serve-static-core [issue #120](https://github.com/jhipster/generator-jhipster-nodejs/issues/120)
