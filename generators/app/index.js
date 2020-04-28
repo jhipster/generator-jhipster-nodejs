@@ -90,7 +90,8 @@ module.exports = class extends AppGenerator {
             customSettings() {
                 this.skipI18n = false;
                 this.testFrameworks = [];
-                this.enableTranslation = false;
+                this.enableTranslation = true;
+                this.languages = [];
             }
         };
 

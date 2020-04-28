@@ -1,0 +1,19 @@
+{
+    "home": {
+        "title": "Bun venit, Java Hipster!",
+        "subtitle": "Aceasta este pagina ta de start",
+        "logged": {
+            "message": "Ești autentificat cu numele de utilizator \"{{username}}\"."
+        },
+        "question": "Dacă ai orice întrebări în legatură cu JHipster:",
+        "link": {
+            "homepage": "Pagina JHipster",
+            "stackoverflow": "NHipster pe Stack Overflow",
+            "bugtracker": "NHipster bug tracker",
+            "chat": "Camera de chat publică pentru JHipster",
+            "follow": "Contactează @NHipster pe Twitter"
+        },
+        "like": "Dacă iți place NHipster nu uita să ne dai o stea pe",
+        "github": "GitHub"
+    }
+}

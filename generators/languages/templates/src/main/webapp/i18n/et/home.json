@@ -1,0 +1,19 @@
+{
+    "home": {
+        "title": "Tere tulemast, Java Hipster!",
+        "subtitle": "See on teie avaleht",
+        "logged": {
+            "message": "Olete sisse logitud kasutajana \"{{username}}\"."
+        },
+        "question": "Kui teil on küsimusi NHipster kohta:",
+        "link": {
+            "homepage": "NHipster koduleht",
+            "stackoverflow": "NHipster Stack Overflow-s",
+            "bugtracker": "NHipster veahaldus",
+            "chat": "NHipster avalik jututuba",
+            "follow": "jälgi @NHipster Twitteris"
+        },
+        "like": "Kui teile meeldib JHipster, siis ärge unustage anda meile tähte",
+        "github": "GitHub-is"
+    }
+}

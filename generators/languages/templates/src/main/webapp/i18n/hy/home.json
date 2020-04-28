@@ -1,0 +1,19 @@
+{
+    "home": {
+        "title": "Բարի գալուստ, Java Hipster!",
+        "subtitle": "Սա Ձեր գլխավոր էջն է",
+        "logged": {
+            "message": "Դուք մուտք եք գործել որպես օգտվող \"{{username}}\"."
+        },
+        "question": "Եթե Ձեզ մոտ առաջացել են հարցեր JHipster:",
+        "link": {
+            "homepage": "NHipster գլխավոր էջ",
+            "stackoverflow": "NHipster on Stack Overflow",
+            "bugtracker": "NHipster bug tracker",
+            "chat": "NHipster public chat room",
+            "follow": "follow @NHipster on Twitter"
+        },
+        "like": "Եթե Ձեզ դուր է գալիս JHipster, մի մոռացեք տալ Մեզ աստղ",
+        "github": "GitHub"
+    }
+}

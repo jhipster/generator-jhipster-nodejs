@@ -1,0 +1,19 @@
+{
+    "home": {
+        "title": "ဂျာဗား Hipster, ကြိုဆိုပါ၏။",
+        "subtitle": "ဤစာမျက်နှာသည် သင်၏ပင်မစာမျက်နှာဖြစ်ပါသည်။",
+        "logged": {
+            "message": "သင်သည်အသုံးပြုသူ \"{{username}}\" အဖြစ် ဝင်ရောက်အသုံးပြုနေပါသည်။"
+        },
+        "question": "NHipster နှင့်ပတ်သက်၍ မေးစရာရှိပါက",
+        "link": {
+            "homepage": "NHipster မူလစာမျက်နှာ",
+            "stackoverflow": "NHipster on Stack Overflow",
+            "bugtracker": "NHipster bug tracker",
+            "chat": "NHipster အများပြည်သူစကားစမြည်ပြောသည့်နေရာ။",
+            "follow": "တွစ်တာပေါ်တွင် @NHipster ကို follow လုပ်ရန်။"
+        },
+        "like": "NHipster ကိုကြိုက်နှစ်သက်ပါလျှင်, ကျွန်တော်တို့ကို ကြယ်ပွင့်လေးတပွင့်ပေးခဲ့ပါ။",
+        "github": "GitHub"
+    }
+}

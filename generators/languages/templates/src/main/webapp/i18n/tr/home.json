@@ -1,0 +1,19 @@
+{
+    "home": {
+        "title": "Merhaba, Java Hipster!",
+        "subtitle": "Burası Ana Sayfanız",
+        "logged": {
+            "message": "\"{{username}}\" olarak giriş yaptınız."
+        },
+        "question": "NHipster hakkında sorularınız için:",
+        "link": {
+            "homepage": "NHipster ana sayfa",
+            "stackoverflow": "Stack Overflow'da JHipster",
+            "bugtracker": "NHipster hata yönetimi",
+            "chat": "NHipster genel sohbet odası",
+            "follow": "Twitter'da @NHipster adresinden ulaşabilirsiniz"
+        },
+        "like": "JHipster'ı beğendiysenizi yıldız vermeyi unutmayın",
+        "github": "GitHub"
+    }
+}

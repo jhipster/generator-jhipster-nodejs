@@ -5,6 +5,7 @@ const helpers = require('yeoman-test');
 const constants = require('../generators/generator-nodejs-constants');
 
 const SERVER_NODEJS_DIR = `${constants.SERVER_NODEJS_SRC_DIR}/`;
+// const LANGUAGES = require('generator-jhipster/generators/generator-constants').LANGUAGES;
 
 const prompt = {
     baseName: 'sampleMysql',
@@ -32,10 +33,9 @@ describe('Main app generator of nodejs JHipster blueprint', () => {
                     'from-cli': true,
                     skipInstall: true,
                     blueprints: 'nodejs',
-                    skipChecks: true
-                })
-                .withArguments({
-                    languages: ['en', 'vi']
+                    skipChecks: true,
+                    skipI18n: true,
+                    enableTranslation: false
                 })
                 .withGenerators([
                     [
@@ -44,6 +44,9 @@ describe('Main app generator of nodejs JHipster blueprint', () => {
                         path.join(__dirname, '../generators/app/index.js')
                     ]
                 ])
+                // .withArguments({
+                //     languages: []
+                // })
                 .withPrompts({
                     prompt
                 })
@@ -70,9 +73,6 @@ describe('Main app generator of nodejs JHipster blueprint', () => {
                     auth: 'jwt',
                     skipChecks: true
                 })
-                .withArguments({
-                    languages: ['en', 'vi']
-                })
                 .withGenerators([
                     [
                         require('../generators/app/index.js'), // eslint-disable-line global-require
@@ -80,6 +80,9 @@ describe('Main app generator of nodejs JHipster blueprint', () => {
                         path.join(__dirname, '../generators/app/index.js')
                     ]
                 ])
+                // .withArguments({
+                //     languages: ['en']
+                // })
                 .withPrompts({
                     prompt
                 })
@@ -104,9 +107,6 @@ describe('Main app generator of nodejs JHipster blueprint', () => {
                     blueprints: 'nodejs',
                     skipChecks: true
                 })
-                .withArguments({
-                    languages: ['en', 'vi']
-                })
                 .withGenerators([
                     [
                         require('../generators/app/index.js'), // eslint-disable-line global-require
@@ -114,6 +114,9 @@ describe('Main app generator of nodejs JHipster blueprint', () => {
                         path.join(__dirname, '../generators/app/index.js')
                     ]
                 ])
+                // .withArguments({
+                //     languages: constants.LA
+                // })
                 .withPrompts({
                     actionAdd: false
                 })
@@ -124,6 +127,7 @@ describe('Main app generator of nodejs JHipster blueprint', () => {
             commonAssertions();
             // assertion for server subgenerator
             assert.file(`${SERVER_NODEJS_DIR}src/app.module.ts`);
+            assert.file(`${SERVER_NODEJS_DIR}src/main/app.module.ts`);
         });
     });
 });
