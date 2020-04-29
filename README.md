@@ -13,11 +13,11 @@
 [![Gitter][gitter-image]][gitter-url]
 [![Downloads][npmcharts-image]][npmcharts-url]
 
-> Generator-jhipster-nodejs, the _official NodeJS blueprint_ that uses [NestJS Typescript Framework](https://nestjs.com/) for your **backend**. We encourage you to use it and give us your feedback.
+> generator-jhipster-nodejs, the _official NodeJS blueprint_ that uses [NestJS TypeScript Framework](https://nestjs.com/) for your **backend**. We encourage you to use it and give us your feedback.
 
 <div align="center">
 	<a href="https://github.com/jhipster/generator-jhipster-nodejs">
-		<img width="160" height="200" src="https://raw.githubusercontent.com/jhipster/generator-jhipster-nodejs/v1.0.1/logo-nhipster.png">
+		<img width="160" height="200" src="https://raw.githubusercontent.com/jhipster/generator-jhipster-nodejs/v1.0.2/logo-nhipster.png">
 	</a>
 </div>
 
@@ -27,42 +27,42 @@
 
 > ## Demo
 >
-> The UI is inherited from standard jhipster app client. So only backend generation changes.
+> The UI is inherited from standard JHipster app client. So only backend generation changes.
 > For this, a live app running is less useful than the code and the app structure shows in:
 >
-> -   **The sample repo app with** [react client and okta oauth2](https://github.com/jhipster/jhipster-sample-app-nodejs-oauth2/tree/v1.0.1)
-> -   **The sample repo app with** [angular client and jwt auth](https://github.com/jhipster/jhipster-sample-app-nodejs/tree/v1.0.1)
+> -   **The sample repo app with** [React client and Okta OAuth2](https://github.com/jhipster/jhipster-sample-app-nodejs-oauth2/tree/v1.0.2)
+> -   **The sample repo app with** [Angular client and JWT auth](https://github.com/jhipster/jhipster-sample-app-nodejs/tree/v1.0.2)
 
 <div align="center">
 	<a href="https://github.com/jhipster/generator-jhipster-nodejs">
-		<img src="https://raw.githubusercontent.com/jhipster/generator-jhipster-nodejs/v1.0.1/nhipster-cli-logo.png">
+		<img src="https://raw.githubusercontent.com/jhipster/generator-jhipster-nodejs/v1.0.2/nhipster-cli-logo.png">
 	</a>
 </div>
 
 # Greetings, nodejs Hipster!
 
-This project adds nodejs for your backend, **all typescript files generation, not JAVA!**, to the [JHipster](https://www.jhipster.tech/) application 😎. It is based on JHipster Blueprint 🔵, that is meant to be used in a JHipster application.
+This project adds nodejs for your backend, **all TypeScript files generation, not Java!**, to the [JHipster](https://www.jhipster.tech/) application 😎. It is based on JHipster Blueprint 🔵, that is meant to be used in a JHipster application.
 
-> The generator applies this standard configuration for the nodeJS app:
+> The generator applies this standard configuration for the NodeJS app:
 
-> -   NestJS base app with web controllers, [swagger doc](https://github.com/nestjs/swagger) and [jwt or oauth2 passport auth](https://github.com/nestjs/passport) services
+> -   NestJS base app with web controllers, [swagger doc](https://github.com/nestjs/swagger) and [JWT or OAuth2 passport auth](https://github.com/nestjs/passport) services
 
-> -   The app starts with four seed users (admin, basic user and anonymous roles), as standard jhipster monolithic app, with SQLite for dev and configurable sql db for prod
+> -   The app starts with four seed users (admin, basic user and anonymous roles), as standard JHipster monolithic app, with SQLite for dev and configurable sql db for prod
 
-> -   The app uses [typeORM](https://github.com/nestjs/typeorm) and asks you a question for onother sql db
+> -   The app uses [TypeORM](https://github.com/nestjs/typeorm) and asks you a question for another sql db
 
 > -   TypeORM is also used for the automatically migration and versioning of the database scripts
 
-> -   The app runs also as a full stack app including, for the monolitich choise, the angular/react client with the home page set for NHipster and CRUD operations for entity generated with subgenerator and jdl import
+> -   The app runs also as a full stack app including, for the monolitich choice, the Angular/React client with the home page set for NHipster and CRUD operations for entity generated with subgenerator and jdl import
 
 <div align="center">
-		<img src="https://raw.githubusercontent.com/jhipster/generator-jhipster-nodejs/v1.0.1/nhipster-cli.gif">
+		<img src="https://raw.githubusercontent.com/jhipster/generator-jhipster-nodejs/v1.0.2/nhipster-cli.gif">
 </div>
 
 > A **previous of a jwt auth app:**
 
 <div align="center">
-		<img src="https://raw.githubusercontent.com/jhipster/generator-jhipster-nodejs/v1.0.1/demo-full-app.gif">
+		<img src="https://raw.githubusercontent.com/jhipster/generator-jhipster-nodejs/v1.0.2/demo-full-app.gif">
 </div>
 
 # Prerequisites
@@ -137,21 +137,23 @@ For the last, in the **test-integration/samples/FOLDER_NAME-jdl** there are some
 
 Shell steps:
 
--   `git clone https://github.com/jhipster/generator-jhipster-nodejs.git`
--   `cd generator-jhipster-nodejs`
--   `git checkout -b feature/my-feature`
--   `npm install`
--   `npm link`
--   `cd ..`
--   `git clone https://github.com/jhipster/generator-jhipster.git`
--   `cd generator-jhipster`
--   `npm install`
--   `npm link`
--   `cd ..`
--   `mkdir test-generation`
--   `cd test-generation`
--   `npm link generator-jhipster`
--   `npm link generator-jhipster-nodejs`
+```console
+$ git clone https://github.com/jhipster/generator-jhipster-nodejs.git
+$ cd generator-jhipster-nodejs
+$ git checkout -b feature/my-feature
+$ npm install
+$ npm link
+$ cd ..
+$ git clone https://github.com/jhipster/generator-jhipster.git
+$ cd generator-jhipster
+$ npm install
+$ npm link
+$ cd ..
+$ mkdir test-generation
+$ cd test-generation
+$ npm link generator-jhipster
+$ npm link generator-jhipster-nodejs
+```
 
 Now you will develop under the **generator-jhipster-nodejs** that you have cloned with git.
 After finish, to generate the app and check your feature, run in **test-generation** folder:
@@ -178,13 +180,13 @@ Thanks goes to these wonderful people:
 
 <div align="left">
 		<a href="https://www.jetbrains.com/?from=generator-jhipster-nodejs">
-		  <img width="80" height="100" src="https://raw.githubusercontent.com/jhipster/generator-jhipster-nodejs/v1.0.1/jetbrains.png">
+		  <img width="80" height="100" src="https://raw.githubusercontent.com/jhipster/generator-jhipster-nodejs/v1.0.2/jetbrains.png">
 		</a>
 		<a href="https://code.visualstudio.com">
-		  <img width="100" height="100" src="https://raw.githubusercontent.com/jhipster/generator-jhipster-nodejs/v1.0.1/visualstudio-code.png">
+		  <img width="100" height="100" src="https://raw.githubusercontent.com/jhipster/generator-jhipster-nodejs/v1.0.2/visualstudio-code.png">
 		</a>
 		<a href="https://www.jhipster.tech">
-		  <img width="160" height="100" src="https://raw.githubusercontent.com/jhipster/generator-jhipster-nodejs/v1.0.1/jhipster-logo.png">
+		  <img width="160" height="100" src="https://raw.githubusercontent.com/jhipster/generator-jhipster-nodejs/v1.0.2/jhipster-logo.png">
 		</a>
 </div>
 

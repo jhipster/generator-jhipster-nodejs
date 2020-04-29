@@ -4,6 +4,22 @@ import { FindManyOptions, FindOneOptions } from 'typeorm';
 import  <%= entityClass %>  from '../domain/<%= entityFileName %>.entity';
 import { <%= entityClass %>Repository } from '../repository/<%= entityFileName %>.repository';
 
+const relationshipNames = [];
+<%_
+for (idx in relationships) {
+
+ const relationshipType = relationships[idx].relationshipType;
+ const relationshipFieldName = relationships[idx].relationshipFieldName;
+ const relationshipFieldNamePlural = relationships[idx].relationshipFieldNamePlural;
+ const ownerSide = relationships[idx].ownerSide;
+ 
+   if (relationshipType === 'many-to-one') { _%>
+    relationshipNames.push('<%-relationshipFieldName %>');
+   <%_ } else if (relationshipType === 'many-to-many' && ownerSide === true) { _%>
+    relationshipNames.push('<%- relationshipFieldNamePlural %>');
+   <%_ }
+}
+_%>
 
 @Injectable()
 export class <%= entityClass %>Service {
@@ -12,7 +28,8 @@ export class <%= entityClass %>Service {
     constructor(@InjectRepository(<%= entityClass %>Repository) private <%= asEntity(entityInstance) %>Repository: <%= entityClass %>Repository) {}
 
       async findById(id: string): Promise<<%= entityClass %> | undefined> {
-        return await this.<%= asEntity(entityInstance) %>Repository.findOne(id);
+        const options = { relations: relationshipNames };
+        return await this.<%= asEntity(entityInstance) %>Repository.findOne(id, options);
       }
 
       async findByfields(options: FindOneOptions<<%= entityClass %>>): Promise<<%= entityClass %> | undefined> {
@@ -20,6 +37,7 @@ export class <%= entityClass %>Service {
       }
 
       async findAndCount(options: FindManyOptions<<%= entityClass %>>): Promise<[<%= entityClass %>[], number]> {
+        options.relations = relationshipNames;
         return await this.<%= asEntity(entityInstance) %>Repository.findAndCount(options);
       }
 
