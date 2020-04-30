@@ -5,7 +5,6 @@ const helpers = require('yeoman-test');
 const constants = require('../generators/generator-nodejs-constants');
 
 const SERVER_NODEJS_DIR = `${constants.SERVER_NODEJS_SRC_DIR}/`;
-const LANGUAGES = require('generator-jhipster/generators/generator-constants').LANGUAGES;
 
 const prompt = {
     baseName: 'sampleMysql',

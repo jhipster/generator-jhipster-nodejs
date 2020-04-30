@@ -1,5 +1,5 @@
 function writeFiles(languages) {
-    let clientFiles = {
+    const clientFiles = {
         common: []
     };
     languages.forEach(language => {
@@ -15,7 +15,6 @@ function writeFiles(languages) {
             ]
         });
     });
-    console.info(languages[0]);
     return {
         overrideFiles() {
             this.writeFilesToDisk(clientFiles, this, false);

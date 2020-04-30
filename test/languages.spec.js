@@ -44,10 +44,7 @@ describe('Subgenerator languages of nodejs JHipster blueprint', () => {
                     ]);
                 });
                 it('contains 1 needles in home.json', () => {
-                    assert.fileContent(
-                        `${CLIENT_MAIN_SRC_DIR}i18n/${language.value}/home.json`,
-                        'NHipster'
-                    );
+                    assert.fileContent(`${CLIENT_MAIN_SRC_DIR}i18n/${language.value}/home.json`, 'NHipster');
                 });
                 it('contains 3 needles in global.json', () => {
                     assert.fileContent(
