@@ -5,7 +5,7 @@
         "logged": {
             "message": "Anda masuk sebagai \"{{username}}\"."
         },
-        "question": "Jika anda punya pertanyaan tentang JHipster:",
+        "question": "Jika anda punya pertanyaan tentang NHipster:",
         "link": {
             "homepage": "NHipster homepage",
             "stackoverflow": "NHipster di Stack Overflow",
@@ -13,7 +13,7 @@
             "chat": "NHipster chat publik",
             "follow": "ikuti @NHipster di Twitter"
         },
-        "like": "Jika anda menyukai JHipster, jangan lupa beri kami bintang di",
+        "like": "Jika anda menyukai NHipster, jangan lupa beri kami bintang di",
         "github": "GitHub"
     }
 }

@@ -5,7 +5,7 @@
         "logged": {
             "message": "Du är inloggad som \"{{username}}\"."
         },
-        "question": "Om du har några frågor om JHipster:",
+        "question": "Om du har några frågor om NHipster:",
         "link": {
             "homepage": "JHipsters hemsida",
             "stackoverflow": "NHipster på Stack Overflow",
@@ -13,7 +13,7 @@
             "chat": "NHipster public chat room",
             "follow": "kontakta @NHipster på Twitter"
         },
-        "like": "Om du gillar JHipster, glöm inte att ge oss en stjärna på",
+        "like": "Om du gillar NHipster, glöm inte att ge oss en stjärna på",
         "github": "GitHub"
     }
 }

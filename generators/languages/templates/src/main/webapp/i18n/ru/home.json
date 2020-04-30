@@ -5,7 +5,7 @@
         "logged": {
             "message": "Вы вошли как пользователь \"{{username}}\"."
         },
-        "question": "Если у Вас возникли вопросы по JHipster:",
+        "question": "Если у Вас возникли вопросы по NHipster:",
         "link": {
             "homepage": "NHipster домашняя страница",
             "stackoverflow": "NHipster на Stack Overflow",
@@ -13,7 +13,7 @@
             "chat": "NHipster public chat room",
             "follow": "пользователь @NHipster в Twitter"
         },
-        "like": "Если вам нравится JHipster, не забудьте дать нам звёздочку на",
+        "like": "Если вам нравится NHipster, не забудьте дать нам звёздочку на",
         "github": "GitHub"
     }
 }

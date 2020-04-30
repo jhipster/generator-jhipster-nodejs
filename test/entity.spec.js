@@ -42,9 +42,6 @@ describe('Subgenerator entity of nodejs JHipster blueprint', () => {
         before(done => {
             getPreCondition()
                 .withArguments(['foo'])
-                .withArguments({
-                    languages: ['en', 'vi']
-                })
                 .withPrompts({
                     fieldAdd: false,
                     relationshipAdd: false,
@@ -73,9 +70,6 @@ describe('Subgenerator entity of nodejs JHipster blueprint', () => {
         before(done => {
             getPreCondition()
                 .withArguments(['GreatEntity'])
-                .withArguments({
-                    languages: ['en', 'vi']
-                })
                 .withPrompts({})
                 .on('end', done);
         });

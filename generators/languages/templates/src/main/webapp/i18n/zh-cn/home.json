@@ -11,9 +11,9 @@
             "stackoverflow": "Stack Overflow 上关于 NHipster 的讨论",
             "bugtracker": "NHipster 的缺陷追踪",
             "chat": "NHipster public chat room",
-            "follow": "在 Twitter 上联络 @jhipster"
+            "follow": "在 Twitter 上联络 @NHipster"
         },
-        "like": "如果您喜欢 JHipster, 请记得给我们加星在",
+        "like": "如果您喜欢 NHipster, 请记得给我们加星在",
         "github": "GitHub"
     }
 }

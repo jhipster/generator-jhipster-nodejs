@@ -5,7 +5,7 @@
         "logged": {
             "message": "U bent aangemeld als gebruiker \"{{username}}\"."
         },
-        "question": "Indien u vragen hebt over JHipster:",
+        "question": "Indien u vragen hebt over NHipster:",
         "link": {
             "homepage": "NHipster startpagina",
             "stackoverflow": "NHipster op Stack Overflow",

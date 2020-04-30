@@ -7,13 +7,13 @@
         },
         "question": "Nếu bạn có bất kỳ câu hỏi nào về NHipster vui lòng truy cập:",
         "link": {
-            "homepage": "Trang chủ JHipster",
+            "homepage": "Trang chủ NHipster",
             "stackoverflow": "NHipster trên Stack Overflow",
-            "bugtracker": "Theo dõi các lỗi JHipster",
-            "chat": "Phòng chat công cộng JHipster",
+            "bugtracker": "Theo dõi các lỗi NHipster",
+            "chat": "Phòng chat công cộng NHipster",
             "follow": "Theo dõi @NHipster trên Twitter"
         },
-        "like": "Nếu bạn thích JHipster, đừng quên cho chúng tôi thêm một ngôi sao trên",
+        "like": "Nếu bạn thích NHipster, đừng quên cho chúng tôi thêm một ngôi sao trên",
         "github": "GitHub"
     }
 }

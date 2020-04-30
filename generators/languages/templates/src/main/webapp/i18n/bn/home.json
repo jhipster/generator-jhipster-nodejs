@@ -8,10 +8,10 @@
         "question": "NHipster নিয়ে প্রশ্ন থাকলে:",
         "link": {
             "homepage": "NHipster হোম পেইজ",
-            "stackoverflow": "Stack Overflow তে JHipster",
+            "stackoverflow": "Stack Overflow তে NHipster",
             "bugtracker": "NHipster বাগ ট্র্যাকার",
             "chat": "NHipster পাবলিক চ্যাট রুম",
-            "follow": "টুইটার এ ফলো করুন @jhipster"
+            "follow": "টুইটার এ ফলো করুন @NHipster"
         },
         "like": "NHipster ভাল লেগে থাকলে স্টার দিতে ভুলবেন না",
         "github": "GitHub"

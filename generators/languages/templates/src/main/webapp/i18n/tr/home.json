@@ -8,12 +8,12 @@
         "question": "NHipster hakkında sorularınız için:",
         "link": {
             "homepage": "NHipster ana sayfa",
-            "stackoverflow": "Stack Overflow'da JHipster",
+            "stackoverflow": "Stack Overflow'da NHipster",
             "bugtracker": "NHipster hata yönetimi",
             "chat": "NHipster genel sohbet odası",
             "follow": "Twitter'da @NHipster adresinden ulaşabilirsiniz"
         },
-        "like": "JHipster'ı beğendiysenizi yıldız vermeyi unutmayın",
+        "like": "NHipster'ı beğendiysenizi yıldız vermeyi unutmayın",
         "github": "GitHub"
     }
 }

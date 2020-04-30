@@ -5,15 +5,15 @@
         "logged": {
             "message": "S'ha connectat amb l'usuari \"{{username}}\"."
         },
-        "question": "Si tens qualsevol pregunta sobre JHipster:",
+        "question": "Si tens qualsevol pregunta sobre NHipster:",
         "link": {
-            "homepage": "Pàgina preincipal de JHipster",
+            "homepage": "Pàgina preincipal de NHipster",
             "stackoverflow": "NHipster a Stack Overflow",
             "bugtracker": "NHipster seguiment d'incidencies",
             "chat": "NHipster public chat room",
             "follow": "Contacte @NHipster a Twitter"
         },
-        "like": "Si li agrada JHipster, no oblidi donar-nos una estrella",
+        "like": "Si li agrada NHipster, no oblidi donar-nos una estrella",
         "github": "GitHub"
     }
 }

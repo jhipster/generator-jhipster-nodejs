@@ -36,10 +36,8 @@ describe('Subgenerator client of nodejs JHipster blueprint', () => {
             getPreCondition()
                 .withPrompts({
                     commonPrompt,
-                    clientFramework: 'angularX'
-                })
-                .withArguments({
-                    languages: ['en', 'vi']
+                    clientFramework: 'angularX',
+                    languages: ['en']
                 })
                 .on('end', done);
         });
@@ -55,10 +53,8 @@ describe('Subgenerator client of nodejs JHipster blueprint', () => {
             getPreCondition()
                 .withPrompts({
                     commonPrompt,
-                    clientFramework: 'react'
-                })
-                .withArguments({
-                    languages: ['en', 'vi']
+                    clientFramework: 'react',
+                    languages: ['en']
                 })
                 .on('end', done);
         });

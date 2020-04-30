@@ -5,7 +5,7 @@
         "logged": {
             "message": "You are logged in as user \"{{username}}\"."
         },
-        "question": "If you have any question on JHipster:",
+        "question": "If you have any question on NHipster:",
         "link": {
             "homepage": "NHipster homepage",
             "stackoverflow": "NHipster on Stack Overflow",
@@ -13,7 +13,7 @@
             "chat": "NHipster public chat room",
             "follow": "follow @NHipster on Twitter"
         },
-        "like": "If you like JHipster, don't forget to give us a star on",
+        "like": "If you like NHipster, don't forget to give us a star on",
         "github": "GitHub"
     }
 }

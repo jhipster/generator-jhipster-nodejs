@@ -5,12 +5,12 @@
         "logged": {
             "message": "Ste prihlásený ako \"{{username}}\"."
         },
-        "question": "Ak máte nejaké otázky o JHipster:",
+        "question": "Ak máte nejaké otázky o NHipster:",
         "link": {
-            "homepage": "Domovská stránka JHipster",
+            "homepage": "Domovská stránka NHipster",
             "stackoverflow": "NHipster v službe Stack Overflow",
-            "bugtracker": "Nahlasovanie chýb JHipster",
-            "chat": "Verejná chatovacia miestnosť JHipster",
+            "bugtracker": "Nahlasovanie chýb NHipster",
+            "chat": "Verejná chatovacia miestnosť NHipster",
             "follow": "Sledovať @NHipster v službe Twitter"
         },
         "like": "Ak sa vám NHipster páči, nezabudnite nám dať hviezdičku v službe",

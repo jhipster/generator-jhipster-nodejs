@@ -5,12 +5,12 @@
         "logged": {
             "message": "Ești autentificat cu numele de utilizator \"{{username}}\"."
         },
-        "question": "Dacă ai orice întrebări în legatură cu JHipster:",
+        "question": "Dacă ai orice întrebări în legatură cu NHipster:",
         "link": {
-            "homepage": "Pagina JHipster",
+            "homepage": "Pagina NHipster",
             "stackoverflow": "NHipster pe Stack Overflow",
             "bugtracker": "NHipster bug tracker",
-            "chat": "Camera de chat publică pentru JHipster",
+            "chat": "Camera de chat publică pentru NHipster",
             "follow": "Contactează @NHipster pe Twitter"
         },
         "like": "Dacă iți place NHipster nu uita să ne dai o stea pe",

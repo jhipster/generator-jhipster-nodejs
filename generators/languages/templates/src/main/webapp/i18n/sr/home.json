@@ -5,7 +5,7 @@
         "logged": {
             "message": "Prijavljeni ste kao korisnik \"{{username}}\"."
         },
-        "question": "Ako imate bilo kakva pitanja o JHipster-u:",
+        "question": "Ako imate bilo kakva pitanja o NHipster-u:",
         "link": {
             "homepage": "NHipster početna stranica",
             "stackoverflow": "NHipster na Stack Overflow",
@@ -13,7 +13,7 @@
             "chat": "NHipster javni čet",
             "follow": "pratite @NHipster na Twitter-u"
         },
-        "like": "Ako Vam se dopada JHipster, ne zaboravite da nam date zvezdicu na",
+        "like": "Ako Vam se dopada NHipster, ne zaboravite da nam date zvezdicu na",
         "github": "GitHub-u"
     }
 }

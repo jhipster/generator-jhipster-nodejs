@@ -5,15 +5,15 @@
         "logged": {
             "message": "Jesteś zalogowany jako użytkownik \"{{username}}\"."
         },
-        "question": "Jeśli masz jakiekolwiek pytania na temat JHipster:",
+        "question": "Jeśli masz jakiekolwiek pytania na temat NHipster:",
         "link": {
-            "homepage": "Strona domowa JHipster",
+            "homepage": "Strona domowa NHipster",
             "stackoverflow": "NHipster na Stack Overflow",
             "bugtracker": "NHipster bug tracker",
-            "chat": "Publiczny chat room JHipster",
+            "chat": "Publiczny chat room NHipster",
             "follow": "skontaktuj się z @NHipster na Twitterze"
         },
-        "like": "Jeśli lubisz JHipster, nie zapomnij dać nam gwiazdki na",
+        "like": "Jeśli lubisz NHipster, nie zapomnij dać nam gwiazdki na",
         "github": "GitHubie"
     }
 }

@@ -7,13 +7,13 @@
         },
         "question": "Si vous avez des questions à propos de NHipster :",
         "link": {
-            "homepage": "Page d'accueil de JHipster",
+            "homepage": "Page d'accueil de NHipster",
             "stackoverflow": "NHipster sur Stack Overflow",
             "bugtracker": "NHipster bug tracker",
             "chat": "NHipster public chat room",
             "follow": "Suivez @NHipster sur Twitter"
         },
-        "like": "Si vous aimez JHipster, donnez nous une étoile sur",
+        "like": "Si vous aimez NHipster, donnez nous une étoile sur",
         "github": "GitHub "
     }
 }

@@ -5,7 +5,7 @@
         "logged": {
             "message": "Դուք մուտք եք գործել որպես օգտվող \"{{username}}\"."
         },
-        "question": "Եթե Ձեզ մոտ առաջացել են հարցեր JHipster:",
+        "question": "Եթե Ձեզ մոտ առաջացել են հարցեր NHipster:",
         "link": {
             "homepage": "NHipster գլխավոր էջ",
             "stackoverflow": "NHipster on Stack Overflow",
@@ -13,7 +13,7 @@
             "chat": "NHipster public chat room",
             "follow": "follow @NHipster on Twitter"
         },
-        "like": "Եթե Ձեզ դուր է գալիս JHipster, մի մոռացեք տալ Մեզ աստղ",
+        "like": "Եթե Ձեզ դուր է գալիս NHipster, մի մոռացեք տալ Մեզ աստղ",
         "github": "GitHub"
     }
 }
