@@ -9,7 +9,7 @@ jobs:
         strategy:
             fail-fast: false
             matrix:
-                node_version: [12.16.3]
+                node_version: [12.16.2]
                 os: [ubuntu-latest]
         steps:
             - uses: actions/checkout@v1
