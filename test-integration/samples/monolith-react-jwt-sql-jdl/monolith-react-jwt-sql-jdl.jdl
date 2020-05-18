@@ -74,7 +74,6 @@ relationship ManyToOne {
 	Activity {demetrauser} to DemetraUser
 }
 
-
 relationship ManyToMany {
 
 	DemetraUser {
@@ -84,6 +83,7 @@ relationship ManyToMany {
 		cfstudent(cf)
 	},
 }
+
 
 relationship OneToMany {
 

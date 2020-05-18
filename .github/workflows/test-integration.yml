@@ -15,7 +15,7 @@ jobs:
                     - monolith-react-oauth2-dev
                     - monolith-angular-jwt-dev
                     - monolith-react-jwt-sql-jdl
-                    - microservice-oauth2-sql-jdl
+                #   - microservice-oauth2-sql-jdl
                 include:
                     - app-type: monolith-react-oauth2-dev
                       arg: 'no'
@@ -23,8 +23,8 @@ jobs:
                       arg: 'no'
                     - app-type: monolith-react-jwt-sql-jdl
                       arg: import-jdl
-                    - app-type: microservice-oauth2-sql-jdl
-                      arg: post-import-jdl
+                #   - app-type: microservice-oauth2-sql-jdl
+                #     arg: post-import-jdl
         env:
             JHI_APP: ${{ matrix.app-type }}
             JHI_ARG: ${{ matrix.arg }}

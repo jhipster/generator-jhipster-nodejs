@@ -65,6 +65,7 @@ relationship ManyToMany {
 	Category{product(title)} to Product{category}
 }
 
+
 paginate Customer, Product, Category with pagination
 paginate Address with pagination
 paginate Product with infinite-scroll
