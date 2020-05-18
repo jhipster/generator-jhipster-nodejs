@@ -2,7 +2,7 @@
  * This is the entity model for university elearning
  * default values: https://www.jhipster.tech/jdl/#annexes
  * Use "jhipster import-jdl model-name.jdl --blueprints nodejs" to generate the entity application
- * Use jhipster 6.x (example 6.6.0)
+ * Use jhipster 6.x (example 6.8.0)
  * relationship info: https://www.jhipster.tech/managing-relationships/
  */
 

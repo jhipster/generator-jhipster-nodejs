@@ -127,7 +127,7 @@ module.exports = class extends ServerGenerator {
             jhipsterNodeEnd() {
                 this.log(chalk.green.bold('\nServer application generated successfully.\n'));
 
-                const executable = `${this.clientPackageManager} start:app`;
+                const executable = `${this.clientPackageManager} run start:app`;
 
                 const READMES = 'README.md and server/README.md';
 
