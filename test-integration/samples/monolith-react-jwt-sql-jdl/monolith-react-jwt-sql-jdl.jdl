@@ -4,7 +4,6 @@
  * Use "jhipster import-jdl model-name.jdl --blueprints nodejs" to generate the entire application
  * Use jhipster 6.x (example 6.8.0)
  * relationship info: https://www.jhipster.tech/managing-relationships/
- * model of: https://github.com/jhipster/jdl-samples/blob/master/online-shop.jh
  */
 
 application {
@@ -28,65 +27,71 @@ application {
 	entities *
 }
 
-// JDL definition entity for online shop application
+// JDL definition entity for application
 
-enum CategoryStatus {
-    AVAILABLE, RESTRICTED, DISABLED
+enum Gender {
+MALE,
+FEMALE
 }
 
-entity Category {
-    description String required,
-    sortOrder Integer,
-    dateAdded LocalDate,
-    dateModified LocalDate,
-    status CategoryStatus
+enum UserType {
+STUDENT,
+TEACHER
 }
 
-entity Product {
-    title String required,
-    keywords String,
-    description String,
-    rating Integer,
-    dateAdded LocalDate,
-    dateModified LocalDate
+
+entity DemetraUser {
+	gender Gender required,
+	address String required,
+	borndate LocalDate required,
+	cf String required unique,
+	usertype UserType required,
+	profileimage ImageBlob
 }
 
-entity Customer {
-	firstName String,
-    lastName String,
-    email String,
-    telephone String
+entity SingleCourse {
+	title String required unique,
+	description String,
+	isnotonlyfordegree Boolean required,
+	cfu Integer,
+	courseimage Blob,
+	amount BigDecimal
 }
 
-entity Address {
-    address1 String,
-    address2 String,
-    city String,
-    postcode String required maxlength(10),
-    country String required maxlength(2)
+entity Activity {
+	name UUID unique,
+	description String,
+	mynumber Double,
+	creationtime ZonedDateTime
+
 }
 
-entity WishList {
-	title String required,
-    restricted Boolean
-}
-
-relationship OneToMany {
-    Customer{wishList(title)} to WishList{customer},
-    WishList{product(title)} to Product{wishList},
-    Customer{address} to Address{customer}
+relationship OneToOne {
+	Activity to SingleCourse
 }
 
 relationship ManyToOne {
-	Category{parent} to Category
+	Activity {demetrauser} to DemetraUser
 }
+
 
 relationship ManyToMany {
-	Category{product(title)} to Product{category}
+
+	DemetraUser {
+		coursetitle(title)
+	}
+	to SingleCourse {
+		cfstudent(cf)
+	},
 }
 
-paginate Customer, Product, Category with pagination
-paginate Address with pagination
-paginate Product with infinite-scroll
+relationship OneToMany {
 
-service Category with serviceClass
+	DemetraUser {
+		singlecourseteacher
+	}
+	to SingleCourse {
+		cfteacher(cf)required
+	}
+
+}
