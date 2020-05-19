@@ -131,8 +131,6 @@ yarn global upgrade generator-jhipster-nodejs
 
 For the last, in the **test-integration/samples/FOLDER_NAME-jdl** there are some examples of jdl models.
 
-> **Please attention that SQLite does not support Enum and Instant types**
-
 ## 🛠 Steps to develop a generator feature and test it
 
 Shell steps:
