@@ -56,7 +56,7 @@ for (idx in relationships) {
     if (relationship.otherEntityAngularName === 'User'){
         isUserRelationship = true;
     }
-    else if (!uniqueEntities[relationship.otherEntityAngularName]) {
+    else if (!uniqueEntities[relationship.otherEntityAngularName] && relationship.otherEntityAngularName != asEntity(entityClass)) {
         uniqueEntities[relationship.otherEntityAngularName] = relationship.otherEntityFileName;
     }
 

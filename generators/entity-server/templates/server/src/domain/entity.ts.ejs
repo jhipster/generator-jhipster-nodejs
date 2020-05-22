@@ -65,7 +65,7 @@ export default class <%= asEntity(entityClass) %> extends BaseEntity  {
     @ApiModelProperty({type: '', description: '<%- formatAsApiDescription(fields[idx].javadoc) %>'<% if (required) { %>, required: true<% } %>})
     <%_ } _%>
         <%_ if (fields[idx].fieldIsEnum) { _%>
-    @Column({type: 'enum', name: '<%-fieldNameAsDatabaseColumn %>', enum: <%= fieldType %>})
+    @Column({type: 'simple-enum', name: '<%-fieldNameAsDatabaseColumn %>', enum: <%= fieldType %>})
         <%_ } else if (['Instant', 'ZonedDateTime', 'LocalDate'].includes(fieldType)) { _%>
     @Column({<%_ if(fieldColumnType) { _%> type: '<%-fieldColumnType%>' ,<%_ }_%> name: "<%-fieldNameAsDatabaseColumn %>"<% if (required) { %>, nullable: false<% } %><% if (unique) { %>, unique: true<% } %>})
         <%_ } else if (fieldType === 'BigDecimal') { _%>

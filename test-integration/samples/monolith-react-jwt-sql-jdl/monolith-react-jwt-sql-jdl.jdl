@@ -2,7 +2,7 @@
  * This is the application and entity model for university elearning
  * default values: https://www.jhipster.tech/jdl/#annexes
  * Use "jhipster import-jdl model-name.jdl --blueprints nodejs" to generate the entire application
- * Use jhipster 6.x (example 6.6.0)
+ * Use jhipster 6.x (example 6.8.0)
  * relationship info: https://www.jhipster.tech/managing-relationships/
  */
 
@@ -29,8 +29,6 @@ application {
 
 // JDL definition entity for application
 
-/*
-
 enum Gender {
 MALE,
 FEMALE
@@ -40,14 +38,14 @@ enum UserType {
 STUDENT,
 TEACHER
 }
- */
+
 
 entity DemetraUser {
-	gender String required,
+	gender Gender required,
 	address String required,
 	borndate LocalDate required,
 	cf String required unique,
-	usertype String required,
+	usertype UserType required,
 	profileimage ImageBlob
 }
 
@@ -72,6 +70,10 @@ relationship OneToOne {
 	Activity to SingleCourse
 }
 
+relationship ManyToOne {
+	Activity {demetrauser} to DemetraUser
+}
+
 relationship ManyToMany {
 
 	DemetraUser {
@@ -81,6 +83,7 @@ relationship ManyToMany {
 		cfstudent(cf)
 	},
 }
+
 
 relationship OneToMany {
 
