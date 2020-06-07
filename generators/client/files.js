@@ -2,6 +2,7 @@ const jhipsterConstants = require('generator-jhipster/generators/generator-const
 
 const ANGULAR_DIR = jhipsterConstants.ANGULAR_DIR;
 const REACT_DIR = jhipsterConstants.REACT_DIR;
+const TEST_DIR = jhipsterConstants.CLIENT_TEST_SRC_DIR;
 
 const clientFiles = {
     common: [
@@ -32,6 +33,11 @@ const clientFiles = {
                     file: 'angular/home/home.component.html',
                     method: 'processHtml',
                     renameTo: () => `${ANGULAR_DIR}home/home.component.html`
+                },
+                {
+                    file: 'angular/layouts/navbar/navbar.component.html',
+                    method: 'processHtml',
+                    renameTo: () => `${ANGULAR_DIR}layouts/navbar/navbar.component.html`
                 }
             ]
         }
@@ -44,6 +50,23 @@ const clientFiles = {
                     file: 'react/home/home.tsx',
                     method: 'processJsx',
                     renameTo: () => `${REACT_DIR}modules/home/home.tsx`
+                },
+                {
+                    file: 'react/shared/layout/header/header.tsx',
+                    method: 'processJsx',
+                    renameTo: () => `${REACT_DIR}shared/layout/header/header.tsx`
+                }
+            ]
+        }
+    ],
+    testMain: [
+        {
+            condition: generator => generator.clientFramework === 'react',
+            templates: [
+                {
+                    file: 'react/shared/layout/header/header.spec.tsx',
+                    method: 'processJsx',
+                    renameTo: () => `${TEST_DIR}spec/app/shared/layout/header/header.spec.tsx`
                 }
             ]
         }

@@ -47,7 +47,7 @@ This application is configured for Service Discovery and Configuration with <% i
 To start your application in the dev profile, simply run:
 
     cd <%= SERVER_NODEJS_SRC_DIR %> && <%= clientPackageManager %> install
-    <%= clientPackageManager %> start:app
+    <%= clientPackageManager %> run start:app
 
 <%_ } _%>
 <%_ if (!skipClient) { _%>
@@ -235,7 +235,7 @@ will generate the file:
 #### Running
 
 ```bash
-<%= clientPackageManager %> start:app
+<%= clientPackageManager %> run start:app
 ```
 
 #### Building
