@@ -46,7 +46,7 @@ function askForMainServerSideOpts(meta) {
                 /* {   value: 'mongodb',
                 name: 'MongoDB' }, */
                 { value: 'mysql', name: 'MySQL or MariaDB' },
-                { value: 'postgres', name: 'PostgreSQL or CockroachDB' },
+                { value: 'postgresql', name: 'PostgreSQL or CockroachDB' },
                 { value: 'oracle', name: 'Oracle (Please follow our documentation to use the Oracle proprietary driver)' },
                 { value: 'mssql', name: 'Microsoft SQL Server' }
             ],

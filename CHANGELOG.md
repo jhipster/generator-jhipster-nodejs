@@ -10,6 +10,7 @@
 
 # [1.1.0](https://github.com/jhipster/generator-jhipster-nodejs/tree/v1.1.0)
 
+-   Enhancement suggestions list tasks for 1.1.0 version [issue #136](https://github.com/jhipster/generator-jhipster-nodejs/issues/136)
 -   Support enum fields entity generation without giving conflicts in sqlite dev database [issue #74](https://github.com/jhipster/generator-jhipster-nodejs/issues/74)
 
 # [1.0.2](https://github.com/jhipster/generator-jhipster-nodejs/tree/v1.0.2)
