@@ -109,25 +109,33 @@ yarn global upgrade generator-jhipster-nodejs
 
 ## 🚦 What we have now
 
+This is a blueprint that it is runnable by:
+
+```bash
+jhipster --blueprints nodejs
+```
+
+However, it also ships with an `nhipster` CLI that you can use as a shortcut.
+
 ✅ General App generation
 
--   `jhipster --blueprints nodejs`
+-   `nhipster`
 
 ✅ Controller generation
 
--   `jhipster spring-controller <controller-name> --blueprints nodejs`
+-   `nhipster spring-controller <controller-name>`
 
 ✅ Service generation
 
--   `jhipster spring-service <service-name> --blueprints nodejs`
+-   `nhipster spring-service <service-name>`
 
 ✅ Entity generation
 
--   `jhipster entity <entity-name> --blueprints nodejs`
+-   `nhipster entity <entity-name>`
 
 ✅ JDL Entity model support generation
 
--   `jhipster import-jdl my_file.jdl --blueprints nodejs`
+-   `nhipster import-jdl my_file.jdl`
 
 For the last, in the **test-integration/samples/FOLDER_NAME-jdl** there are some examples of jdl models.
 
@@ -156,7 +164,7 @@ $ npm link generator-jhipster-nodejs
 Now you will develop under the **generator-jhipster-nodejs** that you have cloned with git.
 After finish, to generate the app and check your feature, run in **test-generation** folder:
 
--   `jhipster --blueprints nodejs`
+-   `nhipster`
 
 ## ❤️ For community
 
