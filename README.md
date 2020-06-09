@@ -75,7 +75,7 @@ As this is a [JHipster](https://www.jhipster.tech/) blueprint, we expect you hav
 
 1. Make sure you have followed the [JHipster installation guide](https://www.jhipster.tech/installation) and that both `yeoman` and `jhipster` are installed.
 2. Install the package with `npm install -g generator-jhipster-nodejs`
-3. And generate the application with `jhipster --blueprints nodejs`
+3. And generate the application with `nhipster`
 
 # Installation Details
 
@@ -109,7 +109,7 @@ yarn global upgrade generator-jhipster-nodejs
 
 ## 🚦 What we have now
 
-This is a blueprint that it is runnable by:
+This is a blueprint that is runnable by:
 
 ```bash
 jhipster --blueprints nodejs
