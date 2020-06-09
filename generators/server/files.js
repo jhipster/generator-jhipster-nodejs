@@ -115,6 +115,20 @@ const serverFiles = {
                 'src/main/docker/realm-config/jhipster-users-0.json'
             ]
         }
+    ],
+    db: [
+        {
+            condition: generator => generator.prodDatabaseType === 'mysql',
+            templates: ['src/main/docker/mysql.yml']
+        },
+        {
+            condition: generator => generator.prodDatabaseType === 'mssql',
+            templates: ['src/main/docker/mssql.yml']
+        },
+        {
+            condition: generator => generator.prodDatabaseType === 'postgresql',
+            templates: ['src/main/docker/postgresql.yml']
+        }
     ]
 };
 

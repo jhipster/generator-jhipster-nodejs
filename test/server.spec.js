@@ -29,6 +29,10 @@ function commonAssertion() {
     assert.file(`${SERVER_NODEJS_DIR}e2e/app.e2e-spec.ts`);
     assert.file(`${SERVER_NODEJS_DIR}e2e/user.e2e-spec.ts`);
     assert.file(`${SERVER_NODEJS_DIR}e2e/jest.e2e.config.json`);
+    assert.file('src/main/docker/app.yml');
+    assert.file('src/main/docker/mysql.yml');
+    assert.noFile('src/main/docker/mssql.yml');
+    assert.noFile('src/main/docker/postgresql.yml');
 }
 
 const commonPrompt = {
@@ -73,6 +77,25 @@ describe('Subgenerator server of nodejs JHipster blueprint', () => {
             assert.file(`${SERVER_NODEJS_DIR}src/web/rest/user.oauth2.controller.ts`);
             assert.file(`${SERVER_NODEJS_DIR}src/security/passport.oauth2.strategy.ts`);
             assert.noFile(`${SERVER_NODEJS_DIR}src/security/payload.interface.ts`);
+        });
+    });
+
+    describe('3-Database mssql test', () => {
+        before(done => {
+            getPreCondition()
+                .withPrompts({
+                    baseName: 'sampleMSsql',
+                    applicationType: 'monolith',
+                    prodDatabaseType: 'mssql',
+                    authenticationType: 'jwt'
+                })
+                .on('end', done);
+        });
+
+        it('app exists with docker mssql.yml', () => {
+            assert.noFile('src/main/docker/mysql.yml');
+            assert.noFile('src/main/docker/postgresql.yml');
+            assert.file('src/main/docker/mssql.yml');
         });
     });
 });
