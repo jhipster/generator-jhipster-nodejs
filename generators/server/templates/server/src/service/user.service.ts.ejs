@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { User } from '../domain/user.entity';
 import { UserRepository } from '../repository/user.repository';
 import { FindManyOptions, FindOneOptions } from 'typeorm';
+import { generateHashedPassword } from '../utilities/encryption';
 
 @Injectable()
 export class UserService {
@@ -37,6 +38,7 @@ export class UserService {
 
   async save(user: User): Promise<User | undefined> {
     user = this.convertInAuthorities(user);
+    user.password = await generateHashedPassword(user.password);
     const result = await this.userRepository.save(user);
     return this.flatAuthorities(result);
   }

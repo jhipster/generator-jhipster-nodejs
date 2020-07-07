@@ -1,0 +1,16 @@
+import * as bcrypt from 'bcrypt';
+
+const saltRounds = 10;
+
+const generateHashedPassword: (password: string | undefined) => Promise<string> = (password) => {
+	return bcrypt.hash(password, saltRounds);
+}
+
+const compareHash: (password: string | undefined, hash: string | undefined) => Promise<boolean> = (password, hash) =>{
+	return bcrypt.compare(password, hash);
+}
+
+export {
+	generateHashedPassword,
+	compareHash
+}

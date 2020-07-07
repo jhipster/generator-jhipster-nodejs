@@ -38,6 +38,7 @@ const serverFiles = {
                 'src/client/interceptors/logging.interceptor.ts',
                 'src/service/auth.service.ts',
                 'src/service/user.service.ts',
+                'src/utilities/encryption.ts',
                 'src/main.ts',
                 'src/swagger.ts',
                 'src/app.module.ts',
