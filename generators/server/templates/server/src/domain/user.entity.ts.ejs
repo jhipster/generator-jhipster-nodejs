@@ -2,6 +2,8 @@ import { Authority } from './authority.entity';
 import { Entity, Column, ManyToMany, JoinTable } from 'typeorm';
 import { BaseEntity } from './base/base.entity';
 import { ApiModelProperty } from '@nestjs/swagger';
+import { config } from '../config';
+import { EncryptionTransformer } from "typeorm-encrypted";
 
 @Entity('jhi_user')
 export class User extends BaseEntity {
@@ -32,7 +34,15 @@ export class User extends BaseEntity {
   authorities?: any[];
 
   @ApiModelProperty({ example: 'myuser', description: 'User password' })
-  @Column()
+  @Column({
+    type: "varchar",
+    transformer: new EncryptionTransformer({
+      key: config.get('crypto.key'),
+      algorithm: 'aes-256-cbc',
+      ivLength: 16,
+      iv: config.get('crypto.iv')
+    })
+  })
   password: string;
   @Column({ nullable: true })
   imageUrl?: string;
