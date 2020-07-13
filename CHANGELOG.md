@@ -10,6 +10,7 @@
 
 # [1.1.0](https://github.com/jhipster/generator-jhipster-nodejs/tree/v1.1.0)
 
+-   Encrypt user passwords on db [issue #53](https://github.com/jhipster/generator-jhipster-nodejs/issues/53)
 -   jest-diff error running "npm run webpack:prod" [issue #149](https://github.com/jhipster/generator-jhipster-nodejs/issues/149)
 -   Docker support for mysql, mssql and postgresql [issue #137](https://github.com/jhipster/generator-jhipster-nodejs/issues/137)
 -   Create a nhipster command line [issue #143](https://github.com/jhipster/generator-jhipster-nodejs/issues/143)
