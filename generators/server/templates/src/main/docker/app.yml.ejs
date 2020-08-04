@@ -28,7 +28,7 @@ services:
             <%_ } _%>
         <%_ if (applicationType === 'monolith' || applicationType === 'gateway') { _%>
         ports:
-            - <%= serverPort %>:<%= serverPort %>:
+            - <%= serverPort %>:<%= serverPort %>
         <%_ } _%>
     <%_ if (authenticationType === 'oauth2' && applicationType !== 'microservice') { _%>
     keycloak:
