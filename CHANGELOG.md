@@ -11,6 +11,7 @@
 
 # [1.1.1](https://github.com/jhipster/generator-jhipster-nodejs/tree/v1.1.1)
 
+-   Error when fetch list of entities from react client [issue #155](https://github.com/jhipster/generator-jhipster-nodejs/issues/155)
 -   double stitch port on app.yml [issue #153](https://github.com/jhipster/generator-jhipster-nodejs/issues/153)
 
 # [1.1.0](https://github.com/jhipster/generator-jhipster-nodejs/tree/v1.1.0)
