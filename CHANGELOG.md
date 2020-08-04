@@ -1,3 +1,4 @@
+<a name="1.1.1"></a>
 <a name="1.1.0"></a>
 <a name="1.0.2"></a>
 <a name="1.0.1"></a>
@@ -7,6 +8,10 @@
 <a name="1.0.0-beta.1"></a>
 <a name="1.0.0-alpha.3"></a>
 <a name="1.0.0-alpha.2"></a>
+
+# [1.1.1](https://github.com/jhipster/generator-jhipster-nodejs/tree/v1.1.1)
+
+-   double stitch port on app.yml [issue #153](https://github.com/jhipster/generator-jhipster-nodejs/issues/153)
 
 # [1.1.0](https://github.com/jhipster/generator-jhipster-nodejs/tree/v1.1.0)
 
