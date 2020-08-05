@@ -1,0 +1,8 @@
+/**
+ * The <%= enumName %> enumeration.
+ */
+export enum <%= enumName %> {
+    <%_ for (idx in enumValues) { _%>
+      <%= enumValues[idx] %> = '<%= enumValues[idx] %>',
+    <%_ } _%>
+}

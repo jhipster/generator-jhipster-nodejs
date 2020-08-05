@@ -58,7 +58,7 @@ function writeFiles() {
                     const enumFileName = _.kebabCase(field.fieldType);
                     const enumInfo = utils.buildEnumInfo(field, this.angularAppName, this.packageName, this.clientRootFolder);
                     this.template(
-                        `${SERVER_NODEJS_DIR}src/domain/enumeration/Enum.ts.ejs`,
+                        `${SERVER_NODEJS_DIR}src/domain/enumeration/enum-type.ts.ejs`,
                         `${SERVER_NODEJS_DIR}src/domain/enumeration/${enumFileName}.ts`,
                         this,
                         {},

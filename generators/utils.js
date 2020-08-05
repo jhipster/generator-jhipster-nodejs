@@ -121,9 +121,10 @@ function addServiceToAppModule(generator, serviceClass) {
 function buildEnumInfo(field, angularAppName, packageName, clientRootFolder) {
     const fieldType = field.fieldType;
     field.enumInstance = _.lowerFirst(fieldType);
+
     const enumInfo = {
         enumName: fieldType,
-        enumValues: field.fieldValues.split(',').join(', '),
+        enumValues: field.fieldValues.split(','),
         enumInstance: field.enumInstance,
         enums: field.fieldValues.replace(/\s/g, '').split(','),
         angularAppName,

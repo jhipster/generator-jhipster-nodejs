@@ -11,6 +11,7 @@
 
 # [1.1.1](https://github.com/jhipster/generator-jhipster-nodejs/tree/v1.1.1)
 
+-   enum type values not correctly mapped in the server side [issue #156](https://github.com/jhipster/generator-jhipster-nodejs/issues/156)
 -   Error when fetch list of entities from react client [issue #155](https://github.com/jhipster/generator-jhipster-nodejs/issues/155)
 -   double stitch port on app.yml [issue #153](https://github.com/jhipster/generator-jhipster-nodejs/issues/153)
 
