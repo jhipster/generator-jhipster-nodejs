@@ -27,7 +27,12 @@
         "baseName": "monolithAngularJwtApp",
         "testFrameworks": [],
         "jhiPrefix": "jhi",
-        "enableTranslation": false,
+        "enableTranslation": true,
+        "nativeLanguage": "en",
+        "languages": [
+            "en",
+            "it"
+        ],
         "clientPackageManager": "npm",
         "blueprint": "generator-jhipster-nodejs"
     }

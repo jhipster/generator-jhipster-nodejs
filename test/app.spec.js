@@ -21,6 +21,10 @@ function commonAssertions() {
 
     // assertion for common subgenerator
     assert.fileContent('README.md', 'https://github.com/jhipster/generator-jhipster-nodejs');
+
+    // assertion for i18n disabled in server part
+    assert.noFile('src/main/webapp/i18n/it/home.json');
+    assert.noFile('src/main/resources/i18n/messages_it.properties');
 }
 
 describe('Main app generator of nodejs JHipster blueprint', () => {
@@ -33,6 +37,9 @@ describe('Main app generator of nodejs JHipster blueprint', () => {
                     skipInstall: true,
                     blueprints: 'nodejs',
                     skipChecks: true
+                })
+                .withArguments({
+                    languages: ''
                 })
                 .withGenerators([
                     [
@@ -51,6 +58,9 @@ describe('Main app generator of nodejs JHipster blueprint', () => {
             commonAssertions();
             // assertion for server subgenerator
             assert.file(`${SERVER_NODEJS_DIR}src/app.module.ts`);
+
+            // assertion for i18n disabled for it
+            assert.noFile('src/main/webapp/i18n/it/home.json');
         });
     });
 
@@ -67,6 +77,9 @@ describe('Main app generator of nodejs JHipster blueprint', () => {
                     auth: 'jwt',
                     skipChecks: true
                 })
+                .withArguments({
+                    languages: ''
+                })
                 .withGenerators([
                     [
                         require('../generators/app/index.js'), // eslint-disable-line global-require
@@ -82,6 +95,8 @@ describe('Main app generator of nodejs JHipster blueprint', () => {
 
         it('app exists without server', () => {
             commonAssertions();
+            // assertion for i18n disabled for it
+            assert.noFile('src/main/webapp/i18n/it/home.json');
         });
     });
 
@@ -115,6 +130,9 @@ describe('Main app generator of nodejs JHipster blueprint', () => {
             commonAssertions();
             // assertion for server subgenerator
             assert.file(`${SERVER_NODEJS_DIR}src/app.module.ts`);
+
+            // assertion for i18n enabled for it
+            assert.fileContent('src/main/webapp/i18n/it/home.json', 'Benvenuto, Node Hipster Official Blueprint!');
         });
     });
 });

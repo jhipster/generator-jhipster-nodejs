@@ -42,12 +42,8 @@ module.exports = class extends ClientGenerator {
     }
 
     get default() {
-        const defaultPhaseFromJHipster = super._default();
-        const defaultNodeClientPhaseSteps = {
-            // disable languages
-            composeLanguages() {}
-        };
-        return Object.assign(defaultPhaseFromJHipster, defaultNodeClientPhaseSteps);
+        // Here we are not overriding this phase and hence its being handled by JHipster
+        return super._default();
     }
 
     get writing() {

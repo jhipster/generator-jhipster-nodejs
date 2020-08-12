@@ -13,6 +13,9 @@ function getPreCondition() {
             blueprints: 'nodejs',
             skipChecks: true
         })
+        .withArguments({
+            languages: ''
+        })
         .withGenerators([
             [
                 require('../generators/client/index.js'), // eslint-disable-line global-require
