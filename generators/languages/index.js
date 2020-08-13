@@ -7,16 +7,16 @@ module.exports = class extends LanguagesGenerator {
     constructor(args, opts) {
         super(args, Object.assign({ fromBlueprint: true }, opts)); // fromBlueprint variable is important
 
-        const jhContext = (this.jhipsterContext = this.options.jhipsterContext);
+        const jhLanguagesContext = (this.jhipsterContext = this.options.jhipsterContext);
 
-        if (!jhContext) {
+        if (!jhLanguagesContext) {
             this.error(`This is a JHipster blueprint and should be used only like ${chalk.yellow('jhipster --blueprints nodejs')}`);
         }
 
-        this.configOptions = jhContext.configOptions || {};
+        this.configOptions = jhLanguagesContext.configOptions || {};
         // This sets up options for this sub generator and is being reused from JHipster
-        jhContext.setupServerOptions(this, jhContext);
-        jhContext.setupClientOptions(this, jhContext);
+        jhLanguagesContext.setupServerOptions(this, jhLanguagesContext);
+        jhLanguagesContext.setupClientOptions(this, jhLanguagesContext);
     }
 
     get initializing() {
