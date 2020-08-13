@@ -5,6 +5,7 @@ const helpers = require('yeoman-test');
 const constants = require('../generators/generator-nodejs-constants');
 
 const SERVER_NODEJS_DIR = `${constants.SERVER_NODEJS_SRC_DIR}/`;
+const i18nHomePath = 'src/main/webapp/i18n/it/home.json';
 
 const prompt = {
     baseName: 'sampleMysql',
@@ -21,10 +22,6 @@ function commonAssertions() {
 
     // assertion for common subgenerator
     assert.fileContent('README.md', 'https://github.com/jhipster/generator-jhipster-nodejs');
-
-    // assertion for i18n disabled in server part
-    assert.noFile('src/main/webapp/i18n/it/home.json');
-    assert.noFile('src/main/resources/i18n/messages_it.properties');
 }
 
 describe('Main app generator of nodejs JHipster blueprint', () => {
@@ -36,10 +33,8 @@ describe('Main app generator of nodejs JHipster blueprint', () => {
                     'from-cli': true,
                     skipInstall: true,
                     blueprints: 'nodejs',
-                    skipChecks: true
-                })
-                .withArguments({
-                    languages: ''
+                    skipChecks: true,
+                    'skip-i18n': true
                 })
                 .withGenerators([
                     [
@@ -60,7 +55,8 @@ describe('Main app generator of nodejs JHipster blueprint', () => {
             assert.file(`${SERVER_NODEJS_DIR}src/app.module.ts`);
 
             // assertion for i18n disabled for it
-            assert.noFile('src/main/webapp/i18n/it/home.json');
+            assert.noFile('src/main/resources/i18n/messages_it.properties');
+            assert.noFile(i18nHomePath);
         });
     });
 
@@ -75,10 +71,8 @@ describe('Main app generator of nodejs JHipster blueprint', () => {
                     skipServer: true,
                     db: 'sql',
                     auth: 'jwt',
-                    skipChecks: true
-                })
-                .withArguments({
-                    languages: ''
+                    skipChecks: true,
+                    'skip-i18n': true
                 })
                 .withGenerators([
                     [
@@ -96,7 +90,8 @@ describe('Main app generator of nodejs JHipster blueprint', () => {
         it('app exists without server', () => {
             commonAssertions();
             // assertion for i18n disabled for it
-            assert.noFile('src/main/webapp/i18n/it/home.json');
+            assert.noFile('src/main/resources/i18n/messages_en.properties');
+            assert.noFile(i18nHomePath);
         });
     });
 
@@ -132,7 +127,8 @@ describe('Main app generator of nodejs JHipster blueprint', () => {
             assert.file(`${SERVER_NODEJS_DIR}src/app.module.ts`);
 
             // assertion for i18n enabled for it
-            assert.fileContent('src/main/webapp/i18n/it/home.json', 'Benvenuto, Node Hipster Official Blueprint!');
+            assert.file(i18nHomePath);
+            assert.fileContent(i18nHomePath, 'Benvenuto, Node Hipster Official Blueprint!');
         });
     });
 });

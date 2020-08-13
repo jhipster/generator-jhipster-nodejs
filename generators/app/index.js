@@ -15,6 +15,13 @@ module.exports = class extends AppGenerator {
         }
 
         this.configOptions = jhContext.configOptions || {};
+
+        // This adds support for a `--skip-i18n` flag for unit test
+        this.option('skip-i18n', {
+            desc: 'skip internationalization',
+            type: Boolean,
+            defaults: false
+        });
     }
 
     get initializing() {
@@ -89,6 +96,11 @@ module.exports = class extends AppGenerator {
 
             customSettings() {
                 this.testFrameworks = [];
+                this.protractorTests = false;
+                if (this.options['skip-i18n']) {
+                    this.enableTranslation = false;
+                    this.skipI18n = true;
+                }
             }
         };
 

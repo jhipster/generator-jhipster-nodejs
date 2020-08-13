@@ -55,7 +55,8 @@ module.exports = class extends LanguagesGenerator {
             // overwrite home.json file
             writeHomeJSON() {
                 this.languagesToApply.forEach(language => {
-                    this.copyI18nFilesByName(this, jhipsterConstants.CLIENT_MAIN_SRC_DIR, 'home.json', language);
+                    const path = `${jhipsterConstants.CLIENT_MAIN_SRC_DIR}i18n/${language}/home.json`;
+                    this.template(path, path);
                 });
             }
         };

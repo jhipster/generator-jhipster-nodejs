@@ -48,6 +48,8 @@ module.exports = class extends EntityGenerator {
 
             composeClient() {
                 const context = this.context;
+                // disable protractor
+                context.protractorTests = false;
                 if (context.skipClient) return;
                 const configOptions = this.configOptions;
 

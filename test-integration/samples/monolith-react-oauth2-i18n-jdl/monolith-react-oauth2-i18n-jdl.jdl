@@ -11,6 +11,7 @@ application {
     applicationType monolith,
     baseName HealthPoints
     packageName com.okta.developer,
+    serverPort 8081,
     authenticationType oauth2,
     prodDatabaseType postgresql,
     buildTool gradle,

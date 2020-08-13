@@ -33,6 +33,7 @@ function commonAssertion() {
     assert.file('src/main/docker/mysql.yml');
     assert.noFile('src/main/docker/mssql.yml');
     assert.noFile('src/main/docker/postgresql.yml');
+    assert.noFile('src/main/resources/i18n/messages_en.properties');
 }
 
 const commonPrompt = {

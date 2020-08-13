@@ -11,10 +11,8 @@ function getPreCondition() {
             skipInstall: true,
             skipServer: true,
             blueprints: 'nodejs',
-            skipChecks: true
-        })
-        .withArguments({
-            languages: ''
+            skipChecks: true,
+            'skip-i18n': true
         })
         .withGenerators([
             [
