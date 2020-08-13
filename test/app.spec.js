@@ -128,7 +128,6 @@ describe('Main app generator of nodejs JHipster blueprint', () => {
 
             // assertion for i18n enabled for it
             assert.file(i18nHomePath);
-            assert.fileContent(i18nHomePath, 'Benvenuto, Node Hipster Official Blueprint!');
         });
     });
 });
