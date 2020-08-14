@@ -18,6 +18,13 @@ module.exports = class extends ClientGenerator {
         this.configOptions = jhContext.configOptions || {};
         // This sets up options for this sub generator and is being reused from JHipster
         jhContext.setupClientOptions(this, jhContext);
+
+        // This adds support for a `--skip-i18n` flag for unit test
+        this.option('skip-i18n', {
+            desc: 'skip internationalization',
+            type: Boolean,
+            defaults: false
+        });
     }
 
     get initializing() {
@@ -43,11 +50,11 @@ module.exports = class extends ClientGenerator {
 
     get default() {
         const defaultPhaseFromJHipster = super._default();
-        const defaultNodeClientPhaseSteps = {
-            // disable languages
-            composeLanguages() {}
-        };
-        return Object.assign(defaultPhaseFromJHipster, defaultNodeClientPhaseSteps);
+        // disable i18n
+        if (this.options['skip-i18n']) {
+            defaultPhaseFromJHipster.composeLanguages = {};
+        }
+        return defaultPhaseFromJHipster;
     }
 
     get writing() {

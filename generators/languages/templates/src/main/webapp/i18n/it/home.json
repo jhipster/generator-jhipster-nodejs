@@ -1,0 +1,19 @@
+{
+    "home": {
+        "title": "Benvenuto, Node Hipster Official Blueprint!",
+        "subtitle": "Questa è la tua home page",
+        "logged": {
+            "message": "Autenticato come \"{{username}}\"."
+        },
+        "question": "In caso di domande su JHipster o su NHipster:",
+        "link": {
+            "homepage": "Homepage JHipster",
+            "stackoverflow": "JHipster su Stack Overflow",
+            "bugtracker": "NHipster tracciamento errori",
+            "chat": "Chat room pubblica di NHipster",
+            "follow": "segui @jhipster su Twitter"
+        },
+        "like": "Se ti piace NHipster, non dimenticarti di darci una stella su",
+        "github": "GitHub"
+    }
+}

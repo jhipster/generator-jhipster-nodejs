@@ -13,17 +13,20 @@ jobs:
                 os: [ubuntu-latest]
                 app-type:
                     - monolith-react-oauth2-dev
-                    - monolith-angular-jwt-dev
-                    - monolith-react-jwt-sql-jdl
-                    - microservice-oauth2-sql-jdl
+                    - monolith-angular-jwt-i18n-dev
+                    - monolith-react-jwt-jdl
+                    - monolith-react-oauth2-i18n-jdl
+                    - microservice-oauth2-jdl
                 include:
                     - app-type: monolith-react-oauth2-dev
                       arg: 'no'
-                    - app-type: monolith-angular-jwt-dev
+                    - app-type: monolith-angular-jwt-i18n-dev
                       arg: 'no'
-                    - app-type: monolith-react-jwt-sql-jdl
+                    - app-type: monolith-react-jwt-jdl
                       arg: import-jdl
-                    - app-type: microservice-oauth2-sql-jdl
+                    - app-type: monolith-react-oauth2-i18n-jdl
+                      arg: import-jdl
+                    - app-type: microservice-oauth2-jdl
                       arg: post-import-jdl
         env:
             JHI_APP: ${{ matrix.app-type }}

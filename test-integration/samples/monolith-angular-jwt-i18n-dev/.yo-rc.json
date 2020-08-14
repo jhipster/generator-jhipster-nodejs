@@ -23,8 +23,7 @@
         "clientFramework": "angularX",
         "clientTheme": "none",
         "clientThemeVariant": "",
-        "jwtSecretKey": "OWUzYzljOTgxNWFjNjFmZmFmNmU1ZGU0ODAyYzIxMjVlMzkzODJlMzYyMmE4NDMxYzRmMTQzZDFkYmExNTFmMDQ4NTlmZjc2NWQzY2M3Yjg0NjQ2ODFiNzBhMTEwMTAyMDQ2NzljNmQ1MDFiMmU4N2U3YmE0ZmJjNmM4ZDE3ZmM=",
-        "enableTranslation": false
+        "jwtSecretKey": "OWUzYzljOTgxNWFjNjFmZmFmNmU1ZGU0ODAyYzIxMjVlMzkzODJlMzYyMmE4NDMxYzRmMTQzZDFkYmExNTFmMDQ4NTlmZjc2NWQzY2M3Yjg0NjQ2ODFiNzBhMTEwMTAyMDQ2NzljNmQ1MDFiMmU4N2U3YmE0ZmJjNmM4ZDE3ZmM="
     },
     "generator-jhipster": {
         "applicationType": "monolith",
@@ -33,7 +32,9 @@
         "jhiPrefix": "jhi",
         "entitySuffix": "",
         "dtoSuffix": "DTO",
-        "enableTranslation": false,
+        "enableTranslation": true,
+        "nativeLanguage": "en",
+        "languages": ["en", "fr"],
         "clientPackageManager": "npm",
         "blueprint": "generator-jhipster-nodejs"
     }

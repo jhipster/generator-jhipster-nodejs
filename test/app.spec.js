@@ -5,6 +5,7 @@ const helpers = require('yeoman-test');
 const constants = require('../generators/generator-nodejs-constants');
 
 const SERVER_NODEJS_DIR = `${constants.SERVER_NODEJS_SRC_DIR}/`;
+const i18nHomePath = 'src/main/webapp/i18n/it/home.json';
 
 const prompt = {
     baseName: 'sampleMysql',
@@ -32,7 +33,8 @@ describe('Main app generator of nodejs JHipster blueprint', () => {
                     'from-cli': true,
                     skipInstall: true,
                     blueprints: 'nodejs',
-                    skipChecks: true
+                    skipChecks: true,
+                    'skip-i18n': true
                 })
                 .withGenerators([
                     [
@@ -51,6 +53,10 @@ describe('Main app generator of nodejs JHipster blueprint', () => {
             commonAssertions();
             // assertion for server subgenerator
             assert.file(`${SERVER_NODEJS_DIR}src/app.module.ts`);
+
+            // assertion for i18n disabled for it
+            assert.noFile('src/main/resources/i18n/messages_it.properties');
+            assert.noFile(i18nHomePath);
         });
     });
 
@@ -65,7 +71,8 @@ describe('Main app generator of nodejs JHipster blueprint', () => {
                     skipServer: true,
                     db: 'sql',
                     auth: 'jwt',
-                    skipChecks: true
+                    skipChecks: true,
+                    'skip-i18n': true
                 })
                 .withGenerators([
                     [
@@ -82,6 +89,9 @@ describe('Main app generator of nodejs JHipster blueprint', () => {
 
         it('app exists without server', () => {
             commonAssertions();
+            // assertion for i18n disabled for it
+            assert.noFile('src/main/resources/i18n/messages_en.properties');
+            assert.noFile(i18nHomePath);
         });
     });
 
@@ -115,6 +125,9 @@ describe('Main app generator of nodejs JHipster blueprint', () => {
             commonAssertions();
             // assertion for server subgenerator
             assert.file(`${SERVER_NODEJS_DIR}src/app.module.ts`);
+
+            // assertion for i18n enabled for it
+            assert.file(i18nHomePath);
         });
     });
 });
