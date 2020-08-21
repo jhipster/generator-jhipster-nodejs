@@ -67,11 +67,11 @@ export default class <%= asEntity(entityClass) %> extends BaseEntity  {
         <%_ if (fields[idx].fieldIsEnum) { _%>
     @Column({type: 'simple-enum', name: '<%-fieldNameAsDatabaseColumn %>', enum: <%= fieldType %>})
         <%_ } else if (['Instant', 'ZonedDateTime', 'LocalDate'].includes(fieldType)) { _%>
-    @Column({<%_ if(fieldColumnType) { _%> type: '<%-fieldColumnType%>' ,<%_ }_%> name: "<%-fieldNameAsDatabaseColumn %>"<% if (required) { %>, nullable: false<% } %><% if (unique) { %>, unique: true<% } %>})
+    @Column({<%_ if(fieldColumnType) { _%> type: '<%-fieldColumnType%>' ,<%_ }_%> name: "<%-fieldNameAsDatabaseColumn %>"<% if (!required) { %>, nullable: true<% } %><% if (unique) { %>, unique: true<% } %>})
         <%_ } else if (fieldType === 'BigDecimal') { _%>
-    @Column({<%_ if(fieldColumnType) { _%> type: '<%-fieldColumnType%>' ,<%_ }_%> name: "<%-fieldNameAsDatabaseColumn %>", precision : 10, scale : 2<% if (required) { %>, nullable: false<% } %><% if (unique) { %>, unique: true<% } %>})
+    @Column({<%_ if(fieldColumnType) { _%> type: '<%-fieldColumnType%>' ,<%_ }_%> name: "<%-fieldNameAsDatabaseColumn %>", precision : 10, scale : 2<% if (!required) { %>, nullable: true<% } %><% if (unique) { %>, unique: true<% } %>})
         <%_ } else { _%>
-    @Column({<%_ if(fieldColumnType) { _%> type: '<%-fieldColumnType%>' ,<%_ }_%>  name: "<%-fieldNameAsDatabaseColumn %>"<% if (fieldValidate === true) { %><% if (fieldValidateRules.includes('maxlength')) { %>, length: <%= fieldValidateRulesMaxlength %><% } %><% if (required) { %>, nullable: false<% } %><% if (unique) { %>, unique: true<% } %><% } %>})
+    @Column({<%_ if(fieldColumnType) { _%> type: '<%-fieldColumnType%>' ,<%_ }_%>  name: "<%-fieldNameAsDatabaseColumn %>"<% if (fieldValidate === true) { %><% if (fieldValidateRules.includes('maxlength')) { %>, length: <%= fieldValidateRulesMaxlength %><% } %> <% } %><% if (!required) { %>, nullable: true<% } %><% if (unique) { %>, unique: true<% }%>})
         <%_ } _%>
         <%_ if (fields[idx].fieldIsEnum) { _%>
     <%= fieldName %>: <%= fieldType %>;
@@ -80,7 +80,7 @@ export default class <%= asEntity(entityClass) %> extends BaseEntity  {
         <%_ } _%>
 
     <%_ if ((fieldType === 'byte[]' || fieldType === 'ByteBuffer') && fieldTypeBlobContent !== 'text') { _%>
-    @Column({name: '<%-fieldNameAsDatabaseColumn %>_content_type'})
+    @Column({name: '<%-fieldNameAsDatabaseColumn %>_content_type'<% if (!required) { %>, nullable: true<% } %>})
     <%= fieldName %>ContentType: string;
     <%_ }
     } _%>
