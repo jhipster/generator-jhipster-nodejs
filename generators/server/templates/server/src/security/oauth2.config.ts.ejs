@@ -8,7 +8,6 @@ const dockerIssuerUri = process.env.NODE_CLIENT_PROVIDER_OIDC_ISSUER_URI || issu
 let oauth2Config = {
     authorizationURL: `${issuerUri}/protocol/openid-connect/auth`,
     tokenURL: `${dockerIssuerUri}/protocol/openid-connect/token`,
-    userInfoUrl: `${dockerIssuerUri}/protocol/openid-connect/userinfo`,
     logoutUrl: `${issuerUri}/protocol/openid-connect/logout`,
     callbackURL: callback,
     isOktaProvider: false,
@@ -18,7 +17,6 @@ if (issuerUri.includes('okta')) {
     oauth2Config = {
         authorizationURL: `${issuerUri}/v1/authorize`,
         tokenURL: `${issuerUri}/v1/token`,
-        userInfoUrl: `${issuerUri}/v1/userinfo`,
         logoutUrl: `${issuerUri}/v1/logout`,
         callbackURL: callback,
         isOktaProvider: true,
