@@ -11,6 +11,7 @@
 
 # [1.2.0](https://github.com/jhipster/generator-jhipster-nodejs/tree/v1.2.0)
 
+-   Unauthorized error in jwt authentication when run client and server separately [issue #124](https://github.com/jhipster/generator-jhipster-nodejs/issues/124)
 -   Blob types not saved [issue #129](https://github.com/jhipster/generator-jhipster-nodejs/issues/129)
 -   Unexpected logs when creating a new app using import-jdl [issue #159](https://github.com/jhipster/generator-jhipster-nodejs/issues/159)
 -   Language i18n for angular home page translation NHipster [issue #45](https://github.com/jhipster/generator-jhipster-nodejs/issues/45)
