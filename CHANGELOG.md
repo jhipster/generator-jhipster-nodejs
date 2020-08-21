@@ -11,6 +11,7 @@
 
 # [1.2.0](https://github.com/jhipster/generator-jhipster-nodejs/tree/v1.2.0)
 
+-   Support docker-compose app.yml stack with keycloack oauth2 [issue #113](https://github.com/jhipster/generator-jhipster-nodejs/issues/113)
 -   Unauthorized error in jwt authentication when run client and server separately [issue #124](https://github.com/jhipster/generator-jhipster-nodejs/issues/124)
 -   Blob types not saved [issue #129](https://github.com/jhipster/generator-jhipster-nodejs/issues/129)
 -   Unexpected logs when creating a new app using import-jdl [issue #159](https://github.com/jhipster/generator-jhipster-nodejs/issues/159)
