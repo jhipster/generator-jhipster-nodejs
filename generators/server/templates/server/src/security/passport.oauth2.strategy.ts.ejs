@@ -33,6 +33,8 @@ export class Oauth2Strategy extends PassportStrategy(Strategy) {
     });
   }
 
+  // replace the get request with a decode jwt to retrieve info
+  // https://developer.aliyun.com/mirror/npm/package/jwt-decode
   async userProfile(accessToken: any, done: any): Promise<any> {
     // roles with id http://dev-281272.okta.com/api/v1/users/<id>/roles
     // id in http://dev-281272.okta.com/api/v1/users/me
