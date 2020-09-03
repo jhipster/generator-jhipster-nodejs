@@ -47,10 +47,10 @@ To contribute for the next featues, fork the repo and open a pull request regard
 -   [x] Added service generator (jhipster spring-service _name_ command)
 -   [x] OAuth2 feature for Keycloack
 -   [x] Encrypt user password in db
+-   [x] Languages subgenerator support i18n: translate home page for NHipster and remove spring boot resources message
 
 ## To DO for next release
 
--   [ ] Languages subgenerator support i18n: translate home page for NHipster and remove spring boot resources message
 -   [ ] DTOs based rest api
 -   [ ] Validation
 -   [ ] Export json/yaml for swagger to integrate with jhipster gateway
