@@ -126,7 +126,7 @@ export default class <%= asEntity(entityClass) %> extends BaseEntity  {
     <%= relationshipFieldNamePlural %>: <%= relationship.otherEntityAngularName %>[];
 
     <%_ } else { _%>
-    @OneToOne(type => <%= relationship.otherEntityAngularName %>  <%_ if (isUserRelationship === false) { _%>, other => other.<%= otherEntityRelationshipName%> <%_ } _%>)
+    @OneToOne(type => <%= relationship.otherEntityAngularName %>)
     <%_ if (ownerSide === true) { _%>@JoinColumn()<%_ } _%>
     <%= relationshipFieldName %>: <%= relationship.otherEntityAngularName %>;
 
