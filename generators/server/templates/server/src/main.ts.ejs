@@ -86,12 +86,13 @@ function registerAsEurekaService(): void {
         instanceId: config.get('eureka.instance.instanceId'),
         hostName: config.get('ipAddress') || 'localhost',
         ipAddr: config.get('ipAddress') || '127.0.0.1',
+        status: `UP`,
         port: {
           '$': port,
           '@enabled': 'true',
         },
         vipAddress: config.get('ipAddress') || 'localhost',
-        statusPageUrl: `http://${config.get('ipAddress')}:${port}/`,
+        homePageUrl: `http://${config.get('ipAddress')}:${port}/`,
         dataCenterInfo: {
           '@class': 'com.netflix.appinfo.InstanceInfo$DefaultDataCenterInfo',
           'name': 'MyOwn',
