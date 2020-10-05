@@ -12,6 +12,8 @@
 
 # [1.3.0](https://github.com/jhipster/generator-jhipster-nodejs/tree/v1.3.0)
 
+-   TS2304: Cannot find name 'Cheerio' in React app [issue #167](https://github.com/jhipster/generator-jhipster-nodejs/issues/167)
+-   OneToOne relationship server error: Missing property [issue #168](https://github.com/jhipster/generator-jhipster-nodejs/issues/168)
 
 # [1.2.0](https://github.com/jhipster/generator-jhipster-nodejs/tree/v1.2.0)
 
