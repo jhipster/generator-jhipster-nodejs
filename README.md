@@ -115,6 +115,30 @@ This is a blueprint that is runnable by:
 jhipster --blueprints nodejs
 ```
 
+However, it also ships with an `nhipster` CLI that you can use as a shortcut.
+
+✅ General App generation
+
+-   `nhipster`
+
+✅ Controller generation
+
+-   `nhipster spring-controller <controller-name>`
+
+✅ Service generation
+
+-   `nhipster spring-service <service-name>`
+
+✅ Entity generation
+
+-   `nhipster entity <entity-name>`
+
+✅ JDL Entity model support generation
+
+-   `nhipster import-jdl my_file.jdl`
+
+For the last, in the **test-integration/samples/FOLDER_NAME-jdl** there are some examples of jdl models.
+
 ## Using Docker
 
 Download the Dockerfile:
@@ -149,30 +173,6 @@ Run and attach interactive shell to the generator docker container to work from 
 ```bash
 docker run -it --rm -v $PWD:/home/jhipster/app jhipster-generator-nodejs /bin/bash
 ```
-
-However, it also ships with an `nhipster` CLI that you can use as a shortcut.
-
-✅ General App generation
-
--   `nhipster`
-
-✅ Controller generation
-
--   `nhipster spring-controller <controller-name>`
-
-✅ Service generation
-
--   `nhipster spring-service <service-name>`
-
-✅ Entity generation
-
--   `nhipster entity <entity-name>`
-
-✅ JDL Entity model support generation
-
--   `nhipster import-jdl my_file.jdl`
-
-For the last, in the **test-integration/samples/FOLDER_NAME-jdl** there are some examples of jdl models.
 
 ## 🛠 Steps to develop a generator feature and test it
 
