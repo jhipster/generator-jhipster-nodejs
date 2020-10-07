@@ -30,6 +30,7 @@ If applicable, add screenshots to help explain your problem.
 -   Version [e.g. 22]
 
 **NHipster configuration**
+
 <!--
 To provide all information we need, you should run `jhipster info` in the project root folder, and
 copy/paste the result here.
