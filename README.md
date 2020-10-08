@@ -141,7 +141,7 @@ For the last, in the **test-integration/samples/FOLDER_NAME-jdl** there are some
 
 ## Using Docker
 
-Download the Dockerfile:
+1. Download the Dockerfile:
 
 ```bash
 mkdir docker
@@ -149,26 +149,28 @@ cd docker
 wget https://github.com/jhipster/generator-jhipster-nodejs/raw/master/docker/Dockerfile
 ```
 
-Build the Docker images:
+2. Build the Docker images:
 
 ```bash
 docker build -t jhipster-generator-nodejs:latest .
 ```
 
-Make a folder where you want to generate the Service:
+3. Make a folder where you want to generate the Application:
 
 ```bash
-mkdir service
-cd service
+mkdir app
+cd app
 ```
 
-Run the generator from image to generate service:
+4. Run the generator image in one of the two following options.
+
+-   Run the generator from image to generate service:
 
 ```bash
 docker run -it --rm -v $PWD:/home/jhipster/app jhipster-generator-nodejs
 ```
 
-Run and attach interactive shell to the generator docker container to work from inside the running container:
+-   Run and attach interactive shell to the generator docker container to work from inside the running container:
 
 ```bash
 docker run -it --rm -v $PWD:/home/jhipster/app jhipster-generator-nodejs /bin/bash
