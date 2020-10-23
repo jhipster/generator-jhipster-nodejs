@@ -12,6 +12,7 @@
 
 # [1.3.0](https://github.com/jhipster/generator-jhipster-nodejs/tree/v1.3.0)
 
+-   Configure swagger ui for oauth2 [issue #67](https://github.com/jhipster/generator-jhipster-nodejs/issues/67)
 -   feat: build and run from Docker Support [issue #172](https://github.com/jhipster/generator-jhipster-nodejs/issues/172)
 -   Node JS microservice is not registered properly in Jhipster Registry [issue #103](https://github.com/jhipster/generator-jhipster-nodejs/issues/103)
 -   TS2304: Cannot find name 'Cheerio' in React app [issue #167](https://github.com/jhipster/generator-jhipster-nodejs/issues/167)
