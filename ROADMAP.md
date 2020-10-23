@@ -50,7 +50,7 @@ To contribute for the next featues, fork the repo and open a pull request regard
 
 ## To DO for next release
 
--   [ ] Mongo db support
+-   [ ] Add MongoDB support
 -   [ ] DTOs based rest api
 -   [ ] Validation
 -   [ ] Export json/yaml for swagger to integrate with jhipster gateway
