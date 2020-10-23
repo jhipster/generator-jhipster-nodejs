@@ -4,6 +4,7 @@ import { LoggingInterceptor } from '../../client/interceptors/logging.intercepto
 import { ApiUseTags, ApiResponse, ApiOperation, ApiExcludeEndpoint } from '@nestjs/swagger';
 import { AuthGuard, RolesGuard } from '../../security';
 import { oauth2Config } from '../../security/oauth2.config';
+import { config } from '../../config';
 
 @Controller()
 @UseInterceptors(LoggingInterceptor)
@@ -25,7 +26,11 @@ export class UserOauth2Controller {
     res.session = req.session;
     res.session.user = req.user;
     res.session.idToken = req.idToken;
+    <%_ if (skipClient) { _%>
+    let url = config.get('jhipster.swagger.path');
+    <%_ } else { _%>
     let url = '/';
+    <%_ } _%>
     if (oauth2Config.isOktaProvider) {
         url = req.session.url;
     }

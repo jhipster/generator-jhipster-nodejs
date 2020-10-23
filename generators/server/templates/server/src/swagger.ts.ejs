@@ -7,17 +7,12 @@ export function setupSwagger(app: INestApplication): any {
   const logger: Logger = new Logger('Swagger');
   const swaggerEndpoint = config.get('jhipster.swagger.path');
 
-  <%_ if (authenticationType === 'oauth2') { _%>
-  const issuerUri = config.get('jhipster.security.oauth2.client.provider.oidc.issuer-uri');
-  <%_ } _%>
   const options = new DocumentBuilder()
     .setTitle(config.get('jhipster.swagger.title'))
     .setDescription(config.get('jhipster.swagger.description'))
     .setVersion(config.get('jhipster.swagger.version'))
     <%_ if (authenticationType === 'jwt') { _%>
     .addBearerAuth()
-    <%_ } else if (authenticationType === 'oauth2') { _%>
-    .addOAuth2('accessCode', `${issuerUri}/v1/authorize`, `${issuerUri}/v1/token`, { 'openid profile': 'openid profile' })
     <%_ } _%>
     .build();
   const document = SwaggerModule.createDocument(app, options);

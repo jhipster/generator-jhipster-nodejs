@@ -40,6 +40,13 @@ async function bootstrap(): Promise<void> {
 
   app.use(passport.initialize());
   app.use(passport.session());
+
+  app.use((req: any, res: any, next: any) => {
+    if (req.session.user == null && req.path.indexOf(config.get('jhipster.swagger.path')) === 0) {
+        return res.redirect('/oauth2/authorization/oidc');
+    }
+    next();
+  });
   <%_ } _%>
 
   const staticClientPath = path.join(__dirname, '../dist/classes/static');

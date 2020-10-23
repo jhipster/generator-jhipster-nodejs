@@ -19,7 +19,7 @@ To contribute for the next featues, fork the repo and open a pull request regard
 -   [x] Running microservice or monolith project
 -   [x] Default sqlite support already configured
 -   [x] Import jdl: functional entity-server generator with simple options (no dto, no serviceImpl)
--   [x] Typeorm mappings for both sql and mongodb
+-   [x] Typeorm mappings for sql
 -   [x] Rest API (with headers) compatible with other jhipster implementations
 -   [x] Cloud Configuration client
 -   [x] Eureka client (but there are some issues registering zuul routes in jhipster registry app)
@@ -32,7 +32,6 @@ To contribute for the next featues, fork the repo and open a pull request regard
 -   [x] Entity generator
 -   [x] Automatic config in dev profile sqlite db and in prod another sql db
 -   [x] All user and auth api with jwt integrated in angular ui
--   [x] Replaced mongoProdDatabase question with standard jhipster databaseType and with all db typeORM support
 -   [x] Remove maven with JAVA requirement option
 -   [x] Add package.json when no client
 -   [x] Avoid reinsert seed db in restart app using typeORM migration
@@ -51,6 +50,7 @@ To contribute for the next featues, fork the repo and open a pull request regard
 
 ## To DO for next release
 
+-   [ ] Add MongoDB support
 -   [ ] DTOs based rest api
 -   [ ] Validation
 -   [ ] Export json/yaml for swagger to integrate with jhipster gateway
