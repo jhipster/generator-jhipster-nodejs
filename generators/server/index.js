@@ -120,6 +120,7 @@ module.exports = class extends ServerGenerator {
     get install() {
         const installPhaseFromJHipster = super._install();
         const jhipsterInstallNodeSteps = {
+            /* istanbul ignore next */
             jhipsterNodeServerInstall() {
                 if (this.skipServer) return;
                 const logMsg = `To install your server dependencies manually, run: cd server && ${chalk.yellow.bold(
