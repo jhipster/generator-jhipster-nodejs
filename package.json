@@ -1,6 +1,6 @@
 {
     "name": "generator-jhipster-nodejs",
-    "version": "1.2.0",
+    "version": "1.3.0",
     "description": "A NodeJS blueprint that creates the backend using NodeJS with NestJS framework",
     "keywords": [
         "yeoman-generator",
