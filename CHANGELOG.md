@@ -14,7 +14,7 @@
 # [1.4.0](https://github.com/jhipster/generator-jhipster-nodejs/tree/v1.4.0)
 
 
-# [1.3.0](https://github.com/jhipster/generator-jhipster-nodejs/tree/v1.3.0)
+# [1.3.0](https://github.com/jhipster/generator-jhipster-nodejs/tree/v1.3.0) - 02/11/2020
 
 -   Add npm/yarn install after running the generator for the server side [issue #161](https://github.com/jhipster/generator-jhipster-nodejs/issues/161)
 -   Configure Swagger UI for OAuth 2.0 [issue #67](https://github.com/jhipster/generator-jhipster-nodejs/issues/67)
