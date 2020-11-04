@@ -14,7 +14,7 @@
 # [1.4.0](https://github.com/jhipster/generator-jhipster-nodejs/tree/v1.4.0)
 
 
-# [1.3.0](https://github.com/jhipster/generator-jhipster-nodejs/tree/v1.3.0) - 02/11/2020
+# [1.3.0](https://github.com/jhipster/generator-jhipster-nodejs/tree/v1.3.0) - 02/11/2020 released date
 
 -   Add npm/yarn install after running the generator for the server side [issue #161](https://github.com/jhipster/generator-jhipster-nodejs/issues/161)
 -   Configure Swagger UI for OAuth 2.0 [issue #67](https://github.com/jhipster/generator-jhipster-nodejs/issues/67)
@@ -23,7 +23,7 @@
 -   TS2304: Cannot find name 'Cheerio' in React app [issue #167](https://github.com/jhipster/generator-jhipster-nodejs/issues/167)
 -   OneToOne relationship server error: Missing property [issue #168](https://github.com/jhipster/generator-jhipster-nodejs/issues/168)
 
-# [1.2.0](https://github.com/jhipster/generator-jhipster-nodejs/tree/v1.2.0)
+# [1.2.0](https://github.com/jhipster/generator-jhipster-nodejs/tree/v1.2.0) - 03/09/2020 released date
 
 -   Unexpected authorized access in security jwt with wrong username but correct password [issue #164](https://github.com/jhipster/generator-jhipster-nodejs/issues/164)
 -   Support docker-compose app.yml stack with keycloack oauth2 [issue #113](https://github.com/jhipster/generator-jhipster-nodejs/issues/113)
@@ -36,7 +36,7 @@
 -   Error when fetch list of entities from react client [issue #155](https://github.com/jhipster/generator-jhipster-nodejs/issues/155)
 -   double stitch port on app.yml [issue #157](https://github.com/jhipster/generator-jhipster-nodejs/issues/157)
 
-# [1.1.0](https://github.com/jhipster/generator-jhipster-nodejs/tree/v1.1.0)
+# [1.1.0](https://github.com/jhipster/generator-jhipster-nodejs/tree/v1.1.0) - 13/07/2020 released date
 
 -   Encrypt user passwords on db [issue #53](https://github.com/jhipster/generator-jhipster-nodejs/issues/53)
 -   jest-diff error running "npm run webpack:prod" [issue #149](https://github.com/jhipster/generator-jhipster-nodejs/issues/149)
@@ -45,16 +45,16 @@
 -   Enhancement suggestions list tasks for 1.1.0 version [issue #136](https://github.com/jhipster/generator-jhipster-nodejs/issues/136)
 -   Support enum fields entity generation without giving conflicts in sqlite dev database [issue #74](https://github.com/jhipster/generator-jhipster-nodejs/issues/74)
 
-# [1.0.2](https://github.com/jhipster/generator-jhipster-nodejs/tree/v1.0.2)
+# [1.0.2](https://github.com/jhipster/generator-jhipster-nodejs/tree/v1.0.2) - 27/04/2020 released date
 
 -   Entity not saved with relationship for many-to-one [issue #125](https://github.com/jhipster/generator-jhipster-nodejs/issues/125)
 -   User controller error for old express-serve-static-core [issue #120](https://github.com/jhipster/generator-jhipster-nodejs/issues/120)
 
-# [1.0.1](https://github.com/jhipster/generator-jhipster-nodejs/tree/v1.0.1)
+# [1.0.1](https://github.com/jhipster/generator-jhipster-nodejs/tree/v1.0.1) - 26/03/2020 released date
 
 -   Installation on Windows can not copy file with prefix "." [issue #118](https://github.com/jhipster/generator-jhipster-nodejs/issues/118)
 
-# [1.0.0](https://github.com/jhipster/generator-jhipster-nodejs/tree/v1.0.0)
+# [1.0.0](https://github.com/jhipster/generator-jhipster-nodejs/tree/v1.0.0) - 24/03/2020 released date
 
 -   Copying node modules - support webpack bundle [issue #100](https://github.com/jhipster/generator-jhipster-nodejs/issues/100)
 -   ManyToOne relationship error generation [issue #106](https://github.com/jhipster/generator-jhipster-nodejs/issues/106)
@@ -63,14 +63,14 @@
 -   Add Sonar configuration to analyze and publish generated project for backend [issue #87](https://github.com/jhipster/generator-jhipster-nodejs/issues/87)
 -   Update with last jhipster version and add blueprint as devDependency project [issue #111](https://github.com/jhipster/generator-jhipster-nodejs/issues/111)
 
-# [1.0.0-beta.3](https://github.com/jhipster/generator-jhipster-nodejs/tree/v1.0.0-beta.3)
+# [1.0.0-beta.3](https://github.com/jhipster/generator-jhipster-nodejs/tree/v1.0.0-beta.3) - 4/02/2020 released date
 
 -   Add e2e tests for generated server project [issue #91](https://github.com/jhipster/generator-jhipster-nodejs/issues/91)
 -   Problems with running prod build [issue #99](https://github.com/jhipster/generator-jhipster-nodejs/issues/99)
 -   Provide service generator [issue #94](https://github.com/jhipster/generator-jhipster-nodejs/issues/94)
 -   Check controller generator with lint and tests [issue #92](https://github.com/jhipster/generator-jhipster-nodejs/issues/92)
 
-# [1.0.0-beta.2](https://github.com/jhipster/generator-jhipster-nodejs/tree/v1.0.0-beta.2)
+# [1.0.0-beta.2](https://github.com/jhipster/generator-jhipster-nodejs/tree/v1.0.0-beta.2) - 11/01/2020 released date
 
 -   Exclude server TS files from client lint and test increasing quality on the generated [issue #83](https://github.com/jhipster/generator-jhipster-nodejs/issues/83)
 -   Consider migrating from TSLint to ESLint for the generated part [issue #55](https://github.com/jhipster/generator-jhipster-nodejs/issues/55)
@@ -81,12 +81,12 @@
 -   Disable testFramework and internationalization prompt questions with main app customization [issue #60](https://github.com/jhipster/generator-jhipster-nodejs/issues/60)
 -   Provide test integration for quality in travis [issue #77](https://github.com/jhipster/generator-jhipster-nodejs/issues/77)
 
-# [1.0.0-beta.1](https://github.com/jhipster/generator-jhipster-nodejs/tree/v1.0.0-beta.1)
+# [1.0.0-beta.1](https://github.com/jhipster/generator-jhipster-nodejs/tree/v1.0.0-beta.1) - 11/12/2019 released date
 
 -   Support okta oauth2 security feature [issue #52](https://github.com/jhipster/generator-jhipster-nodejs/issues/52)
 -   Bug postgres choose generated in typeorm as postegresql [issue #70](https://github.com/jhipster/generator-jhipster-nodejs/issues/70)
 
-# [1.0.0-alpha.3](https://github.com/jhipster/generator-jhipster-nodejs/tree/v1.0.0-alpha.3)
+# [1.0.0-alpha.3](https://github.com/jhipster/generator-jhipster-nodejs/tree/v1.0.0-alpha.3) - 11/10/2019 released date
 
 -   Enable TypeOrm migration schema and data for dev and prod [issue #36](https://github.com/jhipster/generator-jhipster-nodejs/issues/36)
 -   Remove maven with java optional requirement [issue #44](https://github.com/jhipster/generator-jhipster-nodejs/issues/44)
@@ -94,7 +94,7 @@
 -   Resolved bug of prod database not added from jdl [issue #61](https://github.com/jhipster/generator-jhipster-nodejs/issues/61)
 -   Support full generation with jdl for angular/react client and test CRUD entity operations with dev and prod databases [issue #62](https://github.com/jhipster/generator-jhipster-nodejs/issues/62)
 
-# [1.0.0-alpha.2](https://github.com/jhipster/generator-jhipster-nodejs/tree/v1.0.0-alpha.2)
+# [1.0.0-alpha.2](https://github.com/jhipster/generator-jhipster-nodejs/tree/v1.0.0-alpha.2) - 19/09/2019 released date
 
 -   Adding generic base scaffolder from the official blueprint generator
 -   Running microservice or monolith project with default sqlite db
