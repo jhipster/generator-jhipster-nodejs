@@ -64,6 +64,20 @@ launchCurl
 
 
 #-------------------------------------------------------------------------------
+# Run client e2e tests
+#-------------------------------------------------------------------------------
+
+if [ "$1" != "microservice-oauth2-jdl" ]; then
+    echo "*** run protractor e2e test in client for : "$1
+    cd .. && node node_modules/webdriver-manager/bin/webdriver-manager update --gecko false && npm run e2e
+        if [ $? -ne 0 ]; then
+            echo "${RED}FAILED PROTRACTOR CLIENT E2E TEST COMMAND"
+            exit 1
+        fi
+fi
+
+
+#-------------------------------------------------------------------------------
 # Kill app
 #-------------------------------------------------------------------------------
 echo "*** kill app : "$1
