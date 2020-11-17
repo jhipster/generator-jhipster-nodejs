@@ -13,7 +13,7 @@ test/temp/
 /.jhipster
 yarn.lock
 yarn-error.log
-!package-lock.json
+package-lock.json
 *.sw?
 /test/templates/import-jdl/*.png
 .git
