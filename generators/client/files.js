@@ -59,7 +59,7 @@ const clientFiles = {
             ]
         }
     ],
-    testMain: [
+    testE2EWithMain: [
         {
             condition: generator => generator.clientFramework === 'react',
             templates: [
@@ -67,6 +67,19 @@ const clientFiles = {
                     file: 'react/shared/layout/header/header.spec.tsx',
                     method: 'processJsx',
                     renameTo: () => `${TEST_DIR}spec/app/shared/layout/header/header.spec.tsx`
+                },
+                {
+                    file: 'react/test/protractor.conf.js',
+                    renameTo: () => `${TEST_DIR}protractor.conf.js`
+                }
+            ]
+        },
+        {
+            condition: generator => generator.clientFramework === 'angularX',
+            templates: [
+                {
+                    file: 'angular/test/protractor.conf.js',
+                    renameTo: () => `${TEST_DIR}protractor.conf.js`
                 }
             ]
         }
