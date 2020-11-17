@@ -178,7 +178,7 @@
     "postinstall": "node node_modules/protractor/bin/webdriver-manager update --gecko false",
     <%_ } _%>
     <%_ if (!skipServer) { _%>
-    "postInstall": "cd server && npm run lint:fix",
+    "preinstall": "cd server && npm run lint:fix",
     <%_ } _%>
     "start": "<%= clientPackageManager %> run webpack:dev",
     <%_ if (skipServer) { _%>

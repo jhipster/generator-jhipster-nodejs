@@ -1,5 +1,7 @@
 name: Test Integration
 on: [push, pull_request]
+env:
+    JHI_E2E_HEADLESS: true
 jobs:
     applications:
         name: ${{ matrix.app-type }}
