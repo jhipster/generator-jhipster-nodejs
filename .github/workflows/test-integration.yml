@@ -39,6 +39,8 @@ jobs:
                   node-version: ${{ matrix.node-version }}
             - name: git history
               run: git --no-pager log -n 10 --graph --pretty='%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue) <%an>%Creset' --abbrev-commit
+            - name: update google chrome
+              run: sudo apt-get update && sudo apt-get --only-upgrade install google-chrome-stable && google-chrome --version
             - name: PREPARE jhipster env
               run: sudo sh test-integration/00-install-all-jhipster.sh
             - name: 'GENERATE NHipster app'
