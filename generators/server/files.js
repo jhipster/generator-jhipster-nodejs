@@ -91,7 +91,8 @@ const serverFiles = {
                 'src/web/rest/user.jwt.controller.ts',
                 'src/security/passport.jwt.strategy.ts',
                 'src/security/payload.interface.ts',
-                'src/service/dto/user-login.dto.ts'
+                'src/service/dto/user-login.dto.ts',
+                'src/service/dto/password-change.dto.ts'
             ]
         }
     ],

@@ -31,7 +31,6 @@ jobs:
         env:
             JHI_APP: ${{ matrix.app-type }}
             JHI_ARG: ${{ matrix.arg }}
-            
 
         steps:
             - uses: actions/checkout@v1
