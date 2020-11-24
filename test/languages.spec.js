@@ -36,7 +36,7 @@ describe('Subgenerator languages of nodejs JHipster blueprint', () => {
             assert.noFile('src/main/resources/i18n/messages_it.properties');
             assert.noFile('src/main/resources/i18n/messages_es.properties');
 
-            assert.fileContent(i18nHomePath, 'Benvenuto, Node Hipster Official Blueprint!');
+            assert.fileContent(i18nHomePath, 'Benvenuto, Node Official Blueprint di JHipster!');
         });
     });
 });

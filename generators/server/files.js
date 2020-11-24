@@ -13,6 +13,7 @@ const serverFiles = {
             templates: [
                 'src/web/rest/user.controller.ts',
                 'src/web/rest/account.controller.ts',
+                'src/service/dto/password-change.dto.ts',
                 'src/web/rest/auth.controller.ts',
                 'src/web/rest/management.controller.ts',
                 'src/repository/user.repository.ts',
@@ -91,8 +92,7 @@ const serverFiles = {
                 'src/web/rest/user.jwt.controller.ts',
                 'src/security/passport.jwt.strategy.ts',
                 'src/security/payload.interface.ts',
-                'src/service/dto/user-login.dto.ts',
-                'src/service/dto/password-change.dto.ts'
+                'src/service/dto/user-login.dto.ts'
             ]
         }
     ],

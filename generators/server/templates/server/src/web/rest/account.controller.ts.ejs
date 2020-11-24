@@ -69,9 +69,10 @@ export class AccountController {
   @ApiResponse({
     status: 201,
     description: 'user info updated',
-    type: User
+    type: User,
   })
   saveAccount(@Req() req: Request, @Body() user: User): any {
+    return;
   }
 
   @Post('/account/change-password')
@@ -79,9 +80,10 @@ export class AccountController {
   @ApiResponse({
     status: 201,
     description: 'user password changed',
-    type: PasswordChangeDTO
+    type: PasswordChangeDTO,
   })
   changePassword(@Req() req: Request, @Body() passwordChange: PasswordChangeDTO): any {
+    return;
   }
 
   @Post('/account/reset-password/init')

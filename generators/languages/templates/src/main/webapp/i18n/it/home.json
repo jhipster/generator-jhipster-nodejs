@@ -1,6 +1,6 @@
 {
     "home": {
-        "title": "Benvenuto, Node Hipster Official Blueprint!",
+        "title": "Benvenuto, Node Official Blueprint di JHipster!",
         "subtitle": "Questa è la tua home page",
         "logged": {
             "message": "Autenticato come \"{{username}}\"."

@@ -175,7 +175,7 @@
     "clean-www": "rimraf <%= DIST_DIR %>app/{src,<%= BUILD_DIR %>}",
     <%_ if (protractorTests) { _%>
     "e2e": "protractor <%= TEST_SRC_DIR %>protractor.conf.js",
-    "postinstall": "node node_modules/protractor/bin/webdriver-manager update --gecko false",
+    "postinstall": "node node_modules/protractor/bin/webdriver-manager update --gecko false --versions.chrome 86.0.4240.198",
     <%_ } _%>
     <%_ if (!skipServer) { _%>
     "preinstall": "cd server && npm run lint:fix",
