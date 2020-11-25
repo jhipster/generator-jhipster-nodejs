@@ -5,7 +5,9 @@ import { AppModule } from './app.module';
 import { setupSwagger } from './swagger';
 import { config } from './config';
 import { Logger, ValidationPipe, BadRequestException } from '@nestjs/common';
+<%_ if (!skipClient) { _%>
 import * as fs from 'fs';
+<%_ } _%>
 <%_ if (authenticationType === 'oauth2') { _%>
 import passport = require('passport');
 import session = require('express-session');

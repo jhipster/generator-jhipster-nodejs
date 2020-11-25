@@ -4,6 +4,10 @@ set -e
 
 RED='\033[0;31m'
 
+
+#-------------------------------------------------------------------------------
+# Define functions
+#-------------------------------------------------------------------------------
 launchCurl() {
     if [ "$2" = "build" ]; then
       sleep 10
@@ -71,7 +75,7 @@ echo "*** changed directory in : test-integration/samples/"$1
 # Run docker keycloak for oauth2 e2e tests
 #-------------------------------------------------------------------------------
 
-if [ "$1" != "microservice-oauth2-jdl" ] && [  "$2" = "run" ] &&  [ "$1" = *"oauth2"* ]; then
+if  [ "$2" = "oauth2" ]; then
     echo "*** run docker compose keycloak"
     docker-compose -f src/main/docker/keycloak.yml up -d
 fi
@@ -99,8 +103,8 @@ launchCurl
 # Run client e2e tests
 #-------------------------------------------------------------------------------
 
-if [ "$1" != "microservice-oauth2-jdl" ] && [  "$2" = "run" ]; then
-    if [ "$1" = *"oauth2"* ]; then
+if [ "$2" = "oauth2" ] || [  "$2" = "jwt" ]; then
+    if [ "$2" = "oauth2" ]; then
     echo "*** waiting keycloak up running"
     curlKeycloak
     fi
@@ -115,7 +119,7 @@ fi
 #-------------------------------------------------------------------------------
 # Kill keycloak
 #-------------------------------------------------------------------------------
-if [ "$1" != "microservice-oauth2-jdl" ] && [  "$2" = "run" ] &&  [ "$1" = *"oauth2"* ]; then
+if [ "$2" = "oauth2" ]; then
     echo "*** kill docker compose keycloak"
     docker-compose -f src/main/docker/keycloak.yml down
 fi

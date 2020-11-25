@@ -2,12 +2,12 @@ import { <%_ if (authenticationType === 'jwt') { _%> Body, Param, Post, Res, Use
 <%_ if (authenticationType === 'jwt') { _%>
 import { Response, Request } from 'express';
 import { AuthGuard, RolesGuard } from '../../security';
+import { PasswordChangeDTO } from '../../service/dto/password-change.dto';
 <%_ } _%>
 import { User } from '../../domain/user.entity';
 import { LoggingInterceptor } from '../../client/interceptors/logging.interceptor';
 import {<%_ if (authenticationType === 'jwt') { _%> ApiBearerAuth, <%_ } _%> ApiUseTags, ApiResponse, ApiOperation } from '@nestjs/swagger';
 import { AuthService } from '../../service/auth.service';
-import { PasswordChangeDTO } from '../../service/dto/password-change.dto';
 
 @Controller('api')
 @UseInterceptors(LoggingInterceptor)
@@ -75,6 +75,7 @@ export class AccountController {
     return;
   }
 
+  <%_ if (authenticationType === 'jwt') { _%>
   @Post('/account/change-password')
   @ApiOperation({ title: 'Change current password' })
   @ApiResponse({
@@ -83,13 +84,10 @@ export class AccountController {
     type: PasswordChangeDTO,
   })
   async changePassword(@Req() req: Request, @Body() passwordChange: PasswordChangeDTO): Promise<any> {
-  <%_ if (authenticationType === 'jwt') { _%>
     const user: any = req.user;
     return await this.authService.changePassword(user.login, passwordChange.currentPassword, passwordChange.newPassword) ;
-  <%_ } else { _%>
-    return;
-  <%_ } _%>
   }
+  <%_ } _%>
 
   @Post('/account/reset-password/init')
   @ApiOperation({ title: 'Send an email to reset the password of the user' })

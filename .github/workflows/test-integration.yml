@@ -19,18 +19,24 @@ jobs:
                     - microservice-oauth2-jdl
                 include:
                     - app-type: monolith-react-oauth2-dev
-                      arg: 'no'
+                      entity: 'no'
+                      e2e: 'oauth2'
                     - app-type: monolith-angular-jwt-i18n-dev
-                      arg: 'no'
+                      entity: 'no'
+                      e2e: 'jwt'
                     - app-type: monolith-react-jwt-jdl
-                      arg: import-jdl
+                      entity: import-jdl
+                      e2e: 'jwt'
                     - app-type: monolith-react-oauth2-i18n-jdl
-                      arg: import-jdl
+                      entity: import-jdl
+                      e2e: 'oauth2'
                     - app-type: microservice-oauth2-jdl
-                      arg: post-import-jdl
+                      entity: post-import-jdl
+                      e2e: 'no'
         env:
             JHI_APP: ${{ matrix.app-type }}
-            JHI_ARG: ${{ matrix.arg }}
+            JHI_ENTITY: ${{ matrix.entity }}
+            JHI_E2E: ${{ matrix.e2e }}
 
         steps:
             - uses: actions/checkout@v1
@@ -44,7 +50,7 @@ jobs:
             - name: PREPARE jhipster env
               run: sudo sh test-integration/00-install-all-jhipster.sh
             - name: 'GENERATE NHipster app'
-              run: sudo sh test-integration/01-generate-app-sample.sh $JHI_APP $JHI_ARG
+              run: sudo sh test-integration/01-generate-app-sample.sh $JHI_APP $JHI_ENTITY
             - name: 'INSTALL DEPENDENCIES of generated app'
               run: sudo sh test-integration/02-install-dependencies-app-sample.sh $JHI_APP
             - name: 'GENERATE bar SERVER SERVICE'
@@ -58,4 +64,4 @@ jobs:
             - name: 'BUILD AND RUN SERVER APP'
               run: sudo sh test-integration/06-run-generated-app-sample.sh $JHI_APP build
             - name: 'START APP WITH EVENTUAL CLIENT E2E TESTS'
-              run: sudo sh test-integration/06-run-generated-app-sample.sh $JHI_APP run
+              run: sudo sh test-integration/06-run-generated-app-sample.sh $JHI_APP $JHI_E2E
