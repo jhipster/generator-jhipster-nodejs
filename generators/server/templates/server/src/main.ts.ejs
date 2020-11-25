@@ -5,8 +5,6 @@ import { AppModule } from './app.module';
 import { setupSwagger } from './swagger';
 import { config } from './config';
 import { Logger, ValidationPipe, BadRequestException } from '@nestjs/common';
-import * as express from 'express';
-import * as path from 'path';
 import * as fs from 'fs';
 <%_ if (authenticationType === 'oauth2') { _%>
 import passport = require('passport');
@@ -49,14 +47,16 @@ async function bootstrap(): Promise<void> {
   });
   <%_ } _%>
 
-  const staticClientPath = path.join(__dirname, '../dist/classes/static');
+  <%_ if (!skipClient) { _%>
+  const staticClientPath = config.getClientPath();
   if (fs.existsSync(staticClientPath)) {
-    app.use(express.static(staticClientPath));
     logger.log(`Serving static client resources on ${staticClientPath}`);
   } else {
     logger.log(`No client it has been found`);
   }
-
+  <%_ } else { _%>
+    logger.log(`The client is not been generated`);
+  <%_ } _%>
   setupSwagger(app);
 
   await app.listen(port);

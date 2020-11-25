@@ -32,6 +32,9 @@
     <%_ } _%>
     "@nestjs/passport": "7.1.0",
     "@nestjs/platform-express": "7.5.1",
+    <%_ if (!skipClient) { _%>
+    "@nestjs/serve-static": "2.1.4",
+    <%_ } _%>
     "@nestjs/swagger": "3.1.0",
     "@nestjs/typeorm": "7.1.4",
     "class-transformer": "0.3.1",
