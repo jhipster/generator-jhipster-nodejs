@@ -95,8 +95,13 @@ module.exports = class extends AppGenerator {
             validateJava() {},
 
             customSettings() {
-                this.testFrameworks = ['protractor'];
-                this.protractorTests = true;
+                if (!this.skipClient) {
+                    this.testFrameworks = ['protractor'];
+                    this.protractorTests = true;
+                } else {
+                    this.testFrameworks = [];
+                    this.protractorTests = false;
+                }
                 if (this.options['skip-i18n']) {
                     this.enableTranslation = false;
                     this.skipI18n = true;

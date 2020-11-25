@@ -54,6 +54,17 @@ export class AuthService {
     const user: any = await this.userService.findByfields({ where: { id: userId } });
     return user;
   }
+
+  async changePassword(userLogin: string, currentClearTextPassword: string, newPassword: string): Promise<void> {
+    const userFind = await this.userService.findByfields({ where: { login: userLogin, password: currentClearTextPassword } });
+    if (!userFind) {
+      throw new HttpException('Invalid login name or password.', HttpStatus.BAD_REQUEST);
+    }
+    userFind.password = newPassword;
+    await this.userService.save(userFind);
+    return;
+  }
+
   <%_ } else if (authenticationType === 'oauth2') { _%>
     async findUserOrSave(loginUser: User): Promise<User | undefined> {
         let userFound = await this.userService.findByfields({ where: { login: loginUser.login } });
@@ -69,4 +80,5 @@ export class AuthService {
       }
 
   <%_ } _%>
+
 }

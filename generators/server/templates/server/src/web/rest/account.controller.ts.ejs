@@ -82,8 +82,13 @@ export class AccountController {
     description: 'user password changed',
     type: PasswordChangeDTO,
   })
-  changePassword(@Req() req: Request, @Body() passwordChange: PasswordChangeDTO): any {
+  async changePassword(@Req() req: Request, @Body() passwordChange: PasswordChangeDTO): Promise<any> {
+  <%_ if (authenticationType === 'jwt') { _%>
+    const user: any = req.user;
+    return await this.authService.changePassword(user.login, passwordChange.currentPassword, passwordChange.newPassword) ;
+  <%_ } else { _%>
     return;
+  <%_ } _%>
   }
 
   @Post('/account/reset-password/init')
