@@ -3,11 +3,12 @@
 set -e
 
 RED='\033[0;31m'
-
+GREEN='\033[0;32m'
 
 #-------------------------------------------------------------------------------
 # Define functions
 #-------------------------------------------------------------------------------
+
 launchCurl() {
     if [ "$2" = "build" ]; then
       sleep 10
@@ -67,8 +68,9 @@ runApp() {
 #-------------------------------------------------------------------------------
 # Change in template directory
 #-------------------------------------------------------------------------------
+
 cd test-integration/samples/$1
-echo "*** changed directory in : test-integration/samples/"$1
+echo "***${GREEN}changed directory in : test-integration/samples/"$1
 
 
 #-------------------------------------------------------------------------------
@@ -76,28 +78,26 @@ echo "*** changed directory in : test-integration/samples/"$1
 #-------------------------------------------------------------------------------
 
 if  [ "$2" = "oauth2" ]; then
-    echo "*** run docker compose keycloak"
+    echo "***${GREEN}run docker compose keycloak"
     docker-compose -f src/main/docker/keycloak.yml up -d
 fi
-
-
 
 #-------------------------------------------------------------------------------
 # Run and test app
 #-------------------------------------------------------------------------------
+
 if [ "$2" = "build" ]; then
-  echo "*** only server build in : "$1
+  echo "***${GREEN}only server build in : "$1
   cd server
   npm run build
-  echo "*** run server main app in dist : "$1
+  echo "***${GREEN}run server main app in dist : "$1
   runOnlyServerApp
 else
-  echo "*** run full app in : "$1
+  echo "***${GREEN}run full app in : "$1
   runApp
 fi
 
 launchCurl
-
 
 #-------------------------------------------------------------------------------
 # Run client e2e tests
@@ -105,10 +105,10 @@ launchCurl
 
 if [ "$2" = "oauth2" ] || [  "$2" = "jwt" ]; then
     if [ "$2" = "oauth2" ]; then
-    echo "*** waiting keycloak up running"
+    echo "***${GREEN}waiting keycloak up running"
     curlKeycloak
     fi
-    echo "*** run protractor e2e test in client for : "$1
+    echo "***${GREEN}run protractor e2e test in client for : "$1
       node node_modules/webdriver-manager/bin/webdriver-manager update --gecko false && JHI_E2E_HEADLESS=true npm run e2e
         if [ $? -ne 0 ]; then
             echo "${RED}FAILED PROTRACTOR CLIENT E2E TEST COMMAND"
@@ -119,12 +119,14 @@ fi
 #-------------------------------------------------------------------------------
 # Kill keycloak
 #-------------------------------------------------------------------------------
+
 if [ "$2" = "oauth2" ]; then
-    echo "*** kill docker compose keycloak"
+    echo "***${GREEN}kill docker compose keycloak"
     docker-compose -f src/main/docker/keycloak.yml down
 fi
+
 #-------------------------------------------------------------------------------
 # Kill app
 #-------------------------------------------------------------------------------
-echo "*** kill app : "$1
+echo "***${GREEN}kill app : "$1
 kill $(cat .pidRunApp)

@@ -3,13 +3,13 @@
 set -e
 
 RED='\033[0;31m'
-
+GREEN='\033[0;32m'
 
 #-------------------------------------------------------------------------------
 # Change in template directory
 #-------------------------------------------------------------------------------
 cd test-integration/samples/$1
-echo "*** changed directory in : test-integration/samples/"$1
+echo "***${GREEN}changed directory in : test-integration/samples/"$1
 
 
 #-------------------------------------------------------------------------------
