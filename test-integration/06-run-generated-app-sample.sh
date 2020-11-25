@@ -29,6 +29,27 @@ launchCurl() {
     fi
 }
 
+curlKeycloak() {
+    sleep 5
+    retryCount=1
+    maxRetry=5
+    httpUrl="http://localhost:9080/auth/realms/jhipster"
+    rep=$(curl -v "$httpUrl")
+    status=$?
+    while [ "$status" -ne 0 ] && [ "$retryCount" -le "$maxRetry" ]; do
+        echo "*** [$(date)] keycloak not reachable yet. Sleep and retry - retryCount =" $retryCount "/" $maxRetry
+        retryCount=$((retryCount+1))
+        sleep 10
+        rep=$(curl -v "$httpUrl")
+        status=$?
+    done
+
+    if [ "$status" -ne 0 ]; then
+        echo "${RED}[$(date)] Not connected after" $retryCount " retries."
+        exit 1
+    fi
+}
+
 runOnlyServerApp() {
     set NODE_ENV=dev&& node dist/main.js &
     echo $! > .pidRunApp
@@ -44,6 +65,17 @@ runApp() {
 #-------------------------------------------------------------------------------
 cd test-integration/samples/$1
 echo "*** changed directory in : test-integration/samples/"$1
+
+
+#-------------------------------------------------------------------------------
+# Run docker keycloak for oauth2 e2e tests
+#-------------------------------------------------------------------------------
+
+if [ "$1" != "microservice-oauth2-jdl" ] && [  "$2" = "run" ] &&  [ "$1" = *"oauth2"* ]; then
+    echo "*** run docker compose keycloak"
+    docker-compose -f src/main/docker/keycloak.yml up -d
+fi
+
 
 
 #-------------------------------------------------------------------------------
@@ -68,6 +100,10 @@ launchCurl
 #-------------------------------------------------------------------------------
 
 if [ "$1" != "microservice-oauth2-jdl" ] && [  "$2" = "run" ]; then
+    if [ "$1" = *"oauth2"* ]; then
+    echo "*** waiting keycloak up running"
+    curlKeycloak
+    fi
     echo "*** run protractor e2e test in client for : "$1
       node node_modules/webdriver-manager/bin/webdriver-manager update --gecko false && JHI_E2E_HEADLESS=true npm run e2e
         if [ $? -ne 0 ]; then
@@ -76,7 +112,13 @@ if [ "$1" != "microservice-oauth2-jdl" ] && [  "$2" = "run" ]; then
         fi
 fi
 
-
+#-------------------------------------------------------------------------------
+# Kill keycloak
+#-------------------------------------------------------------------------------
+if [ "$1" != "microservice-oauth2-jdl" ] && [  "$2" = "run" ] &&  [ "$1" = *"oauth2"* ]; then
+    echo "*** kill docker compose keycloak"
+    docker-compose -f src/main/docker/keycloak.yml down
+fi
 #-------------------------------------------------------------------------------
 # Kill app
 #-------------------------------------------------------------------------------
