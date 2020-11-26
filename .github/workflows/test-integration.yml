@@ -63,5 +63,5 @@ jobs:
               run: sudo sh test-integration/05-run-generated-e2e-tests-of-sample.sh $NHI_APP
             - name: 'BUILD AND RUN SERVER APP'
               run: sudo sh test-integration/06-run-generated-app-sample.sh $NHI_APP build
-            - name: 'START APP WITH EVENTUAL CLIENT E2E TESTS USING DOCKER KEYCLOAK FOR OAUTH2'
+            - name: 'START APP WITH CLIENT E2E TESTS AND DOCKER KEYCLOAK IN OAUTH2'
               run: sudo sh test-integration/06-run-generated-app-sample.sh $NHI_APP $NHI_E2E
