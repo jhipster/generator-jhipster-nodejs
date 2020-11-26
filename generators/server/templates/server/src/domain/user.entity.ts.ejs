@@ -11,16 +11,16 @@ export class User extends BaseEntity {
   @Column({ unique: true })
   login: string;
   @ApiModelProperty({ example: 'MyUser', description: 'User first name' })
-  @Column()
-  firstName: string;
-  @ApiModelProperty({ example: 'MyUser', description: 'User last name' })
-  @Column()
-  lastName: string;
-  @ApiModelProperty({ example: 'myuser@localhost', description: 'User email' })
   @Column({ nullable: true })
-  email?: string;
-  @ApiModelProperty({ example: 'true', description: 'User activation' })
+  firstName?: string;
+  @ApiModelProperty({ example: 'MyUser', description: 'User last name' })
+  @Column({ nullable: true })
+  lastName?: string;
+  @ApiModelProperty({ example: 'myuser@localhost', description: 'User email' })
   @Column()
+  email: string;
+  @ApiModelProperty({ example: 'true', description: 'User activation' })
+  @Column({ default: false})
   activated: boolean;
   @ApiModelProperty({ example: 'en', description: 'User language' })
   @Column()

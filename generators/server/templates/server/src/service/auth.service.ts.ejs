@@ -56,17 +56,52 @@ export class AuthService {
   }
 
   async changePassword(userLogin: string, currentClearTextPassword: string, newPassword: string): Promise<void> {
-    const userFind = await this.userService.findByfields({ where: { login: userLogin, password: currentClearTextPassword } });
+    const userFind = await this.userService.findByfields({ where: { login: userLogin } });
     if (!userFind) {
-      throw new HttpException('Invalid login name or password.', HttpStatus.BAD_REQUEST);
+        throw new HttpException('Invalid login name!', HttpStatus.BAD_REQUEST);
+    }
+    if (userFind.password !== currentClearTextPassword ) {
+        throw new HttpException('Invalid password!', HttpStatus.BAD_REQUEST);
     }
     userFind.password = newPassword;
     await this.userService.save(userFind);
     return;
   }
 
+  async registerNewUser (newUser: User) : Promise<User> {
+    let userFind: User = await this.userService.findByfields({ where: { login: newUser.login} });
+    if (userFind) {
+      throw new HttpException('Login name already used!', HttpStatus.BAD_REQUEST);
+    }
+    userFind = await this.userService.findByfields({ where: { email: newUser.email} });
+    if (userFind) {
+      throw new HttpException('Email is already in use!', HttpStatus.BAD_REQUEST);
+    }
+    const user: User = await this.userService.save(newUser);
+    return user;
+  }
+
+  async updateUserSettings(userLogin: string, newUserInfo: User) : Promise<User> {
+    const userFind = await this.userService.findByfields({ where: { login: userLogin } });
+    if (!userFind) {
+        throw new HttpException('Invalid login name!', HttpStatus.BAD_REQUEST);
+    }
+    const userFindWithNewEmail = await this.userService.findByfields({ where: { email: newUserInfo.email} });
+    if (userFindWithNewEmail && userFindWithNewEmail.login !== userLogin) {
+      throw new HttpException('Email is already in use!', HttpStatus.BAD_REQUEST);
+    }
+    userFind.firstName = newUserInfo.firstName;
+    userFind.lastName = newUserInfo.lastName;
+    userFind.email = newUserInfo.email;
+    await this.userService.save(userFind);
+    return;
+  }
+
   <%_ } else if (authenticationType === 'oauth2') { _%>
     async findUserOrSave(loginUser: User): Promise<User | undefined> {
+        if (!loginUser.email) {
+          return loginUser;
+        }
         let userFound = await this.userService.findByfields({ where: { login: loginUser.login } });
 
         if (!userFound) {

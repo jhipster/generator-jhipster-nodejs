@@ -11,16 +11,13 @@ import { AuthService } from '../../service/auth.service';
 
 @Controller('api')
 @UseInterceptors(LoggingInterceptor)
-<%_ if (authenticationType === 'jwt') { _%>
-@UseGuards(AuthGuard, RolesGuard)
-@ApiBearerAuth()
-<%_ } _%>
 @ApiUseTags('account-resource')
 export class AccountController {
   logger = new Logger('AccountController');
 
   constructor(private readonly authService: AuthService) { }
   <%_ if (authenticationType === 'jwt') { _%>
+
   @Post('/register')
   @ApiOperation({ title: 'Register user' })
   @ApiResponse({
@@ -28,11 +25,13 @@ export class AccountController {
     description: 'Registered user',
     type: User,
   })
-  registerAccount(@Req() req: Request, @Body() user: User, @Res() res: Response): any {
-    return res.sendStatus(201);
+  async registerAccount(@Req() req: Request, @Body() user: User): Promise <any> {
+    return await this.authService.registerNewUser(user);
   }
 
   @Get('/activate')
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard, RolesGuard)
   @ApiOperation({ title: 'Activate an account' })
   @ApiResponse({
     status: 200,
@@ -43,6 +42,8 @@ export class AccountController {
   }
 
   @Get('/authenticate')
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard, RolesGuard)
   @ApiOperation({ title: 'Check if the user is authenticated' })
   @ApiResponse({
     status: 200,
@@ -54,6 +55,8 @@ export class AccountController {
   }
 
   @Get('/account')
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard)
   @ApiOperation({ title: 'Get the current user.' })
   @ApiResponse({
     status: 200,
@@ -65,18 +68,22 @@ export class AccountController {
   }
 
   @Post('/account')
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard)
   @ApiOperation({ title: 'Update the current user information' })
   @ApiResponse({
     status: 201,
     description: 'user info updated',
     type: User,
   })
-  saveAccount(@Req() req: Request, @Body() user: User): any {
-    return;
-  }
+  async saveAccount(@Req() req: Request, @Body() newUserInfo: User): Promise<any> {
+    const user: any = req.user;
+    return await this.authService.updateUserSettings(user.login, newUserInfo);
+}
 
-  <%_ if (authenticationType === 'jwt') { _%>
   @Post('/account/change-password')
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard)
   @ApiOperation({ title: 'Change current password' })
   @ApiResponse({
     status: 201,
@@ -87,9 +94,10 @@ export class AccountController {
     const user: any = req.user;
     return await this.authService.changePassword(user.login, passwordChange.currentPassword, passwordChange.newPassword) ;
   }
-  <%_ } _%>
 
   @Post('/account/reset-password/init')
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard)
   @ApiOperation({ title: 'Send an email to reset the password of the user' })
   @ApiResponse({
     status: 201,
@@ -101,6 +109,8 @@ export class AccountController {
   }
 
   @Post('/account/reset-password/finish')
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard)
   @ApiOperation({ title: 'Finish to reset the password of the user' })
   @ApiResponse({
     status: 201,
