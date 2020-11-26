@@ -48,9 +48,10 @@ module.exports = class extends EntityGenerator {
 
             composeClient() {
                 const context = this.context;
-                // disable protractor
-                // context.protractorTests = false;
                 if (context.skipClient) return;
+
+                context.testFrameworks = ['protractor'];
+                context.protractorTests = true;
                 const configOptions = this.configOptions;
 
                 this.composeWith(require.resolve('generator-jhipster/generators/entity-client'), {

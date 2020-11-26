@@ -1,7 +1,7 @@
 import { <%_ if (authenticationType === 'jwt') { _%> Body, Param, Post, Res, UseGuards, <%_ } _%> Controller, Get, Logger, Req, UseInterceptors } from '@nestjs/common';
 <%_ if (authenticationType === 'jwt') { _%>
 import { Response, Request } from 'express';
-import { AuthGuard, RolesGuard } from '../../security';
+import { AuthGuard, Roles, RoleType, RolesGuard } from '../../security';
 import { PasswordChangeDTO } from '../../service/dto/password-change.dto';
 <%_ } _%>
 import { User } from '../../domain/user.entity';
@@ -32,6 +32,7 @@ export class AccountController {
   @Get('/activate')
   @ApiBearerAuth()
   @UseGuards(AuthGuard, RolesGuard)
+  @Roles(RoleType.ADMIN)
   @ApiOperation({ title: 'Activate an account' })
   @ApiResponse({
     status: 200,
@@ -43,7 +44,7 @@ export class AccountController {
 
   @Get('/authenticate')
   @ApiBearerAuth()
-  @UseGuards(AuthGuard, RolesGuard)
+  @UseGuards(AuthGuard)
   @ApiOperation({ title: 'Check if the user is authenticated' })
   @ApiResponse({
     status: 200,
