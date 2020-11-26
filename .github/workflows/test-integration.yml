@@ -43,9 +43,9 @@ jobs:
             - uses: actions/setup-node@v1
               with:
                   node-version: ${{ matrix.node-version }}
-            - name: git history
+            - name: GIT HISTORY
               run: git --no-pager log -n 10 --graph --pretty='%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue) <%an>%Creset' --abbrev-commit
-            - name: update google chrome
+            - name: UPDATE GOOGLE chrome
               run: sudo apt-get update && sudo apt-get --only-upgrade install google-chrome-stable && google-chrome --version
             - name: PREPARE jhipster env
               run: sudo sh test-integration/00-install-all-jhipster.sh
@@ -63,5 +63,5 @@ jobs:
               run: sudo sh test-integration/05-run-generated-e2e-tests-of-sample.sh $NHI_APP
             - name: 'BUILD AND RUN SERVER APP'
               run: sudo sh test-integration/06-run-generated-app-sample.sh $NHI_APP build
-            - name: 'START APP WITH EVENTUAL CLIENT E2E TESTS'
+            - name: 'START APP WITH EVENTUAL CLIENT E2E TESTS USING DOCKER KEYCLOAK FOR OAUTH2'
               run: sudo sh test-integration/06-run-generated-app-sample.sh $NHI_APP $NHI_E2E

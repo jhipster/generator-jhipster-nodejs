@@ -35,7 +35,7 @@ launchCurl() {
 }
 
 curlKeycloak() {
-    sleep 5
+    sleep 1
     retryCount=1
     maxRetry=5
     httpUrl="http://localhost:9080/auth/realms/jhipster"
@@ -44,7 +44,7 @@ curlKeycloak() {
     while [ "$status" -ne 0 ] && [ "$retryCount" -le "$maxRetry" ]; do
         echo "*** [$(date)] keycloak not reachable yet. Sleep and retry - retryCount =" $retryCount "/" $maxRetry
         retryCount=$((retryCount+1))
-        sleep 10
+        sleep 5
         rep=$(curl -v "$httpUrl")
         status=$?
     done

@@ -55,6 +55,11 @@ const clientFiles = {
                     file: 'react/shared/layout/header/header.tsx',
                     method: 'processJsx',
                     renameTo: () => `${REACT_DIR}shared/layout/header/header.tsx`
+                },
+                {
+                    file: 'react/shared/layout/menus/admin.tsx',
+                    method: 'processJsx',
+                    renameTo: () => `${REACT_DIR}shared/layout/menus/admin.tsx`
                 }
             ]
         }

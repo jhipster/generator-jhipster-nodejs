@@ -55,6 +55,25 @@
                         <span jhiTranslate="global.menu.admin.main">Administration</span>
                     </span>
                 </a>
+                <ul class="dropdown-menu" ngbDropdownMenu aria-labelledby="admin-menu">
+                    <%_ if (applicationType === 'gateway' && serviceDiscoveryType) { _%>
+                    <li>
+                        <a class="dropdown-item" routerLink="admin/gateway" routerLinkActive="active" (click)="collapseNavbar()">
+                            <fa-icon icon="road" fixedWidth="true"></fa-icon>
+                            <span jhiTranslate="global.menu.admin.gateway">Gateway</span>
+                        </a>
+                    </li>
+                    <%_ } _%>
+                    <%_ if (!skipUserManagement) { _%>
+                    <li>
+                        <a class="dropdown-item" routerLink="admin/user-management" routerLinkActive="active" (click)="collapseNavbar()">
+                            <fa-icon icon="user" fixedWidth="true"></fa-icon>
+                            <span jhiTranslate="global.menu.admin.userManagement">User management</span>
+                        </a>
+                    </li>
+                    <%_ } _%>
+                    <!-- jhipster-needle-add-element-to-admin-menu - JHipster will add entities to the admin menu here -->
+                </ul>
             </li>
             <%_ if (enableTranslation) { _%>
             <li ngbDropdown class="nav-item dropdown pointer" display="dynamic" *ngIf="languages && languages.length > 1">
