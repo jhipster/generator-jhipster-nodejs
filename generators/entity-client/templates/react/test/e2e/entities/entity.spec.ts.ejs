@@ -78,6 +78,13 @@ describe('<%= entityClass %> e2e test', () => {
         await waitUntilDisplayed(navBarPage.accountMenu);
     });
 
+    beforeEach(async() => {
+        await browser.get('/');
+        await waitUntilDisplayed(navBarPage.entityMenu);
+        <%= entityInstance %>ComponentsPage = new <%= entityClass %>ComponentsPage();
+        <%= entityInstance %>ComponentsPage = await <%= entityInstance %>ComponentsPage.goToPage(navBarPage);
+    });
+
     it('should load <%= entityClassPlural %>', async () => {
         await navBarPage.getEntityPage('<%= entityStateName %>');
         <%= entityInstance %>ComponentsPage = new <%= entityClass %>ComponentsPage();
