@@ -6,11 +6,11 @@ RED='\033[0;31m'
 GREEN='\033[0;32m'
 
 #-------------------------------------------------------------------------------
-# Define functions
+# functions
 #-------------------------------------------------------------------------------
 
-launchCurl() {
-    if [ "$2" = "build" ]; then
+launchCurlOrProtractor() {
+    if [ "$1" = "build" ]; then
       sleep 10
     else
       sleep 100
@@ -29,31 +29,32 @@ launchCurl() {
     done
 
     if [ "$status" -ne 0 ]; then
-        echo "${RED}[$(date)] Not connected after" $retryCount " retries."
-        exit 1
+        echo "***${RED}[$(date)] Not connected after" $retryCount " retries."
+        return 1
     fi
-}
 
-curlKeycloak() {
-    sleep 1
-    retryCount=1
-    maxRetry=5
-    httpUrl="http://localhost:9080/auth/realms/jhipster"
-    rep=$(curl -v "$httpUrl")
-    status=$?
-    while [ "$status" -ne 0 ] && [ "$retryCount" -le "$maxRetry" ]; do
-        echo "*** [$(date)] keycloak not reachable yet. Sleep and retry - retryCount =" $retryCount "/" $maxRetry
+    if [ "$1" = "oauth2" ] || [  "$1" = "jwt" ]; then
+
+      retryCount=0
+      maxRetry=1
+      until [ "$retryCount" -ge "$maxRetry" ]
+      do
+        result=0
+        echo "***${GREEN}run protractor e2e test in client for : "$1
+        node node_modules/webdriver-manager/bin/webdriver-manager update --gecko false && JHI_E2E_HEADLESS=true npm run e2e
+        result=$?
+        [ $result -eq 0 ] && break
         retryCount=$((retryCount+1))
-        sleep 5
-        rep=$(curl -v "$httpUrl")
-        status=$?
-    done
+        echo "***${RED}e2e tests failed... retryCount =" $retryCount "/" $maxRetry
+        sleep 15
+      done
+      return $result
 
-    if [ "$status" -ne 0 ]; then
-        echo "${RED}[$(date)] Not connected after" $retryCount " retries."
-        exit 1
+    else
+     return 0
     fi
 }
+
 
 runOnlyServerApp() {
     set NODE_ENV=dev&& node dist/main.js &
@@ -74,15 +75,6 @@ echo "***${GREEN}changed directory in : test-integration/samples/"$1
 
 
 #-------------------------------------------------------------------------------
-# Run docker keycloak for oauth2 e2e tests
-#-------------------------------------------------------------------------------
-
-#if  [ "$2" = "oauth2" ]; then
-#    echo "***${GREEN}run docker compose keycloak"
-#    docker-compose -f src/main/docker/keycloak.yml up -d
-#fi
-
-#-------------------------------------------------------------------------------
 # Run and test app
 #-------------------------------------------------------------------------------
 
@@ -97,36 +89,13 @@ else
   runApp
 fi
 
-launchCurl
-
-#-------------------------------------------------------------------------------
-# Run client e2e tests
-#-------------------------------------------------------------------------------
-
-if [ "$2" = "oauth2" ] || [  "$2" = "jwt" ]; then
- #   if [ "$2" = "oauth2" ]; then
- #   echo "***${GREEN}waiting keycloak up running"
- #   curlKeycloak
- #   fi
-    echo "***${GREEN}run protractor e2e test in client for : "$1
-      node node_modules/webdriver-manager/bin/webdriver-manager update --gecko false && JHI_E2E_HEADLESS=true npm run e2e
-        if [ $? -ne 0 ]; then
-            echo "${RED}FAILED PROTRACTOR CLIENT E2E TEST COMMAND"
-            exit 1
-        fi
-fi
-
-#-------------------------------------------------------------------------------
-# Kill keycloak
-#-------------------------------------------------------------------------------
-
-#if [ "$2" = "oauth2" ]; then
-#    echo "***${GREEN}kill docker compose keycloak"
-#    docker-compose -f src/main/docker/keycloak.yml down
-#fi
+launchCurlOrProtractor $2
+resultRunApp=$?
 
 #-------------------------------------------------------------------------------
 # Kill app
 #-------------------------------------------------------------------------------
 echo "***${GREEN}kill app : "$1
 kill $(cat .pidRunApp)
+
+exit $((resultRunApp))

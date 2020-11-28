@@ -4,17 +4,18 @@
  * Use "jhipster import-jdl model-name.jdl --blueprints nodejs" to generate the entire application
  * Use jhipster 6.x (example 6.8.0)
  * relationship info: https://www.jhipster.tech/managing-relationships/
+ * REMEMBER TO FILL authenticationType and clientFramework
  */
 
 application {
 	config {
 		applicationType monolith,
-		baseName monolithReactJwtSqlJdlApp,
+		baseName monolithClientAuthSqlJdlApp,
 		packageName com.jhipster.node,
 		serverPort 8081,
 		cacheProvider no,
 		enableHibernateCache false,
-		authenticationType jwt,
+		authenticationType REPLACE_AUTH,
 		databaseType sql,
 		prodDatabaseType mssql,
 		serviceDiscoveryType false,
@@ -22,7 +23,7 @@ application {
 		useSass true,
 		skipUserManagement false,
 		enableTranslation false,
-		clientFramework react
+		clientFramework REPLACE_CLIENT_FRAMEWORK
 	}
 	entities *
 }

@@ -5,7 +5,7 @@ jobs:
         name: ${{ matrix.app-type }}
         runs-on: ${{ matrix.os }}
         if: "!contains(github.event.head_commit.message, '[ci skip]') && !contains(github.event.head_commit.message, '[skip ci]')"
-        timeout-minutes: 20
+        timeout-minutes: 40
         strategy:
             fail-fast: false
             matrix:
@@ -15,26 +15,47 @@ jobs:
                     - monolith-react-oauth2-dev
                     - monolith-angular-jwt-i18n-dev
                     - monolith-react-jwt-jdl
+                    - monolith-react-oauth2-jdl
+                    - monolith-angular-jwt-jdl
+                    - monolith-angular-oauth2-jdl
                     - monolith-react-oauth2-i18n-jdl
                     - microservice-oauth2-jdl
                 include:
                     - app-type: monolith-react-oauth2-dev
+                      app-folder: monolith-react-oauth2-dev
                       entity: 'no'
-                      e2e: 'oauth2'
+                      e2e: oauth2
                     - app-type: monolith-angular-jwt-i18n-dev
+                      app-folder: monolith-angular-jwt-i18n-dev
                       entity: 'no'
-                      e2e: 'jwt'
+                      e2e: jwt
                     - app-type: monolith-react-jwt-jdl
+                      app-folder: monolith-client-auth-template-jdl
                       entity: import-jdl
-                      e2e: 'jwt'
-                    - app-type: monolith-react-oauth2-i18n-jdl
+                      e2e: jwt
+                    - app-type: monolith-react-oauth2-jdl
+                      app-folder: monolith-client-auth-template-jdl
                       entity: import-jdl
                       e2e: 'oauth2'
+                    - app-type: monolith-angular-jwt-jdl
+                      app-folder: monolith-client-auth-template-jdl
+                      entity: import-jdl
+                      e2e: jwt
+                    - app-type: monolith-angular-oauth2-jdl
+                      app-folder: monolith-client-auth-template-jdl
+                      entity: import-jdl
+                      e2e: oauth2
+                    - app-type: monolith-react-oauth2-i18n-jdl
+                      app-folder: monolith-react-oauth2-i18n-jdl
+                      entity: import-jdl
+                      e2e: oauth2
                     - app-type: microservice-oauth2-jdl
+                      app-folder: microservice-oauth2-jdl
                       entity: post-import-jdl
                       e2e: 'no'
         env:
             NHI_APP: ${{ matrix.app-type }}
+            NHI_APP_FOLDER: ${{ matrix.app-folder }}
             NHI_ENTITY: ${{ matrix.entity }}
             NHI_E2E: ${{ matrix.e2e }}
 
@@ -51,22 +72,25 @@ jobs:
                   sudo apt install google-chrome-stable
             - name: PREPARE jhipster env
               run: sudo sh test-integration/00-install-all-jhipster.sh
+            - name: 'CONFIGURE EVENTUAL TEMPLATE APP'
+              if: contains(env.NHI_APP_FOLDER, 'template')
+              run: sudo bash test-integration/0x-configure-template.sh $NHI_APP_FOLDER $NHI_APP
             - name: 'GENERATE NHipster app'
-              run: sudo sh test-integration/01-generate-app-sample.sh $NHI_APP $NHI_ENTITY
+              run: sudo sh test-integration/01-generate-app-sample.sh $NHI_APP_FOLDER $NHI_ENTITY
             - name: 'INSTALL DEPENDENCIES of generated app'
-              run: sudo sh test-integration/02-install-dependencies-app-sample.sh $NHI_APP
+              run: sudo sh test-integration/02-install-dependencies-app-sample.sh $NHI_APP_FOLDER
             - name: 'GENERATE bar SERVER SERVICE'
-              run: sudo sh test-integration/03-generate-component-sample.sh $NHI_APP service bar
+              run: sudo sh test-integration/03-generate-component-sample.sh $NHI_APP_FOLDER service bar
             - name: 'GENERATE foo SERVER CONTROLLER'
-              run: sudo sh test-integration/03-generate-component-sample.sh $NHI_APP controller foo
+              run: sudo sh test-integration/03-generate-component-sample.sh $NHI_APP_FOLDER controller foo
             - name: 'RUN UNIT TESTS of generated app'
-              run: sudo sh test-integration/04-run-generated-unit-tests-of-sample.sh $NHI_APP
+              run: sudo sh test-integration/04-run-generated-unit-tests-of-sample.sh $NHI_APP_FOLDER
             - name: 'RUN SERVER E2E TESTS of generated app'
-              run: sudo sh test-integration/05-run-generated-e2e-tests-of-sample.sh $NHI_APP
+              run: sudo sh test-integration/05-run-generated-e2e-tests-of-sample.sh $NHI_APP_FOLDER
             - name: 'BUILD AND RUN SERVER APP'
-              run: sudo sh test-integration/07-run-generated-app-sample.sh $NHI_APP build
-            - name: 'START DOCKER KEYCLOAK for oauth2'
+              run: sudo sh test-integration/07-run-generated-app-sample.sh $NHI_APP_FOLDER build
+            - name: 'RUN DOCKER KEYCLOAK for CLIENT E2E oauth2 TESTS'
               if: "env.NHI_E2E == 'oauth2'"
-              run: sudo sh test-integration/06-docker-compose.sh $NHI_APP
-            - name: 'START APP WITH CLIENT E2E TESTS'
-              run: sudo sh test-integration/07-run-generated-app-sample.sh $NHI_APP $NHI_E2E
+              run: sudo sh test-integration/06-docker-compose.sh $NHI_APP_FOLDER
+            - name: 'START APP WITH EVENTUAL CLIENT E2E TESTS'
+              run: sudo sh test-integration/07-run-generated-app-sample.sh $NHI_APP_FOLDER $NHI_E2E
