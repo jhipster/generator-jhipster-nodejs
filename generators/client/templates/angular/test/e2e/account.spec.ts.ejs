@@ -15,6 +15,8 @@
  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  See the License for the specific language governing permissions and
  limitations under the License.
+
+UPDATED AND MODIFIED FROM MAIN
 -%>
 import { browser, element, by, ExpectedConditions as ec } from 'protractor';
 
@@ -201,6 +203,7 @@ describe('account', () => {
     expect(url).to.endWith('404');
 
     // as user is admin then should show admin menu to user
+    await browser.wait(ec.visibilityOf(element(by.id('user-management-page-heading'))));
     await navBarPage.clickOnAdminMenu();
   });
 
