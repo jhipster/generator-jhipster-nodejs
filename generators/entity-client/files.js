@@ -9,7 +9,7 @@ const entityClientFiles = {
             templates: [
                 {
                     file: 'react/test/e2e/entities/entity.spec.ts',
-                    renameTo: () => `${TEST_DIR}e2e/entities/entity.spec.ts`
+                    renameTo: generator => `${TEST_DIR}e2e/entities/${generator.entityFolderName}/${generator.entityFileName}`
                 }
             ]
         },
@@ -18,7 +18,7 @@ const entityClientFiles = {
             templates: [
                 {
                     file: 'angular/test/e2e/entities/entity.spec.ts',
-                    renameTo: () => `${TEST_DIR}e2e/entities/entity.spec.ts`
+                    renameTo: generator => `${TEST_DIR}e2e/entities/${generator.entityFolderName}/${generator.entityFileName}`
                 }
             ]
         }
