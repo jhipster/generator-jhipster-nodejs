@@ -15,6 +15,8 @@
  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  See the License for the specific language governing permissions and
  limitations under the License.
+
+6.8.0 CHANGED
 -%>
 import { browser, element, by, ExpectedConditions as ec } from 'protractor';
 
@@ -50,6 +52,8 @@ describe('administration', () => {
 
     <%_ if (!skipUserManagement) { _%>
     it('should load user management', async () => {
+        await browser.get('/');
+        navBarPage = new NavBarPage(true);
         await navBarPage.clickOnAdmin('user-management');
         <%_ if (enableTranslation) { _%>
         const expect1 = 'userManagement.home.title';
