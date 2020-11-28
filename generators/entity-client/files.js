@@ -1,6 +1,5 @@
 const jhipsterConstants = require('generator-jhipster/generators/generator-constants');
 
-
 const TEST_DIR = jhipsterConstants.CLIENT_TEST_SRC_DIR;
 
 const entityClientFiles = {
@@ -9,7 +8,7 @@ const entityClientFiles = {
             condition: generator => generator.clientFramework === 'react',
             templates: [
                 {
-                    file: 'react/test/e2e/entities/entity.spec.ts.ejs',
+                    file: 'react/test/e2e/entities/entity.spec.ts',
                     renameTo: () => `${TEST_DIR}e2e/entities/entity.spec.ts`
                 }
             ]
@@ -18,7 +17,7 @@ const entityClientFiles = {
             condition: generator => generator.clientFramework === 'angularX',
             templates: [
                 {
-                    file: 'angular/test/e2e/entities/entity.spec.ts.ejs',
+                    file: 'angular/test/e2e/entities/entity.spec.ts',
                     renameTo: () => `${TEST_DIR}e2e/entities/entity.spec.ts`
                 }
             ]
