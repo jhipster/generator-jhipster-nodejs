@@ -16,7 +16,7 @@ echo -e "***${GREEN}changed directory in : test-integration/samples/"$1
 # Configure template
 #-------------------------------------------------------------------------------
 
-echo "${GREEN}This is a template app named: "$1
+echo -e "${GREEN}This is a template app named: "$1
 
     if [[ $2 =~ "react" ]]
     then
