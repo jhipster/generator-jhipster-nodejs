@@ -77,10 +77,10 @@ echo "***${GREEN}changed directory in : test-integration/samples/"$1
 # Run docker keycloak for oauth2 e2e tests
 #-------------------------------------------------------------------------------
 
-if  [ "$2" = "oauth2" ]; then
-    echo "***${GREEN}run docker compose keycloak"
-    docker-compose -f src/main/docker/keycloak.yml up -d
-fi
+#if  [ "$2" = "oauth2" ]; then
+#    echo "***${GREEN}run docker compose keycloak"
+#    docker-compose -f src/main/docker/keycloak.yml up -d
+#fi
 
 #-------------------------------------------------------------------------------
 # Run and test app
@@ -104,10 +104,10 @@ launchCurl
 #-------------------------------------------------------------------------------
 
 if [ "$2" = "oauth2" ] || [  "$2" = "jwt" ]; then
-    if [ "$2" = "oauth2" ]; then
-    echo "***${GREEN}waiting keycloak up running"
-    curlKeycloak
-    fi
+ #   if [ "$2" = "oauth2" ]; then
+ #   echo "***${GREEN}waiting keycloak up running"
+ #   curlKeycloak
+ #   fi
     echo "***${GREEN}run protractor e2e test in client for : "$1
       node node_modules/webdriver-manager/bin/webdriver-manager update --gecko false && JHI_E2E_HEADLESS=true npm run e2e
         if [ $? -ne 0 ]; then
@@ -120,10 +120,10 @@ fi
 # Kill keycloak
 #-------------------------------------------------------------------------------
 
-if [ "$2" = "oauth2" ]; then
-    echo "***${GREEN}kill docker compose keycloak"
-    docker-compose -f src/main/docker/keycloak.yml down
-fi
+#if [ "$2" = "oauth2" ]; then
+#    echo "***${GREEN}kill docker compose keycloak"
+#    docker-compose -f src/main/docker/keycloak.yml down
+#fi
 
 #-------------------------------------------------------------------------------
 # Kill app
