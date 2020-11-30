@@ -12,8 +12,8 @@ const entityClientFiles = {
                     renameTo: generator => `${TEST_DIR}e2e/entities/${generator.entityFolderName}/${generator.entityFileName}`
                 }
             ]
-        },
-        {
+        }
+        /* {
             condition: generator => generator.clientFramework === 'angularX',
             templates: [
                 {
@@ -21,7 +21,7 @@ const entityClientFiles = {
                     renameTo: generator => `${TEST_DIR}e2e/entities/${generator.entityFolderName}/${generator.entityFileName}`
                 }
             ]
-        }
+        } */
     ]
 };
 

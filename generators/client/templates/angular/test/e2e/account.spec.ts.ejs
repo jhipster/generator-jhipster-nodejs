@@ -33,14 +33,14 @@ const expect = chai.expect;
 describe('account', () => {
   let navBarPage: NavBarPage;
   let signInPage: SignInPage;
-  const username = process.env.E2E_USERNAME ?? 'admin';
-  const password = process.env.E2E_PASSWORD ?? 'admin';
+  const username = 'admin';
+  const password = 'admin';
   <%_ if (!skipUserManagement) { _%>
   let passwordPage: PasswordPage;
   let settingsPage: SettingsPage;
   <%_ } _%>
 
-  before(async () => {
+  beforeEach(async () => {
     await browser.get('/');
     navBarPage = new NavBarPage(true);
   });
@@ -82,7 +82,7 @@ describe('account', () => {
 
   it('should login successfully with admin account', async () => {
   <%_ if (authenticationType !== 'oauth2') { _%>
-    await browser.get('/');
+
     signInPage = await navBarPage.getSignInPage();
 
     <%_ if (enableTranslation) { _%>
@@ -195,8 +195,6 @@ describe('account', () => {
 <%_ } _%>
 
   it('should navigate to 404 not found error page on non existing route and show user own navbar if valid authentication exists', async () => {
-    await browser.get('/');
-    navBarPage = new NavBarPage(true);
     // don't sign out and refresh page with non existing route
     await browser.get('/this-is-link-to-non-existing-page');
 

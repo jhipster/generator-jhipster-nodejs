@@ -5,7 +5,7 @@
   "author": "",
   "license": "MIT",
   "scripts": {
-    "clean": "rimraf dist",
+    "clean": "rimraf dist ../target/db/",
     "build": "npm run clean && tsc -p tsconfig.build.json && npm run copy-resources",
 	"webpack:prod": "npm run clean && webpack --config webpack.server.prod.config.js && npm run copy-resources",
     "copy-resources": "ts-node scripts/copy-resources.ts",
