@@ -13,7 +13,7 @@ launchCurlOrProtractor() {
     if [ "$1" = "build" ]; then
       sleep 10
     else
-      sleep 130
+      sleep 150
     fi
     retryCount=1
     maxRetry=10

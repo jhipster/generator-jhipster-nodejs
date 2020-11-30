@@ -65,7 +65,7 @@ export class AccountController {
   })
   async getAccount(@Req() req: Request): Promise<any> {
     const user: any = req.user;
-    return await this.authService.findUserWithAuthById(user.id);
+    return await this.authService.getAccount(user.id);
   }
 
   @Post('/account')
@@ -130,13 +130,9 @@ export class AccountController {
     status: 200,
     description: 'User retrieved',
   })
-  getAccount(@Req() req: any): any | void {
+  getAccount(@Req() req: any): any {
     const user: User = req.session.user;
-    if (user) {
-      return user;
-    }
-    return ;
-
+    return this.authService.getAccount(user);
   }
 
   <%_ } _%>

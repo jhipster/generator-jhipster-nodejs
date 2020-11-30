@@ -64,8 +64,9 @@ export class UserOauth2Controller {
     if (req.session && req.session.user) {
       idTokenFromSession = req.session.user.idToken;
       req.session.destroy();
+      return { idToken: idTokenFromSession, logoutUrl: oauth2Config.logoutUrl };
     }
-    return { idToken: idTokenFromSession, logoutUrl: oauth2Config.logoutUrl };
+    return;
   }
 
 }

@@ -18,8 +18,7 @@
 
 6.8.0 CHANGED
 -%>
-import { browser, element, by, ExpectedConditions as ec } from 'protractor';
-
+import { browser, <%_ if (!skipUserManagement) { _%> element, by, <%_ } _%> ExpectedConditions as ec } from 'protractor';
 import { NavBarPage, SignInPage } from '../page-objects/jhi-page-objects';
 <%_
 let elementGetter = `getText()`;
@@ -28,7 +27,9 @@ if (enableTranslation) {
 }
 _%>
 
+<%_ if (!skipUserManagement) { _%>
 const expect = chai.expect;
+<%_ } _%>
 
 describe('administration', () => {
     let navBarPage: NavBarPage;
