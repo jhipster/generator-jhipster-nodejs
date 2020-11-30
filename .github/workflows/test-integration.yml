@@ -12,42 +12,57 @@ jobs:
                 node_version: [12.16.1]
                 os: [ubuntu-latest]
                 app-type:
-                    - monolith-react-oauth2-dev
-                    - monolith-angular-jwt-i18n-dev
                     - monolith-react-jwt-jdl
+                    - monolith-react-jwt-i18n-jdl
                     - monolith-react-oauth2-jdl
-                    - monolith-angular-jwt-jdl
-                    - monolith-angular-oauth2-jdl
                     - monolith-react-oauth2-i18n-jdl
+                    - monolith-angular-jwt-jdl
+                    - monolith-angular-jwt-i18n-jdl
+                    - monolith-angular-oauth2-jdl
+                    - monolith-angular-oauth2-i18n-jdl
+                    - monolith-angular-jwt-i18n-dev
+                    - monolith-react-oauth2-dev
                     - microservice-oauth2-jdl
                 include:
-                    - app-type: monolith-react-oauth2-dev
-                      app-folder: monolith-react-oauth2-dev
-                      entity: 'no'
-                      e2e: oauth2
-                    - app-type: monolith-angular-jwt-i18n-dev
-                      app-folder: monolith-angular-jwt-i18n-dev
-                      entity: 'no'
-                      e2e: jwt
                     - app-type: monolith-react-jwt-jdl
                       app-folder: monolith-client-auth-template-jdl
+                      entity: import-jdl
+                      e2e: jwt
+                    - app-type: monolith-react-jwt-i18n-jdl
+                      app-folder: monolith-client-auth-i18n-template-jdl
                       entity: import-jdl
                       e2e: jwt
                     - app-type: monolith-react-oauth2-jdl
                       app-folder: monolith-client-auth-template-jdl
                       entity: import-jdl
                       e2e: 'oauth2'
+                    - app-type: monolith-react-oauth2-i18n-jdl
+                      app-folder: monolith-client-auth-i18n-template-jdl
+                      entity: import-jdl
+                      e2e: oauth2
                     - app-type: monolith-angular-jwt-jdl
                       app-folder: monolith-client-auth-template-jdl
+                      entity: import-jdl
+                      e2e: jwt
+                    - app-type: monolith-angular-jwt-i18n-jdl
+                      app-folder: monolith-client-auth-i18n-template-jdl
                       entity: import-jdl
                       e2e: jwt
                     - app-type: monolith-angular-oauth2-jdl
                       app-folder: monolith-client-auth-template-jdl
                       entity: import-jdl
                       e2e: oauth2
-                    - app-type: monolith-react-oauth2-i18n-jdl
-                      app-folder: monolith-react-oauth2-i18n-jdl
+                    - app-type: monolith-angular-oauth2-i18n-jdl
+                      app-folder: monolith-client-auth-i18n-template-jdl
                       entity: import-jdl
+                      e2e: oauth2
+                    - app-type: monolith-angular-jwt-i18n-dev
+                      app-folder: monolith-angular-jwt-i18n-dev
+                      entity: 'no'
+                      e2e: jwt
+                    - app-type: monolith-react-oauth2-dev
+                      app-folder: monolith-react-oauth2-dev
+                      entity: 'no'
                       e2e: oauth2
                     - app-type: microservice-oauth2-jdl
                       app-folder: microservice-oauth2-jdl
