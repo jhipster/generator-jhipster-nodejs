@@ -104,7 +104,7 @@ export class AuthService {
 
   <%_ } else if (authenticationType === 'oauth2') { _%>
     async findUserOrSave(loginUser: User): Promise<User | undefined> {
-        if(loginUser.login && loginUser.password && !loginUser.email) {
+        if (loginUser.login && loginUser.password && !loginUser.email) {
             loginUser.email = loginUser.login + '@localhost.it';
         }
         let userFound = await this.userService.findByfields({ where: { login: loginUser.login } });
