@@ -68,14 +68,15 @@ export class SeedUsersRoles1570200490072 implements MigrationInterface {
 
     const authorityRepository = getRepository("nhi_authority");
 
-    const adminRole = await authorityRepository.save(
-      this.role1
-    );
-    const userRole = await authorityRepository.save(
-      this.role2
-    );
+   <%_ if (authenticationType === 'oauth2') { _%>
 
-   <%_ if (authenticationType !== 'oauth2') { _%>
+    await authorityRepository.save([this.role1, this.role2]);
+
+   <%_ } else { _%>
+
+    const adminRole = await authorityRepository.save(this.role1);
+    const userRole = await authorityRepository.save(this.role2);
+
     const userRepository = getRepository("nhi_user");
 
     this.user1.authorities= [adminRole, userRole];
@@ -85,7 +86,6 @@ export class SeedUsersRoles1570200490072 implements MigrationInterface {
     await userRepository.save([this.user1, this.user2, this.user3, this.user4]);
 
     <%_ } _%>
-
   }
 
 

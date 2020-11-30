@@ -77,11 +77,6 @@ const clientFiles = {
                     file: 'react/test/protractor.conf.js',
                     renameTo: () => `${TEST_DIR}protractor.conf.js`
                 },
-                /*
-                {
-                    file: 'react/test/e2e/account.spec.ts',
-                    renameTo: () => `${TEST_DIR}e2e/modules/account/account.spec.ts`
-                }, */
                 {
                     file: 'react/test/e2e/administration.spec.ts',
                     renameTo: () => `${TEST_DIR}e2e/modules/administration/administration.spec.ts`
@@ -95,10 +90,6 @@ const clientFiles = {
                     file: 'angular/test/protractor.conf.js',
                     renameTo: () => `${TEST_DIR}protractor.conf.js`
                 },
-                /* {
-                    file: 'angular/test/e2e/account.spec.ts',
-                    renameTo: () => `${TEST_DIR}e2e/account/account.spec.ts`
-                }, */
                 {
                     file: 'angular/test/e2e/administration.spec.ts',
                     renameTo: () => `${TEST_DIR}e2e/admin/administration.spec.ts`

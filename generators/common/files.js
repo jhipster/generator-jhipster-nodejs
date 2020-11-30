@@ -20,6 +20,7 @@ const commonFiles = {
 function writeFiles() {
     return {
         overrideFiles() {
+            this.protractorTests = true;
             this.writeFilesToDisk(commonFiles, this, false);
         }
     };

@@ -269,7 +269,7 @@ Unit tests are run by [Jest][] and written with [Jasmine][]. They're located in 
     <%= clientPackageManager %> test
 
 <% if (protractorTests) { %>UI end-to-end tests are powered by [Protractor][], which is built on top of WebDriverJS. They're located in [<%= CLIENT_TEST_SRC_DIR %>e2e](<%= CLIENT_TEST_SRC_DIR %>e2e)
-and can be run in a terminal (`<%= clientPackageManager %> run e2e`) after that the full application is run (`<%= clientPackageManager %> run start:app`)
+and can be run in a terminal (`<%= clientPackageManager %> run e2e`) after that the full application is run (`<%= clientPackageManager %> run start:app`).
 <% } %><% if (gatlingTests) { %>### Other tests
 
 Performance tests are run by [Gatling][] and written in Scala. They're located in [src/test/gatling](src/test/gatling).
