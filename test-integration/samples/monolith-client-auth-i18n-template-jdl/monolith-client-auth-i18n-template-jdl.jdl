@@ -3,7 +3,7 @@
  * This is the application and entity model for the 21-Points (https://github.com/mraible/21-points) application from Matt Raible
  * Use "jhipster import-jdl model-name.jdl --blueprints nodejs" to generate the entity application
  * Use jhipster 6.x (example 6.8.0)
- * model committed also in: https://github.com/jhipster/jdl-samples/blob/master/21-points.jh
+ * model modified from that committed in: https://github.com/jhipster/jdl-samples/blob/master/21-points.jh
  */
 
 application {
@@ -62,7 +62,4 @@ relationship ManyToOne {
   Weight{user(login)} to User
   Points{user(login)} to User
 }
-
-paginate BloodPressure, Weight with infinite-scroll
-paginate Points with pagination
 

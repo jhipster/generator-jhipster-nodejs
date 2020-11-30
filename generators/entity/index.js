@@ -54,7 +54,7 @@ module.exports = class extends EntityGenerator {
                 context.protractorTests = true;
                 const configOptions = this.configOptions;
 
-                this.composeWith(require.resolve('../entity-client'), {
+                this.composeWith(require.resolve('generator-jhipster/generators/entity-client'), {
                     context,
                     configOptions,
                     'skip-install': context.options['skip-install'],
