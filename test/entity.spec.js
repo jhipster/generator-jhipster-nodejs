@@ -28,11 +28,6 @@ function getPreCondition() {
                 require('../generators/entity/index.js'), // eslint-disable-line global-require
                 'jhipster-nodejs:entity',
                 path.join(__dirname, '../generators/entity/index.js')
-            ],
-            [
-                require('../generators/entity-server/index.js'), // eslint-disable-line global-require
-                'jhipster-nodejs:entity-server',
-                path.join(__dirname, '../generators/entity-server/index.js')
             ]
         ]);
 }

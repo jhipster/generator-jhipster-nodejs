@@ -1,5 +1,5 @@
 
-#!/bin/bash
+#!/bin/sh
 
 set -e
 
@@ -11,7 +11,7 @@ GREEN='\033[0;32m'
 # Change in template directory
 #-------------------------------------------------------------------------------
 cd test-integration/samples/$1
-echo "*** changed directory in : test-integration/samples/"$1
+echo "***${GREEN}changed directory in : test-integration/samples/"$1
 
 
 #-------------------------------------------------------------------------------

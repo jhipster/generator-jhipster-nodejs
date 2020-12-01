@@ -13,6 +13,8 @@
 
 # [1.4.0](https://github.com/jhipster/generator-jhipster-nodejs/tree/v1.4.0)
 
+-   Protractor or another tool for client e2e tests [issue #101](https://github.com/jhipster/generator-jhipster-nodejs/issues/101)
+-   Support the account management with user registration, delete, creation and changes password with settings [issue #166](https://github.com/jhipster/generator-jhipster-nodejs/issues/166)
 -   NestJS migration from 6 to 7 version [issue #183](https://github.com/jhipster/generator-jhipster-nodejs/issues/183)
 
 # [1.3.0](https://github.com/jhipster/generator-jhipster-nodejs/tree/v1.3.0) - 02/11/2020 released date

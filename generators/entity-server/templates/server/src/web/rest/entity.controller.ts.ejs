@@ -87,9 +87,8 @@ export class <%= entityClass %>Controller {
     status: 204,
     description: 'The record has been successfully deleted.',
   })
-  async remove(@Req() req: Request, @Param('id') id: string): Promise<<%= entityClass %>>  {
+  async deleteById(@Req() req: Request, @Param('id') id: string): Promise<void>  {
     HeaderUtil.addEntityDeletedHeaders(req.res, '<%= entityClass %>', id);
-    const toDelete = await this.<%= asEntity(entityInstance) %>Service.findById(id);
-    return await this.<%= asEntity(entityInstance) %>Service.delete(toDelete);
+    return await this.<%= asEntity(entityInstance) %>Service.deleteById(id);
   }
 }

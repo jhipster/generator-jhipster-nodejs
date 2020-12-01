@@ -269,7 +269,7 @@ Unit tests are run by [Jest][] and written with [Jasmine][]. They're located in 
     <%= clientPackageManager %> test
 
 <% if (protractorTests) { %>UI end-to-end tests are powered by [Protractor][], which is built on top of WebDriverJS. They're located in [<%= CLIENT_TEST_SRC_DIR %>e2e](<%= CLIENT_TEST_SRC_DIR %>e2e)
-and can be run in terminal (`<%= clientPackageManager %> run e2e`)
+and can be run in a terminal (`<%= clientPackageManager %> run e2e`) after that the full application is run (`<%= clientPackageManager %> run start:app`).
 <% } %><% if (gatlingTests) { %>### Other tests
 
 Performance tests are run by [Gatling][] and written in Scala. They're located in [src/test/gatling](src/test/gatling).
@@ -312,15 +312,15 @@ For more information, refer to the [Code quality page][].
 [Setting up Continuous Integration]: <%= DOCUMENTATION_ARCHIVE_URL %>/setting-up-ci/
 
 <% if (testFrameworks.includes("gatling")) { %>[Gatling]: http://gatling.io/<% } %>
-<%_ if (!skipClient) {_%>
 [Node.js]: https://nodejs.org/
 [Yarn]: https://yarnpkg.org/
 [Webpack]: https://webpack.github.io/
-[Angular CLI]: https://cli.angular.io/
-[BrowserSync]: http://www.browsersync.io/
 [Jest]: https://facebook.github.io/jest/
 [NestJS]: https://nestjs.com/
 [NestJS CLI]: https://docs.nestjs.com/cli/usages
+<%_ if (!skipClient) {_%>
+[Angular CLI]: https://cli.angular.io/
+[BrowserSync]: http://www.browsersync.io/
 [Jasmine]: http://jasmine.github.io/2.0/introduction.html
 [Protractor]: https://angular.github.io/protractor/
 [Leaflet]: http://leafletjs.com/

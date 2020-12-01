@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, HttpException, HttpStatus, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FindManyOptions, FindOneOptions } from 'typeorm';
 import  <%= entityClass %>  from '../domain/<%= entityFileName %>.entity';
@@ -12,7 +12,7 @@ for (idx in relationships) {
  const relationshipFieldName = relationships[idx].relationshipFieldName;
  const relationshipFieldNamePlural = relationships[idx].relationshipFieldNamePlural;
  const ownerSide = relationships[idx].ownerSide;
- 
+
    if (relationshipType === 'many-to-one') { _%>
     relationshipNames.push('<%-relationshipFieldName %>');
    <%_ } else if (relationshipType === 'many-to-many' && ownerSide === true) { _%>
@@ -49,8 +49,13 @@ export class <%= entityClass %>Service {
         return await this.save(<%= asEntity(entityInstance) %>);
       }
 
-      async delete(<%= asEntity(entityInstance) %>: <%= entityClass %>): Promise<<%= entityClass %> | undefined> {
-        return await this.<%= asEntity(entityInstance) %>Repository.remove(<%= asEntity(entityInstance) %>);
+      async deleteById(id: string): Promise<void | undefined> {
+        await this.<%= asEntity(entityInstance) %>Repository.delete(id);
+        const entityFind = await this.findById(id);
+        if (entityFind) {
+          throw new HttpException('Error, entity not deleted!', HttpStatus.NOT_FOUND);
+        }
+        return;
       }
 
 }

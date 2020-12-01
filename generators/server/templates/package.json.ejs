@@ -28,7 +28,7 @@
   "scripts": {
     "build:app": "cd server && <%= clientPackageManager %> run build",
     "lint:fix": "echo \"INFO: no client found\"",
-    "postInstall": "cd server && npm run lint:fix",
+    "preinstall": "cd server && npm run lint:fix",
     "start:app": "cd server && <%= clientPackageManager %> run start",
     "test": "echo \"INFO: no client test found\""
   },

@@ -13,7 +13,7 @@ const commonConf = {
 let ormconfig: TypeOrmModuleOptions = {
     name: 'default',
     type: 'sqlite',
-    database: '../target/sqlite-dev-db.sql',
+    database: '../target/db/sqlite-dev-db.sql',
     logging: true,
     synchronize: true,
     entities: commonConf.ENTITIES,

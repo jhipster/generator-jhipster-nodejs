@@ -7,7 +7,6 @@ const logger = new Logger('Config');
 
 export class Config {
   debugLogging = 'debug';
-
   'server.port' = '<%= serverPort %>';
   'jhipster.clientApp.name' = '<%= baseName %>';
   'jhipster.registry.password' = 'admin';
@@ -62,6 +61,11 @@ export class Config {
     return this[key];
   }
 
+  <%_ if (!skipClient) { _%>
+  public getClientPath(): string {
+    return path.join(__dirname, '../dist/classes/static');
+  }
+  <%_ } _%>
   public addAll(properties): any {
     properties = objectToArray(properties);
     for (const property in properties) {

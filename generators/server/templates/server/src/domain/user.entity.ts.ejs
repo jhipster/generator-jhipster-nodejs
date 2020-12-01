@@ -5,22 +5,22 @@ import { ApiModelProperty } from '@nestjs/swagger';
 import { config } from '../config';
 import { EncryptionTransformer } from "typeorm-encrypted";
 
-@Entity('jhi_user')
+@Entity('nhi_user')
 export class User extends BaseEntity {
   @ApiModelProperty({ uniqueItems: true, example: 'myuser', description: 'User login' })
   @Column({ unique: true })
   login: string;
   @ApiModelProperty({ example: 'MyUser', description: 'User first name' })
-  @Column()
-  firstName: string;
-  @ApiModelProperty({ example: 'MyUser', description: 'User last name' })
-  @Column()
-  lastName: string;
-  @ApiModelProperty({ example: 'myuser@localhost', description: 'User email' })
   @Column({ nullable: true })
-  email?: string;
-  @ApiModelProperty({ example: 'true', description: 'User activation' })
+  firstName?: string;
+  @ApiModelProperty({ example: 'MyUser', description: 'User last name' })
+  @Column({ nullable: true })
+  lastName?: string;
+  @ApiModelProperty({ example: 'myuser@localhost', description: 'User email' })
   @Column()
+  email: string;
+  @ApiModelProperty({ example: 'true', description: 'User activation' })
+  @Column({ default: false})
   activated: boolean;
   @ApiModelProperty({ example: 'en', description: 'User language' })
   @Column()

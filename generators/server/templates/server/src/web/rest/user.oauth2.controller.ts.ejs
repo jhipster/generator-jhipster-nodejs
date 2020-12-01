@@ -4,7 +4,9 @@ import { LoggingInterceptor } from '../../client/interceptors/logging.intercepto
 import { ApiUseTags, ApiResponse, ApiOperation, ApiExcludeEndpoint } from '@nestjs/swagger';
 import { AuthGuard, RolesGuard } from '../../security';
 import { oauth2Config } from '../../security/oauth2.config';
+<%_ if (skipClient) { _%>
 import { config } from '../../config';
+<%_ } _%>
 
 @Controller()
 @UseInterceptors(LoggingInterceptor)
@@ -62,8 +64,9 @@ export class UserOauth2Controller {
     if (req.session && req.session.user) {
       idTokenFromSession = req.session.user.idToken;
       req.session.destroy();
+      return { idToken: idTokenFromSession, logoutUrl: oauth2Config.logoutUrl };
     }
-    return { idToken: idTokenFromSession, logoutUrl: oauth2Config.logoutUrl };
+    return;
   }
 
 }

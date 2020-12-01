@@ -1,7 +1,8 @@
 import { <%_ if (authenticationType === 'jwt') { _%> Body, Param, Post, Res, UseGuards, <%_ } _%> Controller, Get, Logger, Req, UseInterceptors } from '@nestjs/common';
 <%_ if (authenticationType === 'jwt') { _%>
 import { Response, Request } from 'express';
-import { AuthGuard, RolesGuard } from '../../security';
+import { AuthGuard, Roles, RoleType, RolesGuard } from '../../security';
+import { PasswordChangeDTO } from '../../service/dto/password-change.dto';
 <%_ } _%>
 import { User } from '../../domain/user.entity';
 import { LoggingInterceptor } from '../../client/interceptors/logging.interceptor';
@@ -10,16 +11,13 @@ import { AuthService } from '../../service/auth.service';
 
 @Controller('api')
 @UseInterceptors(LoggingInterceptor)
-<%_ if (authenticationType === 'jwt') { _%>
-@UseGuards(AuthGuard, RolesGuard)
-@ApiBearerAuth()
-<%_ } _%>
 @ApiUseTags('account-resource')
 export class AccountController {
   logger = new Logger('AccountController');
 
   constructor(private readonly authService: AuthService) { }
   <%_ if (authenticationType === 'jwt') { _%>
+
   @Post('/register')
   @ApiOperation({ title: 'Register user' })
   @ApiResponse({
@@ -27,11 +25,14 @@ export class AccountController {
     description: 'Registered user',
     type: User,
   })
-  registerAccount(@Req() req: Request, @Body() user: User, @Res() res: Response): any {
-    return res.sendStatus(201);
+  async registerAccount(@Req() req: Request, @Body() user: User): Promise <any> {
+    return await this.authService.registerNewUser(user);
   }
 
   @Get('/activate')
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles(RoleType.ADMIN)
   @ApiOperation({ title: 'Activate an account' })
   @ApiResponse({
     status: 200,
@@ -42,6 +43,8 @@ export class AccountController {
   }
 
   @Get('/authenticate')
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard)
   @ApiOperation({ title: 'Check if the user is authenticated' })
   @ApiResponse({
     status: 200,
@@ -53,6 +56,8 @@ export class AccountController {
   }
 
   @Get('/account')
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard)
   @ApiOperation({ title: 'Get the current user.' })
   @ApiResponse({
     status: 200,
@@ -60,32 +65,40 @@ export class AccountController {
   })
   async getAccount(@Req() req: Request): Promise<any> {
     const user: any = req.user;
-    return await this.authService.findUserWithAuthById(user.id);
+    return await this.authService.getAccount(user.id);
   }
 
   @Post('/account')
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard)
   @ApiOperation({ title: 'Update the current user information' })
   @ApiResponse({
     status: 201,
     description: 'user info updated',
     type: User,
   })
-  saveAccount(@Req() req: Request, @Body() user: User, @Res() res: Response): any {
-    return res.sendStatus(201);
-  }
+  async saveAccount(@Req() req: Request, @Body() newUserInfo: User): Promise<any> {
+    const user: any = req.user;
+    return await this.authService.updateUserSettings(user.login, newUserInfo);
+}
 
   @Post('/account/change-password')
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard)
   @ApiOperation({ title: 'Change current password' })
   @ApiResponse({
     status: 201,
     description: 'user password changed',
-    type: User,
+    type: PasswordChangeDTO,
   })
-  changePassword(@Req() req: Request, @Body() user: User, @Res() res: Response): any {
-    return res.sendStatus(201);
+  async changePassword(@Req() req: Request, @Body() passwordChange: PasswordChangeDTO): Promise<any> {
+    const user: any = req.user;
+    return await this.authService.changePassword(user.login, passwordChange.currentPassword, passwordChange.newPassword) ;
   }
 
   @Post('/account/reset-password/init')
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard)
   @ApiOperation({ title: 'Send an email to reset the password of the user' })
   @ApiResponse({
     status: 201,
@@ -97,6 +110,8 @@ export class AccountController {
   }
 
   @Post('/account/reset-password/finish')
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard)
   @ApiOperation({ title: 'Finish to reset the password of the user' })
   @ApiResponse({
     status: 201,
@@ -115,13 +130,9 @@ export class AccountController {
     status: 200,
     description: 'User retrieved',
   })
-  getAccount(@Req() req: any): any | void {
+  getAccount(@Req() req: any): any {
     const user: User = req.session.user;
-    if (user) {
-      return user;
-    }
-    return ;
-
+    return this.authService.getAccount(user);
   }
 
   <%_ } _%>

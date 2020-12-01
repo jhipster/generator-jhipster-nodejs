@@ -133,7 +133,7 @@
     "postcss-loader": "3.0.0",
     "prettier": "1.19.1",
     <%_ if (protractorTests) { _%>
-    "protractor": "5.4.2",
+    "protractor": "5.4.3",
     <%_ } _%>
     "reflect-metadata": "0.1.13",
     "rimraf": "3.0.0",
@@ -178,7 +178,7 @@
     "postinstall": "node node_modules/protractor/bin/webdriver-manager update --gecko false",
     <%_ } _%>
     <%_ if (!skipServer) { _%>
-    "postInstall": "cd server && npm run lint:fix",
+    "preinstall": "cd server && npm run lint:fix",
     <%_ } _%>
     "start": "<%= clientPackageManager %> run webpack:dev",
     <%_ if (skipServer) { _%>

@@ -1,14 +1,19 @@
-#!/bin/bash
+#!/bin/sh
 
 set -e
 
 RED='\033[0;31m'
+GREEN='\033[0;32m'
 
-launchCurl() {
-    if [ "$2" = "build" ]; then
+#-------------------------------------------------------------------------------
+# functions
+#-------------------------------------------------------------------------------
+
+launchCurlOrProtractor() {
+    if [ "$1" = "build" ]; then
       sleep 10
     else
-      sleep 100
+      sleep 150
     fi
     retryCount=1
     maxRetry=10
@@ -18,16 +23,38 @@ launchCurl() {
     while [ "$status" -ne 0 ] && [ "$retryCount" -le "$maxRetry" ]; do
         echo "*** [$(date)] Application not reachable yet. Sleep and retry - retryCount =" $retryCount "/" $maxRetry
         retryCount=$((retryCount+1))
-        sleep 10
+        sleep 15
         rep=$(curl -v "$httpUrl")
         status=$?
     done
 
     if [ "$status" -ne 0 ]; then
-        echo "${RED}[$(date)] Not connected after" $retryCount " retries."
-        exit 1
+        echo "***${RED}[$(date)] Not connected after" $retryCount " retries."
+        return 1
+    fi
+
+    if [ "$1" = "oauth2" ] || [  "$1" = "jwt" ]; then
+
+      retryCount=0
+      maxRetry=1
+      until [ "$retryCount" -ge "$maxRetry" ]
+      do
+        result=0
+        echo "***${GREEN}run protractor e2e test in client for : "$1
+        node node_modules/webdriver-manager/bin/webdriver-manager update --gecko false && JHI_E2E_HEADLESS=true npm run e2e
+        result=$?
+        [ $result -eq 0 ] && break
+        retryCount=$((retryCount+1))
+        echo "***${RED}e2e tests failed... retryCount =" $retryCount "/" $maxRetry
+        sleep 15
+      done
+      return $result
+
+    else
+     return 0
     fi
 }
+
 
 runOnlyServerApp() {
     set NODE_ENV=dev&& node dist/main.js &
@@ -42,29 +69,33 @@ runApp() {
 #-------------------------------------------------------------------------------
 # Change in template directory
 #-------------------------------------------------------------------------------
+
 cd test-integration/samples/$1
-echo "*** changed directory in : test-integration/samples/"$1
+echo "***${GREEN}changed directory in : test-integration/samples/"$1
 
 
 #-------------------------------------------------------------------------------
 # Run and test app
 #-------------------------------------------------------------------------------
+
 if [ "$2" = "build" ]; then
-  echo "*** only server build in : "$1
+  echo "***${GREEN}only server build in : "$1
   cd server
   npm run build
-  echo "*** run server main app in dist : "$1
+  echo "***${GREEN}run server main app in dist : "$1
   runOnlyServerApp
 else
-  echo "*** run full app in : "$1
+  echo "***${GREEN}run full app in : "$1
   runApp
 fi
 
-launchCurl
-
+launchCurlOrProtractor $2
+resultRunApp=$?
 
 #-------------------------------------------------------------------------------
 # Kill app
 #-------------------------------------------------------------------------------
-echo "*** kill app : "$1
+echo "***${GREEN}kill app : "$1
 kill $(cat .pidRunApp)
+
+exit $((resultRunApp))
