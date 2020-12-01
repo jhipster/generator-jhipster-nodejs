@@ -10,6 +10,7 @@ To contribute for the next featues, fork the repo and open a pull request regard
 -   Swagger support
 -   Entity ORM generation for prod database (sql) and dev database (default db is sqlite already configured)
 -   Basic security management with jwt and oauth2
+-   Jest e2e tests for server and jhipster e2e client tests
 -   All subgenerators
 
 > Let it free to give advices or tips!
@@ -47,6 +48,8 @@ To contribute for the next featues, fork the repo and open a pull request regard
 -   [x] OAuth2 feature for Keycloack
 -   [x] Encrypt user password in db
 -   [x] Languages subgenerator support i18n: translate home page for NHipster and remove spring boot resources message
+-   [x] Jhipster client e2e protractor tests integrated
+-   [x] Other core/admin jhipster management api
 
 ## To DO for next release
 
@@ -57,4 +60,4 @@ To contribute for the next featues, fork the repo and open a pull request regard
 -   [ ] pagination options in client
 -   [ ] Elastic Search support
 -   [ ] Search api
--   [ ] Other core/admin jhipster management api and services with sending email
+-   [ ] Admin services sending email (for new user and change password api)
