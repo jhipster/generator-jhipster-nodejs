@@ -1,0 +1,26 @@
+import { ApiModelProperty } from '@nestjs/swagger';
+import { IsString } from 'class-validator';
+
+/**
+ * A DTO base objct.
+ */
+export class BaseDTO  {
+
+  @ApiModelProperty({ example: '66ed8031-d40e-4f30-8ae4-8bf5c2ca87ff', description: 'Entity id' })
+  @IsString()
+  id?: string;
+
+  @ApiModelProperty({ example: 'administator', description: 'Created by user name' })
+  @IsString()
+  createdBy?: string;
+
+  @ApiModelProperty({ example: '10/12/2020', description: 'Created date' })
+  createdDate?: Date;
+
+  @ApiModelProperty({ example: 'newAdministrator', description: 'Last modified by user name' })
+  @IsString()
+  lastModifiedBy?: string;
+
+  @ApiModelProperty({ example: '12/12/2020', description: 'Last modified date' })
+  lastModifiedDate?: Date;
+}

@@ -4,7 +4,7 @@ import { Response, Request } from 'express';
 import { AuthGuard, Roles, RoleType, RolesGuard } from '../../security';
 import { PasswordChangeDTO } from '../../service/dto/password-change.dto';
 <%_ } _%>
-import { User } from '../../domain/user.entity';
+import { UserDTO } from '../../service/dto/user.dto';
 import { LoggingInterceptor } from '../../client/interceptors/logging.interceptor';
 import {<%_ if (authenticationType === 'jwt') { _%> ApiBearerAuth, <%_ } _%> ApiUseTags, ApiResponse, ApiOperation } from '@nestjs/swagger';
 import { AuthService } from '../../service/auth.service';
@@ -23,10 +23,10 @@ export class AccountController {
   @ApiResponse({
     status: 201,
     description: 'Registered user',
-    type: User,
+    type: UserDTO,
   })
-  async registerAccount(@Req() req: Request, @Body() user: User): Promise <any> {
-    return await this.authService.registerNewUser(user);
+  async registerAccount(@Req() req: Request, @Body() userDTO: UserDTO): Promise <any> {
+    return await this.authService.registerNewUser(userDTO);
   }
 
   @Get('/activate')
@@ -75,9 +75,9 @@ export class AccountController {
   @ApiResponse({
     status: 201,
     description: 'user info updated',
-    type: User,
+    type: userDTO,
   })
-  async saveAccount(@Req() req: Request, @Body() newUserInfo: User): Promise<any> {
+  async saveAccount(@Req() req: Request, @Body() newUserInfo: userDTO): Promise<any> {
     const user: any = req.user;
     return await this.authService.updateUserSettings(user.login, newUserInfo);
 }
@@ -131,7 +131,7 @@ export class AccountController {
     description: 'User retrieved',
   })
   getAccount(@Req() req: any): any {
-    const user: User = req.session.user;
+    const user: userDTO = req.session.user;
     return this.authService.getAccount(user);
   }
 

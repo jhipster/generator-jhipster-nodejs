@@ -2,7 +2,7 @@ import { Body, Controller, Delete, Get, Logger, Param, Post, Put, UseGuards, Req
 import { Request } from 'express';
 import { AuthGuard, Roles, RolesGuard, RoleType } from '../../security';
 import { PageRequest, Page } from '../../domain/base/pagination.entity';
-import { User } from '../../domain/user.entity';
+import { UserDTO } from '../../service/dto/user.dto';
 import { HeaderUtil } from '../../client/header-util';
 import { LoggingInterceptor } from '../../client/interceptors/logging.interceptor';
 import {<%_ if (authenticationType === 'jwt') { _%> ApiBearerAuth, <%_ } else if (authenticationType === 'oauth2') { _%> ApiOAuth2Auth, <%_ } _%> ApiUseTags, ApiResponse, ApiOperation } from '@nestjs/swagger';
@@ -27,7 +27,7 @@ export class UserController {
   @ApiResponse({
       status: 200,
       description: 'List all records',
-      type: User,
+      type: UserDTO,
   })
   async getAllUsers(@Req() req: Request): Promise<User[]> {
       const pageRequest: PageRequest = new PageRequest(req.query.page, req.query.size, req.query.sort);

@@ -1,28 +1,21 @@
 import { Authority } from './authority.entity';
 import { Entity, Column, ManyToMany, JoinTable } from 'typeorm';
 import { BaseEntity } from './base/base.entity';
-import { ApiModelProperty } from '@nestjs/swagger';
 import { config } from '../config';
 import { EncryptionTransformer } from "typeorm-encrypted";
 
 @Entity('nhi_user')
 export class User extends BaseEntity {
-  @ApiModelProperty({ uniqueItems: true, example: 'myuser', description: 'User login' })
   @Column({ unique: true })
   login: string;
-  @ApiModelProperty({ example: 'MyUser', description: 'User first name' })
   @Column({ nullable: true })
   firstName?: string;
-  @ApiModelProperty({ example: 'MyUser', description: 'User last name' })
   @Column({ nullable: true })
   lastName?: string;
-  @ApiModelProperty({ example: 'myuser@localhost', description: 'User email' })
   @Column()
   email: string;
-  @ApiModelProperty({ example: 'true', description: 'User activation' })
   @Column({ default: false})
   activated: boolean;
-  @ApiModelProperty({ example: 'en', description: 'User language' })
   @Column()
   langKey: string;
 
@@ -30,10 +23,8 @@ export class User extends BaseEntity {
   // eslint-disable-next-line
   @ManyToMany(type => Authority)
   @JoinTable()
-  @ApiModelProperty({ isArray: true, enum: ['ROLE_USER', 'ROLE_ADMIN', 'ROLE_ANONYMOUS'], description: 'Array of permissions' })
   authorities?: any[];
 
-  @ApiModelProperty({ example: 'myuser', description: 'User password' })
   @Column({
     type: "varchar",
     transformer: new EncryptionTransformer({
