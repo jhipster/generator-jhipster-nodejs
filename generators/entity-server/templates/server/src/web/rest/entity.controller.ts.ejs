@@ -1,7 +1,7 @@
 import { Body, Controller, Delete, Get, Logger, Param, Post as PostMethod, Put, UseGuards, Req, UseInterceptors } from '@nestjs/common';
 import { <% if (authenticationType === 'jwt') { _%> ApiBearerAuth, <% } else if (authenticationType === 'oauth2') { _%> ApiOAuth2Auth, <% } _%> ApiUseTags, ApiResponse, ApiOperation } from '@nestjs/swagger';
 import { Request } from 'express';
-import <%= entityClass %> from '../../domain/<%= entityFileName %>.entity';
+import { <%= entityClass %> } from '../../domain/<%= entityFileName %>.entity';
 import { <%= entityClass %>Service } from '../../service/<%= entityFileName %>.service';
 import { PageRequest, Page } from '../../domain/base/pagination.entity';
 import { AuthGuard, Roles, RolesGuard, RoleType } from '../../security';

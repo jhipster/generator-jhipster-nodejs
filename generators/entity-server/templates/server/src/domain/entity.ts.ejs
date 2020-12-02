@@ -13,11 +13,11 @@ const uniqueEnums = {}; %><%- include imports -%>
 <%_ if (!hasDto && importApiModelProperty === true) { _%>
 import { ApiModelProperty } from '@nestjs/swagger';
 <%_ } if (validation) { _%>
-import {validate, Contains, IsInt, Length, IsEmail, IsFQDN, IsDate, Min, Max} from "class-validator";
+import { validate, Contains, IsInt, Length, IsEmail, IsFQDN, IsDate, Min, Max } from "class-validator";
 <%_ } _%>
 
 <%_ Object.keys(uniqueEntities).forEach(function(entityClass) { _%>
-import <%= entityClass %> from './<%= uniqueEntities[entityClass] %>.entity';
+import { <%= entityClass %> } from './<%= uniqueEntities[entityClass] %>.entity';
 <%_ }); _%>
 <%_ Object.keys(uniqueEnums).forEach(function(enumClass) { _%>
 import { <%= enumClass %> } from './enumeration/<%= uniqueEnums[enumClass] %>';
@@ -35,7 +35,7 @@ import { User } from './user.entity';
 <%- formatAsClassJavadoc(javadoc) %>
 <%_ } _%>
 @Entity('<%= entityTableName %>')
-export default class <%= asEntity(entityClass) %> extends BaseEntity  {
+export class <%= asEntity(entityClass) %> extends BaseEntity  {
 
 <%_ for (idx in fields) {
     if (typeof fields[idx].javadoc !== 'undefined') { _%>

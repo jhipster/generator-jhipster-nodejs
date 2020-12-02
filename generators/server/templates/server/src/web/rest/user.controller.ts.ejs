@@ -71,6 +71,9 @@ export class UserController {
       userDTO.id = userOnDb.id;
       updated = true;
     }
+    else {
+      userDTO.password = userDTO.login;
+    }
     const createdOrUpdated = await this.userService.update(userDTO);
     if (updated) {
       HeaderUtil.addEntityUpdatedHeaders(req.res, 'User', createdOrUpdated.id);

@@ -30,6 +30,14 @@ const serverFiles = {
                     renameTo: generator => `src/service/${generator.entityFileName}.service.ts`
                 },
                 {
+                    file: 'src/service/dto/entity.dto.ts',
+                    renameTo: generator => `src/service/dto/${generator.entityFileName}.dto.ts`
+                },
+                {
+                    file: 'src/service/mapper/entity.mapper.ts',
+                    renameTo: generator => `src/service/mapper/${generator.entityFileName}.mapper.ts`
+                },
+                {
                     file: 'src/web/rest/entity.controller.ts',
                     renameTo: generator => `src/web/rest/${generator.entityFileName}.controller.ts`
                 },

@@ -1,0 +1,38 @@
+import { <%= asEntity(entityClass) %> } from '../../domain/<%= entityFileName %>.entity';
+import { <%= asEntity(entityClass) %>DTO } from '../dto/<%= entityFileName %>.dto';
+// add other mapper if nested
+/**
+ * A <%= asEntity(entityClass) %> mapper object.
+ */
+export class <%= asEntity(entityClass) %>Mapper {
+
+  static fromDTOtoEntity (entityDTO: <%= asEntity(entityClass) %>DTO): <%= asEntity(entityClass) %> {
+    if (!entityDTO) {
+      return;
+    }
+    let entity = new <%= asEntity(entityClass) %>();
+    const fields = Object.getOwnPropertyNames(entityDTO);
+    fields.forEach(field => {
+        // check if nested and call the other mapper
+        entity[field] = entityDTO[field];
+    });
+    return entity;
+
+  }
+
+  static fromEntityToDTO (entity: <%= asEntity(entityClass) %>): <%= asEntity(entityClass) %>DTO {
+    if (!entity) {
+      return;
+    }
+    let entityDTO = new <%= asEntity(entityClass) %>DTO();
+
+    const fields = Object.getOwnPropertyNames(entity);
+
+    fields.forEach(field => {
+        // check if nested and call the other mapper
+        entityDTO[field] = entity[field];
+    });
+
+    return entityDTO;
+  }
+}

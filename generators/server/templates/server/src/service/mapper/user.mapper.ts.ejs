@@ -10,7 +10,7 @@ export class UserMapper {
     if (!userDTO) {
       return;
     }
-    let user: User = new User();
+    let user = new User();
     const fields = Object.getOwnPropertyNames(userDTO);
     fields.forEach(field => {
          user[field] = userDTO[field];
@@ -23,7 +23,7 @@ export class UserMapper {
     if (!user) {
       return;
     }
-    let userDTO: UserDTO = new UserDTO();
+    let userDTO = new UserDTO();
 
     const fields = Object.getOwnPropertyNames(user);
 

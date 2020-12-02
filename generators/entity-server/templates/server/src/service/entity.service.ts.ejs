@@ -1,7 +1,7 @@
 import { Injectable, HttpException, HttpStatus, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FindManyOptions, FindOneOptions } from 'typeorm';
-import  <%= entityClass %>  from '../domain/<%= entityFileName %>.entity';
+import { <%= entityClass %> }  from '../domain/<%= entityFileName %>.entity';
 import { <%= entityClass %>Repository } from '../repository/<%= entityFileName %>.repository';
 
 const relationshipNames = [];

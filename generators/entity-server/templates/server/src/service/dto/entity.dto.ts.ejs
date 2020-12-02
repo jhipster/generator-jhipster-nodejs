@@ -1,0 +1,119 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import { ApiModelProperty } from '@nestjs/swagger';
+import { validate, Contains, IsString, IsInt, Length, IsEmail, Min, Max } from "class-validator";
+import { BaseDTO } from './base.dto';
+
+<%
+let importApiModelProperty = true;
+let importJsonIgnore = false;
+let importJsonIgnoreProperties = false;
+let importSet = false;
+let hasDto = dto === 'mapstruct';
+let isUserRelationship = false;
+const uniqueEntities = {};
+const uniqueEnums = {}; %><%- include ../../domain/imports -%>
+
+<%_ Object.keys(uniqueEntities).forEach(function(entityClass) { _%>
+import { <%= entityClass %>DTO } from './<%= uniqueEntities[entityClass] %>.dto';
+<%_ }); _%>
+<%_ Object.keys(uniqueEnums).forEach(function(enumClass) { _%>
+import { <%= enumClass %> } from '../../domain/enumeration/<%= uniqueEnums[enumClass] %>';
+<%_ }); _%>
+
+<%_ if (isUserRelationship === true) { _%>
+import { UserDTO } from './user.dto';
+<%_ } _%>
+
+/**
+ * A <%= asEntity(entityClass) %> DTO object.
+ */
+export class <%= asEntity(entityClass) %>DTO extends BaseDTO {
+
+    <%_ for (idx in fields) {
+
+        let required = false;
+        let unique = false;
+        const fieldValidate = fields[idx].fieldValidate;
+        const fieldValidateRules = fields[idx].fieldValidateRules;
+        const fieldValidateRulesMaxlength = fields[idx].fieldValidateRulesMaxlength;
+        const fieldType = fields[idx].fieldType;
+        const fieldTypeBlobContent = fields[idx].fieldTypeBlobContent;
+        const fieldName = fields[idx].fieldName;
+        const fieldNameUnderscored = fields[idx].fieldNameUnderscored;
+        const fieldNameAsDatabaseColumn = fields[idx].fieldNameAsDatabaseColumn;
+        const fieldColumnType=addDbType(fieldType);
+        if (fieldValidate === true) {
+            if (fieldValidateRules.includes('required')) {
+                required = true;
+            }
+            if (fieldValidateRules.includes('unique')) {
+                unique = true;
+            } _%>
+        <%- include ../../common/field_validators -%>
+        <%_ } _%>
+        <%_ if (!hasDto && typeof fields[idx].javadoc != 'undefined') { _%>
+        @ApiModelProperty({type: '', description: '<%- formatAsApiDescription(fields[idx].javadoc) %>'<% if (required) { %>, required: true<% } %>})
+        <%_ } _%>
+            <%_ if (fields[idx].fieldIsEnum) { _%>
+
+            <%_ } else if (['Instant', 'ZonedDateTime', 'LocalDate'].includes(fieldType)) { _%>
+
+            <%_ } else if (fieldType === 'BigDecimal') { _%>
+
+            <%_ } else { _%>
+
+            <%_ } _%>
+            <%_ if (fields[idx].fieldIsEnum) { _%>
+        <%= fieldName %>: <%= fieldType %>;
+            <%_ } else { _%>
+        <%= fieldName %>: <%= getTsType(fieldType) %>;
+            <%_ } _%>
+
+        <%_ if ((fieldType === 'byte[]' || fieldType === 'ByteBuffer') && fieldTypeBlobContent !== 'text') { _%>
+
+        <%= fieldName %>ContentType: string;
+        <%_ }
+        } _%>
+
+        <%_
+        for (idx in relationships) {
+            const relationship = relationships[idx];
+            const otherEntityRelationshipName = relationships[idx].otherEntityRelationshipName;
+            const otherEntityRelationshipNamePlural = relationships[idx].otherEntityRelationshipNamePlural;
+            const relationshipName = relationships[idx].relationshipName;
+            const relationshipFieldName = relationships[idx].relationshipFieldName;
+            const relationshipFieldNamePlural = relationships[idx].relationshipFieldNamePlural;
+            const joinTableName = getJoinTableName(entityTableName, relationshipName, prodDatabaseType);
+            const relationshipType = relationships[idx].relationshipType;
+            const relationshipValidate = relationships[idx].relationshipValidate;
+            const relationshipRequired = relationships[idx].relationshipRequired;
+            const otherEntityNameCapitalized = relationships[idx].otherEntityNameCapitalized;
+            const ownerSide = relationships[idx].ownerSide;
+
+            if (typeof relationships.javadoc != 'undefined') { _%>
+    <%- formatAsFieldJavadoc(relationships.javadoc) %>
+                <%_ if (!hasDto) { _%>
+        @ApiModelProperty({description = "<%- formatAsApiDescription(relationships.javadoc) %>"})
+                <%_ }_%>
+        <%_ }
+            if (relationshipType === 'one-to-many') {_%>
+
+        <%= relationshipFieldNamePlural %>: <%= relationship.otherEntityAngularName %>DTO[];
+
+        <%_ } else if (relationshipType === 'many-to-one') { _%>
+
+        <%= relationshipFieldName %>: <%= relationship.otherEntityAngularName %>DTO;
+
+        <%_ } else if (relationshipType === 'many-to-many') { _%>
+
+        <%= relationshipFieldNamePlural %>: <%= relationship.otherEntityAngularName %>DTO[];
+
+        <%_ } else { _%>
+
+        <%= relationshipFieldName %>: <%= relationship.otherEntityAngularName %>DTO;
+
+        <%_ }
+        } _%>
+        // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
+
+    }

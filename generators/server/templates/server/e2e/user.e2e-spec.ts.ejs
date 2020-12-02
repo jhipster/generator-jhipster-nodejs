@@ -14,11 +14,19 @@ describe('User', () => {
     const authGuardMock = { canActivate: (): any => true };
     const rolesGuardMock = { canActivate: (): any => true };
 
-    const testUserDTO: UserDTO = {
+    const testUserRequestObject: any = {
         login: 'userTestLogin',
         firstName: 'UserTest',
         lastName: 'UserTest',
         email: 'usertest@localhost.it'
+    };
+
+    const testUserDTO: UserDTO = {
+        login: 'userTestLogin',
+        firstName: 'UserTest',
+        lastName: 'UserTest',
+        email: 'usertest@localhost.it',
+        password: 'userTestLogin'
     };
 
     beforeEach(async () => {
@@ -40,11 +48,11 @@ describe('User', () => {
         const createdUser: UserDTO = (
             await request(app.getHttpServer())
                 .post('/api/users')
-                .send(testUserDTO)
+                .send(testUserRequestObject)
                 .expect(201)
         ).body;
 
-        expect(createdUser.login).toEqual(testUserDTO.login);
+        expect(createdUser.login).toEqual(testUserRequestObject.login);
         await service.delete(createdUser);
     });
 
@@ -62,7 +70,7 @@ describe('User', () => {
             await request(app.getHttpServer())
                 .put('/api/users')
                 .send(savedUser)
-                .expect(201)
+                .expect(200)
         ).body;
 
         expect(updatedUser).toEqual(savedUser);
