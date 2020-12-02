@@ -39,7 +39,7 @@ export class AccountController {
     description: 'activated',
   })
   activateAccount(@Param() key: string, @Res() res: Response): any{
-    return res.sendStatus(200);
+    return res.sendStatus(500);
   }
 
   @Get('/authenticate')
@@ -75,9 +75,9 @@ export class AccountController {
   @ApiResponse({
     status: 201,
     description: 'user info updated',
-    type: userDTO,
+    type: UserDTO,
   })
-  async saveAccount(@Req() req: Request, @Body() newUserInfo: userDTO): Promise<any> {
+  async saveAccount(@Req() req: Request, @Body() newUserInfo: UserDTO): Promise<any> {
     const user: any = req.user;
     return await this.authService.updateUserSettings(user.login, newUserInfo);
 }
@@ -106,7 +106,7 @@ export class AccountController {
     type: 'string',
   })
   requestPasswordReset(@Req() req: Request, @Body() email: string, @Res() res: Response): any {
-    return res.sendStatus(201);
+    return res.sendStatus(500);
   }
 
   @Post('/account/reset-password/finish')
@@ -119,7 +119,7 @@ export class AccountController {
     type: 'string',
   })
   finishPasswordReset(@Req() req: Request, @Body() keyAndPassword: string, @Res() res: Response): any {
-    return res.sendStatus(201);
+    return res.sendStatus(500);
   }
 
   <%_ } else if (authenticationType === 'oauth2') { _%>
@@ -129,10 +129,11 @@ export class AccountController {
   @ApiResponse({
     status: 200,
     description: 'User retrieved',
+    type: UserDTO,
   })
   getAccount(@Req() req: any): any {
-    const user: userDTO = req.session.user;
-    return this.authService.getAccount(user);
+    const userDTO: UserDTO = req.session.user;
+    return this.authService.getAccount(userDTO);
   }
 
   <%_ } _%>

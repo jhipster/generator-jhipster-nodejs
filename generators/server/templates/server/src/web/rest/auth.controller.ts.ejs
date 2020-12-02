@@ -1,5 +1,4 @@
 import { Controller, Get, Logger, UseGuards, Req, UseInterceptors } from '@nestjs/common';
-import { UserDTO } from '../../service/dto/user.dto';
 import { AuthGuard, Roles, RolesGuard, RoleType } from '../../security';
 import { LoggingInterceptor } from '../../client/interceptors/logging.interceptor';
 import {<%_ if (authenticationType === 'jwt') { _%> ApiBearerAuth,<%_ } else if (authenticationType === 'oauth2') { _%> ApiOAuth2Auth, <%_ } _%> ApiUseTags, ApiResponse, ApiOperation } from '@nestjs/swagger';
@@ -30,7 +29,7 @@ export class AuthController {
   })
   @Roles(RoleType.ADMIN)
   getAuthorities(@Req() req: any): any {
-    const user: UserDTO = req.user;
+    const user: any = req.user;
     return user.authorities;
   }
 

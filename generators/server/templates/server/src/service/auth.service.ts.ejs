@@ -55,12 +55,12 @@ export class AuthService {
   }
 
   async findUserWithAuthById(userId: string): Promise<UserDTO | undefined> {
-    const userDTO: any = await this.userService.findByfields({ where: { id: userId } });
+    const userDTO: UserDTO = await this.userService.findByfields({ where: { id: userId } });
     return userDTO;
   }
 
   async getAccount(userId: string): Promise<UserDTO | undefined> {
-    const userDTO: any = await this.findUserWithAuthById(userId);
+    const userDTO: UserDTO = await this.findUserWithAuthById(userId);
     if (!userDTO) {
        return;
     }
@@ -68,7 +68,7 @@ export class AuthService {
   }
 
   async changePassword(userLogin: string, currentClearTextPassword: string, newPassword: string): Promise<void> {
-    const userFind = await this.userService.findByfields({ where: { login: userLogin } });
+    const userFind: UserDTO = await this.userService.findByfields({ where: { login: userLogin } });
     if (!userFind) {
         throw new HttpException('Invalid login name!', HttpStatus.BAD_REQUEST);
     }
@@ -95,7 +95,7 @@ export class AuthService {
   }
 
   async updateUserSettings(userLogin: string, newUserInfo: UserDTO) : Promise<UserDTO> {
-    const userFind = await this.userService.findByfields({ where: { login: userLogin } });
+    const userFind: UserDTO = await this.userService.findByfields({ where: { login: userLogin } });
     if (!userFind) {
         throw new HttpException('Invalid login name!', HttpStatus.BAD_REQUEST);
     }
@@ -115,7 +115,7 @@ export class AuthService {
         if (loginUser.login && loginUser.password && !loginUser.email) {
             loginUser.email = loginUser.login + '@localhost.it';
         }
-        let userFound = await this.userService.findByfields({ where: { login: loginUser.login } });
+        let userFound: UserDTO = await this.userService.findByfields({ where: { login: loginUser.login } });
 
         if (!userFound) {
           const authoritiesName = [];
@@ -127,7 +127,7 @@ export class AuthService {
         return loginUser;
       }
 
-   getAccount(user: UserDTO): any {
+   getAccount(userDTO: UserDTO): any {
     if (!userDTO) {
        return;
     }

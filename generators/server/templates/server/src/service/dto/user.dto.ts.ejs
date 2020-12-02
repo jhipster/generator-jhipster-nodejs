@@ -1,5 +1,5 @@
 import { ApiModelProperty } from '@nestjs/swagger';
-import { IsString, IsEmail, IsBoolean } from 'class-validator';
+import { IsString, IsEmail } from 'class-validator';
 import { BaseDTO } from './base.dto';
 /**
  * A User DTO object.
@@ -11,44 +11,33 @@ export class UserDTO extends BaseDTO {
     login: string;
 
     @ApiModelProperty({ example: 'MyUser', description: 'User first name' })
-    @IsString()
     firstName?: string;
 
     @ApiModelProperty({ example: 'MyUser', description: 'User last name' })
-    @IsString()
     lastName?: string;
 
-    @ApiModelProperty({ example: 'myuser@localhost', description: 'User email' })
+    @ApiModelProperty({ example: 'myuser@localhost.it', description: 'User email' })
     @IsEmail()
     email: string;
 
     @ApiModelProperty({ example: 'true', description: 'User activation' })
-    @IsBoolean()
     activated: boolean;
 
     @ApiModelProperty({ example: 'en', description: 'User language' })
-    @IsString()
     langKey: string;
 
     @ApiModelProperty({ isArray: true, enum: ['ROLE_USER', 'ROLE_ADMIN', 'ROLE_ANONYMOUS'], description: 'Array of permissions' })
     authorities?: any[];
 
     @ApiModelProperty({ example: 'myuser', description: 'User password' })
-    @IsString()
     password: string;
 
     @ApiModelProperty({ example: 'http://my-image-url', description: 'Image url' })
-    @IsString()
     imageUrl?: string;
 
-    @ApiModelProperty({ example: 'myActivationKey', description: 'Activation key' })
-    @IsString()
     activationKey?: string;
 
-    @ApiModelProperty({ example: 'myResetKey', description: 'Reset key' })
-    @IsString()
     resetKey?: string;
 
-    @ApiModelProperty({ example: 'myResetDate', description: 'Reset Date' })
     resetDate?: Date;
 }
