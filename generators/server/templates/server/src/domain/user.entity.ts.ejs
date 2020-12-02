@@ -16,7 +16,7 @@ export class User extends BaseEntity {
   email: string;
   @Column({ default: false})
   activated: boolean;
-  @Column()
+  @Column({default: 'en'})
   langKey: string;
 
 

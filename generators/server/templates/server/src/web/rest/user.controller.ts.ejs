@@ -50,6 +50,7 @@ export class UserController {
   })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
   async createUser(@Req() req: Request, @Body() userDTO: UserDTO): Promise<UserDTO> {
+      userDTO.password = userDTO.login;
       const created = await this.userService.save(userDTO);
       HeaderUtil.addEntityCreatedHeaders(req.res, 'User', created.id);
       return created;
@@ -64,8 +65,20 @@ export class UserController {
       type: UserDTO,
   })
   async updateUser(@Req() req: Request, @Body() userDTO: UserDTO): Promise<UserDTO> {
-      HeaderUtil.addEntityCreatedHeaders(req.res, 'User', userDTO.id);
-      return await this.userService.update(userDTO);
+    const userOnDb = await this.userService.find({ where: { login: userDTO.login } });
+    let updated = false;
+    if (userOnDb && userOnDb.id) {
+      userDTO.id = userOnDb.id;
+      updated = true;
+    }
+    const createdOrUpdated = await this.userService.update(userDTO);
+    if (updated) {
+      HeaderUtil.addEntityUpdatedHeaders(req.res, 'User', createdOrUpdated.id);
+    }
+    else {
+      HeaderUtil.addEntityCreatedHeaders(req.res, 'User', createdOrUpdated.id);
+    }
+    return createdOrUpdated;
   }
 
   @Get('/:login')

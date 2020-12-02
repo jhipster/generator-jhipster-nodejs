@@ -4,7 +4,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { JwtService } from '@nestjs/jwt';
 import { UserLoginDTO } from '../service/dto/user-login.dto';
 import { Payload } from '../security/payload.interface';
-import { Authority } from '../domain/authority.entity';
 <%_ } _%>
 import { AuthorityRepository } from '../repository/authority.repository';
 import { UserService } from '../service/user.service';
@@ -48,10 +47,6 @@ export class AuthService {
   /* eslint-enable */
   async validateUser(payload: Payload): Promise<UserDTO | undefined> {
     return await this.findUserWithAuthById(payload.id);
-  }
-
-  async find(): Promise<Authority[]> {
-    return await this.authorityRepository.find();
   }
 
   async findUserWithAuthById(userId: string): Promise<UserDTO | undefined> {

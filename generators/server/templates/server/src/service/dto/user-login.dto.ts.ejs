@@ -11,7 +11,7 @@ export class UserLoginDTO {
   readonly password: string;
 
   @ApiModelProperty({ description: 'User remember login', required: false  })
-  readonly rememberMe: boolean;
+  readonly rememberMe?: boolean;
 
   @ApiModelProperty({ description: 'User login name', required: true  })
   @IsString()
