@@ -53,15 +53,14 @@ export class <%= asEntity(entityClass) %>DTO extends BaseDTO {
             } _%>
         <%- include ../../common/field_validators -%>
         <%_ } _%>
-            @ApiModelProperty({ <%_ if (typeof fields[idx].javadoc != 'undefined') { _%> description: '<%- formatAsApiDescription(fields[idx].javadoc) %>' <%_ } else { _%> description: '<%= fieldName %> field' <%_ } if (!required) { _%>, required: false <%_ } _%>})
             <%_ if (fields[idx].fieldIsEnum) { _%>
-
+            @ApiModelProperty({ enum: <%= fieldType %>, <%_ if (typeof fields[idx].javadoc != 'undefined') { _%> description: '<%- formatAsApiDescription(fields[idx].javadoc) %>' <%_ } else { _%> description: '<%= fieldName %> enum field' <%_ } if (!required) { _%>, required: false <%_ } _%>})
             <%_ } else if (['Instant', 'ZonedDateTime', 'LocalDate'].includes(fieldType)) { _%>
 
             <%_ } else if (fieldType === 'BigDecimal') { _%>
 
             <%_ } else { _%>
-
+            @ApiModelProperty({ <%_ if (typeof fields[idx].javadoc != 'undefined') { _%> description: '<%- formatAsApiDescription(fields[idx].javadoc) %>' <%_ } else { _%> description: '<%= fieldName %> field' <%_ } if (!required) { _%>, required: false <%_ } _%>})
             <%_ } _%>
             <%_ if (fields[idx].fieldIsEnum) { _%>
         <%= fieldName %>: <%= fieldType %>;
@@ -93,21 +92,20 @@ export class <%= asEntity(entityClass) %>DTO extends BaseDTO {
             if (typeof relationships.javadoc != 'undefined') { _%>
     <%- formatAsFieldJavadoc(relationships.javadoc) %>
         <%_ } _%>
-          @ApiModelProperty({ <%_ if (typeof relationships.javadoc != 'undefined') { _%>  description: '<%- formatAsApiDescription(relationships.javadoc) %>' <%_ } else { _%> description: '<%= relationshipFieldName %> relationship' <%_ } _%> })
           <%_ if (relationshipType === 'one-to-many') { _%>
-
+         @ApiModelProperty({ type: <%= relationship.otherEntityAngularName %>DTO, isArray: true, <%_ if (typeof relationships.javadoc != 'undefined') { _%>  description: '<%- formatAsApiDescription(relationships.javadoc) %>' <%_ } else { _%> description: '<%= relationshipFieldNamePlural %> relationship' <%_ } _%> })
         <%= relationshipFieldNamePlural %>: <%= relationship.otherEntityAngularName %>DTO[];
 
         <%_ } else if (relationshipType === 'many-to-one') { _%>
-
+        @ApiModelProperty({ type: <%= relationship.otherEntityAngularName %>DTO, <%_ if (typeof relationships.javadoc != 'undefined') { _%>  description: '<%- formatAsApiDescription(relationships.javadoc) %>' <%_ } else { _%> description: '<%= relationshipFieldName %> relationship' <%_ } _%> })
         <%= relationshipFieldName %>: <%= relationship.otherEntityAngularName %>DTO;
 
         <%_ } else if (relationshipType === 'many-to-many') { _%>
-
+        @ApiModelProperty({ type: <%= relationship.otherEntityAngularName %>DTO, isArray: true, <%_ if (typeof relationships.javadoc != 'undefined') { _%>  description: '<%- formatAsApiDescription(relationships.javadoc) %>' <%_ } else { _%> description: '<%= relationshipFieldNamePlural %> relationship' <%_ } _%> })
         <%= relationshipFieldNamePlural %>: <%= relationship.otherEntityAngularName %>DTO[];
 
         <%_ } else { _%>
-
+        @ApiModelProperty({ type: <%= relationship.otherEntityAngularName %>DTO, <%_ if (typeof relationships.javadoc != 'undefined') { _%>  description: '<%- formatAsApiDescription(relationships.javadoc) %>' <%_ } else { _%> description: '<%= relationshipFieldName %> relationship' <%_ } _%> })
         <%= relationshipFieldName %>: <%= relationship.otherEntityAngularName %>DTO;
 
         <%_ }

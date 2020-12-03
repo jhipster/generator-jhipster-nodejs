@@ -25,7 +25,12 @@ export class UserDTO extends BaseDTO {
   @ApiModelProperty({ example: 'en', description: 'User language', required: false })
   langKey?: string;
 
-  @ApiModelProperty({ isArray: true, enum: ['ROLE_USER', 'ROLE_ADMIN', 'ROLE_ANONYMOUS'], description: 'Array of permissions', required: false })
+  @ApiModelProperty({
+    isArray: true,
+    enum: ['ROLE_USER', 'ROLE_ADMIN', 'ROLE_ANONYMOUS'],
+    description: 'Array of permissions',
+    required: false
+  })
   authorities?: any[];
 
   @ApiModelProperty({ example: 'myuser', description: 'User password' })

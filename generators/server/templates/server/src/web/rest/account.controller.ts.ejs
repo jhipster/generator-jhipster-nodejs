@@ -16,7 +16,7 @@ export class AccountController {
   logger = new Logger('AccountController');
 
   constructor(private readonly authService: AuthService) { }
-  <%_ if (authenticationType === 'jwt') { _%>
+  <%_ if (authenticationType === 'jwt' && !skipUserManagement) { _%>
 
   @Post('/register')
   @ApiOperation({ title: 'Register user' })
