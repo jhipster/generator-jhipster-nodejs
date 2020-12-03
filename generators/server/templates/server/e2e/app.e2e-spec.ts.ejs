@@ -13,7 +13,7 @@ describe('App', () => {
         'activeProfiles': 'no',
         'display-ribbon-on-profiles': 'no',
     };
-<%_  if (authenticationType === 'jwt') { _%>
+<%_  if (!skipUserManagement) { _%>
     const testUserLogin: UserLoginDTO = {
         username: 'system',
         password: 'system',
@@ -23,7 +23,7 @@ describe('App', () => {
     const testUserLogin: any = {
         session: {
             user: {
-                username: 'system'
+                login: 'system'
             }
         }
     };
@@ -43,15 +43,23 @@ describe('App', () => {
         .expect(200)
         .expect(infoService));
 
-    <%_ if (authenticationType === 'jwt') { _%>
+
+    <%_ if (!skipUserManagement) { _%>
     it('/POST security jwt adding OK', () => request(app.getHttpServer())
         .post('/api/authenticate')
+        .send(testUserLogin)
+        .expect(201));
     <%_ } else if (authenticationType === 'oauth2') { _%>
     it('/POST security oauth2 adding OK', () => request(app.getHttpServer())
         .post('/api/logout')
-    <%_ } _%>
         .send(testUserLogin)
         .expect(201));
+
+    it('/GET account not logged', () => request(app.getHttpServer())
+        .get('/api/account')
+        .expect(200)
+        .expect({}));
+    <%_ } _%>
 
     afterEach(async () => {
         await app.close();

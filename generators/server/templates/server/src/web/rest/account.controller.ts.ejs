@@ -16,7 +16,7 @@ export class AccountController {
   logger = new Logger('AccountController');
 
   constructor(private readonly authService: AuthService) { }
-  <%_ if (authenticationType === 'jwt' && !skipUserManagement) { _%>
+  <%_ if (!skipUserManagement) { _%>
 
   @Post('/register')
   @ApiOperation({ title: 'Register user' })
@@ -132,6 +132,9 @@ export class AccountController {
     type: UserDTO,
   })
   getAccount(@Req() req: any): any {
+    if(!req.session) {
+       return;
+    }
     const userDTO: UserDTO = req.session.user;
     return this.authService.getAccount(userDTO);
   }
