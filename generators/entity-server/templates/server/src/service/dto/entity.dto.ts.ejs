@@ -1,17 +1,17 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { ApiModelProperty } from '@nestjs/swagger';
-import { validate, Contains, IsString, IsInt, Length, IsEmail, Min, Max } from "class-validator";
+<%_ if (validation) { _%>
+import { validate, Contains, IsString, IsInt, Length, IsEmail, Min, Max } from 'class-validator';
+<%_ } _%>
 import { BaseDTO } from './base.dto';
 
-<%
-let importApiModelProperty = true;
-let importJsonIgnore = false;
-let importJsonIgnoreProperties = false;
-let importSet = false;
-let hasDto = dto === 'mapstruct';
+<%_
 let isUserRelationship = false;
 const uniqueEntities = {};
-const uniqueEnums = {}; %><%- include ../../domain/imports -%>
+const uniqueEnums = {};
+_%>
+
+<%- include ../../domain/imports -%>
 
 <%_ Object.keys(uniqueEntities).forEach(function(entityClass) { _%>
 import { <%= entityClass %>DTO } from './<%= uniqueEntities[entityClass] %>.dto';
@@ -30,7 +30,9 @@ import { UserDTO } from './user.dto';
 export class <%= asEntity(entityClass) %>DTO extends BaseDTO {
 
     <%_ for (idx in fields) {
-
+       if (typeof fields[idx].javadoc !== 'undefined') { _%>
+    <%- formatAsFieldJavadoc(fields[idx].javadoc) %>
+    <%_ }
         let required = false;
         let unique = false;
         const fieldValidate = fields[idx].fieldValidate;
@@ -51,9 +53,7 @@ export class <%= asEntity(entityClass) %>DTO extends BaseDTO {
             } _%>
         <%- include ../../common/field_validators -%>
         <%_ } _%>
-        <%_ if (!hasDto && typeof fields[idx].javadoc != 'undefined') { _%>
-        @ApiModelProperty({type: '', description: '<%- formatAsApiDescription(fields[idx].javadoc) %>'<% if (required) { %>, required: true<% } %>})
-        <%_ } _%>
+            @ApiModelProperty({ <%_ if (typeof fields[idx].javadoc != 'undefined') { _%> description: '<%- formatAsApiDescription(fields[idx].javadoc) %>' <%_ } else { _%> description: '<%= fieldName %> field' <%_ } if (!required) { _%>, required: false <%_ } _%>})
             <%_ if (fields[idx].fieldIsEnum) { _%>
 
             <%_ } else if (['Instant', 'ZonedDateTime', 'LocalDate'].includes(fieldType)) { _%>
@@ -92,11 +92,9 @@ export class <%= asEntity(entityClass) %>DTO extends BaseDTO {
 
             if (typeof relationships.javadoc != 'undefined') { _%>
     <%- formatAsFieldJavadoc(relationships.javadoc) %>
-                <%_ if (!hasDto) { _%>
-        @ApiModelProperty({description = "<%- formatAsApiDescription(relationships.javadoc) %>"})
-                <%_ }_%>
-        <%_ }
-            if (relationshipType === 'one-to-many') {_%>
+        <%_ } _%>
+          @ApiModelProperty({ <%_ if (typeof relationships.javadoc != 'undefined') { _%>  description: '<%- formatAsApiDescription(relationships.javadoc) %>' <%_ } else { _%> description: '<%= relationshipFieldName %> relationship' <%_ } _%> })
+          <%_ if (relationshipType === 'one-to-many') { _%>
 
         <%= relationshipFieldNamePlural %>: <%= relationship.otherEntityAngularName %>DTO[];
 

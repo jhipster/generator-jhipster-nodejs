@@ -5,7 +5,7 @@ import { BaseDTO } from './base.dto';
  * An User DTO object.
  */
 export class UserDTO extends BaseDTO {
-  @ApiModelProperty({ uniqueItems: true, example: 'myuser', description: 'User login', required: true })
+  @ApiModelProperty({ uniqueItems: true, example: 'myuser', description: 'User login' })
   @IsString()
   login: string;
 
@@ -15,7 +15,7 @@ export class UserDTO extends BaseDTO {
   @ApiModelProperty({ example: 'MyUser', description: 'User last name', required: false })
   lastName?: string;
 
-  @ApiModelProperty({ example: 'myuser@localhost.it', description: 'User email', required: true })
+  @ApiModelProperty({ example: 'myuser@localhost.it', description: 'User email' })
   @IsEmail()
   email: string;
 
@@ -28,7 +28,7 @@ export class UserDTO extends BaseDTO {
   @ApiModelProperty({ isArray: true, enum: ['ROLE_USER', 'ROLE_ADMIN', 'ROLE_ANONYMOUS'], description: 'Array of permissions', required: false })
   authorities?: any[];
 
-  @ApiModelProperty({ example: 'myuser', description: 'User password', required: true })
+  @ApiModelProperty({ example: 'myuser', description: 'User password' })
   password: string;
 
   @ApiModelProperty({ example: 'http://my-image-url', description: 'Image url', required: false })

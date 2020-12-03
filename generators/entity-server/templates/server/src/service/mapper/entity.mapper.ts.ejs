@@ -1,6 +1,7 @@
 import { <%= asEntity(entityClass) %> } from '../../domain/<%= entityFileName %>.entity';
 import { <%= asEntity(entityClass) %>DTO } from '../dto/<%= entityFileName %>.dto';
-// add other mapper if nested
+
+
 /**
  * A <%= asEntity(entityClass) %> mapper object.
  */
@@ -13,7 +14,6 @@ export class <%= asEntity(entityClass) %>Mapper {
     let entity = new <%= asEntity(entityClass) %>();
     const fields = Object.getOwnPropertyNames(entityDTO);
     fields.forEach(field => {
-        // check if nested and call the other mapper
         entity[field] = entityDTO[field];
     });
     return entity;
@@ -29,7 +29,6 @@ export class <%= asEntity(entityClass) %>Mapper {
     const fields = Object.getOwnPropertyNames(entity);
 
     fields.forEach(field => {
-        // check if nested and call the other mapper
         entityDTO[field] = entity[field];
     });
 

@@ -1,20 +1,14 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { Entity, Column, PrimaryGeneratedColumn, JoinColumn, OneToOne, ManyToOne, OneToMany, ManyToMany, JoinTable } from 'typeorm';
 import { BaseEntity } from './base/base.entity';
-<%
-let importApiModelProperty = true;
-let importJsonIgnore = false;
-let importJsonIgnoreProperties = false;
-let importSet = false;
-let hasDto = dto === 'mapstruct';
+
+<%_
 let isUserRelationship = false;
 const uniqueEntities = {};
-const uniqueEnums = {}; %><%- include imports -%>
-<%_ if (!hasDto && importApiModelProperty === true) { _%>
-import { ApiModelProperty } from '@nestjs/swagger';
-<%_ } if (validation) { _%>
-import { validate, Contains, IsInt, Length, IsEmail, IsFQDN, IsDate, Min, Max } from "class-validator";
-<%_ } _%>
+const uniqueEnums = {};
+_%>
+
+<%- include imports -%>
 
 <%_ Object.keys(uniqueEntities).forEach(function(entityClass) { _%>
 import { <%= entityClass %> } from './<%= uniqueEntities[entityClass] %>.entity';
@@ -61,9 +55,6 @@ export class <%= asEntity(entityClass) %> extends BaseEntity  {
         } _%>
     <%- include ../common/field_validators -%>
     <%_ } _%>
-    <%_ if (!hasDto && typeof fields[idx].javadoc != 'undefined') { _%>
-    @ApiModelProperty({type: '', description: '<%- formatAsApiDescription(fields[idx].javadoc) %>'<% if (required) { %>, required: true<% } %>})
-    <%_ } _%>
         <%_ if (fields[idx].fieldIsEnum) { _%>
     @Column({type: 'simple-enum', name: '<%-fieldNameAsDatabaseColumn %>', enum: <%= fieldType %>})
         <%_ } else if (['Instant', 'ZonedDateTime', 'LocalDate'].includes(fieldType)) { _%>
@@ -100,12 +91,6 @@ export class <%= asEntity(entityClass) %> extends BaseEntity  {
         const otherEntityNameCapitalized = relationships[idx].otherEntityNameCapitalized;
         const ownerSide = relationships[idx].ownerSide;
 
-        if (typeof relationships.javadoc != 'undefined') { _%>
-<%- formatAsFieldJavadoc(relationships.javadoc) %>
-            <%_ if (!hasDto) { _%>
-    @ApiModelProperty({description = "<%- formatAsApiDescription(relationships.javadoc) %>"})
-            <%_ }_%>
-    <%_ }
         if (relationshipType === 'one-to-many') {_%>
     @OneToMany(type => <%= relationship.otherEntityAngularName %> <%_ if (isUserRelationship === false) { _%>, other => other.<%= otherEntityRelationshipName %><%_ } _%>)
     <%= relationshipFieldNamePlural %>: <%= relationship.otherEntityAngularName %>[];
