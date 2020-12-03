@@ -1,7 +1,8 @@
 import { Injectable, HttpException, HttpStatus, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FindManyOptions, FindOneOptions } from 'typeorm';
-import { <%= entityClass %> }  from '../domain/<%= entityFileName %>.entity';
+import { <%= entityClass %>DTO }  from '../service/dto/<%= entityFileName %>.dto';
+import { <%= entityClass %>Mapper }  from '../service/mapper/<%= entityFileName %>.mapper';
 import { <%= entityClass %>Repository } from '../repository/<%= entityFileName %>.repository';
 
 const relationshipNames = [];
@@ -27,26 +28,38 @@ export class <%= entityClass %>Service {
 
     constructor(@InjectRepository(<%= entityClass %>Repository) private <%= asEntity(entityInstance) %>Repository: <%= entityClass %>Repository) {}
 
-      async findById(id: string): Promise<<%= entityClass %> | undefined> {
+      async findById(id: string): Promise<<%= entityClass %>DTO | undefined> {
         const options = { relations: relationshipNames };
-        return await this.<%= asEntity(entityInstance) %>Repository.findOne(id, options);
+        const result = await this.<%= asEntity(entityInstance) %>Repository.findOne(id, options);
+        return <%= entityClass %>Mapper.fromEntityToDTO(result);
       }
 
-      async findByfields(options: FindOneOptions<<%= entityClass %>>): Promise<<%= entityClass %> | undefined> {
-        return await this.<%= asEntity(entityInstance) %>Repository.findOne(options);
+      async findByfields(options: FindOneOptions<<%= entityClass %>DTO>): Promise<<%= entityClass %>DTO | undefined> {
+        const result = await this.<%= asEntity(entityInstance) %>Repository.findOne(options);
+        return <%= entityClass %>Mapper.fromEntityToDTO(result);
       }
 
-      async findAndCount(options: FindManyOptions<<%= entityClass %>>): Promise<[<%= entityClass %>[], number]> {
+      async findAndCount(options: FindManyOptions<<%= entityClass %>DTO>): Promise<[<%= entityClass %>DTO[], number]> {
         options.relations = relationshipNames;
-        return await this.<%= asEntity(entityInstance) %>Repository.findAndCount(options);
+        const resultList = await this.<%= asEntity(entityInstance) %>Repository.findAndCount(options);
+        const <%= asEntity(entityInstance) %>DTO: <%= entityClass %>DTO[] = [];
+        if (resultList && resultList[0]) {
+            resultList[0].forEach(<%= asEntity(entityInstance) %> => <%= asEntity(entityInstance) %>DTO.push(<%= entityClass %>Mapper.fromEntityToDTO(<%= asEntity(entityInstance) %>)));
+            resultList[0] = <%= asEntity(entityInstance) %>DTO;
+        }
+        return resultList;
       }
 
-      async save(<%= asEntity(entityInstance) %>: <%= entityClass %>): Promise<<%= entityClass %> | undefined> {
-        return await this.<%= asEntity(entityInstance) %>Repository.save(<%= asEntity(entityInstance) %>);
+      async save(<%= asEntity(entityInstance) %>DTO: <%= entityClass %>DTO): Promise<<%= entityClass %>DTO | undefined> {
+        const entity = <%= entityClass %>Mapper.fromDTOtoEntity(<%= asEntity(entityInstance) %>DTO);
+        const result = await this.<%= asEntity(entityInstance) %>Repository.save(entity);
+        return <%= entityClass %>Mapper.fromEntityToDTO(result);
       }
 
-      async update(<%= asEntity(entityInstance) %>: <%= entityClass %>): Promise<<%= entityClass %> | undefined> {
-        return await this.save(<%= asEntity(entityInstance) %>);
+      async update(<%= asEntity(entityInstance) %>DTO: <%= entityClass %>DTO): Promise<<%= entityClass %>DTO | undefined> {
+        const entity = <%= entityClass %>Mapper.fromDTOtoEntity(<%= asEntity(entityInstance) %>DTO);
+        const result = await this.<%= asEntity(entityInstance) %>Repository.save(entity);
+        return <%= entityClass %>Mapper.fromEntityToDTO(result);
       }
 
       async deleteById(id: string): Promise<void | undefined> {
