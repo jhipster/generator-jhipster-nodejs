@@ -37,13 +37,14 @@ export class <%= asEntity(entityClass) %>DTO extends BaseDTO {
         let unique = false;
         const fieldValidate = fields[idx].fieldValidate;
         const fieldValidateRules = fields[idx].fieldValidateRules;
-        const fieldValidateRulesMaxlength = fields[idx].fieldValidateRulesMaxlength;
         const fieldType = fields[idx].fieldType;
         const fieldTypeBlobContent = fields[idx].fieldTypeBlobContent;
         const fieldName = fields[idx].fieldName;
         const fieldNameUnderscored = fields[idx].fieldNameUnderscored;
         const fieldNameAsDatabaseColumn = fields[idx].fieldNameAsDatabaseColumn;
         const fieldColumnType=addDbType(fieldType);
+        <%- include ../../common/dto_field_validators -%>
+
         if (fieldValidate === true) {
             if (fieldValidateRules.includes('required')) {
                 required = true;
@@ -51,7 +52,6 @@ export class <%= asEntity(entityClass) %>DTO extends BaseDTO {
             if (fieldValidateRules.includes('unique')) {
                 unique = true;
             } _%>
-        <%- include ../../common/field_validators -%>
         <%_ } _%>
             <%_ if (fields[idx].fieldIsEnum) { _%>
             @ApiModelProperty({ enum: <%= fieldType %>, <%_ if (typeof fields[idx].javadoc != 'undefined') { _%> description: '<%- formatAsApiDescription(fields[idx].javadoc) %>' <%_ } else { _%> description: '<%= fieldName %> enum field' <%_ } if (!required) { _%>, required: false <%_ } _%>})
