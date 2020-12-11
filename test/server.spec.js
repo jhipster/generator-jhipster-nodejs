@@ -34,6 +34,9 @@ function commonAssertion() {
     assert.noFile('src/main/docker/mssql.yml');
     assert.noFile('src/main/docker/postgresql.yml');
     assert.noFile('src/main/resources/i18n/messages_en.properties');
+    assert.file(`${SERVER_NODEJS_DIR}src/service/dto/user.dto.ts`);
+    assert.file(`${SERVER_NODEJS_DIR}src/service/dto/base.dto.ts`);
+    assert.file(`${SERVER_NODEJS_DIR}src/service/mapper/user.mapper.ts`);
 }
 
 const commonPrompt = {
@@ -55,8 +58,10 @@ describe('Subgenerator server of nodejs JHipster blueprint', () => {
 
         it('app exists with jwt files', () => {
             commonAssertion();
+            assert.file(`${SERVER_NODEJS_DIR}e2e/account.e2e-spec.ts`);
             assert.file(`${SERVER_NODEJS_DIR}src/web/rest/user.jwt.controller.ts`);
             assert.file(`${SERVER_NODEJS_DIR}src/service/dto/user-login.dto.ts`);
+            assert.file(`${SERVER_NODEJS_DIR}src/service/dto/password-change.dto.ts`);
             assert.file(`${SERVER_NODEJS_DIR}src/security/passport.jwt.strategy.ts`);
             assert.file(`${SERVER_NODEJS_DIR}src/security/payload.interface.ts`);
             assert.noFile(`${SERVER_NODEJS_DIR}src/web/rest/user.oauth2.controller.ts`);
@@ -75,9 +80,12 @@ describe('Subgenerator server of nodejs JHipster blueprint', () => {
 
         it('app exists with oauth2 files', () => {
             commonAssertion();
+            assert.noFile(`${SERVER_NODEJS_DIR}e2e/account.e2e-spec.ts`);
             assert.file(`${SERVER_NODEJS_DIR}src/web/rest/user.oauth2.controller.ts`);
             assert.file(`${SERVER_NODEJS_DIR}src/security/passport.oauth2.strategy.ts`);
             assert.noFile(`${SERVER_NODEJS_DIR}src/security/payload.interface.ts`);
+            assert.noFile(`${SERVER_NODEJS_DIR}src/service/dto/user-login.dto.ts`);
+            assert.noFile(`${SERVER_NODEJS_DIR}src/service/dto/password-change.dto.ts`);
         });
     });
 

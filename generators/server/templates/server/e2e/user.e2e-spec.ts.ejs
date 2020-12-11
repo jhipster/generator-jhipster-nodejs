@@ -4,30 +4,30 @@ import { AppModule } from '../src/app.module';
 import { INestApplication } from '@nestjs/common';
 import { AuthGuard } from '../src/security/guards/auth.guard';
 import { RolesGuard } from '../src/security/guards/roles.guard';
-import { User } from '../src/domain/user.entity';
-import { UserRepository } from '../src/repository/user.repository';
-
+import { UserDTO } from '../src/service/dto/user.dto';
+import { UserService } from '../src/service/user.service';
 
 describe('User', () => {
     let app: INestApplication;
-    let repository: UserRepository;
+    let service: UserService;
 
     const authGuardMock = { canActivate: (): any => true };
     const rolesGuardMock = { canActivate: (): any => true };
 
-    const testUser: User = {
+    const testUserRequestObject: any = {
         login: 'userTestLogin',
-        password: '',
+        firstName: 'UserTest',
+        lastName: 'UserTest',
+        email: 'usertest@localhost.it'
+    };
+
+    const testUserDTO: UserDTO = {
+        login: 'userTestLogin',
         firstName: 'UserTest',
         lastName: 'UserTest',
         email: 'usertest@localhost.it',
-        imageUrl: '',
-        activated: true,
-        langKey: 'en',
-        createdBy: 'testadmin',
-        lastModifiedBy: 'testadmin',
+        password: 'userTestLogin'
     };
-
 
     beforeEach(async () => {
         const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -41,74 +41,67 @@ describe('User', () => {
 
         app = moduleFixture.createNestApplication();
         await app.init();
-        repository = moduleFixture.get<UserRepository >(UserRepository);
-
+        service = moduleFixture.get<UserService>(UserService);
     });
 
     it('/POST create user', async () => {
+        const createdUser: UserDTO = (
+            await request(app.getHttpServer())
+                .post('/api/users')
+                .send(testUserRequestObject)
+                .expect(201)
+        ).body;
 
-        const createdUser: User = (await request(app.getHttpServer())
-            .post('/api/users')
-            .send(testUser)
-            .expect(201)).body;
-
-        expect(createdUser.login).toEqual(testUser.login);
-        await repository.remove(createdUser);
-    }
-    );
+        expect(createdUser.login).toEqual(testUserRequestObject.login);
+        await service.delete(createdUser);
+    });
 
     it('/GET all users', () => {
-
         request(app.getHttpServer())
             .get('/api/users')
             .expect(200);
-    }
-    );
+    });
 
     it('/PUT update user', async () => {
-
-        const savedUser: User =  await repository.save(testUser);
+        const savedUser: UserDTO = await service.save(testUserDTO);
         savedUser.firstName = 'Updated Name';
 
-        const updatedUser: User = (await request(app.getHttpServer())
-            .put('/api/users')
-            .send(savedUser)
-            .expect(201)).body;
-
+        const updatedUser: UserDTO = (
+            await request(app.getHttpServer())
+                .put('/api/users')
+                .send(savedUser)
+                .expect(200)
+        ).body;
 
         expect(updatedUser).toEqual(savedUser);
 
-        await repository.remove(savedUser);
-    }
-    );
-
+        await service.delete(savedUser);
+    });
 
     it('/GET user with a login name', async () => {
+        const savedUser: UserDTO = await service.save(testUserDTO);
 
-        const savedUser: User = await repository.save(testUser);
-
-        const getUser: User = (await request(app.getHttpServer())
-            .get('/api/users/' + savedUser.login)
-            .expect(200)).body;
+        const getUser: UserDTO = (
+            await request(app.getHttpServer())
+                .get('/api/users/' + savedUser.login)
+                .expect(200)
+        ).body;
 
         expect(getUser).toEqual(savedUser);
 
-        await repository.remove(savedUser);
-    }
-    );
+        await service.delete(savedUser);
+    });
 
     it('/DELETE user', async () => {
-
-        const savedUser: User =  await repository.save(testUser);
+        const savedUser: UserDTO = await service.save(testUserDTO);
 
         await request(app.getHttpServer())
             .delete('/api/users/' + savedUser.login)
             .expect(204);
 
-        const userUndefined = await repository.findOne(savedUser.id);
+        const userUndefined = await service.findById(savedUser.id);
         expect(userUndefined).toBeUndefined();
-    }
-    );
+    });
 
     afterEach(async () => {
         await app.close();

@@ -13,7 +13,6 @@ const serverFiles = {
             templates: [
                 'src/web/rest/user.controller.ts',
                 'src/web/rest/account.controller.ts',
-                'src/service/dto/password-change.dto.ts',
                 'src/web/rest/auth.controller.ts',
                 'src/web/rest/management.controller.ts',
                 'src/repository/user.repository.ts',
@@ -39,6 +38,9 @@ const serverFiles = {
                 'src/client/interceptors/logging.interceptor.ts',
                 'src/service/auth.service.ts',
                 'src/service/user.service.ts',
+                'src/service/dto/base.dto.ts',
+                'src/service/dto/user.dto.ts',
+                'src/service/mapper/user.mapper.ts',
                 'src/main.ts',
                 'src/swagger.ts',
                 'src/app.module.ts',
@@ -47,9 +49,6 @@ const serverFiles = {
                 'src/orm.config.ts',
                 'scripts/copy-resources.ts',
                 'tsconfig.build.json',
-                'e2e/app.e2e-spec.ts',
-                'e2e/user.e2e-spec.ts',
-                'e2e/jest.e2e.config.json',
                 'test/admin/management.controller.spec.ts',
                 'nest-cli.json',
                 {
@@ -72,6 +71,17 @@ const serverFiles = {
             ]
         }
     ],
+    e2e: [
+        {
+            path: SERVER_NODEJS_DIR,
+            templates: ['e2e/app.e2e-spec.ts', 'e2e/user.e2e-spec.ts', 'e2e/jest.e2e.config.json']
+        },
+        {
+            path: SERVER_NODEJS_DIR,
+            condition: generator => !generator.skipUserManagement && generator.authenticationType !== 'oauth2',
+            templates: ['e2e/account.e2e-spec.ts']
+        }
+    ],
     other: [
         {
             templates: [
@@ -92,6 +102,7 @@ const serverFiles = {
                 'src/web/rest/user.jwt.controller.ts',
                 'src/security/passport.jwt.strategy.ts',
                 'src/security/payload.interface.ts',
+                'src/service/dto/password-change.dto.ts',
                 'src/service/dto/user-login.dto.ts'
             ]
         }

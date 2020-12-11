@@ -53,6 +53,8 @@ describe('Subgenerator entity of nodejs JHipster blueprint', () => {
             assert.file(`${SERVER_NODEJS_DIR}src/domain/foo.entity.ts`);
             assert.file(`${SERVER_NODEJS_DIR}src/repository/foo.repository.ts`);
             assert.file(`${SERVER_NODEJS_DIR}src/service/foo.service.ts`);
+            assert.file(`${SERVER_NODEJS_DIR}src/service/dto/foo.dto.ts`);
+            assert.file(`${SERVER_NODEJS_DIR}src/service/mapper/foo.mapper.ts`);
             assert.file(`${SERVER_NODEJS_DIR}src/web/rest/foo.controller.ts`);
 
             const testControllerPath = `${SERVER_NODEJS_DIR}e2e/foo.e2e-spec.ts`;
@@ -76,8 +78,11 @@ describe('Subgenerator entity of nodejs JHipster blueprint', () => {
             const genderEnumPath = `${SERVER_NODEJS_DIR}src/domain/enumeration/gender.ts`;
             const greatEntityPath = `${SERVER_NODEJS_DIR}src/domain/great-entity.entity.ts`;
 
+            const greatEntityDTOPath = `${SERVER_NODEJS_DIR}src/service/dto/great-entity.dto.ts`;
+
             assert.file(genderEnumPath);
             assert.file(greatEntityPath);
+            assert.file(greatEntityDTOPath);
 
             // Gender enum class
             assert.fileContent(genderEnumPath, 'export enum Gender');
@@ -85,21 +90,30 @@ describe('Subgenerator entity of nodejs JHipster blueprint', () => {
             // import enum in entity
             assert.fileContent(greatEntityPath, "import { Gender } from './enumeration/gender';");
 
+            // import enum in entity dto
+            assert.fileContent(greatEntityDTOPath, "import { Gender } from '../../domain/enumeration/gender';");
+
             // name UUID unique field
             assert.fileContent(greatEntityPath, "@Column({ name: 'name', nullable: true, unique: true })");
             assert.fileContent(greatEntityPath, 'name: string;');
 
-            // Gender enum field
+            // Gender enum field with swagger annotation
             assert.fileContent(greatEntityPath, "@Column({ type: 'simple-enum', name: 'gender', enum: Gender })");
             assert.fileContent(greatEntityPath, 'gender: Gender;');
+            assert.fileContent(greatEntityDTOPath, 'gender: Gender;');
+            assert.fileContent(greatEntityDTOPath, "@ApiModelProperty({ enum: Gender, description: 'gender enum field' })");
 
-            // address String required field
+            // address String required field with swagger annotation
             assert.fileContent(greatEntityPath, "@Column({ name: 'address' })");
             assert.fileContent(greatEntityPath, 'address: string;');
+            assert.fileContent(greatEntityDTOPath, 'address: string;');
+            assert.fileContent(greatEntityDTOPath, "@ApiModelProperty({ description: 'address field' })");
 
-            // istrue Boolean required field
+            // istrue Boolean field with swagger annotation
             assert.fileContent(greatEntityPath, "@Column({ type: 'boolean', name: 'istrue', nullable: true })");
             assert.fileContent(greatEntityPath, 'istrue: boolean;');
+            assert.fileContent(greatEntityDTOPath, 'istrue: boolean;');
+            assert.fileContent(greatEntityDTOPath, "@ApiModelProperty({ description: 'istrue field', required: false })");
 
             // borndate LocalDate required field
             assert.fileContent(greatEntityPath, "@Column({ type: 'date', name: 'borndate' })");

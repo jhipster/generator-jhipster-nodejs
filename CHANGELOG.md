@@ -13,6 +13,7 @@
 
 # [1.4.0](https://github.com/jhipster/generator-jhipster-nodejs/tree/v1.4.0)
 
+-   Dto implementation in the rest nestjs api[issue #181](https://github.com/jhipster/generator-jhipster-nodejs/issues/181)
 -   Protractor or another tool for client e2e tests [issue #101](https://github.com/jhipster/generator-jhipster-nodejs/issues/101)
 -   Support the account management with user registration, delete, creation and changes password with settings [issue #166](https://github.com/jhipster/generator-jhipster-nodejs/issues/166)
 -   NestJS migration from 6 to 7 version [issue #183](https://github.com/jhipster/generator-jhipster-nodejs/issues/183)

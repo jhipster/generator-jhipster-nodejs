@@ -4,11 +4,10 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { JwtService } from '@nestjs/jwt';
 import { UserLoginDTO } from '../service/dto/user-login.dto';
 import { Payload } from '../security/payload.interface';
-import { Authority } from '../domain/authority.entity';
 <%_ } _%>
-import { User } from '../domain/user.entity';
 import { AuthorityRepository } from '../repository/authority.repository';
 import { UserService } from '../service/user.service';
+import { UserDTO } from './dto/user.dto';
 
 @Injectable()
 export class AuthService {
@@ -46,29 +45,25 @@ export class AuthService {
   }
 
   /* eslint-enable */
-  async validateUser(payload: Payload): Promise<User | undefined> {
+  async validateUser(payload: Payload): Promise<UserDTO | undefined> {
     return await this.findUserWithAuthById(payload.id);
   }
 
-  async find(): Promise<Authority[]> {
-    return await this.authorityRepository.find();
+  async findUserWithAuthById(userId: string): Promise<UserDTO | undefined> {
+    const userDTO: UserDTO = await this.userService.findByfields({ where: { id: userId } });
+    return userDTO;
   }
 
-  async findUserWithAuthById(userId: string): Promise<User | undefined> {
-    const user: any = await this.userService.findByfields({ where: { id: userId } });
-    return user;
-  }
-
-  async getAccount(userId: string): Promise<User | undefined> {
-    const user: any = await this.findUserWithAuthById(userId);
-    if (!user) {
+  async getAccount(userId: string): Promise<UserDTO | undefined> {
+    const userDTO: UserDTO = await this.findUserWithAuthById(userId);
+    if (!userDTO) {
        return;
     }
-    return user;
+    return userDTO;
   }
 
   async changePassword(userLogin: string, currentClearTextPassword: string, newPassword: string): Promise<void> {
-    const userFind = await this.userService.findByfields({ where: { login: userLogin } });
+    const userFind: UserDTO = await this.userService.findByfields({ where: { login: userLogin } });
     if (!userFind) {
         throw new HttpException('Invalid login name!', HttpStatus.BAD_REQUEST);
     }
@@ -80,8 +75,8 @@ export class AuthService {
     return;
   }
 
-  async registerNewUser (newUser: User) : Promise<User> {
-    let userFind: User = await this.userService.findByfields({ where: { login: newUser.login} });
+  async registerNewUser (newUser: UserDTO) : Promise<UserDTO> {
+    let userFind: UserDTO = await this.userService.findByfields({ where: { login: newUser.login} });
     if (userFind) {
       throw new HttpException('Login name already used!', HttpStatus.BAD_REQUEST);
     }
@@ -90,12 +85,12 @@ export class AuthService {
       throw new HttpException('Email is already in use!', HttpStatus.BAD_REQUEST);
     }
     newUser.authorities = ['ROLE_USER'];
-    const user: User = await this.userService.save(newUser);
+    const user: UserDTO = await this.userService.save(newUser);
     return user;
   }
 
-  async updateUserSettings(userLogin: string, newUserInfo: User) : Promise<User> {
-    const userFind = await this.userService.findByfields({ where: { login: userLogin } });
+  async updateUserSettings(userLogin: string, newUserInfo: UserDTO) : Promise<UserDTO> {
+    const userFind: UserDTO = await this.userService.findByfields({ where: { login: userLogin } });
     if (!userFind) {
         throw new HttpException('Invalid login name!', HttpStatus.BAD_REQUEST);
     }
@@ -111,11 +106,11 @@ export class AuthService {
   }
 
   <%_ } else if (authenticationType === 'oauth2') { _%>
-    async findUserOrSave(loginUser: User): Promise<User | undefined> {
+    async findUserOrSave(loginUser: UserDTO): Promise<UserDTO | undefined> {
         if (loginUser.login && loginUser.password && !loginUser.email) {
             loginUser.email = loginUser.login + '@localhost.it';
         }
-        let userFound = await this.userService.findByfields({ where: { login: loginUser.login } });
+        let userFound: UserDTO = await this.userService.findByfields({ where: { login: loginUser.login } });
 
         if (!userFound) {
           const authoritiesName = [];
@@ -127,11 +122,11 @@ export class AuthService {
         return loginUser;
       }
 
-   getAccount(user: User): any {
-    if (!user) {
+   getAccount(userDTO: UserDTO): any {
+    if (!userDTO) {
        return;
     }
-    return user;
+    return userDTO;
    }
 
   <%_ } _%>

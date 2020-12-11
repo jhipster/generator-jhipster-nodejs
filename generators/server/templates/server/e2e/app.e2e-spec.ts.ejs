@@ -13,20 +13,15 @@ describe('App', () => {
         'activeProfiles': 'no',
         'display-ribbon-on-profiles': 'no',
     };
-<%_  if (authenticationType === 'jwt') { _%>
+<%_  if (!skipUserManagement && authenticationType !=='oauth2') { _%>
     const testUserLogin: UserLoginDTO = {
         username: 'system',
         password: 'system',
         rememberMe: true
     };
 <%_ } else if (authenticationType === 'oauth2') { _%>
-    const testUserLogin: any = {
-        session: {
-            user: {
-                username: 'system'
-            }
-        }
-    };
+
+    const testRequest: any = {};
 <%_ }_%>
 
     beforeEach(async () => {
@@ -43,15 +38,24 @@ describe('App', () => {
         .expect(200)
         .expect(infoService));
 
-    <%_ if (authenticationType === 'jwt') { _%>
-    it('/POST security jwt adding OK', () => request(app.getHttpServer())
+
+    <%_ if (!skipUserManagement && authenticationType !=='oauth2') { _%>
+    it('/POST authenticate get jwt authenticate OK', () => request(app.getHttpServer())
         .post('/api/authenticate')
-    <%_ } else if (authenticationType === 'oauth2') { _%>
-    it('/POST security oauth2 adding OK', () => request(app.getHttpServer())
-        .post('/api/logout')
-    <%_ } _%>
         .send(testUserLogin)
         .expect(201));
+    <%_ } else if (authenticationType === 'oauth2') { _%>
+    it('/POST security oauth2 does not perform logout', () => request(app.getHttpServer())
+        .post('/api/logout')
+        .send(testRequest)
+        .expect({})
+        .expect(201));
+
+    it('/GET account not logged', () => request(app.getHttpServer())
+        .get('/api/account')
+        .expect(200)
+        .expect({}));
+    <%_ } _%>
 
     afterEach(async () => {
         await app.close();
