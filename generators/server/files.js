@@ -75,14 +75,12 @@ const serverFiles = {
         {
             path: SERVER_NODEJS_DIR,
             templates: ['e2e/app.e2e-spec.ts', 'e2e/user.e2e-spec.ts', 'e2e/jest.e2e.config.json']
-        }
-        /*  ,{
+        },
+        {
             path: SERVER_NODEJS_DIR,
-            condition: generator => !generator.skipUserManagement,
-            templates: [
-                'e2e/account.e2e-spec.ts',
-            ]
-        } */
+            condition: generator => !generator.skipUserManagement && generator.authenticationType !== 'oauth2',
+            templates: ['e2e/account.e2e-spec.ts']
+        }
     ],
     other: [
         {

@@ -13,7 +13,7 @@ describe('App', () => {
         'activeProfiles': 'no',
         'display-ribbon-on-profiles': 'no',
     };
-<%_  if (!skipUserManagement) { _%>
+<%_  if (!skipUserManagement && authenticationType !=='oauth2') { _%>
     const testUserLogin: UserLoginDTO = {
         username: 'system',
         password: 'system',
@@ -39,7 +39,7 @@ describe('App', () => {
         .expect(infoService));
 
 
-    <%_ if (!skipUserManagement) { _%>
+    <%_ if (!skipUserManagement && authenticationType !=='oauth2') { _%>
     it('/POST authenticate get jwt authenticate OK', () => request(app.getHttpServer())
         .post('/api/authenticate')
         .send(testUserLogin)

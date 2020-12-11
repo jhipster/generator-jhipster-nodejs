@@ -16,7 +16,7 @@ export class AccountController {
   logger = new Logger('AccountController');
 
   constructor(private readonly authService: AuthService) { }
-  <%_ if (!skipUserManagement) { _%>
+  <%_ if (!skipUserManagement && authenticationType !=='oauth2') { _%>
 
   @Post('/register')
   @ApiOperation({ title: 'Register user' })

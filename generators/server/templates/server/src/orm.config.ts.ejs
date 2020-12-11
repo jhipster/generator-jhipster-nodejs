@@ -43,6 +43,7 @@ if (process.env.NODE_ENV === 'test') {
       name: 'default',
       type: 'sqlite',
       database: ':memory:',
+      keepConnectionAlive: true,
       logging: true,
       synchronize: true,
       entities: commonConf.ENTITIES,

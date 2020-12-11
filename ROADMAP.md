@@ -50,11 +50,11 @@ To contribute for the next featues, fork the repo and open a pull request regard
 -   [x] Languages subgenerator support i18n: translate home page for NHipster and remove spring boot resources message
 -   [x] Jhipster client e2e protractor tests integrated
 -   [x] Other core/admin jhipster management api
+-   [x] DTOs based rest api
 
 ## To DO for next release
 
 -   [ ] Add MongoDB support
--   [ ] DTOs based rest api
 -   [ ] Validation
 -   [ ] Export json/yaml for swagger to integrate with jhipster gateway
 -   [ ] pagination options in client
