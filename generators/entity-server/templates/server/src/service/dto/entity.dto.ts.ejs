@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { ApiModelProperty } from '@nestjs/swagger';
 <%_ if (validation) { _%>
-import { validate, Contains, IsString, IsInt, Length, IsEmail, Min, Max } from 'class-validator';
+import { IsNotEmpty, MinLength, MaxLength, Length, Min, Max, Matches } from 'class-validator';
 <%_ } _%>
 import { BaseDTO } from './base.dto';
 
@@ -34,7 +34,6 @@ export class <%= asEntity(entityClass) %>DTO extends BaseDTO {
     <%- formatAsFieldJavadoc(fields[idx].javadoc) %>
     <%_ }
         let required = false;
-        let unique = false;
         const fieldValidate = fields[idx].fieldValidate;
         const fieldValidateRules = fields[idx].fieldValidateRules;
         const fieldType = fields[idx].fieldType;
@@ -43,22 +42,15 @@ export class <%= asEntity(entityClass) %>DTO extends BaseDTO {
         const fieldNameUnderscored = fields[idx].fieldNameUnderscored;
         const fieldNameAsDatabaseColumn = fields[idx].fieldNameAsDatabaseColumn;
         const fieldColumnType=addDbType(fieldType);
-        <%- include ../../common/dto_field_validators -%>
-
         if (fieldValidate === true) {
             if (fieldValidateRules.includes('required')) {
                 required = true;
             }
-            if (fieldValidateRules.includes('unique')) {
-                unique = true;
-            } _%>
+            _%>
+            <%- include ../../common/field_validators -%>
         <%_ } _%>
             <%_ if (fields[idx].fieldIsEnum) { _%>
             @ApiModelProperty({ enum: <%= fieldType %>, <%_ if (typeof fields[idx].javadoc != 'undefined') { _%> description: '<%- formatAsApiDescription(fields[idx].javadoc) %>' <%_ } else { _%> description: '<%= fieldName %> enum field' <%_ } if (!required) { _%>, required: false <%_ } _%>})
-            <%_ } else if (['Instant', 'ZonedDateTime', 'LocalDate'].includes(fieldType)) { _%>
-
-            <%_ } else if (fieldType === 'BigDecimal') { _%>
-
             <%_ } else { _%>
             @ApiModelProperty({ <%_ if (typeof fields[idx].javadoc != 'undefined') { _%> description: '<%- formatAsApiDescription(fields[idx].javadoc) %>' <%_ } else { _%> description: '<%= fieldName %> field' <%_ } if (!required) { _%>, required: false <%_ } _%>})
             <%_ } _%>
