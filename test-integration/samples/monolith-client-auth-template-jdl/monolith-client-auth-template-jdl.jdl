@@ -45,14 +45,14 @@ entity DemetraUser {
 	gender Gender required,
 	address String minlength(1) maxlength(100) required,
 	borndate LocalDate required,
-	cf String minlength(1) required unique,
+	cf String required unique,
 	usertype UserType required,
 	profileimage ImageBlob
 }
 
 entity SingleCourse {
 	title String required unique,
-	description String pattern(/^[^@\s]+@[^@\s]+\.[^@\s]+$/),
+	description String pattern(/^[A-Z]$/),
 	isnotonlyfordegree Boolean required,
 	cfu Integer,
 	courseimage Blob,
@@ -62,7 +62,7 @@ entity SingleCourse {
 entity Activity {
 	name UUID unique,
 	description String,
-	mynumber Double min(1) max(100),
+	mynumber Double,
 	creationtime ZonedDateTime
 }
 

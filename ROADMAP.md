@@ -51,11 +51,11 @@ To contribute for the next featues, fork the repo and open a pull request regard
 -   [x] Jhipster client e2e protractor tests integrated
 -   [x] Other core/admin jhipster management api
 -   [x] DTOs based rest api
+-   [x] Validation
 
 ## To DO for next release
 
 -   [ ] Add MongoDB support
--   [ ] Validation
 -   [ ] Export json/yaml for swagger to integrate with jhipster gateway
 -   [ ] pagination options in client
 -   [ ] Elastic Search support

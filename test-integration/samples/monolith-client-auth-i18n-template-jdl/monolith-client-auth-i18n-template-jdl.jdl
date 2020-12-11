@@ -35,7 +35,7 @@ entity BloodPressure {
 }
 entity Weight {
   timestamp ZonedDateTime required
-  weight Double 
+  weight Double
 }
 entity Points {
   date LocalDate required
@@ -45,7 +45,7 @@ entity Points {
   notes String maxlength(140)
 }
 entity Preferences {
-  weeklyGoal Integer required max(21)
+  weeklyGoal Integer required max(150)
   weightUnits Units required
 }
 
