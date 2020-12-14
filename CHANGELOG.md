@@ -11,7 +11,7 @@
 <a name="1.0.0-alpha.3"></a>
 <a name="1.0.0-alpha.2"></a>
 
-# [1.4.0](https://github.com/jhipster/generator-jhipster-nodejs/tree/v1.4.0)
+# [1.4.0](https://github.com/jhipster/generator-jhipster-nodejs/tree/v1.4.0) - 14/12/2020 released date
 
 -   Add validation in dto nestjs controllers [issue #182](https://github.com/jhipster/generator-jhipster-nodejs/issues/182)
 -   Dto implementation in the rest nestjs api [issue #181](https://github.com/jhipster/generator-jhipster-nodejs/issues/181)
