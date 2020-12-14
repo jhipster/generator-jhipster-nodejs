@@ -5,8 +5,18 @@
             "fieldName": "name",
             "fieldType": "UUID",
             "fieldValidateRules": [
-                "unique"
-            ]
+                "unique",
+                "minlength"
+            ],
+            "fieldValidateRulesMinlength": "5"
+        },
+        {
+            "fieldName": "description",
+            "fieldType": "String",
+            "fieldValidateRules": [
+                "pattern"
+            ],
+            "fieldValidateRulesPattern": "^[A-Z]$"
         },
         {
             "fieldName": "gender",
@@ -20,8 +30,12 @@
             "fieldName": "address",
             "fieldType": "String",
             "fieldValidateRules": [
+                "minlength",
+                "maxlength",
                 "required"
-            ]
+            ],
+            "fieldValidateRulesMinlength": "1",
+            "fieldValidateRulesMaxlength": "100"
         },
         {
             "fieldName": "istrue",
@@ -64,7 +78,13 @@
         },
         {
             "fieldName": "mynumber",
-            "fieldType": "Double"
+            "fieldType": "Double",
+            "fieldValidateRules": [
+                "min",
+                "max"
+            ],
+            "fieldValidateRulesMin": "1",
+            "fieldValidateRulesMax": "100"
         },
         {
             "fieldName": "count",

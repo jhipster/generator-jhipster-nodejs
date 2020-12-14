@@ -97,17 +97,35 @@ describe('Subgenerator entity of nodejs JHipster blueprint', () => {
             assert.fileContent(greatEntityPath, "@Column({ name: 'name', nullable: true, unique: true })");
             assert.fileContent(greatEntityPath, 'name: string;');
 
+            // name UUID with validation and swagger annotation
+            assert.fileContent(greatEntityDTOPath, 'name: string;');
+            assert.fileContent(greatEntityDTOPath, '@MinLength(5)');
+            assert.fileContent(greatEntityDTOPath, "@ApiModelProperty({ description: 'name field', required: false })");
+
             // Gender enum field with swagger annotation
             assert.fileContent(greatEntityPath, "@Column({ type: 'simple-enum', name: 'gender', enum: Gender })");
             assert.fileContent(greatEntityPath, 'gender: Gender;');
             assert.fileContent(greatEntityDTOPath, 'gender: Gender;');
             assert.fileContent(greatEntityDTOPath, "@ApiModelProperty({ enum: Gender, description: 'gender enum field' })");
 
-            // address String required field with swagger annotation
-            assert.fileContent(greatEntityPath, "@Column({ name: 'address' })");
+            // address string required field
+            assert.fileContent(greatEntityPath, "@Column({ name: 'address', length: 100 })");
             assert.fileContent(greatEntityPath, 'address: string;');
+
+            // address string with validation and swagger annotation
             assert.fileContent(greatEntityDTOPath, 'address: string;');
+            assert.fileContent(greatEntityDTOPath, '@IsNotEmpty()');
+            assert.fileContent(greatEntityDTOPath, '@Length(1, 100)');
             assert.fileContent(greatEntityDTOPath, "@ApiModelProperty({ description: 'address field' })");
+
+            // description string field
+            assert.fileContent(greatEntityPath, "@Column({ name: 'description', nullable: true })");
+            assert.fileContent(greatEntityPath, 'description: string;');
+
+            // description string with validation and swagger annotation
+            assert.fileContent(greatEntityDTOPath, 'description: string;');
+            assert.fileContent(greatEntityDTOPath, "@Matches('^[A-Z]$')");
+            assert.fileContent(greatEntityDTOPath, "@ApiModelProperty({ description: 'description field', required: false })");
 
             // istrue Boolean field with swagger annotation
             assert.fileContent(greatEntityPath, "@Column({ type: 'boolean', name: 'istrue', nullable: true })");
@@ -118,6 +136,8 @@ describe('Subgenerator entity of nodejs JHipster blueprint', () => {
             // borndate LocalDate required field
             assert.fileContent(greatEntityPath, "@Column({ type: 'date', name: 'borndate' })");
             assert.fileContent(greatEntityPath, 'borndate: any;');
+
+            assert.fileContent(greatEntityDTOPath, "@ApiModelProperty({ description: 'borndate field' })");
 
             // profileimage Blob field
             assert.fileContent(greatEntityPath, "@Column({ type: 'blob', name: 'profileimage', nullable: true })");
@@ -146,6 +166,12 @@ describe('Subgenerator entity of nodejs JHipster blueprint', () => {
             // mynumber Double field
             assert.fileContent(greatEntityPath, "@Column({ type: 'double', name: 'mynumber', nullable: true })");
             assert.fileContent(greatEntityPath, 'mynumber: number;');
+
+            // mynumber with validation and swagger annotation
+            assert.fileContent(greatEntityDTOPath, 'mynumber: number;');
+            assert.fileContent(greatEntityDTOPath, '@Min(1)');
+            assert.fileContent(greatEntityDTOPath, '@Max(100)');
+            assert.fileContent(greatEntityDTOPath, "@ApiModelProperty({ description: 'mynumber field', required: false })");
 
             // count Long field
             assert.fileContent(greatEntityPath, "@Column({ type: 'long', name: 'count', nullable: true })");

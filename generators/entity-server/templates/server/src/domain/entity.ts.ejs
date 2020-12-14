@@ -53,7 +53,7 @@ export class <%= asEntity(entityClass) %> extends BaseEntity  {
         if (fieldValidateRules.includes('unique')) {
             unique = true;
         } _%>
-    <%- include ../common/field_validators -%>
+
     <%_ } _%>
         <%_ if (fields[idx].fieldIsEnum) { _%>
     @Column({type: 'simple-enum', name: '<%-fieldNameAsDatabaseColumn %>', enum: <%= fieldType %>})
