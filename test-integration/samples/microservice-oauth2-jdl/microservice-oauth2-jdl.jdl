@@ -4,7 +4,7 @@
  * Use "jhipster import-jdl model-name.jdl --blueprints nodejs" to generate the entity application
  * Use jhipster 6.x (example 6.8.0)
  * relationship info: https://www.jhipster.tech/managing-relationships/
- * model of: https://github.com/jhipster/jdl-samples/blob/master/online-shop.jh
+ * model modified from: https://github.com/jhipster/jdl-samples/blob/master/online-shop.jh
  */
 
 
@@ -51,10 +51,19 @@ entity WishList {
     restricted Boolean
 }
 
+entity ShopUser {
+    preference String
+}
+
+relationship OneToOne {
+  ShopUser{internalUser} to User
+}
+
 relationship OneToMany {
     Customer{wishList(title)} to WishList{customer},
     WishList{product(title)} to Product{wishList},
-    Customer{address} to Address{customer}
+    Customer{address} to Address{customer},
+    ShopUser{products} to Product
 }
 
 relationship ManyToOne {
