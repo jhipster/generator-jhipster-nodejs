@@ -56,13 +56,14 @@ entity ShopUser {
 }
 
 relationship OneToOne {
-  ShopUser{shop} to User
+  ShopUser{internalUser} to User
 }
 
 relationship OneToMany {
     Customer{wishList(title)} to WishList{customer},
     WishList{product(title)} to Product{wishList},
-    Customer{address} to Address{customer}
+    Customer{address} to Address{customer},
+    ShopUser{products} to Product
 }
 
 relationship ManyToOne {

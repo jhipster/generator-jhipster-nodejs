@@ -90,6 +90,7 @@ export class <%= asEntity(entityClass) %> extends BaseEntity  {
         const relationshipRequired = relationships[idx].relationshipRequired;
         const otherEntityNameCapitalized = relationships[idx].otherEntityNameCapitalized;
         const ownerSide = relationships[idx].ownerSide;
+        isUserRelationship = isUserRelationship && relationship.otherEntityAngularName === 'User';
 
         if (relationshipType === 'one-to-many') {_%>
     @OneToMany(type => <%= relationship.otherEntityAngularName %> <%_ if (isUserRelationship === false) { _%>, other => other.<%= otherEntityRelationshipName %><%_ } _%>)
