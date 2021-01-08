@@ -27,7 +27,6 @@ if (process.env.NODE_ENV === 'prod') {
     ormconfig = {
         name: 'default',
         type: '<%= (prodDatabaseType === 'postgresql') ? 'postgres' : prodDatabaseType %>',
-        database: '<%= baseName %>',
         url: '<%= prodDatabaseType %>://YOUR_USER:YOUR_PWD@localhost:27017/<%= baseName %>',
         logging: false,
         synchronize: commonConf.SYNCRONIZE,
