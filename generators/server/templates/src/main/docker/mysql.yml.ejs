@@ -19,8 +19,8 @@ services:
         # volumes:
         #     - ~/volumes/jhipster/<%= baseName %>/mysql/:/var/lib/mysql/
         environment:
-            - MYSQL_USER=root
-            - MYSQL_ALLOW_EMPTY_PASSWORD=yes
+            - MYSQL_USER=SA
+            - MYSQL_PASSWORD=yourStrong(!)Password
             - MYSQL_DATABASE=<%= baseName.toLowerCase() %>
         ports:
             - 3306:3306

@@ -23,7 +23,7 @@ services:
             - ACCEPT_EULA=Y
             - MSSQL_PID=Express
             - SA_PASSWORD=yourStrong(!)Password
-            - MSSQL_DATABASE=<%= baseName %>
+            - MSSQL_DATABASE=<%= baseName.toLowerCase() %>
             - MSSQL_SLEEP=60
         ports:
             - 1433:1433

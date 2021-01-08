@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from './module/auth.module';
-import { ormconfig } from './orm.config';
+import { ormConfig } from './orm.config';
 <%_ if (!skipClient) { _%>
 import { config } from './config';
 import { ServeStaticModule } from '@nestjs/serve-static';
@@ -12,7 +12,7 @@ import { ServeStaticModule } from '@nestjs/serve-static';
 
 @Module({
   imports: [
-  TypeOrmModule.forRootAsync({useFactory: () => (ormconfig)}),
+  TypeOrmModule.forRootAsync({ useFactory: ormConfig }),
     <%_ if (!skipClient) { _%>
     ServeStaticModule.forRoot({
         rootPath: config.getClientPath(),

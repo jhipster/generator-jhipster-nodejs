@@ -99,6 +99,15 @@ module.exports = class extends ServerGenerator {
                     devDatabaseType: this.devDatabaseType
                 };
                 this.config.set(config);
+            },
+            setDockerDbPortValue() {
+                if (this.prodDatabaseType === 'mysql') {
+                    this.dbPortValue = 3306;
+                } else if (this.prodDatabaseType === 'mssql') {
+                    this.dbPortValue = 1433;
+                } else if (this.prodDatabaseType === 'postgresql') {
+                    this.dbPortValue = 5432;
+                }
             }
         };
         return Object.assign(confPhaseFromJHipster, jhipsterConfigNodeSteps);

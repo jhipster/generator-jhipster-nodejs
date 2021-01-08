@@ -107,4 +107,23 @@ describe('Subgenerator server of nodejs JHipster blueprint', () => {
             assert.file('src/main/docker/mssql.yml');
         });
     });
+
+    describe('4-Database postgresql test', () => {
+        before(done => {
+            getPreCondition()
+                .withPrompts({
+                    baseName: 'samplePostgresql',
+                    applicationType: 'monolith',
+                    prodDatabaseType: 'postgresql',
+                    authenticationType: 'jwt'
+                })
+                .on('end', done);
+        });
+
+        it('app exists with docker postgresql.yml', () => {
+            assert.noFile('src/main/docker/mysql.yml');
+            assert.file('src/main/docker/postgresql.yml');
+            assert.noFile('src/main/docker/mssql.yml');
+        });
+    });
 });
