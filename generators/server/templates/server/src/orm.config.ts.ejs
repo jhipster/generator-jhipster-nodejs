@@ -1,7 +1,7 @@
 import { TypeOrmModuleOptions } from '@nestjs/typeorm';
 
 <%# With mongodb it will be async -%>
-function ormConfig() {
+function ormConfig(): TypeOrmModuleOptions {
     const commonConf = {
         SYNCRONIZE: false,
         ENTITIES: [__dirname + '/domain/*.entity{.ts,.js}'],

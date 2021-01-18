@@ -16,11 +16,14 @@ jobs:
                     - monolith-react-jwt-i18n-jdl
                     - monolith-react-oauth2-jdl
                     - monolith-react-oauth2-i18n-jdl
+                    - monolith-react-mysql-prod-jdl
                     - monolith-angular-jwt-jdl
                     - monolith-angular-jwt-i18n-jdl
                     - monolith-angular-oauth2-jdl
                     - monolith-angular-oauth2-i18n-jdl
                     - monolith-angular-jwt-i18n-dev
+                    - monolith-angular-mssql-prod-jdl
+                    - monolith-angular-postgresql-prod-jdl
                     - monolith-react-oauth2-dev
                     - microservice-oauth2-jdl
                 include:
@@ -40,6 +43,10 @@ jobs:
                       app-folder: monolith-client-auth-i18n-template-jdl
                       entity: import-jdl
                       e2e: oauth2
+                    - app-type: monolith-react-mysql-prod-jdl
+                      app-folder: monolith-client-database-prod-template-jdl
+                      entity: import-jdl
+                      e2e: jwt
                     - app-type: monolith-angular-jwt-jdl
                       app-folder: monolith-client-auth-template-jdl
                       entity: import-jdl
@@ -59,6 +66,14 @@ jobs:
                     - app-type: monolith-angular-jwt-i18n-dev
                       app-folder: monolith-angular-jwt-i18n-dev
                       entity: 'no'
+                      e2e: jwt
+                    - app-type: monolith-angular-mssql-prod-jdl
+                      app-folder: monolith-client-database-prod-template-jdl
+                      entity: import-jdl
+                      e2e: jwt
+                    - app-type: monolith-angular-postgresql-prod-jdl
+                      app-folder: monolith-client-database-prod-template-jdl
+                      entity: import-jdl
                       e2e: jwt
                     - app-type: monolith-react-oauth2-dev
                       app-folder: monolith-react-oauth2-dev
@@ -102,10 +117,13 @@ jobs:
               run: sudo sh test-integration/04-run-generated-unit-tests-of-sample.sh $NHI_APP_FOLDER
             - name: 'RUN SERVER E2E TESTS of generated app'
               run: sudo sh test-integration/05-run-generated-e2e-tests-of-sample.sh $NHI_APP_FOLDER
+            - name: 'RUN DOCKER PROD DATABASE'
+              if: contains(env.NHI_APP_FOLDER, 'prod')
+              run: sudo bash test-integration/06-bis-docker-compose-database.sh $NHI_APP_FOLDER $NHI_APP
             - name: 'BUILD AND RUN SERVER APP'
               run: sudo sh test-integration/07-run-generated-app-sample.sh $NHI_APP_FOLDER build
             - name: 'RUN DOCKER KEYCLOAK for CLIENT E2E oauth2 TESTS'
               if: "env.NHI_E2E == 'oauth2'"
-              run: sudo sh test-integration/06-docker-compose.sh $NHI_APP_FOLDER
+              run: sudo sh test-integration/06-docker-compose-oauth2.sh $NHI_APP_FOLDER
             - name: 'START APP WITH EVENTUAL CLIENT E2E TESTS'
               run: sudo sh test-integration/07-run-generated-app-sample.sh $NHI_APP_FOLDER $NHI_E2E
