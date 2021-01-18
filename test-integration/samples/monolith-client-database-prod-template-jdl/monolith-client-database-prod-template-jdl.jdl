@@ -32,8 +32,7 @@ application {
 entity SpaceEvent {
   name String required
   date LocalDate required
-  description TextBlob required
-  photo ImageBlob required
+  description String
   type SpaceEventType required
 }
 

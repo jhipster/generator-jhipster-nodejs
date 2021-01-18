@@ -102,11 +102,11 @@ module.exports = class extends ServerGenerator {
             },
             setDockerDbPortValue() {
                 if (this.prodDatabaseType === 'mysql') {
-                    this.dbPortValue = 3306;
+                    this.dbPortValue = 3307;
                 } else if (this.prodDatabaseType === 'mssql') {
-                    this.dbPortValue = 1433;
+                    this.dbPortValue = 1434;
                 } else if (this.prodDatabaseType === 'postgresql') {
-                    this.dbPortValue = 5432;
+                    this.dbPortValue = 5433;
                 }
             }
         };

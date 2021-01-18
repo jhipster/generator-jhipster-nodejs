@@ -26,6 +26,7 @@ if [[ $2 =~ "mssql" ]]
 then
     echo "***${GREEN}run docker compose mssql"
     docker-compose -f src/main/docker/mssql.yml up -d
+    sleep 50
 fi
 
 if [[ $2 =~ "postgresql" ]]

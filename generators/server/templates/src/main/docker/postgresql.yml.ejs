@@ -19,8 +19,9 @@ services:
         # volumes:
         #     - ~/volumes/jhipster/<%= baseName %>/postgresql/:/var/lib/postgresql/data/
         environment:
-            - POSTGRES_USER=SA
+            - POSTGRES_USER=sa
             - POSTGRES_PASSWORD=yourStrong(!)Password
+            - POSTGRES_DB=<%= baseName.toLowerCase() %>
             - POSTGRES_HOST_AUTH_METHOD=trust
         ports:
-            - 5432:5432
+            - 5433:5432

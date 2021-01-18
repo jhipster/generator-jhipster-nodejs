@@ -49,8 +49,8 @@ if(process.env.NODE_ENV==='prod'){
       ...
       database: 'YOUR_DATABASE_NAME'
       host: 'localhost',
-      port: 3306,
-      username: 'SA',
+      port: 3307,
+      username: 'sa',
       password: 'yourStrong(!)Password',
       logging: false,
       synchronize: commonConf.SYNCRONIZE,
@@ -79,9 +79,15 @@ $ npm run start
 $ npm run start:dev
 
 # build and run in production mode
+# in linux
+$ NODE_ENV=prod npm run build && npm run start:prod
+# in windows
 $ set NODE_ENV=prod&& npm run build && npm run start:prod
 
 # run production build with node
+# in linux
+$ NODE_ENV=prod node dist/main.js
+# in windows
 $ set NODE_ENV=prod&& node dist/main.js
 
 # build production bundle with webpack
