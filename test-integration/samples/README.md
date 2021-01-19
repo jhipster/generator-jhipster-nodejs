@@ -29,6 +29,6 @@ Every `*template-jdl` app will be customized to generate **four applications** c
 
 In case of **database** (`mssql`,`mysql` and `postgresql`) will be generated:
 
-- monolith-angular-mssql-prod-jdl
-- monolith-react-mysql-prod-jdl
-- monolith-angular-postgresql-prod-jdl
+-   monolith-angular-mssql-prod-jdl
+-   monolith-react-mysql-prod-jdl
+-   monolith-angular-postgresql-prod-jdl

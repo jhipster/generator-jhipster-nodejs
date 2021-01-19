@@ -69,7 +69,11 @@
     "reflect-metadata": "0.1.13",
     "rxjs": "6.6.3",
     "shelljs": "0.8.4",
+    <%_ if (databaseType === 'mongodb') { _%>
+    "mongodb-memory-server": "6.9.2",
+    <%_ } else {_%>
     "sqlite3": "5.0.0",
+    <%_ } _%>
     "swagger-ui-express": "4.0.7",
     "typeorm": "0.2.29",
     "typeorm-encrypted": "0.5.6"

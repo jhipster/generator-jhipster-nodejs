@@ -1,6 +1,10 @@
 import { TypeOrmModuleOptions } from '@nestjs/typeorm';
+<%_ if (databaseType === 'mongodb') { _%> import { MongoMemoryServer } from 'mongodb-memory-server'; <%_ } _%>
 
-<%# With mongodb it will be async -%>
+<%_ if (databaseType === 'mongodb') { _%>
+async function ormConfig(): TypeOrmModuleOptions {
+const mongod = new MongoMemoryServer();
+<%_ } else { _%>
 function ormConfig(): TypeOrmModuleOptions {
     const commonConf = {
         SYNCRONIZE: false,
@@ -59,5 +63,5 @@ function ormConfig(): TypeOrmModuleOptions {
     }
     return ormconfig;
 }
-
+<%_ }  _%>
 export { ormConfig };

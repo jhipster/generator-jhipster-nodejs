@@ -107,6 +107,8 @@ module.exports = class extends ServerGenerator {
                     this.dbPortValue = 1434;
                 } else if (this.prodDatabaseType === 'postgresql') {
                     this.dbPortValue = 5433;
+                } else if (this.prodDatabaseType === 'mongodb') {
+                    this.dbPortValue = 27018;
                 }
             }
         };
