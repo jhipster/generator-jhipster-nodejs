@@ -39,14 +39,19 @@ $ npm install
 ### Define your prod database
 
 For prod database configuration,
-in [src/orm.config.ts](src/orm.config.ts) change your **url** connection:
+you don't have to do nothing if you use a docker-compose with a project database image.
+To use other custom instance, in [src/orm.config.ts](src/orm.config.ts) change **database, host, port, username and password** according your values:
 
 
 ```ts
 if(process.env.NODE_ENV==='prod'){
   ormconfig = {
       ...
-      url: 'YOUR CONNECTION URL',
+      database: 'YOUR_DATABASE_NAME'
+      host: 'localhost',
+      port: 3307,
+      username: 'sa',
+      password: 'yourStrong(!)Password',
       logging: false,
       synchronize: commonConf.SYNCRONIZE,
       entities: commonConf.ENTITIES,
@@ -74,9 +79,15 @@ $ npm run start
 $ npm run start:dev
 
 # build and run in production mode
+# in linux
+$ NODE_ENV=prod npm run build && npm run start:prod
+# in windows
 $ set NODE_ENV=prod&& npm run build && npm run start:prod
 
 # run production build with node
+# in linux
+$ NODE_ENV=prod node dist/main.js
+# in windows
 $ set NODE_ENV=prod&& node dist/main.js
 
 # build production bundle with webpack

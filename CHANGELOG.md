@@ -1,4 +1,4 @@
-<a name="1.4.1"></a>
+<a name="1.5.0"></a>
 <a name="1.4.0"></a>
 <a name="1.3.0"></a>
 <a name="1.2.0"></a>
@@ -12,7 +12,9 @@
 <a name="1.0.0-alpha.3"></a>
 <a name="1.0.0-alpha.2"></a>
 
-# [1.4.1](https://github.com/jhipster/generator-jhipster-nodejs/tree/v1.4.1) - xx/xx/2021 released date
+# [1.5.0](https://github.com/jhipster/generator-jhipster-nodejs/tree/v1.5.0) - xx/xx/2021 released date
+
+-   Integration test for all database docker instance as prod running [issue #198](https://github.com/jhipster/generator-jhipster-nodejs/issues/198)
 
 -   A relation OneToOne from a custom entity to the User entity together other OneToMany relationships throw an error [issue #195](https://github.com/jhipster/generator-jhipster-nodejs/issues/195)
 

@@ -57,12 +57,14 @@ launchCurlOrProtractor() {
 
 
 runOnlyServerApp() {
-    set NODE_ENV=dev&& node dist/main.js &
+    echo "***${GREEN}node env : "$1
+    NODE_ENV=$1 node dist/main.js &
     echo $! > .pidRunApp
 }
 
 runApp() {
-     npm run start:app &
+    echo "***${GREEN}node env : "$1
+    NODE_ENV=$1 npm run start:app &
     echo $! > .pidRunApp
 }
 
@@ -77,16 +79,21 @@ echo "***${GREEN}changed directory in : test-integration/samples/"$1
 #-------------------------------------------------------------------------------
 # Run and test app
 #-------------------------------------------------------------------------------
+ENV_BUILD="dev"
+if [ "$1" = "monolith-client-database-prod-template-jdl" ]; then
+echo "***${GREEN}set prod build environment"
+ENV_BUILD="prod"
+fi
 
 if [ "$2" = "build" ]; then
   echo "***${GREEN}only server build in : "$1
   cd server
   npm run build
   echo "***${GREEN}run server main app in dist : "$1
-  runOnlyServerApp
+  runOnlyServerApp $ENV_BUILD
 else
   echo "***${GREEN}run full app in : "$1
-  runApp
+  runApp $ENV_BUILD
 fi
 
 launchCurlOrProtractor $2
