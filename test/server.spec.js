@@ -31,6 +31,7 @@ function commonAssertion() {
     assert.file(`${SERVER_NODEJS_DIR}e2e/jest.e2e.config.json`);
     assert.file('src/main/docker/app.yml');
     assert.file('src/main/docker/mysql.yml');
+    assert.noFile('src/main/docker/mongodb.yml');
     assert.noFile('src/main/docker/mssql.yml');
     assert.noFile('src/main/docker/postgresql.yml');
     assert.noFile('src/main/resources/i18n/messages_en.properties');
@@ -105,6 +106,7 @@ describe('Subgenerator server of nodejs JHipster blueprint', () => {
             assert.noFile('src/main/docker/mysql.yml');
             assert.noFile('src/main/docker/postgresql.yml');
             assert.file('src/main/docker/mssql.yml');
+            assert.noFile('src/main/docker/mongodb.yml');
         });
     });
 
@@ -123,6 +125,27 @@ describe('Subgenerator server of nodejs JHipster blueprint', () => {
         it('app exists with docker postgresql.yml', () => {
             assert.noFile('src/main/docker/mysql.yml');
             assert.file('src/main/docker/postgresql.yml');
+            assert.noFile('src/main/docker/mssql.yml');
+            assert.noFile('src/main/docker/mongodb.yml');
+        });
+    });
+
+    describe('5-Database mongodb test', () => {
+        before(done => {
+            getPreCondition()
+                .withPrompts({
+                    baseName: 'sampleMongodb',
+                    applicationType: 'monolith',
+                    prodDatabaseType: 'mongodb',
+                    authenticationType: 'jwt'
+                })
+                .on('end', done);
+        });
+
+        it('app exists with docker postgresql.yml', () => {
+            assert.file('src/main/docker/mongodb.yml');
+            assert.noFile('src/main/docker/mysql.yml');
+            assert.noFile('src/main/docker/postgresql.yml');
             assert.noFile('src/main/docker/mssql.yml');
         });
     });

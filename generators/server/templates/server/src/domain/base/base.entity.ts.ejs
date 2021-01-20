@@ -1,8 +1,12 @@
-import { PrimaryGeneratedColumn, Column } from 'typeorm';
+import { <%_ if (databaseType === 'mongodb') { _%> ObjectIdColumn <%_ } else { _%> PrimaryGeneratedColumn <%_ } _%>, Column } from 'typeorm';
 
 export abstract class BaseEntity {
 
-   @PrimaryGeneratedColumn('uuid')
+<%_ if (databaseType === 'mongodb') { _%>
+    @ObjectIdColumn({ name: 'id' })
+<%_ } else { _%>
+    @PrimaryGeneratedColumn('uuid')
+<%_ } _%>
    id?: string;
 
    @Column({ nullable: true })
