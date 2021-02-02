@@ -18,10 +18,15 @@ export class User extends BaseEntity {
   activated?: boolean;
   @Column({default: 'en'})
   langKey?: string;
-  
+
+  <%_ if (databaseType === 'mongodb') { _%>
+  @Column()
+  authorities?: Authority[];
+  <%_ } else { _%>
   @ManyToMany(() => Authority)
   @JoinTable()
   authorities?: any[];
+  <%_ } _%>
 
   @Column({
     type: "varchar",

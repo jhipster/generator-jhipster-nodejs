@@ -1,9 +1,20 @@
-import { Entity, PrimaryColumn } from 'typeorm';
+import { Entity, <%_ if (databaseType === 'mongodb') { _%> Column <%_ } else { _%> PrimaryColumn <%_ } _%> } from 'typeorm';
 import { ApiModelProperty } from '@nestjs/swagger';
+<%_ if (databaseType === 'mongodb') { _%>
+import { BaseEntity } from './base/base.entity';
+<%_ } _%>
 
 @Entity('nhi_authority')
+<%_ if (databaseType === 'mongodb') { _%>
+export class Authority extends BaseEntity {
+<%_ } else { _%>
 export class Authority {
+<%_ } _%>
   @ApiModelProperty({ example: 'ROLE_USER', description: 'User role' })
+  <%_ if (databaseType === 'mongodb') { _%>
+  @Column({ unique: true })
+  <%_ } else { _%>
   @PrimaryColumn()
+  <%_ } _%>
   name: string;
 }

@@ -2,7 +2,7 @@ import { TypeOrmModuleOptions } from '@nestjs/typeorm';
 <%_ if (databaseType === 'mongodb') { _%> import { MongoMemoryServer } from 'mongodb-memory-server'; <%_ } _%>
 
 <%_ if (databaseType === 'mongodb') { _%>
-async function ormConfig(): TypeOrmModuleOptions {
+async function ormConfig(): Promise<TypeOrmModuleOptions> {
 const mongod = new MongoMemoryServer();
 <%_ } else { _%>
 function ormConfig(): TypeOrmModuleOptions {
