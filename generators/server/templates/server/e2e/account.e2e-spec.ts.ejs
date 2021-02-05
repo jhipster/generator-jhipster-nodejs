@@ -19,7 +19,7 @@ describe('Account', () => {
     };
 
     const testUserAuthenticated: any = {
-        id: 'authenticateId',
+        id: '601d70b6ec992423f8d531bd',
         login: 'userlogged',
         email: 'userlogged@localhost.it',
         password: 'userloggedPassword',

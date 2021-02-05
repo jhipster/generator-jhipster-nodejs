@@ -50,7 +50,11 @@ export class AuthService {
   }
 
   async findUserWithAuthById(userId: string): Promise<UserDTO | undefined> {
+    <%_ if (databaseType === 'mongodb') { _%>
+    const userDTO: UserDTO = await this.userService.findById(userId);
+    <%_ } else { _%>
     const userDTO: UserDTO = await this.userService.findByfields({ where: { id: userId } });
+    <%_ } _%>
     return userDTO;
   }
 

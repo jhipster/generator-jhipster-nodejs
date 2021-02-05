@@ -63,6 +63,7 @@ describe('User', () => {
     });
 
     it('/PUT update user', async () => {
+        testUserDTO.login = 'TestUserUpdate';
         const savedUser: UserDTO = await service.save(testUserDTO);
         savedUser.firstName = 'Updated Name';
 
@@ -79,6 +80,7 @@ describe('User', () => {
     });
 
     it('/GET user with a login name', async () => {
+        testUserDTO.login = 'TestUserGet';
         const savedUser: UserDTO = await service.save(testUserDTO);
 
         const getUser: UserDTO = (
@@ -93,6 +95,7 @@ describe('User', () => {
     });
 
     it('/DELETE user', async () => {
+        testUserDTO.login = 'TestUserDelete';
         const savedUser: UserDTO = await service.save(testUserDTO);
 
         await request(app.getHttpServer())
