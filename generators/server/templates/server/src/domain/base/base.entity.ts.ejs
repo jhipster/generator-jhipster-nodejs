@@ -3,7 +3,7 @@ import { <%_ if (databaseType === 'mongodb') { _%> ObjectIdColumn <%_ } else { _
 export abstract class BaseEntity {
 
 <%_ if (databaseType === 'mongodb') { _%>
-    @ObjectIdColumn({ name: 'id' })
+    @ObjectIdColumn({ name: '_id' })
 <%_ } else { _%>
     @PrimaryGeneratedColumn('uuid')
 <%_ } _%>
