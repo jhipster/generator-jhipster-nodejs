@@ -17,7 +17,7 @@ services:
     <%= baseName.toLowerCase() %>-mongodb:
         image: <%= DOCKER_MONGODB %>
         environment:
-           - MONGO_INITDB_DATABASE=<%= baseName.toLowerCase() %>
+       #   - MONGO_INITDB_DATABASE=<%= baseName.toLowerCase() %>
            - MONGO_INITDB_ROOT_USERNAME=sa
            - MONGO_INITDB_ROOT_PASSWORD=yourStrong(!)Password
         ports:
