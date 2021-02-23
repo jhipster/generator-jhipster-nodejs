@@ -1,0 +1,50 @@
+/*
+ * This is the application and entity model for university elearning
+ * default values: https://www.jhipster.tech/jdl/#annexes
+ * Use "jhipster import-jdl model-name.jdl --blueprints nodejs" to generate the entire application
+ * Use jhipster 6.x (example 6.8.0)
+ * relationship info: https://www.jhipster.tech/managing-relationships/
+ * REMEMBER TO FILL authenticationType and clientFramework
+ */
+
+application {
+	config {
+		applicationType monolith,
+		baseName monolithClientAuthMongodbJdlApp,
+		packageName com.jhipster.node,
+		serverPort 8081,
+		cacheProvider no,
+		enableHibernateCache false,
+		authenticationType REPLACE_AUTH,
+		databaseType mongodb,
+		prodDatabaseType mongodb,
+		serviceDiscoveryType false,
+		clientPackageManager npm,
+		useSass true,
+		skipUserManagement false,
+		enableTranslation false,
+		clientFramework angularX
+	}
+	entities *
+}
+
+// JDL definition entity for application
+
+
+entity Transaction {
+	cf String required unique
+}
+
+entity Car {
+	title String required unique,
+	description String pattern(/^[A-Z]$/),
+	isnotonlyfordegree Boolean required,
+	point Integer
+}
+
+entity License {
+	name UUID unique,
+	description String,
+	mynumber Double
+}
+

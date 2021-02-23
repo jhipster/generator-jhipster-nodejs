@@ -42,7 +42,7 @@ function ormConfig(): TypeOrmModuleOptions {
         ormconfig = {
             name: 'default',
             type: '<%= (prodDatabaseType === 'postgresql') ? 'postgres' : prodDatabaseType %>',
-            database: 'admin',
+            database: '<%= (prodDatabaseType === 'mongodb') ? 'admin': baseName.toLowerCase() %>',
             host: 'localhost',
             port: <%= dbPortValue %>,
             username: 'sa',

@@ -63,7 +63,7 @@ echo -e "${GREEN}This is a template app named: "$1
         echo -e "${GREEN}Replace prod database in postgresql"
     fi
 
-     if [[ $2 =~ "mongodb" ]]
+    if [[ $2 =~ "mongodb" ]]
     then
         sed -i 's/REPLACE_DATABASE_TYPE/mongodb/g' $1.jdl
         sed -i 's/REPLACE_PROD_DATABASE_TYPE/mongodb/g' $1.jdl

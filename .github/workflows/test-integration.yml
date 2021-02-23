@@ -21,8 +21,10 @@ jobs:
                     - monolith-angular-jwt-jdl
                     - monolith-angular-jwt-i18n-jdl
                     - monolith-angular-oauth2-jdl
+                    - monolith-angular-oauth2-mongodb-jdl
                     - monolith-angular-oauth2-i18n-jdl
                     - monolith-angular-jwt-i18n-dev
+                    - monolith-angular-jwt-mongodb-jdl
                     - monolith-angular-mssql-prod-jdl
                     - monolith-angular-postgresql-prod-jdl
                     - monolith-react-oauth2-dev
@@ -56,12 +58,20 @@ jobs:
                       app-folder: monolith-client-auth-template-jdl
                       entity: import-jdl
                       e2e: jwt
+                    - app-type: monolith-angular-jwt-mongodb-jdl
+                      app-folder: monolith-angular-auth-mongodb-template-jdl
+                      entity: import-jdl
+                      e2e: jwt
                     - app-type: monolith-angular-jwt-i18n-jdl
                       app-folder: monolith-client-auth-i18n-template-jdl
                       entity: import-jdl
                       e2e: jwt
                     - app-type: monolith-angular-oauth2-jdl
                       app-folder: monolith-client-auth-template-jdl
+                      entity: import-jdl
+                      e2e: oauth2
+                    - app-type: monolith-angular-oauth2-mongodb-jdl
+                      app-folder: monolith-angular-auth-mongodb-template-jdl
                       entity: import-jdl
                       e2e: oauth2
                     - app-type: monolith-angular-oauth2-i18n-jdl
