@@ -74,7 +74,11 @@ describe('User', () => {
                 .expect(200)
         ).body;
 
+        <%_ if (databaseType !== 'mongodb') { _%>
         expect(updatedUser).toEqual(savedUser);
+        <%_ } else { _%>
+        expect(updatedUser.firstName).toEqual(savedUser.firstName);
+        <%_ } _%>
 
         await service.delete(savedUser);
     });
@@ -89,7 +93,11 @@ describe('User', () => {
                 .expect(200)
         ).body;
 
+        <%_ if (databaseType !== 'mongodb') { _%>
         expect(getUser).toEqual(savedUser);
+        <%_ } else { _%>
+        expect(getUser.login).toEqual(savedUser.login);
+        <%_ } _%>
 
         await service.delete(savedUser);
     });

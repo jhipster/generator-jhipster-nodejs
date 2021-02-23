@@ -37,14 +37,6 @@ module.exports = class extends ServerGenerator {
                 this.buildTool = jhipsterNodeConstants.BUILD_TOOL_NODEJS;
                 this.enableSwaggerCodegen = jhipsterNodeConstants.ENABLE_SWAGGER_CODEGEN_NODEJS;
                 this.testFrameworks = [];
-
-                /*
-                this.packagejs= jhipsterPackagejs;
-                this.jhipsterVersion=jhipsterPackagejs.version;
-
-                const configuration = this.getAllJhipsterConfig(this, true);
-                this.mongoProdDatabase = configuration.get('mongoProdDatabase');
-                */
             }
         };
 
@@ -89,14 +81,17 @@ module.exports = class extends ServerGenerator {
     get configuring() {
         const confPhaseFromJHipster = super._configuring();
         const jhipsterConfigNodeSteps = {
+            updateDatabaseConf() {
+                if (this.prodDatabaseType === jhipsterNodeConstants.MONGODB_DATABASE_TYPE_NODEJS) {
+                    this.databaseType = jhipsterNodeConstants.MONGODB_DATABASE_TYPE_NODEJS;
+                    this.devDatabaseType = jhipsterNodeConstants.MONGODB_DATABASE_TYPE_NODEJS;
+                }
+            },
             jhipsterNodeSaveConfig() {
                 const config = {
-                    /* serverPort: this.serverPort,
                     databaseType: this.databaseType,
-                    prodDatabaseType: this.prodDatabaseType,
-                    jhipsterVersion: this.jhipsterVersion,
-                    */
-                    devDatabaseType: this.devDatabaseType
+                    devDatabaseType: this.devDatabaseType,
+                    prodDatabaseType: this.prodDatabaseType
                 };
                 this.config.set(config);
             },
