@@ -96,13 +96,9 @@ describe('Account', () => {
         expect(loggedUser.login).toEqual(userAuthenticated.login);
         expect(loggedUser.email).toEqual(userAuthenticated.email);
         <%_ } else { _%>
-        const loggedUser: any =
-            (
-                await request(app.getHttpServer())
-                    .get('/api/account')
-                    .expect(200)
-
-        );
+        await request(app.getHttpServer())
+              .get('/api/account')
+              .expect(200);
         <%_ } _%>
 
     });

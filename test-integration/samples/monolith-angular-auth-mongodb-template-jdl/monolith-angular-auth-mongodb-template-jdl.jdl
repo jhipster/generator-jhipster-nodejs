@@ -1,10 +1,10 @@
 /*
- * This is the application and entity model for university elearning
+ * This is the application and entity model for cars management
  * default values: https://www.jhipster.tech/jdl/#annexes
  * Use "jhipster import-jdl model-name.jdl --blueprints nodejs" to generate the entire application
  * Use jhipster 6.x (example 6.8.0)
  * relationship info: https://www.jhipster.tech/managing-relationships/
- * REMEMBER TO FILL authenticationType and clientFramework
+ * REMEMBER TO FILL authenticationType
  */
 
 application {
@@ -37,7 +37,7 @@ entity Transaction {
 
 entity Car {
 	title String required unique,
-	description String pattern(/^[A-Z]$/),
+	description String,
 	isnotonlyfordegree Boolean required,
 	point Integer
 }
