@@ -35,6 +35,11 @@ const clientFiles = {
                     renameTo: () => `${ANGULAR_DIR}home/home.component.html`
                 },
                 {
+                    file: 'angular/docs/docs.component.html',
+                    method: 'processHtml',
+                    renameTo: () => `${ANGULAR_DIR}admin/docs/docs.component.html`
+                },
+                {
                     file: 'angular/layouts/navbar/navbar.component.html',
                     method: 'processHtml',
                     renameTo: () => `${ANGULAR_DIR}layouts/navbar/navbar.component.html`
@@ -50,6 +55,11 @@ const clientFiles = {
                     file: 'react/home/home.tsx',
                     method: 'processJsx',
                     renameTo: () => `${REACT_DIR}modules/home/home.tsx`
+                },
+                {
+                    file: 'react/docs/docs.tsx',
+                    method: 'processJsx',
+                    renameTo: () => `${REACT_DIR}modules/administration/docs/docs.tsx`
                 },
                 {
                     file: 'react/shared/layout/header/header.tsx',
