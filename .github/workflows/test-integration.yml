@@ -17,11 +17,14 @@ jobs:
                     - monolith-react-oauth2-jdl
                     - monolith-react-oauth2-i18n-jdl
                     - monolith-react-mysql-prod-jdl
+                    - monolith-react-mongodb-prod-jdl
                     - monolith-angular-jwt-jdl
                     - monolith-angular-jwt-i18n-jdl
                     - monolith-angular-oauth2-jdl
+                    - monolith-angular-oauth2-mongodb-jdl
                     - monolith-angular-oauth2-i18n-jdl
                     - monolith-angular-jwt-i18n-dev
+                    - monolith-angular-jwt-mongodb-jdl
                     - monolith-angular-mssql-prod-jdl
                     - monolith-angular-postgresql-prod-jdl
                     - monolith-react-oauth2-dev
@@ -47,8 +50,16 @@ jobs:
                       app-folder: monolith-client-database-prod-template-jdl
                       entity: import-jdl
                       e2e: jwt
+                    - app-type: monolith-react-mongodb-prod-jdl
+                      app-folder: monolith-client-database-prod-template-jdl
+                      entity: import-jdl
+                      e2e: jwt
                     - app-type: monolith-angular-jwt-jdl
                       app-folder: monolith-client-auth-template-jdl
+                      entity: import-jdl
+                      e2e: jwt
+                    - app-type: monolith-angular-jwt-mongodb-jdl
+                      app-folder: monolith-angular-auth-mongodb-template-jdl
                       entity: import-jdl
                       e2e: jwt
                     - app-type: monolith-angular-jwt-i18n-jdl
@@ -57,6 +68,10 @@ jobs:
                       e2e: jwt
                     - app-type: monolith-angular-oauth2-jdl
                       app-folder: monolith-client-auth-template-jdl
+                      entity: import-jdl
+                      e2e: oauth2
+                    - app-type: monolith-angular-oauth2-mongodb-jdl
+                      app-folder: monolith-angular-auth-mongodb-template-jdl
                       entity: import-jdl
                       e2e: oauth2
                     - app-type: monolith-angular-oauth2-i18n-jdl

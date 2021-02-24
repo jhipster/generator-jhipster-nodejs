@@ -1,7 +1,15 @@
 import { TypeOrmModuleOptions } from '@nestjs/typeorm';
+<%_ if (databaseType === 'mongodb') { _%> import { MongoMemoryServer } from 'mongodb-memory-server'; <%_ } _%>
 
-<%# With mongodb it will be async -%>
+<%_ if (databaseType === 'mongodb') { _%>
+async function ormConfig(): Promise<TypeOrmModuleOptions> {
+let mongod;
+if (process.env.NODE_ENV !== 'prod') {
+    mongod = await MongoMemoryServer.create();
+}
+<%_ } else { _%>
 function ormConfig(): TypeOrmModuleOptions {
+<%_ } _%>
     const commonConf = {
         SYNCRONIZE: false,
         ENTITIES: [__dirname + '/domain/*.entity{.ts,.js}'],
@@ -14,8 +22,16 @@ function ormConfig(): TypeOrmModuleOptions {
 
     let ormconfig: TypeOrmModuleOptions = {
         name: 'default',
-        type: 'sqlite',
+        type: '<%= devDatabaseType %>',
+        <%_ if (databaseType === 'mongodb') { _%>
+        host: 'localhost',
+        port: mongod?await mongod.getPort():0,
+        database: mongod?await mongod.getDbName():'dev',
+        useNewUrlParser: true,
+        useUnifiedTopology: true,
+        <%_ } else { _%>
         database: '../target/db/sqlite-dev-db.sql',
+        <%_ } _%>
         logging: true,
         synchronize: true,
         entities: commonConf.ENTITIES,
@@ -29,7 +45,7 @@ function ormConfig(): TypeOrmModuleOptions {
         ormconfig = {
             name: 'default',
             type: '<%= (prodDatabaseType === 'postgresql') ? 'postgres' : prodDatabaseType %>',
-            database: '<%= baseName.toLowerCase() %>',
+            database: '<%= (prodDatabaseType === 'mongodb') ? 'admin': baseName.toLowerCase() %>',
             host: 'localhost',
             port: <%= dbPortValue %>,
             username: 'sa',
@@ -46,8 +62,16 @@ function ormConfig(): TypeOrmModuleOptions {
     if (process.env.NODE_ENV === 'test') {
     ormconfig = {
         name: 'default',
-        type: 'sqlite',
+        type: '<%= devDatabaseType %>',
+        <%_ if (databaseType === 'mongodb') { _%>
+        host: 'localhost',
+        port: await mongod.getPort(),
+        database: await mongod.getDbName(),
+        useNewUrlParser: true,
+        useUnifiedTopology: true,
+        <%_ } else { _%>
         database: ':memory:',
+        <%_ } _%>
         keepConnectionAlive: true,
         logging: true,
         synchronize: true,

@@ -35,5 +35,11 @@ then
     docker-compose -f src/main/docker/postgresql.yml up -d
 fi
 
+if [[ $2 =~ "mongodb" ]]
+then
+    echo "***${GREEN}run docker compose mongodb"
+    docker-compose -f src/main/docker/mongodb.yml up -d
+fi
+
 
 docker ps -a

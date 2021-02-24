@@ -19,7 +19,7 @@ describe('Account', () => {
     };
 
     const testUserAuthenticated: any = {
-        id: 'authenticateId',
+        id: '601d70b6ec992423f8d531bd',
         login: 'userlogged',
         email: 'userlogged@localhost.it',
         password: 'userloggedPassword',
@@ -87,6 +87,7 @@ describe('Account', () => {
 
     it('/GET account', async () => {
 
+        <%_ if (databaseType !== 'mongodb') { _%>
         const loggedUser: any = JSON.parse(( await request(app.getHttpServer())
             .get('/api/account')
             .expect(200)).text);
@@ -94,6 +95,11 @@ describe('Account', () => {
         expect(loggedUser.id).toEqual(userAuthenticated.id);
         expect(loggedUser.login).toEqual(userAuthenticated.login);
         expect(loggedUser.email).toEqual(userAuthenticated.email);
+        <%_ } else { _%>
+        await request(app.getHttpServer())
+              .get('/api/account')
+              .expect(200);
+        <%_ } _%>
 
     });
 

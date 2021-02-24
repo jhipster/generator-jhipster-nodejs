@@ -16,7 +16,9 @@ export class UserService {
     }
 
     async findByfields(options: FindOneOptions<UserDTO>): Promise<UserDTO | undefined> {
+        <%_ if (databaseType !== 'mongodb') { _%>
         options.relations = ['authorities'];
+        <%_ } _%>
         const result = await this.userRepository.findOne(options);
         return UserMapper.fromEntityToDTO(this.flatAuthorities(result));
     }
@@ -27,7 +29,9 @@ export class UserService {
     }
 
     async findAndCount(options: FindManyOptions<UserDTO>): Promise<[UserDTO[], number]> {
+        <%_ if (databaseType !== 'mongodb') { _%>
         options.relations = ['authorities'];
+        <%_ } _%>
         const resultList = await this.userRepository.findAndCount(options);
         const usersDTO: UserDTO[] = [];
         if (resultList && resultList[0]) {

@@ -1,5 +1,5 @@
 /*
- * This is the application and entity model modified for the 21-Points (https://github.com/jhipster/jdl-samples/main/space.jdl)
+ * This is the application and entity model modified for the space (https://github.com/jhipster/jdl-samples/main/space.jdl)
  * Use "jhipster import-jdl model-name.jdl --blueprints nodejs" to generate the entire application
  * Use jhipster 6.x (example 6.8.0)
  * relationship info: https://www.jhipster.tech/managing-relationships/
@@ -15,8 +15,8 @@ application {
 		cacheProvider no,
 		enableHibernateCache false,
 		authenticationType jwt,
-		databaseType sql,
-		prodDatabaseType REPLACE_DATABASE_TYPE,
+		databaseType REPLACE_DATABASE_TYPE,
+		prodDatabaseType REPLACE_PROD_DATABASE_TYPE,
 		serviceDiscoveryType false,
 		clientPackageManager npm,
 		useSass true,

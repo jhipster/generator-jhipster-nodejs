@@ -1,4 +1,5 @@
 const _ = require('lodash');
+const chalk = require('chalk');
 const constants = require('../generator-nodejs-constants');
 
 const SERVER_NODEJS_DIR = `${constants.SERVER_NODEJS_SRC_DIR}/`;
@@ -58,6 +59,10 @@ function writeFiles() {
     return {
         customEntityServerFiles() {
             if (this.skipServer) return;
+
+            if (this.databaseType === 'mongodb' && this.relationships.length > 0) {
+                this.error(chalk.red('relationships not supported in mongodb!'));
+            }
 
             this.writeFilesToDisk(serverFiles, this, false);
 

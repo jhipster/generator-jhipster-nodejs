@@ -140,6 +140,10 @@ const serverFiles = {
         {
             condition: generator => generator.prodDatabaseType === 'postgresql',
             templates: ['src/main/docker/postgresql.yml']
+        },
+        {
+            condition: generator => generator.prodDatabaseType === 'mongodb',
+            templates: ['src/main/docker/mongodb.yml']
         }
     ]
 };

@@ -1,5 +1,7 @@
 const chalk = require('chalk');
 
+const MONGODB = 'mongodb';
+
 module.exports = {
     askForModuleName,
     askForMainServerSideOpts
@@ -43,12 +45,11 @@ function askForMainServerSideOpts(meta) {
             name: 'prodDatabaseType',
             message: `Which ${chalk.yellow('*production*')} database would you like to use?`,
             choices: [
-                /* {   value: 'mongodb',
-                name: 'MongoDB' }, */
                 { value: 'mysql', name: 'MySQL or MariaDB' },
                 { value: 'postgresql', name: 'PostgreSQL or CockroachDB' },
                 { value: 'oracle', name: 'Oracle (Please follow our documentation to use the Oracle proprietary driver)' },
-                { value: 'mssql', name: 'Microsoft SQL Server' }
+                { value: 'mssql', name: 'Microsoft SQL Server' },
+                { value: MONGODB, name: 'MongoDB' }
             ],
             default: 'mysql'
         }
@@ -59,8 +60,13 @@ function askForMainServerSideOpts(meta) {
     const done = this.async();
 
     this.prompt(PROMPT).then(prompt => {
-        this.databaseType = 'sql';
-        this.devDatabaseType = 'sqlite';
+        if (prompt.prodDatabaseType === MONGODB) {
+            this.databaseType = MONGODB;
+            this.devDatabaseType = MONGODB;
+        } else {
+            this.databaseType = 'sql';
+            this.devDatabaseType = 'sqlite';
+        }
         this.prodDatabaseType = prompt.prodDatabaseType;
         this.serverPort = prompt.serverPort;
         this.authenticationType = prompt.authenticationType;
@@ -68,12 +74,6 @@ function askForMainServerSideOpts(meta) {
         if (this.serverPort === undefined) {
             this.serverPort = defaultPort;
         }
-
-        /*
-        if (this.prodDatabaseType === 'mongodb') {
-            this.databaseType = 'mongodb';
-        }
-        */
 
         done();
     });

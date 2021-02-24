@@ -1,5 +1,5 @@
 import { Authority } from './authority.entity';
-import { Entity, Column, ManyToMany, JoinTable } from 'typeorm';
+import { Entity, Column <%_ if (databaseType !== 'mongodb') { _%>, ManyToMany, JoinTable <%_ } _%> } from 'typeorm';
 import { BaseEntity } from './base/base.entity';
 import { config } from '../config';
 import { EncryptionTransformer } from "typeorm-encrypted";
@@ -18,10 +18,15 @@ export class User extends BaseEntity {
   activated?: boolean;
   @Column({default: 'en'})
   langKey?: string;
-  
+
+  <%_ if (databaseType === 'mongodb') { _%>
+  @Column()
+  authorities?: Authority[];
+  <%_ } else { _%>
   @ManyToMany(() => Authority)
   @JoinTable()
   authorities?: any[];
+  <%_ } _%>
 
   @Column({
     type: "varchar",

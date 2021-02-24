@@ -63,6 +63,7 @@ describe('User', () => {
     });
 
     it('/PUT update user', async () => {
+        testUserDTO.login = 'TestUserUpdate';
         const savedUser: UserDTO = await service.save(testUserDTO);
         savedUser.firstName = 'Updated Name';
 
@@ -73,12 +74,17 @@ describe('User', () => {
                 .expect(200)
         ).body;
 
+        <%_ if (databaseType !== 'mongodb') { _%>
         expect(updatedUser).toEqual(savedUser);
+        <%_ } else { _%>
+        expect(updatedUser.firstName).toEqual(savedUser.firstName);
+        <%_ } _%>
 
         await service.delete(savedUser);
     });
 
     it('/GET user with a login name', async () => {
+        testUserDTO.login = 'TestUserGet';
         const savedUser: UserDTO = await service.save(testUserDTO);
 
         const getUser: UserDTO = (
@@ -87,12 +93,17 @@ describe('User', () => {
                 .expect(200)
         ).body;
 
+        <%_ if (databaseType !== 'mongodb') { _%>
         expect(getUser).toEqual(savedUser);
+        <%_ } else { _%>
+        expect(getUser.login).toEqual(savedUser.login);
+        <%_ } _%>
 
         await service.delete(savedUser);
     });
 
     it('/DELETE user', async () => {
+        testUserDTO.login = 'TestUserDelete';
         const savedUser: UserDTO = await service.save(testUserDTO);
 
         await request(app.getHttpServer())
