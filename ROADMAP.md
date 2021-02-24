@@ -52,10 +52,10 @@ To contribute for the next featues, fork the repo and open a pull request regard
 -   [x] Other core/admin jhipster management api
 -   [x] DTOs based rest api
 -   [x] Validation
+-   [x] Add MongoDB support
 
 ## To DO for next release
 
--   [ ] Add MongoDB support
 -   [ ] Export json/yaml for swagger to integrate with jhipster gateway
 -   [ ] pagination options in client
 -   [ ] Elastic Search support
