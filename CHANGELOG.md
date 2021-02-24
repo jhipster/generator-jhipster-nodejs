@@ -14,6 +14,8 @@
 
 # [1.5.0](https://github.com/jhipster/generator-jhipster-nodejs/tree/v1.5.0) - xx/xx/2021 released date
 
+-   Support mongodb generation with docker image (without relationship) [issue #73](https://github.com/jhipster/generator-jhipster-nodejs/issues/73)
+
 -   Integration test for all database docker instance as prod running [issue #198](https://github.com/jhipster/generator-jhipster-nodejs/issues/198)
 
 -   A relation OneToOne from a custom entity to the User entity together other OneToMany relationships throw an error [issue #195](https://github.com/jhipster/generator-jhipster-nodejs/issues/195)

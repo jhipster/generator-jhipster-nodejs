@@ -30,7 +30,12 @@ export class UserController {
       type: UserDTO,
   })
   async getAllUsers(@Req() req: Request): Promise<UserDTO[]> {
-      const pageRequest: PageRequest = new PageRequest(req.query.page, req.query.size, req.query.sort);
+     <%_ if (databaseType === 'mongodb') { _%>
+      const sortField = '';
+      <%_ } else { _%>
+      const sortField = req.query.sort;
+      <%_ } _%>
+      const pageRequest: PageRequest = new PageRequest(req.query.page, req.query.size, sortField);
       const [results, count] = await this.userService.findAndCount({
           skip: +pageRequest.page * pageRequest.size,
           take: +pageRequest.size,

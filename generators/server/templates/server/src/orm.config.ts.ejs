@@ -3,7 +3,10 @@ import { TypeOrmModuleOptions } from '@nestjs/typeorm';
 
 <%_ if (databaseType === 'mongodb') { _%>
 async function ormConfig(): Promise<TypeOrmModuleOptions> {
-const mongod = new MongoMemoryServer();
+let mongod;
+if (process.env.NODE_ENV !== 'prod') {
+    mongod = await MongoMemoryServer.create();
+}
 <%_ } else { _%>
 function ormConfig(): TypeOrmModuleOptions {
 <%_ } _%>
@@ -22,8 +25,8 @@ function ormConfig(): TypeOrmModuleOptions {
         type: '<%= devDatabaseType %>',
         <%_ if (databaseType === 'mongodb') { _%>
         host: 'localhost',
-        port: await mongod.getPort(),
-        database: await mongod.getDbName(),
+        port: mongod?await mongod.getPort():0,
+        database: mongod?await mongod.getDbName():'dev',
         useNewUrlParser: true,
         useUnifiedTopology: true,
         <%_ } else { _%>
