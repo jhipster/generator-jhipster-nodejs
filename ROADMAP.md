@@ -52,7 +52,7 @@ To contribute for the next featues, fork the repo and open a pull request regard
 -   [x] Other core/admin jhipster management api
 -   [x] DTOs based rest api
 -   [x] Validation
--   [x] Add MongoDB support
+-   [x] Add MongoDB support with docker compose and embedded for dev/test
 
 ## To DO for next release
 
