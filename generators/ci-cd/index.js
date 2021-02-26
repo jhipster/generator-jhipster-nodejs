@@ -16,7 +16,13 @@ module.exports = class extends CiCdGenerator {
     }
 
     get initializing() {
-        return super._initializing();
+        const phaseFromJHipster = super._initializing();
+        const jhipsterNodeCiCdPhaseSteps = {
+            sayHello() {
+                this.log(chalk.white('🚀 Welcome to the NHipster CI/CD custom Sub-Generator 🚀'));
+            }
+        };
+        return Object.assign(phaseFromJHipster, jhipsterNodeCiCdPhaseSteps);
     }
 
     get prompting() {
