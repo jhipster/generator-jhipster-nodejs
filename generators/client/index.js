@@ -7,7 +7,7 @@ const writeFiles = require('./files').writeFiles;
 
 module.exports = class extends ClientGenerator {
     constructor(args, opts) {
-        super(args, Object.assign({ fromBlueprint: true }, opts)); // fromBlueprint variable is important
+        super(args, { fromBlueprint: true, ...opts }); // fromBlueprint variable is important
 
         const jhContext = (this.jhipsterContext = this.options.jhipsterContext);
 
@@ -16,8 +16,6 @@ module.exports = class extends ClientGenerator {
         }
 
         this.configOptions = jhContext.configOptions || {};
-        // This sets up options for this sub generator and is being reused from JHipster
-        jhContext.setupClientOptions(this, jhContext);
 
         // This adds support for a `--skip-i18n` flag for unit test
         this.option('skip-i18n', {
@@ -36,7 +34,7 @@ module.exports = class extends ClientGenerator {
                 // this.packagejs = jhipsterPackagejs;
             }
         };
-        return Object.assign(initPhaseFromJHipster, initNodeClientPhaseSteps);
+        return { ...initPhaseFromJHipster, ...initNodeClientPhaseSteps };
     }
 
     get prompting() {
@@ -46,6 +44,18 @@ module.exports = class extends ClientGenerator {
     get configuring() {
         // Here we are not overriding this phase and hence its being handled by JHipster
         return super._configuring();
+    }
+
+    get composing() {
+        return this._composing();
+    }
+
+    get loading() {
+        return this._loading();
+    }
+
+    get preparing() {
+        return this._preparing();
     }
 
     get default() {
@@ -60,7 +70,11 @@ module.exports = class extends ClientGenerator {
     get writing() {
         const phaseFromJHipster = super._writing();
         const jhipsterNodeClientPhaseSteps = writeFiles();
-        return Object.assign(phaseFromJHipster, jhipsterNodeClientPhaseSteps);
+        return { ...phaseFromJHipster, ...jhipsterNodeClientPhaseSteps };
+    }
+
+    get postWriting() {
+        return this._postWriting();
     }
 
     get install() {

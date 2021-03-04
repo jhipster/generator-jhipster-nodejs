@@ -7,8 +7,8 @@ module.exports = {
     askForMainServerSideOpts
 };
 
-function askForModuleName() {
-    if (this.baseName) return;
+function askForModuleName(meta) {
+    if (!meta && this.baseName) return;
 
     this.askModuleName(this);
 }
@@ -74,7 +74,6 @@ function askForMainServerSideOpts(meta) {
         if (this.serverPort === undefined) {
             this.serverPort = defaultPort;
         }
-
         done();
     });
 }

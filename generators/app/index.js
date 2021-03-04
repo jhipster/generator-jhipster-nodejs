@@ -6,7 +6,7 @@ const nodePromptApp = require('./prompts.js');
 
 module.exports = class extends AppGenerator {
     constructor(args, opts) {
-        super(args, Object.assign({ fromBlueprint: true }, opts)); // fromBlueprint variable is important
+        super(args, { fromBlueprint: true, ...opts }); // fromBlueprint variable is important
 
         const jhContext = (this.jhipsterContext = this.options.jhipsterContext);
 
@@ -109,12 +109,12 @@ module.exports = class extends AppGenerator {
             }
         };
 
-        return Object.assign(initPhaseFromJHipster, nodeInitAppPhaseSteps);
+        return { ...initPhaseFromJHipster, ...nodeInitAppPhaseSteps };
     }
 
     get prompting() {
         const promptPhaseFromJHipster = super._prompting();
-        return Object.assign(promptPhaseFromJHipster, nodePromptApp);
+        return { ...promptPhaseFromJHipster, ...nodePromptApp };
     }
 
     get configuring() {
@@ -159,7 +159,19 @@ module.exports = class extends AppGenerator {
             }
         };
 
-        return Object.assign(configuringPhaseFromJHipster, jhipsterConfigureAppPhaseSteps);
+        return { ...configuringPhaseFromJHipster, ...jhipsterConfigureAppPhaseSteps };
+    }
+
+    get composing() {
+        return this._composing();
+    }
+
+    get loading() {
+        return this._loading();
+    }
+
+    get preparing() {
+        return this._preparing();
     }
 
     get default() {
@@ -173,7 +185,7 @@ module.exports = class extends AppGenerator {
             // askForMoreModules: {}
         };
 
-        return Object.assign(defaultPhaseFromJHipster, jhipsterConfigureAppPhaseSteps);
+        return { ...defaultPhaseFromJHipster, ...jhipsterConfigureAppPhaseSteps };
     }
 
     get writing() {
@@ -198,7 +210,11 @@ module.exports = class extends AppGenerator {
             }
         };
 
-        return Object.assign(writingPhaseFromJHipster, jhipsterWritingAppPhaseSteps);
+        return { ...writingPhaseFromJHipster, ...jhipsterWritingAppPhaseSteps };
+    }
+
+    get postWriting() {
+        return this._postWriting();
     }
 
     get end() {

@@ -8,7 +8,7 @@ const prompts = require('./prompts');
 
 module.exports = class extends ServerGenerator {
     constructor(args, opts) {
-        super(args, Object.assign({ fromBlueprint: true }, opts)); // fromBlueprint variable is important
+        super(args, { fromBlueprint: true, ...opts }); // fromBlueprint variable is important
 
         const jhContext = (this.jhipsterContext = this.options.jhipsterContext);
 
@@ -17,8 +17,6 @@ module.exports = class extends ServerGenerator {
         }
 
         this.configOptions = jhContext.configOptions || {};
-        // This sets up options for this sub generator and is being reused from JHipster
-        jhContext.setupServerOptions(this, jhContext);
     }
 
     get initializing() {
@@ -40,7 +38,7 @@ module.exports = class extends ServerGenerator {
             }
         };
 
-        return Object.assign(initPhaseFromJHipster, jhipsterInitNodePhaseSteps);
+        return { ...initPhaseFromJHipster, ...jhipsterInitNodePhaseSteps };
 
         //  return initPhaseFromJHipster;
     }
@@ -107,10 +105,23 @@ module.exports = class extends ServerGenerator {
                 }
             }
         };
-        return Object.assign(confPhaseFromJHipster, jhipsterConfigNodeSteps);
+
+        return { ...confPhaseFromJHipster, ...jhipsterConfigNodeSteps };
 
         // Here we are not overriding this phase and hence its being handled by JHipster
         // return confPhaseFromJHipster;
+    }
+
+    get composing() {
+        return this._composing();
+    }
+
+    get loading() {
+        return this._loading();
+    }
+
+    get preparing() {
+        return this._preparing();
     }
 
     get default() {
@@ -121,6 +132,10 @@ module.exports = class extends ServerGenerator {
     get writing() {
         // The writing phase is being overriden so that we can write our own templates as well.
         return writeFiles();
+    }
+
+    get postWriting() {
+        return this._postWriting();
     }
 
     get install() {
@@ -147,7 +162,8 @@ module.exports = class extends ServerGenerator {
             }
         };
 
-        return Object.assign(installPhaseFromJHipster, jhipsterInstallNodeSteps);
+        return { ...installPhaseFromJHipster, ...jhipsterInstallNodeSteps };
+
         // Here we are not overriding this phase and hence its being handled by JHipster
         // return super._install();
     }

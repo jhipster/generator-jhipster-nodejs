@@ -5,7 +5,7 @@ const LanguagesGenerator = require('generator-jhipster/generators/languages');
 
 module.exports = class extends LanguagesGenerator {
     constructor(args, opts) {
-        super(args, Object.assign({ fromBlueprint: true }, opts)); // fromBlueprint variable is important
+        super(args, { fromBlueprint: true, ...opts }); // fromBlueprint variable is important
 
         const jhLanguagesContext = (this.jhipsterContext = this.options.jhipsterContext);
 
@@ -14,9 +14,6 @@ module.exports = class extends LanguagesGenerator {
         }
 
         this.configOptions = jhLanguagesContext.configOptions || {};
-        // This sets up options for this sub generator and is being reused from JHipster
-        jhLanguagesContext.setupServerOptions(this, jhLanguagesContext);
-        jhLanguagesContext.setupClientOptions(this, jhLanguagesContext);
     }
 
     get initializing() {
@@ -32,6 +29,18 @@ module.exports = class extends LanguagesGenerator {
 
         // Here we are not overriding this phase and hence its being handled by JHipster
         // return super._initializing();
+    }
+
+    get composing() {
+        return this._composing();
+    }
+
+    get loading() {
+        return this._loading();
+    }
+
+    get preparing() {
+        return this._preparing();
     }
 
     get default() {
@@ -61,5 +70,9 @@ module.exports = class extends LanguagesGenerator {
             }
         };
         return Object.assign(phaseFromJHipster, jhipsterNodeLanguagesPhaseSteps);
+    }
+
+    get postWriting() {
+        return this._postWriting();
     }
 };

@@ -29,7 +29,7 @@ RUN \
     /var/tmp/*
 
 # install jhipster
-RUN npm install -g generator-jhipster@6.8.0
+RUN npm install -g generator-jhipster@7.0.0-beta.1
 
 RUN \
   # install the blueprint

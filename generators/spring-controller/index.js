@@ -6,7 +6,7 @@ const writeFiles = require('./files').writeFiles;
 
 module.exports = class extends SpringControllerGenerator {
     constructor(args, opts) {
-        super(args, Object.assign({ fromBlueprint: true }, opts)); // fromBlueprint variable is important
+        super(args, { fromBlueprint: true, ...opts }); // fromBlueprint variable is important
 
         const jhContext = (this.jhipsterContext = this.options.jhipsterContext);
 
@@ -26,7 +26,7 @@ module.exports = class extends SpringControllerGenerator {
                 this.controllerClass = _.upperFirst(this.name);
             }
         };
-        return Object.assign(initPhaseFromJHipster, initNodeControllerPhaseSteps);
+        return { ...initPhaseFromJHipster, ...initNodeControllerPhaseSteps };
 
         // Here we are not overriding this phase and hence its being handled by JHipster
         // return super._initializing();
