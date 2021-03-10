@@ -4,17 +4,18 @@ const MONGODB = 'mongodb';
 
 module.exports = {
     askForModuleName,
-    askForMainServerSideOpts
+    askForServerSideOpts,
+    askForDatabaseType
 };
 
-function askForModuleName(meta) {
-    if (!meta && this.baseName) return;
+function askForModuleName() {
+    if (this.baseName) return;
 
     this.askModuleName(this);
 }
 
-function askForMainServerSideOpts(meta) {
-    if (!meta && this.existingProject) return;
+async function askForServerSideOpts() {
+    if (this.existingProject) return;
 
     const applicationType = this.applicationType;
 
@@ -39,7 +40,21 @@ function askForMainServerSideOpts(meta) {
                 { value: 'oauth2', name: 'OAuth 2.0 / OIDC Authentication (stateful, works with Okta)' }
             ],
             default: 'jwt'
-        },
+        }
+    ];
+
+    const answers = await this.prompt(PROMPT);
+    this.serverPort = answers.serverPort;
+    this.authenticationType = answers.authenticationType;
+
+    if (this.serverPort === undefined) {
+        this.serverPort = defaultPort;
+    }
+}
+
+async function askForDatabaseType() {
+    if (this.existingProject) return;
+    const PROMPT = [
         {
             type: 'list',
             name: 'prodDatabaseType',
@@ -55,25 +70,13 @@ function askForMainServerSideOpts(meta) {
         }
     ];
 
-    if (meta) return PROMPT; // eslint-disable-line consistent-return
-
-    const done = this.async();
-
-    this.prompt(PROMPT).then(prompt => {
-        if (prompt.prodDatabaseType === MONGODB) {
-            this.databaseType = MONGODB;
-            this.devDatabaseType = MONGODB;
-        } else {
-            this.databaseType = 'sql';
-            this.devDatabaseType = 'sqlite';
-        }
-        this.prodDatabaseType = prompt.prodDatabaseType;
-        this.serverPort = prompt.serverPort;
-        this.authenticationType = prompt.authenticationType;
-
-        if (this.serverPort === undefined) {
-            this.serverPort = defaultPort;
-        }
-        done();
-    });
+    const answers = await this.prompt(PROMPT);
+    if (answers.prodDatabaseType === MONGODB) {
+        this.databaseType = MONGODB;
+        this.devDatabaseType = MONGODB;
+    } else {
+        this.databaseType = 'sql';
+        this.devDatabaseType = 'sqlite';
+    }
+    this.prodDatabaseType = answers.prodDatabaseType;
 }

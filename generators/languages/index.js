@@ -13,7 +13,7 @@ module.exports = class extends LanguagesGenerator {
             this.error(`This is a JHipster blueprint and should be used only like ${chalk.yellow('jhipster --blueprints nodejs')}`);
         }
 
-        this.configOptions = jhLanguagesContext.configOptions || {};
+        this.configOptions = jhLanguagesContext.jhipsterConfig || {};
     }
 
     get initializing() {
@@ -25,10 +25,14 @@ module.exports = class extends LanguagesGenerator {
                 this.skipServer = true;
             }
         };
-        return Object.assign(initPhaseFromJHipster, initNodeLanguagesPhaseSteps);
+        return { ...initPhaseFromJHipster, ...initNodeLanguagesPhaseSteps };
 
         // Here we are not overriding this phase and hence its being handled by JHipster
         // return super._initializing();
+    }
+
+    get prompting() {
+        return this._prompting();
     }
 
     get composing() {
@@ -69,7 +73,7 @@ module.exports = class extends LanguagesGenerator {
                 });
             }
         };
-        return Object.assign(phaseFromJHipster, jhipsterNodeLanguagesPhaseSteps);
+        return { ...phaseFromJHipster, ...jhipsterNodeLanguagesPhaseSteps };
     }
 
     get postWriting() {

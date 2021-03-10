@@ -9,7 +9,6 @@ const clientFiles = {
         {
             condition: generator => generator.clientFramework === 'angularX',
             templates: [
-                { file: 'angular/tsconfig-aot.json', renameTo: () => 'tsconfig-aot.json' },
                 { file: 'angular/tsconfig.json', renameTo: () => 'tsconfig.json' },
                 { file: 'angular/package.json', renameTo: () => 'package.json' },
                 { file: 'angular/eslintignore', renameTo: () => '.eslintignore' }
@@ -20,7 +19,7 @@ const clientFiles = {
             templates: [
                 { file: 'react/tsconfig.json', renameTo: () => 'tsconfig.json' },
                 { file: 'react/package.json', renameTo: () => 'package.json' },
-                { file: 'react/eslintrc.json', renameTo: () => '.eslintrc.json' },
+                // { file: 'react/eslintrc.json', renameTo: () => '.eslintrc.json' },
                 { file: 'react/eslintignore', renameTo: () => '.eslintignore' }
             ]
         }

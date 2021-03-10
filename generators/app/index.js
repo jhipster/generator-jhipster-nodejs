@@ -14,7 +14,7 @@ module.exports = class extends AppGenerator {
             this.error(`This is a JHipster blueprint and should be used only like ${chalk.yellow('jhipster --blueprints nodejs')}`);
         }
 
-        this.configOptions = jhContext.configOptions || {};
+        this.configOptions = jhContext.jhipsterConfig || {};
 
         // This adds support for a `--skip-i18n` flag for unit test
         this.option('skip-i18n', {
@@ -94,14 +94,7 @@ module.exports = class extends AppGenerator {
             // remove jhipster standard java requirement not used in this blueprint
             validateJava() {},
 
-            customSettings() {
-                if (!this.skipClient) {
-                    this.testFrameworks = ['protractor'];
-                    this.protractorTests = true;
-                } else {
-                    this.testFrameworks = [];
-                    this.protractorTests = false;
-                }
+            customI18nSettings() {
                 if (this.options['skip-i18n']) {
                     this.enableTranslation = false;
                     this.skipI18n = true;
@@ -120,7 +113,7 @@ module.exports = class extends AppGenerator {
     get configuring() {
         const configuringPhaseFromJHipster = super._configuring();
 
-        const jhipsterConfigureAppPhaseSteps = {
+        /* const jhipsterConfigureAppPhaseSteps = {
             composeServer() {
                 if (this.skipServer) return;
                 const options = this.options;
@@ -157,13 +150,19 @@ module.exports = class extends AppGenerator {
                     debug: this.isDebugEnabled
                 });
             }
-        };
+        }; */
 
-        return { ...configuringPhaseFromJHipster, ...jhipsterConfigureAppPhaseSteps };
+        return configuringPhaseFromJHipster;
+        // return { ...configuringPhaseFromJHipster, ...jhipsterConfigureAppPhaseSteps };
     }
 
     get composing() {
-        return this._composing();
+        const defaultPhaseFromJHipster = super._composing();
+        const jhipsterConfigureAppPhaseSteps = {
+            askForTestOpts: {}
+        };
+
+        return { ...defaultPhaseFromJHipster, ...jhipsterConfigureAppPhaseSteps };
     }
 
     get loading() {
@@ -177,12 +176,15 @@ module.exports = class extends AppGenerator {
     get default() {
         const defaultPhaseFromJHipster = super._default();
         const jhipsterConfigureAppPhaseSteps = {
-            /* saveConfig() {
-                // remove old update in yo-rc.json
-            },
-            */
-            askForTestOpts: {}
-            // askForMoreModules: {}
+            customTestSettings() {
+                if (!this.skipClient) {
+                    this.testFrameworks = ['protractor'];
+                    this.protractorTests = true;
+                } else {
+                    this.testFrameworks = [];
+                    this.protractorTests = false;
+                }
+            }
         };
 
         return { ...defaultPhaseFromJHipster, ...jhipsterConfigureAppPhaseSteps };
@@ -191,7 +193,7 @@ module.exports = class extends AppGenerator {
     get writing() {
         const writingPhaseFromJHipster = super._writing();
 
-        const jhipsterWritingAppPhaseSteps = {
+        /* const jhipsterWritingAppPhaseSteps = {
             regenerateEntities() {
                 if (this.withEntities) {
                     const options = this.options;
@@ -208,9 +210,10 @@ module.exports = class extends AppGenerator {
                     });
                 }
             }
-        };
+        }; */
 
-        return { ...writingPhaseFromJHipster, ...jhipsterWritingAppPhaseSteps };
+        return writingPhaseFromJHipster;
+        // return { ...writingPhaseFromJHipster, ...jhipsterWritingAppPhaseSteps };
     }
 
     get postWriting() {

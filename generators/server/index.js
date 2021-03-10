@@ -16,7 +16,7 @@ module.exports = class extends ServerGenerator {
             this.error(`This is a JHipster blueprint and should be used only like ${chalk.yellow('jhipster --blueprints nodejs')}`);
         }
 
-        this.configOptions = jhContext.configOptions || {};
+        this.configOptions = jhContext.jhipsterConfig || {};
     }
 
     get initializing() {
@@ -47,7 +47,8 @@ module.exports = class extends ServerGenerator {
         //  The prompting phase is being overriden so that we can ask our own questions
         return {
             askForModuleName: prompts.askForModuleName,
-            askForMainServerSideOpts: prompts.askForMainServerSideOpts,
+            askForServerSideOpts: prompts.askForServerSideOpts,
+            askForDatabaseType: prompts.askForDatabaseType,
             setSharedNodeConfigOptions() {
                 this.configOptions.serverPort = this.serverPort;
                 this.configOptions.baseName = this.baseName;
@@ -135,7 +136,7 @@ module.exports = class extends ServerGenerator {
     }
 
     get postWriting() {
-        return this._postWriting();
+        return null;
     }
 
     get install() {
