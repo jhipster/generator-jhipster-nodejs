@@ -13,6 +13,8 @@ module.exports = class extends EntityGenerator {
         }
 
         this.configOptions = jhContext.jhipsterConfig || {};
+        this.configOptions.skipDbChangelog = true;
+        this.options.skipDbChangelog = true;
     }
 
     get initializing() {
@@ -20,16 +22,34 @@ module.exports = class extends EntityGenerator {
     }
 
     get prompting() {
-        // Here we are not overriding this phase and hence its being handled by JHipster
-        return super._prompting();
+        return this._prompting();
     }
 
     get configuring() {
-        // Here we are not overriding this phase and hence its being handled by JHipster
-        return super._configuring();
+        return this._configuring();
+    }
+
+    get composing() {
+        return this._composing();
+    }
+
+    get loading() {
+        return this._loading();
+    }
+
+    get preparing() {
+        return this._preparing();
+    }
+
+    get preparingRelationships() {
+        return this._preparingRelationships();
     }
 
     get writing() {
+        return this._writing();
+    }
+
+    /* get writing() {
         return {
             composeServer() {
                 const context = this.context;
@@ -74,7 +94,7 @@ module.exports = class extends EntityGenerator {
                 });
             }
         };
-    }
+    } */
 
     get install() {
         // Here we are not overriding this phase and hence its being handled by JHipster

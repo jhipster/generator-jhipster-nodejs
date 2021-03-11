@@ -2,7 +2,6 @@
 const chalk = require('chalk');
 const AppGenerator = require('generator-jhipster/generators/app');
 const nodePackagejs = require('../../package.json');
-const nodePromptApp = require('./prompts.js');
 
 module.exports = class extends AppGenerator {
     constructor(args, opts) {
@@ -92,68 +91,35 @@ module.exports = class extends AppGenerator {
             },
             /* eslint-enable */
             // remove jhipster standard java requirement not used in this blueprint
-            validateJava() {},
-
-            customI18nSettings() {
-                if (this.options['skip-i18n']) {
-                    this.enableTranslation = false;
-                    this.skipI18n = true;
-                }
-            }
+            validateJava() {}
         };
 
         return { ...initPhaseFromJHipster, ...nodeInitAppPhaseSteps };
     }
 
     get prompting() {
-        const promptPhaseFromJHipster = super._prompting();
-        return { ...promptPhaseFromJHipster, ...nodePromptApp };
+        return super._prompting();
     }
 
     get configuring() {
         const configuringPhaseFromJHipster = super._configuring();
 
-        /* const jhipsterConfigureAppPhaseSteps = {
-            composeServer() {
-                if (this.skipServer) return;
-                const options = this.options;
-                const configOptions = this.configOptions;
-
-                this.composeWith(require.resolve('../server'), {
-                    ...options,
-                    configOptions,
-                    'client-hook': !this.skipClient,
-                    debug: this.isDebugEnabled
-                });
-            },
-
-            composeClient() {
-                if (this.skipClient) return;
-                const options = this.options;
-                const configOptions = this.configOptions;
-
-                this.composeWith(require.resolve('../client'), {
-                    ...options,
-                    configOptions,
-                    debug: this.isDebugEnabled
-                });
-            },
-
-            composeCommon() {
-                const options = this.options;
-                const configOptions = this.configOptions;
-
-                this.composeWith(require.resolve('../common'), {
-                    ...options,
-                    'client-hook': !this.skipClient,
-                    configOptions,
-                    debug: this.isDebugEnabled
-                });
+        const jhipsterConfigureAppPhaseSteps = {
+            customI18n() {
+                if (this.configOptions.skipClient) {
+                    this.configOptions.testFrameworks = [];
+                } else {
+                    this.configOptions.testFrameworks = ['protractor'];
+                }
+                this.testFrameworks = this.configOptions.testFrameworks;
+                if (this.options['skip-i18n']) {
+                    this.configOptions.enableTranslation = false;
+                    this.configOptions.skipI18n = true;
+                }
             }
-        }; */
+        };
 
-        return configuringPhaseFromJHipster;
-        // return { ...configuringPhaseFromJHipster, ...jhipsterConfigureAppPhaseSteps };
+        return { ...configuringPhaseFromJHipster, ...jhipsterConfigureAppPhaseSteps };
     }
 
     get composing() {
@@ -166,7 +132,7 @@ module.exports = class extends AppGenerator {
     }
 
     get loading() {
-        return this._loading();
+        return super._loading();
     }
 
     get preparing() {
@@ -175,19 +141,7 @@ module.exports = class extends AppGenerator {
 
     get default() {
         const defaultPhaseFromJHipster = super._default();
-        const jhipsterConfigureAppPhaseSteps = {
-            customTestSettings() {
-                if (!this.skipClient) {
-                    this.testFrameworks = ['protractor'];
-                    this.protractorTests = true;
-                } else {
-                    this.testFrameworks = [];
-                    this.protractorTests = false;
-                }
-            }
-        };
-
-        return { ...defaultPhaseFromJHipster, ...jhipsterConfigureAppPhaseSteps };
+        return defaultPhaseFromJHipster;
     }
 
     get writing() {
@@ -217,7 +171,15 @@ module.exports = class extends AppGenerator {
     }
 
     get postWriting() {
-        return this._postWriting();
+        const defaultPhaseFromJHipster = super._postWriting();
+        const jhipsterConfigureAppPhaseSteps = {
+            customSet() {
+                this.configOptions.testFrameworks = this.testFrameworks;
+                this.configOptions.composedWith = [];
+            }
+        };
+
+        return { ...defaultPhaseFromJHipster, ...jhipsterConfigureAppPhaseSteps };
     }
 
     get end() {

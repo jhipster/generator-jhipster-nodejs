@@ -15,7 +15,7 @@ describe('Subgenerator languages of nodejs JHipster blueprint', () => {
                 })
                 .withOptions({
                     'from-cli': true,
-                    skipInstall: true,
+                    'skip-prompts': true,
                     blueprints: 'nodejs',
                     skipChecks: true
                 })

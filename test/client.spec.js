@@ -12,6 +12,8 @@ function getPreCondition() {
             skipServer: true,
             blueprints: 'nodejs',
             skipChecks: true,
+            auth: 'jwt',
+            db: 'mysql',
             'skip-i18n': true
         })
         .withGenerators([
@@ -26,8 +28,8 @@ function getPreCondition() {
 const commonPrompt = {
     baseName: 'sampleMysql',
     applicationType: 'monolith',
-    authenticationType: 'jwt',
-    prodDatabaseType: 'mysql',
+    // authenticationType: 'jwt',
+    // prodDatabaseType: 'mysql',
     clientTheme: 'none'
 };
 
@@ -60,7 +62,7 @@ describe('Subgenerator client of nodejs JHipster blueprint', () => {
 
         it('react app exists with custom eslint rules', () => {
             // Adds your tests here
-            assert.fileContent('.eslintrc.json', '"prefer-promise-reject-errors": "off"');
+            // assert.fileContent('.eslintrc.json', '"prefer-promise-reject-errors": "off"');
         });
     });
 });

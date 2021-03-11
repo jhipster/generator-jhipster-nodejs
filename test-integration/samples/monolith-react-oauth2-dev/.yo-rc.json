@@ -1,39 +1,60 @@
 {
-    "generator-jhipster-nodejs": {
-        "applicationType": "monolith",
-        "baseName": "monolithReactOauth2DevApp",
-        "packageName": "com.jhipster.node",
-        "packageFolder": "com/jhipster/node",
-        "serverPort": "8081",
-        "authenticationType": "oauth2",
-        "cacheProvider": "no",
-        "enableHibernateCache": false,
-        "websocket": false,
-        "databaseType": "sql",
-        "devDatabaseType": "sqlite",
-        "prodDatabaseType": "mysql",
-        "searchEngine": false,
-        "messageBroker": false,
-        "serviceDiscoveryType": false,
-        "buildTool": "maven",
+	"generator-jhipster": {
+		"blueprints": [{
+				"name": "generator-jhipster-nodejs"
+			}
+		],
+		"otherModules": [{
+				"name": "generator-jhipster-nodejs"
+			}
+		],
+		"applicationType": "monolith",
+		"baseName": "monolithReactOauth2DevApp",
+		"logo": false,
+		"skipClient": false,
+		"skipServer": false,
+		"skipUserManagement": true,
+		"skipCheckLengthOfIdentifier": false,
+		"skipFakeData": false,
+		"jhiPrefix": "jhi",
+		"entitySuffix": "",
+		"dtoSuffix": "DTO",
+		"testFrameworks": [],
+		"pages": [],
+		"creationTimestamp": 1615471285814,
+		"composedWith": [],
+		"experimental": false,
+		"optionsParsed": true,
+		"blueprintConfigured": true,
+		"skipPrompts": true,
+		"serverPort": "8081",
+		"packageName": "com.jhipster.node",
+		"cacheProvider": "no",
+		"enableHibernateCache": false,
+		"websocket": false,
+		"databaseType": "sql",
+		"devDatabaseType": "sqlite",
+		"prodDatabaseType": "mysql",
+		"searchEngine": false,
+		"messageBroker": false,
+		"serviceDiscoveryType": false,
+		"buildTool": "maven",
         "enableSwaggerCodegen": false,
-        "embeddableLaunchScript": false,
-        "useSass": true,
-        "clientPackageManager": "npm",
-        "clientFramework": "react",
-        "clientTheme": "none",
-        "clientThemeVariant": "",
-        "enableTranslation": false
-    },
-    "generator-jhipster": {
-        "applicationType": "monolith",
-        "baseName": "monolithReactOauth2DevApp",
-        "testFrameworks": [],
-        "jhiPrefix": "jhi",
-        "entitySuffix": "",
-        "dtoSuffix": "DTO",
-        "enableTranslation": false,
-        "clientPackageManager": "npm",
-        "blueprint": "generator-jhipster-nodejs"
-    }
+        "authenticationType": "oauth2",
+		"clientFramework": "react",
+		"withAdminUi": false,
+		"clientTheme": "none",
+		"enableTranslation": false,
+		"nativeLanguage": "en",
+		"promptValues": {
+			"nativeLanguage": "en"
+		},
+		"packageFolder": "com/jhipster/node",
+		"clientPackageManager": "npm",
+		"clientThemeVariant": "",
+		"reactive": false,
+		"languages": ["en"],
+		"sharedEntities": {},
+		"sharedLiquibaseFakeData": {}
+	}
 }

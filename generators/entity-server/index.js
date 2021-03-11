@@ -44,8 +44,20 @@ module.exports = class extends EntityServerGenerator {
         this.configOptions = jhContext.jhipsterConfig || {};
     }
 
+    get initializing() {
+        return this._initializing();
+    }
+
+    get default() {
+        return this._default();
+    }
+
     get writing() {
         return writeFiles();
+    }
+
+    get preparing() {
+        return this._preparing();
     }
 
     get end() {

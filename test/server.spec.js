@@ -20,6 +20,11 @@ function getPreCondition() {
                 require('../generators/server/index.js'), // eslint-disable-line global-require
                 'jhipster-nodejs:server',
                 path.join(__dirname, '../generators/server/index.js')
+            ],
+            [
+                require('../generators/languages/index.js'), // eslint-disable-line global-require
+                'jhipster-nodejs:languages',
+                path.join(__dirname, '../generators/languages/index.js')
             ]
         ]);
 }
