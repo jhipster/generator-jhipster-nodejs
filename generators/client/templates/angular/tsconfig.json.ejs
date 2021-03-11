@@ -49,6 +49,6 @@
   <%_ if (cypressTests) { _%>
   ,"exclude": ["<%= CLIENT_TEST_SRC_DIR %>cypress"]
   <%_ } else { _%>
-  ,"exclude": ["node_modules","<%= SERVER_NODEJS_SRC_DIR %>"]
+  ,"exclude": ["node_modules", "jest.config.js", "<%= SERVER_NODEJS_SRC_DIR %>"]
   <%_ } _%>
 }
