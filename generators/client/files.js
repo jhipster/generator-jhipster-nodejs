@@ -77,11 +77,11 @@ const clientFiles = {
         {
             condition: generator => generator.clientFramework === 'react',
             templates: [
-                {
+                /* {
                     file: 'react/shared/layout/header/header.spec.tsx',
                     method: 'processJsx',
                     renameTo: () => `${TEST_DIR}spec/app/shared/layout/header/header.spec.tsx`
-                },
+                }, */
                 {
                     file: 'react/test/protractor.conf.js',
                     renameTo: () => `${TEST_DIR}protractor.conf.js`

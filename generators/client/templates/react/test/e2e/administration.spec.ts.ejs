@@ -16,7 +16,7 @@
  See the License for the specific language governing permissions and
  limitations under the License.
 
-6.8.0 CHANGED
+7.0.0-beta.1 CHANGED
 -%>
 import { element, by, browser } from 'protractor';
 
@@ -29,6 +29,8 @@ const expect = chai.expect;
 describe('Administration', () => {
   let navBarPage: NavBarPage;
   let signInPage: SignInPage;
+  const username = process.env.E2E_USERNAME ?? 'admin';
+  const password = process.env.E2E_PASSWORD ?? 'admin';
 
   before(async () => {
     await browser.get('/');
@@ -37,13 +39,13 @@ describe('Administration', () => {
     <%_ if (authenticationType !== 'oauth2') { _%>
     await signInPage.waitUntilDisplayed();
 
-    await signInPage.username.sendKeys('admin');
-    await signInPage.password.sendKeys('admin');
+    await signInPage.username.sendKeys(username);
+    await signInPage.password.sendKeys(password);
     await signInPage.loginButton.click();
     await signInPage.waitUntilHidden();
 
     <%_ } else { _%>
-    await signInPage.loginWithOAuth('admin', 'admin');
+    await signInPage.loginWithOAuth(username, password);
     <%_ } _%>
     await waitUntilDisplayed(navBarPage.adminMenu);
   });

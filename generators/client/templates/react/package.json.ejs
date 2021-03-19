@@ -217,7 +217,7 @@
     <%_ if (skipServer) { _%>
     "sonar": "sonar-scanner",
     <%_ } _%>
-    "build": "<%= clientPackageManager %> run webpack:prod",
+    "build": "<%= clientPackageManager %> run webapp:prod",
     "build:app": "<%= clientPackageManager %> run build && cd server && <%= clientPackageManager %> run build",
     "pretest": "<%= clientPackageManager %> run lint",
     "test": "<%= clientPackageManager %> run jest",

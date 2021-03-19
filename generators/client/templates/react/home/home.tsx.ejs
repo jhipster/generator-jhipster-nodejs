@@ -18,27 +18,38 @@
 -%>
 import './home.<%= styleSheetExt %>';
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Translate } from 'react-jhipster';
 import { connect } from 'react-redux';
 import { Row, Col, Alert } from 'reactstrap';
 
-import { IRootState } from 'app/shared/reducers';
 <%_ if (authenticationType === 'oauth2') { _%>
-import { getLoginUrl } from 'app/shared/util/url-utils';
+import { getLoginUrl, REDIRECT_URL } from 'app/shared/util/url-utils';
 <%_ } _%>
 
 export type IHomeProp = StateProps;
 
 export const Home = (props: IHomeProp) => {
+<%_ if (authenticationType === 'oauth2') { _%>
+  useEffect(() => {
+    const redirectURL = localStorage.getItem(REDIRECT_URL);
+    if (redirectURL) {
+      localStorage.removeItem(REDIRECT_URL);
+      location.href = `${location.origin}${redirectURL}`;
+    }
+  });
+<%_ } _%>
 
   const { account } = props;
 
   return (
     <Row>
-      <Col md="9">
-        <h2><Translate contentKey="home.title">Welcome, Java Hipster!</Translate></h2>
+        <Col md="3" className="pad">
+          <span className="hipster rounded" />
+        </Col>
+        <Col md="9">
+          <h2><Translate contentKey="home.title">Welcome, <%= backendName %> Hipster!</Translate></h2>
         <p className="lead"><Translate contentKey="home.subtitle">This is your homepage</Translate></p>
         {
           (account && account.login) ? (
@@ -51,8 +62,11 @@ export const Home = (props: IHomeProp) => {
             <div>
               <Alert color="warning">
                 <Translate contentKey="global.messages.info.authenticated.prefix">If you want to </Translate>
+                <% if (!enableTranslation) { %><span>&nbsp;</span><% } %>
                 <%_ if (authenticationType === 'oauth2') { _%>
-                <Link to={getLoginUrl()} className="alert-link"><Translate contentKey="global.messages.info.authenticated.link"> sign in</Translate></Link>
+                <a href={getLoginUrl()} className="alert-link">
+                  <Translate contentKey="global.messages.info.authenticated.link">sign in</Translate>
+                </a>
                 <%_ } else { _%>
                 <Link to="/login" className="alert-link"><Translate contentKey="global.messages.info.authenticated.link"> sign in</Translate></Link>
                 <%_ } _%>

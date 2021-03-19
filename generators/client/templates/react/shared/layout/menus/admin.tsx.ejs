@@ -22,7 +22,6 @@ import {
   DropdownItem
 } from 'reactstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { NavLink as Link } from 'react-router-dom';
 import { NavDropdown } from './menu-components';
 import { Translate, translate } from 'react-jhipster';
 
@@ -38,15 +37,15 @@ const adminMenuItems = (
   </>
 );
 
-const swaggerItem = (
+const openAPIItem = (
   <MenuItem icon="book" to="/admin/docs"><Translate contentKey="global.menu.admin.apidocs">API</Translate></MenuItem>
 );
 
 
-export const AdminMenu = ({ showSwagger <% if (devDatabaseType === 'h2Disk' || devDatabaseType === 'h2Memory') { %>, showDatabase <%_ } _%>}) => (
-  <NavDropdown icon="user-plus" name={translate('global.menu.admin.main')} style={{ width: '140%' }} id="admin-menu">
+export const AdminMenu = ({ showOpenAPI <% if (devDatabaseType === 'h2Disk' || devDatabaseType === 'h2Memory') { %>, showDatabase <%_ } _%>}) => (
+  <NavDropdown icon="users-cog" name={translate('global.menu.admin.main')} id="admin-menu" data-cy="adminMenu">
       {adminMenuItems}
-      {showSwagger && swaggerItem}
+      {showOpenAPI && openAPIItem}
   </NavDropdown>
 );
 

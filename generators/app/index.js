@@ -106,12 +106,6 @@ module.exports = class extends AppGenerator {
 
         const jhipsterConfigureAppPhaseSteps = {
             customI18n() {
-                if (this.configOptions.skipClient) {
-                    this.configOptions.testFrameworks = [];
-                } else {
-                    this.configOptions.testFrameworks = ['protractor'];
-                }
-                this.testFrameworks = this.configOptions.testFrameworks;
                 if (this.options['skip-i18n']) {
                     this.configOptions.enableTranslation = false;
                     this.configOptions.skipI18n = true;
@@ -125,7 +119,15 @@ module.exports = class extends AppGenerator {
     get composing() {
         const defaultPhaseFromJHipster = super._composing();
         const jhipsterConfigureAppPhaseSteps = {
-            askForTestOpts: {}
+            askForTestOpts: {},
+            setCustomTestFramework() {
+                if (this.configOptions.skipClient) {
+                    this.configOptions.testFrameworks = [];
+                } else {
+                    this.configOptions.testFrameworks = ['protractor'];
+                }
+                this.testFrameworks = this.configOptions.testFrameworks;
+            }
         };
 
         return { ...defaultPhaseFromJHipster, ...jhipsterConfigureAppPhaseSteps };
@@ -180,6 +182,10 @@ module.exports = class extends AppGenerator {
         };
 
         return { ...defaultPhaseFromJHipster, ...jhipsterConfigureAppPhaseSteps };
+    }
+
+    get install() {
+        return this._install();
     }
 
     get end() {
