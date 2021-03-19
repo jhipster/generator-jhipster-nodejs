@@ -4,7 +4,7 @@ import { TypeOrmModuleOptions } from '@nestjs/typeorm';
 <%_ if (databaseType === 'mongodb') { _%>
 async function ormConfig(): Promise<TypeOrmModuleOptions> {
 let mongod;
-if (process.env.NODE_ENV !== 'prod') {
+if (process.env.BACKEND_ENV !== 'prod') {
     mongod = await MongoMemoryServer.create();
 }
 <%_ } else { _%>
@@ -41,7 +41,7 @@ function ormConfig(): TypeOrmModuleOptions {
     };
 
 
-    if (process.env.NODE_ENV === 'prod') {
+    if (process.env.BACKEND_ENV === 'prod') {
         ormconfig = {
             name: 'default',
             type: '<%= (prodDatabaseType === 'postgresql') ? 'postgres' : prodDatabaseType %>',
@@ -59,7 +59,7 @@ function ormConfig(): TypeOrmModuleOptions {
         };
     }
 
-    if (process.env.NODE_ENV === 'test') {
+    if (process.env.BACKEND_ENV === 'test') {
     ormconfig = {
         name: 'default',
         type: '<%= devDatabaseType %>',
