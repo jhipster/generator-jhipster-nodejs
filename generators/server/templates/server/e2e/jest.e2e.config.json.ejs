@@ -2,13 +2,13 @@
   "moduleFileExtensions": ["js", "json", "ts"],
   "rootDir": "..",
   "testEnvironment": "node",
-  "testRegex": "(/e2e/.*|\\.(e2e-spec))\\.(ts|js)$",
+  "testRegex": "(/e2e/.*|\\.(e2e-spec))\\.(ts)$",
   "transform": {
     "^.+\\.(t|j)s$": "ts-jest"
   },
   "coverageDirectory": "coverage",
-  "globals": {
-  "BACKEND_ENV": "test"
-  },
+  "setupFiles": [
+		"./e2e/setup.test.js"
+  ],
   "testTimeout": 10000
 }

@@ -29,6 +29,7 @@ function commonAssertion() {
     assert.file(`${SERVER_NODEJS_DIR}e2e/app.e2e-spec.ts`);
     assert.file(`${SERVER_NODEJS_DIR}e2e/user.e2e-spec.ts`);
     assert.file(`${SERVER_NODEJS_DIR}e2e/jest.e2e.config.json`);
+    assert.file(`${SERVER_NODEJS_DIR}e2e/setup.test.js`);
     assert.file('src/main/docker/app.yml');
     assert.file('src/main/docker/mysql.yml');
     assert.noFile('src/main/docker/mongodb.yml');

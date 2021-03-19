@@ -12,7 +12,9 @@
 <a name="1.0.0-alpha.3"></a>
 <a name="1.0.0-alpha.2"></a>
 
-# [1.5.0](https://github.com/jhipster/generator-jhipster-nodejs/tree/v1.5.0) - xx/xx/2021 released date
+# [1.5.0](https://github.com/jhipster/generator-jhipster-nodejs/tree/v1.5.0) - 19/03/2021 released date
+
+-   Rename NODE_ENV in BACKEND_ENV with better usage documentation [issue #206](https://github.com/jhipster/generator-jhipster-nodejs/issues/206)
 
 -   Enable admin api button in the client side that routes to swagger nodejs [issue #186](https://github.com/jhipster/generator-jhipster-nodejs/issues/186)
 
