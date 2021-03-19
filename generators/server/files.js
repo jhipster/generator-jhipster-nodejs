@@ -74,7 +74,7 @@ const serverFiles = {
     e2e: [
         {
             path: SERVER_NODEJS_DIR,
-            templates: ['e2e/app.e2e-spec.ts', 'e2e/user.e2e-spec.ts', 'e2e/jest.e2e.config.json']
+            templates: ['e2e/app.e2e-spec.ts', 'e2e/user.e2e-spec.ts', 'e2e/jest.e2e.config.json', 'e2e/setup.test.js']
         },
         {
             path: SERVER_NODEJS_DIR,
