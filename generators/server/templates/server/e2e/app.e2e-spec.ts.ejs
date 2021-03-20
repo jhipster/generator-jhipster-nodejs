@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import request = require('supertest');
 import { AppModule } from '../src/app.module';
 import { INestApplication } from '@nestjs/common';
-<%_ if (authenticationType === 'jwt') { _%>
+<%_ if (authenticationType === 'jwt' && !skipUserManagement) { _%>
 import { UserLoginDTO } from '../src/service/dto/user-login.dto';
 <%_ } _%>
 

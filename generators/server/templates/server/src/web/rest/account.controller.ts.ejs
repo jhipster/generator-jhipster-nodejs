@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { <%_ if (authenticationType === 'jwt') { _%> Body, Param, Post, Res, UseGuards, <%_ } _%> Controller, Get, Logger, Req, UseInterceptors } from '@nestjs/common';
 <%_ if (authenticationType === 'jwt') { _%>
 import { Response, Request } from 'express';

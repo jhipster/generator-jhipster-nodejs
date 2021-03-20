@@ -8,7 +8,7 @@ const uniqueEntities = {};
 const uniqueEnums = {};
 _%>
 
-<%- include imports -%>
+<%- include('imports', { fields, relationships, uniqueEntities, uniqueEnums, isUserRelationship, asEntity, entityClass }); -%>
 
 <%_ Object.keys(uniqueEntities).forEach(function(entityClass) { _%>
 import { <%= entityClass %> } from './<%= uniqueEntities[entityClass] %>.entity';

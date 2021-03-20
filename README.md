@@ -189,7 +189,7 @@ $ npm link
 $ cd ..
 $ git clone https://github.com/jhipster/generator-jhipster.git
 $ cd generator-jhipster
-$ git checkout v6.8.0
+$ git checkout v7.0.0-beta.1
 $ npm install
 $ npm link
 $ cd ..
