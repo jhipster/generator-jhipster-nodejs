@@ -139,6 +139,20 @@ export class AccountController {
     return this.authService.getAccount(userDTO);
   }
 
+  <%_ } else {_%>
+
+  @Get('/account')
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard)
+  @ApiOperation({ title: 'Get the current user.' })
+  @ApiResponse({
+    status: 200,
+    description: 'user retrieved',
+  })
+  async getAccount(@Req() req: Request): Promise<any> {
+    const user: any = req.user;
+    return await this.authService.getAccount(user.id);
+  }
   <%_ } _%>
 
 }

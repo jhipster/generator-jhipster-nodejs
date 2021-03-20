@@ -72,8 +72,10 @@ module.exports = class extends LanguagesGenerator {
             writeHomeJSON() {
                 if (!this.skipClient) {
                     this.languagesToApply.forEach(language => {
-                        const path = `${jhipsterConstants.CLIENT_MAIN_SRC_DIR}i18n/${language}/home.json`;
-                        this.template(path, path);
+                        if (language === 'en' || language === 'it' || language === 'es') {
+                            const path = `${jhipsterConstants.CLIENT_MAIN_SRC_DIR}i18n/${language}/home.json`;
+                            this.template(path, path);
+                        }
                     });
                 }
             }

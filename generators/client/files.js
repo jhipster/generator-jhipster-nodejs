@@ -19,7 +19,6 @@ const clientFiles = {
             templates: [
                 { file: 'react/tsconfig.json', renameTo: () => 'tsconfig.json' },
                 { file: 'react/package.json', renameTo: () => 'package.json' },
-                // { file: 'react/eslintrc.json', renameTo: () => '.eslintrc.json' },
                 { file: 'react/eslintignore', renameTo: () => '.eslintignore' }
             ]
         }
@@ -77,11 +76,6 @@ const clientFiles = {
         {
             condition: generator => generator.clientFramework === 'react',
             templates: [
-                /* {
-                    file: 'react/shared/layout/header/header.spec.tsx',
-                    method: 'processJsx',
-                    renameTo: () => `${TEST_DIR}spec/app/shared/layout/header/header.spec.tsx`
-                }, */
                 {
                     file: 'react/test/protractor.conf.js',
                     renameTo: () => `${TEST_DIR}protractor.conf.js`

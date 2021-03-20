@@ -1,6 +1,10 @@
 const path = require('path');
 const assert = require('yeoman-assert');
 const helpers = require('yeoman-test');
+const jhipsterConstants = require('generator-jhipster/generators/generator-constants');
+
+const REACT_DIR = jhipsterConstants.REACT_DIR;
+const ANGULAR_DIR = jhipsterConstants.ANGULAR_DIR;
 
 // initial precondition for all tests
 function getPreCondition() {
@@ -28,8 +32,6 @@ function getPreCondition() {
 const commonPrompt = {
     baseName: 'sampleMysql',
     applicationType: 'monolith',
-    // authenticationType: 'jwt',
-    // prodDatabaseType: 'mysql',
     clientTheme: 'none'
 };
 
@@ -44,9 +46,10 @@ describe('Subgenerator client of nodejs JHipster blueprint', () => {
                 .on('end', done);
         });
 
-        it('angular app exists with custom package.json scripts', () => {
+        it('angular app exists with custom package.json scripts and home', () => {
             // Adds your tests here
             assert.fileContent('package.json', '"start:app": "npm run build && cd server && npm run start"');
+            assert.fileContent(`${ANGULAR_DIR}home/home.component.html`, 'generator-jhipster-nodejs');
         });
     });
 
@@ -60,9 +63,10 @@ describe('Subgenerator client of nodejs JHipster blueprint', () => {
                 .on('end', done);
         });
 
-        it('react app exists with custom eslint rules', () => {
+        it('react app exists with custom package.json scripts and home', () => {
             // Adds your tests here
-            // assert.fileContent('.eslintrc.json', '"prefer-promise-reject-errors": "off"');
+            assert.fileContent('package.json', '"start:app": "npm run build && cd server && npm run start"');
+            assert.fileContent(`${REACT_DIR}modules/home/home.tsx`, 'generator-jhipster-nodejs');
         });
     });
 });
