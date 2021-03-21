@@ -93,105 +93,108 @@ describe('Subgenerator entity of nodejs JHipster blueprint', () => {
             assert.fileContent(genderEnumPath, 'export enum Gender');
 
             // import enum in entity
-            assert.fileContent(greatEntityPath, "import { Gender } from './enumeration/gender';");
+            assert.fileContent(greatEntityPath, 'import { Gender } from "./enumeration/gender";');
 
             // import enum in entity dto
-            assert.fileContent(greatEntityDTOPath, "import { Gender } from '../../domain/enumeration/gender';");
+            assert.fileContent(greatEntityDTOPath, 'import { Gender } from "../../domain/enumeration/gender";');
 
             // name UUID unique field
-            assert.fileContent(greatEntityPath, "@Column({ name: 'name', nullable: true, unique: true })");
+            assert.fileContent(greatEntityPath, '@Column({ name: "name", nullable: true, unique: true })');
             assert.fileContent(greatEntityPath, 'name: string;');
 
             // name UUID with validation and swagger annotation
             assert.fileContent(greatEntityDTOPath, 'name: string;');
             assert.fileContent(greatEntityDTOPath, '@MinLength(5)');
-            assert.fileContent(greatEntityDTOPath, "@ApiModelProperty({ description: 'name field', required: false })");
+            assert.fileContent(greatEntityDTOPath, '@ApiModelProperty({ description: "name field", required: false })');
 
             // Gender enum field with swagger annotation
-            assert.fileContent(greatEntityPath, "@Column({ type: 'simple-enum', name: 'gender', enum: Gender })");
+            assert.fileContent(greatEntityPath, '@Column({ type: "simple-enum", name: "gender", enum: Gender })');
             assert.fileContent(greatEntityPath, 'gender: Gender;');
             assert.fileContent(greatEntityDTOPath, 'gender: Gender;');
-            assert.fileContent(greatEntityDTOPath, "@ApiModelProperty({ enum: Gender, description: 'gender enum field' })");
+            assert.fileContent(greatEntityDTOPath, '@ApiModelProperty({ enum: Gender, description: "gender enum field" })');
 
             // address string required field
-            assert.fileContent(greatEntityPath, "@Column({ name: 'address', length: 100 })");
+            assert.fileContent(greatEntityPath, '@Column({ name: "address", length: 100 })');
             assert.fileContent(greatEntityPath, 'address: string;');
 
             // address string with validation and swagger annotation
             assert.fileContent(greatEntityDTOPath, 'address: string;');
             assert.fileContent(greatEntityDTOPath, '@IsNotEmpty()');
             assert.fileContent(greatEntityDTOPath, '@Length(1, 100)');
-            assert.fileContent(greatEntityDTOPath, "@ApiModelProperty({ description: 'address field' })");
+            assert.fileContent(greatEntityDTOPath, '@ApiModelProperty({ description: "address field" })');
 
             // description string field
-            assert.fileContent(greatEntityPath, "@Column({ name: 'description', nullable: true })");
+            assert.fileContent(greatEntityPath, '@Column({ name: "description", nullable: true })');
             assert.fileContent(greatEntityPath, 'description: string;');
 
             // description string with validation and swagger annotation
             assert.fileContent(greatEntityDTOPath, 'description: string;');
-            assert.fileContent(greatEntityDTOPath, "@Matches('^[A-Z]$')");
-            assert.fileContent(greatEntityDTOPath, "@ApiModelProperty({ description: 'description field', required: false })");
+            assert.fileContent(greatEntityDTOPath, '@Matches("^[A-Z]$")');
+            assert.fileContent(greatEntityDTOPath, '@ApiModelProperty({ description: "description field", required: false })');
 
             // istrue Boolean field with swagger annotation
-            assert.fileContent(greatEntityPath, "@Column({ type: 'boolean', name: 'istrue', nullable: true })");
+            assert.fileContent(greatEntityPath, '@Column({ type: "boolean", name: "istrue", nullable: true })');
             assert.fileContent(greatEntityPath, 'istrue: boolean;');
             assert.fileContent(greatEntityDTOPath, 'istrue: boolean;');
-            assert.fileContent(greatEntityDTOPath, "@ApiModelProperty({ description: 'istrue field', required: false })");
+            assert.fileContent(greatEntityDTOPath, '@ApiModelProperty({ description: "istrue field", required: false })');
 
             // borndate LocalDate required field
-            assert.fileContent(greatEntityPath, "@Column({ type: 'date', name: 'borndate' })");
+            assert.fileContent(greatEntityPath, '@Column({ type: "date", name: "borndate" })');
             assert.fileContent(greatEntityPath, 'borndate: any;');
 
-            assert.fileContent(greatEntityDTOPath, "@ApiModelProperty({ description: 'borndate field' })");
+            assert.fileContent(greatEntityDTOPath, '@ApiModelProperty({ description: "borndate field" })');
 
             // profileimage Blob field
-            assert.fileContent(greatEntityPath, "@Column({ type: 'blob', name: 'profileimage', nullable: true })");
+            assert.fileContent(greatEntityPath, '@Column({ type: "blob", name: "profileimage", nullable: true })');
             assert.fileContent(greatEntityPath, 'profileimage: any;');
 
             // storage AnyBlob field
-            assert.fileContent(greatEntityPath, "@Column({ type: 'blob', name: 'storage', nullable: true })");
+            assert.fileContent(greatEntityPath, '@Column({ type: "blob", name: "storage", nullable: true })');
             assert.fileContent(greatEntityPath, 'storage: any;');
 
             // datafile TextBlob field
-            assert.fileContent(greatEntityPath, "@Column({ type: 'blob', name: 'datafile', nullable: true })");
+            assert.fileContent(greatEntityPath, '@Column({ type: "blob", name: "datafile", nullable: true })');
             assert.fileContent(greatEntityPath, 'datafile: any;');
 
             // image Blob field
-            assert.fileContent(greatEntityPath, "@Column({ type: 'blob', name: 'image', nullable: true })");
+            assert.fileContent(greatEntityPath, '@Column({ type: "blob", name: "image", nullable: true })');
             assert.fileContent(greatEntityPath, 'image: any;');
 
             // amount BigDecimal field
-            assert.fileContent(greatEntityPath, "@Column({ type: 'decimal', name: 'amount', precision: 10, scale: 2, nullable: true })");
+            assert.fileContent(greatEntityPath, '  type: "decimal",');
+            assert.fileContent(greatEntityPath, '  name: "amount",');
+            assert.fileContent(greatEntityPath, '  precision: 10,');
+            assert.fileContent(greatEntityPath, '  scale: 2,');
             assert.fileContent(greatEntityPath, 'amount: number;');
 
             // cfu Integer field
-            assert.fileContent(greatEntityPath, "@Column({ type: 'integer', name: 'cfu', nullable: true })");
+            assert.fileContent(greatEntityPath, '@Column({ type: "integer", name: "cfu", nullable: true })');
             assert.fileContent(greatEntityPath, 'cfu: number;');
 
             // mynumber Double field
-            assert.fileContent(greatEntityPath, "@Column({ type: 'double', name: 'mynumber', nullable: true })");
+            assert.fileContent(greatEntityPath, '@Column({ type: "double", name: "mynumber", nullable: true })');
             assert.fileContent(greatEntityPath, 'mynumber: number;');
 
             // mynumber with validation and swagger annotation
             assert.fileContent(greatEntityDTOPath, 'mynumber: number;');
             assert.fileContent(greatEntityDTOPath, '@Min(1)');
             assert.fileContent(greatEntityDTOPath, '@Max(100)');
-            assert.fileContent(greatEntityDTOPath, "@ApiModelProperty({ description: 'mynumber field', required: false })");
+            assert.fileContent(greatEntityDTOPath, '@ApiModelProperty({ description: "mynumber field", required: false })');
 
             // count Long field
-            assert.fileContent(greatEntityPath, "@Column({ type: 'long', name: 'count', nullable: true })");
+            assert.fileContent(greatEntityPath, '@Column({ type: "long", name: "count", nullable: true })');
             assert.fileContent(greatEntityPath, 'count: number;');
 
             // cent Float field
-            assert.fileContent(greatEntityPath, "@Column({ type: 'float', name: 'cent', nullable: true })");
+            assert.fileContent(greatEntityPath, '@Column({ type: "float", name: "cent", nullable: true })');
             assert.fileContent(greatEntityPath, 'cent: number;');
 
             // creationtime Instant field
-            assert.fileContent(greatEntityPath, "@Column({ type: 'timestamp', name: 'creationtime', nullable: true })");
+            assert.fileContent(greatEntityPath, '@Column({ type: "timestamp", name: "creationtime", nullable: true })');
             assert.fileContent(greatEntityPath, 'creationtime: any;');
 
             // deathtime ZonedDateTime field
-            assert.fileContent(greatEntityPath, "@Column({ type: 'datetime', name: 'deathtime', nullable: true })");
+            assert.fileContent(greatEntityPath, '@Column({ type: "datetime", name: "deathtime", nullable: true })');
             assert.fileContent(greatEntityPath, 'deathtime: any;');
         });
     });

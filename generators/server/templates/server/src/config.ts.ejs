@@ -104,7 +104,7 @@ logger.log(`Actual process.env.BACKEND_ENV value: ${process.env.BACKEND_ENV}`);
 logger.log('Standard allowed values are: dev, test or prod');
 logger.log('if you run with a non standard BACKEND_ENV value, remember to add your application-{process.env.BACKEND_ENV}.yml file');
 if (!fs.existsSync(envYamlConfigPath)) {
-   logger.error('An application-{process.env.BACKEND_ENV}.yml file with your process.env.BACKEND_ENV value does not exist under your config folder!');
+   logger.error('An application-{process.env.BACKEND_ENV}.yml file with your process.env.BACKEND_ENV value does not exist under config folder!');
 }
 const envYamlConfig = yaml.safeLoad(fs.readFileSync(envYamlConfigPath, 'utf8'));
 

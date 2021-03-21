@@ -63,6 +63,10 @@ const serverFiles = {
                     file: 'server.eslintignore',
                     renameTo: () => '.server.eslintignore'
                 },
+                {
+                    file: 'prettierrc.js',
+                    renameTo: () => '.prettierrc.js'
+                },
                 'package.json',
                 'tsconfig.json',
                 'README.md',

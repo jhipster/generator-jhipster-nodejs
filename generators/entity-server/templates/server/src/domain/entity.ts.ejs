@@ -6,9 +6,26 @@ import { BaseEntity } from './base/base.entity';
 let isUserRelationship = false;
 const uniqueEntities = {};
 const uniqueEnums = {};
-_%>
 
-<%- include('imports', { fields, relationships, uniqueEntities, uniqueEnums, isUserRelationship, asEntity, entityClass }); -%>
+for (idx in fields) {
+    if (fields[idx].fieldIsEnum && (
+            !uniqueEnums[fields[idx].fieldType] || (uniqueEnums[fields[idx].fieldType] && fields[idx].fieldValues.length !== 0))) {
+        uniqueEnums[fields[idx].fieldType] = _.kebabCase(fields[idx].fieldType);
+    }
+    if (fields[idx].fieldName === 'id') {
+        //delete fields[idx];
+    }
+}
+for (idx in relationships) {
+    const relationship = relationships[idx];
+    if (relationship.otherEntityAngularName === 'User'){
+        isUserRelationship = true;
+    }
+    else if (!uniqueEntities[relationship.otherEntityAngularName] && relationship.otherEntityAngularName != asEntity(entityClass)) {
+        uniqueEntities[relationship.otherEntityAngularName] = relationship.otherEntityFileName;
+    }
+}
+_%>
 
 <%_ Object.keys(uniqueEntities).forEach(function(entityClass) { _%>
 import { <%= entityClass %> } from './<%= uniqueEntities[entityClass] %>.entity';
