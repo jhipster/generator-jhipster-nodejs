@@ -6,14 +6,15 @@ import { BaseEntity } from './base/base.entity';
 let isUserRelationship = false;
 const uniqueEntities = {};
 const uniqueEnums = {};
+const fieldsWithoutId = [];
 
 for (idx in fields) {
     if (fields[idx].fieldIsEnum && (
             !uniqueEnums[fields[idx].fieldType] || (uniqueEnums[fields[idx].fieldType] && fields[idx].fieldValues.length !== 0))) {
         uniqueEnums[fields[idx].fieldType] = _.kebabCase(fields[idx].fieldType);
     }
-    if (fields[idx].fieldName === 'id') {
-        //delete fields[idx];
+    if (fields[idx].fieldName !== 'id') {
+        fieldsWithoutId.push(fields[idx]);
     }
 }
 for (idx in relationships) {
@@ -48,20 +49,21 @@ import { User } from './user.entity';
 @Entity('<%= entityTableName %>')
 export class <%= asEntity(entityClass) %> extends BaseEntity  {
 
-<%_ for (idx in fields) {
-    if (typeof fields[idx].javadoc !== 'undefined') { _%>
-<%- formatAsFieldJavadoc(fields[idx].javadoc) %>
+<%_ for (idx in fieldsWithoutId) {
+    const field = fieldsWithoutId[idx];
+    if (typeof field.javadoc !== 'undefined') { _%>
+<%- formatAsFieldJavadoc(field.javadoc) %>
     <%_ }
     let required = false;
     let unique = false;
-    const fieldValidate = fields[idx].fieldValidate;
-    const fieldValidateRules = fields[idx].fieldValidateRules;
-    const fieldValidateRulesMaxlength = fields[idx].fieldValidateRulesMaxlength;
-    const fieldType = fields[idx].fieldType;
-    const fieldTypeBlobContent = fields[idx].fieldTypeBlobContent;
-    const fieldName = fields[idx].fieldName;
-    const fieldNameUnderscored = fields[idx].fieldNameUnderscored;
-    const fieldNameAsDatabaseColumn = fields[idx].fieldNameAsDatabaseColumn;
+    const fieldValidate = field.fieldValidate;
+    const fieldValidateRules = field.fieldValidateRules;
+    const fieldValidateRulesMaxlength = field.fieldValidateRulesMaxlength;
+    const fieldType = field.fieldType;
+    const fieldTypeBlobContent = field.fieldTypeBlobContent;
+    const fieldName = field.fieldName;
+    const fieldNameUnderscored = field.fieldNameUnderscored;
+    const fieldNameAsDatabaseColumn = field.fieldNameAsDatabaseColumn;
     const fieldColumnType=addDbType(fieldType);
     if (fieldValidate === true) {
         if (fieldValidateRules.includes('required')) {
@@ -72,7 +74,7 @@ export class <%= asEntity(entityClass) %> extends BaseEntity  {
         } _%>
 
     <%_ } _%>
-        <%_ if (fields[idx].fieldIsEnum) { _%>
+        <%_ if (field.fieldIsEnum) { _%>
     @Column({type: 'simple-enum', name: '<%-fieldNameAsDatabaseColumn %>', enum: <%= fieldType %>})
         <%_ } else if (['Instant', 'ZonedDateTime', 'LocalDate'].includes(fieldType)) { _%>
     @Column({<%_ if(fieldColumnType) { _%> type: '<%-fieldColumnType%>' ,<%_ }_%> name: "<%-fieldNameAsDatabaseColumn %>"<% if (!required) { %>, nullable: true<% } %><% if (unique) { %>, unique: true<% } %>})
@@ -81,7 +83,7 @@ export class <%= asEntity(entityClass) %> extends BaseEntity  {
         <%_ } else { _%>
     @Column({<%_ if(fieldColumnType) { _%> type: '<%-fieldColumnType%>' ,<%_ }_%>  name: "<%-fieldNameAsDatabaseColumn %>"<% if (fieldValidate === true) { %><% if (fieldValidateRules.includes('maxlength')) { %>, length: <%= fieldValidateRulesMaxlength %><% } %> <% } %><% if (!required) { %>, nullable: true<% } %><% if (unique) { %>, unique: true<% }%>})
         <%_ } _%>
-        <%_ if (fields[idx].fieldIsEnum) { _%>
+        <%_ if (field.fieldIsEnum) { _%>
     <%= fieldName %>: <%= fieldType %>;
         <%_ } else { _%>
     <%= fieldName %>: <%= getTsType(fieldType) %>;

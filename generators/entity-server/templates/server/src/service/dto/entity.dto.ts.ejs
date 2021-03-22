@@ -9,14 +9,15 @@ import { BaseDTO } from './base.dto';
 let isUserRelationship = false;
 const uniqueEntities = {};
 const uniqueEnums = {};
+const fieldsWithoutId = [];
 
 for (idx in fields) {
     if (fields[idx].fieldIsEnum && (
             !uniqueEnums[fields[idx].fieldType] || (uniqueEnums[fields[idx].fieldType] && fields[idx].fieldValues.length !== 0))) {
         uniqueEnums[fields[idx].fieldType] = _.kebabCase(fields[idx].fieldType);
     }
-    if (fields[idx].fieldName === 'id') {
-        //delete fields[idx];
+    if (fields[idx].fieldName !== 'id') {
+        fieldsWithoutId.push(fields[idx]);
     }
 }
 for (idx in relationships) {
@@ -46,8 +47,8 @@ import { UserDTO } from './user.dto';
  */
 export class <%= asEntity(entityClass) %>DTO extends BaseDTO {
 
-    <%_ for (idx in fields) {
-        const field = fields[idx];
+    <%_ for (idx in fieldsWithoutId) {
+        const field = fieldsWithoutId[idx];
        if (typeof field.javadoc !== 'undefined') { _%>
     <%- formatAsFieldJavadoc(field.javadoc) %>
     <%_ }
