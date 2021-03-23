@@ -15,7 +15,14 @@ module.exports = class extends ServerGenerator {
             this.error(`This is a JHipster blueprint and should be used only like ${chalk.yellow('jhipster --blueprints nodejs')}`);
         }
 
-        this.configOptions = jhContext.jhipsterConfig || {};
+        this.configOptions = jhContext.configOptions || {};
+
+        // This adds support for a `--skip-i18n` flag for unit test
+        this.option('skip-i18n', {
+            desc: 'skip internationalization',
+            type: Boolean,
+            defaults: false
+        });
     }
 
     get initializing() {
@@ -32,12 +39,15 @@ module.exports = class extends ServerGenerator {
                 this.buildTool = jhipsterNodeConstants.BUILD_TOOL_NODEJS;
                 this.enableSwaggerCodegen = jhipsterNodeConstants.ENABLE_SWAGGER_CODEGEN_NODEJS;
 
-                this.baseName = this.configOptions.baseName;
-                this.databaseType = this.configOptions.databaseType;
-                this.devDatabaseType = this.configOptions.devDatabaseType;
-                this.prodDatabaseType = this.configOptions.prodDatabaseType;
-                this.serverPort = this.configOptions.serverPort;
-                this.authenticationType = this.configOptions.authenticationType;
+                this.baseName = this.configOptions.baseName || this.jhipsterConfig.baseName;
+                this.serverPort = this.configOptions.serverPort || this.jhipsterConfig.serverPort;
+                this.authenticationType = this.configOptions.authenticationType || this.jhipsterConfig.authenticationType;
+                this.databaseType = this.configOptions.databaseType || this.jhipsterConfig.databaseType;
+                this.prodDatabaseType = this.configOptions.prodDatabaseType || this.jhipsterConfig.prodDatabaseType;
+                this.devDatabaseType = jhipsterNodeConstants.DEV_DATABASE_TYPE_NODEJS;
+                if (this.prodDatabaseType === jhipsterNodeConstants.MONGODB_DATABASE_TYPE_NODEJS) {
+                    this.devDatabaseType = this.prodDatabaseType;
+                }
             }
         };
 
@@ -69,6 +79,14 @@ module.exports = class extends ServerGenerator {
                 this.configOptions.enableSwaggerCodegen = this.enableSwaggerCodegen;
                 this.configOptions.authenticationType = this.authenticationType;
                 this.configOptions.testFrameworks = [];
+
+                this.jhipsterConfig.serverPort = this.serverPort;
+                this.jhipsterConfig.baseName = this.baseName;
+                this.jhipsterConfig.packageName = this.packageName;
+                this.jhipsterConfig.databaseType = this.databaseType;
+                this.jhipsterConfig.devDatabaseType = this.devDatabaseType;
+                this.jhipsterConfig.prodDatabaseType = this.prodDatabaseType;
+                this.jhipsterConfig.authenticationType = this.authenticationType;
             }
         };
 
@@ -81,7 +99,12 @@ module.exports = class extends ServerGenerator {
     }
 
     get composing() {
-        return this._composing();
+        const defaultPhaseFromJHipster = super._composing();
+        // disable i18n
+        if (this.options['skip-i18n']) {
+            defaultPhaseFromJHipster.composeLanguages = {};
+        }
+        return defaultPhaseFromJHipster;
     }
 
     get loading() {

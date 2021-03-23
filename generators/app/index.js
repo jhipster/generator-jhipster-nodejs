@@ -117,7 +117,9 @@ module.exports = class extends AppGenerator {
     }
 
     get composing() {
-        return super._composing();
+        const composingPhaseFromJHipster = super._composing();
+        composingPhaseFromJHipster.askForTestOpts = {};
+        return composingPhaseFromJHipster;
     }
 
     get loading() {

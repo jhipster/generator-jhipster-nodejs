@@ -53,10 +53,10 @@ describe('Main app generator of nodejs JHipster blueprint', () => {
             helpers
                 .run('generator-jhipster/generators/app')
                 .withOptions({
-                    'from-cli': true,
+                    fromCli: true,
                     skipInstall: true,
-                    blueprints: 'nodejs',
                     skipChecks: true,
+                    blueprints: 'nodejs',
                     'skip-i18n': true
                 })
                 .withGenerators(allSubgenerators)
@@ -82,7 +82,7 @@ describe('Main app generator of nodejs JHipster blueprint', () => {
             helpers
                 .run('generator-jhipster/generators/app')
                 .withOptions({
-                    'from-cli': true,
+                    fromCli: true,
                     skipInstall: true,
                     blueprints: 'nodejs',
                     skipServer: true,
@@ -114,7 +114,7 @@ describe('Main app generator of nodejs JHipster blueprint', () => {
                     fse.copySync(path.join(__dirname, '../test/templates/ngx-blueprint'), dir);
                 })
                 .withOptions({
-                    'from-cli': true,
+                    fromCli: true,
                     skipInstall: true,
                     blueprints: 'nodejs',
                     skipChecks: true

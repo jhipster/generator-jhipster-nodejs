@@ -11,14 +11,14 @@ function getPreCondition() {
     return helpers
         .run('generator-jhipster/generators/client')
         .withOptions({
-            'from-cli': true,
+            fromCli: true,
             skipInstall: true,
             skipServer: true,
             blueprints: 'nodejs',
+            'skip-i18n': true,
             skipChecks: true,
             auth: 'jwt',
-            db: 'mysql',
-            'skip-i18n': true
+            db: 'mysql'
         })
         .withGenerators([
             [

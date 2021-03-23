@@ -15,10 +15,8 @@
  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  See the License for the specific language governing permissions and
  limitations under the License.
-
- 7.0.0 MAYBE CHECK FROM 7.0.0-beta.1
 -%>
-<nav data-cy="navbar" class="navbar navbar-<% if (clientTheme === 'none' || clientThemeVariant === 'primary') { %>dark<% } else { %><%= clientThemeVariant %><% } %> navbar-expand-md <% if (clientTheme === 'none') { %>bg-dark<% } else { %>bg-<%= clientThemeVariant %><% } %>">
+<nav data-cy="navbar" class="navbar navbar-<% if (clientThemeNone || clientThemePrimary) { %>dark<% } else { %><%= clientThemeVariant %><% } %> navbar-expand-md <% if (clientThemeNone) { %>bg-dark<% } else { %>bg-<%= clientThemeVariant %><% } %>">
     <a class="navbar-brand logo" routerLink="/" (click)="collapseNavbar()">
         <span class="logo-img"></span>
         <span <%= jhiPrefix %>Translate="global.title" class="navbar-title"><%= capitalizedBaseName %></span> <span class="navbar-version">{{ version }}</span>

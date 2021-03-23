@@ -17,7 +17,7 @@ describe('Subgenerator nestjs-service of nodejs JHipster blueprint', () => {
                     fse.copySync(path.join(__dirname, '../test/templates/server'), `${dir}/server`);
                 })
                 .withOptions({
-                    'from-cli': true,
+                    fromCli: true,
                     skipInstall: true,
                     blueprints: 'nodejs',
                     skipChecks: true

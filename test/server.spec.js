@@ -10,21 +10,17 @@ function getPreCondition() {
     return helpers
         .run('generator-jhipster/generators/server')
         .withOptions({
-            'from-cli': true,
+            fromCli: true,
             skipInstall: true,
             blueprints: 'nodejs',
-            skipChecks: true
+            skipChecks: true,
+            'skip-i18n': true
         })
         .withGenerators([
             [
                 require('../generators/server/index.js'), // eslint-disable-line global-require
                 'jhipster-nodejs:server',
                 path.join(__dirname, '../generators/server/index.js')
-            ],
-            [
-                require('../generators/languages/index.js'), // eslint-disable-line global-require
-                'jhipster-nodejs:languages',
-                path.join(__dirname, '../generators/languages/index.js')
             ]
         ]);
 }

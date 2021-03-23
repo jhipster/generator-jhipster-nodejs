@@ -12,7 +12,7 @@ describe('Subgenerator common of nodejs JHipster blueprint', () => {
                     fse.copySync(path.join(__dirname, '../test/templates/ngx-blueprint'), dir);
                 })
                 .withOptions({
-                    'from-cli': true,
+                    fromCli: true,
                     skipInstall: true,
                     blueprints: 'nodejs',
                     skipChecks: true
