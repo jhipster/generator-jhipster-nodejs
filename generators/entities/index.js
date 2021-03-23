@@ -6,13 +6,9 @@ module.exports = class extends EntitiesGenerator {
     constructor(args, opts) {
         super(args, { fromBlueprint: true, ...opts }); // fromBlueprint variable is important
 
-        const jhContext = (this.jhipsterContext = this.options.jhipsterContext);
-
-        if (!jhContext) {
+        if (!this.jhipsterContext) {
             this.error(`This is a JHipster blueprint and should be used only like ${chalk.yellow('jhipster --blueprints nodejs')}`);
         }
-
-        this.configOptions = jhContext.configOptions || {};
 
         this.options.skipDbChangelog = true;
     }
