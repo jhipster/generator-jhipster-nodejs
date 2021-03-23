@@ -13,7 +13,7 @@ module.exports = class extends LanguagesGenerator {
             this.error(`This is a JHipster blueprint and should be used only like ${chalk.yellow('jhipster --blueprints nodejs')}`);
         }
 
-        this.configOptions = jhLanguagesContext.jhipsterConfig || {};
+        this.configOptions = jhLanguagesContext.configOptions || {};
     }
 
     get initializing() {
@@ -81,9 +81,5 @@ module.exports = class extends LanguagesGenerator {
             }
         };
         return { ...phaseFromJHipster, ...jhipsterNodeLanguagesPhaseSteps };
-    }
-
-    get postWriting() {
-        return this._postWriting();
     }
 };

@@ -13,7 +13,7 @@ module.exports = class extends AppGenerator {
             this.error(`This is a JHipster blueprint and should be used only like ${chalk.yellow('jhipster --blueprints nodejs')}`);
         }
 
-        this.configOptions = jhContext.jhipsterConfig || {};
+        this.configOptions = jhContext.configOptions || {};
 
         // This adds support for a `--skip-i18n` flag for unit test
         this.option('skip-i18n', {
@@ -117,20 +117,7 @@ module.exports = class extends AppGenerator {
     }
 
     get composing() {
-        const defaultPhaseFromJHipster = super._composing();
-        const jhipsterConfigureAppPhaseSteps = {
-            askForTestOpts: {},
-            setCustomTestFramework() {
-                if (this.configOptions.skipClient) {
-                    this.configOptions.testFrameworks = [];
-                } else {
-                    this.configOptions.testFrameworks = ['protractor'];
-                }
-                this.testFrameworks = this.configOptions.testFrameworks;
-            }
-        };
-
-        return { ...defaultPhaseFromJHipster, ...jhipsterConfigureAppPhaseSteps };
+        return super._composing();
     }
 
     get loading() {
@@ -142,46 +129,15 @@ module.exports = class extends AppGenerator {
     }
 
     get default() {
-        const defaultPhaseFromJHipster = super._default();
-        return defaultPhaseFromJHipster;
+        return super._default();
     }
 
     get writing() {
-        const writingPhaseFromJHipster = super._writing();
-
-        /* const jhipsterWritingAppPhaseSteps = {
-            regenerateEntities() {
-                if (this.withEntities) {
-                    const options = this.options;
-                    const configOptions = this.configOptions;
-                    this.getExistingEntities().forEach(entity => {
-                        this.composeWith(require.resolve('../entity'), {
-                            ...options,
-                            configOptions,
-                            regenerate: true,
-                            'skip-install': true,
-                            debug: this.isDebugEnabled,
-                            arguments: [entity.name]
-                        });
-                    });
-                }
-            }
-        }; */
-
-        return writingPhaseFromJHipster;
-        // return { ...writingPhaseFromJHipster, ...jhipsterWritingAppPhaseSteps };
+        return super._writing();
     }
 
     get postWriting() {
-        const defaultPhaseFromJHipster = super._postWriting();
-        const jhipsterConfigureAppPhaseSteps = {
-            customSet() {
-                this.configOptions.testFrameworks = this.testFrameworks;
-                this.configOptions.composedWith = [];
-            }
-        };
-
-        return { ...defaultPhaseFromJHipster, ...jhipsterConfigureAppPhaseSteps };
+        return super._postWriting();
     }
 
     get install() {

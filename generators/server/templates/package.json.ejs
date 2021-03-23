@@ -33,16 +33,17 @@
         <%_ });
     } _%>
     <%_ if (!skipCommitHook) { _%>
-    "husky": "<%= HUSKY_VERSION %>",
-    "lint-staged": "<%= LINT_STAGED_VERSION %>",
+    "husky": "<%= dependabotPackageJson.devDependencies['husky'] %>",
+    "lint-staged": "<%= dependabotPackageJson.devDependencies['lint-staged'] %>",
     <%_ } _%>
-    "prettier": "<%= PRETTIER_VERSION %>",
     "@typescript-eslint/eslint-plugin": "2.11.0",
     "@typescript-eslint/eslint-plugin-tslint": "2.11.0",
     "@typescript-eslint/parser": "2.11.0",
     "eslint": "6.7.2",
     "eslint-config-prettier": "6.7.0",
-    "eslint-loader": "3.0.3"
+    "eslint-loader": "3.0.3",
+    "prettier": "<%= dependabotPackageJson.devDependencies['prettier'] %>",
+    "prettier-plugin-packagejson": "<%= dependabotPackageJson.devDependencies['prettier-plugin-packagejson'] %>"
   },
   "engines": {
     "node": ">=<%= NODE_VERSION %>"
@@ -51,6 +52,7 @@
     "build:app": "cd server && <%= clientPackageManager %> run build",
     "lint:fix": "echo \"INFO: no client found\"",
     "preinstall": "cd server && npm run lint:fix",
+    "prettier:check": "prettier --check \"{,src/**/}*.{<%= getPrettierExtensions() %>}\"",
     "prettier:format": "prettier --write \"{,src/**/}*.{<%= getPrettierExtensions() %>}\"",
     "start:app": "cd server && <%= clientPackageManager %> run start",
     "test": "echo \"INFO: no client test found\""

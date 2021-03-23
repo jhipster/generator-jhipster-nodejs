@@ -26,9 +26,9 @@
     "strict": true,
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
-    <%_ if (protractorTests) { // Prevents Jest and Mocha types conflicts. See https://github.com/jhipster/generator-jhipster/pull/13083 _%>
+<%_ if (protractorTests) { // Prevents Jest and Mocha types conflicts. See https://github.com/jhipster/generator-jhipster/pull/13083 _%>
     "skipLibCheck": true,
-    <%_ } _%>
+<%_ } _%>
     "outDir": "<%= DIST_DIR %>app",
     "lib": ["es2018", "dom"],
     "baseUrl": "./",
@@ -47,8 +47,8 @@
     "preserveWhitespaces": true
   }
   <%_ if (cypressTests) { _%>
-  ,"exclude": ["<%= CLIENT_TEST_SRC_DIR %>cypress"]
+    ,"exclude": ["<%= CLIENT_TEST_SRC_DIR %>cypress"]
   <%_ } else { _%>
-  ,"exclude": ["node_modules", "<%= SERVER_NODEJS_SRC_DIR %>"]
+    ,"exclude": ["node_modules", "<%= SERVER_NODEJS_SRC_DIR %>"]
   <%_ } _%>
 }

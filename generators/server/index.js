@@ -124,8 +124,7 @@ module.exports = class extends ServerGenerator {
     }
 
     get install() {
-        const installPhaseFromJHipster = super._install();
-        const jhipsterInstallNodeSteps = {
+        return {
             /* istanbul ignore next */
             jhipsterNodeServerInstall() {
                 if (this.skipServer) return;
@@ -146,11 +145,6 @@ module.exports = class extends ServerGenerator {
                 }
             }
         };
-
-        return { ...installPhaseFromJHipster, ...jhipsterInstallNodeSteps };
-
-        // Here we are not overriding this phase and hence its being handled by JHipster
-        // return super._install();
     }
 
     get end() {

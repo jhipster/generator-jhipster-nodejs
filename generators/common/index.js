@@ -14,7 +14,7 @@ module.exports = class extends CommonGenerator {
             this.error(`This is a JHipster blueprint and should be used only like ${chalk.yellow('jhipster --blueprints nodejs')}`);
         }
 
-        this.configOptions = jhContext.jhipsterConfig || {};
+        this.configOptions = jhContext.configOptions || {};
     }
 
     get initializing() {
@@ -29,10 +29,6 @@ module.exports = class extends CommonGenerator {
 
         // Here we are not overriding this phase and hence its being handled by JHipster
         // return super._initializing();
-    }
-
-    get composing() {
-        return this._composing();
     }
 
     get loading() {
@@ -52,9 +48,5 @@ module.exports = class extends CommonGenerator {
         const phaseFromJHipster = super._writing();
         const jhipsterNodeCommonPhaseSteps = writeFiles();
         return { ...phaseFromJHipster, ...jhipsterNodeCommonPhaseSteps };
-    }
-
-    get postWriting() {
-        return this._postWriting();
     }
 };

@@ -15,7 +15,7 @@ module.exports = class extends ClientGenerator {
             this.error(`This is a JHipster blueprint and should be used only like ${chalk.yellow('jhipster --blueprints nodejs')}`);
         }
 
-        this.configOptions = jhContext.jhipsterConfig || {};
+        this.configOptions = jhContext.configOptions || {};
 
         // This adds support for a `--skip-i18n` flag for unit test
         this.option('skip-i18n', {
@@ -42,7 +42,6 @@ module.exports = class extends ClientGenerator {
     }
 
     get configuring() {
-        // Here we are not overriding this phase and hence its being handled by JHipster
         return super._configuring();
     }
 
@@ -64,7 +63,14 @@ module.exports = class extends ClientGenerator {
     }
 
     get default() {
-        return super._default();
+        const defaultPhaseFromJHipster = super._default();
+        const defaultNodeClientPhaseSteps = {
+            // variables to use in templates
+            setupCustomClientConsts() {
+                this.protractorTests = true;
+            }
+        };
+        return { ...defaultPhaseFromJHipster, ...defaultNodeClientPhaseSteps };
     }
 
     get writing() {
@@ -76,11 +82,6 @@ module.exports = class extends ClientGenerator {
     get postWriting() {
         // you can use this phase to overwrite package.json
         return this._postWriting();
-    }
-
-    get install() {
-        // Here we are not overriding this phase and hence its being handled by JHipster
-        return super._install();
     }
 
     get end() {

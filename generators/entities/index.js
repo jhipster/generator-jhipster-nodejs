@@ -15,8 +15,6 @@ module.exports = class extends EntitiesGenerator {
         this.configOptions = jhContext.configOptions || {};
 
         this.options.skipDbChangelog = true;
-        // this.options.withEntities = undefined;
-        // this.configOptions.creationTimestamp = undefined;
     }
 
     get initializing() {
@@ -27,10 +25,6 @@ module.exports = class extends EntitiesGenerator {
         const composePhaseFromJHipster = super._composing();
         // composePhaseFromJHipster.databaseChangelog = {};
         return composePhaseFromJHipster;
-    }
-
-    get loading() {
-        return super._loading();
     }
 
     get default() {

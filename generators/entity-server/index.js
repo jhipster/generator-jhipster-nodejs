@@ -48,6 +48,10 @@ module.exports = class extends EntityServerGenerator {
         return this._initializing();
     }
 
+    get preparingFields() {
+        return this._preparingFields();
+    }
+
     get default() {
         return this._default();
     }
@@ -56,13 +60,8 @@ module.exports = class extends EntityServerGenerator {
         return writeFiles();
     }
 
-    get preparing() {
-        return this._preparing();
-    }
-
-    get end() {
-        // Here we are not overriding this phase and hence its being handled by JHipster
-        return super._end();
+    get postWriting() {
+        return null;
     }
 
     getTsType(fieldType) {

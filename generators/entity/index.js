@@ -37,6 +37,10 @@ module.exports = class extends EntityGenerator {
         return this._preparing();
     }
 
+    get preparingFields() {
+        return this._preparingFields();
+    }
+
     get preparingRelationships() {
         return this._preparingRelationships();
     }
@@ -48,11 +52,6 @@ module.exports = class extends EntityGenerator {
 
     get writing() {
         return this._writing();
-    }
-
-    get postWriting() {
-        // Here we are not overriding this phase and hence its being handled by JHipster
-        return super._postWriting();
     }
 
     get install() {
