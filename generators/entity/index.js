@@ -22,7 +22,14 @@ module.exports = class extends EntityGenerator {
     }
 
     get configuring() {
-        return this._configuring();
+        const defaultPhaseFromJHipster = super._configuring();
+        const defaultNodeClientPhaseSteps = {
+            // variables to use in templates
+            setupCustomEntityClientConsts() {
+                this.context.protractorTests = true;
+            }
+        };
+        return { ...defaultPhaseFromJHipster, ...defaultNodeClientPhaseSteps };
     }
 
     get composing() {

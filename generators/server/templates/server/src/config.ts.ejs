@@ -63,7 +63,7 @@ export class Config {
 
   <%_ if (!skipClient) { _%>
   public getClientPath(): string {
-    return path.join(__dirname, '../dist/classes/static');
+    return path.join(__dirname, '../dist/static');
   }
   <%_ } _%>
   public addAll(properties): any {

@@ -108,15 +108,18 @@ export class <%= asEntity(entityClass) %> extends BaseEntity  {
         const relationshipValidate = relationships[idx].relationshipValidate;
         const relationshipRequired = relationships[idx].relationshipRequired;
         const otherEntityNameCapitalized = relationships[idx].otherEntityNameCapitalized;
-        const ownerSide = relationships[idx].ownerSide;
-        isUserRelationship = isUserRelationship && relationship.otherEntityAngularName === 'User';
+        const ownerSide = relationships[idx].ownerSide; // before was ownerSide === true in and userRel many-to-one
+        let userRelationship = false;
+        if (relationship.otherEntityAngularName === 'User'){
+            userRelationship = true;
+        }
 
         if (relationshipType === 'one-to-many') {_%>
-    @OneToMany(type => <%= relationship.otherEntityAngularName %> <%_ if (isUserRelationship === false) { _%>, other => other.<%= otherEntityRelationshipName %><%_ } _%>)
+    @OneToMany(type => <%= relationship.otherEntityAngularName %> <%_ if (userRelationship === false) { _%>, other => other.<%= otherEntityRelationshipName %><%_ } _%>)
     <%= relationshipFieldNamePlural %>: <%= relationship.otherEntityAngularName %>[];
 
     <%_ } else if (relationshipType === 'many-to-one') { _%>
-    @ManyToOne(type => <%= relationship.otherEntityAngularName %> <%_ if (ownerSide === true && isUserRelationship === false ) { _%>, other => other.<%= otherEntityRelationshipNamePlural %>  <%_ } _%>)
+    @ManyToOne(type => <%= relationship.otherEntityAngularName %> <%_ if (!ownerSide && userRelationship === false ) { _%>, other => other.<%= otherEntityRelationshipNamePlural %>  <%_ } _%>)
     <%= relationshipFieldName %>: <%= relationship.otherEntityAngularName %>;
 
     <%_ } else if (relationshipType === 'many-to-many') { _%>

@@ -138,36 +138,11 @@ module.exports = class extends ServerGenerator {
     }
 
     get writing() {
-        // The writing phase is being overriden so that we can write our own templates as well.
         return writeFiles();
     }
 
     get postWriting() {
         return null;
-    }
-
-    get install() {
-        return {
-            /* istanbul ignore next */
-            jhipsterNodeServerInstall() {
-                if (this.skipServer) return;
-                const logMsg = `To install your server dependencies manually, run: cd server && ${chalk.yellow.bold(
-                    `${this.clientPackageManager} install`
-                )}`;
-
-                if (this.options.skipInstall) {
-                    this.log(logMsg);
-                } else {
-                    try {
-                        this.log(chalk.bold('\nInstalling server dependencies using npm'));
-                        this.spawnCommandSync('npm', ['install'], { cwd: `${process.cwd()}/server` });
-                    } catch (e) {
-                        this.warning('Install of server dependencies failed!');
-                        this.log(logMsg);
-                    }
-                }
-            }
-        };
     }
 
     get end() {

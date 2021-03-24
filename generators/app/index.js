@@ -143,7 +143,28 @@ module.exports = class extends AppGenerator {
     }
 
     get install() {
-        return this._install();
+        const installPhaseFromJHipster = super._install();
+
+        const nodeServerInstall = {
+            /* istanbul ignore next */
+            jhipsterNodeServerInstall() {
+                if (this.skipServer) return;
+                const logMsg = `To install your server dependencies manually, run: cd server && ${chalk.yellow.bold('npm install')}`;
+
+                if (this.options.skipInstall) {
+                    this.log(logMsg);
+                } else {
+                    try {
+                        this.log(chalk.bold('\nInstalling server dependencies using npm'));
+                        this.spawnCommandSync('npm', ['install'], { cwd: `${process.cwd()}/server` });
+                    } catch (e) {
+                        this.warning('Install of server dependencies failed!');
+                        this.log(logMsg);
+                    }
+                }
+            }
+        };
+        return { ...installPhaseFromJHipster, ...nodeServerInstall };
     }
 
     get end() {

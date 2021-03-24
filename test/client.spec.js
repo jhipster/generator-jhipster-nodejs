@@ -49,6 +49,7 @@ describe('Subgenerator client of nodejs JHipster blueprint', () => {
         it('angular app exists with custom package.json scripts and home', () => {
             // Adds your tests here
             assert.fileContent('package.json', '"start:app": "npm run build && cd server && npm run start"');
+            assert.fileContent('package.json', '"build:app": "npm run build && cd server && npm run build"');
             assert.fileContent(`${ANGULAR_DIR}home/home.component.html`, 'generator-jhipster-nodejs');
         });
     });
@@ -66,6 +67,7 @@ describe('Subgenerator client of nodejs JHipster blueprint', () => {
         it('react app exists with custom package.json scripts and home', () => {
             // Adds your tests here
             assert.fileContent('package.json', '"start:app": "npm run build && cd server && npm run start"');
+            assert.fileContent('package.json', '"build:app": "npm run build && cd server && npm run build"');
             assert.fileContent(`${REACT_DIR}modules/home/home.tsx`, 'generator-jhipster-nodejs');
         });
     });

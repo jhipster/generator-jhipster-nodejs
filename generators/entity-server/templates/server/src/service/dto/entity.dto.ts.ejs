@@ -98,7 +98,6 @@ export class <%= asEntity(entityClass) %>DTO extends BaseDTO {
             const relationshipValidate = relationship.relationshipValidate;
             const relationshipRequired = relationship.relationshipRequired;
             const otherEntityNameCapitalized = relationship.otherEntityNameCapitalized;
-            const ownerSide = relationship.ownerSide;
 
             if (typeof relationships.javadoc != 'undefined') { _%>
     <%- formatAsFieldJavadoc(relationships.javadoc) %>
