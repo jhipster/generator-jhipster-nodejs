@@ -89,6 +89,20 @@ describe('<%= entityClass %> Controller', () => {
     }
     );
 
+    it('/PUT update <%= entityApiUrl %> from id', async () => {
+
+
+        const updatedEntity: <%= entityClass %>DTO = (await request(app.getHttpServer())
+            .put('/api/<%= entityApiUrl %>/' + entityMock.id)
+            .send(entityMock)
+            .expect(201)).body;
+
+
+        expect(updatedEntity).toEqual(entityMock);
+
+    }
+    );
+
 
     it('/DELETE <%= entityApiUrl %>', async () => {
 
