@@ -84,6 +84,11 @@ const serverFiles = {
             path: SERVER_NODEJS_DIR,
             condition: generator => !generator.skipUserManagement && generator.authenticationType !== 'oauth2',
             templates: ['e2e/account.e2e-spec.ts']
+        },
+        {
+            path: SERVER_NODEJS_DIR,
+            condition: generator => generator.authenticationType === 'jwt',
+            templates: ['e2e/user.admin.e2e-spec.ts']
         }
     ],
     other: [
@@ -104,6 +109,7 @@ const serverFiles = {
             condition: generator => generator.authenticationType === 'jwt',
             templates: [
                 'src/web/rest/user.jwt.controller.ts',
+                'src/web/rest/user.admin.controller.ts',
                 'src/security/passport.jwt.strategy.ts',
                 'src/security/payload.interface.ts',
                 'src/service/dto/password-change.dto.ts',
