@@ -1,4 +1,4 @@
-<a name="2.0.0"></a>
+<a name="2.0.0-beta.1"></a>
 <a name="1.5.0"></a>
 <a name="1.4.0"></a>
 <a name="1.3.0"></a>
@@ -13,7 +13,9 @@
 <a name="1.0.0-alpha.3"></a>
 <a name="1.0.0-alpha.2"></a>
 
-# [2.0.0](https://github.com/jhipster/generator-jhipster-nodejs/tree/v2.0.0) - XX/XX/2021 released date
+# [2.0.0-beta.1](https://github.com/jhipster/generator-jhipster-nodejs/tree/v2.0.0-beta.1) - XX/XX/2021 released date
+
+-   Vue.js support from 7.x jhipster upgrade [issue #158](https://github.com/jhipster/generator-jhipster-nodejs/issues/158)
 
 -   Unable to create a new entity for jhipster 6.8.0 bug [issue #147](https://github.com/jhipster/generator-jhipster-nodejs/issues/147)
 

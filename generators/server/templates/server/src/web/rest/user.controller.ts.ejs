@@ -90,6 +90,7 @@ export class UserController {
 
   @Get('/:login')
   @Roles(RoleType.ADMIN)
+  @ApiOperation({ title: 'Get user' })
   @ApiResponse({
       status: 200,
       description: 'The found record',
@@ -101,7 +102,7 @@ export class UserController {
 
   @Delete('/:login')
   @Roles(RoleType.ADMIN)
-  @ApiOperation({ title: 'Delete login user' })
+  @ApiOperation({ title: 'Delete user' })
   @ApiResponse({
       status: 204,
       description: 'The record has been successfully deleted.',

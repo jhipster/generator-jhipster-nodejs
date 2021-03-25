@@ -30,6 +30,12 @@ echo -e "${GREEN}This is a template app named: "$1
         echo -e "${GREEN}Replace client in angular"
     fi
 
+    if [[ $2 =~ "vue" ]]
+    then
+        sed -i 's/REPLACE_CLIENT_FRAMEWORK/vue/g' $1.jdl
+        echo -e "${GREEN}Replace client in vue"
+    fi
+
     if [[ $2 =~ "jwt" ]]
     then
         sed -i 's/REPLACE_AUTH/jwt/g' $1.jdl
