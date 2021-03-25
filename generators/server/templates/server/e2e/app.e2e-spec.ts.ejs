@@ -10,8 +10,8 @@ describe('App', () => {
     let app: INestApplication;
 
     const infoService = {
-         activeProfiles : 'no',
-        'display-ribbon-on-profiles': 'no',
+         activeProfiles : 'dev',
+        'display-ribbon-on-profiles': 'dev',
     };
 <%_  if (!skipUserManagement && authenticationType !=='oauth2') { _%>
     const testUserLogin: UserLoginDTO = {

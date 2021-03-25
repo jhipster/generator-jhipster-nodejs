@@ -2,6 +2,7 @@ const jhipsterConstants = require('generator-jhipster/generators/generator-const
 
 const ANGULAR_DIR = jhipsterConstants.ANGULAR_DIR;
 const REACT_DIR = jhipsterConstants.REACT_DIR;
+const VUE_DIR = jhipsterConstants.VUE_DIR;
 const TEST_DIR = jhipsterConstants.CLIENT_TEST_SRC_DIR;
 
 const clientFiles = {
@@ -20,6 +21,14 @@ const clientFiles = {
                 { file: 'react/tsconfig.json', renameTo: () => 'tsconfig.json' },
                 { file: 'react/package.json', renameTo: () => 'package.json' },
                 { file: 'react/eslintignore', renameTo: () => '.eslintignore' }
+            ]
+        },
+        {
+            condition: generator => generator.clientFramework === 'vue',
+            templates: [
+                { file: 'vue/tsconfig.json', renameTo: () => 'tsconfig.json' },
+                { file: 'vue/package.json', renameTo: () => 'package.json' },
+                { file: 'vue/eslintignore', renameTo: () => '.eslintignore' }
             ]
         }
     ],
@@ -72,6 +81,25 @@ const clientFiles = {
             ]
         }
     ],
+    vueMain: [
+        {
+            condition: generator => generator.clientFramework === 'vue',
+            templates: [
+                {
+                    file: 'vue/home/home.vue',
+                    renameTo: () => `${VUE_DIR}core/home/home.vue`
+                },
+                {
+                    file: 'vue/docs/docs.vue',
+                    renameTo: () => `${VUE_DIR}admin/docs/docs.vue`
+                },
+                {
+                    file: 'vue/jhi-navbar/jhi-navbar.vue',
+                    renameTo: () => `${VUE_DIR}core/jhi-navbar/jhi-navbar.vue`
+                }
+            ]
+        }
+    ],
     testE2EWithMain: [
         {
             condition: generator => generator.clientFramework === 'react',
@@ -96,6 +124,19 @@ const clientFiles = {
                 {
                     file: 'angular/test/e2e/administration.spec.ts',
                     renameTo: () => `${TEST_DIR}e2e/admin/administration.spec.ts`
+                }
+            ]
+        },
+        {
+            condition: generator => generator.clientFramework === 'vue',
+            templates: [
+                {
+                    file: 'vue/test/protractor.conf.js',
+                    renameTo: () => `${TEST_DIR}protractor.conf.js`
+                },
+                {
+                    file: 'vue/test/e2e/administration.spec.ts',
+                    renameTo: () => `${TEST_DIR}e2e/modules/administration/administration.spec.ts`
                 }
             ]
         }

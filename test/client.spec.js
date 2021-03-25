@@ -5,6 +5,7 @@ const jhipsterConstants = require('generator-jhipster/generators/generator-const
 
 const REACT_DIR = jhipsterConstants.REACT_DIR;
 const ANGULAR_DIR = jhipsterConstants.ANGULAR_DIR;
+const VUE_DIR = jhipsterConstants.VUE_DIR;
 
 // initial precondition for all tests
 function getPreCondition() {
@@ -69,6 +70,24 @@ describe('Subgenerator client of nodejs JHipster blueprint', () => {
             assert.fileContent('package.json', '"start:app": "npm run build && cd server && npm run start"');
             assert.fileContent('package.json', '"build:app": "npm run build && cd server && npm run build"');
             assert.fileContent(`${REACT_DIR}modules/home/home.tsx`, 'generator-jhipster-nodejs');
+        });
+    });
+
+    describe('3-vue test', () => {
+        before(done => {
+            getPreCondition()
+                .withPrompts({
+                    commonPrompt,
+                    clientFramework: 'vue'
+                })
+                .on('end', done);
+        });
+
+        it('vue app exists with custom package.json scripts and home', () => {
+            // Adds your tests here
+            assert.fileContent('package.json', '"start:app": "npm run build && cd server && npm run start"');
+            assert.fileContent('package.json', '"build:app": "npm run build && cd server && npm run build"');
+            assert.fileContent(`${VUE_DIR}core/home/home.vue`, 'generator-jhipster-nodejs');
         });
     });
 });
