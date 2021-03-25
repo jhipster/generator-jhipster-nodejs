@@ -101,7 +101,7 @@ export class AuthService {
         throw new HttpException('Invalid login name!', HttpStatus.BAD_REQUEST);
     }
     const userFindEmail: UserDTO = await this.userService.findByfields({ where: { email: newUserInfo.email } });
-    if (userFindEmail && userFindEmail.login !== userFind.login) {
+    if (userFindEmail && newUserInfo.email !== userFind.email) {
         throw new HttpException('Email is already in use!', HttpStatus.BAD_REQUEST);
     }
 

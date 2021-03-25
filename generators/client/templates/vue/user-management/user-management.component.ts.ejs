@@ -99,10 +99,11 @@ export default class <%=jhiPrefixCapitalized%>UserManagementComponent extends Vu
       _%>
       // disabling the translation for error
       // const message = this.$t(res.headers['<%=headerAlert%>'], { param: decodeURIComponent(res.headers['<%=headerParams%>'].replace(/\+/g, ' ')) });
-      const message = res.headers['<%=headerAlert%>'];
       <%_ } else {_%>
-      const message = res.headers['<%=headerAlert%>'];
+      // disabling for error
+      // const message = res.headers['<%=headerAlert%>'];
       <%_ } _%>
+      const message = 'success delete!';
       this.$bvToast.toast(message.toString(), {
         toaster: 'b-toaster-top-center',
         title: 'Info',

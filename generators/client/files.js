@@ -94,12 +94,17 @@ const clientFiles = {
                     renameTo: () => `${VUE_DIR}admin/docs/docs.vue`
                 },
                 {
-                    file: 'vue/user-management/user-management.component.ts',
-                    renameTo: () => `${VUE_DIR}admin/user-management/user-management.component.ts`
-                },
-                {
                     file: 'vue/jhi-navbar/jhi-navbar.vue',
                     renameTo: () => `${VUE_DIR}core/jhi-navbar/jhi-navbar.vue`
+                }
+            ]
+        },
+        {
+            condition: generator => generator.clientFramework === 'vue' && !generator.skipUserManagement,
+            templates: [
+                {
+                    file: 'vue/user-management/user-management.component.ts',
+                    renameTo: () => `${VUE_DIR}admin/user-management/user-management.component.ts`
                 }
             ]
         }
@@ -115,6 +120,10 @@ const clientFiles = {
                 {
                     file: 'react/test/e2e/administration.spec.ts',
                     renameTo: () => `${TEST_DIR}e2e/modules/administration/administration.spec.ts`
+                },
+                {
+                    file: 'react/test/e2e/account.spec.ts',
+                    renameTo: () => `${TEST_DIR}e2e/modules/account/account.spec.ts`
                 }
             ]
         },
@@ -141,6 +150,10 @@ const clientFiles = {
                 {
                     file: 'vue/test/e2e/administration.spec.ts',
                     renameTo: () => `${TEST_DIR}e2e/modules/administration/administration.spec.ts`
+                },
+                {
+                    file: 'vue/test/e2e/account.spec.ts',
+                    renameTo: () => `${TEST_DIR}e2e/modules/account/account.spec.ts`
                 }
             ]
         }
