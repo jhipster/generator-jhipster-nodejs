@@ -51,7 +51,7 @@ export class PublicUserController {
   getAuthorities(@Req() req: any): any {
     const user: any = req.user;
     if (!user) {
-        return;
+        return [];
      }
     return user.authorities;
   }
