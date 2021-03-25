@@ -8,7 +8,7 @@ import { LoggingInterceptor } from '../../client/interceptors/logging.intercepto
 import {<%_ if (authenticationType === 'jwt') { _%> ApiBearerAuth, <%_ } else if (authenticationType === 'oauth2') { _%> ApiOAuth2Auth, <%_ } _%> ApiUseTags, ApiResponse, ApiOperation } from '@nestjs/swagger';
 import { UserService } from '../../service/user.service';
 
-@Controller('api/users')
+@Controller('api/admin/users')
 @UseGuards(AuthGuard, RolesGuard)
 @UseInterceptors(LoggingInterceptor)
 <%_ if (authenticationType === 'jwt') { _%>
@@ -24,9 +24,10 @@ export class UserController {
 
   @Get('/')
   @Roles(RoleType.ADMIN)
+  @ApiOperation({ title: 'Get the list of users' })
   @ApiResponse({
       status: 200,
-      description: 'List all records',
+      description: 'List all users',
       type: UserDTO,
   })
   async getAllUsers(@Req() req: Request): Promise<UserDTO[]> {
@@ -88,6 +89,7 @@ export class UserController {
   }
 
   @Get('/:login')
+  @Roles(RoleType.ADMIN)
   @ApiResponse({
       status: 200,
       description: 'The found record',
@@ -98,13 +100,13 @@ export class UserController {
   }
 
   @Delete('/:login')
+  @Roles(RoleType.ADMIN)
   @ApiOperation({ title: 'Delete login user' })
   @ApiResponse({
       status: 204,
       description: 'The record has been successfully deleted.',
       type: UserDTO
   })
-  @Roles(RoleType.ADMIN)
   async deleteUser(@Req() req: Request, @Param('login') loginValue: string): Promise<UserDTO> {
       HeaderUtil.addEntityDeletedHeaders(req.res, 'User', loginValue);
       const userToDelete = await this.userService.find({ where: { login: loginValue } });

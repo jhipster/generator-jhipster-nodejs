@@ -41,7 +41,7 @@
 		"buildTool": "maven",
         "enableSwaggerCodegen": false,
         "authenticationType": "jwt",
-		"clientFramework": "angularX",
+		"clientFramework": "react",
 		"withAdminUi": false,
 		"clientTheme": "none",
 		"enableTranslation": true,

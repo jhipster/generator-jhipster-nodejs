@@ -8,6 +8,8 @@ import { Payload } from '../security/payload.interface';
 import { AuthorityRepository } from '../repository/authority.repository';
 import { UserService } from '../service/user.service';
 import { UserDTO } from './dto/user.dto';
+import { FindManyOptions } from 'typeorm';
+
 
 @Injectable()
 export class AuthService {
@@ -134,5 +136,9 @@ export class AuthService {
    }
 
   <%_ } _%>
+
+  async getAllUsers(options: FindManyOptions<UserDTO>): Promise<[UserDTO[], number]> {
+    return await this.userService.findAndCount(options);
+ }
 
 }

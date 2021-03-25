@@ -38,6 +38,13 @@ describe('App', () => {
         .expect(200)
         .expect(infoService));
 
+    it('/GET public roles OK', () => request(app.getHttpServer())
+        .get('/api/authorities')
+        .expect(200));
+
+    it('/GET public users OK', () => request(app.getHttpServer())
+        .get('/api/users')
+        .expect(200));
 
     <%_ if (!skipUserManagement && authenticationType !=='oauth2') { _%>
     it('/POST authenticate get jwt authenticate OK', () => request(app.getHttpServer())

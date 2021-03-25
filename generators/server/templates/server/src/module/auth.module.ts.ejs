@@ -17,7 +17,7 @@ import { config } from '../config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthorityRepository } from '../repository/authority.repository';
 
-import { AuthController} from '../web/rest/auth.controller';
+import { PublicUserController } from '../web/rest/public.user.controller';
 import { AccountController } from '../web/rest/account.controller';
 
 @Module({
@@ -39,7 +39,7 @@ import { AccountController } from '../web/rest/account.controller';
   <%_ } else if (authenticationType === 'oauth2') { _%>
   UserOauth2Controller,
   <%_ } _%>
-  AuthController, AccountController ],
+  PublicUserController, AccountController ],
   providers: [AuthService,
   <%_ if (authenticationType === 'jwt') { _%>
   JwtStrategy

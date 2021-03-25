@@ -1,26 +1,15 @@
 /* eslint-disable consistent-return */
 const chalk = require('chalk');
-const EntitiesGenerator = require('generator-jhipster/generators/entities');
+const EntityClientGenerator = require('generator-jhipster/generators/entity-client');
+const writeFiles = require('./files').writeFiles;
 
-module.exports = class extends EntitiesGenerator {
+module.exports = class extends EntityClientGenerator {
     constructor(args, opts) {
         super(args, { fromBlueprint: true, ...opts }); // fromBlueprint variable is important
 
         if (!this.jhipsterContext) {
             this.error(`This is a JHipster blueprint and should be used only like ${chalk.yellow('jhipster --blueprints nodejs')}`);
         }
-
-        this.options.skipDbChangelog = true;
-    }
-
-    get initializing() {
-        return super._initializing();
-    }
-
-    get composing() {
-        const composePhaseFromJHipster = super._composing();
-        composePhaseFromJHipster.databaseChangelog = {};
-        return composePhaseFromJHipster;
     }
 
     get default() {
@@ -29,6 +18,12 @@ module.exports = class extends EntitiesGenerator {
     }
 
     get writing() {
-        return this._writing();
+        const phaseFromJHipster = super._writing();
+        const jhipsterNodeEntityClPhaseSteps = writeFiles();
+        return { ...phaseFromJHipster, ...jhipsterNodeEntityClPhaseSteps };
+    }
+
+    get postWriting() {
+        return this._postWriting();
     }
 };

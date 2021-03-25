@@ -1,0 +1,59 @@
+import { Controller, Get, Logger, Req, UseInterceptors } from '@nestjs/common';
+import { LoggingInterceptor } from '../../client/interceptors/logging.interceptor';
+import { PageRequest, Page } from '../../domain/base/pagination.entity';
+import { UserDTO } from '../../service/dto/user.dto';
+import { Request } from 'express';
+import { HeaderUtil } from '../../client/header-util';
+import { ApiUseTags, ApiResponse, ApiOperation } from '@nestjs/swagger';
+import { AuthService } from '../../service/auth.service';
+
+@Controller('api')
+@UseInterceptors(LoggingInterceptor)
+@ApiUseTags('public-user-controller')
+export class PublicUserController {
+
+  logger = new Logger('PublicUserController');
+
+  constructor(private readonly authService: AuthService) { }
+
+  @Get('/users')
+  @ApiOperation({ title: 'Get the list of users' })
+  @ApiResponse({
+      status: 200,
+      description: 'List all users records',
+      type: UserDTO,
+  })
+  async getAllPublicUsers(@Req() req: Request): Promise<UserDTO[]> {
+     <%_ if (databaseType === 'mongodb') { _%>
+      const sortField = '';
+      <%_ } else { _%>
+      const sortField = req.query.sort;
+      <%_ } _%>
+      const pageRequest: PageRequest = new PageRequest(req.query.page, req.query.size, sortField);
+      const [results, count] = await this.authService.getAllUsers({
+          skip: +pageRequest.page * pageRequest.size,
+          take: +pageRequest.size,
+          order: pageRequest.sort.asOrder()
+      });
+      HeaderUtil.addPaginationHeaders(req.res, new Page(results, count, pageRequest));
+      return results;
+  }
+
+
+  @Get('/authorities')
+  @ApiOperation({ title: 'Get the list of user roles' })
+  @ApiResponse({
+    status: 200,
+    description: 'List all user roles',
+    type: 'string',
+    isArray: true,
+  })
+  getAuthorities(@Req() req: any): any {
+    const user: any = req.user;
+    if (!user) {
+        return;
+     }
+    return user.authorities;
+  }
+
+}

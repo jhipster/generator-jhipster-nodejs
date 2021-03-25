@@ -2,6 +2,8 @@ const path = require('path');
 const fse = require('fs-extra');
 const assert = require('yeoman-assert');
 const helpers = require('yeoman-test');
+const REACT_DIR = require('generator-jhipster/generators/generator-constants').REACT_DIR;
+
 const constants = require('../generators/generator-nodejs-constants');
 
 const SERVER_NODEJS_DIR = `${constants.SERVER_NODEJS_SRC_DIR}/`;
@@ -11,7 +13,8 @@ function getPreCondition() {
     return helpers
         .run('generator-jhipster/generators/entity')
         .inTmpDir(dir => {
-            fse.copySync(path.join(__dirname, '../test/templates/ngx-blueprint'), dir);
+            fse.copySync(path.join(__dirname, '../test/templates/react-blueprint'), dir);
+            fse.copySync(path.join(__dirname, '../test/templates/src'), `${dir}/src`);
             fse.copySync(path.join(__dirname, '../test/templates/.jhipster'), `${dir}/.jhipster`);
             fse.copySync(path.join(__dirname, '../test/templates/server'), `${dir}/server`);
         })
@@ -38,6 +41,11 @@ function getPreCondition() {
                 require('../generators/entity-server/index.js'), // eslint-disable-line global-require
                 'jhipster-nodejs:entity-server',
                 path.join(__dirname, '../generators/entity-server/index.js')
+            ],
+            [
+                require('../generators/entity-client/index.js'), // eslint-disable-line global-require
+                'jhipster-nodejs:entity-client',
+                path.join(__dirname, '../generators/entity-client/index.js')
             ]
         ]);
 }
@@ -84,6 +92,11 @@ describe('Subgenerator entity of nodejs JHipster blueprint', () => {
         it('does creates entity file with enum and fields validated', () => {
             // Adds your tests here
             assert.file('.jhipster/GreatEntity.json');
+
+            // test entity-client removed id primary key
+            const entityReactPath = `${REACT_DIR}entities/great-entity/great-entity.tsx`;
+            assert.file(entityReactPath);
+            assert.fileContent(entityReactPath, '// removed th id primary key');
 
             const genderEnumPath = `${SERVER_NODEJS_DIR}src/domain/enumeration/gender.ts`;
             const greatEntityPath = `${SERVER_NODEJS_DIR}src/domain/great-entity.entity.ts`;

@@ -111,7 +111,7 @@ describe('Main app generator of nodejs JHipster blueprint', () => {
             helpers
                 .run('generator-jhipster/generators/app')
                 .inTmpDir(dir => {
-                    fse.copySync(path.join(__dirname, '../test/templates/ngx-blueprint'), dir);
+                    fse.copySync(path.join(__dirname, '../test/templates/react-blueprint'), dir);
                 })
                 .withOptions({
                     fromCli: true,
