@@ -122,13 +122,21 @@ describe('Account Service test suite', () => {
     });
   });
 
+  <%_ if (authenticationType === 'oauth2') { _%>
+  it('should init service as authentified and not return authority user', async () => {
+  <%_ } else { _%>
   it('should init service as not authentified and return authority user', async () => {
+  <%_ } _%>
     axiosStub.get.resolves({});
     axiosStub.get.withArgs('api/account').rejects();
     accountService = await new AccountService(store, <%_ if (enableTranslation) { _%>new TranslationService(store, i18n),<%_ } %><%_ if (authenticationType === 'session' || authenticationType === 'oauth2') { _%>mockedCookie,<%_ } %><%_ if (websocket === 'spring-websocket') { _%>null,<%_ } %> router);
 
     return accountService.hasAnyAuthorityAndCheckAuth('USER').then((value: boolean) => {
+    <%_ if (authenticationType === 'oauth2') { _%>
+      expect(value).toBe(false);
+    <%_ } else { _%>
       expect(value).toBe(true);
+    <%_ } _%>
     });
   });
 
