@@ -100,6 +100,10 @@ const clientFiles = {
                 {
                     file: 'vue/account/account.service.ts',
                     renameTo: () => `${VUE_DIR}account/account.service.ts`
+                },
+                {
+                    file: 'vue/account/account.service.spec.ts',
+                    renameTo: () => `${TEST_DIR}spec/app/account/account.service.spec.ts`
                 }
             ]
         },

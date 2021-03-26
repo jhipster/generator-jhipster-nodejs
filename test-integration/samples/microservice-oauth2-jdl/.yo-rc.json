@@ -45,9 +45,6 @@
         "authenticationType": "oauth2",
         "enableTranslation": false,
         "nativeLanguage": "en",
-        "promptValues": {
-            "nativeLanguage": "en"
-        },
         "packageFolder": "com/jhipster/node",
         "clientPackageManager": "npm",
         "reactive": false,

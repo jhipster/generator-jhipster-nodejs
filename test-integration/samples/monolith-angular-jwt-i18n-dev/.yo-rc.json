@@ -48,9 +48,6 @@
         "clientTheme": "none",
         "enableTranslation": true,
         "nativeLanguage": "en",
-        "promptValues": {
-            "nativeLanguage": "en"
-        },
         "packageFolder": "com/jhipster/node",
         "clientPackageManager": "npm",
         "clientThemeVariant": "",
