@@ -96,6 +96,10 @@ const clientFiles = {
                 {
                     file: 'vue/jhi-navbar/jhi-navbar.vue',
                     renameTo: () => `${VUE_DIR}core/jhi-navbar/jhi-navbar.vue`
+                },
+                {
+                    file: 'vue/account/account.service.ts',
+                    renameTo: () => `${VUE_DIR}account/account.service.ts`
                 }
             ]
         },
