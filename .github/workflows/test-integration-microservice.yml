@@ -1,0 +1,64 @@
+name: Test Integration Microservice
+on: [push, pull_request]
+jobs:
+    applications:
+        name: ${{ matrix.app-type }}
+        runs-on: ${{ matrix.os }}
+        if: "!contains(github.event.head_commit.message, '[ci skip]') && !contains(github.event.head_commit.message, '[skip ci]')"
+        timeout-minutes: 40
+        strategy:
+            fail-fast: false
+            matrix:
+                node_version: [14.16.0]
+                os: [ubuntu-latest]
+                app-type:
+                    - microservice-oauth2-jdl
+                include:
+                    - app-type: microservice-oauth2-jdl
+                      app-folder: microservice-oauth2-jdl
+                      entity: post-import-jdl
+                      e2e: 'no'
+        env:
+            NHI_APP: ${{ matrix.app-type }}
+            NHI_APP_FOLDER: ${{ matrix.app-folder }}
+            NHI_ENTITY: ${{ matrix.entity }}
+            NHI_E2E: ${{ matrix.e2e }}
+
+        steps:
+            - uses: actions/checkout@v1
+            - uses: actions/setup-node@v1
+              with:
+                  node-version: ${{ matrix.node-version }}
+            - name: GIT HISTORY
+              run: git --no-pager log -n 10 --graph --pretty='%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue) <%an>%Creset' --abbrev-commit
+            - name: DOWNLOAD LATEST CHROME binary
+              run: |
+                  sudo apt update
+                  sudo apt install google-chrome-stable
+            - name: PREPARE jhipster env
+              run: sudo sh test-integration/00-install-all-jhipster.sh
+            - name: 'CONFIGURE EVENTUAL TEMPLATE APP'
+              if: contains(env.NHI_APP_FOLDER, 'template')
+              run: sudo bash test-integration/0x-configure-template.sh $NHI_APP_FOLDER $NHI_APP
+            - name: 'GENERATE NHipster app'
+              run: sudo sh test-integration/01-generate-app-sample.sh $NHI_APP_FOLDER $NHI_ENTITY
+            - name: 'INSTALL DEPENDENCIES of generated app'
+              run: sudo sh test-integration/02-install-dependencies-app-sample.sh $NHI_APP_FOLDER
+            - name: 'GENERATE bar SERVER SERVICE'
+              run: sudo sh test-integration/03-generate-component-sample.sh $NHI_APP_FOLDER service bar
+            - name: 'GENERATE foo SERVER CONTROLLER'
+              run: sudo sh test-integration/03-generate-component-sample.sh $NHI_APP_FOLDER controller foo
+            - name: 'RUN UNIT TESTS of generated app'
+              run: sudo sh test-integration/04-run-generated-unit-tests-of-sample.sh $NHI_APP_FOLDER
+            - name: 'RUN SERVER E2E TESTS of generated app'
+              run: sudo sh test-integration/05-run-generated-e2e-tests-of-sample.sh $NHI_APP_FOLDER
+            - name: 'RUN DOCKER PROD DATABASE'
+              if: contains(env.NHI_APP_FOLDER, 'prod')
+              run: sudo bash test-integration/06-bis-docker-compose-database.sh $NHI_APP_FOLDER $NHI_APP
+            - name: 'BUILD AND RUN SERVER APP'
+              run: sudo sh test-integration/07-run-generated-app-sample.sh $NHI_APP_FOLDER build
+            - name: 'RUN DOCKER KEYCLOAK for CLIENT E2E oauth2 TESTS'
+              if: "env.NHI_E2E == 'oauth2'"
+              run: sudo sh test-integration/06-docker-compose-oauth2.sh $NHI_APP_FOLDER
+            - name: 'START APP WITH EVENTUAL CLIENT E2E TESTS'
+              run: sudo sh test-integration/07-run-generated-app-sample.sh $NHI_APP_FOLDER $NHI_E2E

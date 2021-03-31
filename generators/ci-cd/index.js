@@ -4,7 +4,7 @@ const CiCdGenerator = require('generator-jhipster/generators/ci-cd');
 
 module.exports = class extends CiCdGenerator {
     constructor(args, opts) {
-        super(args, Object.assign({ fromBlueprint: true }, opts)); // fromBlueprint variable is important
+        super(args, { fromBlueprint: true, ...opts }); // fromBlueprint variable is important
 
         const jhContext = (this.jhipsterContext = this.options.jhipsterContext);
 
@@ -16,13 +16,13 @@ module.exports = class extends CiCdGenerator {
     }
 
     get initializing() {
-        const phaseFromJHipster = super._initializing();
-        const jhipsterNodeCiCdPhaseSteps = {
+        const initPhaseFromJHipster = super._initializing();
+        const initNodeCiCdPhaseSteps = {
             sayHello() {
                 this.log(chalk.white('🚀 Welcome to the NHipster CI/CD custom Sub-Generator 🚀'));
             }
         };
-        return Object.assign(phaseFromJHipster, jhipsterNodeCiCdPhaseSteps);
+        return { ...initPhaseFromJHipster, ...initNodeCiCdPhaseSteps };
     }
 
     get prompting() {
@@ -32,6 +32,10 @@ module.exports = class extends CiCdGenerator {
     get configuring() {
         // Here we are not overriding this phase and hence its being handled by JHipster
         return super._configuring();
+    }
+
+    get loading() {
+        return super._loading();
     }
 
     get writing() {
