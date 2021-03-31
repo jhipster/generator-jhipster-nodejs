@@ -21,13 +21,15 @@ export class HeaderUtil {
 
   static addEntityUpdatedHeaders(res: Response, entityName, param): any {
     res.status(200);
-    const message = enableTranslation ? applicationName + '.' + entityName + '.updated' : 'A ' + entityName + ' is updated with identifier ' + param;
+    const message = enableTranslation ? applicationName + '.' + entityName +
+    '.updated' : 'A ' + entityName + ' is updated with identifier ' + param;
     this.createAlert(res, message, param);
   }
 
   static addEntityDeletedHeaders(res: Response, entityName, param): any {
     res.status(204);
-    const message = enableTranslation ? applicationName + '.' + entityName + '.deleted' : 'A ' + entityName + ' is deleted with identifier ' + param;
+    const message = enableTranslation ? applicationName + '.' + entityName +
+    '.deleted' : 'A ' + entityName + ' is deleted with identifier ' + param;
     this.createAlert(res, message, param);
   }
 

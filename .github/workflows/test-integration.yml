@@ -12,6 +12,9 @@ jobs:
                 node_version: [14.16.0]
                 os: [ubuntu-latest]
                 app-type:
+                    - monolith-vue-jwt-i18n-jdl
+                    - monolith-vue-oauth2-i18n-jdl
+                    - monolith-vue-mongodb-prod-jdl
                     - monolith-react-jwt-jdl
                     - monolith-react-jwt-i18n-jdl
                     - monolith-react-oauth2-jdl
@@ -30,6 +33,18 @@ jobs:
                     - monolith-react-oauth2-dev
                     - microservice-oauth2-jdl
                 include:
+                    - app-type: monolith-vue-jwt-i18n-jdl
+                      app-folder: monolith-client-auth-i18n-template-jdl
+                      entity: import-jdl
+                      e2e: jwt
+                    - app-type: monolith-vue-oauth2-i18n-jdl
+                      app-folder: monolith-client-auth-i18n-template-jdl
+                      entity: import-jdl
+                      e2e: oauth2
+                    - app-type: monolith-vue-mongodb-prod-jdl
+                      app-folder: monolith-client-database-prod-template-jdl
+                      entity: import-jdl
+                      e2e: jwt
                     - app-type: monolith-react-jwt-jdl
                       app-folder: monolith-client-auth-template-jdl
                       entity: import-jdl
@@ -41,7 +56,7 @@ jobs:
                     - app-type: monolith-react-oauth2-jdl
                       app-folder: monolith-client-auth-template-jdl
                       entity: import-jdl
-                      e2e: 'oauth2'
+                      e2e: oauth2
                     - app-type: monolith-react-oauth2-i18n-jdl
                       app-folder: monolith-client-auth-i18n-template-jdl
                       entity: import-jdl

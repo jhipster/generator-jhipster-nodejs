@@ -16,6 +16,29 @@ const prompt = {
     clientTheme: 'none'
 };
 
+const allSubgenerators = [
+    [
+        require('../generators/app/index.js'), // eslint-disable-line global-require
+        'jhipster-nodejs:app',
+        path.join(__dirname, '../generators/app/index.js')
+    ],
+    [
+        require('../generators/server/index.js'), // eslint-disable-line global-require
+        'jhipster-nodejs:server',
+        path.join(__dirname, '../generators/server/index.js')
+    ],
+    [
+        require('../generators/client/index.js'), // eslint-disable-line global-require
+        'jhipster-nodejs:client',
+        path.join(__dirname, '../generators/client/index.js')
+    ],
+    [
+        require('../generators/common/index.js'), // eslint-disable-line global-require
+        'jhipster-nodejs:common',
+        path.join(__dirname, '../generators/common/index.js')
+    ]
+];
+
 function commonAssertions() {
     // assertion for client subgenerator
     assert.fileContent('package.json', '"start:app": "npm run build && cd server && npm run start"');
@@ -30,19 +53,13 @@ describe('Main app generator of nodejs JHipster blueprint', () => {
             helpers
                 .run('generator-jhipster/generators/app')
                 .withOptions({
-                    'from-cli': true,
+                    fromCli: true,
                     skipInstall: true,
-                    blueprints: 'nodejs',
                     skipChecks: true,
+                    blueprints: 'nodejs',
                     'skip-i18n': true
                 })
-                .withGenerators([
-                    [
-                        require('../generators/app/index.js'), // eslint-disable-line global-require
-                        'jhipster-nodejs:app',
-                        path.join(__dirname, '../generators/app/index.js')
-                    ]
-                ])
+                .withGenerators(allSubgenerators)
                 .withPrompts({
                     prompt
                 })
@@ -65,7 +82,7 @@ describe('Main app generator of nodejs JHipster blueprint', () => {
             helpers
                 .run('generator-jhipster/generators/app')
                 .withOptions({
-                    'from-cli': true,
+                    fromCli: true,
                     skipInstall: true,
                     blueprints: 'nodejs',
                     skipServer: true,
@@ -74,13 +91,7 @@ describe('Main app generator of nodejs JHipster blueprint', () => {
                     skipChecks: true,
                     'skip-i18n': true
                 })
-                .withGenerators([
-                    [
-                        require('../generators/app/index.js'), // eslint-disable-line global-require
-                        'jhipster-nodejs:app',
-                        path.join(__dirname, '../generators/app/index.js')
-                    ]
-                ])
+                .withGenerators(allSubgenerators)
                 .withPrompts({
                     prompt
                 })
@@ -100,21 +111,15 @@ describe('Main app generator of nodejs JHipster blueprint', () => {
             helpers
                 .run('generator-jhipster/generators/app')
                 .inTmpDir(dir => {
-                    fse.copySync(path.join(__dirname, '../test/templates/ngx-blueprint'), dir);
+                    fse.copySync(path.join(__dirname, '../test/templates/react-blueprint'), dir);
                 })
                 .withOptions({
-                    'from-cli': true,
+                    fromCli: true,
                     skipInstall: true,
                     blueprints: 'nodejs',
                     skipChecks: true
                 })
-                .withGenerators([
-                    [
-                        require('../generators/app/index.js'), // eslint-disable-line global-require
-                        'jhipster-nodejs:app',
-                        path.join(__dirname, '../generators/app/index.js')
-                    ]
-                ])
+                .withGenerators(allSubgenerators)
                 .withPrompts({
                     actionAdd: false
                 })

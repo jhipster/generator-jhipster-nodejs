@@ -10,10 +10,11 @@ function getPreCondition() {
     return helpers
         .run('generator-jhipster/generators/server')
         .withOptions({
-            'from-cli': true,
+            fromCli: true,
             skipInstall: true,
             blueprints: 'nodejs',
-            skipChecks: true
+            skipChecks: true,
+            'skip-i18n': true
         })
         .withGenerators([
             [

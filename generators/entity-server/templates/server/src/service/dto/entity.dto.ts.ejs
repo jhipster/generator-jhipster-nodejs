@@ -9,9 +9,27 @@ import { BaseDTO } from './base.dto';
 let isUserRelationship = false;
 const uniqueEntities = {};
 const uniqueEnums = {};
-_%>
+const fieldsWithoutId = [];
 
-<%- include ../../domain/imports -%>
+for (idx in fields) {
+    if (fields[idx].fieldIsEnum && (
+            !uniqueEnums[fields[idx].fieldType] || (uniqueEnums[fields[idx].fieldType] && fields[idx].fieldValues.length !== 0))) {
+        uniqueEnums[fields[idx].fieldType] = _.kebabCase(fields[idx].fieldType);
+    }
+    if (fields[idx].fieldName !== 'id') {
+        fieldsWithoutId.push(fields[idx]);
+    }
+}
+for (idx in relationships) {
+    const relationship = relationships[idx];
+    if (relationship.otherEntityAngularName === 'User'){
+        isUserRelationship = true;
+    }
+    else if (!uniqueEntities[relationship.otherEntityAngularName] && relationship.otherEntityAngularName != asEntity(entityClass)) {
+        uniqueEntities[relationship.otherEntityAngularName] = relationship.otherEntityFileName;
+    }
+}
+_%>
 
 <%_ Object.keys(uniqueEntities).forEach(function(entityClass) { _%>
 import { <%= entityClass %>DTO } from './<%= uniqueEntities[entityClass] %>.dto';
@@ -29,32 +47,33 @@ import { UserDTO } from './user.dto';
  */
 export class <%= asEntity(entityClass) %>DTO extends BaseDTO {
 
-    <%_ for (idx in fields) {
-       if (typeof fields[idx].javadoc !== 'undefined') { _%>
-    <%- formatAsFieldJavadoc(fields[idx].javadoc) %>
+    <%_ for (idx in fieldsWithoutId) {
+        const field = fieldsWithoutId[idx];
+       if (typeof field.javadoc !== 'undefined') { _%>
+    <%- formatAsFieldJavadoc(field.javadoc) %>
     <%_ }
         let required = false;
-        const fieldValidate = fields[idx].fieldValidate;
-        const fieldValidateRules = fields[idx].fieldValidateRules;
-        const fieldType = fields[idx].fieldType;
-        const fieldTypeBlobContent = fields[idx].fieldTypeBlobContent;
-        const fieldName = fields[idx].fieldName;
-        const fieldNameUnderscored = fields[idx].fieldNameUnderscored;
-        const fieldNameAsDatabaseColumn = fields[idx].fieldNameAsDatabaseColumn;
+        const fieldValidate = field.fieldValidate;
+        const fieldValidateRules = field.fieldValidateRules;
+        const fieldType = field.fieldType;
+        const fieldTypeBlobContent = field.fieldTypeBlobContent;
+        const fieldName = field.fieldName;
+        const fieldNameUnderscored = field.fieldNameUnderscored;
+        const fieldNameAsDatabaseColumn = field.fieldNameAsDatabaseColumn;
         const fieldColumnType=addDbType(fieldType);
         if (fieldValidate === true) {
             if (fieldValidateRules.includes('required')) {
                 required = true;
             }
             _%>
-            <%- include ../../common/field_validators -%>
+            <%- include('../../common/field_validators', { field }); -%>
         <%_ } _%>
-            <%_ if (fields[idx].fieldIsEnum) { _%>
-            @ApiModelProperty({ enum: <%= fieldType %>, <%_ if (typeof fields[idx].javadoc != 'undefined') { _%> description: '<%- formatAsApiDescription(fields[idx].javadoc) %>' <%_ } else { _%> description: '<%= fieldName %> enum field' <%_ } if (!required) { _%>, required: false <%_ } _%>})
+            <%_ if (field.fieldIsEnum) { _%>
+            @ApiModelProperty({ enum: <%= fieldType %>, <%_ if (typeof field.javadoc != 'undefined') { _%> description: '<%- formatAsApiDescription(field.javadoc) %>' <%_ } else { _%> description: '<%= fieldName %> enum field' <%_ } if (!required) { _%>, required: false <%_ } _%>})
             <%_ } else { _%>
-            @ApiModelProperty({ <%_ if (typeof fields[idx].javadoc != 'undefined') { _%> description: '<%- formatAsApiDescription(fields[idx].javadoc) %>' <%_ } else { _%> description: '<%= fieldName %> field' <%_ } if (!required) { _%>, required: false <%_ } _%>})
+            @ApiModelProperty({ <%_ if (typeof field.javadoc != 'undefined') { _%> description: '<%- formatAsApiDescription(field.javadoc) %>' <%_ } else { _%> description: '<%= fieldName %> field' <%_ } if (!required) { _%>, required: false <%_ } _%>})
             <%_ } _%>
-            <%_ if (fields[idx].fieldIsEnum) { _%>
+            <%_ if (field.fieldIsEnum) { _%>
         <%= fieldName %>: <%= fieldType %>;
             <%_ } else { _%>
         <%= fieldName %>: <%= getTsType(fieldType) %>;
@@ -69,17 +88,16 @@ export class <%= asEntity(entityClass) %>DTO extends BaseDTO {
         <%_
         for (idx in relationships) {
             const relationship = relationships[idx];
-            const otherEntityRelationshipName = relationships[idx].otherEntityRelationshipName;
-            const otherEntityRelationshipNamePlural = relationships[idx].otherEntityRelationshipNamePlural;
-            const relationshipName = relationships[idx].relationshipName;
-            const relationshipFieldName = relationships[idx].relationshipFieldName;
-            const relationshipFieldNamePlural = relationships[idx].relationshipFieldNamePlural;
+            const otherEntityRelationshipName = relationship.otherEntityRelationshipName;
+            const otherEntityRelationshipNamePlural = relationship.otherEntityRelationshipNamePlural;
+            const relationshipName = relationship.relationshipName;
+            const relationshipFieldName = relationship.relationshipFieldName;
+            const relationshipFieldNamePlural = relationship.relationshipFieldNamePlural;
             const joinTableName = getJoinTableName(entityTableName, relationshipName, prodDatabaseType);
-            const relationshipType = relationships[idx].relationshipType;
-            const relationshipValidate = relationships[idx].relationshipValidate;
-            const relationshipRequired = relationships[idx].relationshipRequired;
-            const otherEntityNameCapitalized = relationships[idx].otherEntityNameCapitalized;
-            const ownerSide = relationships[idx].ownerSide;
+            const relationshipType = relationship.relationshipType;
+            const relationshipValidate = relationship.relationshipValidate;
+            const relationshipRequired = relationship.relationshipRequired;
+            const otherEntityNameCapitalized = relationship.otherEntityNameCapitalized;
 
             if (typeof relationships.javadoc != 'undefined') { _%>
     <%- formatAsFieldJavadoc(relationships.javadoc) %>

@@ -6,7 +6,7 @@ const writeFiles = require('./files').writeFiles;
 
 module.exports = class extends CommonGenerator {
     constructor(args, opts) {
-        super(args, Object.assign({ fromBlueprint: true }, opts)); // fromBlueprint variable is important
+        super(args, { fromBlueprint: true, ...opts }); // fromBlueprint variable is important
 
         const jhContext = (this.jhipsterContext = this.options.jhipsterContext);
 
@@ -15,9 +15,6 @@ module.exports = class extends CommonGenerator {
         }
 
         this.configOptions = jhContext.configOptions || {};
-        // This sets up options for this sub generator and is being reused from JHipster
-        jhContext.setupServerOptions(this, jhContext);
-        jhContext.setupClientOptions(this, jhContext);
     }
 
     get initializing() {
@@ -28,10 +25,18 @@ module.exports = class extends CommonGenerator {
                 this.SERVER_NODEJS_SRC_DIR = constants.SERVER_NODEJS_SRC_DIR;
             }
         };
-        return Object.assign(initPhaseFromJHipster, initNodeCommonPhaseSteps);
+        return { ...initPhaseFromJHipster, ...initNodeCommonPhaseSteps };
 
         // Here we are not overriding this phase and hence its being handled by JHipster
         // return super._initializing();
+    }
+
+    get loading() {
+        return this._loading();
+    }
+
+    get preparing() {
+        return this._preparing();
     }
 
     get default() {
@@ -42,6 +47,6 @@ module.exports = class extends CommonGenerator {
     get writing() {
         const phaseFromJHipster = super._writing();
         const jhipsterNodeCommonPhaseSteps = writeFiles();
-        return Object.assign(phaseFromJHipster, jhipsterNodeCommonPhaseSteps);
+        return { ...phaseFromJHipster, ...jhipsterNodeCommonPhaseSteps };
     }
 };

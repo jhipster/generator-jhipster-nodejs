@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import request = require('supertest');
 import { AppModule } from '../src/app.module';
 import { INestApplication } from '@nestjs/common';
-<%_ if (authenticationType === 'jwt') { _%>
+<%_ if (authenticationType === 'jwt' && !skipUserManagement) { _%>
 import { UserLoginDTO } from '../src/service/dto/user-login.dto';
 <%_ } _%>
 
@@ -10,8 +10,8 @@ describe('App', () => {
     let app: INestApplication;
 
     const infoService = {
-        'activeProfiles': 'no',
-        'display-ribbon-on-profiles': 'no',
+         activeProfiles : 'dev',
+        'display-ribbon-on-profiles': 'dev',
     };
 <%_  if (!skipUserManagement && authenticationType !=='oauth2') { _%>
     const testUserLogin: UserLoginDTO = {
@@ -38,6 +38,13 @@ describe('App', () => {
         .expect(200)
         .expect(infoService));
 
+    it('/GET public roles OK', () => request(app.getHttpServer())
+        .get('/api/authorities')
+        .expect(200));
+
+    it('/GET public users OK', () => request(app.getHttpServer())
+        .get('/api/users')
+        .expect(200));
 
     <%_ if (!skipUserManagement && authenticationType !=='oauth2') { _%>
     it('/POST authenticate get jwt authenticate OK', () => request(app.getHttpServer())

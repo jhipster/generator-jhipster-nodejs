@@ -66,9 +66,11 @@ relationship OneToMany {
     ShopUser{products} to Product
 }
 
+
 relationship ManyToOne {
 	Category{parent} to Category
 }
+
 
 relationship ManyToMany {
 	Category{product(title)} to Product{category}

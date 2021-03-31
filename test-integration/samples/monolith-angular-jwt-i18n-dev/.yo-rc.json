@@ -1,11 +1,36 @@
 {
-    "generator-jhipster-nodejs": {
+    "generator-jhipster": {
+        "blueprints": [
+            {
+                "name": "generator-jhipster-nodejs"
+            }
+        ],
+        "otherModules": [
+            {
+                "name": "generator-jhipster-nodejs"
+            }
+        ],
         "applicationType": "monolith",
         "baseName": "monolithAngularJwtDevApp",
-        "packageName": "com.jhipster.node",
-        "packageFolder": "com/jhipster/node",
+        "logo": false,
+        "skipClient": false,
+        "skipServer": false,
+        "skipUserManagement": true,
+        "skipCheckLengthOfIdentifier": false,
+        "skipFakeData": false,
+        "jhiPrefix": "jhi",
+        "entitySuffix": "",
+        "dtoSuffix": "DTO",
+        "testFrameworks": [],
+        "pages": [],
+        "creationTimestamp": 1615471285814,
+        "composedWith": [],
+        "experimental": false,
+        "optionsParsed": true,
+        "blueprintConfigured": true,
+        "skipPrompts": true,
         "serverPort": "8081",
-        "authenticationType": "jwt",
+        "packageName": "com.jhipster.node",
         "cacheProvider": "no",
         "enableHibernateCache": false,
         "websocket": false,
@@ -17,25 +42,18 @@
         "serviceDiscoveryType": false,
         "buildTool": "maven",
         "enableSwaggerCodegen": false,
-        "embeddableLaunchScript": false,
-        "useSass": true,
-        "clientPackageManager": "npm",
+        "authenticationType": "jwt",
         "clientFramework": "angularX",
+        "withAdminUi": false,
         "clientTheme": "none",
-        "clientThemeVariant": "",
-        "jwtSecretKey": "OWUzYzljOTgxNWFjNjFmZmFmNmU1ZGU0ODAyYzIxMjVlMzkzODJlMzYyMmE4NDMxYzRmMTQzZDFkYmExNTFmMDQ4NTlmZjc2NWQzY2M3Yjg0NjQ2ODFiNzBhMTEwMTAyMDQ2NzljNmQ1MDFiMmU4N2U3YmE0ZmJjNmM4ZDE3ZmM="
-    },
-    "generator-jhipster": {
-        "applicationType": "monolith",
-        "baseName": "monolithAngularJwtDevApp",
-        "testFrameworks": [],
-        "jhiPrefix": "jhi",
-        "entitySuffix": "",
-        "dtoSuffix": "DTO",
         "enableTranslation": true,
         "nativeLanguage": "en",
-        "languages": ["en", "fr"],
+        "packageFolder": "com/jhipster/node",
         "clientPackageManager": "npm",
-        "blueprint": "generator-jhipster-nodejs"
+        "clientThemeVariant": "",
+        "reactive": false,
+        "languages": ["en", "fr"],
+        "sharedEntities": {},
+        "sharedLiquibaseFakeData": {}
     }
 }

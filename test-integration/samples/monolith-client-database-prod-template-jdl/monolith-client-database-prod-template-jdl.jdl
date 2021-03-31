@@ -19,7 +19,6 @@ application {
 		prodDatabaseType REPLACE_PROD_DATABASE_TYPE,
 		serviceDiscoveryType false,
 		clientPackageManager npm,
-		useSass true,
 		skipUserManagement false,
 		enableTranslation false,
 		clientFramework REPLACE_CLIENT_FRAMEWORK

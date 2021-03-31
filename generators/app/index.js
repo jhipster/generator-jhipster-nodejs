@@ -2,11 +2,10 @@
 const chalk = require('chalk');
 const AppGenerator = require('generator-jhipster/generators/app');
 const nodePackagejs = require('../../package.json');
-const nodePromptApp = require('./prompts.js');
 
 module.exports = class extends AppGenerator {
     constructor(args, opts) {
-        super(args, Object.assign({ fromBlueprint: true }, opts)); // fromBlueprint variable is important
+        super(args, { fromBlueprint: true, ...opts }); // fromBlueprint variable is important
 
         const jhContext = (this.jhipsterContext = this.options.jhipsterContext);
 
@@ -92,113 +91,80 @@ module.exports = class extends AppGenerator {
             },
             /* eslint-enable */
             // remove jhipster standard java requirement not used in this blueprint
-            validateJava() {},
-
-            customSettings() {
-                if (!this.skipClient) {
-                    this.testFrameworks = ['protractor'];
-                    this.protractorTests = true;
-                } else {
-                    this.testFrameworks = [];
-                    this.protractorTests = false;
-                }
-                if (this.options['skip-i18n']) {
-                    this.enableTranslation = false;
-                    this.skipI18n = true;
-                }
-            }
+            validateJava() {}
         };
 
-        return Object.assign(initPhaseFromJHipster, nodeInitAppPhaseSteps);
+        return { ...initPhaseFromJHipster, ...nodeInitAppPhaseSteps };
     }
 
     get prompting() {
-        const promptPhaseFromJHipster = super._prompting();
-        return Object.assign(promptPhaseFromJHipster, nodePromptApp);
+        return super._prompting();
     }
 
     get configuring() {
         const configuringPhaseFromJHipster = super._configuring();
 
         const jhipsterConfigureAppPhaseSteps = {
-            composeServer() {
-                if (this.skipServer) return;
-                const options = this.options;
-                const configOptions = this.configOptions;
-
-                this.composeWith(require.resolve('../server'), {
-                    ...options,
-                    configOptions,
-                    'client-hook': !this.skipClient,
-                    debug: this.isDebugEnabled
-                });
-            },
-
-            composeClient() {
-                if (this.skipClient) return;
-                const options = this.options;
-                const configOptions = this.configOptions;
-
-                this.composeWith(require.resolve('../client'), {
-                    ...options,
-                    configOptions,
-                    debug: this.isDebugEnabled
-                });
-            },
-
-            composeCommon() {
-                const options = this.options;
-                const configOptions = this.configOptions;
-
-                this.composeWith(require.resolve('../common'), {
-                    ...options,
-                    'client-hook': !this.skipClient,
-                    configOptions,
-                    debug: this.isDebugEnabled
-                });
-            }
-        };
-
-        return Object.assign(configuringPhaseFromJHipster, jhipsterConfigureAppPhaseSteps);
-    }
-
-    get default() {
-        const defaultPhaseFromJHipster = super._default();
-        const jhipsterConfigureAppPhaseSteps = {
-            /* saveConfig() {
-                // remove old update in yo-rc.json
-            },
-            */
-            askForTestOpts: {}
-            // askForMoreModules: {}
-        };
-
-        return Object.assign(defaultPhaseFromJHipster, jhipsterConfigureAppPhaseSteps);
-    }
-
-    get writing() {
-        const writingPhaseFromJHipster = super._writing();
-
-        const jhipsterWritingAppPhaseSteps = {
-            regenerateEntities() {
-                if (this.withEntities) {
-                    const options = this.options;
-                    const configOptions = this.configOptions;
-                    this.getExistingEntities().forEach(entity => {
-                        this.composeWith(require.resolve('../entity'), {
-                            ...options,
-                            configOptions,
-                            regenerate: true,
-                            'skip-install': true,
-                            debug: this.isDebugEnabled,
-                            arguments: [entity.name]
-                        });
-                    });
+            customI18n() {
+                if (this.options['skip-i18n']) {
+                    this.configOptions.enableTranslation = false;
+                    this.configOptions.skipI18n = true;
                 }
             }
         };
 
-        return Object.assign(writingPhaseFromJHipster, jhipsterWritingAppPhaseSteps);
+        return { ...configuringPhaseFromJHipster, ...jhipsterConfigureAppPhaseSteps };
+    }
+
+    get composing() {
+        const composingPhaseFromJHipster = super._composing();
+        composingPhaseFromJHipster.askForTestOpts = {};
+        return composingPhaseFromJHipster;
+    }
+
+    get loading() {
+        return super._loading();
+    }
+
+    get preparing() {
+        return this._preparing();
+    }
+
+    get default() {
+        return super._default();
+    }
+
+    get writing() {
+        return super._writing();
+    }
+
+    get postWriting() {
+        return super._postWriting();
+    }
+
+    get install() {
+        const installPhaseFromJHipster = super._install();
+
+        const nodeServerInstall = {
+            /* istanbul ignore next */
+            jhipsterNodeServerInstall() {
+                if (this.skipServer) return;
+                const logMsg = `To install your server dependencies manually, run: cd server && ${chalk.yellow.bold('npm install')}`;
+
+                if (this.options.skipInstall) {
+                    this.log(logMsg);
+                } else {
+                    try {
+                        this.log(chalk.bold('\nInstalling server dependencies using npm'));
+                        this.spawnCommandSync('npm', ['install'], { cwd: `${process.cwd()}/server` });
+                    } catch (e) {
+                        this.warning('Install of server dependencies failed!');
+                        this.log(logMsg);
+                    }
+                }
+            }
+        };
+        return { ...installPhaseFromJHipster, ...nodeServerInstall };
     }
 
     get end() {

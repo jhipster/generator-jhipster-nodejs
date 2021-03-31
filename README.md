@@ -47,7 +47,7 @@ This project adds nodejs for your backend, **all TypeScript files generation, no
 
 > -   NestJS base app with web controllers, [swagger doc](https://github.com/nestjs/swagger) and [JWT or OAuth2 passport auth](https://github.com/nestjs/passport) services
 
-> -   The app starts with four seed users (admin, basic user and anonymous roles), as standard JHipster monolithic app, with SQLite for dev and configurable sql db for prod. But from the 1.5.0 release you can choose mongodb that uses an embedded version for dev/test
+> -   The app starts with four seed users (admin, basic user and anonymous roles), as standard JHipster monolithic app, with SQLite for dev and configurable sql db for prod. But from the 1.5.0 release you can choose mongodb that uses a memory version for dev/test
 
 > -   The app uses [TypeORM](https://github.com/nestjs/typeorm) and asks you a question for another sql db or for mongodb
 
@@ -189,7 +189,7 @@ $ npm link
 $ cd ..
 $ git clone https://github.com/jhipster/generator-jhipster.git
 $ cd generator-jhipster
-$ git checkout v6.8.0
+$ git checkout v7.0.0
 $ npm install
 $ npm link
 $ cd ..

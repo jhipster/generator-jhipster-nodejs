@@ -4,7 +4,7 @@ import { AppModule } from '../src/app.module';
 import { INestApplication } from '@nestjs/common';
 import { AuthGuard } from '../src/security/guards/auth.guard';
 import { RolesGuard } from '../src/security/guards/roles.guard';
-import { <%= entityClass %>DTO }  from '../src/service/dto/<%= entityFileName %>.dto';
+import { <%= entityClass %>DTO } from '../src/service/dto/<%= entityFileName %>.dto';
 import { <%= entityClass %>Service } from '../src/service/<%= entityFileName %>.service';
 
 describe('<%= entityClass %> Controller', () => {
@@ -80,6 +80,20 @@ describe('<%= entityClass %> Controller', () => {
 
         const updatedEntity: <%= entityClass %>DTO = (await request(app.getHttpServer())
             .put('/api/<%= entityApiUrl %>')
+            .send(entityMock)
+            .expect(201)).body;
+
+
+        expect(updatedEntity).toEqual(entityMock);
+
+    }
+    );
+
+    it('/PUT update <%= entityApiUrl %> from id', async () => {
+
+
+        const updatedEntity: <%= entityClass %>DTO = (await request(app.getHttpServer())
+            .put('/api/<%= entityApiUrl %>/' + entityMock.id)
             .send(entityMock)
             .expect(201)).body;
 

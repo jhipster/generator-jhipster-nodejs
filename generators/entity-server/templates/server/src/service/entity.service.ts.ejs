@@ -58,8 +58,13 @@ export class <%= entityClass %>Service {
 
       async update(<%= asEntity(entityInstance) %>DTO: <%= entityClass %>DTO): Promise<<%= entityClass %>DTO | undefined> {
         const entity = <%= entityClass %>Mapper.fromDTOtoEntity(<%= asEntity(entityInstance) %>DTO);
+      <%_ if (databaseType === 'mongodb') { _%>
+        await this.<%= asEntity(entityInstance) %>Repository.update(entity.id, entity);
+        return <%= asEntity(entityInstance) %>DTO;
+      <%_ } else { _%>
         const result = await this.<%= asEntity(entityInstance) %>Repository.save(entity);
         return <%= entityClass %>Mapper.fromEntityToDTO(result);
+      <%_ } _%>
       }
 
       async deleteById(id: string): Promise<void | undefined> {

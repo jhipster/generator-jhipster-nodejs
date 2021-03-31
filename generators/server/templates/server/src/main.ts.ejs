@@ -97,14 +97,14 @@ function registerAsEurekaService(): void {
         ipAddr: config.get('ipAddress') || '127.0.0.1',
         status: `UP`,
         port: {
-          '$': port,
+           $: port,
           '@enabled': 'true',
         },
         vipAddress: config.get('ipAddress') || 'localhost',
         homePageUrl: `http://${config.get('ipAddress')}:${port}/`,
         dataCenterInfo: {
           '@class': 'com.netflix.appinfo.InstanceInfo$DefaultDataCenterInfo',
-          'name': 'MyOwn',
+           name : 'MyOwn',
         },
       },
       eureka: {
