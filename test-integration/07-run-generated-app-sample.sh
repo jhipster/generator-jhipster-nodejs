@@ -58,13 +58,13 @@ launchCurlOrProtractor() {
 
 runOnlyServerApp() {
     echo "***${GREEN}node env : "$1
-    NODE_ENV=$1 node dist/main.js &
+    BACKEND_ENV=$1 node dist/main.js &
     echo $! > .pidRunApp
 }
 
 runApp() {
     echo "***${GREEN}node env : "$1
-    NODE_ENV=$1 npm run start:app &
+    BACKEND_ENV=$1 npm run start:app &
     echo $! > .pidRunApp
 }
 

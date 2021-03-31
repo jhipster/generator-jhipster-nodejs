@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { <%_ if (authenticationType === 'jwt') { _%> Body, Param, Post, Res, UseGuards, <%_ } _%> Controller, Get, Logger, Req, UseInterceptors } from '@nestjs/common';
 <%_ if (authenticationType === 'jwt') { _%>
 import { Response, Request } from 'express';
@@ -65,7 +66,16 @@ export class AccountController {
   })
   async getAccount(@Req() req: Request): Promise<any> {
     const user: any = req.user;
-    return await this.authService.getAccount(user.id);
+    const userProfileFound = await this.authService.getAccount(user.id);
+    <%_ if (databaseType === 'mongodb') { _%>
+    if (userProfileFound && !userProfileFound.firstName) {
+        userProfileFound.firstName ='';
+    }
+    if (userProfileFound && !userProfileFound.lastName) {
+        userProfileFound.lastName ='';
+    }
+    <%_ } _%>
+    return userProfileFound;
   }
 
   @Post('/account')
@@ -139,6 +149,20 @@ export class AccountController {
     return this.authService.getAccount(userDTO);
   }
 
+  <%_ } else {_%>
+
+  @Get('/account')
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard)
+  @ApiOperation({ title: 'Get the current user.' })
+  @ApiResponse({
+    status: 200,
+    description: 'user retrieved',
+  })
+  async getAccount(@Req() req: Request): Promise<any> {
+    const user: any = req.user;
+    return await this.authService.getAccount(user.id);
+  }
   <%_ } _%>
 
 }

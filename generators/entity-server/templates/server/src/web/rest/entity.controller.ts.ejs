@@ -80,6 +80,19 @@ export class <%= entityClass %>Controller {
     return await this.<%= asEntity(entityInstance) %>Service.update(<%= asEntity(entityInstance) %>DTO);
   }
 
+  @Put('/:id')
+  @Roles(RoleType.ADMIN)
+  @ApiOperation({ title: 'Update <%= asEntity(entityInstance) %> with id' })
+  @ApiResponse({
+    status: 200,
+    description: 'The record has been successfully updated.',
+    type: <%= entityClass %>DTO,
+  })
+  async putId(@Req() req: Request, @Body() <%= asEntity(entityInstance) %>DTO: <%= entityClass %>DTO): Promise<<%= entityClass %>DTO>  {
+    HeaderUtil.addEntityCreatedHeaders(req.res, '<%= entityClass %>', <%= asEntity(entityInstance) %>DTO.id);
+    return await this.<%= asEntity(entityInstance) %>Service.update(<%= asEntity(entityInstance) %>DTO);
+  }
+
   @Delete('/:id')
   @Roles(RoleType.ADMIN)
   @ApiOperation({ title: 'Delete <%= asEntity(entityInstance) %>' })

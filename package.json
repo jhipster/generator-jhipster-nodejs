@@ -1,14 +1,22 @@
 {
     "name": "generator-jhipster-nodejs",
-    "version": "1.4.0",
+    "version": "1.5.0",
     "description": "A NodeJS blueprint that creates the backend using NodeJS with NestJS framework",
     "keywords": [
         "yeoman-generator",
         "jhipster-blueprint",
-        "jhipster-6",
+        "jhipster-7",
         "nodejs"
     ],
     "homepage": "https://github.com/jhipster/generator-jhipster-nodejs",
+    "bugs": {
+        "url": "https://github.com/jhipster/generator-jhipster-nodejs/issues"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/jhipster/generator-jhipster-nodejs.git"
+    },
+    "license": "Apache-2.0",
     "author": {
         "name": "Angelo Manganiello",
         "email": "angelo.mang@libero.it",
@@ -20,23 +28,35 @@
         "Iván García Sainz-Aja (https://github.com/ivangsa)",
         "Daniel Franco <dandrfranco@gmail.com> (https://github.com/DanielFran)"
     ],
+    "main": "generators/app/index.js",
+    "bin": {
+        "nhipster": "./cli/nhipster.js"
+    },
     "files": [
         "generators",
         "cli"
     ],
-    "bin": {
-        "nhipster": "./cli/nhipster.js"
+    "scripts": {
+        "ejs-lint": "npm run test:unit -- test/ejslint.js",
+        "ejslint": "ejslint",
+        "eslint": "eslint . --no-eslintrc --config .generator.eslintrc.json ",
+        "jsdoc": "jsdoc --configure jsdoc-conf.json",
+        "lint": "npm run eslint && npm run ejs-lint",
+        "lint-fix": "npm run prettier:format && npm run eslint -- --fix",
+        "prettier:format": "prettier --write \"{,**/}*.{js,json,md,yml}\"",
+        "sonar:scanner": "sonar-scanner",
+        "pretest": "npm run lint",
+        "test": "npm run test:unit -- test/*.spec.js",
+        "test:unit": "nyc --reporter=lcov mocha --timeout 20000 --slow 0"
     },
-    "main": "generators/app/index.js",
-    "repository": {
-        "type": "git",
-        "url": "git+https://github.com/jhipster/generator-jhipster-nodejs.git"
-    },
+    "pre-commit": [
+        "lint"
+    ],
     "dependencies": {
         "chalk": "2.4.2",
         "commander": "2.20.0",
         "ejs": "2.6.1",
-        "generator-jhipster": "6.8.0",
+        "generator-jhipster": "7.0.0",
         "lodash": "4.17.19",
         "meow": "5.0.0",
         "semver": "6.1.1",
@@ -60,30 +80,13 @@
         "sinon": "7.3.2",
         "sonarqube-scanner": "2.5.0",
         "yeoman-assert": "3.1.1",
-        "yeoman-test": "2.2.0"
+        "yeoman-test": "5.1.0"
     },
-    "scripts": {
-        "prettier:format": "prettier --write \"{,**/}*.{js,json,md,yml}\"",
-        "lint": "npm run eslint && npm run ejs-lint",
-        "lint-fix": "npm run prettier:format && npm run eslint -- --fix",
-        "eslint": "eslint . --no-eslintrc --config .generator.eslintrc.json ",
-        "ejs-lint": "npm run test:unit -- test/ejslint.js",
-        "ejslint": "ejslint",
-        "pretest": "npm run lint",
-        "sonar:scanner": "sonar-scanner",
-        "test": "npm run test:unit -- test/*.spec.js",
-        "test:unit": "nyc --reporter=lcov mocha --timeout 20000 --slow 0",
-        "jsdoc": "jsdoc --configure jsdoc-conf.json"
+    "peerDependencies": {
+        "yeoman-environment": "3.2.0"
     },
-    "pre-commit": [
-        "lint"
-    ],
     "engines": {
         "node": ">=8.10.0",
         "npm": ">=5.6.0"
-    },
-    "license": "Apache-2.0",
-    "bugs": {
-        "url": "https://github.com/jhipster/generator-jhipster-nodejs/issues"
     }
 }

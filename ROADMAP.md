@@ -53,11 +53,11 @@ To contribute for the next featues, fork the repo and open a pull request regard
 -   [x] DTOs based rest api
 -   [x] Validation
 -   [x] Add MongoDB support with docker compose and embedded for dev/test
+-   [x] Upgrade Jhipster 7.0.0 with Vue
 
 ## To DO for next release
 
 -   [ ] Export json/yaml for swagger to integrate with jhipster gateway
--   [ ] pagination options in client
 -   [ ] Elastic Search support
 -   [ ] Search api
 -   [ ] Admin services sending email (for new user and change password api)

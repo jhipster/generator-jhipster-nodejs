@@ -13,11 +13,11 @@ describe('Subgenerator nestjs-service of nodejs JHipster blueprint', () => {
             helpers
                 .run('generator-jhipster/generators/spring-service')
                 .inTmpDir(dir => {
-                    fse.copySync(path.join(__dirname, '../test/templates/ngx-blueprint'), dir);
+                    fse.copySync(path.join(__dirname, '../test/templates/react-blueprint'), dir);
                     fse.copySync(path.join(__dirname, '../test/templates/server'), `${dir}/server`);
                 })
                 .withOptions({
-                    'from-cli': true,
+                    fromCli: true,
                     skipInstall: true,
                     blueprints: 'nodejs',
                     skipChecks: true

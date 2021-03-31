@@ -11,13 +11,13 @@ describe('Subgenerator languages of nodejs JHipster blueprint', () => {
             helpers
                 .run('generator-jhipster/generators/languages')
                 .inTmpDir(dir => {
-                    fse.copySync(path.join(__dirname, '../test/templates/ngx-blueprint'), dir);
+                    fse.copySync(path.join(__dirname, '../test/templates/react-blueprint'), dir);
                 })
                 .withOptions({
-                    'from-cli': true,
+                    fromCli: true,
                     skipInstall: true,
-                    blueprints: 'nodejs',
-                    skipChecks: true
+                    skipChecks: true,
+                    blueprints: 'nodejs'
                 })
                 .withGenerators([
                     [

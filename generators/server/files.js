@@ -13,7 +13,7 @@ const serverFiles = {
             templates: [
                 'src/web/rest/user.controller.ts',
                 'src/web/rest/account.controller.ts',
-                'src/web/rest/auth.controller.ts',
+                'src/web/rest/public.user.controller.ts',
                 'src/web/rest/management.controller.ts',
                 'src/repository/user.repository.ts',
                 'src/repository/authority.repository.ts',
@@ -63,6 +63,10 @@ const serverFiles = {
                     file: 'server.eslintignore',
                     renameTo: () => '.server.eslintignore'
                 },
+                {
+                    file: 'prettierrc.js',
+                    renameTo: () => '.prettierrc.js'
+                },
                 'package.json',
                 'tsconfig.json',
                 'README.md',
@@ -74,7 +78,7 @@ const serverFiles = {
     e2e: [
         {
             path: SERVER_NODEJS_DIR,
-            templates: ['e2e/app.e2e-spec.ts', 'e2e/user.e2e-spec.ts', 'e2e/jest.e2e.config.json']
+            templates: ['e2e/app.e2e-spec.ts', 'e2e/user.e2e-spec.ts', 'e2e/jest.e2e.config.json', 'e2e/setup.test.js']
         },
         {
             path: SERVER_NODEJS_DIR,

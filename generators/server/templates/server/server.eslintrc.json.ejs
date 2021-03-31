@@ -5,7 +5,9 @@
     },
     "extends": [
         "plugin:@typescript-eslint/recommended",
-        "plugin:@typescript-eslint/recommended-requiring-type-checking"
+        "plugin:@typescript-eslint/recommended-requiring-type-checking",
+        "prettier/@typescript-eslint", // Uses eslint-config-prettier to disable ESLint rules
+        "plugin:prettier/recommended" // Enables eslint-plugin-prettier
     ],
     "parser": "@typescript-eslint/parser",
     "parserOptions": {
@@ -156,10 +158,6 @@
         ],
         "prefer-arrow-callback": "error",
         "prefer-const": "error",
-        "quote-props": [
-            "error",
-            "consistent-as-needed"
-        ],
         "radix": "error",
         "space-before-function-paren": [
             "error",

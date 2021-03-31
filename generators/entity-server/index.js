@@ -33,24 +33,31 @@ const dbTypes = {
 
 module.exports = class extends EntityServerGenerator {
     constructor(args, opts) {
-        super(args, Object.assign({ fromBlueprint: true }, opts)); // fromBlueprint variable is important
+        super(args, { fromBlueprint: true, ...opts }); // fromBlueprint variable is important
 
-        const jhContext = (this.jhipsterContext = this.options.jhipsterContext);
-
-        if (!jhContext) {
+        if (!this.jhipsterContext) {
             this.error(`This is a JHipster blueprint and should be used only like ${chalk.yellow('jhipster --blueprints nodejs')}`);
         }
+    }
 
-        this.configOptions = jhContext.configOptions || {};
+    get initializing() {
+        return this._initializing();
+    }
+
+    get preparingFields() {
+        return this._preparingFields();
+    }
+
+    get default() {
+        return this._default();
     }
 
     get writing() {
         return writeFiles();
     }
 
-    get end() {
-        // Here we are not overriding this phase and hence its being handled by JHipster
-        return super._end();
+    get postWriting() {
+        return null;
     }
 
     getTsType(fieldType) {

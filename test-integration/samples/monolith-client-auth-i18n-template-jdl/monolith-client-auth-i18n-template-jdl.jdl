@@ -18,7 +18,6 @@ application {
     searchEngine elasticsearch,
     testFrameworks [protractor],
     clientFramework REPLACE_CLIENT_FRAMEWORK,
-    useSass true,
     enableTranslation true,
     nativeLanguage en,
     languages [en, es]

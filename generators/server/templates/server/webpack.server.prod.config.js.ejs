@@ -29,7 +29,7 @@ module.exports = {
     },
     plugins: [
         new webpack.EnvironmentPlugin({
-            NODE_ENV: 'prod',
+            BACKEND_ENV: 'prod',
         }),
     ],
     externals: {

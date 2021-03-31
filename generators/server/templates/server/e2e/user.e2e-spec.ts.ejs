@@ -47,7 +47,7 @@ describe('User', () => {
     it('/POST create user', async () => {
         const createdUser: UserDTO = (
             await request(app.getHttpServer())
-                .post('/api/users')
+                .post('/api/admin/users')
                 .send(testUserRequestObject)
                 .expect(201)
         ).body;
@@ -58,7 +58,7 @@ describe('User', () => {
 
     it('/GET all users', () => {
         request(app.getHttpServer())
-            .get('/api/users')
+            .get('/api/admin/users')
             .expect(200);
     });
 
@@ -69,7 +69,7 @@ describe('User', () => {
 
         const updatedUser: UserDTO = (
             await request(app.getHttpServer())
-                .put('/api/users')
+                .put('/api/admin/users')
                 .send(savedUser)
                 .expect(200)
         ).body;
@@ -89,7 +89,7 @@ describe('User', () => {
 
         const getUser: UserDTO = (
             await request(app.getHttpServer())
-                .get('/api/users/' + savedUser.login)
+                .get('/api/admin/users/' + savedUser.login)
                 .expect(200)
         ).body;
 
@@ -107,7 +107,7 @@ describe('User', () => {
         const savedUser: UserDTO = await service.save(testUserDTO);
 
         await request(app.getHttpServer())
-            .delete('/api/users/' + savedUser.login)
+            .delete('/api/admin/users/' + savedUser.login)
             .expect(204);
 
         const userUndefined = await service.findById(savedUser.id);

@@ -1,11 +1,36 @@
 {
-    "generator-jhipster-nodejs": {
+    "generator-jhipster": {
+        "blueprints": [
+            {
+                "name": "generator-jhipster-nodejs"
+            }
+        ],
+        "otherModules": [
+            {
+                "name": "generator-jhipster-nodejs"
+            }
+        ],
         "applicationType": "microservice",
         "baseName": "microserviceOauth2SqlJdlApp",
-        "packageName": "com.jhipster.node",
-        "packageFolder": "com/jhipster/node",
+        "logo": false,
+        "skipClient": true,
+        "skipServer": false,
+        "skipUserManagement": true,
+        "skipCheckLengthOfIdentifier": false,
+        "skipFakeData": false,
+        "jhiPrefix": "jhi",
+        "entitySuffix": "",
+        "dtoSuffix": "DTO",
+        "testFrameworks": [],
+        "pages": [],
+        "creationTimestamp": 1615471285814,
+        "composedWith": [],
+        "experimental": false,
+        "optionsParsed": true,
+        "blueprintConfigured": true,
+        "skipPrompts": true,
         "serverPort": "8081",
-        "authenticationType": "oauth2",
+        "packageName": "com.jhipster.node",
         "cacheProvider": "no",
         "enableHibernateCache": false,
         "websocket": false,
@@ -17,17 +42,14 @@
         "serviceDiscoveryType": false,
         "buildTool": "maven",
         "enableSwaggerCodegen": false,
-        "embeddableLaunchScript": false,
-        "enableTranslation": false
-    },
-    "generator-jhipster": {
-        "applicationType": "microservice",
-        "baseName": "microserviceOauth2SqlJdlApp",
-        "testFrameworks": [],
-        "jhiPrefix": "jhi",
-        "entitySuffix": "",
-        "dtoSuffix": "DTO",
+        "authenticationType": "oauth2",
         "enableTranslation": false,
-        "blueprint": "generator-jhipster-nodejs"
+        "nativeLanguage": "en",
+        "packageFolder": "com/jhipster/node",
+        "clientPackageManager": "npm",
+        "reactive": false,
+        "languages": ["en"],
+        "sharedEntities": {},
+        "sharedLiquibaseFakeData": {}
     }
 }

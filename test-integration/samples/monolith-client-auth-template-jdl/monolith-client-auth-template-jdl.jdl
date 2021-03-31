@@ -20,7 +20,6 @@ application {
 		prodDatabaseType mssql,
 		serviceDiscoveryType false,
 		clientPackageManager npm,
-		useSass true,
 		skipUserManagement false,
 		enableTranslation false,
 		clientFramework REPLACE_CLIENT_FRAMEWORK

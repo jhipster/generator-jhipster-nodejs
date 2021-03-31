@@ -63,7 +63,7 @@ export class Config {
 
   <%_ if (!skipClient) { _%>
   public getClientPath(): string {
-    return path.join(__dirname, '../dist/classes/static');
+    return path.join(__dirname, '../dist/static');
   }
   <%_ } _%>
   public addAll(properties): any {
@@ -97,13 +97,14 @@ export class Config {
 }
 
 const yamlConfigPath = path.join(__dirname, 'config', 'application.yml');
-const envYamlConfigPath = path.join(__dirname, 'config', `application-${process.env.NODE_ENV}.yml`);
+const envYamlConfigPath = path.join(__dirname, 'config', `application-${process.env.BACKEND_ENV}.yml`);
 
 const yamlConfig = yaml.safeLoad(fs.readFileSync(yamlConfigPath, 'utf8'));
-logger.log(`Actual process.env.NODE_ENV value: ${process.env.NODE_ENV}`);
+logger.log(`Actual process.env.BACKEND_ENV value: ${process.env.BACKEND_ENV}`);
 logger.log('Standard allowed values are: dev, test or prod');
+logger.log('if you run with a non standard BACKEND_ENV value, remember to add your application-{process.env.BACKEND_ENV}.yml file');
 if (!fs.existsSync(envYamlConfigPath)) {
-   logger.error('does not exist under your config folder an application-{process.env.NODE_ENV}.yml file with your process.env.NODE_ENV value');
+   logger.error('An application-{process.env.BACKEND_ENV}.yml file with your process.env.BACKEND_ENV value does not exist under config folder!');
 }
 const envYamlConfig = yaml.safeLoad(fs.readFileSync(envYamlConfigPath, 'utf8'));
 

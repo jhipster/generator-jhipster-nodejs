@@ -1,4 +1,4 @@
-import { Injectable, <%_ if (authenticationType === 'jwt') { _%> HttpException, HttpStatus,  <%_ } _%>  Logger } from '@nestjs/common';
+import { Injectable, <%_ if (authenticationType === 'jwt') { _%> HttpException, HttpStatus,  <%_ } _%> Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 <%_ if (authenticationType === 'jwt') { _%>
 import { JwtService } from '@nestjs/jwt';
@@ -8,6 +8,8 @@ import { Payload } from '../security/payload.interface';
 import { AuthorityRepository } from '../repository/authority.repository';
 import { UserService } from '../service/user.service';
 import { UserDTO } from './dto/user.dto';
+import { FindManyOptions } from 'typeorm';
+
 
 @Injectable()
 export class AuthService {
@@ -98,7 +100,8 @@ export class AuthService {
     if (!userFind) {
         throw new HttpException('Invalid login name!', HttpStatus.BAD_REQUEST);
     }
-    if (userFind.email && userFind.email !== newUserInfo.email) {
+    const userFindEmail: UserDTO = await this.userService.findByfields({ where: { email: newUserInfo.email } });
+    if (userFindEmail && newUserInfo.email !== userFind.email) {
         throw new HttpException('Email is already in use!', HttpStatus.BAD_REQUEST);
     }
 
@@ -134,5 +137,9 @@ export class AuthService {
    }
 
   <%_ } _%>
+
+  async getAllUsers(options: FindManyOptions<UserDTO>): Promise<[UserDTO[], number]> {
+    return await this.userService.findAndCount(options);
+ }
 
 }
