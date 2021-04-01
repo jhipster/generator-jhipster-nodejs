@@ -1,7 +1,6 @@
 /* eslint-disable consistent-return */
 const chalk = require('chalk');
 const ClientGenerator = require('generator-jhipster/generators/client');
-// const jhipsterPackagejs = require('generator-jhipster/package.json');
 const constants = require('../generator-nodejs-constants');
 const writeFiles = require('./files').writeFiles;
 
@@ -14,8 +13,6 @@ module.exports = class extends ClientGenerator {
         if (!jhContext) {
             this.error(`This is a JHipster blueprint and should be used only like ${chalk.yellow('jhipster --blueprints nodejs')}`);
         }
-
-        this.configOptions = jhContext.configOptions || {};
 
         // This adds support for a `--skip-i18n` flag for unit test
         this.option('skip-i18n', {
@@ -31,7 +28,6 @@ module.exports = class extends ClientGenerator {
             // variables to use in templates
             setupCustomClientConsts() {
                 this.SERVER_NODEJS_SRC_DIR = constants.SERVER_NODEJS_SRC_DIR;
-                // this.packagejs = jhipsterPackagejs;
             }
         };
         return { ...initPhaseFromJHipster, ...initNodeClientPhaseSteps };

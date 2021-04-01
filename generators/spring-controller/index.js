@@ -13,8 +13,6 @@ module.exports = class extends SpringControllerGenerator {
         if (!jhContext) {
             this.error(`This is a JHipster blueprint and should be used only like ${chalk.yellow('jhipster --blueprints nodejs')}`);
         }
-
-        this.configOptions = jhContext.configOptions || {};
     }
 
     get initializing() {
