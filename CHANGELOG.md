@@ -13,7 +13,7 @@
 <a name="1.0.0-alpha.3"></a>
 <a name="1.0.0-alpha.2"></a>
 
-# [2.0.0-beta.1](https://github.com/jhipster/generator-jhipster-nodejs/tree/v2.0.0-beta.1) - XX/XX/2021 released date
+# [2.0.0-beta.1](https://github.com/jhipster/generator-jhipster-nodejs/tree/v2.0.0-beta.1) - 08/04/2021 released date
 
 -   Update class-validator to 0.13.1 to fix "matches" (regexp validator modifiers) [issue #215](https://github.com/jhipster/generator-jhipster-nodejs/issues/215)
 -   Vue.js support from 7.x jhipster upgrade [issue #158](https://github.com/jhipster/generator-jhipster-nodejs/issues/158)
