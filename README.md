@@ -23,7 +23,7 @@
 
 > ## Notes
 >
-> For the features of the last release refers to [CHANGELOG.md](https://github.com/jhipster/generator-jhipster-nodejs/blob/master/CHANGELOG.md).
+> For the features of the last release refers to [CHANGELOG.md](https://github.com/jhipster/generator-jhipster-nodejs/tree/v2.0.0-beta.1/CHANGELOG.md).
 
 > ## Demo
 >
