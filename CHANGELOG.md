@@ -1,3 +1,4 @@
+<a name="2.0.0"></a>
 <a name="2.0.0-beta.1"></a>
 <a name="1.5.0"></a>
 <a name="1.4.0"></a>
@@ -12,6 +13,10 @@
 <a name="1.0.0-beta.1"></a>
 <a name="1.0.0-alpha.3"></a>
 <a name="1.0.0-alpha.2"></a>
+
+# [2.0.0](https://github.com/jhipster/generator-jhipster-nodejs/tree/v2.0.0) - xx/xx/2021 released date
+
+-   Entity name duplicated into app.module.ts imports every time entity updated [issue #219](https://github.com/jhipster/generator-jhipster-nodejs/issues/219)
 
 # [2.0.0-beta.1](https://github.com/jhipster/generator-jhipster-nodejs/tree/v2.0.0-beta.1) - 08/04/2021 released date
 
