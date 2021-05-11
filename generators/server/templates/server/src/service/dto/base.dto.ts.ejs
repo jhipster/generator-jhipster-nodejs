@@ -1,10 +1,10 @@
 
 /**
- * A DTO base objct.
+ * A DTO base object.
  */
 export class BaseDTO  {
 
-  id?: string;
+  id?:<%_ if (getPkType(databaseType) === 'Long') { _%>number<%_ } else { _%>string<%_ } _%>;
 
   createdBy?: string;
 

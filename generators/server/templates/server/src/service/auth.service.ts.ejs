@@ -10,6 +10,10 @@ import { UserService } from '../service/user.service';
 import { UserDTO } from './dto/user.dto';
 import { FindManyOptions } from 'typeorm';
 
+<%_
+const userIdType = getPkType(databaseType) === 'Long' ? 'number' : 'string';
+_%>
+
 
 @Injectable()
 export class AuthService {
@@ -51,7 +55,7 @@ export class AuthService {
     return await this.findUserWithAuthById(payload.id);
   }
 
-  async findUserWithAuthById(userId: string): Promise<UserDTO | undefined> {
+  async findUserWithAuthById(userId: <%= userIdType %>): Promise<UserDTO | undefined> {
     <%_ if (databaseType === 'mongodb') { _%>
     const userDTO: UserDTO = await this.userService.findById(userId);
     <%_ } else { _%>
@@ -60,7 +64,7 @@ export class AuthService {
     return userDTO;
   }
 
-  async getAccount(userId: string): Promise<UserDTO | undefined> {
+  async getAccount(userId: <%= userIdType %>): Promise<UserDTO | undefined> {
     const userDTO: UserDTO = await this.findUserWithAuthById(userId);
     if (!userDTO) {
        return;
