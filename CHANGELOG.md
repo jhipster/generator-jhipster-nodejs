@@ -16,6 +16,7 @@
 
 # [2.0.0](https://github.com/jhipster/generator-jhipster-nodejs/tree/v2.0.0) - xx/xx/2021 released date
 
+-   Support JHipster primary key type [issue #230](https://github.com/jhipster/generator-jhipster-nodejs/issues/230)
 -   Entity name duplicated into app.module.ts imports every time entity updated [issue #219](https://github.com/jhipster/generator-jhipster-nodejs/issues/219)
 
 # [2.0.0-beta.1](https://github.com/jhipster/generator-jhipster-nodejs/tree/v2.0.0-beta.1) - 08/04/2021 released date
