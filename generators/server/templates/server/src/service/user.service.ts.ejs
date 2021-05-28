@@ -10,7 +10,7 @@ import { FindManyOptions, FindOneOptions } from 'typeorm';
 export class UserService {
     constructor(@InjectRepository(UserRepository) private userRepository: UserRepository) {}
 
-    async findById(id: string): Promise<UserDTO | undefined> {
+    async findById(id: <%= getPkType(databaseType) === 'Long' ? 'number' : 'string' %>): Promise<UserDTO | undefined> {
         const result = await this.userRepository.findOne(id);
         return UserMapper.fromEntityToDTO(this.flatAuthorities(result))
     }
