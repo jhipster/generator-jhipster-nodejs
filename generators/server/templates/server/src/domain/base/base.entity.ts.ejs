@@ -4,10 +4,14 @@ export abstract class BaseEntity {
 
 <%_ if (databaseType === 'mongodb') { _%>
     @ObjectIdColumn({ name: '_id' })
-<%_ } else { _%>
+    id?: string;
+<%_ } else if (getPkType(databaseType) === 'UUID') { _%>
     @PrimaryGeneratedColumn('uuid')
+    id?: string;
+<%_ } else { _%>
+    @PrimaryGeneratedColumn()
+    id?: number;
 <%_ } _%>
-   id?: string;
 
    @Column({ nullable: true })
    createdBy?: string;
