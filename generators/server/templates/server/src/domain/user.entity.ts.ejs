@@ -1,8 +1,8 @@
 import { Authority } from './authority.entity';
-import { Entity, Column <%_ if (databaseType !== 'mongodb') { _%>, ManyToMany, JoinTable <%_ } _%> } from 'typeorm';
+import { Entity, Column, BeforeInsert, BeforeUpdate <%_ if (databaseType !== 'mongodb') { _%>, ManyToMany, JoinTable <%_ } _%> } from 'typeorm';
 import { BaseEntity } from './base/base.entity';
+import * as bcrypt from 'bcrypt';
 import { config } from '../config';
-import { EncryptionTransformer } from "typeorm-encrypted";
 
 @Entity('nhi_user')
 export class User extends BaseEntity {
@@ -30,12 +30,6 @@ export class User extends BaseEntity {
 
   @Column({
     type: "varchar",
-    transformer: new EncryptionTransformer({
-      key: config.get('crypto.key'),
-      algorithm: 'aes-256-cbc',
-      ivLength: 16,
-      iv: config.get('crypto.iv')
-    }),
     select: false
   })
   password: string;
@@ -47,4 +41,12 @@ export class User extends BaseEntity {
   resetKey?: string;
   @Column({ nullable: true })
   resetDate?: Date;
+
+  @BeforeInsert()
+  @BeforeUpdate()
+  async hashPassword?(): Promise<void> {
+    if (this.password) {
+      this.password = await bcrypt.hash(this.password, config.get('jhipster.security.authentication.jwt.hash-salt-or-rounds'));
+    }
+  }
 }

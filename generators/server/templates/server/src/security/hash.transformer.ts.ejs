@@ -1,0 +1,17 @@
+import { ValueTransformer } from 'typeorm';
+import * as bcrypt from 'bcrypt';
+import { config } from '../config';
+
+export class HashTransformer implements ValueTransformer {
+    from(value: string): string {
+        return value;
+    }
+
+    to(value: string): string {
+        if (value) {
+            return bcrypt.hashSync(value, config.get('jhipster.security.authentication.jwt.hash-salt-or-rounds'));
+        }  else {
+            return value;
+        }
+    }
+}

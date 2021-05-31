@@ -9,6 +9,7 @@ import { AuthorityRepository } from '../repository/authority.repository';
 import { UserService } from '../service/user.service';
 import { UserDTO } from './dto/user.dto';
 import { FindManyOptions } from 'typeorm';
+import * as bcrypt from 'bcrypt';
 
 <%_
 const userIdType = getPkType(databaseType) === 'Long' ? 'number' : 'string';
@@ -31,8 +32,9 @@ export class AuthService {
     const loginUserName = userLogin.username;
     const loginPassword = userLogin.password;
 
-    const userFind = await this.userService.findByfields({ where: { login: loginUserName, password: loginPassword } });
-    if (!userFind) {
+    const userFind = await this.userService.findByfields({ where: { login: loginUserName }, select: ['id', 'login', 'password', 'activated'] });
+    const validPassword = !!userFind && await bcrypt.compare(loginPassword, userFind.password);
+    if (!userFind || !validPassword) {
         throw new HttpException('Invalid login name or password!', HttpStatus.BAD_REQUEST);
     }
 
@@ -77,7 +79,7 @@ export class AuthService {
     if (!userFind) {
         throw new HttpException('Invalid login name!', HttpStatus.BAD_REQUEST);
     }
-    if (userFind.password !== currentClearTextPassword ) {
+    if (!(await bcrypt.compare(currentClearTextPassword, userFind.password))) {
         throw new HttpException('Invalid password!', HttpStatus.BAD_REQUEST);
     }
     userFind.password = newPassword;
