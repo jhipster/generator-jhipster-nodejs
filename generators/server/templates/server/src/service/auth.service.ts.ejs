@@ -73,7 +73,7 @@ export class AuthService {
   }
 
   async changePassword(userLogin: string, currentClearTextPassword: string, newPassword: string): Promise<void> {
-    const userFind: UserDTO = await this.userService.findByfields({ where: { login: userLogin } });
+    const userFind: UserDTO = await this.userService.findByfields({ where: { login: userLogin }, select: [ 'id', 'password' ] });
     if (!userFind) {
         throw new HttpException('Invalid login name!', HttpStatus.BAD_REQUEST);
     }

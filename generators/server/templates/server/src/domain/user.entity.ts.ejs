@@ -35,7 +35,8 @@ export class User extends BaseEntity {
       algorithm: 'aes-256-cbc',
       ivLength: 16,
       iv: config.get('crypto.iv')
-    })
+    }),
+    select: false
   })
   password: string;
   @Column({ nullable: true })
