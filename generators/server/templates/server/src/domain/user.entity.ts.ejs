@@ -1,8 +1,10 @@
 import { Authority } from './authority.entity';
-import { Entity, Column, BeforeInsert, BeforeUpdate <%_ if (databaseType !== 'mongodb') { _%>, ManyToMany, JoinTable <%_ } _%> } from 'typeorm';
+import { Entity, Column<%_ if (authenticationType === 'jwt') { _%>, BeforeInsert, BeforeUpdate<%_ } _%> <%_ if (databaseType !== 'mongodb') { _%>, ManyToMany, JoinTable <%_ } _%> } from 'typeorm';
 import { BaseEntity } from './base/base.entity';
+<%_ if (authenticationType === 'jwt') { _%>
 import * as bcrypt from 'bcrypt';
 import { config } from '../config';
+<% } %>
 
 @Entity('nhi_user')
 export class User extends BaseEntity {
@@ -42,6 +44,7 @@ export class User extends BaseEntity {
   @Column({ nullable: true })
   resetDate?: Date;
 
+<%_ if (authenticationType === 'jwt') { _%>
   @BeforeInsert()
   @BeforeUpdate()
   async hashPassword?(): Promise<void> {
@@ -49,4 +52,5 @@ export class User extends BaseEntity {
       this.password = await bcrypt.hash(this.password, config.get('jhipster.security.authentication.jwt.hash-salt-or-rounds'));
     }
   }
+<%_ } _%>
 }

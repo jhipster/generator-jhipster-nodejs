@@ -37,7 +37,9 @@
     <%_ } _%>
     "@nestjs/swagger": "3.1.0",
     "@nestjs/typeorm": "7.1.4",
+    <%_ if (authenticationType === 'jwt') { _%>
     "bcrypt": "5.0.1",
+    <%_ } _%>
     "class-transformer": "0.3.1",
     "class-validator": "0.13.1",
     "cloud-config-client": "1.4.2",
