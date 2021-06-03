@@ -41,7 +41,7 @@ launchCurlOrProtractor() {
       do
         result=0
         echo "***${GREEN}run protractor e2e test in client for : "$1
-        node node_modules/webdriver-manager/bin/webdriver-manager update --gecko false && JHI_E2E_HEADLESS=true npm run e2e
+        node node_modules/webdriver-manager/bin/webdriver-manager update --gecko false --versions.chrome 90.0.4430.24 && JHI_E2E_HEADLESS=true npm run e2e
         result=$?
         [ $result -eq 0 ] && break
         retryCount=$((retryCount+1))
