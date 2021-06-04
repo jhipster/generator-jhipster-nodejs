@@ -1,6 +1,8 @@
 import { ApiModelProperty } from '@nestjs/swagger';
 import { IsString, IsEmail } from 'class-validator';
 import { BaseDTO } from './base.dto';
+import { Exclude } from 'class-transformer';
+
 /**
  * An User DTO object.
  */
@@ -33,6 +35,7 @@ export class UserDTO extends BaseDTO {
   })
   authorities?: any[];
 
+  @Exclude()
   @ApiModelProperty({ example: 'myuser', description: 'User password' })
   password: string;
 

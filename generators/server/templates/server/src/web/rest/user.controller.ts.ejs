@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Logger, Param, Post, Put, UseGuards, Req, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Logger, Param, Post, Put, UseGuards, Req, UseInterceptors, ClassSerializerInterceptor } from '@nestjs/common';
 import { Request } from 'express';
 import { AuthGuard, Roles, RolesGuard, RoleType } from '../../security';
 import { PageRequest, Page } from '../../domain/base/pagination.entity';
@@ -10,7 +10,7 @@ import { UserService } from '../../service/user.service';
 
 @Controller('api/admin/users')
 @UseGuards(AuthGuard, RolesGuard)
-@UseInterceptors(LoggingInterceptor)
+@UseInterceptors(LoggingInterceptor, ClassSerializerInterceptor)
 <%_ if (authenticationType === 'jwt') { _%>
 @ApiBearerAuth()
 <%_ } else if (authenticationType === 'oauth2') { _%>

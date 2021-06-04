@@ -31,6 +31,7 @@ const serverFiles = {
                 'src/security/guards/roles.guard.ts',
                 'src/security/guards/auth.guard.ts',
                 'src/security/role-type.ts',
+                'src/security/password-util.ts',
                 'src/security/decorators/auth-user.decorator.ts',
                 'src/security/decorators/roles.decorator.ts',
                 'src/security/index.ts',
