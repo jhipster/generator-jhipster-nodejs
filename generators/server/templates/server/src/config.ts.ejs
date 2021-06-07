@@ -14,6 +14,7 @@ export class Config {
   'jhipster.security.authentication.jwt.base64-secret' = '';
   'jhipster.security.authentication.jwt.token-validity-in-seconds' = 86400;
   'jhipster.security.authentication.jwt.token-validity-in-seconds-for-remember-me' = 2592000;
+  'jhipster.security.authentication.jwt.hash-salt-or-rounds' = 10;
 <%_ } else if (authenticationType === 'oauth2') { _%>
   'jhipster.security.session.secret' = '';
   'jhipster.security.oauth2.client.provider.oidc.issuer-uri' = '';
@@ -49,9 +50,7 @@ export class Config {
   'cloud.config.uri' = 'http://admin:${jhipster.registry.password}@localhost:8761/config';
   'cloud.config.name' = '<%= baseName %>';
   'cloud.config.profile' = 'prod';
-  'loud.config.label' = 'master';
-  'crypto.key' = '3772c1cdbd27c225735d116d1e4c5421a3aec26c919cc7ab457f21a4d16a1821';
-  'crypto.iv' = '54f3ad979d9262d3a2dd4489531daf34';
+  'cloud.config.label' = 'master';
 
   constructor(properties) {
     this.addAll(properties);

@@ -59,7 +59,7 @@ describe('Account', () => {
         await app.init();
         service = moduleFixture.get<UserService>(UserService);
         authService = moduleFixture.get<AuthService>(AuthService);
-        userAuthenticated = await service.save(testUserAuthenticated);
+        userAuthenticated = await service.save(testUserAuthenticated, true);
     });
 
     it('/POST register new user', async () => {
