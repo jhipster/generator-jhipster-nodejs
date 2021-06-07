@@ -34,6 +34,7 @@ const serverFiles = {
                 'src/security/password-util.ts',
                 'src/security/decorators/auth-user.decorator.ts',
                 'src/security/decorators/roles.decorator.ts',
+                'src/security/request.ts',
                 'src/security/index.ts',
                 'src/client/header-util.ts',
                 'src/client/interceptors/logging.interceptor.ts',

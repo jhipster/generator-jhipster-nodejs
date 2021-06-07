@@ -57,8 +57,8 @@ describe('Account', () => {
 
         app = moduleFixture.createNestApplication();
         await app.init();
-        service = moduleFixture.get<UserService>(UserService);
-        authService = moduleFixture.get<AuthService>(AuthService);
+        service = await moduleFixture.resolve<UserService>(UserService);
+        authService = await moduleFixture.resolve<AuthService>(AuthService);
         userAuthenticated = await service.save(testUserAuthenticated, true);
     });
 
@@ -119,7 +119,7 @@ describe('Account', () => {
             .send(savedTestUser)
             .expect(201);
 
-        const updatedUserSettings: UserDTO = await service.findByfields({ where: { login: testUserAuthenticated.login } });
+        const updatedUserSettings: UserDTO = await service.findByFields({ where: { login: testUserAuthenticated.login } });
         expect(updatedUserSettings.firstName).toEqual(savedTestUser.firstName);
         expect(updatedUserSettings.lastName).toEqual(savedTestUser.lastName);
 

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Inject, Scope } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from '../domain/user.entity';
 import { UserDTO } from './dto/user.dto';
@@ -6,17 +6,20 @@ import { UserMapper } from './mapper/user.mapper';
 import { UserRepository } from '../repository/user.repository';
 import { FindManyOptions, FindOneOptions } from 'typeorm';
 import { transformPassword } from '../security';
+import { REQUEST } from '@nestjs/core';
+import { Request } from '../security'
 
-@Injectable()
+@Injectable({ scope: Scope.REQUEST })
 export class UserService {
-    constructor(@InjectRepository(UserRepository) private userRepository: UserRepository) {}
+    constructor(@InjectRepository(UserRepository) private userRepository: UserRepository,
+                @Inject(REQUEST) private readonly request: Request) {}
 
     async findById(id: <%= getPkType(databaseType) === 'Long' ? 'number' : 'string' %>): Promise<UserDTO | undefined> {
         const result = await this.userRepository.findOne(id);
         return UserMapper.fromEntityToDTO(this.flatAuthorities(result))
     }
 
-    async findByfields(options: FindOneOptions<UserDTO>): Promise<UserDTO | undefined> {
+    async findByFields(options: FindOneOptions<UserDTO>): Promise<UserDTO | undefined> {
         <%_ if (databaseType !== 'mongodb') { _%>
         options.relations = ['authorities'];
         <%_ } _%>
@@ -47,12 +50,17 @@ export class UserService {
         if (updatePassword) {
             await transformPassword(user);
         }
+        if (!user.createdBy) {
+          user.createdBy = this.request?.user?.login || null;
+        }
+        user.lastModifiedBy = this.request?.user?.login || null;
         const result = await this.userRepository.save(user);
         return UserMapper.fromEntityToDTO(this.flatAuthorities(result));
     }
 
     async update(userDTO: UserDTO): Promise<UserDTO | undefined> {
         const user = await this.save(UserMapper.fromDTOtoEntity(userDTO));
+        user.lastModifiedBy = this.request?.user?.login || null;
         return UserMapper.fromEntityToDTO(user);
     }
 

@@ -1,6 +1,9 @@
-import { Injectable, HttpException, HttpStatus, Logger } from '@nestjs/common';
+import { HttpException, HttpStatus, Inject, Injectable, Logger, Scope } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FindManyOptions, FindOneOptions } from 'typeorm';
+import { REQUEST } from '@nestjs/core';
+import { Request } from '../security';
+import { UserDTO } from './dto/user.dto';
 import { <%= entityClass %>DTO }  from '../service/dto/<%= entityFileName %>.dto';
 import { <%= entityClass %>Mapper }  from '../service/mapper/<%= entityFileName %>.mapper';
 import { <%= entityClass %>Repository } from '../repository/<%= entityFileName %>.repository';
@@ -22,11 +25,12 @@ for (idx in relationships) {
 }
 _%>
 
-@Injectable()
+@Injectable({ scope: Scope.REQUEST })
 export class <%= entityClass %>Service {
     logger = new Logger('<%= entityClass %>Service');
 
-    constructor(@InjectRepository(<%= entityClass %>Repository) private <%= asEntity(entityInstance) %>Repository: <%= entityClass %>Repository) {}
+    constructor(@InjectRepository(<%= entityClass %>Repository) private <%= asEntity(entityInstance) %>Repository: <%= entityClass %>Repository,
+                @Inject(REQUEST) private readonly request: Request) {}
 
       async findById(id: string): Promise<<%= entityClass %>DTO | undefined> {
         const options = { relations: relationshipNames };
@@ -34,7 +38,7 @@ export class <%= entityClass %>Service {
         return <%= entityClass %>Mapper.fromEntityToDTO(result);
       }
 
-      async findByfields(options: FindOneOptions<<%= entityClass %>DTO>): Promise<<%= entityClass %>DTO | undefined> {
+      async findByFields(options: FindOneOptions<<%= entityClass %>DTO>): Promise<<%= entityClass %>DTO | undefined> {
         const result = await this.<%= asEntity(entityInstance) %>Repository.findOne(options);
         return <%= entityClass %>Mapper.fromEntityToDTO(result);
       }
@@ -52,12 +56,17 @@ export class <%= entityClass %>Service {
 
       async save(<%= asEntity(entityInstance) %>DTO: <%= entityClass %>DTO): Promise<<%= entityClass %>DTO | undefined> {
         const entity = <%= entityClass %>Mapper.fromDTOtoEntity(<%= asEntity(entityInstance) %>DTO);
+        if (!entity.createdBy) {
+          entity.createdBy = this.request?.user?.login || null;
+        }
+        entity.lastModifiedBy = this.request?.user?.login || null;
         const result = await this.<%= asEntity(entityInstance) %>Repository.save(entity);
         return <%= entityClass %>Mapper.fromEntityToDTO(result);
       }
 
       async update(<%= asEntity(entityInstance) %>DTO: <%= entityClass %>DTO): Promise<<%= entityClass %>DTO | undefined> {
         const entity = <%= entityClass %>Mapper.fromDTOtoEntity(<%= asEntity(entityInstance) %>DTO);
+        entity.lastModifiedBy = this.request?.user?.login || null;
       <%_ if (databaseType === 'mongodb') { _%>
         await this.<%= asEntity(entityInstance) %>Repository.update(entity.id, entity);
         return <%= asEntity(entityInstance) %>DTO;
