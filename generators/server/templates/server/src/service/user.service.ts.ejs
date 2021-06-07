@@ -5,6 +5,7 @@ import { UserDTO } from './dto/user.dto';
 import { UserMapper } from './mapper/user.mapper';
 import { UserRepository } from '../repository/user.repository';
 import { FindManyOptions, FindOneOptions } from 'typeorm';
+import { transformPassword } from '../security';
 
 @Injectable()
 export class UserService {
@@ -41,8 +42,11 @@ export class UserService {
         return resultList;
     }
 
-    async save(userDTO: UserDTO): Promise<UserDTO | undefined> {
+    async save(userDTO: UserDTO, updatePassword = false): Promise<UserDTO | undefined> {
         const user = this.convertInAuthorities(UserMapper.fromDTOtoEntity(userDTO));
+        if (updatePassword) {
+            await transformPassword(user);
+        }
         const result = await this.userRepository.save(user);
         return UserMapper.fromEntityToDTO(this.flatAuthorities(result));
     }

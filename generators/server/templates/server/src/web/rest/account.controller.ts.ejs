@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { <%_ if (authenticationType === 'jwt') { _%> Body, Param, Post, Res, UseGuards, <%_ } _%> Controller, Get, Logger, Req, UseInterceptors } from '@nestjs/common';
+import { <%_ if (authenticationType === 'jwt') { _%> Body, Param, Post, Res, UseGuards, <%_ } _%> Controller, Get, Logger, Req, UseInterceptors, ClassSerializerInterceptor, InternalServerErrorException } from '@nestjs/common';
 <%_ if (authenticationType === 'jwt') { _%>
 import { Response, Request } from 'express';
 import { AuthGuard, Roles, RoleType, RolesGuard } from '../../security';
@@ -11,7 +11,7 @@ import {<%_ if (authenticationType === 'jwt') { _%> ApiBearerAuth, <%_ } _%> Api
 import { AuthService } from '../../service/auth.service';
 
 @Controller('api')
-@UseInterceptors(LoggingInterceptor)
+@UseInterceptors(LoggingInterceptor, ClassSerializerInterceptor)
 @ApiUseTags('account-resource')
 export class AccountController {
   logger = new Logger('AccountController');
@@ -26,7 +26,7 @@ export class AccountController {
     description: 'Registered user',
     type: UserDTO,
   })
-  async registerAccount(@Req() req: Request, @Body() userDTO: UserDTO): Promise <any> {
+  async registerAccount(@Req() req: Request, @Body() userDTO: UserDTO & { password: string }): Promise <any> {
     return await this.authService.registerNewUser(userDTO);
   }
 
@@ -40,7 +40,7 @@ export class AccountController {
     description: 'activated',
   })
   activateAccount(@Param() key: string, @Res() res: Response): any{
-    return res.sendStatus(500);
+    throw new InternalServerErrorException();
   }
 
   @Get('/authenticate')
@@ -116,7 +116,7 @@ export class AccountController {
     type: 'string',
   })
   requestPasswordReset(@Req() req: Request, @Body() email: string, @Res() res: Response): any {
-    return res.sendStatus(500);
+    throw new InternalServerErrorException();
   }
 
   @Post('/account/reset-password/finish')
@@ -129,7 +129,7 @@ export class AccountController {
     type: 'string',
   })
   finishPasswordReset(@Req() req: Request, @Body() keyAndPassword: string, @Res() res: Response): any {
-    return res.sendStatus(500);
+    throw new InternalServerErrorException();
   }
 
   <%_ } else if (authenticationType === 'oauth2') { _%>
