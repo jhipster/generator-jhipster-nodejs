@@ -57,9 +57,9 @@ describe('Account', () => {
 
         app = moduleFixture.createNestApplication();
         await app.init();
-        service = await moduleFixture.resolve<UserService>(UserService);
-        authService = await moduleFixture.resolve<AuthService>(AuthService);
-        userAuthenticated = await service.save(testUserAuthenticated, true);
+        service = moduleFixture.get<UserService>(UserService);
+        authService = moduleFixture.get<AuthService>(AuthService);
+        userAuthenticated = await service.save(testUserAuthenticated, testUserAuthenticated.login, true);
     });
 
     it('/POST register new user', async () => {

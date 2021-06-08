@@ -41,7 +41,7 @@ describe('User', () => {
 
         app = moduleFixture.createNestApplication();
         await app.init();
-        service = await moduleFixture.resolve<UserService>(UserService);
+        service = moduleFixture.get<UserService>(UserService);
     });
 
     it('/POST create user', async () => {
