@@ -3,8 +3,9 @@ import { <% if (authenticationType === 'jwt') { _%> ApiBearerAuth, <% } else if 
 import { <%= entityClass %>DTO } from '../../service/dto/<%= entityFileName %>.dto';
 import { <%= entityClass %>Service } from '../../service/<%= entityFileName %>.service';
 import { PageRequest, Page } from '../../domain/base/pagination.entity';
-import { AuthGuard, Request, Roles, RolesGuard, RoleType } from '../../security';
+import { AuthGuard,  Roles, RolesGuard, RoleType } from '../../security';
 import { HeaderUtil } from '../../client/header-util';
+import { Request } from '../../client/request';
 import { LoggingInterceptor } from '../../client/interceptors/logging.interceptor';
 
 @Controller('api/<%= entityApiUrl %>')
