@@ -1,4 +1,4 @@
-import { <%_ if (databaseType === 'mongodb') { _%> ObjectIdColumn <%_ } else { _%> PrimaryGeneratedColumn <%_ } _%>, Column } from 'typeorm';
+import { <%_ if (databaseType === 'mongodb') { _%> ObjectIdColumn <%_ } else { _%> PrimaryGeneratedColumn <%_ } _%>, Column, CreateDateColumn, UpdateDateColumn } from 'typeorm';
 
 export abstract class BaseEntity {
 
@@ -15,11 +15,11 @@ export abstract class BaseEntity {
 
    @Column({ nullable: true })
    createdBy?: string;
-   @Column({ nullable: true })
+   @CreateDateColumn({ nullable: true })
    createdDate?: Date;
    @Column({ nullable: true })
    lastModifiedBy?: string;
-   @Column({ nullable: true })
+   @UpdateDateColumn({ nullable: true })
    lastModifiedDate?: Date;
 
 

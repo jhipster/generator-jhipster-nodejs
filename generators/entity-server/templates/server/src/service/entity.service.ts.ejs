@@ -34,7 +34,7 @@ export class <%= entityClass %>Service {
         return <%= entityClass %>Mapper.fromEntityToDTO(result);
       }
 
-      async findByfields(options: FindOneOptions<<%= entityClass %>DTO>): Promise<<%= entityClass %>DTO | undefined> {
+      async findByFields(options: FindOneOptions<<%= entityClass %>DTO>): Promise<<%= entityClass %>DTO | undefined> {
         const result = await this.<%= asEntity(entityInstance) %>Repository.findOne(options);
         return <%= entityClass %>Mapper.fromEntityToDTO(result);
       }
@@ -50,14 +50,23 @@ export class <%= entityClass %>Service {
         return resultList;
       }
 
-      async save(<%= asEntity(entityInstance) %>DTO: <%= entityClass %>DTO): Promise<<%= entityClass %>DTO | undefined> {
+      async save(<%= asEntity(entityInstance) %>DTO: <%= entityClass %>DTO, creator?: string): Promise<<%= entityClass %>DTO | undefined> {
         const entity = <%= entityClass %>Mapper.fromDTOtoEntity(<%= asEntity(entityInstance) %>DTO);
+        if (creator) {
+            if (!entity.createdBy) {
+                entity.createdBy = creator;
+            }
+            entity.lastModifiedBy = creator;
+        }
         const result = await this.<%= asEntity(entityInstance) %>Repository.save(entity);
         return <%= entityClass %>Mapper.fromEntityToDTO(result);
       }
 
-      async update(<%= asEntity(entityInstance) %>DTO: <%= entityClass %>DTO): Promise<<%= entityClass %>DTO | undefined> {
+      async update(<%= asEntity(entityInstance) %>DTO: <%= entityClass %>DTO, updater?: string): Promise<<%= entityClass %>DTO | undefined> {
         const entity = <%= entityClass %>Mapper.fromDTOtoEntity(<%= asEntity(entityInstance) %>DTO);
+        if (updater) {
+            entity.lastModifiedBy = updater;
+        }
       <%_ if (databaseType === 'mongodb') { _%>
         await this.<%= asEntity(entityInstance) %>Repository.update(entity.id, entity);
         return <%= asEntity(entityInstance) %>DTO;

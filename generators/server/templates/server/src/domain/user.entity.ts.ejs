@@ -1,6 +1,7 @@
 import { Authority } from './authority.entity';
 import { Entity, Column<%_ if (databaseType !== 'mongodb') { _%>, ManyToMany, JoinTable <%_ } _%> } from 'typeorm';
 import { BaseEntity } from './base/base.entity';
+import { Exclude } from 'class-transformer';
 
 @Entity('nhi_user')
 export class User extends BaseEntity {
@@ -29,6 +30,7 @@ export class User extends BaseEntity {
   @Column({
     type: "varchar"
   })
+  @Exclude()
   password: string;
   @Column({ nullable: true })
   imageUrl?: string;
