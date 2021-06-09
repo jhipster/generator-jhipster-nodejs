@@ -37,6 +37,7 @@ const serverFiles = {
                 'src/security/index.ts',
                 'src/client/header-util.ts',
                 'src/client/interceptors/logging.interceptor.ts',
+                'src/client/request.ts',
                 'src/service/auth.service.ts',
                 'src/service/user.service.ts',
                 'src/service/dto/base.dto.ts',
