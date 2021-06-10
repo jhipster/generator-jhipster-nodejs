@@ -5,17 +5,18 @@ import { UserDTO } from './dto/user.dto';
 import { UserMapper } from './mapper/user.mapper';
 import { UserRepository } from '../repository/user.repository';
 import { FindManyOptions, FindOneOptions } from 'typeorm';
+import { transformPassword } from '../security';
 
 @Injectable()
 export class UserService {
     constructor(@InjectRepository(UserRepository) private userRepository: UserRepository) {}
 
-    async findById(id: string): Promise<UserDTO | undefined> {
+    async findById(id: <%= getPkType(databaseType) === 'Long' ? 'number' : 'string' %>): Promise<UserDTO | undefined> {
         const result = await this.userRepository.findOne(id);
         return UserMapper.fromEntityToDTO(this.flatAuthorities(result))
     }
 
-    async findByfields(options: FindOneOptions<UserDTO>): Promise<UserDTO | undefined> {
+    async findByFields(options: FindOneOptions<UserDTO>): Promise<UserDTO | undefined> {
         <%_ if (databaseType !== 'mongodb') { _%>
         options.relations = ['authorities'];
         <%_ } _%>
@@ -41,15 +42,23 @@ export class UserService {
         return resultList;
     }
 
-    async save(userDTO: UserDTO): Promise<UserDTO | undefined> {
+    async save(userDTO: UserDTO, creator?: string, updatePassword = false): Promise<UserDTO | undefined> {
         const user = this.convertInAuthorities(UserMapper.fromDTOtoEntity(userDTO));
+        if (updatePassword) {
+            await transformPassword(user);
+        }
+        if (creator) {
+            if (!user.createdBy ) {
+                user.createdBy = creator;
+            }
+            user.lastModifiedBy = creator;
+        }
         const result = await this.userRepository.save(user);
         return UserMapper.fromEntityToDTO(this.flatAuthorities(result));
     }
 
-    async update(userDTO: UserDTO): Promise<UserDTO | undefined> {
-        const user = await this.save(UserMapper.fromDTOtoEntity(userDTO));
-        return UserMapper.fromEntityToDTO(user);
+    async update(userDTO: UserDTO, updater?: string): Promise<UserDTO | undefined> {
+        return this.save(userDTO, updater);
     }
 
     async delete(userDTO: UserDTO): Promise<UserDTO | undefined> {

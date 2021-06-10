@@ -7,10 +7,12 @@ import { RolesGuard } from '../src/security/guards/roles.guard';
 import { UserDTO } from '../src/service/dto/user.dto';
 import { UserService } from '../src/service/user.service';
 import { PasswordChangeDTO } from '../src/service/dto/password-change.dto';
+import { AuthService } from '../src/service/auth.service';
 
 describe('Account', () => {
     let app: INestApplication;
     let service: UserService;
+    let authService: AuthService;
 
     const testUserDTO: UserDTO = {
         login: 'userTestLogin',
@@ -19,10 +21,11 @@ describe('Account', () => {
     };
 
     const testUserAuthenticated: any = {
-        id: '601d70b6ec992423f8d531bd',
+        id: 42,
         login: 'userlogged',
         email: 'userlogged@localhost.it',
         password: 'userloggedPassword',
+        activated: true
     };
 
     const testPasswordChange: PasswordChangeDTO = {
@@ -55,7 +58,8 @@ describe('Account', () => {
         app = moduleFixture.createNestApplication();
         await app.init();
         service = moduleFixture.get<UserService>(UserService);
-        userAuthenticated = await service.save(testUserAuthenticated);
+        authService = moduleFixture.get<AuthService>(AuthService);
+        userAuthenticated = await service.save(testUserAuthenticated, testUserAuthenticated.login, true);
     });
 
     it('/POST register new user', async () => {
@@ -115,7 +119,7 @@ describe('Account', () => {
             .send(savedTestUser)
             .expect(201);
 
-        const updatedUserSettings: UserDTO = await service.findByfields({ where: { login: testUserAuthenticated.login } });
+        const updatedUserSettings: UserDTO = await service.findByFields({ where: { login: testUserAuthenticated.login } });
         expect(updatedUserSettings.firstName).toEqual(savedTestUser.firstName);
         expect(updatedUserSettings.lastName).toEqual(savedTestUser.lastName);
 
@@ -127,8 +131,13 @@ describe('Account', () => {
             .send(testPasswordChange)
             .expect(201);
 
-        const updatedUserPassword: UserDTO = await service.findByfields({ where: { login: testUserAuthenticated.login } });
-        expect(updatedUserPassword.password).toEqual(testPasswordChange.newPassword);
+        const successFullyLoggedInWithNewPassword = await authService.login(
+            {
+                username: testUserAuthenticated.login,
+                password: testPasswordChange.newPassword
+            }).then(() => true, () => false);
+
+        expect(successFullyLoggedInWithNewPassword).toEqual(true);
     });
 
     it('/POST reset password init', async () => {

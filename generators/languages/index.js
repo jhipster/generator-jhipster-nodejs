@@ -12,8 +12,6 @@ module.exports = class extends LanguagesGenerator {
         if (!jhLanguagesContext) {
             this.error(`This is a JHipster blueprint and should be used only like ${chalk.yellow('jhipster --blueprints nodejs')}`);
         }
-
-        this.configOptions = jhLanguagesContext.configOptions || {};
     }
 
     get initializing() {

@@ -39,7 +39,7 @@ function addEntityToAppModule(generator, entityClass) {
         {
             file: `${constants.SERVER_NODEJS_SRC_DIR}/src/app.module.ts`,
             needle: 'jhipster-needle-add-entity-module-to-main',
-            splicable: [`,${entityClass}Module`]
+            splicable: [`${entityClass}Module,`]
         },
         generator
     );
@@ -122,7 +122,7 @@ function buildEnumInfo(field, angularAppName, packageName, clientRootFolder) {
     const fieldType = field.fieldType;
     field.enumInstance = _.lowerFirst(fieldType);
 
-    const enumInfo = {
+    return {
         enumName: fieldType,
         enumValues: field.fieldValues.split(','),
         enumInstance: field.enumInstance,
@@ -131,5 +131,4 @@ function buildEnumInfo(field, angularAppName, packageName, clientRootFolder) {
         packageName,
         clientRootFolder: clientRootFolder ? `${clientRootFolder}-` : ''
     };
-    return enumInfo;
 }

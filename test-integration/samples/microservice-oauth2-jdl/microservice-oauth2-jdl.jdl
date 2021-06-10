@@ -24,7 +24,7 @@ entity Category {
 
 entity Product {
     title String required,
-    keywords String,
+    keywords String pattern(/^[a-z]+$/),
     description String,
     rating Integer,
     dateAdded LocalDate,

@@ -1,8 +1,7 @@
 import { Authority } from './authority.entity';
-import { Entity, Column <%_ if (databaseType !== 'mongodb') { _%>, ManyToMany, JoinTable <%_ } _%> } from 'typeorm';
+import { Entity, Column<%_ if (databaseType !== 'mongodb') { _%>, ManyToMany, JoinTable <%_ } _%> } from 'typeorm';
 import { BaseEntity } from './base/base.entity';
-import { config } from '../config';
-import { EncryptionTransformer } from "typeorm-encrypted";
+import { Exclude } from 'class-transformer';
 
 @Entity('nhi_user')
 export class User extends BaseEntity {
@@ -29,14 +28,9 @@ export class User extends BaseEntity {
   <%_ } _%>
 
   @Column({
-    type: "varchar",
-    transformer: new EncryptionTransformer({
-      key: config.get('crypto.key'),
-      algorithm: 'aes-256-cbc',
-      ivLength: 16,
-      iv: config.get('crypto.iv')
-    })
+    type: "varchar"
   })
+  @Exclude()
   password: string;
   @Column({ nullable: true })
   imageUrl?: string;

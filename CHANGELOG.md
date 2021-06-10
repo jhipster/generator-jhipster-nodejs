@@ -1,3 +1,4 @@
+<a name="2.0.0"></a>
 <a name="2.0.0-beta.1"></a>
 <a name="1.5.0"></a>
 <a name="1.4.0"></a>
@@ -13,22 +14,25 @@
 <a name="1.0.0-alpha.3"></a>
 <a name="1.0.0-alpha.2"></a>
 
-# [2.0.0-beta.1](https://github.com/jhipster/generator-jhipster-nodejs/tree/v2.0.0-beta.1) - XX/XX/2021 released date
+# [2.0.0](https://github.com/jhipster/generator-jhipster-nodejs/tree/v2.0.0) - xx/xx/2021 released date
 
+-   Passwords should be hashed instead of encrypted [issue #234](https://github.com/jhipster/generator-jhipster-nodejs/issues/234)
+-   Remove in query user api the unencrypted password exposed [issue #232](https://github.com/jhipster/generator-jhipster-nodejs/issues/232)
+-   Support JHipster primary key type [issue #230](https://github.com/jhipster/generator-jhipster-nodejs/issues/230)
+-   Entity name duplicated into app.module.ts imports every time entity updated [issue #219](https://github.com/jhipster/generator-jhipster-nodejs/issues/219)
+
+# [2.0.0-beta.1](https://github.com/jhipster/generator-jhipster-nodejs/tree/v2.0.0-beta.1) - 08/04/2021 released date
+
+-   Update class-validator to 0.13.1 to fix "matches" (regexp validator modifiers) [issue #215](https://github.com/jhipster/generator-jhipster-nodejs/issues/215)
 -   Vue.js support from 7.x jhipster upgrade [issue #158](https://github.com/jhipster/generator-jhipster-nodejs/issues/158)
-
 -   Unable to create a new entity for jhipster 6.8.0 bug [issue #147](https://github.com/jhipster/generator-jhipster-nodejs/issues/147)
 
 # [1.5.0](https://github.com/jhipster/generator-jhipster-nodejs/tree/v1.5.0) - 19/03/2021 released date
 
 -   Rename NODE_ENV in BACKEND_ENV with better usage documentation [issue #206](https://github.com/jhipster/generator-jhipster-nodejs/issues/206)
-
 -   Enable admin api button in the client side that routes to swagger nodejs [issue #186](https://github.com/jhipster/generator-jhipster-nodejs/issues/186)
-
 -   Support mongodb generation with docker image (without relationship) [issue #73](https://github.com/jhipster/generator-jhipster-nodejs/issues/73)
-
 -   Integration test for all database docker instance as prod running [issue #198](https://github.com/jhipster/generator-jhipster-nodejs/issues/198)
-
 -   A relation OneToOne from a custom entity to the User entity together other OneToMany relationships throw an error [issue #195](https://github.com/jhipster/generator-jhipster-nodejs/issues/195)
 
 # [1.4.0](https://github.com/jhipster/generator-jhipster-nodejs/tree/v1.4.0) - 14/12/2020 released date

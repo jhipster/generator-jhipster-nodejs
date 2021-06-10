@@ -1,12 +1,16 @@
 import { Body, Controller, Delete, Get, Logger, Param, Post as PostMethod, Put, UseGuards, Req, UseInterceptors } from '@nestjs/common';
 import { <% if (authenticationType === 'jwt') { _%> ApiBearerAuth, <% } else if (authenticationType === 'oauth2') { _%> ApiOAuth2Auth, <% } _%> ApiUseTags, ApiResponse, ApiOperation } from '@nestjs/swagger';
-import { Request } from 'express';
 import { <%= entityClass %>DTO } from '../../service/dto/<%= entityFileName %>.dto';
 import { <%= entityClass %>Service } from '../../service/<%= entityFileName %>.service';
 import { PageRequest, Page } from '../../domain/base/pagination.entity';
-import { AuthGuard, Roles, RolesGuard, RoleType } from '../../security';
+import { AuthGuard,  Roles, RolesGuard, RoleType } from '../../security';
 import { HeaderUtil } from '../../client/header-util';
+import { Request } from '../../client/request';
 import { LoggingInterceptor } from '../../client/interceptors/logging.interceptor';
+
+<%_
+const pkType = getPkType(databaseType) === 'Long' ? 'number' : 'string';
+_%>
 
 @Controller('api/<%= entityApiUrl %>')
 @UseGuards(AuthGuard, RolesGuard)
@@ -48,7 +52,7 @@ export class <%= entityClass %>Controller {
     description: 'The found record',
     type: <%= entityClass %>DTO,
   })
-  async getOne(@Param('id') id: string): Promise<<%= entityClass %>DTO>  {
+  async getOne(@Param('id') id: <%= pkType %>): Promise<<%= entityClass %>DTO>  {
     return await this.<%= asEntity(entityInstance) %>Service.findById(id);
   }
 
@@ -62,7 +66,7 @@ export class <%= entityClass %>Controller {
   })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
   async post(@Req() req: Request, @Body() <%= asEntity(entityInstance) %>DTO: <%= entityClass %>DTO): Promise<<%= entityClass %>DTO>  {
-    const created = await this.<%= asEntity(entityInstance) %>Service.save(<%= asEntity(entityInstance) %>DTO);
+    const created = await this.<%= asEntity(entityInstance) %>Service.save(<%= asEntity(entityInstance) %>DTO, req.user?.login);
     HeaderUtil.addEntityCreatedHeaders(req.res, '<%= entityClass %>', created.id);
     return created;
   }
@@ -77,7 +81,7 @@ export class <%= entityClass %>Controller {
   })
   async put(@Req() req: Request, @Body() <%= asEntity(entityInstance) %>DTO: <%= entityClass %>DTO): Promise<<%= entityClass %>DTO>  {
     HeaderUtil.addEntityCreatedHeaders(req.res, '<%= entityClass %>', <%= asEntity(entityInstance) %>DTO.id);
-    return await this.<%= asEntity(entityInstance) %>Service.update(<%= asEntity(entityInstance) %>DTO);
+    return await this.<%= asEntity(entityInstance) %>Service.update(<%= asEntity(entityInstance) %>DTO, req.user?.login);
   }
 
   @Put('/:id')
@@ -90,7 +94,7 @@ export class <%= entityClass %>Controller {
   })
   async putId(@Req() req: Request, @Body() <%= asEntity(entityInstance) %>DTO: <%= entityClass %>DTO): Promise<<%= entityClass %>DTO>  {
     HeaderUtil.addEntityCreatedHeaders(req.res, '<%= entityClass %>', <%= asEntity(entityInstance) %>DTO.id);
-    return await this.<%= asEntity(entityInstance) %>Service.update(<%= asEntity(entityInstance) %>DTO);
+    return await this.<%= asEntity(entityInstance) %>Service.update(<%= asEntity(entityInstance) %>DTO, req.user?.login);
   }
 
   @Delete('/:id')
@@ -100,7 +104,7 @@ export class <%= entityClass %>Controller {
     status: 204,
     description: 'The record has been successfully deleted.',
   })
-  async deleteById(@Req() req: Request, @Param('id') id: string): Promise<void>  {
+  async deleteById(@Req() req: Request, @Param('id') id: <%= pkType %>): Promise<void>  {
     HeaderUtil.addEntityDeletedHeaders(req.res, '<%= entityClass %>', id);
     return await this.<%= asEntity(entityInstance) %>Service.deleteById(id);
   }
