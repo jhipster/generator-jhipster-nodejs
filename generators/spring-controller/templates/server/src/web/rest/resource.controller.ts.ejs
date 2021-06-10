@@ -4,6 +4,10 @@ import { Request } from 'express';
 import { AuthGuard, Roles, RolesGuard, RoleType } from '../../security';
 import { LoggingInterceptor } from '../../client/interceptors/logging.interceptor';
 
+<%_
+const pkType = getPkType(databaseType) === 'Long' ? 'number' : 'string';
+_%>
+
 @Controller('api/<%= controllerFileName %>s')
 @UseGuards(AuthGuard, RolesGuard)
 @UseInterceptors(LoggingInterceptor)
@@ -33,8 +37,8 @@ export class <%= controllerClass %>Controller {
     status: 200,
     description: 'The found record'
   })
-  async getOne(@Param('id') id: string): Promise<any>  {
-    // call your async service with await..next an example 
+  async getOne(@Param('id') id: <%= pkType %>): Promise<any>  {
+    // call your async service with await..next an example
     await new Promise<any>((resolve) => { resolve(this.logger.log(id)); });
       new Promise<any>((resolve) => { resolve('to implement'); });
   }
@@ -70,8 +74,8 @@ export class <%= controllerClass %>Controller {
     status: 204,
     description: 'The record has been successfully deleted.',
   })
-  async remove(@Req() req: Request, @Param('id') id: string): Promise<void>  {
-    // call your async service with await..next an example 
+  async remove(@Req() req: Request, @Param('id') id: <%= pkType %>): Promise<void>  {
+    // call your async service with await..next an example
     await new Promise<any>((resolve) => { resolve(this.logger.log(req + ' ' + id)); });
       new Promise<any>((resolve) => { resolve('to implement'); });
   }

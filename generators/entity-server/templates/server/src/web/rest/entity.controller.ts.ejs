@@ -8,6 +8,10 @@ import { HeaderUtil } from '../../client/header-util';
 import { Request } from '../../client/request';
 import { LoggingInterceptor } from '../../client/interceptors/logging.interceptor';
 
+<%_
+const pkType = getPkType(databaseType) === 'Long' ? 'number' : 'string';
+_%>
+
 @Controller('api/<%= entityApiUrl %>')
 @UseGuards(AuthGuard, RolesGuard)
 @UseInterceptors(LoggingInterceptor)
@@ -48,7 +52,7 @@ export class <%= entityClass %>Controller {
     description: 'The found record',
     type: <%= entityClass %>DTO,
   })
-  async getOne(@Param('id') id: string): Promise<<%= entityClass %>DTO>  {
+  async getOne(@Param('id') id: <%= pkType %>): Promise<<%= entityClass %>DTO>  {
     return await this.<%= asEntity(entityInstance) %>Service.findById(id);
   }
 
@@ -100,7 +104,7 @@ export class <%= entityClass %>Controller {
     status: 204,
     description: 'The record has been successfully deleted.',
   })
-  async deleteById(@Req() req: Request, @Param('id') id: string): Promise<void>  {
+  async deleteById(@Req() req: Request, @Param('id') id: <%= pkType %>): Promise<void>  {
     HeaderUtil.addEntityDeletedHeaders(req.res, '<%= entityClass %>', id);
     return await this.<%= asEntity(entityInstance) %>Service.deleteById(id);
   }

@@ -20,7 +20,9 @@ for (idx in relationships) {
     relationshipNames.push('<%- relationshipFieldNamePlural %>');
    <%_ }
 }
+const pkType = getPkType(databaseType) === 'Long' ? 'number' : 'string';
 _%>
+
 
 @Injectable()
 export class <%= entityClass %>Service {
@@ -28,7 +30,7 @@ export class <%= entityClass %>Service {
 
     constructor(@InjectRepository(<%= entityClass %>Repository) private <%= asEntity(entityInstance) %>Repository: <%= entityClass %>Repository) {}
 
-      async findById(id: string): Promise<<%= entityClass %>DTO | undefined> {
+      async findById(id: <%= pkType %>): Promise<<%= entityClass %>DTO | undefined> {
         const options = { relations: relationshipNames };
         const result = await this.<%= asEntity(entityInstance) %>Repository.findOne(id, options);
         return <%= entityClass %>Mapper.fromEntityToDTO(result);
@@ -76,7 +78,7 @@ export class <%= entityClass %>Service {
       <%_ } _%>
       }
 
-      async deleteById(id: string): Promise<void | undefined> {
+      async deleteById(id: <%= pkType %>): Promise<void | undefined> {
         await this.<%= asEntity(entityInstance) %>Repository.delete(id);
         const entityFind = await this.findById(id);
         if (entityFind) {
