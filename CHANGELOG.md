@@ -16,6 +16,8 @@
 
 # [2.0.0](https://github.com/jhipster/generator-jhipster-nodejs/tree/v2.0.0) - xx/xx/2021 released date
 
+-   Passwords should be hashed instead of encrypted [issue #234](https://github.com/jhipster/generator-jhipster-nodejs/issues/234)
+-   Remove in query user api the unencrypted password exposed [issue #232](https://github.com/jhipster/generator-jhipster-nodejs/issues/232)
 -   Support JHipster primary key type [issue #230](https://github.com/jhipster/generator-jhipster-nodejs/issues/230)
 -   Entity name duplicated into app.module.ts imports every time entity updated [issue #219](https://github.com/jhipster/generator-jhipster-nodejs/issues/219)
 
