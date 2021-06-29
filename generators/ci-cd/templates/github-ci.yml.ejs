@@ -53,9 +53,9 @@ jobs:
               if (!skipServer) { _%>
             - name: Run backend test
               run: |
-                  cd server
                   <%= clientPackageManager %> install
                   <%= clientPackageManager %> run test
+              working-directory: server
                }
               if (!skipClient) { _%>
             - name: Run frontend test
