@@ -38,7 +38,7 @@ jobs:
         steps:
             - uses: actions/checkout@v2
               <%_ if (!skipClient) { _%>
-            - uses: actions/setup-node@v1
+            - uses: actions/setup-node@v2
               with:
                   node-version: <%= NODE_VERSION %>
               <%_ }
