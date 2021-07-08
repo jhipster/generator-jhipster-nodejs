@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Logger, Param, Post as PostMethod, Put, UseGuards, Req, UseInterceptors } from '@nestjs/common';
+import { Body, ClassSerializerInterceptor, Controller, Delete, Get, Logger, Param, Post as PostMethod, Put, UseGuards, Req, UseInterceptors } from '@nestjs/common';
 import { <% if (authenticationType === 'jwt') { _%> ApiBearerAuth, <% } else if (authenticationType === 'oauth2') { _%> ApiOAuth2Auth, <% } _%> ApiUseTags, ApiResponse, ApiOperation } from '@nestjs/swagger';
 import { <%= entityClass %>DTO } from '../../service/dto/<%= entityFileName %>.dto';
 import { <%= entityClass %>Service } from '../../service/<%= entityFileName %>.service';
@@ -14,7 +14,7 @@ _%>
 
 @Controller('api/<%= entityApiUrl %>')
 @UseGuards(AuthGuard, RolesGuard)
-@UseInterceptors(LoggingInterceptor)
+@UseInterceptors(LoggingInterceptor, ClassSerializerInterceptor)
 <%_ if (authenticationType === 'jwt') { _%>
 @ApiBearerAuth()
 <%_ } else if (authenticationType === 'oauth2') { _%>
