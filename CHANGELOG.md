@@ -16,6 +16,9 @@
 
 # [2.0.0](https://github.com/jhipster/generator-jhipster-nodejs/tree/v2.0.0) - xx/xx/2021 released date
 
+-   ci-cd for nodejs application [issue #104](https://github.com/jhipster/generator-jhipster-nodejs/issues/104)
+-   Support JHipster primary key type for entity service and controller [issue #238](https://github.com/jhipster/generator-jhipster-nodejs/issues/238)
+-   Columns createdBy, createdDate, lastModifiedBy and lastModifiedDate should be filled automatically [issue #236](https://github.com/jhipster/generator-jhipster-nodejs/issues/236)
 -   Passwords should be hashed instead of encrypted [issue #234](https://github.com/jhipster/generator-jhipster-nodejs/issues/234)
 -   Remove in query user api the unencrypted password exposed [issue #232](https://github.com/jhipster/generator-jhipster-nodejs/issues/232)
 -   Support JHipster primary key type [issue #230](https://github.com/jhipster/generator-jhipster-nodejs/issues/230)

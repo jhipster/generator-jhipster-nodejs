@@ -1,0 +1,137 @@
+<%#
+ Copyright 2013-2020 the original author or authors from the JHipster project.
+
+ This file is part of the JHipster project, see https://www.jhipster.tech/
+ for more information.
+
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+-%>
+<%_ if (insideDocker) { _%>
+image: jhipster/jhipster:v<%= jhipsterVersion %>
+<%_ } _%>
+
+# NHipster ci-cd
+
+<%_ if (!skipServer) { _%>
+stages:
+    - build
+    - test
+    - packaging
+<%_ } _%>
+
+before_script:
+    <%_ if (clientFramework === ANGULAR) { _%>
+    - export NG_CLI_ANALYTICS="false"
+    <%_ } _%>
+
+server-compile:
+    stage: build
+    script:
+        - cd server && <%= clientPackageManager %> install
+    artifacts:
+        paths:
+            - server/node_modules
+
+server-test:
+    stage: test
+    script:
+        - cd server && <%= clientPackageManager %> run test
+    artifacts:
+        reports:
+            junit: server/coverage/clover.xml
+        paths:
+            - server/coverage
+        expire_in: 1 day
+
+<%_ if (!skipClient) { _%>
+frontend-test:
+    stage: test
+    script:
+        - <%= clientPackageManager %> run webpack:test
+    artifacts:
+        reports:
+            junit: build/test-results/TESTS-results-jest.xml
+        paths:
+            - build/test-results
+        expire_in: 1 day
+<%_ } _%>
+
+<%_ if (!skipServer && cicdIntegrations.includes('sonar')) { _%>
+#sonar-analyze:
+#    stage: analyze
+#    dependencies:
+#        - maven-test
+#        <%_ if (!skipClient) { _%>
+#       - frontend-test
+#        <%_ } _%>
+#    script:
+#        - cd server && <%= clientPackageManager %> run sonar:scanner
+#    allow_failure: true
+<%_ } _%>
+
+server-package:
+    stage: package
+    script:
+        - <%= clientPackageManager %> run build:app
+    artifacts:
+        paths:
+            - server/dist
+        expire_in: 1 day
+
+<%_ if (cicdIntegrations.includes('heroku')) { _%>
+#deploy-to-production:
+#    stage: deploy
+#    script:
+#      - ./mvnw -ntp com.heroku.sdk:heroku-maven-plugin:2.0.5:deploy -DskipTests -Pprod -Dheroku.buildpacks=heroku/jvm -Dheroku.appName=<%= herokuAppName %> -Dmaven.repo.local=$MAVEN_USER_HOME
+#    environment:
+#        name: production
+#    when: manual
+<%_ } _%>
+
+<%_ if (skipServer) { _%>
+cache:
+    paths:
+        - node_modules/
+stages:
+    - build
+    - test
+    - packaging
+webpack-build:
+    stage: build
+    script:
+        - <%= clientPackageManager %> install
+        - <%= clientPackageManager %> run webpack:build
+    artifacts:
+        paths:
+            - build/
+webpack-test:
+    stage: test
+    dependencies:
+        - webpack-build
+    script:
+        - <%= clientPackageManager %> run webpack:test
+    artifacts:
+        reports:
+            junit: build/test-results/TESTS-results-jest.xml
+        paths:
+            - build/test-results
+        expire_in: 1 day
+webpack-prod:
+    stage: packaging
+    script:
+        - <%= clientPackageManager %> run webpack:prod
+        # - add cmd to zip the app folder build/resources/main/static
+    artifacts:
+        paths:
+            - build/
+<%_ } _%>
