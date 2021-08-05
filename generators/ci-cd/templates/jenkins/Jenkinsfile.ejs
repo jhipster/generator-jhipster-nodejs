@@ -1,0 +1,104 @@
+<%#
+ Copyright 2013-2020 the original author or authors from the JHipster project.
+
+ This file is part of the JHipster project, see https://www.jhipster.tech/
+ for more information.
+
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+-%>
+#!/usr/bin/env groovy
+
+// NHipster ci-cd
+
+node {
+    stage('checkout') {
+        checkout scm
+    }
+
+<%_ if (sendBuildToGitlab) { _%>
+    gitlabCommitStatus('build') {
+<%_ } _%>
+<%_ if (insideDocker) { _%>
+<%= gitLabIndent %>    docker.image('jhipster/jhipster:v<%= jhipsterVersion %>').inside('-u jhipster<% if (buildTool === 'maven') { %> -e MAVEN_OPTS="-Duser.home=./"<% } else if (buildTool === 'gradle') { %> -e GRADLE_USER_HOME=.gradle<% } %>') {
+<%_ } _%>
+
+    <%_ if (!skipClient) { _%>
+
+<%= indent %>    stage('install frontend') {
+<%= indent %>        sh "<%= clientPackageManager %> install"
+<%= indent %>    }
+
+    <%_ } _%>
+
+    <%_ if (!skipServer) { _%>
+<%= indent %>    stage('install server') {
+<%= indent %>        sh "cd server && <%= clientPackageManager %> install"
+<%= indent %>    }
+
+<%= indent %>    stage('backend tests') {
+<%= indent %>        try {
+<%= indent %>            sh "cd server && <%= clientPackageManager %> run test"
+<%= indent %>        } catch(err) {
+<%= indent %>            throw err
+<%= indent %>        } finally {
+<%= indent %>            junit '**/server/coverage/**/*.xml'
+<%= indent %>        }
+<%= indent %>    }
+    <%_ } _%>
+    <%_ if (!skipClient) { _%>
+<%= indent %>    stage('frontend tests') {
+<%= indent %>        try {
+<%= indent %>            sh "<%= clientPackageManager %> run test"
+<%= indent %>        } catch(err) {
+<%= indent %>            throw err
+<%= indent %>        } finally {
+<%= indent %>            junit '**/target/test-results/**/TEST-*.xml'
+<%= indent %>        }
+<%= indent %>    }
+
+    <%_ } _%>
+    <%_ if (cicdIntegrations.includes('heroku')) { _%>
+/*<%= indent %>    stage('package and deploy') {
+<%= indent %>        sh "./mvnw -ntp com.heroku.sdk:heroku-maven-plugin:2.0.5:deploy -DskipTests -Pprod -Dheroku.buildpacks=heroku/jvm -Dheroku.appName=<%= herokuAppName %>"
+    <%_ } else { _%>
+<%= indent %>    stage('packaging') {
+<%= indent %>        sh "./mvnw -ntp verify <% if (cicdIntegrations.includes('deploy')) { %>deploy <% } %>-Pprod -DskipTests"
+    <%_ } _%>
+<%= indent %>        archiveArtifacts artifacts: '**/target/*.jar', fingerprint: true
+<%= indent %>    }
+*/
+%_ } _%>
+<%_ if (!skipServer && cicdIntegrations.includes('sonar')) { _%>
+<%= indent %>    stage('quality analysis') {
+<%= indent %>        withSonarQubeEnv('<%= sonarName %>') {
+<%= indent %>            sh "cd server && <%= clientPackageManager %> run sonar:scanner"
+<%= indent %>        }
+<%= indent %>    }
+<%_ } _%>
+<%_ if (insideDocker) { _%>
+<%= gitLabIndent %>    }
+<%_ } _%>
+<%_ if (cicdIntegrations.includes('publishDocker')) { _%>
+
+/*<%= gitLabIndent %>    def dockerImage
+<%= gitLabIndent %>    stage('publish docker') {
+<%= gitLabIndent %>        // A pre-requisite to this step is to setup authentication to the docker registry
+<%= gitLabIndent %>        // https://github.com/GoogleContainerTools/jib/tree/master/jib-maven-plugin#authentication-methods
+<%= gitLabIndent %>        sh "./mvnw -ntp jib:build"
+<%= gitLabIndent %>    }
+*/
+<%_ } _%>
+<%_ if (sendBuildToGitlab) { _%>
+    }
+<%_ } _%>
+}

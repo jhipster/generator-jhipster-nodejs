@@ -1,10 +1,9 @@
 Description:
-    Creates a new JHipster service: this is a simple nestjs service class.
+    Creates a new NHipster service: this is a simple nestjs service class.
 
 Example:
-    jhipster nestjs-service Foo
+    nhipster nestjs-service Foo
 
     This will create:
         server/src/service/foo.service.ts
 
-TO DO
