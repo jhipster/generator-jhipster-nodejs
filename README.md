@@ -138,6 +138,10 @@ However, it also ships with an `nhipster` CLI that you can use as a shortcut.
 
 -   `nhipster import-jdl my_file.jdl`
 
+✅ Ci-cd generation
+
+-   `nhipster ci-cd`
+
 For the last, in the **test-integration/samples/FOLDER_NAME-jdl** there are some examples of jdl models.
 
 ## Using Docker
