@@ -31,6 +31,15 @@ const dbTypes = {
     'byte[]': 'blob'
 };
 
+function sanitizeDbType(fieldType, dbType) {
+    if (dbType === 'sqlite') {
+        if (fieldType === 'timestamp') {
+            return 'datetime';
+        }
+    }
+    return fieldType;
+}
+
 module.exports = class extends EntityServerGenerator {
     constructor(args, opts) {
         super(args, { fromBlueprint: true, ...opts }); // fromBlueprint variable is important
@@ -65,6 +74,6 @@ module.exports = class extends EntityServerGenerator {
     }
 
     addDbType(fieldType) {
-        return dbTypes[fieldType];
+        return sanitizeDbType(dbTypes[fieldType], this.devDatabaseType);
     }
 };

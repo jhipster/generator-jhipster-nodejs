@@ -1,7 +1,7 @@
 import { Controller, ClassSerializerInterceptor, Get, Logger, Req, UseInterceptors } from '@nestjs/common';
 import { LoggingInterceptor } from '../../client/interceptors/logging.interceptor';
 import { PageRequest, Page } from '../../domain/base/pagination.entity';
-import { UserDTO } from '../../service/dto/user.dto';
+import { <%= asDto('User')%> } from '../../service/dto/user.dto';
 import { Request } from 'express';
 import { HeaderUtil } from '../../client/header-util';
 import { ApiUseTags, ApiResponse, ApiOperation } from '@nestjs/swagger';
@@ -21,9 +21,9 @@ export class PublicUserController {
   @ApiResponse({
       status: 200,
       description: 'List all users records',
-      type: UserDTO,
+      type: <%= asDto('User')%>,
   })
-  async getAllPublicUsers(@Req() req: Request): Promise<UserDTO[]> {
+  async getAllPublicUsers(@Req() req: Request): Promise<<%= asDto('User')%>[]> {
      <%_ if (databaseType === 'mongodb') { _%>
       const sortField = '';
       <%_ } else { _%>

@@ -208,7 +208,7 @@ describe('Subgenerator entity of nodejs JHipster blueprint', () => {
             assert.fileContent(greatEntityPath, 'cent: number;');
 
             // creationtime Instant field
-            assert.fileContent(greatEntityPath, '@Column({ type: "timestamp", name: "creationtime", nullable: true })');
+            assert.fileContent(greatEntityPath, '@Column({ type: "datetime", name: "creationtime", nullable: true })');
             assert.fileContent(greatEntityPath, 'creationtime: any;');
 
             // deathtime ZonedDateTime field

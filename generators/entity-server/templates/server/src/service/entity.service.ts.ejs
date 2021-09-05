@@ -1,7 +1,7 @@
 import { Injectable, HttpException, HttpStatus, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FindManyOptions, FindOneOptions } from 'typeorm';
-import { <%= entityClass %>DTO }  from '../service/dto/<%= entityFileName %>.dto';
+import { <%= asDto(entityClass) %> }  from '../service/dto/<%= entityFileName %>.dto';
 import { <%= entityClass %>Mapper }  from '../service/mapper/<%= entityFileName %>.mapper';
 import { <%= entityClass %>Repository } from '../repository/<%= entityFileName %>.repository';
 
@@ -30,21 +30,21 @@ export class <%= entityClass %>Service {
 
     constructor(@InjectRepository(<%= entityClass %>Repository) private <%= asEntity(entityInstance) %>Repository: <%= entityClass %>Repository) {}
 
-      async findById(id: <%= pkType %>): Promise<<%= entityClass %>DTO | undefined> {
+      async findById(id: <%= pkType %>): Promise<<%= asDto(entityClass) %> | undefined> {
         const options = { relations: relationshipNames };
         const result = await this.<%= asEntity(entityInstance) %>Repository.findOne(id, options);
         return <%= entityClass %>Mapper.fromEntityToDTO(result);
       }
 
-      async findByFields(options: FindOneOptions<<%= entityClass %>DTO>): Promise<<%= entityClass %>DTO | undefined> {
+      async findByFields(options: FindOneOptions<<%= asDto(entityClass) %>>): Promise<<%= asDto(entityClass) %> | undefined> {
         const result = await this.<%= asEntity(entityInstance) %>Repository.findOne(options);
         return <%= entityClass %>Mapper.fromEntityToDTO(result);
       }
 
-      async findAndCount(options: FindManyOptions<<%= entityClass %>DTO>): Promise<[<%= entityClass %>DTO[], number]> {
+      async findAndCount(options: FindManyOptions<<%= asDto(entityClass) %>>): Promise<[<%= asDto(entityClass) %>[], number]> {
         options.relations = relationshipNames;
         const resultList = await this.<%= asEntity(entityInstance) %>Repository.findAndCount(options);
-        const <%= asEntity(entityInstance) %>DTO: <%= entityClass %>DTO[] = [];
+        const <%= asEntity(entityInstance) %>DTO: <%= asDto(entityClass) %>[] = [];
         if (resultList && resultList[0]) {
             resultList[0].forEach(<%= asEntity(entityInstance) %> => <%= asEntity(entityInstance) %>DTO.push(<%= entityClass %>Mapper.fromEntityToDTO(<%= asEntity(entityInstance) %>)));
             resultList[0] = <%= asEntity(entityInstance) %>DTO;
@@ -52,7 +52,7 @@ export class <%= entityClass %>Service {
         return resultList;
       }
 
-      async save(<%= asEntity(entityInstance) %>DTO: <%= entityClass %>DTO, creator?: string): Promise<<%= entityClass %>DTO | undefined> {
+      async save(<%= asEntity(entityInstance) %>DTO: <%= asDto(entityClass) %>, creator?: string): Promise<<%= asDto(entityClass) %> | undefined> {
         const entity = <%= entityClass %>Mapper.fromDTOtoEntity(<%= asEntity(entityInstance) %>DTO);
         if (creator) {
             if (!entity.createdBy) {
@@ -64,7 +64,7 @@ export class <%= entityClass %>Service {
         return <%= entityClass %>Mapper.fromEntityToDTO(result);
       }
 
-      async update(<%= asEntity(entityInstance) %>DTO: <%= entityClass %>DTO, updater?: string): Promise<<%= entityClass %>DTO | undefined> {
+      async update(<%= asEntity(entityInstance) %>DTO: <%= asDto(entityClass) %>, updater?: string): Promise<<%= asDto(entityClass) %> | undefined> {
         const entity = <%= entityClass %>Mapper.fromDTOtoEntity(<%= asEntity(entityInstance) %>DTO);
         if (updater) {
             entity.lastModifiedBy = updater;

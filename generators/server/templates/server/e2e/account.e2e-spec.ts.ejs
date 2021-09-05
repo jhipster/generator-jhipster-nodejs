@@ -4,7 +4,7 @@ import { AppModule } from '../src/app.module';
 import { ExecutionContext, INestApplication } from '@nestjs/common';
 import { AuthGuard } from '../src/security/guards/auth.guard';
 import { RolesGuard } from '../src/security/guards/roles.guard';
-import { UserDTO } from '../src/service/dto/user.dto';
+import { <%= asDto('User')%> } from '../src/service/dto/user.dto';
 import { UserService } from '../src/service/user.service';
 import { PasswordChangeDTO } from '../src/service/dto/password-change.dto';
 import { AuthService } from '../src/service/auth.service';
@@ -14,7 +14,7 @@ describe('Account', () => {
     let service: UserService;
     let authService: AuthService;
 
-    const testUserDTO: UserDTO = {
+    const testUserDTO: <%= asDto('User')%> = {
         login: 'userTestLogin',
         email: 'usertest@localhost.it',
         password: 'testPassword',
@@ -33,7 +33,7 @@ describe('Account', () => {
         newPassword: 'newPassword',
     };
 
-    let userAuthenticated: UserDTO;
+    let userAuthenticated: <%= asDto('User')%>;
 
     const authGuardMock = { canActivate: (context: ExecutionContext): any => {
         const req = context.switchToHttp().getRequest();
@@ -63,7 +63,7 @@ describe('Account', () => {
     });
 
     it('/POST register new user', async () => {
-        const createdUser: UserDTO = (
+        const createdUser: <%= asDto('User')%> = (
             await request(app.getHttpServer())
                 .post('/api/register')
                 .send(testUserDTO)
@@ -109,7 +109,7 @@ describe('Account', () => {
 
     it('/POST account update settings', async () => {
 
-        const savedTestUser: UserDTO = {
+        const savedTestUser: <%= asDto('User')%> = {
             firstName: 'updateFirstName',
             lastName: 'updateLastName',
             ...testUserAuthenticated,
@@ -119,7 +119,7 @@ describe('Account', () => {
             .send(savedTestUser)
             .expect(201);
 
-        const updatedUserSettings: UserDTO = await service.findByFields({ where: { login: testUserAuthenticated.login } });
+        const updatedUserSettings: <%= asDto('User')%> = await service.findByFields({ where: { login: testUserAuthenticated.login } });
         expect(updatedUserSettings.firstName).toEqual(savedTestUser.firstName);
         expect(updatedUserSettings.lastName).toEqual(savedTestUser.lastName);
 

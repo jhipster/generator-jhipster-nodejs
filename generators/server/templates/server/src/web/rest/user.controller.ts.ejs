@@ -1,7 +1,7 @@
 import { Body, Controller, Delete, Get, Logger, Param, Post, Put, UseGuards, Req, UseInterceptors, ClassSerializerInterceptor } from '@nestjs/common';
 import { AuthGuard,  Roles, RolesGuard, RoleType } from '../../security';
 import { PageRequest, Page } from '../../domain/base/pagination.entity';
-import { UserDTO } from '../../service/dto/user.dto';
+import { <%= asDto('User')%> } from '../../service/dto/user.dto';
 import { HeaderUtil } from '../../client/header-util';
 import { Request } from '../../client/request';
 import { LoggingInterceptor } from '../../client/interceptors/logging.interceptor';
@@ -28,9 +28,9 @@ export class UserController {
   @ApiResponse({
       status: 200,
       description: 'List all users',
-      type: UserDTO,
+      type: <%= asDto('User')%>,
   })
-  async getAllUsers(@Req() req: Request): Promise<UserDTO[]> {
+  async getAllUsers(@Req() req: Request): Promise<<%= asDto('User')%>[]> {
      <%_ if (databaseType === 'mongodb') { _%>
       const sortField = '';
       <%_ } else { _%>
@@ -52,10 +52,10 @@ export class UserController {
   @ApiResponse({
       status: 201,
       description: 'The record has been successfully created.',
-      type: UserDTO,
+      type: <%= asDto('User')%>,
   })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
-  async createUser(@Req() req: Request, @Body() userDTO: UserDTO): Promise<UserDTO> {
+  async createUser(@Req() req: Request, @Body() userDTO: <%= asDto('User')%>): Promise<<%= asDto('User')%>> {
       userDTO.password = userDTO.login;
       const created = await this.userService.save(userDTO, req.user?.login);
       HeaderUtil.addEntityCreatedHeaders(req.res, 'User', created.id);
@@ -68,9 +68,9 @@ export class UserController {
   @ApiResponse({
       status: 200,
       description: 'The record has been successfully updated.',
-      type: UserDTO,
+      type: <%= asDto('User')%>,
   })
-  async updateUser(@Req() req: Request, @Body() userDTO: UserDTO): Promise<UserDTO> {
+  async updateUser(@Req() req: Request, @Body() userDTO: <%= asDto('User')%>): Promise<<%= asDto('User')%>> {
     const userOnDb = await this.userService.find({ where: { login: userDTO.login } });
     let updated = false;
     if (userOnDb && userOnDb.id) {
@@ -94,9 +94,9 @@ export class UserController {
   @ApiResponse({
       status: 200,
       description: 'The found record',
-      type: UserDTO,
+      type: <%= asDto('User')%>,
   })
-  async getUser(@Param('login') loginValue: string): Promise<UserDTO> {
+  async getUser(@Param('login') loginValue: string): Promise<<%= asDto('User')%>> {
       return await this.userService.find({ where: { login: loginValue } });
   }
 
@@ -106,9 +106,9 @@ export class UserController {
   @ApiResponse({
       status: 204,
       description: 'The record has been successfully deleted.',
-      type: UserDTO
+      type: <%= asDto('User')%>
   })
-  async deleteUser(@Req() req: Request, @Param('login') loginValue: string): Promise<UserDTO> {
+  async deleteUser(@Req() req: Request, @Param('login') loginValue: string): Promise<<%= asDto('User')%>> {
       HeaderUtil.addEntityDeletedHeaders(req.res, 'User', loginValue);
       const userToDelete = await this.userService.find({ where: { login: loginValue } });
       return await this.userService.delete(userToDelete);
