@@ -1,7 +1,7 @@
 Description:
-    Creates a new JHipster server side application based on the selected options
+    Creates a new NHipster server side application based on the selected options
 
 Example:
-    jhipster server
+    nhipster server
 
     This will create a NestJS server side app
