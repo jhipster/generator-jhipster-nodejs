@@ -1,13 +1,13 @@
 import { <%= asEntity(entityClass) %> } from '../../domain/<%= entityFileName %>.entity';
-import { <%= asEntity(entityClass) %>DTO } from '../dto/<%= entityFileName %>.dto';
+import { <%= asDto(entityClass) %> } from '../dto/<%= entityFileName %>.dto';
 
 
 /**
- * A <%= asEntity(entityClass) %> mapper object.
+ * A <%= entityClass %> mapper object.
  */
-export class <%= asEntity(entityClass) %>Mapper {
+export class <%= entityClass %>Mapper {
 
-  static fromDTOtoEntity (entityDTO: <%= asEntity(entityClass) %>DTO): <%= asEntity(entityClass) %> {
+  static fromDTOtoEntity (entityDTO: <%= asDto(entityClass) %>): <%= asEntity(entityClass) %> {
     if (!entityDTO) {
       return;
     }
@@ -20,11 +20,11 @@ export class <%= asEntity(entityClass) %>Mapper {
 
   }
 
-  static fromEntityToDTO (entity: <%= asEntity(entityClass) %>): <%= asEntity(entityClass) %>DTO {
+  static fromEntityToDTO (entity: <%= asEntity(entityClass) %>): <%= asDto(entityClass) %> {
     if (!entity) {
       return;
     }
-    let entityDTO = new <%= asEntity(entityClass) %>DTO();
+    let entityDTO = new <%= asDto(entityClass) %>();
 
     const fields = Object.getOwnPropertyNames(entity);
 

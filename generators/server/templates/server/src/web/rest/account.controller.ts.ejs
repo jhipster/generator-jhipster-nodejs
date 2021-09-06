@@ -5,7 +5,7 @@ import { Response, Request } from 'express';
 import { AuthGuard, Roles, RoleType, RolesGuard } from '../../security';
 import { PasswordChangeDTO } from '../../service/dto/password-change.dto';
 <%_ } _%>
-import { UserDTO } from '../../service/dto/user.dto';
+import { <%= asDto('User')%> } from '../../service/dto/user.dto';
 import { LoggingInterceptor } from '../../client/interceptors/logging.interceptor';
 import {<%_ if (authenticationType === 'jwt') { _%> ApiBearerAuth, <%_ } _%> ApiUseTags, ApiResponse, ApiOperation } from '@nestjs/swagger';
 import { AuthService } from '../../service/auth.service';
@@ -24,9 +24,9 @@ export class AccountController {
   @ApiResponse({
     status: 201,
     description: 'Registered user',
-    type: UserDTO,
+    type: <%= asDto('User')%>,
   })
-  async registerAccount(@Req() req: Request, @Body() userDTO: UserDTO & { password: string }): Promise <any> {
+  async registerAccount(@Req() req: Request, @Body() userDTO: <%= asDto('User')%> & { password: string }): Promise <any> {
     return await this.authService.registerNewUser(userDTO);
   }
 
@@ -85,9 +85,9 @@ export class AccountController {
   @ApiResponse({
     status: 201,
     description: 'user info updated',
-    type: UserDTO,
+    type: <%= asDto('User')%>,
   })
-  async saveAccount(@Req() req: Request, @Body() newUserInfo: UserDTO): Promise<any> {
+  async saveAccount(@Req() req: Request, @Body() newUserInfo: <%= asDto('User')%>): Promise<any> {
     const user: any = req.user;
     return await this.authService.updateUserSettings(user.login, newUserInfo);
 }
@@ -139,13 +139,13 @@ export class AccountController {
   @ApiResponse({
     status: 200,
     description: 'User retrieved',
-    type: UserDTO,
+    type: <%= asDto('User')%>,
   })
   getAccount(@Req() req: any): any {
     if(!req.session) {
        return;
     }
-    const userDTO: UserDTO = req.session.user;
+    const userDTO: <%= asDto('User')%> = req.session.user;
     return this.authService.getAccount(userDTO);
   }
 

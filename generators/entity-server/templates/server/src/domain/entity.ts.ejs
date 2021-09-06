@@ -19,11 +19,12 @@ for (idx in fields) {
 }
 for (idx in relationships) {
     const relationship = relationships[idx];
-    if (relationship.otherEntityAngularName === 'User'){
+    const otherEntityClass = asEntity(relationship.otherEntity.entityClass);
+    if (relationship.otherEntity.entityClass === 'User'){
         isUserRelationship = true;
     }
-    else if (!uniqueEntities[relationship.otherEntityAngularName] && relationship.otherEntityAngularName != asEntity(entityClass)) {
-        uniqueEntities[relationship.otherEntityAngularName] = relationship.otherEntityFileName;
+    else if (!uniqueEntities[otherEntityClass] && otherEntityClass != asEntity(entityClass)) {
+        uniqueEntities[otherEntityClass] = relationship.otherEntityFileName;
     }
 }
 _%>
@@ -36,7 +37,7 @@ import { <%= enumClass %> } from './enumeration/<%= uniqueEnums[enumClass] %>';
 <%_ }); _%>
 
 <%_ if (isUserRelationship === true) { _%>
-import { User } from './user.entity';
+import { <%= asEntity('User') %> } from './user.entity';
 <%_ } _%>
 
 <%_ if (typeof javadoc == 'undefined') { _%>
@@ -109,21 +110,22 @@ export class <%= asEntity(entityClass) %> extends BaseEntity  {
         const relationshipRequired = relationships[idx].relationshipRequired;
         const otherEntityNameCapitalized = relationships[idx].otherEntityNameCapitalized;
         const ownerSide = relationships[idx].ownerSide; // before was ownerSide === true in and userRel many-to-one
+        const otherEntityClass = asEntity(relationships[idx].otherEntity.entityClass);
         let userRelationship = false;
-        if (relationship.otherEntityAngularName === 'User'){
+        if (otherEntityClass === 'User'){
             userRelationship = true;
         }
 
         if (relationshipType === 'one-to-many') {_%>
-    @OneToMany(type => <%= relationship.otherEntityAngularName %> <%_ if (userRelationship === false) { _%>, other => other.<%= otherEntityRelationshipName %><%_ } _%>)
-    <%= relationshipFieldNamePlural %>: <%= relationship.otherEntityAngularName %>[];
+    @OneToMany(type => <%= otherEntityClass %> <%_ if (userRelationship === false) { _%>, other => other.<%= otherEntityRelationshipName %><%_ } _%>)
+    <%= relationshipFieldNamePlural %>: <%= otherEntityClass %>[];
 
     <%_ } else if (relationshipType === 'many-to-one') { _%>
-    @ManyToOne(type => <%= relationship.otherEntityAngularName %> <%_ if (!ownerSide && userRelationship === false ) { _%>, other => other.<%= otherEntityRelationshipNamePlural %>  <%_ } _%>)
-    <%= relationshipFieldName %>: <%= relationship.otherEntityAngularName %>;
+    @ManyToOne(type => <%= otherEntityClass %> <%_ if (!ownerSide && userRelationship === false ) { _%>, other => other.<%= otherEntityRelationshipNamePlural %>  <%_ } _%>)
+    <%= relationshipFieldName %>: <%= otherEntityClass %>;
 
     <%_ } else if (relationshipType === 'many-to-many') { _%>
-    @ManyToMany(type => <%= relationship.otherEntityAngularName %> )
+    @ManyToMany(type => <%= otherEntityClass %> )
         <%_ if (ownerSide === true) { _%>
     @JoinTable({
         name: '<%= joinTableName %>',
@@ -131,12 +133,12 @@ export class <%= asEntity(entityClass) %> extends BaseEntity  {
         inverseJoinColumn: { name: '<%= getColumnName(relationship.relationshipName) %>_id', referencedColumnName: "id" }
     })
         <%_ } _%>
-    <%= relationshipFieldNamePlural %>: <%= relationship.otherEntityAngularName %>[];
+    <%= relationshipFieldNamePlural %>: <%= otherEntityClass %>[];
 
     <%_ } else { _%>
-    @OneToOne(type => <%= relationship.otherEntityAngularName %>)
+    @OneToOne(type => <%= otherEntityClass %>)
     <%_ if (ownerSide === true) { _%>@JoinColumn()<%_ } _%>
-    <%= relationshipFieldName %>: <%= relationship.otherEntityAngularName %>;
+    <%= relationshipFieldName %>: <%= otherEntityClass %>;
 
     <%_ }
     } _%>

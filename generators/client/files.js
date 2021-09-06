@@ -171,6 +171,8 @@ const clientFiles = {
 function writeFiles() {
     return {
         overrideFiles() {
+            // TODO: remove override of workbox-webpack-plugin once generator-jhipster is updated (see https://stackoverflow.com/questions/68895709/jhipster-7-1-0-reactjs-building-jar/68903314#68903314)
+            this.dependabotPackageJson.devDependencies['workbox-webpack-plugin'] = '6.2.4';
             this.writeFilesToDisk(clientFiles, this, false);
         }
     };

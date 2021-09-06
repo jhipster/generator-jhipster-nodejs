@@ -1,6 +1,7 @@
+<%_ const UserEntity = asEntity('User') %>
 import { MigrationInterface, QueryRunner, getRepository } from 'typeorm';
 <%_ if (authenticationType !== 'oauth2') { _%>
-import { User } from '../domain/user.entity';
+import { <%= UserEntity %> } from '../domain/user.entity';
 import { transformPassword } from '../security';
 <%_ } _%>
 import { Authority } from '../domain/authority.entity';
@@ -11,7 +12,7 @@ export class SeedUsersRoles1570200490072 implements MigrationInterface {
   role2: Authority = { name: 'ROLE_USER' };
 
   <%_ if (authenticationType !== 'oauth2') { _%>
-  user1: User = {
+  user1: <%= UserEntity %> = {
     login: 'system',
     password: 'system',
     firstName: 'System',
@@ -24,7 +25,7 @@ export class SeedUsersRoles1570200490072 implements MigrationInterface {
     lastModifiedBy: 'system'
   };
 
-  user2: User = {
+  user2: <%= UserEntity %> = {
     login: 'anonymoususer',
     password: 'anonymoususer',
     firstName: 'Anonymous',
@@ -37,7 +38,7 @@ export class SeedUsersRoles1570200490072 implements MigrationInterface {
     lastModifiedBy: 'system'
   };
 
-  user3: User = {
+  user3: <%= UserEntity %> = {
     login: 'admin',
     password: 'admin',
     firstName: 'Administrator',
@@ -50,7 +51,7 @@ export class SeedUsersRoles1570200490072 implements MigrationInterface {
     lastModifiedBy: 'system'
   };
 
-  user4: User = {
+  user4: <%= UserEntity %> = {
     login: 'user',
     password: 'user',
     firstName: 'User',

@@ -22,30 +22,31 @@ for (idx in fields) {
 }
 for (idx in relationships) {
     const relationship = relationships[idx];
-    if (relationship.otherEntityAngularName === 'User'){
+    const otherDto = asDto(relationship.otherEntity.entityClass);
+    if (relationship.otherEntity.entityClass === 'User'){
         isUserRelationship = true;
     }
-    else if (!uniqueEntities[relationship.otherEntityAngularName] && relationship.otherEntityAngularName != asEntity(entityClass)) {
-        uniqueEntities[relationship.otherEntityAngularName] = relationship.otherEntityFileName;
+    else if (!uniqueEntities[otherDto] && otherDto != asDto(entityClass)) {
+        uniqueEntities[otherDto] = relationship.otherEntityFileName;
     }
 }
 _%>
 
-<%_ Object.keys(uniqueEntities).forEach(function(entityClass) { _%>
-import { <%= entityClass %>DTO } from './<%= uniqueEntities[entityClass] %>.dto';
+<%_ Object.keys(uniqueEntities).forEach(function(entityDto) { _%>
+import { <%= entityDto %> } from './<%= uniqueEntities[entityDto] %>.dto';
 <%_ }); _%>
 <%_ Object.keys(uniqueEnums).forEach(function(enumClass) { _%>
 import { <%= enumClass %> } from '../../domain/enumeration/<%= uniqueEnums[enumClass] %>';
 <%_ }); _%>
 
 <%_ if (isUserRelationship === true) { _%>
-import { UserDTO } from './user.dto';
+import { <%= asDto('User')%> } from './user.dto';
 <%_ } _%>
 
 /**
- * A <%= asEntity(entityClass) %> DTO object.
+ * A <%= asDto(entityClass) %> object.
  */
-export class <%= asEntity(entityClass) %>DTO extends BaseDTO {
+export class <%= asDto(entityClass) %> extends BaseDTO {
 
     <%_ for (idx in fieldsWithoutId) {
         const field = fieldsWithoutId[idx];
@@ -98,25 +99,26 @@ export class <%= asEntity(entityClass) %>DTO extends BaseDTO {
             const relationshipValidate = relationship.relationshipValidate;
             const relationshipRequired = relationship.relationshipRequired;
             const otherEntityNameCapitalized = relationship.otherEntityNameCapitalized;
+            const otherEntityDto = asDto(relationship.otherEntity.entityClass);
 
-            if (typeof relationships.javadoc != 'undefined') { _%>
+        if (typeof relationships.javadoc != 'undefined') { _%>
     <%- formatAsFieldJavadoc(relationships.javadoc) %>
         <%_ } _%>
           <%_ if (relationshipType === 'one-to-many') { _%>
-         @ApiModelProperty({ type: <%= relationship.otherEntityAngularName %>DTO, isArray: true, <%_ if (typeof relationships.javadoc != 'undefined') { _%>  description: '<%- formatAsApiDescription(relationships.javadoc) %>' <%_ } else { _%> description: '<%= relationshipFieldNamePlural %> relationship' <%_ } _%> })
-        <%= relationshipFieldNamePlural %>: <%= relationship.otherEntityAngularName %>DTO[];
+         @ApiModelProperty({ type: <%= otherEntityDto %>, isArray: true, <%_ if (typeof relationships.javadoc != 'undefined') { _%>  description: '<%- formatAsApiDescription(relationships.javadoc) %>' <%_ } else { _%> description: '<%= relationshipFieldNamePlural %> relationship' <%_ } _%> })
+        <%= relationshipFieldNamePlural %>: <%= otherEntityDto %>[];
 
         <%_ } else if (relationshipType === 'many-to-one') { _%>
-        @ApiModelProperty({ type: <%= relationship.otherEntityAngularName %>DTO, <%_ if (typeof relationships.javadoc != 'undefined') { _%>  description: '<%- formatAsApiDescription(relationships.javadoc) %>' <%_ } else { _%> description: '<%= relationshipFieldName %> relationship' <%_ } _%> })
-        <%= relationshipFieldName %>: <%= relationship.otherEntityAngularName %>DTO;
+        @ApiModelProperty({ type: <%= otherEntityDto %>, <%_ if (typeof relationships.javadoc != 'undefined') { _%>  description: '<%- formatAsApiDescription(relationships.javadoc) %>' <%_ } else { _%> description: '<%= relationshipFieldName %> relationship' <%_ } _%> })
+        <%= relationshipFieldName %>: <%= otherEntityDto %>;
 
         <%_ } else if (relationshipType === 'many-to-many') { _%>
-        @ApiModelProperty({ type: <%= relationship.otherEntityAngularName %>DTO, isArray: true, <%_ if (typeof relationships.javadoc != 'undefined') { _%>  description: '<%- formatAsApiDescription(relationships.javadoc) %>' <%_ } else { _%> description: '<%= relationshipFieldNamePlural %> relationship' <%_ } _%> })
-        <%= relationshipFieldNamePlural %>: <%= relationship.otherEntityAngularName %>DTO[];
+        @ApiModelProperty({ type: <%= otherEntityDto %>, isArray: true, <%_ if (typeof relationships.javadoc != 'undefined') { _%>  description: '<%- formatAsApiDescription(relationships.javadoc) %>' <%_ } else { _%> description: '<%= relationshipFieldNamePlural %> relationship' <%_ } _%> })
+        <%= relationshipFieldNamePlural %>: <%= otherEntityDto %>[];
 
         <%_ } else { _%>
-        @ApiModelProperty({ type: <%= relationship.otherEntityAngularName %>DTO, <%_ if (typeof relationships.javadoc != 'undefined') { _%>  description: '<%- formatAsApiDescription(relationships.javadoc) %>' <%_ } else { _%> description: '<%= relationshipFieldName %> relationship' <%_ } _%> })
-        <%= relationshipFieldName %>: <%= relationship.otherEntityAngularName %>DTO;
+        @ApiModelProperty({ type: <%= otherEntityDto %>, <%_ if (typeof relationships.javadoc != 'undefined') { _%>  description: '<%- formatAsApiDescription(relationships.javadoc) %>' <%_ } else { _%> description: '<%= relationshipFieldName %> relationship' <%_ } _%> })
+        <%= relationshipFieldName %>: <%= otherEntityDto %>;
 
         <%_ }
         } _%>

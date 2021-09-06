@@ -8,7 +8,7 @@ import * as bcrypt from 'bcrypt';
 <%_ } _%>
 import { AuthorityRepository } from '../repository/authority.repository';
 import { UserService } from '../service/user.service';
-import { UserDTO } from './dto/user.dto';
+import { <%= asDto('User')%> } from './dto/user.dto';
 import { FindManyOptions } from 'typeorm';
 
 <%_
@@ -53,21 +53,21 @@ export class AuthService {
   }
 
   /* eslint-enable */
-  async validateUser(payload: Payload): Promise<UserDTO | undefined> {
+  async validateUser(payload: Payload): Promise<<%= asDto('User')%> | undefined> {
     return await this.findUserWithAuthById(payload.id);
   }
 
-  async findUserWithAuthById(userId: <%= userIdType %>): Promise<UserDTO | undefined> {
+  async findUserWithAuthById(userId: <%= userIdType %>): Promise<<%= asDto('User')%> | undefined> {
     <%_ if (databaseType === 'mongodb') { _%>
-    const userDTO: UserDTO = await this.userService.findById(userId);
+    const userDTO: <%= asDto('User')%> = await this.userService.findById(userId);
     <%_ } else { _%>
-    const userDTO: UserDTO = await this.userService.findByFields({ where: { id: userId } });
+    const userDTO: <%= asDto('User')%> = await this.userService.findByFields({ where: { id: userId } });
     <%_ } _%>
     return userDTO;
   }
 
-  async getAccount(userId: <%= userIdType %>): Promise<UserDTO | undefined> {
-    const userDTO: UserDTO = await this.findUserWithAuthById(userId);
+  async getAccount(userId: <%= userIdType %>): Promise<<%= asDto('User')%> | undefined> {
+    const userDTO: <%= asDto('User')%> = await this.findUserWithAuthById(userId);
     if (!userDTO) {
        return;
     }
@@ -75,7 +75,7 @@ export class AuthService {
   }
 
   async changePassword(userLogin: string, currentClearTextPassword: string, newPassword: string): Promise<void> {
-    const userFind: UserDTO = await this.userService.findByFields({ where: { login: userLogin } });
+    const userFind: <%= asDto('User')%> = await this.userService.findByFields({ where: { login: userLogin } });
     if (!userFind) {
         throw new HttpException('Invalid login name!', HttpStatus.BAD_REQUEST);
     }
@@ -88,8 +88,8 @@ export class AuthService {
     return;
   }
 
-  async registerNewUser (newUser: UserDTO) : Promise<UserDTO> {
-    let userFind: UserDTO = await this.userService.findByFields({ where: { login: newUser.login} });
+  async registerNewUser (newUser: <%= asDto('User')%>) : Promise<<%= asDto('User')%>> {
+    let userFind: <%= asDto('User')%> = await this.userService.findByFields({ where: { login: newUser.login} });
     if (userFind) {
       throw new HttpException('Login name already used!', HttpStatus.BAD_REQUEST);
     }
@@ -98,16 +98,16 @@ export class AuthService {
       throw new HttpException('Email is already in use!', HttpStatus.BAD_REQUEST);
     }
     newUser.authorities = ['ROLE_USER'];
-    const user: UserDTO = await this.userService.save(newUser, newUser.login, true);
+    const user: <%= asDto('User')%> = await this.userService.save(newUser, newUser.login, true);
     return user;
   }
 
-  async updateUserSettings(userLogin: string, newUserInfo: UserDTO) : Promise<UserDTO> {
-    const userFind: UserDTO = await this.userService.findByFields({ where: { login: userLogin } });
+  async updateUserSettings(userLogin: string, newUserInfo: <%= asDto('User')%>) : Promise<<%= asDto('User')%>> {
+    const userFind: <%= asDto('User')%> = await this.userService.findByFields({ where: { login: userLogin } });
     if (!userFind) {
         throw new HttpException('Invalid login name!', HttpStatus.BAD_REQUEST);
     }
-    const userFindEmail: UserDTO = await this.userService.findByFields({ where: { email: newUserInfo.email } });
+    const userFindEmail: <%= asDto('User')%> = await this.userService.findByFields({ where: { email: newUserInfo.email } });
     if (userFindEmail && newUserInfo.email !== userFind.email) {
         throw new HttpException('Email is already in use!', HttpStatus.BAD_REQUEST);
     }
@@ -121,11 +121,11 @@ export class AuthService {
   }
 
   <%_ } else if (authenticationType === 'oauth2') { _%>
-    async findUserOrSave(loginUser: UserDTO): Promise<UserDTO | undefined> {
+    async findUserOrSave(loginUser: <%= asDto('User')%>): Promise<<%= asDto('User')%> | undefined> {
         if (loginUser.login && loginUser.password && !loginUser.email) {
             loginUser.email = loginUser.login + '@localhost.it';
         }
-        let userFound: UserDTO = await this.userService.findByFields({ where: { login: loginUser.login } });
+        let userFound: <%= asDto('User')%> = await this.userService.findByFields({ where: { login: loginUser.login } });
 
         if (!userFound) {
           const authoritiesName = [];
@@ -137,7 +137,7 @@ export class AuthService {
         return loginUser;
       }
 
-   getAccount(userDTO: UserDTO): any {
+   getAccount(userDTO: <%= asDto('User')%>): any {
     if (!userDTO) {
        return;
     }
@@ -146,7 +146,7 @@ export class AuthService {
 
   <%_ } _%>
 
-  async getAllUsers(options: FindManyOptions<UserDTO>): Promise<[UserDTO[], number]> {
+  async getAllUsers(options: FindManyOptions<<%= asDto('User')%>>): Promise<[<%= asDto('User')%>[], number]> {
     return await this.userService.findAndCount(options);
  }
 
