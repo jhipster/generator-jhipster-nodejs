@@ -16,6 +16,7 @@
 
 # [2.0.0](https://github.com/jhipster/generator-jhipster-nodejs/tree/v2.0.0) - xx/xx/2021 released date
 
+-   Support entitySuffix generation [issue #209](https://github.com/jhipster/generator-jhipster-nodejs/issues/209)
 -   ci-cd for nodejs application [issue #104](https://github.com/jhipster/generator-jhipster-nodejs/issues/104)
 -   Support JHipster primary key type for entity service and controller [issue #238](https://github.com/jhipster/generator-jhipster-nodejs/issues/238)
 -   Columns createdBy, createdDate, lastModifiedBy and lastModifiedDate should be filled automatically [issue #236](https://github.com/jhipster/generator-jhipster-nodejs/issues/236)
