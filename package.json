@@ -60,7 +60,7 @@
         "lodash": "4.17.21",
         "meow": "5.0.0",
         "semver": "6.1.1",
-        "shelljs": "0.8.4"
+        "shelljs": "0.8.5"
     },
     "devDependencies": {
         "chai": "4.2.0",
