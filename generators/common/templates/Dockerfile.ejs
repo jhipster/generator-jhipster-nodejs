@@ -1,10 +1,13 @@
-FROM node:14-alpine
+ARG ENTRY_POINT=8083
+ARG PROD_MODE="dev"
+
+FROM node:14-alpine AS base
 
 # Create app directory
 
 WORKDIR /usr/node-app
 
-ENV NODE_SERVER_PORT=8081
+ENV NODE_SERVER_PORT=$ENTRY_POINT
 
 COPY . .
 
@@ -20,6 +23,17 @@ WORKDIR ..
 
 RUN npm install
 
-EXPOSE 8081
+EXPOSE ${ENTRY_POINT}
 
+FROM base AS branch-version-dev
+RUN echo "this is the stage that runs as DEV"
+ENV BACKEND_ENV="dev"
 ENTRYPOINT ["npm", "run", "start:app" ]
+
+FROM base AS branch-version-prod
+RUN echo "this is the stage that runs as PROD"
+ENV BACKEND_ENV="prod"
+ENTRYPOINT ["npm", "run", "start:prod" ]
+
+FROM branch-version-${PROD_MODE} AS final
+RUN echo "finally selected prod mode as: ${BACKEND_ENV}"

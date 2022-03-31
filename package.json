@@ -56,11 +56,11 @@
         "chalk": "2.4.2",
         "commander": "2.20.0",
         "ejs": "2.6.1",
-        "generator-jhipster": "7.0.1",
+        "generator-jhipster": "7.7.0",
         "lodash": "4.17.21",
         "meow": "5.0.0",
         "semver": "6.1.1",
-        "shelljs": "0.8.4"
+        "shelljs": "^0.8.5"
     },
     "devDependencies": {
         "chai": "4.2.0",
@@ -72,13 +72,13 @@
         "eslint-plugin-prettier": "3.1.0",
         "fs-extra": "8.0.1",
         "glob": "7.1.4",
-        "jsdoc": "3.6.3",
+        "jsdoc": "^3.6.10",
         "mocha": "6.1.4",
         "nyc": "15.0.0",
         "pre-commit": "1.2.2",
         "prettier": "1.17.1",
         "sinon": "7.3.2",
-        "sonarqube-scanner": "2.5.0",
+        "sonarqube-scanner": "^2.8.1",
         "yeoman-assert": "3.1.1",
         "yeoman-test": "5.1.0"
     },
