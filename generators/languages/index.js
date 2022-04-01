@@ -87,7 +87,7 @@ module.exports = class extends LanguagesGenerator {
 
     get postWriting() {
         return {
-            ...super._postWriting(),
+            ...super._postWriting()
             // postWritingDotnet() {
             //     if (this.clientFramework === ANGULAR) {
             //         return writeFilesAngular.call(this);

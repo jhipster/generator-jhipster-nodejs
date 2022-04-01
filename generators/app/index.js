@@ -98,7 +98,7 @@ module.exports = class extends AppGenerator {
                 this.namespace = this.jhipsterConfig.namespace;
                 this.applicationType = this.jhipsterConfig.applicationType;
                 this.serviceDiscoveryType = this.jhipsterConfig.serviceDiscoveryType;
-                const serverConfigFound = this.namespace !== undefined ;
+                const serverConfigFound = this.namespace !== undefined;
 
                 if (this.baseName !== undefined && serverConfigFound) {
                     this.log(
