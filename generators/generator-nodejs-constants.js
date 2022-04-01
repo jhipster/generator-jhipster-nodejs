@@ -31,6 +31,10 @@ const SERVICE_DISCOVERY_TYPE_NODEJS = false;
 const ENABLE_SWAGGER_CODEGEN_NODEJS = false;
 const BUILD_TOOL_NODEJS = 'maven';
 
+// Version of Node, NPM
+const NODE_VERSION = '16.10.0';
+const NPM_VERSION = '7.24.0';
+
 const constants = {
     SERVER_NODEJS_SRC_DIR,
     PACKAGE_NAME_NODEJS,
@@ -44,7 +48,9 @@ const constants = {
     MESSAGE_BROKER_NODEJS,
     SERVICE_DISCOVERY_TYPE_NODEJS,
     ENABLE_SWAGGER_CODEGEN_NODEJS,
-    BUILD_TOOL_NODEJS
+    BUILD_TOOL_NODEJS,
+    NODE_VERSION,
+    NPM_VERSION
 };
 
 module.exports = constants;

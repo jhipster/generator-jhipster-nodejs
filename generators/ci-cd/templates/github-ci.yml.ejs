@@ -52,7 +52,7 @@ jobs:
                   <%= clientPackageManager %> install
                   <%= clientPackageManager %> run test
               working-directory: server
-               }
+              <%_ }
               if (!skipClient) { _%>
             - name: Run frontend test
               run: <%= clientPackageManager %> run <%= frontTestCommand %>
