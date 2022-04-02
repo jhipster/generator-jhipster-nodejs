@@ -52,11 +52,7 @@ export class PageRequest {
             return pa;
         } else if (typeof pa === 'number') {
             return pa;
-        } else if (!('length' in pa)) {
-            // throw new Error(`Incorrect item passed in as pagination query: ${JSON.stringify(pa)}`);
-            return other;
         } else {
-            // throw new Error(`Incorrect list of items passed in as pagination query: ${JSON.stringify(pa)}`);
             return other;
         }
     }
