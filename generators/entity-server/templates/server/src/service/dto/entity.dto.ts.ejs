@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { ApiModelProperty } from '@nestjs/swagger';
+import { ApiProperty } from '@nestjs/swagger';
 <%_ if (validation) { _%>
 import { IsNotEmpty, MinLength, MaxLength, Length, Min, Max, Matches } from 'class-validator';
 <%_ } _%>
@@ -70,9 +70,9 @@ export class <%= asDto(entityClass) %> extends BaseDTO {
             <%- include('../../common/field_validators', { field }); -%>
         <%_ } _%>
             <%_ if (field.fieldIsEnum) { _%>
-            @ApiModelProperty({ enum: <%= fieldType %>, <%_ if (typeof field.javadoc != 'undefined') { _%> description: '<%- formatAsApiDescription(field.javadoc) %>' <%_ } else { _%> description: '<%= fieldName %> enum field' <%_ } if (!required) { _%>, required: false <%_ } _%>})
+            @ApiProperty({ enum: <%= fieldType %>, <%_ if (typeof field.javadoc != 'undefined') { _%> description: '<%- formatAsApiDescription(field.javadoc) %>' <%_ } else { _%> description: '<%= fieldName %> enum field' <%_ } if (!required) { _%>, required: false <%_ } _%>})
             <%_ } else { _%>
-            @ApiModelProperty({ <%_ if (typeof field.javadoc != 'undefined') { _%> description: '<%- formatAsApiDescription(field.javadoc) %>' <%_ } else { _%> description: '<%= fieldName %> field' <%_ } if (!required) { _%>, required: false <%_ } _%>})
+            @ApiProperty({ <%_ if (typeof field.javadoc != 'undefined') { _%> description: '<%- formatAsApiDescription(field.javadoc) %>' <%_ } else { _%> description: '<%= fieldName %> field' <%_ } if (!required) { _%>, required: false <%_ } _%>})
             <%_ } _%>
             <%_ if (field.fieldIsEnum) { _%>
         <%= fieldName %>: <%= fieldType %>;
@@ -105,19 +105,19 @@ export class <%= asDto(entityClass) %> extends BaseDTO {
     <%- formatAsFieldJavadoc(relationships.javadoc) %>
         <%_ } _%>
           <%_ if (relationshipType === 'one-to-many') { _%>
-         @ApiModelProperty({ type: <%= otherEntityDto %>, isArray: true, <%_ if (typeof relationships.javadoc != 'undefined') { _%>  description: '<%- formatAsApiDescription(relationships.javadoc) %>' <%_ } else { _%> description: '<%= relationshipFieldNamePlural %> relationship' <%_ } _%> })
+         @ApiProperty({ type: <%= otherEntityDto %>, isArray: true, <%_ if (typeof relationships.javadoc != 'undefined') { _%>  description: '<%- formatAsApiDescription(relationships.javadoc) %>' <%_ } else { _%> description: '<%= relationshipFieldNamePlural %> relationship' <%_ } _%> })
         <%= relationshipFieldNamePlural %>: <%= otherEntityDto %>[];
 
         <%_ } else if (relationshipType === 'many-to-one') { _%>
-        @ApiModelProperty({ type: <%= otherEntityDto %>, <%_ if (typeof relationships.javadoc != 'undefined') { _%>  description: '<%- formatAsApiDescription(relationships.javadoc) %>' <%_ } else { _%> description: '<%= relationshipFieldName %> relationship' <%_ } _%> })
+        @ApiProperty({ type: <%= otherEntityDto %>, <%_ if (typeof relationships.javadoc != 'undefined') { _%>  description: '<%- formatAsApiDescription(relationships.javadoc) %>' <%_ } else { _%> description: '<%= relationshipFieldName %> relationship' <%_ } _%> })
         <%= relationshipFieldName %>: <%= otherEntityDto %>;
 
         <%_ } else if (relationshipType === 'many-to-many') { _%>
-        @ApiModelProperty({ type: <%= otherEntityDto %>, isArray: true, <%_ if (typeof relationships.javadoc != 'undefined') { _%>  description: '<%- formatAsApiDescription(relationships.javadoc) %>' <%_ } else { _%> description: '<%= relationshipFieldNamePlural %> relationship' <%_ } _%> })
+        @ApiProperty({ type: <%= otherEntityDto %>, isArray: true, <%_ if (typeof relationships.javadoc != 'undefined') { _%>  description: '<%- formatAsApiDescription(relationships.javadoc) %>' <%_ } else { _%> description: '<%= relationshipFieldNamePlural %> relationship' <%_ } _%> })
         <%= relationshipFieldNamePlural %>: <%= otherEntityDto %>[];
 
         <%_ } else { _%>
-        @ApiModelProperty({ type: <%= otherEntityDto %>, <%_ if (typeof relationships.javadoc != 'undefined') { _%>  description: '<%- formatAsApiDescription(relationships.javadoc) %>' <%_ } else { _%> description: '<%= relationshipFieldName %> relationship' <%_ } _%> })
+        @ApiProperty({ type: <%= otherEntityDto %>, <%_ if (typeof relationships.javadoc != 'undefined') { _%>  description: '<%- formatAsApiDescription(relationships.javadoc) %>' <%_ } else { _%> description: '<%= relationshipFieldName %> relationship' <%_ } _%> })
         <%= relationshipFieldName %>: <%= otherEntityDto %>;
 
         <%_ }
