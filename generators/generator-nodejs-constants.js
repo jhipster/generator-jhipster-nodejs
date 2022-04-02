@@ -32,8 +32,8 @@ const ENABLE_SWAGGER_CODEGEN_NODEJS = false;
 const BUILD_TOOL_NODEJS = 'maven';
 
 // Version of Node, NPM
-const NODE_VERSION = '16.10.0';
-const NPM_VERSION = '7.24.0';
+const NODE_VERSION = '16.14.0';
+const NPM_VERSION = '8.5.0';
 
 const constants = {
     SERVER_NODEJS_SRC_DIR,

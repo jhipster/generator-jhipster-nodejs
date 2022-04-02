@@ -20,9 +20,9 @@ export class Sort {
 
 export class PageRequest {
   @JsonProperty()
-  page: number = 0;
+  page = 0;
   @JsonProperty()
-  size: number = 20;
+  size = 20;
   @Type(() => Sort)
   sort: Sort = new Sort('id,ASC');
 
