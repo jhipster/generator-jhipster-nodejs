@@ -9,7 +9,7 @@ jobs:
         strategy:
             fail-fast: false
             matrix:
-                node_version: [14.16.0]
+                node_version: [16.14.2]
                 os: [ubuntu-latest]
                 app-type:
                     - monolith-vue-jwt-i18n-jdl
