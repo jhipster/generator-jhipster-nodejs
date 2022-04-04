@@ -71,7 +71,7 @@ This project adds nodejs for your backend, **all TypeScript files generation, no
 As this is a [JHipster](https://www.jhipster.tech/) blueprint, we expect you have JHipster and its related tools already installed:
 
 -   [Installing JHipster](https://www.jhipster.tech/installation/)
--   [node.js 14.16.0](https://nodejs.org/de/blog/release/v14.16.0/)
+-   [node.js 16.14.2](https://nodejs.org/de/blog/release/v16.14.2/)
 
 **Please attention to install that node.js version!!**
 
@@ -197,7 +197,7 @@ $ npm link
 $ cd ..
 $ git clone https://github.com/jhipster/generator-jhipster.git
 $ cd generator-jhipster
-$ git checkout v7.0.0
+$ git checkout v7.7.0
 $ npm install
 $ npm link
 $ cd ..

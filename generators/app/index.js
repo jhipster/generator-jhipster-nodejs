@@ -7,20 +7,20 @@ module.exports = class extends AppGenerator {
     constructor(args, opts) {
         super(args, { fromBlueprint: true, ...opts }); // fromBlueprint variable is important
 
-        const jhContext = (this.jhipsterContext = this.options.jhipsterContext);
+        // const jhContext = (this.jhipsterContext = this.options.jhipsterContext);
 
-        if (!jhContext) {
-            this.error(`This is a JHipster blueprint and should be used only like ${chalk.yellow('jhipster --blueprints nodejs')}`);
-        }
+        // if (!jhContext) {
+        //     this.error(`This is a JHipster blueprint and should be used only like ${chalk.yellow('jhipster --blueprints nodejs')}`);
+        // }
 
-        this.configOptions = jhContext.configOptions || {};
+        // this.configOptions = jhContext.configOptions || {};
 
-        // This adds support for a `--skip-i18n` flag for unit test
-        this.option('skip-i18n', {
-            desc: 'skip internationalization',
-            type: Boolean,
-            defaults: false
-        });
+        // // This adds support for a `--skip-i18n` flag for unit test
+        // this.option('skip-i18n', {
+        //     desc: 'skip internationalization',
+        //     type: Boolean,
+        //     defaults: false
+        // });
     }
 
     get initializing() {
@@ -91,7 +91,25 @@ module.exports = class extends AppGenerator {
             },
             /* eslint-enable */
             // remove jhipster standard java requirement not used in this blueprint
-            validateJava() {}
+            validateJava() {},
+
+            getConfig() {
+                this.baseName = this.jhipsterConfig.baseName;
+                this.namespace = this.jhipsterConfig.namespace;
+                this.applicationType = this.jhipsterConfig.applicationType;
+                this.serviceDiscoveryType = this.jhipsterConfig.serviceDiscoveryType;
+                const serverConfigFound = this.namespace !== undefined;
+
+                if (this.baseName !== undefined && serverConfigFound) {
+                    this.log(
+                        chalk.green(
+                            'This is an existing project, using the configuration from your .yo-rc.json file \n' +
+                                'to re-generate the project...\n'
+                        )
+                    );
+                    this.existingProject = true;
+                }
+            }
         };
 
         return { ...initPhaseFromJHipster, ...nodeInitAppPhaseSteps };

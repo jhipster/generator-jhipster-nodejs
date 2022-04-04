@@ -11,7 +11,7 @@ export class <%= entityClass %>Mapper {
     if (!entityDTO) {
       return;
     }
-    let entity = new <%= asEntity(entityClass) %>();
+    const entity = new <%= asEntity(entityClass) %>();
     const fields = Object.getOwnPropertyNames(entityDTO);
     fields.forEach(field => {
         entity[field] = entityDTO[field];
@@ -24,7 +24,7 @@ export class <%= entityClass %>Mapper {
     if (!entity) {
       return;
     }
-    let entityDTO = new <%= asDto(entityClass) %>();
+    const entityDTO = new <%= asDto(entityClass) %>();
 
     const fields = Object.getOwnPropertyNames(entity);
 

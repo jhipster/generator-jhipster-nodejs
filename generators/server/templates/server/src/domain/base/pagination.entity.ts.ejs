@@ -1,6 +1,7 @@
 /* eslint-disable max-classes-per-file */
 import { BaseEntity } from './base.entity';
 import { Type, Expose as JsonProperty } from 'class-transformer';
+import { ParsedQs } from 'qs';
 
 export class Sort {
   public property: string;
@@ -18,19 +19,43 @@ export class Sort {
   }
 }
 
+export type PaginationQueryType = string | string[] | ParsedQs | ParsedQs[];
 export class PageRequest {
-  @JsonProperty()
-  page: number = 0;
-  @JsonProperty()
-  size: number = 20;
-  @Type(() => Sort)
-  sort: Sort = new Sort('id,ASC');
+    @JsonProperty()
+    page = 0;
+    @JsonProperty()
+    size = 20;
+    @Type(() => Sort)
+    sort: Sort = new Sort('id,ASC');
 
-  constructor(page: number | string, size: number | string, sort: string) {
-    this.page = +page || this.page;
-    this.size = +size || this.size;
-    this.sort = sort ? new Sort(sort) : this.sort;
-  }
+    constructor(page: number | PaginationQueryType, size: number | PaginationQueryType, sort: PaginationQueryType) {
+        this.page = PageRequest.handleNumberTypes(page, this.page);
+        this.size = PageRequest.handleNumberTypes(size, this.size);
+        this.sort = new Sort(PageRequest.handleUnusualTypes(sort, 'id,ASC'));
+    }
+
+    public static handleNumberTypes(pp: number | PaginationQueryType, other: number | string): number {
+        if (typeof pp === 'number') {
+            return pp;
+        } else {
+            const elseItem = PageRequest.handleUnusualTypes(pp, other);
+            if (typeof elseItem === 'number') {
+                return elseItem;
+            } else {
+                return parseInt(elseItem);
+            }
+        }
+    }
+
+    public static handleUnusualTypes<T>(pa: PaginationQueryType, other: T): string | T {
+        if (typeof pa === 'string') {
+            return pa;
+        } else if (typeof pa === 'number') {
+            return pa;
+        } else {
+            return other;
+        }
+    }
 }
 
 export class Page<T extends BaseEntity> {

@@ -12,6 +12,10 @@ module.exports = class extends LanguagesGenerator {
         if (!jhLanguagesContext) {
             this.error(`This is a JHipster blueprint and should be used only like ${chalk.yellow('jhipster --blueprints nodejs')}`);
         }
+
+        if (this.configOptions.baseName) {
+            this.baseName = this.configOptions.baseName;
+        }
     }
 
     get initializing() {
@@ -79,5 +83,22 @@ module.exports = class extends LanguagesGenerator {
             }
         };
         return { ...phaseFromJHipster, ...jhipsterNodeLanguagesPhaseSteps };
+    }
+
+    get postWriting() {
+        return {
+            ...super._postWriting()
+            // postWritingDotnet() {
+            //     if (this.clientFramework === ANGULAR) {
+            //         return writeFilesAngular.call(this);
+            //     }
+            //     if (this.clientFramework === REACT) {
+            //         return writeFilesReact.call(this);
+            //     }
+            //     if (this.clientFramework === VUE) {
+            //         return writeFilesVue.call(this);
+            //     }
+            // },
+        };
     }
 };
