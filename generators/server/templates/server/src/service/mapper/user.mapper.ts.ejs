@@ -10,7 +10,7 @@ export class UserMapper {
     if (!userDTO) {
       return;
     }
-    let user = new <%= asEntity('User') %>();
+    const user = new <%= asEntity('User') %>();
     const fields = Object.getOwnPropertyNames(userDTO);
     fields.forEach(field => {
          user[field] = userDTO[field];
@@ -23,7 +23,7 @@ export class UserMapper {
     if (!user) {
       return;
     }
-    let userDTO = new <%= asDto('User')%>();
+    const userDTO = new <%= asDto('User')%>();
 
     const fields = Object.getOwnPropertyNames(user);
 
