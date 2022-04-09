@@ -81,7 +81,7 @@ async function loadCloudConfig(): Promise<void> {
           // }
       }, (err, cloudConfig) => {
           if (cloudConfig) {
-              config.addAll(cloudConfig.properties);
+              config.addAll(cloudConfig.properties());
           } else if (err) {
               logger.error('Unable to access cloud config');
           }

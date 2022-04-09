@@ -42,7 +42,7 @@ export class PageRequest {
             if (typeof elseItem === 'number') {
                 return elseItem;
             } else {
-                return parseInt(elseItem);
+                return parseInt(elseItem, 10);
             }
         }
     }
