@@ -7,7 +7,7 @@ export class Sort {
   public direction: 'ASC' | 'DESC' | string;
   constructor(sort: string) {
     if (sort) {
-      [this.property, this.direction] = sort.split(',');
+      [this.property, this.direction] = sort.toString().split(',');
     }
   }
 
