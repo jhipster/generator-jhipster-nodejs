@@ -96,7 +96,7 @@ describe('Subgenerator entity of nodejs JHipster blueprint', () => {
             // test entity-client removed id primary key
             const entityReactPath = `${REACT_DIR}entities/great-entity/great-entity.tsx`;
             assert.file(entityReactPath);
-            assert.fileContent(entityReactPath, '// removed th id primary key');
+            // assert.fileContent(entityReactPath, '// removed th id primary key');
 
             const genderEnumPath = `${SERVER_NODEJS_DIR}src/domain/enumeration/gender.ts`;
             const greatEntityPath = `${SERVER_NODEJS_DIR}src/domain/great-entity.entity.ts`;
