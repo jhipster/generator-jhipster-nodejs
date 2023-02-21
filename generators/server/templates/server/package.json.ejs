@@ -36,7 +36,7 @@
     <%_ if (!skipClient) { _%>
     "@nestjs/serve-static": "2.1.4",
     <%_ } _%>
-    "@nestjs/swagger": "3.1.0",
+    "@nestjs/swagger": "4.8.0",
     "@nestjs/typeorm": "7.1.4",
     <%_ if (authenticationType === 'jwt') { _%>
     "bcrypt": "5.0.1",
@@ -89,10 +89,11 @@
     "@types/express": "4.17.1",
     "@types/express-serve-static-core": "4.17.3",
     "@types/jest": "25.2.3",
+    "@types/superagent": "4.1.10",
     <%_ if (authenticationType === 'oauth2') { _%>
     "@types/jwt-decode": "3.1.0",
     <%_ } _%>
-    "@types/node": "11.13.4",
+    "@types/node": "^14.18.10",
     <%_ if (authenticationType === 'jwt') { _%>
     "@types/passport-jwt": "3.0.3",
     <%_ } _%>
