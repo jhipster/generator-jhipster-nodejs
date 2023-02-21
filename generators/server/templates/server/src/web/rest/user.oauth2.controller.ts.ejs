@@ -1,7 +1,7 @@
 import { Controller, Get, Logger, Post, Res, UseGuards, Req, UseInterceptors } from '@nestjs/common';
 import { AuthService } from '../../service/auth.service';
 import { LoggingInterceptor } from '../../client/interceptors/logging.interceptor';
-import { ApiUseTags, ApiResponse, ApiOperation, ApiExcludeEndpoint } from '@nestjs/swagger';
+import { ApiTags, ApiResponse, ApiOperation, ApiExcludeEndpoint } from '@nestjs/swagger';
 import { AuthGuard, RolesGuard } from '../../security';
 import { oauth2Config } from '../../security/oauth2.config';
 <%_ if (skipClient) { _%>
@@ -10,7 +10,7 @@ import { config } from '../../config';
 
 @Controller()
 @UseInterceptors(LoggingInterceptor)
-@ApiUseTags('user-oauth2-controller')
+@ApiTags('user-oauth2-controller')
 export class UserOauth2Controller {
   logger = new Logger('UserOauth2Controller');
 
@@ -19,7 +19,7 @@ export class UserOauth2Controller {
   @ApiExcludeEndpoint()
   @UseGuards(AuthGuard, RolesGuard)
   @Get('/login/oauth2/code/oidc')
-  @ApiOperation({ title: 'Backend redirect' })
+  @ApiOperation({ summary: 'Backend redirect' })
   @ApiResponse({
     status: 200,
     description: 'Redirect oauth2 oidc after login',
@@ -43,7 +43,7 @@ export class UserOauth2Controller {
   @ApiExcludeEndpoint()
   @Get('/oauth2/authorization/oidc')
   @UseGuards(AuthGuard, RolesGuard)
-  @ApiOperation({ title: 'Perform login oauth2 oidc from client' })
+  @ApiOperation({ summary: 'Perform login oauth2 oidc from client' })
   @ApiResponse({
     status: 200,
     description: 'Redirect to login oauth2 oidc',
@@ -54,7 +54,7 @@ export class UserOauth2Controller {
 
   @ApiExcludeEndpoint()
   @Post('/api/logout')
-  @ApiOperation({ title: 'Perform logout oauth2 oidc from client' })
+  @ApiOperation({ summary: 'Perform logout oauth2 oidc from client' })
   @ApiResponse({
     status: 201,
     description: 'Logout oauth2 oidc',
