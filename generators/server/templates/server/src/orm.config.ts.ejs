@@ -79,8 +79,28 @@ function ormConfig(): TypeOrmModuleOptions {
         migrations: commonConf.MIGRATIONS,
         cli: commonConf.CLI,
         migrationsRun: commonConf.MIGRATIONS_RUN,
-    };
+        };
     }
+
+    if (process.env.BACKEND_ENV === 'dev') {
+        ormconfig = {
+            name: 'default',
+            type: '<%= (prodDatabaseType === 'postgresql') ? 'postgres' : prodDatabaseType %>',
+            database: '<%= (prodDatabaseType === 'mongodb') ? 'admin': baseName.toLowerCase() %>',
+            host: 'localhost',
+            port: <%= dbPortValue %>,
+            username: 'sa',
+            password: 'yourStrong(!)Password',
+            logging: false,
+            synchronize: commonConf.SYNCRONIZE,
+            entities: commonConf.ENTITIES,
+            migrations: commonConf.MIGRATIONS,
+            cli: commonConf.CLI,
+            migrationsRun: commonConf.MIGRATIONS_RUN,
+    };
+
+}
+
     return ormconfig;
 }
 
