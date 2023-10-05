@@ -31,7 +31,7 @@
   "type": "module",
   "main": "generators/app/index.js",
   "bin": {
-    "nhipster": "./cli/cli.cjs"
+    "nhipster": "cli/cli.cjs"
   },
   "files": [
     "cli",
@@ -41,8 +41,8 @@
     "ejslint": "ejslint generators/**/*.ejs",
     "lint": "eslint .",
     "lint-fix": "npm run ejslint && npm run lint -- --fix",
-    "prettier-check": "prettier --check \"{,src/**/}*.{md,json,yml,html,js,ts,tsx,css,scss,vue,java}\"",
-    "prettier-format": "prettier --write \"{,src/**/}*.{md,json,yml,html,js,ts,tsx,css,scss,vue,java}\"",
+    "prettier-check": "prettier --check \"{,generators/**/}*.{md,json,yml,html,js,ts,tsx,css,scss,vue,java}\"",
+    "prettier-format": "prettier --write \"{,generators/**/}*.{md,json,yml,html,js,ts,tsx,css,scss,vue,java}\"",
     "pretest": "npm run prettier-check && npm run lint",
     "test": "vitest run",
     "update-snapshot": "vitest run --update",
