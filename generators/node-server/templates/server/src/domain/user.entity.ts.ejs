@@ -3,7 +3,7 @@ import { Entity, Column<%_ if (databaseType !== 'mongodb') { _%>, ManyToMany, Jo
 import { BaseEntity } from './base/base.entity';
 import { Exclude } from 'class-transformer';
 
-@Entity('nhi_user')
+@Entity('<%- jhiTablePrefix %>_user')
 export class <%= user.persistClass %> extends BaseEntity {
   @Column({ unique: true })
   login: string;

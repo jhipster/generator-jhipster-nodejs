@@ -4,7 +4,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { BaseEntity } from './base/base.entity';
 <%_ } _%>
 
-@Entity('nhi_authority')
+@Entity('<%- jhiTablePrefix %>_authority')
 <%_ if (databaseType === 'mongodb') { _%>
 export class Authority extends BaseEntity {
 <%_ } else { _%>
