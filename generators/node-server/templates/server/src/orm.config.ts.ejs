@@ -62,16 +62,17 @@ function ormConfig(): TypeOrmModuleOptions {
     if (process.env.BACKEND_ENV === 'test') {
     ormconfig = {
         name: 'default',
-        type: '<%= devDatabaseType %>',
-        <%_ if (databaseType === 'mongodb') { _%>
+<%_ if (databaseTypeSql) { _%>
+        type: 'sqlite',
+        database: ':memory:',
+<%_ } else { _%>
+        type: '<%= databaseType %>',
         host: 'localhost',
         port: await mongod.getPort(),
         database: await mongod.getDbName(),
         useNewUrlParser: true,
         useUnifiedTopology: true,
-        <%_ } else { _%>
-        database: ':memory:',
-        <%_ } _%>
+<%_ } _%>
         keepConnectionAlive: true,
         logging: true,
         synchronize: true,
