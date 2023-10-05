@@ -61,10 +61,6 @@ export const serverFiles = {
           file: 'server.eslintignore',
           renameTo: () => '.server.eslintignore',
         },
-        {
-          file: 'prettierrc.js',
-          renameTo: () => '.prettierrc.js',
-        },
         'package.json',
         'tsconfig.json',
         'README.md',
@@ -88,10 +84,6 @@ export const serverFiles = {
     {
       templates: [
         'package.json',
-        'src/main/docker/app.yml',
-        /*
-                    { file: '.mvn/wrapper/maven-wrapper.properties', method: 'copy', noEjs: true },
-                */
       ],
     },
   ],

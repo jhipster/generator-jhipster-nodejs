@@ -34,6 +34,12 @@
         "sbs": false,
         "written": true
       },
+      "docker": {
+        "command": false,
+        "priorities": [],
+        "sbs": true,
+        "written": true
+      },
       "languages": {
         "command": false,
         "priorities": [],
@@ -76,6 +82,6 @@
     "localBlueprint": false,
     "sampleWritten": true,
     "skipCommitHook": true,
-    "subGenerators": ["ci-cd", "languages", "server"]
+    "subGenerators": ["ci-cd", "docker", "languages", "server"]
   }
 }

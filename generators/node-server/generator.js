@@ -41,13 +41,6 @@ const dbTypes = {
 };
 
 export default class extends BaseApplicationGenerator {
-  constructor(args, opts, features) {
-    super(args, opts, {
-      ...features,
-      jhipster7Migration: true,
-    });
-  }
-
   async beforeQueue() {
     await this.dependsOnJHipster('bootstrap-application');
   }
@@ -69,8 +62,8 @@ export default class extends BaseApplicationGenerator {
   get [BaseApplicationGenerator.CONFIGURING]() {
     return this.asConfiguringTaskGroup({
       async configuringTemplateTask() {
-        if (this.jhipsterConfigWithDefaults.databaseType === 'sql') {
-          this.jhipsterConfigWithDefaults.devDatabaseType = 'sqlite';
+        if (this.jhipsterConfigWithDefaults.prodDatabaseType === 'mongodb') {
+          this.jhipsterConfig.databaseType = 'mongodb';
         }
       },
     });
@@ -104,7 +97,9 @@ export default class extends BaseApplicationGenerator {
 
   get [BaseApplicationGenerator.CONFIGURING_EACH_ENTITY]() {
     return this.asConfiguringEachEntityTaskGroup({
-      async configuringEachEntityTemplateTask() {},
+      async configuringEachEntityTemplateTask({ entityConfig }) {
+        entityConfig.dto = true;
+      },
     });
   }
 

@@ -1,6 +1,6 @@
 import chalk from "chalk";
 
-export const getLogo = () => `
+export const getLogo = version => `
 ${chalk.yellow(' ███╗   ██╗')}${chalk.green(' ██╗   ██╗ ████████╗ ███████╗   ██████╗ ████████╗ ████████╗ ███████╗')}
 ${chalk.yellow(' ████╗  ██║')}${chalk.green(' ██║   ██║ ╚══██╔══╝ ██╔═══██╗ ██╔════╝ ╚══██╔══╝ ██╔═════╝ ██╔═══██╗')}
 ${chalk.yellow(' ██╔██╗ ██║')}${chalk.green(' ████████║    ██║    ███████╔╝ ╚█████╗     ██║    ██████╗   ███████╔╝')}
@@ -12,7 +12,7 @@ ${chalk.yellow(' ╚═╝  ╚═══╝')}${chalk.green(
 
                             https://www.jhipster.tech
 
-${chalk.white('Welcome to NHipster (Jhipster NodeJS Official Blueprint) ') + chalk.yellow(`v${nodePackagejs.version}`)}
+${chalk.white('Welcome to NHipster (Jhipster NodeJS Official Blueprint) ') + chalk.yellow(`v${version}`)}
 ${chalk.white('This blueprint generates your backend in NodeJS with NestJS framework')}
 ${chalk.green(
     ' _______________________________________________________________________________________________________________\n'

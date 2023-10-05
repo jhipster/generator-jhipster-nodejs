@@ -1,7 +1,10 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`SubGenerator node-server of nodejs JHipster blueprint > run > should succeed 1`] = `
+exports[`SubGenerator server of nodejs JHipster blueprint > run > should succeed 1`] = `
 {
+  ".jhipster/Foo.json": {
+    "stateCleared": "modified",
+  },
   ".yo-rc.json": {
     "stateCleared": "modified",
   },
@@ -57,6 +60,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > run > should su
     "stateCleared": "modified",
   },
   "server/e2e/app.e2e-spec.ts": {
+    "stateCleared": "modified",
+  },
+  "server/e2e/foo.e2e-spec.ts": {
     "stateCleared": "modified",
   },
   "server/e2e/jest.e2e.config.json": {
@@ -116,6 +122,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > run > should su
   "server/src/domain/base/pagination.entity.ts": {
     "stateCleared": "modified",
   },
+  "server/src/domain/foo.ts": {
+    "stateCleared": "modified",
+  },
   "server/src/domain/user.entity.ts": {
     "stateCleared": "modified",
   },
@@ -131,6 +140,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > run > should su
   "server/src/module/auth.module.ts": {
     "stateCleared": "modified",
   },
+  "server/src/module/foo.module.ts": {
+    "stateCleared": "modified",
+  },
   "server/src/module/user.module.ts": {
     "stateCleared": "modified",
   },
@@ -138,6 +150,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > run > should su
     "stateCleared": "modified",
   },
   "server/src/repository/authority.repository.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/repository/foo.repository.ts": {
     "stateCleared": "modified",
   },
   "server/src/repository/user.repository.ts": {
@@ -176,6 +191,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > run > should su
   "server/src/service/dto/base.dto.ts": {
     "stateCleared": "modified",
   },
+  "server/src/service/dto/foo.dto.ts": {
+    "stateCleared": "modified",
+  },
   "server/src/service/dto/password-change.dto.ts": {
     "stateCleared": "modified",
   },
@@ -183,6 +201,12 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > run > should su
     "stateCleared": "modified",
   },
   "server/src/service/dto/user.dto.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/service/foo.service.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/service/mapper/foo.mapper.ts": {
     "stateCleared": "modified",
   },
   "server/src/service/mapper/user.mapper.ts": {
@@ -195,6 +219,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > run > should su
     "stateCleared": "modified",
   },
   "server/src/web/rest/account.controller.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/web/rest/foo.controller.ts": {
     "stateCleared": "modified",
   },
   "server/src/web/rest/management.controller.ts": {

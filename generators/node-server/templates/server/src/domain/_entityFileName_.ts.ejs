@@ -11,7 +11,7 @@ const fieldsWithoutId = [];
 for (idx in fields) {
     if (fields[idx].fieldIsEnum && (
             !uniqueEnums[fields[idx].fieldType] || (uniqueEnums[fields[idx].fieldType] && fields[idx].fieldValues.length !== 0))) {
-        uniqueEnums[fields[idx].fieldType] = _.kebabCase(fields[idx].fieldType);
+        uniqueEnums[fields[idx].fieldType] = this._.kebabCase(fields[idx].fieldType);
     }
     if (fields[idx].fieldName !== 'id') {
         fieldsWithoutId.push(fields[idx]);
@@ -65,7 +65,7 @@ export class <%= persistClass %> extends BaseEntity  {
     const fieldName = field.fieldName;
     const fieldNameUnderscored = field.fieldNameUnderscored;
     const fieldNameAsDatabaseColumn = field.fieldNameAsDatabaseColumn;
-    const fieldColumnType=addDbType(fieldType);
+    const fieldColumnType=this.addDbType(fieldType);
     if (fieldValidate === true) {
         if (fieldValidateRules.includes('required')) {
             required = true;
@@ -87,7 +87,7 @@ export class <%= persistClass %> extends BaseEntity  {
         <%_ if (field.fieldIsEnum) { _%>
     <%= fieldName %>: <%= fieldType %>;
         <%_ } else { _%>
-    <%= fieldName %>: <%= getTsType(fieldType) %>;
+    <%= fieldName %>: <%= this.getTsType(fieldType) %>;
         <%_ } _%>
 
     <%_ if ((fieldType === 'byte[]' || fieldType === 'ByteBuffer') && fieldTypeBlobContent !== 'text') { _%>

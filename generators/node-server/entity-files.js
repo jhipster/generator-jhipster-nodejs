@@ -10,39 +10,16 @@ export const entityFiles = {
   server: [
     {
       path: SERVER_NODEJS_DIR,
+      renameTo: (data, filepath) => `${SERVER_NODEJS_DIR}${filepath.replace('_entityFileName_', data.entityFileName)}`,
       templates: [
-        {
-          file: 'src/domain/entity.ts',
-          renameTo: generator => `src/domain/${generator.entityFileName}.entity.ts`,
-        },
-        {
-          file: 'src/module/entity.module.ts',
-          renameTo: generator => `src/module/${generator.entityFileName}.module.ts`,
-        },
-        {
-          file: 'src/repository/entity.repository.ts',
-          renameTo: generator => `src/repository/${generator.entityFileName}.repository.ts`,
-        },
-        {
-          file: 'src/service/entity.service.ts',
-          renameTo: generator => `src/service/${generator.entityFileName}.service.ts`,
-        },
-        {
-          file: 'src/service/dto/entity.dto.ts',
-          renameTo: generator => `src/service/dto/${generator.entityFileName}.dto.ts`,
-        },
-        {
-          file: 'src/service/mapper/entity.mapper.ts',
-          renameTo: generator => `src/service/mapper/${generator.entityFileName}.mapper.ts`,
-        },
-        {
-          file: 'src/web/rest/entity.controller.ts',
-          renameTo: generator => `src/web/rest/${generator.entityFileName}.controller.ts`,
-        },
-        {
-          file: 'e2e/entity.e2e-spec.ts',
-          renameTo: generator => `e2e/${generator.entityFileName}.e2e-spec.ts`,
-        },
+        'src/domain/_entityFileName_.ts',
+        'src/module/_entityFileName_.module.ts',
+        'src/repository/_entityFileName_.repository.ts',
+        'src/service/_entityFileName_.service.ts',
+        'src/service/dto/_entityFileName_.dto.ts',
+        'src/service/mapper/_entityFileName_.mapper.ts',
+        'src/web/rest/_entityFileName_.controller.ts',
+        'e2e/_entityFileName_.e2e-spec.ts',
       ],
     },
   ],

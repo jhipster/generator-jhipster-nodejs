@@ -49,10 +49,17 @@
   "engines": {
     "node": ">=<%= nodeVersion %>"
   },
+  "workspaces": {
+    "packages": [
+<%_ if (!skipServer) { _%>
+      "client",
+<%_ } _%>
+      "server"
+    ]
+  },
   "scripts": {
     "build:app": "cd server && <%= clientPackageManager %> run build",
     "lint:fix": "echo \"INFO: no client found\"",
-    "preinstall": "cd server && npm run lint:fix",
     "prettier:check": "prettier --check \"{,src/**/}*.{<%= prettierExtensions %>}\"",
     "prettier:format": "prettier --write \"{,src/**/}*.{<%= prettierExtensions %>}\"",
     "start:app": "cd server && <%= clientPackageManager %> run start",

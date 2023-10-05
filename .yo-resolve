@@ -4,3 +4,4 @@ generators/server/generator.js skip
 .github/workflows/generator.yml skip
 generators/node-server/generator.js skip
 README.md skip
+generators/languages/generator.js skip
