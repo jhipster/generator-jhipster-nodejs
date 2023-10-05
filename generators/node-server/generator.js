@@ -90,6 +90,7 @@ export default class extends BaseApplicationGenerator {
         application.clientDistDir = 'client/dist/';
         application.dockerServicesDir = 'docker/';
         application.withAdminUi = false;
+        application.temporaryDir = 'tmp/';
       },
     });
   }

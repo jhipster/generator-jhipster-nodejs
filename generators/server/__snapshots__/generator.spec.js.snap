@@ -44,9 +44,6 @@ exports[`SubGenerator server of nodejs JHipster blueprint > run > should succeed
   "server/.env": {
     "stateCleared": "modified",
   },
-  "server/.prettierrc.js": {
-    "stateCleared": "modified",
-  },
   "server/.server.eslintignore": {
     "stateCleared": "modified",
   },

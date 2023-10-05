@@ -82,9 +82,7 @@ export const serverFiles = {
   ],
   other: [
     {
-      templates: [
-        'package.json',
-      ],
+      templates: ['package.json'],
     },
   ],
   jwt: [

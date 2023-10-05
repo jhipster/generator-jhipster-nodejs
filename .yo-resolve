@@ -5,3 +5,6 @@ generators/server/generator.js skip
 generators/node-server/generator.js skip
 README.md skip
 generators/languages/generator.js skip
+generators/ci-cd/generator.js skip
+generators/docker/generator.js skip
+generators/server/generator.spec.js skip
