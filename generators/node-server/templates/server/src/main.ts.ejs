@@ -27,6 +27,8 @@ async function bootstrap(): Promise<void> {
       exceptionFactory: (): BadRequestException  => new BadRequestException('Validation error'),
     }),
   );
+  // Disable cache.
+  app.getHttpAdapter().getInstance().set('etag', false);
 
   <%_ if (authenticationType === 'oauth2') { _%>
   app.use(
