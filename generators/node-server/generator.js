@@ -87,7 +87,7 @@ export default class extends BaseApplicationGenerator {
         application.clientRootDir = 'client/';
         application.clientSrcDir = 'client/src/';
         application.clientTestDir = 'client/test/';
-        application.clientDistDir = 'client/dist/';
+        application.clientDistDir = 'server/dist/static/';
         application.dockerServicesDir = 'docker/';
         application.withAdminUi = false;
         application.temporaryDir = 'tmp/';
