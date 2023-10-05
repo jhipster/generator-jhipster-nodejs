@@ -81,6 +81,7 @@ function ormConfig(): TypeOrmModuleOptions {
         migrationsRun: commonConf.MIGRATIONS_RUN,
         };
     }
+<%_ if (devDatabaseType !== 'sqlite') { _%>
 
     if (process.env.BACKEND_ENV === 'dev') {
         ormconfig = {
@@ -97,9 +98,9 @@ function ormConfig(): TypeOrmModuleOptions {
             migrations: commonConf.MIGRATIONS,
             cli: commonConf.CLI,
             migrationsRun: commonConf.MIGRATIONS_RUN,
-    };
-
-}
+        };
+    }
+<%_ } _%>
 
     return ormconfig;
 }

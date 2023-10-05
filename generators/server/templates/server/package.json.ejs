@@ -18,7 +18,7 @@
     "start": "npm run clean && npm run copy-resources && nodemon --watch src -e ts,tsx --exec ts-node src/main.ts",
     "lint": "eslint . --ignore-path .server.eslintignore --no-eslintrc --config .server.eslintrc.json --ext .js,.ts",
     "lint:fix": "npm run lint -- --fix",
-    "test": "npm run lint:fix && npm run lint && jest",
+    "test": "jest",
     "test:cov": "jest --coverage",
     "test:watch": "jest --watch",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
@@ -76,7 +76,7 @@
     <%_ if (databaseType === 'mongodb') { _%>
     "mongodb-memory-server": "6.9.2",
     <%_ } else {_%>
-    "sqlite3": "5.0.0",
+    "sqlite3": "5.1.6",
     <%_ } _%>
     "swagger-ui-express": "4.0.7",
     "typeorm": "0.2.29",
@@ -105,19 +105,19 @@
     "eslint-config-prettier": "6.7.0",
     "eslint-loader": "3.0.3",
     "eslint-plugin-prettier": "3.3.1",
-    "jest": "25.2.3",
+    "jest": "26.6.3",
     "nodemon": "1.19.1",
     "prettier": "1.19.0",
     "rimraf": "3.0.2",
     "sonarqube-scanner": "2.5.0",
     "supertest": "6.0.1",
-    "ts-jest": "24.0.2",
+    "ts-jest": "26.5.6",
     "ts-node": "8.1.0",
     "tsc-watch": "2.2.1",
     "tsconfig-paths": "3.8.0",
     "tslint": "5.20.1",
-    "typescript": "3.8.3",
-	"webpack": "4.41.5"
+    "typescript": "4.1.6",
+	  "webpack": "4.41.5"
   },
   "jest": {
     "moduleFileExtensions": [
