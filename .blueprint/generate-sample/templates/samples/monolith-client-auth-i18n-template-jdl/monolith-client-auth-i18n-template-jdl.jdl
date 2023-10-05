@@ -16,7 +16,7 @@ application {
     prodDatabaseType postgresql,
     buildTool gradle,
     searchEngine elasticsearch,
-    testFrameworks [protractor],
+    testFrameworks [cypress],
     clientFramework REPLACE_CLIENT_FRAMEWORK,
     enableTranslation true,
     nativeLanguage en,
