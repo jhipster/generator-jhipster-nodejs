@@ -68,7 +68,7 @@
 <%_ if (!databaseTypeSql) { _%>
     "pretest:server:e2e": "npm run docker:db:up",
 <%_ } _%>
-    "test:server:e2e": "<%= clientPackageManager %> test:e2e --workspace server",
+    "test:server:e2e": "<%= clientPackageManager %> run test:e2e --workspace server",
 <%_ if (!databaseTypeSql) { _%>
     "posttest:server:e2e": "npm run docker:db:down",
 <%_ } _%>
