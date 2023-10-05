@@ -55,7 +55,11 @@ export default class extends BaseApplicationGenerator {
 
   get [BaseApplicationGenerator.PROMPTING]() {
     return this.asPromptingTaskGroup({
-      async promptingTemplateTask() {},
+      async promptingTemplateTask({ control }) {
+        if (control.existingProject && !this.options.askAnswered) return;
+
+        await this.prompt(this.prepareQuestions(command.configs));
+      },
     });
   }
 
@@ -85,6 +89,7 @@ export default class extends BaseApplicationGenerator {
         application.clientTestDir = 'client/test/';
         application.clientDistDir = 'client/dist/';
         application.dockerServicesDir = 'docker/';
+        application.withAdminUi = false;
       },
     });
   }

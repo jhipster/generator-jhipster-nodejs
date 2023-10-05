@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { <%_ if (authenticationType === 'jwt') { _%> Body, Param, Post, Res, UseGuards, <%_ } _%> Controller, Get, Logger, Req, UseInterceptors, ClassSerializerInterceptor, InternalServerErrorException } from '@nestjs/common';
+import { <%_ if (authenticationType === 'jwt') { _%> Body, Param, Post, Res, UseGuards, <%_ } _%> Controller, Get, HttpCode, Logger, Req, UseInterceptors, ClassSerializerInterceptor, InternalServerErrorException } from '@nestjs/common';
 <%_ if (authenticationType === 'jwt') { _%>
 import { Response, Request } from 'express';
 import { AuthGuard, Roles, RoleType, RolesGuard } from '../../security';
@@ -39,7 +39,7 @@ export class AccountController {
     status: 200,
     description: 'activated',
   })
-  activateAccount(@Param() key: string, @Res() res: Response): any{
+  activateAccount(@Param() key: string, @Res() res: Response): any {
     throw new InternalServerErrorException();
   }
 
@@ -79,31 +79,33 @@ export class AccountController {
   }
 
   @Post('/account')
+  @HttpCode(200)
   @ApiBearerAuth()
   @UseGuards(AuthGuard)
   @ApiOperation({ summary: 'Update the current user information' })
   @ApiResponse({
-    status: 201,
+    status: 200,
     description: 'user info updated',
     type: <%= user.dtoClass%>,
   })
   async saveAccount(@Req() req: Request, @Body() newUserInfo: <%= user.dtoClass%>): Promise<any> {
     const user: any = req.user;
     return await this.authService.updateUserSettings(user.login, newUserInfo);
-}
+  }
 
   @Post('/account/change-password')
+  @HttpCode(200)
   @ApiBearerAuth()
   @UseGuards(AuthGuard)
   @ApiOperation({ summary: 'Change current password' })
   @ApiResponse({
-    status: 201,
+    status: 200,
     description: 'user password changed',
     type: PasswordChangeDTO,
   })
   async changePassword(@Req() req: Request, @Body() passwordChange: PasswordChangeDTO): Promise<any> {
     const user: any = req.user;
-    return await this.authService.changePassword(user.login, passwordChange.currentPassword, passwordChange.newPassword) ;
+    return await this.authService.changePassword(user.login, passwordChange.currentPassword, passwordChange.newPassword);
   }
 
   @Post('/account/reset-password/init')
