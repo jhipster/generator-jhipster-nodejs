@@ -1,5 +1,7 @@
 import BaseApplicationGenerator from 'generator-jhipster/generators/base-application';
 import command from './command.js';
+import { serverFiles } from './files.js';
+import { entityFiles } from './entity-files.js';
 
 function sanitizeDbType(fieldType, dbType) {
   if (dbType === 'sqlite') {
@@ -39,6 +41,17 @@ const dbTypes = {
 };
 
 export default class extends BaseApplicationGenerator {
+  constructor(args, opts, features) {
+    super(args, opts, {
+      ...features,
+      jhipster7Migration: true,
+    });
+  }
+
+  async beforeQueue() {
+    await this.dependsOnJHipster('bootstrap-application');
+  }
+
   get [BaseApplicationGenerator.INITIALIZING]() {
     return this.asInitializingTaskGroup({
       async initializingTemplateTask() {
@@ -63,9 +76,23 @@ export default class extends BaseApplicationGenerator {
     });
   }
 
+  get [BaseApplicationGenerator.COMPOSING]() {
+    return this.asComposingTaskGroup({
+      async composingTemplateTask() {
+        await this.composeWithJHipster('docker');
+      },
+    });
+  }
+
   get [BaseApplicationGenerator.LOADING]() {
     return this.asLoadingTaskGroup({
-      async loadingTemplateTask() {},
+      async loadingTemplateTask({ application }) {
+        application.clientRootDir = 'client/';
+        application.clientSrcDir = 'client/src/';
+        application.clientTestDir = 'client/test/';
+        application.clientDistDir = 'client/dist/';
+        application.dockerServicesDir = 'docker/';
+      },
     });
   }
 
@@ -120,10 +147,9 @@ export default class extends BaseApplicationGenerator {
   get [BaseApplicationGenerator.WRITING]() {
     return this.asWritingTaskGroup({
       async writingTemplateTask({ application }) {
+        application.dbPortValue = undefined;
         await this.writeFiles({
-          sections: {
-            files: [{ templates: ['template-file-node-server'] }],
-          },
+          sections: serverFiles,
           context: application,
         });
       },
@@ -132,15 +158,19 @@ export default class extends BaseApplicationGenerator {
 
   get [BaseApplicationGenerator.WRITING_ENTITIES]() {
     return this.asWritingEntitiesTaskGroup({
-      customEntityServerFiles() {
-        if (this.skipServer) return;
-
+      async customEntityServerFiles({ application, entities }) {
         if (this.databaseType === 'mongodb' && this.relationships.length > 0) {
-          this.error(chalk.red('relationships not supported in mongodb!'));
+          throw new Error('relationships not supported in mongodb!');
         }
 
-        this.writeFilesToDisk(serverFiles, this, false);
+        for (const entity of entities.filter(entity => !entity.skipServer && !entity.builtIn)) {
+          await this.writeFiles({
+            sections: entityFiles,
+            context: { ...application, ...entity },
+          });
+        }
 
+        /*
         this.fields.forEach(field => {
           if (field.fieldIsEnum === true) {
             const enumFileName = _.kebabCase(field.fieldType);
@@ -154,12 +184,8 @@ export default class extends BaseApplicationGenerator {
             );
           }
         });
-
-        utils.addEntityToAppModuleImport(this, this.entityClass, this.entityFileName);
-        utils.addEntityToAppModule(this, this.entityClass);
+        */
       },
-
-      async writingEntitiesTemplateTask() {},
     });
   }
 
@@ -171,7 +197,10 @@ export default class extends BaseApplicationGenerator {
 
   get [BaseApplicationGenerator.POST_WRITING_ENTITIES]() {
     return this.asPostWritingEntitiesTaskGroup({
-      async postWritingEntitiesTemplateTask() {},
+      async postWritingEntitiesTemplateTask() {
+        // utils.addEntityToAppModuleImport(this, this.entityClass, this.entityFileName);
+        // utils.addEntityToAppModule(this, this.entityClass);
+      },
     });
   }
 

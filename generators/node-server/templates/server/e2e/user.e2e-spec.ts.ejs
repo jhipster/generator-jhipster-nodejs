@@ -4,7 +4,7 @@ import { AppModule } from '../src/app.module';
 import { INestApplication } from '@nestjs/common';
 import { AuthGuard } from '../src/security/guards/auth.guard';
 import { RolesGuard } from '../src/security/guards/roles.guard';
-import { <%= asDto('User')%> } from '../src/service/dto/user.dto';
+import { <%= user.dtoClass%> } from '../src/service/dto/user.dto';
 import { UserService } from '../src/service/user.service';
 
 describe('User', () => {
@@ -21,7 +21,7 @@ describe('User', () => {
         email: 'usertest@localhost.it'
     };
 
-    const testUserDTO: <%= asDto('User')%> = {
+    const testUserDTO: <%= user.dtoClass%> = {
         login: 'userTestLogin',
         firstName: 'UserTest',
         lastName: 'UserTest',
@@ -45,7 +45,7 @@ describe('User', () => {
     });
 
     it('/POST create user', async () => {
-        const createdUser: <%= asDto('User')%> = (
+        const createdUser: <%= user.dtoClass%> = (
             await request(app.getHttpServer())
                 .post('/api/admin/users')
                 .send(testUserRequestObject)
@@ -82,16 +82,16 @@ describe('User', () => {
         expect(updatedUser.firstName).toEqual(savedUser.firstName);
         <%_ } _%>
 
-        await service.delete(savedUser as <%= asDto('User')%>);
+        await service.delete(savedUser as <%= user.dtoClass%>);
     });
 
     it('/GET user with a login name', async () => {
         testUserDTO.login = 'TestUserGet';
-        const savedUser: <%= asDto('User')%> = await service.save(testUserDTO);
+        const savedUser: <%= user.dtoClass%> = await service.save(testUserDTO);
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const { password, ...savedUserWithoutPassword } = savedUser;
 
-        const getUser: <%= asDto('User')%> = (
+        const getUser: <%= user.dtoClass%> = (
             await request(app.getHttpServer())
                 .get('/api/admin/users/' + savedUser.login)
                 .expect(200)
@@ -108,7 +108,7 @@ describe('User', () => {
 
     it('/DELETE user', async () => {
         testUserDTO.login = 'TestUserDelete';
-        const savedUser: <%= asDto('User')%> = await service.save(testUserDTO);
+        const savedUser: <%= user.dtoClass%> = await service.save(testUserDTO);
 
         await request(app.getHttpServer())
             .delete('/api/admin/users/' + savedUser.login)

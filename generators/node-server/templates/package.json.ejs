@@ -28,13 +28,13 @@
   "devDependencies": {
     <%_ if (!skipJhipsterDependencies) { _%>
     "generator-jhipster": "<%= jhipsterVersion %>",
-        <%_ otherModules.forEach(module => { _%>
+        <%_ blueprints.forEach(module => { _%>
     "<%= module.name %>": "<%= module.version %>",
         <%_ });
     } _%>
     <%_ if (!skipCommitHook) { _%>
-    "husky": "<%= dependabotPackageJson.devDependencies['husky'] %>",
-    "lint-staged": "<%= dependabotPackageJson.devDependencies['lint-staged'] %>",
+    "husky": "<%= nodeDependencies['husky'] %>",
+    "lint-staged": "<%= nodeDependencies['lint-staged'] %>",
     <%_ } _%>
     "browser-sync-client": "2.27.9",
     "@typescript-eslint/eslint-plugin": "2.11.0",
@@ -43,18 +43,18 @@
     "eslint": "6.7.2",
     "eslint-config-prettier": "6.7.0",
     "eslint-loader": "3.0.3",
-    "prettier": "<%= dependabotPackageJson.devDependencies['prettier'] %>",
-    "prettier-plugin-packagejson": "<%= dependabotPackageJson.devDependencies['prettier-plugin-packagejson'] %>"
+    "prettier": "<%= nodeDependencies['prettier'] %>",
+    "prettier-plugin-packagejson": "<%= nodeDependencies['prettier-plugin-packagejson'] %>"
   },
   "engines": {
-    "node": ">=<%= NODE_VERSION %>"
+    "node": ">=<%= nodeVersion %>"
   },
   "scripts": {
     "build:app": "cd server && <%= clientPackageManager %> run build",
     "lint:fix": "echo \"INFO: no client found\"",
     "preinstall": "cd server && npm run lint:fix",
-    "prettier:check": "prettier --check \"{,src/**/}*.{<%= getPrettierExtensions() %>}\"",
-    "prettier:format": "prettier --write \"{,src/**/}*.{<%= getPrettierExtensions() %>}\"",
+    "prettier:check": "prettier --check \"{,src/**/}*.{<%= prettierExtensions %>}\"",
+    "prettier:format": "prettier --write \"{,src/**/}*.{<%= prettierExtensions %>}\"",
     "start:app": "cd server && <%= clientPackageManager %> run start",
     "test": "echo \"INFO: no client test found\""
   }

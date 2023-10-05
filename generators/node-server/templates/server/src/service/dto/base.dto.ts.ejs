@@ -8,7 +8,7 @@ import { Transform } from 'class-transformer';
 export class BaseDTO  {
 
   <%_ if (databaseType === 'mongodb') { _%>@Transform(id => id?.toHexString ? id?.toHexString() : id, {toPlainOnly: true})<%_ } _%>
-  id?:<%_ if (getPkType(databaseType) === 'Long') { _%>number<%_ } else { _%>string<%_ } _%>;
+  id?:<%_ if (databaseType === 'sql') { _%>number<%_ } else { _%>string<%_ } _%>;
 
   createdBy?: string;
 

@@ -89,7 +89,6 @@ export const serverFiles = {
       templates: [
         'package.json',
         'src/main/docker/app.yml',
-        'src/main/docker/sonar.yml',
         /*
                     { file: '.mvn/wrapper/maven-wrapper.properties', method: 'copy', noEjs: true },
                 */
@@ -114,34 +113,6 @@ export const serverFiles = {
       path: SERVER_NODEJS_DIR,
       condition: generator => generator.authenticationType === 'oauth2',
       templates: ['src/web/rest/user.oauth2.controller.ts', 'src/security/passport.oauth2.strategy.ts', 'src/security/oauth2.config.ts'],
-    },
-  ],
-  keycloak: [
-    {
-      condition: generator => generator.authenticationType === 'oauth2',
-      templates: [
-        'src/main/docker/keycloak.yml',
-        'src/main/docker/realm-config/jhipster-realm.json',
-        'src/main/docker/realm-config/jhipster-users-0.json',
-      ],
-    },
-  ],
-  db: [
-    {
-      condition: generator => generator.prodDatabaseType === 'mysql',
-      templates: ['src/main/docker/mysql.yml'],
-    },
-    {
-      condition: generator => generator.prodDatabaseType === 'mssql',
-      templates: ['src/main/docker/mssql.yml'],
-    },
-    {
-      condition: generator => generator.prodDatabaseType === 'postgresql',
-      templates: ['src/main/docker/postgresql.yml'],
-    },
-    {
-      condition: generator => generator.prodDatabaseType === 'mongodb',
-      templates: ['src/main/docker/mongodb.yml'],
     },
   ],
 };

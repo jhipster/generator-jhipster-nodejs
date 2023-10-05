@@ -22,11 +22,11 @@ for (idx in fields) {
 }
 for (idx in relationships) {
     const relationship = relationships[idx];
-    const otherDto = asDto(relationship.otherEntity.entityClass);
+    const otherDto = relationship.otherEntity.dtoClass;
     if (relationship.otherEntity.entityClass === 'User'){
         isUserRelationship = true;
     }
-    else if (!uniqueEntities[otherDto] && otherDto != asDto(entityClass)) {
+    else if (!uniqueEntities[otherDto] && otherDto != dtoClass) {
         uniqueEntities[otherDto] = relationship.otherEntityFileName;
     }
 }
@@ -40,13 +40,13 @@ import { <%= enumClass %> } from '../../domain/enumeration/<%= uniqueEnums[enumC
 <%_ }); _%>
 
 <%_ if (isUserRelationship === true) { _%>
-import { <%= asDto('User')%> } from './user.dto';
+import { <%= user.dtoClass%> } from './user.dto';
 <%_ } _%>
 
 /**
- * A <%= asDto(entityClass) %> object.
+ * A <%= dtoClass %> object.
  */
-export class <%= asDto(entityClass) %> extends BaseDTO {
+export class <%= dtoClass %> extends BaseDTO {
 
     <%_ for (idx in fieldsWithoutId) {
         const field = fieldsWithoutId[idx];
@@ -99,7 +99,7 @@ export class <%= asDto(entityClass) %> extends BaseDTO {
             const relationshipValidate = relationship.relationshipValidate;
             const relationshipRequired = relationship.relationshipRequired;
             const otherEntityNameCapitalized = relationship.otherEntityNameCapitalized;
-            const otherEntityDto = asDto(relationship.otherEntity.entityClass);
+            const otherEntityDto = relationship.otherEntity.dtoClass;
 
         if (typeof relationships.javadoc != 'undefined') { _%>
     <%- formatAsFieldJavadoc(relationships.javadoc) %>

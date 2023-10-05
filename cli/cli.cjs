@@ -1,5 +1,7 @@
 #!/usr/bin/env node
 
+import { getLogo } from './logo';
+
 const { dirname, basename, join } = require('path');
 const { version, bin } = require('../package.json');
 
@@ -22,9 +24,8 @@ const blueprint = packageFolderName.startsWith('jhipster-') ? `generator-${packa
     blueprints: {
       [blueprint]: version,
     },
-    printBlueprintLogo: () => {
-      console.log('===================== JHipster nodejs =====================');
-      console.log('');
+    printLogo: () => {
+      console.log(getLogo());
     },
     lookups: [{ packagePaths: [packagePath], lookups: ['generators'] }],
   }).catch(done);

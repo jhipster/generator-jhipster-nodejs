@@ -1,6 +1,6 @@
 export interface Payload {
 
-  id: <%= getPkType(databaseType) === 'Long' ? 'number' : 'string' %>;
+  id: <%= databaseType === 'sql' ? 'number' : 'string' %>;
   username: string;
   authorities?: string[];
 

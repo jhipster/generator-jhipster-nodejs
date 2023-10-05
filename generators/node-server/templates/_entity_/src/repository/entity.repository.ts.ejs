@@ -1,5 +1,5 @@
 import { EntityRepository, Repository } from 'typeorm';
-import { <%= asEntity(entityClass) %> } from '../domain/<%= entityFileName %>.entity';
+import { <%= persistClass %> } from '../domain/<%= entityFileName %>.entity';
 
-@EntityRepository(<%= asEntity(entityClass) %>)
-export class <%= entityClass %>Repository extends Repository<<%= asEntity(entityClass) %>> {}
+@EntityRepository(<%= persistClass %>)
+export class <%= entityClass %>Repository extends Repository<<%= persistClass %>> {}

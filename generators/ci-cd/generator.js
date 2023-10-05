@@ -6,8 +6,6 @@ export default class extends CiCdGenerator {
     super(args, opts, {
       ...features,
       checkBlueprint: true,
-      // Dropped it once migration is done.
-      jhipster7Migration: true,
     });
   }
 
@@ -115,7 +113,7 @@ export default class extends CiCdGenerator {
       async writingTemplateTask({ application }) {
         await this.writeFiles({
           sections: {
-            files: [{ templates: ['template-file-ci-cd'] }],
+            files: [],
           },
           context: application,
         });

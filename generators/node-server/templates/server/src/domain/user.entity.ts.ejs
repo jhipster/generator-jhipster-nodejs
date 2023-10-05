@@ -4,7 +4,7 @@ import { BaseEntity } from './base/base.entity';
 import { Exclude } from 'class-transformer';
 
 @Entity('nhi_user')
-export class <%= asEntity('User') %> extends BaseEntity {
+export class <%= user.persistClass %> extends BaseEntity {
   @Column({ unique: true })
   login: string;
   @Column({ nullable: true })

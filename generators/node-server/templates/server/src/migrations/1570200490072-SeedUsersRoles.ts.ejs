@@ -1,4 +1,4 @@
-<%_ const UserEntity = asEntity('User') %>
+<%_ const UserEntity = user.persistClass %>
 import { MigrationInterface, QueryRunner, getRepository } from 'typeorm';
 <%_ if (authenticationType !== 'oauth2') { _%>
 import { <%= UserEntity %> } from '../domain/user.entity';

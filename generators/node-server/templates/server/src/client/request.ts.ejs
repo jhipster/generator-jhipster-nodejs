@@ -1,6 +1,6 @@
 import { Request as ExpressRequest} from 'express';
-import { <%= asDto('User')%> } from '../service/dto/user.dto';
+import { <%= user.dtoClass%> } from '../service/dto/user.dto';
 
 export interface Request extends ExpressRequest {
-  user?: <%= asDto('User')%>;
+  user?: <%= user.dtoClass%>;
 }

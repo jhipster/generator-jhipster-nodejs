@@ -1,6 +1,7 @@
-import { command } from 'generator-jhipster/generators/server';
+import chalk from 'chalk';
+import { command as serverCommand } from 'generator-jhipster/generators/server';
 
-const { applicationType } = command.configs;
+const { applicationType } = serverCommand.configs;
 
 /**
  * @type {import('generator-jhipster').JHipsterCommandDefinition}

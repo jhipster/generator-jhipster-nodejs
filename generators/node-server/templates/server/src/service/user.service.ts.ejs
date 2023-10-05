@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { <%= asEntity('User') %> } from '../domain/user.entity';
-import { <%= asDto('User')%> } from './dto/user.dto';
+import { <%= user.persistClass %> } from '../domain/user.entity';
+import { <%= user.dtoClass%> } from './dto/user.dto';
 import { UserMapper } from './mapper/user.mapper';
 import { UserRepository } from '../repository/user.repository';
 import { FindManyOptions, FindOneOptions } from 'typeorm';
@@ -11,12 +11,12 @@ import { transformPassword } from '../security';
 export class UserService {
     constructor(@InjectRepository(UserRepository) private userRepository: UserRepository) {}
 
-    async findById(id: <%= getPkType(databaseType) === 'Long' ? 'number' : 'string' %>): Promise<<%= asDto('User')%> | undefined> {
+    async findById(id: <%= user.primaryKey.tsType %>): Promise<<%= user.dtoClass%> | undefined> {
         const result = await this.userRepository.findOne(id);
         return UserMapper.fromEntityToDTO(this.flatAuthorities(result))
     }
 
-    async findByFields(options: FindOneOptions<<%= asDto('User')%>>): Promise<<%= asDto('User')%> | undefined> {
+    async findByFields(options: FindOneOptions<<%= user.dtoClass%>>): Promise<<%= user.dtoClass%> | undefined> {
         <%_ if (databaseType !== 'mongodb') { _%>
         options.relations = ['authorities'];
         <%_ } _%>
@@ -24,17 +24,17 @@ export class UserService {
         return UserMapper.fromEntityToDTO(this.flatAuthorities(result));
     }
 
-    async find(options: FindManyOptions<<%= asDto('User')%>>): Promise<<%= asDto('User')%> | undefined> {
+    async find(options: FindManyOptions<<%= user.dtoClass%>>): Promise<<%= user.dtoClass%> | undefined> {
         const result = await this.userRepository.findOne(options);
         return UserMapper.fromEntityToDTO(this.flatAuthorities(result));
     }
 
-    async findAndCount(options: FindManyOptions<<%= asDto('User')%>>): Promise<[<%= asDto('User')%>[], number]> {
+    async findAndCount(options: FindManyOptions<<%= user.dtoClass%>>): Promise<[<%= user.dtoClass%>[], number]> {
         <%_ if (databaseType !== 'mongodb') { _%>
         options.relations = ['authorities'];
         <%_ } _%>
         const resultList = await this.userRepository.findAndCount(options);
-        const usersDTO: <%= asDto('User')%>[] = [];
+        const usersDTO: <%= user.dtoClass%>[] = [];
         if (resultList && resultList[0]) {
             resultList[0].forEach(user => usersDTO.push(UserMapper.fromEntityToDTO(this.flatAuthorities(user))));
             resultList[0] = usersDTO;
@@ -42,7 +42,7 @@ export class UserService {
         return resultList;
     }
 
-    async save(userDTO: <%= asDto('User')%>, creator?: string, updatePassword = false): Promise<<%= asDto('User')%> | undefined> {
+    async save(userDTO: <%= user.dtoClass%>, creator?: string, updatePassword = false): Promise<<%= user.dtoClass%> | undefined> {
         const user = this.convertInAuthorities(UserMapper.fromDTOtoEntity(userDTO));
         if (updatePassword) {
             await transformPassword(user);
@@ -57,17 +57,17 @@ export class UserService {
         return UserMapper.fromEntityToDTO(this.flatAuthorities(result));
     }
 
-    async update(userDTO: <%= asDto('User')%>, updater?: string): Promise<<%= asDto('User')%> | undefined> {
+    async update(userDTO: <%= user.dtoClass%>, updater?: string): Promise<<%= user.dtoClass%> | undefined> {
         return this.save(userDTO, updater);
     }
 
-    async delete(userDTO: <%= asDto('User')%>): Promise<<%= asDto('User')%> | undefined> {
+    async delete(userDTO: <%= user.dtoClass%>): Promise<<%= user.dtoClass%> | undefined> {
         const user = UserMapper.fromDTOtoEntity(userDTO);
         const result = await this.userRepository.remove(user)
         return UserMapper.fromEntityToDTO(result);
     }
 
-    private flatAuthorities(user: any): <%= asEntity('User') %> {
+    private flatAuthorities(user: any): <%= user.persistClass %> {
         if (user && user.authorities) {
             const authorities: string[] = [];
             user.authorities.forEach(authority => authorities.push(authority.name));
@@ -76,7 +76,7 @@ export class UserService {
         return user;
     }
 
-    private convertInAuthorities(user: any): <%= asEntity('User') %> {
+    private convertInAuthorities(user: any): <%= user.persistClass %> {
         if (user && user.authorities) {
             const authorities: any[] = [];
             user.authorities.forEach(authority => authorities.push({ name: authority }));

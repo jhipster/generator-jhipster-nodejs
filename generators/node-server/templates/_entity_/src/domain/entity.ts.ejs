@@ -19,11 +19,11 @@ for (idx in fields) {
 }
 for (idx in relationships) {
     const relationship = relationships[idx];
-    const otherEntityClass = asEntity(relationship.otherEntity.entityClass);
+    const otherEntityClass = relationship.otherEntity.persistClass;
     if (relationship.otherEntity.entityClass === 'User'){
         isUserRelationship = true;
     }
-    else if (!uniqueEntities[otherEntityClass] && otherEntityClass != asEntity(entityClass)) {
+    else if (!uniqueEntities[otherEntityClass] && otherEntityClass != persistClass) {
         uniqueEntities[otherEntityClass] = relationship.otherEntityFileName;
     }
 }
@@ -37,18 +37,18 @@ import { <%= enumClass %> } from './enumeration/<%= uniqueEnums[enumClass] %>';
 <%_ }); _%>
 
 <%_ if (isUserRelationship === true) { _%>
-import { <%= asEntity('User') %> } from './user.entity';
+import { <%= user.persistClass %> } from './user.entity';
 <%_ } _%>
 
 <%_ if (typeof javadoc == 'undefined') { _%>
 /**
- * A <%= asEntity(entityClass) %>.
+ * A <%= persistClass %>.
  */
 <%_ } else { _%>
 <%- formatAsClassJavadoc(javadoc) %>
 <%_ } _%>
 @Entity('<%= entityTableName %>')
-export class <%= asEntity(entityClass) %> extends BaseEntity  {
+export class <%= persistClass %> extends BaseEntity  {
 
 <%_ for (idx in fieldsWithoutId) {
     const field = fieldsWithoutId[idx];
@@ -110,7 +110,7 @@ export class <%= asEntity(entityClass) %> extends BaseEntity  {
         const relationshipRequired = relationships[idx].relationshipRequired;
         const otherEntityNameCapitalized = relationships[idx].otherEntityNameCapitalized;
         const ownerSide = relationships[idx].ownerSide; // before was ownerSide === true in and userRel many-to-one
-        const otherEntityClass = asEntity(relationships[idx].otherEntity.entityClass);
+        const otherEntityClass = relationships[idx].otherEntity.persistClass;
         let userRelationship = false;
         if (otherEntityClass === 'User'){
             userRelationship = true;

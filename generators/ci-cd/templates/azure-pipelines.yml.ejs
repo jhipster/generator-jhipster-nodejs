@@ -22,7 +22,7 @@ jobs:
   pool:
     vmImage: 'Ubuntu 16.04'
   variables:
-    NODE_VERSION: <%= NODE_VERSION %>
+    NODE_VERSION: <%= nodeVersion %>
     JHI_DISABLE_WEBPACK_LOGS: true
     NG_CLI_ANALYTICS: "false"
 
@@ -32,7 +32,7 @@ jobs:
   #----------------------------------------------------------------------
   - task: NodeTool@0
     inputs:
-    versionSpec: '<%= NODE_VERSION %>'
+    versionSpec: '<%= nodeVersion %>'
     displayName: 'TOOLS: install Node.js'
   <%_ if (clientPackageManager === 'npm') { _%>
   - script: sudo npm install -g npm

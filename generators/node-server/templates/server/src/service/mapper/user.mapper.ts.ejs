@@ -1,16 +1,16 @@
-import { <%= asEntity('User') %> } from '../../domain/user.entity';
-import { <%= asDto('User')%> } from '../dto/user.dto';
+import { <%= user.persistClass %> } from '../../domain/user.entity';
+import { <%= user.dtoClass%> } from '../dto/user.dto';
 
 /**
  * An User mapper object.
  */
 export class UserMapper {
 
-  static fromDTOtoEntity (userDTO: <%= asDto('User')%>): <%= asEntity('User') %> {
+  static fromDTOtoEntity (userDTO: <%= user.dtoClass%>): <%= user.persistClass %> {
     if (!userDTO) {
       return;
     }
-    let user = new <%= asEntity('User') %>();
+    let user = new <%= user.persistClass %>();
     const fields = Object.getOwnPropertyNames(userDTO);
     fields.forEach(field => {
          user[field] = userDTO[field];
@@ -19,11 +19,11 @@ export class UserMapper {
 
   }
 
-  static fromEntityToDTO (user: <%= asEntity('User') %>): <%= asDto('User')%> {
+  static fromEntityToDTO (user: <%= user.persistClass %>): <%= user.dtoClass%> {
     if (!user) {
       return;
     }
-    let userDTO = new <%= asDto('User')%>();
+    let userDTO = new <%= user.dtoClass%>();
 
     const fields = Object.getOwnPropertyNames(user);
 

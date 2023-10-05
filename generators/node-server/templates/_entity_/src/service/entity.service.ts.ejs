@@ -1,7 +1,7 @@
 import { Injectable, HttpException, HttpStatus, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FindManyOptions, FindOneOptions } from 'typeorm';
-import { <%= asDto(entityClass) %> }  from '../service/dto/<%= entityFileName %>.dto';
+import { <%= dtoClass %> }  from '../service/dto/<%= entityFileName %>.dto';
 import { <%= entityClass %>Mapper }  from '../service/mapper/<%= entityFileName %>.mapper';
 import { <%= entityClass %>Repository } from '../repository/<%= entityFileName %>.repository';
 
@@ -20,7 +20,7 @@ for (idx in relationships) {
     relationshipNames.push('<%- relationshipFieldNamePlural %>');
    <%_ }
 }
-const pkType = getPkType(databaseType) === 'Long' ? 'number' : 'string';
+const pkType = primaryKey.tsType;
 _%>
 
 
@@ -28,58 +28,58 @@ _%>
 export class <%= entityClass %>Service {
     logger = new Logger('<%= entityClass %>Service');
 
-    constructor(@InjectRepository(<%= entityClass %>Repository) private <%= asEntity(entityInstance) %>Repository: <%= entityClass %>Repository) {}
+    constructor(@InjectRepository(<%= entityClass %>Repository) private <%= entityInstance %>Repository: <%= entityClass %>Repository) {}
 
-      async findById(id: <%= pkType %>): Promise<<%= asDto(entityClass) %> | undefined> {
+      async findById(id: <%= pkType %>): Promise<<%= dtoClass %> | undefined> {
         const options = { relations: relationshipNames };
-        const result = await this.<%= asEntity(entityInstance) %>Repository.findOne(id, options);
+        const result = await this.<%= entityInstance %>Repository.findOne(id, options);
         return <%= entityClass %>Mapper.fromEntityToDTO(result);
       }
 
-      async findByFields(options: FindOneOptions<<%= asDto(entityClass) %>>): Promise<<%= asDto(entityClass) %> | undefined> {
-        const result = await this.<%= asEntity(entityInstance) %>Repository.findOne(options);
+      async findByFields(options: FindOneOptions<<%= dtoClass %>>): Promise<<%= dtoClass %> | undefined> {
+        const result = await this.<%= entityInstance %>Repository.findOne(options);
         return <%= entityClass %>Mapper.fromEntityToDTO(result);
       }
 
-      async findAndCount(options: FindManyOptions<<%= asDto(entityClass) %>>): Promise<[<%= asDto(entityClass) %>[], number]> {
+      async findAndCount(options: FindManyOptions<<%= dtoClass %>>): Promise<[<%= dtoClass %>[], number]> {
         options.relations = relationshipNames;
-        const resultList = await this.<%= asEntity(entityInstance) %>Repository.findAndCount(options);
-        const <%= asEntity(entityInstance) %>DTO: <%= asDto(entityClass) %>[] = [];
+        const resultList = await this.<%= entityInstance %>Repository.findAndCount(options);
+        const <%= entityInstance %>DTO: <%= dtoClass %>[] = [];
         if (resultList && resultList[0]) {
-            resultList[0].forEach(<%= asEntity(entityInstance) %> => <%= asEntity(entityInstance) %>DTO.push(<%= entityClass %>Mapper.fromEntityToDTO(<%= asEntity(entityInstance) %>)));
-            resultList[0] = <%= asEntity(entityInstance) %>DTO;
+            resultList[0].forEach(<%= entityInstance %> => <%= entityInstance %>DTO.push(<%= entityClass %>Mapper.fromEntityToDTO(<%= entityInstance %>)));
+            resultList[0] = <%= entityInstance %>DTO;
         }
         return resultList;
       }
 
-      async save(<%= asEntity(entityInstance) %>DTO: <%= asDto(entityClass) %>, creator?: string): Promise<<%= asDto(entityClass) %> | undefined> {
-        const entity = <%= entityClass %>Mapper.fromDTOtoEntity(<%= asEntity(entityInstance) %>DTO);
+      async save(<%= entityInstance %>DTO: <%= dtoClass %>, creator?: string): Promise<<%= dtoClass %> | undefined> {
+        const entity = <%= entityClass %>Mapper.fromDTOtoEntity(<%= entityInstance %>DTO);
         if (creator) {
             if (!entity.createdBy) {
                 entity.createdBy = creator;
             }
             entity.lastModifiedBy = creator;
         }
-        const result = await this.<%= asEntity(entityInstance) %>Repository.save(entity);
+        const result = await this.<%= entityInstance %>Repository.save(entity);
         return <%= entityClass %>Mapper.fromEntityToDTO(result);
       }
 
-      async update(<%= asEntity(entityInstance) %>DTO: <%= asDto(entityClass) %>, updater?: string): Promise<<%= asDto(entityClass) %> | undefined> {
-        const entity = <%= entityClass %>Mapper.fromDTOtoEntity(<%= asEntity(entityInstance) %>DTO);
+      async update(<%= entityInstance %>DTO: <%= dtoClass %>, updater?: string): Promise<<%= dtoClass %> | undefined> {
+        const entity = <%= entityClass %>Mapper.fromDTOtoEntity(<%= entityInstance %>DTO);
         if (updater) {
             entity.lastModifiedBy = updater;
         }
       <%_ if (databaseType === 'mongodb') { _%>
-        await this.<%= asEntity(entityInstance) %>Repository.update(entity.id, entity);
-        return <%= asEntity(entityInstance) %>DTO;
+        await this.<%= entityInstance %>Repository.update(entity.id, entity);
+        return <%= entityInstance %>DTO;
       <%_ } else { _%>
-        const result = await this.<%= asEntity(entityInstance) %>Repository.save(entity);
+        const result = await this.<%= entityInstance %>Repository.save(entity);
         return <%= entityClass %>Mapper.fromEntityToDTO(result);
       <%_ } _%>
       }
 
       async deleteById(id: <%= pkType %>): Promise<void | undefined> {
-        await this.<%= asEntity(entityInstance) %>Repository.delete(id);
+        await this.<%= entityInstance %>Repository.delete(id);
         const entityFind = await this.findById(id);
         if (entityFind) {
           throw new HttpException('Error, entity not deleted!', HttpStatus.NOT_FOUND);
