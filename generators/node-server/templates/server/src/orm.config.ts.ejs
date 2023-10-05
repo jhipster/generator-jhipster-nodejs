@@ -10,6 +10,10 @@ if (process.env.BACKEND_ENV !== 'prod') {
 <%_ } else { _%>
 function ormConfig(): TypeOrmModuleOptions {
 <%_ } _%>
+<%_
+  const nodeProdDatabaseDriver = databaseType !== 'sql' ? databaseType : (prodDatabaseType === 'postgresql') ? 'postgres' : prodDatabaseType;
+  const nodeDevDatabaseDriver = databaseType !== 'sql' ? databaseType : (devDatabaseType === 'postgresql') ? 'postgres' : devDatabaseType;
+_%>
     const commonConf = {
         SYNCRONIZE: false,
         ENTITIES: [__dirname + '/domain/*.entity{.ts,.js}'],
@@ -22,7 +26,7 @@ function ormConfig(): TypeOrmModuleOptions {
 
     let ormconfig: TypeOrmModuleOptions = {
         name: 'default',
-        type: '<%= devDatabaseType %>',
+        type: '<%= nodeProdDatabaseDriver %>',
         <%_ if (databaseType === 'mongodb') { _%>
         host: 'localhost',
         port: mongod?await mongod.getPort():0,
@@ -44,7 +48,7 @@ function ormConfig(): TypeOrmModuleOptions {
     if (process.env.BACKEND_ENV === 'prod') {
         ormconfig = {
             name: 'default',
-            type: '<%= (databaseType !== 'sql') ? databaseType : (prodDatabaseType === 'postgresql') ? 'postgres' : prodDatabaseType %>',
+            type: '<%= nodeProdDatabaseDriver %>',
             database: '<%= (databaseType === 'sql') ? prodDatabaseName : baseName %>',
             host: '<%= (databaseType === 'sql') ? prodDatabaseType : databaseType %>',
             // port: <%= dbPortValue %>,
@@ -66,7 +70,7 @@ function ormConfig(): TypeOrmModuleOptions {
         type: 'sqlite',
         database: ':memory:',
 <%_ } else { _%>
-        type: '<%= databaseType %>',
+        type: '<%= nodeProdDatabaseDriver %>',
         host: 'localhost',
         port: await mongod.getPort(),
         database: await mongod.getDbName(),
@@ -87,12 +91,12 @@ function ormConfig(): TypeOrmModuleOptions {
     if (process.env.BACKEND_ENV === 'dev') {
         ormconfig = {
             name: 'default',
-            type: '<%= (prodDatabaseType === 'postgresql') ? 'postgres' : prodDatabaseType %>',
+            type: '<%= nodeDevDatabaseDriver %>',
             database: '<%= (prodDatabaseType === 'mongodb') ? 'admin': baseName.toLowerCase() %>',
             host: 'localhost',
             // port: <%= dbPortValue %>,
-            username: 'sa',
-            password: 'yourStrong(!)Password',
+            username: '<%- (databaseType === 'sql') ? devDatabaseUsername : '' %>',
+            password: '<%- (databaseType === 'sql') ? devDatabasePassword : '' %>',
             logging: false,
             synchronize: commonConf.SYNCRONIZE,
             entities: commonConf.ENTITIES,
