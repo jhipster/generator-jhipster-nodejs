@@ -1,0 +1,79 @@
+{
+  "generator-jhipster": {
+    "additionalSubGenerators": "node-server",
+    "baseName": "nodejs",
+    "cli": true,
+    "entities": [],
+    "generators": {
+      "ci-cd": {
+        "command": false,
+        "priorities": [
+          "initializing",
+          "prompting",
+          "configuring",
+          "composing",
+          "loading",
+          "preparing",
+          "configuringEachEntity",
+          "loadingEntities",
+          "preparingEachEntity",
+          "preparingEachEntityField",
+          "preparingEachEntityRelationship",
+          "postPreparingEachEntity",
+          "default",
+          "writing",
+          "writingEntities",
+          "postWriting",
+          "postWritingEntities",
+          "loadingTranslations",
+          "install",
+          "postInstall",
+          "end"
+        ],
+        "sbs": false,
+        "written": true
+      },
+      "languages": {
+        "command": false,
+        "priorities": [],
+        "sbs": true,
+        "written": true
+      },
+      "node-server": {
+        "command": false,
+        "priorities": [
+          "initializing",
+          "prompting",
+          "configuring",
+          "loading",
+          "preparing",
+          "configuringEachEntity",
+          "loadingEntities",
+          "preparingEachEntity",
+          "preparingEachEntityField",
+          "preparingEachEntityRelationship",
+          "postPreparingEachEntity",
+          "default",
+          "writing",
+          "writingEntities",
+          "postWriting",
+          "postWritingEntities",
+          "end"
+        ],
+        "sbs": null,
+        "written": true
+      },
+      "server": {
+        "command": false,
+        "priorities": ["initializing", "composing"],
+        "sbs": false,
+        "written": true
+      }
+    },
+    "jhipsterVersion": "8.0.0-beta.3",
+    "localBlueprint": false,
+    "sampleWritten": true,
+    "skipCommitHook": true,
+    "subGenerators": ["ci-cd", "languages", "server"]
+  }
+}

@@ -1,42 +1,68 @@
 {
-    "name": "generator-jhipster-nodejs",
-    "version": "2.0.0",
-    "description": "A NodeJS blueprint that creates the backend using NodeJS with NestJS framework",
-    "keywords": [
-        "yeoman-generator",
-        "jhipster-blueprint",
-        "jhipster-7",
-        "nodejs"
-    ],
-    "homepage": "https://github.com/jhipster/generator-jhipster-nodejs",
-    "bugs": {
-        "url": "https://github.com/jhipster/generator-jhipster-nodejs/issues"
-    },
-    "repository": {
-        "type": "git",
-        "url": "git+https://github.com/jhipster/generator-jhipster-nodejs.git"
-    },
-    "license": "Apache-2.0",
-    "author": {
-        "name": "Angelo Manganiello",
-        "email": "angelo.mang@libero.it",
-        "url": "https://github.com/amanganiello90"
-    },
-    "contributors": [
-        "Deepu KS <d4udts@gmail.com> (https://deepu105.github.io)",
-        "Hadi Rasouli (https://github.com/hadirsa)",
-        "Iván García Sainz-Aja (https://github.com/ivangsa)",
-        "Daniel Franco <dandrfranco@gmail.com> (https://github.com/DanielFran)"
-    ],
-    "main": "generators/app/index.js",
-    "bin": {
-        "nhipster": "./cli/nhipster.js"
-    },
-    "files": [
-        "generators",
-        "cli"
-    ],
-    "dependencies": {
-        "generator-jhipster": "github:jhipster/generator-jhipster#main"
-    }
+  "name": "generator-jhipster-nodejs",
+  "version": "2.0.0",
+  "description": "A NodeJS blueprint that creates the backend using NodeJS with NestJS framework",
+  "keywords": [
+    "yeoman-generator",
+    "jhipster-blueprint",
+    "jhipster-8",
+    "nodejs"
+  ],
+  "homepage": "https://github.com/jhipster/generator-jhipster-nodejs",
+  "bugs": {
+    "url": "https://github.com/jhipster/generator-jhipster-nodejs/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jhipster/generator-jhipster-nodejs.git"
+  },
+  "license": "Apache-2.0",
+  "author": {
+    "name": "Angelo Manganiello",
+    "email": "angelo.mang@libero.it",
+    "url": "https://github.com/amanganiello90"
+  },
+  "contributors": [
+    "Deepu KS <d4udts@gmail.com> (https://deepu105.github.io)",
+    "Hadi Rasouli (https://github.com/hadirsa)",
+    "Iván García Sainz-Aja (https://github.com/ivangsa)",
+    "Daniel Franco <dandrfranco@gmail.com> (https://github.com/DanielFran)"
+  ],
+  "type": "module",
+  "main": "generators/app/index.js",
+  "bin": {
+    "nhipster": "./cli/cli.cjs"
+  },
+  "files": [
+    "cli",
+    "generators"
+  ],
+  "scripts": {
+    "ejslint": "ejslint generators/**/*.ejs",
+    "lint": "eslint .",
+    "lint-fix": "npm run ejslint && npm run lint -- --fix",
+    "prettier-check": "prettier --check \"{,src/**/}*.{md,json,yml,html,js,ts,tsx,css,scss,vue,java}\"",
+    "prettier-format": "prettier --write \"{,src/**/}*.{md,json,yml,html,js,ts,tsx,css,scss,vue,java}\"",
+    "pretest": "npm run prettier-check && npm run lint",
+    "test": "vitest run",
+    "update-snapshot": "vitest run --update",
+    "vitest": "vitest"
+  },
+  "dependencies": {
+    "generator-jhipster": "8.0.0-beta.3"
+  },
+  "devDependencies": {
+    "ejs-lint": "2.0.0",
+    "eslint": "8.50.0",
+    "eslint-config-airbnb-base": "15.0.0",
+    "eslint-config-prettier": "9.0.0",
+    "eslint-plugin-import": "2.28.1",
+    "eslint-plugin-prettier": "5.0.0",
+    "prettier": "3.0.3",
+    "vitest": "0.34.6",
+    "yeoman-test": ">=8.0.0-rc.1"
+  },
+  "engines": {
+    "node": "^18.13.0 || >= 20.2.0"
+  }
 }
