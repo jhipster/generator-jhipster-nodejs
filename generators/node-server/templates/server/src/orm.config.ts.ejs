@@ -44,12 +44,12 @@ function ormConfig(): TypeOrmModuleOptions {
     if (process.env.BACKEND_ENV === 'prod') {
         ormconfig = {
             name: 'default',
-            type: '<%= (prodDatabaseType === 'postgresql') ? 'postgres' : prodDatabaseType %>',
-            database: '<%= (prodDatabaseType === 'mongodb') ? 'admin': baseName.toLowerCase() %>',
-            host: '<%= prodDatabaseType %>',
+            type: '<%= (databaseType !== 'sql') ? databaseType : (prodDatabaseType === 'postgresql') ? 'postgres' : prodDatabaseType %>',
+            database: '<%= (databaseType === 'sql') ? prodDatabaseName : baseName %>',
+            host: '<%= (databaseType === 'sql') ? prodDatabaseType : databaseType %>',
             // port: <%= dbPortValue %>,
-            username: '<%- prodDatabaseUsername %>',
-            password: '<%- prodDatabasePassword %>',
+            username: '<%- (databaseType === 'sql') ? prodDatabaseUsername : '' %>',
+            password: '<%- (databaseType === 'sql') ? prodDatabasePassword : '' %>',
             logging: false,
             synchronize: commonConf.SYNCRONIZE,
             entities: commonConf.ENTITIES,

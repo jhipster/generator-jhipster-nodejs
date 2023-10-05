@@ -128,8 +128,8 @@ export class <%= persistClass %> extends BaseEntity  {
         <%_ if (ownerSide === true) { _%>
     @JoinTable({
         name: '<%= relationship.joinTable.name %>',
-        joinColumn: { name: '<%= getColumnName(name) %>_id', referencedColumnName: "id" },
-        inverseJoinColumn: { name: '<%= getColumnName(relationship.relationshipName) %>_id', referencedColumnName: "id" }
+        joinColumn: { name: '<%= entityTableName %>_id', referencedColumnName: "id" },
+        inverseJoinColumn: { name: '<%= relationship.columnName %>_id', referencedColumnName: "id" }
     })
         <%_ } _%>
     <%= relationshipFieldNamePlural %>: <%= otherEntityClass %>[];
