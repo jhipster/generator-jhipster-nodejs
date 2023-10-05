@@ -45,7 +45,7 @@ entity DemetraUser {
 }
 
 entity SingleCourse {
-	title String required unique,
+	// title String required unique,
 	// description String pattern(/^[A-Z]$/),
 	// isnotonlyfordegree Boolean required,
 	cfu Integer,
