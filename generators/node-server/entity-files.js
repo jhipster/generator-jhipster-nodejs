@@ -12,7 +12,7 @@ export const entityFiles = {
       path: SERVER_NODEJS_DIR,
       renameTo: (data, filepath) => `${SERVER_NODEJS_DIR}${filepath.replace('_entityFileName_', data.entityFileName)}`,
       templates: [
-        'src/domain/_entityFileName_.ts',
+        'src/domain/_entityFileName_.entity.ts',
         'src/module/_entityFileName_.module.ts',
         'src/repository/_entityFileName_.repository.ts',
         'src/service/_entityFileName_.service.ts',

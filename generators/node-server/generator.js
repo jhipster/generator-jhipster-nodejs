@@ -102,13 +102,6 @@ export default class extends BaseApplicationGenerator {
     });
   }
 
-  get [BaseApplicationGenerator.PREPARING]() {
-    return this.asPreparingTaskGroup({
-      async preparingTemplateTask({ application }) {
-      },
-    });
-  }
-
   get [BaseApplicationGenerator.CONFIGURING_EACH_ENTITY]() {
     return this.asConfiguringEachEntityTaskGroup({
       async configuringEachEntityTemplateTask({ entityConfig }) {
@@ -184,18 +177,12 @@ export default class extends BaseApplicationGenerator {
               this.fetchFromInstalledJHipster(
                 `client/templates/${TEMPLATES_WEBAPP_SOURCES_DIR}app/entities/enumerations/enum.model.ts.ejs`,
               ),
-              `${webappEnumerationsDir}${field.enumFileName}.model.ts`,
+              `${webappEnumerationsDir}${field.enumFileName}.ts`,
               enumInfo,
             );
           }
         }
       },
-    });
-  }
-
-  get [BaseApplicationGenerator.POST_WRITING]() {
-    return this.asPostWritingTaskGroup({
-      async postWritingTemplateTask() {},
     });
   }
 

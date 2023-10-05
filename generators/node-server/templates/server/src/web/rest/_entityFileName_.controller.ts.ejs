@@ -1,5 +1,5 @@
 import { Body, ClassSerializerInterceptor, Controller, Delete, Get, Logger, Param, Post as PostMethod, Put, UseGuards, Req, UseInterceptors } from '@nestjs/common';
-import { <% if (authenticationType === 'jwt') { _%> ApiBearerAuth, <% } else if (authenticationType === 'oauth2') { _%> ApiOAuth2Auth, <% } _%> ApiTags, ApiResponse, ApiOperation } from '@nestjs/swagger';
+import { <% if (authenticationType === 'jwt') { _%> ApiBearerAuth, <% } else if (authenticationType === 'oauth2') { _%> ApiSecurity, <% } _%> ApiTags, ApiResponse, ApiOperation } from '@nestjs/swagger';
 import { <%= dtoClass %> } from '../../service/dto/<%= entityFileName %>.dto';
 import { <%= entityClass %>Service } from '../../service/<%= entityFileName %>.service';
 import { PageRequest, Page } from '../../domain/base/pagination.entity';
@@ -18,7 +18,7 @@ _%>
 <%_ if (authenticationType === 'jwt') { _%>
 @ApiBearerAuth()
 <%_ } else if (authenticationType === 'oauth2') { _%>
-@ApiOAuth2Auth()
+@ApiSecurity()
 <%_ } _%>
 @ApiTags('<%= entityApiUrl %>')
 export class <%= entityClass %>Controller {
