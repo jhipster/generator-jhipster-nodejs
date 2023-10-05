@@ -104,7 +104,6 @@ export class <%= persistClass %> extends BaseEntity  {
         const relationshipName = relationships[idx].relationshipName;
         const relationshipFieldName = relationships[idx].relationshipFieldName;
         const relationshipFieldNamePlural = relationships[idx].relationshipFieldNamePlural;
-        const joinTableName = getJoinTableName(entityTableName, relationshipName, prodDatabaseType);
         const relationshipType = relationships[idx].relationshipType;
         const relationshipValidate = relationships[idx].relationshipValidate;
         const relationshipRequired = relationships[idx].relationshipRequired;
@@ -128,7 +127,7 @@ export class <%= persistClass %> extends BaseEntity  {
     @ManyToMany(type => <%= otherEntityClass %> )
         <%_ if (ownerSide === true) { _%>
     @JoinTable({
-        name: '<%= joinTableName %>',
+        name: '<%= relationship.joinTable.name %>',
         joinColumn: { name: '<%= getColumnName(name) %>_id', referencedColumnName: "id" },
         inverseJoinColumn: { name: '<%= getColumnName(relationship.relationshipName) %>_id', referencedColumnName: "id" }
     })

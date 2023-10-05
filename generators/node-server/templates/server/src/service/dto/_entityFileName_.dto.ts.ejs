@@ -94,7 +94,6 @@ export class <%= dtoClass %> extends BaseDTO {
             const relationshipName = relationship.relationshipName;
             const relationshipFieldName = relationship.relationshipFieldName;
             const relationshipFieldNamePlural = relationship.relationshipFieldNamePlural;
-            const joinTableName = getJoinTableName(entityTableName, relationshipName, prodDatabaseType);
             const relationshipType = relationship.relationshipType;
             const relationshipValidate = relationship.relationshipValidate;
             const relationshipRequired = relationship.relationshipRequired;
