@@ -2,27 +2,19 @@ FROM node:18-alpine
 
 # Create app directory
 
-WORKDIR /tmp/node-app
+WORKDIR /usr/node-app
 
 ENV NODE_SERVER_PORT=<%- serverPort %>
+ENV CYPRESS_INSTALL_BINARY=0
 
 COPY . .
 
 RUN npm install
-
-WORKDIR /tmp/node-app/<%- clientRootDir %>
-
-RUN npm run build
-
-WORKDIR /tmp/node-app/<%- nodeServerRootDir %>
-
-RUN npm run build
-
-WORKDIR /usr/app/
-
-RUN cp -r /tmp/node-app//<%- nodeServerRootDir %>dist .
-RUN rm -rf /tmp/node-app
+RUN npm run --workspace server build
+RUN npm run --workspace client build
+RUN npm cache clean --force
+RUN rm -rf target tmp
 
 EXPOSE <%- serverPort %>
 
-ENTRYPOINT ["node", "/usr/app/main.js" ]
+ENTRYPOINT ["node", "/usr/node-app/<%- nodeServerRootDir %>dist/main.js" ]
