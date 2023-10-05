@@ -95,7 +95,9 @@ export default class extends BaseApplicationGenerator {
         application.dockerServicesDir = 'docker/';
         application.withAdminUi = false;
         application.temporaryDir = 'tmp/';
+        application.backendType = 'NodeJS';
         application.nodeServerRootDir = `${SERVER_NODEJS_SRC_DIR}/`;
+        application.dbPortValue = undefined;
       },
     });
   }
@@ -103,9 +105,6 @@ export default class extends BaseApplicationGenerator {
   get [BaseApplicationGenerator.PREPARING]() {
     return this.asPreparingTaskGroup({
       async preparingTemplateTask({ application }) {
-        // Disable cypress audit so chrome doesn't have to be installed at docker image
-        application.cypressAudit = false;
-        application.dbPortValue = undefined;
       },
     });
   }
