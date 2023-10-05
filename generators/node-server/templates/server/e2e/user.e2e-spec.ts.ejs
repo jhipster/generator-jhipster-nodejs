@@ -114,7 +114,7 @@ describe('User', () => {
             .delete('/api/admin/users/' + savedUser.login)
             .expect(204);
 
-        const userUndefined = await service.findById(savedUser.id);
+        const userUndefined = await service.findById(savedUser.id as any);
         expect(userUndefined).toBeUndefined();
     });
 

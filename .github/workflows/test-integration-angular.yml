@@ -89,7 +89,7 @@ jobs:
             - name: 'RUN UNIT TESTS of generated app'
               run: npm test --workspaces
             - name: 'RUN SERVER E2E TESTS of generated app'
-              run: npm run test:e2e --workspace server
+              run: npm run test:server:e2e
             - name: 'BUILD AND RUN SERVER APP'
               run: npm run app:up
             - name: 'START APP WITH EVENTUAL CLIENT E2E TESTS'
