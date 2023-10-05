@@ -28,13 +28,13 @@ application {
 // JDL definition for application 'TwentyOnePoints' generated with command 'jhipster export-jdl'
 
 entity BloodPressure {
-  timestamp ZonedDateTime required
+  // timestamp ZonedDateTime required
   systolic Integer required
   diastolic Integer required
 }
 entity Weight {
   timestamp ZonedDateTime required
-  weight Double
+  // weight Double
 }
 entity Points {
   date LocalDate required

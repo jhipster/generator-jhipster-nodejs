@@ -38,6 +38,6 @@ entity Car {
 entity License {
 	name UUID unique,
 	description String,
-	mynumber Double
+	// mynumber Double
 }
 

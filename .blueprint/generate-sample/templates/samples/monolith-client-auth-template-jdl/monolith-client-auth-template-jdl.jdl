@@ -41,7 +41,7 @@ entity DemetraUser {
 	borndate LocalDate required,
 	cf String required unique,
 	usertype UserType required,
-	profileimage ImageBlob
+	// profileimage ImageBlob
 }
 
 entity SingleCourse {
@@ -49,15 +49,15 @@ entity SingleCourse {
 	description String pattern(/^[A-Z]$/),
 	isnotonlyfordegree Boolean required,
 	cfu Integer,
-	courseimage Blob,
+	// courseimage Blob,
 	amount BigDecimal
 }
 
 entity Activity {
 	name UUID unique,
 	description String,
-	mynumber Double,
-	creationtime ZonedDateTime
+	// mynumber Double,
+	// creationtime ZonedDateTime
 }
 
 relationship OneToOne {
