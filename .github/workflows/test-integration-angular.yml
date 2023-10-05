@@ -94,6 +94,7 @@ jobs:
               run: npm run app:up
             - name: 'START APP WITH EVENTUAL CLIENT E2E TESTS'
               run: npm run e2e:headless --workspace client
+              id: e2e
             - name: 'E2E: Store failure screenshots'
               uses: actions/upload-artifact@v3
               if: always() && steps.e2e.outcome == 'failure'
