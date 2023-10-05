@@ -17,6 +17,7 @@ application {
 		prodDatabaseType mssql,
 		enableTranslation false,
 		clientFramework REPLACE_CLIENT_FRAMEWORK
+		testFrameworks [cypress]
 	}
 	entities *
 }

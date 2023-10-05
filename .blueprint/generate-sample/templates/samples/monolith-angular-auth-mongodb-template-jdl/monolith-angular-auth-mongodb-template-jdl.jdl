@@ -16,6 +16,7 @@ application {
 		databaseType mongodb,
 		enableTranslation false,
 		clientFramework angular
+		testFrameworks [cypress]
 	}
 	entities *
 }

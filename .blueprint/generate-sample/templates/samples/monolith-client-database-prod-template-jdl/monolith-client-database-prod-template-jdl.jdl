@@ -15,6 +15,7 @@ application {
 		prodDatabaseType REPLACE_PROD_DATABASE_TYPE,
 		enableTranslation false,
 		clientFramework REPLACE_CLIENT_FRAMEWORK
+		testFrameworks [cypress]
 	}
 	entities *
 }
