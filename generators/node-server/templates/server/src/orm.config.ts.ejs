@@ -92,7 +92,7 @@ _%>
         ormconfig = {
             name: 'default',
             type: '<%= nodeDevDatabaseDriver %>',
-            database: '<%= (prodDatabaseType === 'mongodb') ? 'admin': baseName.toLowerCase() %>',
+            database: '<%= (databaseType === 'sql') ? devDatabaseName : baseName %>',
             host: 'localhost',
             // port: <%= dbPortValue %>,
             username: '<%- (databaseType === 'sql') ? devDatabaseUsername : '' %>',

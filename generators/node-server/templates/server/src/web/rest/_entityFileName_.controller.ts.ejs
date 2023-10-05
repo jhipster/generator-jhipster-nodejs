@@ -57,7 +57,7 @@ export class <%= entityClass %>Controller {
   }
 
   @PostMethod('/')
-  @Roles(RoleType.ADMIN)
+  @Roles(RoleType.USER)
   @ApiOperation({ summary: 'Create <%= entityInstance %>' })
   @ApiResponse({
     status: 201,
@@ -72,7 +72,7 @@ export class <%= entityClass %>Controller {
   }
 
   @Put('/')
-  @Roles(RoleType.ADMIN)
+  @Roles(RoleType.USER)
   @ApiOperation({ summary: 'Update <%= entityInstance %>' })
   @ApiResponse({
     status: 200,
@@ -85,7 +85,7 @@ export class <%= entityClass %>Controller {
   }
 
   @Put('/:id')
-  @Roles(RoleType.ADMIN)
+  @Roles(RoleType.USER)
   @ApiOperation({ summary: 'Update <%= entityInstance %> with id' })
   @ApiResponse({
     status: 200,
@@ -98,7 +98,7 @@ export class <%= entityClass %>Controller {
   }
 
   @Delete('/:id')
-  @Roles(RoleType.ADMIN)
+  @Roles(RoleType.USER)
   @ApiOperation({ summary: 'Delete <%= entityInstance %>' })
   @ApiResponse({
     status: 204,
