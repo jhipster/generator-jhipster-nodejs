@@ -36,59 +36,7 @@
         "generators",
         "cli"
     ],
-    "scripts": {
-        "ejs-lint": "npm run test:unit -- test/ejslint.js",
-        "ejslint": "ejslint",
-        "eslint": "eslint . --no-eslintrc --config .generator.eslintrc.json ",
-        "jsdoc": "jsdoc --configure jsdoc-conf.json",
-        "lint": "npm run eslint && npm run ejs-lint",
-        "lint-fix": "npm run prettier:format && npm run eslint -- --fix",
-        "prettier:format": "prettier --write \"{,**/}*.{js,json,md,yml}\"",
-        "sonar:scanner": "sonar-scanner",
-        "pretest": "npm run lint",
-        "test": "npm run test:unit -- test/*.spec.js",
-        "test:unit": "nyc --reporter=lcov mocha --timeout 20000 --slow 0"
-    },
-    "pre-commit": [
-        "lint"
-    ],
     "dependencies": {
-        "browser-sync-client": "2.27.9",
-        "chalk": "2.4.2",
-        "commander": "2.20.0",
-        "ejs": "2.6.1",
-        "generator-jhipster": "7.0.1",
-        "lodash": "4.17.21",
-        "meow": "5.0.0",
-        "semver": "6.1.1",
-        "shelljs": "0.8.4"
-    },
-    "devDependencies": {
-        "browser-sync-client": "2.27.9",
-        "chai": "4.2.0",
-        "ejs-lint": "0.3.0",
-        "eslint": "6.0.0-alpha.2",
-        "eslint-config-airbnb-base": "13.1.0",
-        "eslint-config-prettier": "4.3.0",
-        "eslint-plugin-import": "2.17.3",
-        "eslint-plugin-prettier": "3.1.0",
-        "fs-extra": "8.0.1",
-        "glob": "7.1.4",
-        "jsdoc": "3.6.3",
-        "mocha": "6.1.4",
-        "nyc": "15.0.0",
-        "pre-commit": "1.2.2",
-        "prettier": "1.17.1",
-        "sinon": "7.3.2",
-        "sonarqube-scanner": "2.5.0",
-        "yeoman-assert": "3.1.1",
-        "yeoman-test": "5.1.0"
-    },
-    "peerDependencies": {
-        "yeoman-environment": "3.2.0"
-    },
-    "engines": {
-        "node": ">=8.10.0",
-        "npm": ">=5.6.0"
+        "generator-jhipster": "github:jhipster/generator-jhipster#main"
     }
 }

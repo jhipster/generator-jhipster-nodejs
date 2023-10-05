@@ -1,8 +1,0 @@
-Description:
-    Creates a new simple nestjs REST controller.
-
-Example:
-    nhipster nestjs-controller Foo
-
-    This will create:
-        server/src/controller/foo.controller.ts with API on "api/foo"

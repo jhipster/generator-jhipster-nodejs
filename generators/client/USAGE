@@ -1,7 +1,0 @@
-Description:
-    Creates a new NHipster client side application based on the selected options
-
-Example:
-    nhipster client
-
-    This will create a client app
