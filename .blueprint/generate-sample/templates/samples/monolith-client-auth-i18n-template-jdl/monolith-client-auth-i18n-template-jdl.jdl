@@ -33,8 +33,8 @@ entity BloodPressure {
   diastolic Integer required
 }
 entity Weight {
-  timestamp ZonedDateTime required
-  // weight Double
+  // timestamp ZonedDateTime required
+  weight Float
 }
 entity Points {
   date LocalDate required
