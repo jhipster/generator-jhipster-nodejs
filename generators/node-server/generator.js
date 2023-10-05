@@ -1,7 +1,11 @@
 import BaseApplicationGenerator from 'generator-jhipster/generators/base-application';
+import { createNeedleCallback } from 'generator-jhipster/generators/base/support';
+import { getEnumInfo } from 'generator-jhipster/generators/base-application/support';
+import { TEMPLATES_WEBAPP_SOURCES_DIR } from 'generator-jhipster';
 import command from './command.js';
 import { serverFiles } from './files.js';
 import { entityFiles } from './entity-files.js';
+import { SERVER_NODEJS_SRC_DIR } from '../generator-nodejs-constants.js';
 
 function sanitizeDbType(fieldType, dbType) {
   if (dbType === 'sqlite') {
@@ -169,23 +173,19 @@ export default class extends BaseApplicationGenerator {
             sections: entityFiles,
             context: { ...application, ...entity },
           });
-        }
 
-        /*
-        this.fields.forEach(field => {
-          if (field.fieldIsEnum === true) {
-            const enumFileName = _.kebabCase(field.fieldType);
-            const enumInfo = utils.buildEnumInfo(field, this.angularAppName, this.packageName, this.clientRootFolder);
-            this.template(
-              `${SERVER_NODEJS_DIR}src/domain/enumeration/enum-type.ts.ejs`,
-              `${SERVER_NODEJS_DIR}src/domain/enumeration/${enumFileName}.ts`,
-              this,
-              {},
+          const webappEnumerationsDir = `${SERVER_NODEJS_SRC_DIR}/src/domain/enumeration/`;
+          for (const field of entity.fields.filter(field => field.fieldIsEnum)) {
+            const enumInfo = getEnumInfo(field, entity.clientRootFolder);
+            await this.writeFile(
+              this.fetchFromInstalledJHipster(
+                `client/templates/${TEMPLATES_WEBAPP_SOURCES_DIR}app/entities/enumerations/enum.model.ts.ejs`,
+              ),
+              `${webappEnumerationsDir}${field.enumFileName}.model.ts`,
               enumInfo,
             );
           }
-        });
-        */
+        }
       },
     });
   }
@@ -198,9 +198,20 @@ export default class extends BaseApplicationGenerator {
 
   get [BaseApplicationGenerator.POST_WRITING_ENTITIES]() {
     return this.asPostWritingEntitiesTaskGroup({
-      async postWritingEntitiesTemplateTask() {
-        // utils.addEntityToAppModuleImport(this, this.entityClass, this.entityFileName);
-        // utils.addEntityToAppModule(this, this.entityClass);
+      async postWritingEntitiesTemplateTask({ entities }) {
+        for (const entity of entities.filter(entity => !entity.skipServer && !entity.builtIn)) {
+          this.editFile(
+            `${SERVER_NODEJS_SRC_DIR}/src/app.module.ts`,
+            createNeedleCallback({
+              needle: 'jhipster-needle-add-entity-module-to-main-import',
+              contentToAdd: `import { ${entity.entityClass}Module } from './module/${entity.entityFileName}.module';`,
+            }),
+            createNeedleCallback({
+              needle: 'jhipster-needle-add-entity-module-to-main',
+              contentToAdd: `${entity.entityClass}Module,`,
+            }),
+          );
+        }
       },
     });
   }

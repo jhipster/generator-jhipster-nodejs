@@ -41,9 +41,6 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > run > should su
   "server/.env": {
     "stateCleared": "modified",
   },
-  "server/.prettierrc.js": {
-    "stateCleared": "modified",
-  },
   "server/.server.eslintignore": {
     "stateCleared": "modified",
   },

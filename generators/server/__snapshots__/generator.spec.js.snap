@@ -119,6 +119,9 @@ exports[`SubGenerator server of nodejs JHipster blueprint > run > should succeed
   "server/src/domain/base/pagination.entity.ts": {
     "stateCleared": "modified",
   },
+  "server/src/domain/enumeration/my-enum.model.ts": {
+    "stateCleared": "modified",
+  },
   "server/src/domain/foo.ts": {
     "stateCleared": "modified",
   },
