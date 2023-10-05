@@ -5,9 +5,6 @@ exports[`SubGenerator cypress of nodejs JHipster blueprint > run > should succee
   ".yo-rc.json": {
     "stateCleared": "modified",
   },
-  "cypress-audits.config.ts": {
-    "stateCleared": "modified",
-  },
   "cypress.config.ts": {
     "stateCleared": "modified",
   },
@@ -33,9 +30,6 @@ exports[`SubGenerator cypress of nodejs JHipster blueprint > run > should succee
     "stateCleared": "modified",
   },
   "src/test/javascript/cypress/e2e/administration/administration.cy.ts": {
-    "stateCleared": "modified",
-  },
-  "src/test/javascript/cypress/e2e/lighthouse.audits.ts": {
     "stateCleared": "modified",
   },
   "src/test/javascript/cypress/fixtures/integration-test.png": {

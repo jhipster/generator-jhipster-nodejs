@@ -2,28 +2,19 @@
 
 exports[`SubGenerator server of nodejs JHipster blueprint > run > should succeed 1`] = `
 {
+  ".dockerignore": {
+    "stateCleared": "modified",
+  },
   ".jhipster/Foo.json": {
     "stateCleared": "modified",
   },
   ".yo-rc.json": {
     "stateCleared": "modified",
   },
+  "Dockerfile": {
+    "stateCleared": "modified",
+  },
   "docker/app.yml": {
-    "stateCleared": "modified",
-  },
-  "docker/grafana/provisioning/dashboards/JVM.json": {
-    "stateCleared": "modified",
-  },
-  "docker/grafana/provisioning/dashboards/dashboard.yml": {
-    "stateCleared": "modified",
-  },
-  "docker/grafana/provisioning/datasources/datasource.yml": {
-    "stateCleared": "modified",
-  },
-  "docker/jhipster-control-center.yml": {
-    "stateCleared": "modified",
-  },
-  "docker/monitoring.yml": {
     "stateCleared": "modified",
   },
   "docker/postgresql.yml": {
@@ -119,10 +110,10 @@ exports[`SubGenerator server of nodejs JHipster blueprint > run > should succeed
   "server/src/domain/base/pagination.entity.ts": {
     "stateCleared": "modified",
   },
-  "server/src/domain/enumeration/my-enum.model.ts": {
+  "server/src/domain/enumeration/my-enum.ts": {
     "stateCleared": "modified",
   },
-  "server/src/domain/foo.ts": {
+  "server/src/domain/foo.entity.ts": {
     "stateCleared": "modified",
   },
   "server/src/domain/user.entity.ts": {
