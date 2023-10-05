@@ -83,7 +83,7 @@ jobs:
               run: npm install && npm link
               working-directory: ${{ github.workspace }}/generator-jhipster-nodejs
             - name: 'GENERATE NHipster app'
-              run: nhipster generate-sample $NHI_APP_FOLDER --template $NHI_APP
+              run: nhipster generate-sample $NHI_APP_FOLDER --template-name $NHI_APP
             - name: 'INSTALL DEPENDENCIES of generated app'
               run: npm install
             - name: 'RUN UNIT TESTS of generated app'
