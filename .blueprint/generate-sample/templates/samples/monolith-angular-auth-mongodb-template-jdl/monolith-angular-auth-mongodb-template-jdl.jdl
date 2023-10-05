@@ -31,7 +31,7 @@ entity Transaction {
 entity Car {
 	title String required unique,
 	description String,
-	isnotonlyfordegree Boolean required,
+	// isnotonlyfordegree Boolean required,
 	point Integer
 }
 
