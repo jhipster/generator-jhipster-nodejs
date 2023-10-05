@@ -1,5 +1,7 @@
 name: Test Integration Angular
 on: [push, pull_request]
+env:
+  NODE_OPTIONS: --dns-result-order=ipv4first
 jobs:
     applications:
         name: ${{ matrix.app-type }}
