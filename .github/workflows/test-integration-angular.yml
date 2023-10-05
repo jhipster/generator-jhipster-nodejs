@@ -94,3 +94,12 @@ jobs:
               run: npm run app:up
             - name: 'START APP WITH EVENTUAL CLIENT E2E TESTS'
               run: npm run e2e:headless --workspace client
+            - name: 'E2E: Store failure screenshots'
+              uses: actions/upload-artifact@v3
+              if: always() && steps.e2e.outcome == 'failure'
+              with:
+                  name: screenshots-${{ matrix.app-type }}
+                  path: ${{ github.workspace }}/app/**/cypress/screenshots
+            - name: Dump docker logs
+              if: always()
+              uses: jwalton/gh-docker-logs@v2
