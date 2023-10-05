@@ -5,6 +5,14 @@ const SERVER_NODEJS_DIR = `${SERVER_NODEJS_SRC_DIR}/`;
 export const serverFiles = {
   common: [
     {
+      templates: [
+        '.dockerignore',
+        // 'README.md',
+        '.gitignore.jhi.nodejs',
+        'Dockerfile',
+      ],
+    },
+    {
       path: SERVER_NODEJS_DIR,
       templates: [
         'src/web/rest/user.controller.ts',

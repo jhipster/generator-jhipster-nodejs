@@ -95,13 +95,18 @@ export default class extends BaseApplicationGenerator {
         application.dockerServicesDir = 'docker/';
         application.withAdminUi = false;
         application.temporaryDir = 'tmp/';
+        application.nodeServerRootDir = `${SERVER_NODEJS_SRC_DIR}/`;
       },
     });
   }
 
   get [BaseApplicationGenerator.PREPARING]() {
     return this.asPreparingTaskGroup({
-      async preparingTemplateTask() {},
+      async preparingTemplateTask({ application }) {
+        // Disable cypress audit so chrome doesn't have to be installed at docker image
+        application.cypressAudit = false;
+        application.dbPortValue = undefined;
+      },
     });
   }
 
@@ -152,7 +157,6 @@ export default class extends BaseApplicationGenerator {
   get [BaseApplicationGenerator.WRITING]() {
     return this.asWritingTaskGroup({
       async writingTemplateTask({ application }) {
-        application.dbPortValue = undefined;
         await this.writeFiles({
           sections: serverFiles,
           context: application,
