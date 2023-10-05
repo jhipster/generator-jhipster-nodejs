@@ -74,6 +74,8 @@ jobs:
             - uses: actions/setup-node@v3
               with:
                   node-version: ${{ matrix.node-version }}
+            - run: mkdir ${{ github.workspace }}/app
+              working-directory: ${{ github.workspace }}/generator-jhipster-nodejs
             - name: GIT HISTORY
               run: git --no-pager log -n 10 --graph --pretty='%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue) <%an>%Creset' --abbrev-commit
               working-directory: ${{ github.workspace }}/generator-jhipster-nodejs
