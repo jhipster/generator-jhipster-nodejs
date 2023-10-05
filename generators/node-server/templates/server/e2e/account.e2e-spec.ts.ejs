@@ -117,7 +117,7 @@ describe('Account', () => {
         await request(app.getHttpServer())
             .post('/api/account')
             .send(savedTestUser)
-            .expect(201);
+            .expect(200);
 
         const updatedUserSettings: <%= user.dtoClass%> = await service.findByFields({ where: { login: testUserAuthenticated.login } });
         expect(updatedUserSettings.firstName).toEqual(savedTestUser.firstName);
@@ -129,7 +129,7 @@ describe('Account', () => {
         await request(app.getHttpServer())
             .post('/api/account/change-password')
             .send(testPasswordChange)
-            .expect(201);
+            .expect(200);
 
         const successFullyLoggedInWithNewPassword = await authService.login(
             {

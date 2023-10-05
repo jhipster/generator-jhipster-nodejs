@@ -50,7 +50,7 @@ describe('App', () => {
     it('/POST authenticate get jwt authenticate OK', () => request(app.getHttpServer())
         .post('/api/authenticate')
         .send(testUserLogin)
-        .expect(201));
+        .expect(200));
     <%_ } else if (authenticationType === 'oauth2') { _%>
     it('/POST security oauth2 does not perform logout', () => request(app.getHttpServer())
         .post('/api/logout')

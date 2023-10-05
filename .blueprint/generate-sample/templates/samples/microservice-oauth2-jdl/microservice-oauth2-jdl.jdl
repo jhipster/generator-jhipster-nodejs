@@ -56,7 +56,7 @@ entity ShopUser {
 }
 
 relationship OneToOne {
-  ShopUser{internalUser} to User
+  ShopUser{internalUser} to User with builtInEntity
 }
 
 relationship OneToMany {
