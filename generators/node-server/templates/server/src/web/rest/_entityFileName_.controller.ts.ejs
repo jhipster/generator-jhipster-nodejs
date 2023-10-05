@@ -18,7 +18,7 @@ _%>
 <%_ if (authenticationType === 'jwt') { _%>
 @ApiBearerAuth()
 <%_ } else if (authenticationType === 'oauth2') { _%>
-@ApiSecurity()
+@ApiSecurity({})
 <%_ } _%>
 @ApiTags('<%= entityApiUrl %>')
 export class <%= entityClass %>Controller {

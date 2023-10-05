@@ -14,7 +14,7 @@ import { UserService } from '../../service/user.service';
 <%_ if (authenticationType === 'jwt') { _%>
 @ApiBearerAuth()
 <%_ } else if (authenticationType === 'oauth2') { _%>
-@ApiSecurity()
+@ApiSecurity({})
 <%_ } _%>
 @ApiTags('user-resource')
 export class UserController {
