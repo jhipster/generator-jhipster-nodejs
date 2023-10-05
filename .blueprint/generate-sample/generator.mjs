@@ -8,11 +8,10 @@ export default class extends BaseGenerator {
   get [BaseGenerator.INITIALIZING]() {
     return this.asInitializingTaskGroup({
       async initializeOptions() {
-        this.parseJHipsterArguments(command.arguments);
+        this.parseJHipsterCommand(command);
         if (this.sampleName && !this.sampleName.endsWith('.jdl')) {
           this.sampleName += '.jdl';
         }
-        this.parseJHipsterOptions(command.options);
       },
     });
   }

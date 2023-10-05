@@ -1,25 +1,28 @@
-FROM node:14-alpine
+FROM node:18-alpine
 
 # Create app directory
 
-WORKDIR /usr/node-app
+WORKDIR /tmp/node-app
 
-ENV NODE_SERVER_PORT=8081
+ENV NODE_SERVER_PORT=<%- serverPort %>
 
 COPY . .
 
-# install server deps
-
-WORKDIR server
-
 RUN npm install
 
-# install client deps
+WORKDIR /tmp/node-app/<%- clientRootDir %>
 
-WORKDIR ..
+RUN npm run build
 
-RUN npm install
+WORKDIR /tmp/node-app/<%- nodeServerRootDir %>
 
-EXPOSE 8081
+RUN npm run build
 
-ENTRYPOINT ["npm", "run", "start:app" ]
+WORKDIR /usr/app/
+
+RUN cp -r /tmp/node-app//<%- nodeServerRootDir %>dist .
+RUN rm -rf /tmp/node-app
+
+EXPOSE <%- serverPort %>
+
+ENTRYPOINT ["node", "/usr/app/main.js" ]
