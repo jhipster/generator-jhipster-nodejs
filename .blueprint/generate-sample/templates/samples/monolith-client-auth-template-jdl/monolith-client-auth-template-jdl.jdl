@@ -12,15 +12,9 @@ application {
 		applicationType monolith,
 		baseName monolithClientAuthSqlJdlApp,
 		packageName com.jhipster.node,
-		serverPort 8081,
-		cacheProvider no,
-		enableHibernateCache false,
 		authenticationType REPLACE_AUTH,
 		databaseType sql,
 		prodDatabaseType mssql,
-		serviceDiscoveryType false,
-		clientPackageManager npm,
-		skipUserManagement false,
 		enableTranslation false,
 		clientFramework REPLACE_CLIENT_FRAMEWORK
 	}

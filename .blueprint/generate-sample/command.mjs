@@ -26,7 +26,12 @@ const command = {
       type: String,
     },
   },
-  options: {},
+  options: {
+    templateName: {
+      type: String,
+      scope: 'generator',
+    },
+  },
   import: [GENERATOR_APP],
 };
 

@@ -11,15 +11,8 @@ application {
 		applicationType monolith,
 		baseName monolithClientDatabaseProdJdlApp,
 		packageName com.jhipster.node,
-		serverPort 8081,
-		cacheProvider no,
-		enableHibernateCache false,
 		authenticationType jwt,
-		databaseType REPLACE_DATABASE_TYPE,
 		prodDatabaseType REPLACE_PROD_DATABASE_TYPE,
-		serviceDiscoveryType false,
-		clientPackageManager npm,
-		skipUserManagement false,
 		enableTranslation false,
 		clientFramework REPLACE_CLIENT_FRAMEWORK
 	}

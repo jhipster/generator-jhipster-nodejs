@@ -79,11 +79,8 @@ jobs:
             - name: Link blueprint
               run: npm install && npm link
               working-directory: ${{ github.workspace }}/generator-jhipster-nodejs
-            - name: 'CONFIGURE EVENTUAL TEMPLATE APP'
-              if: contains(env.NHI_APP_FOLDER, 'template')
-              run: bash test-integration/0x-configure-template.sh $NHI_APP_FOLDER $NHI_APP
             - name: 'GENERATE NHipster app'
-              run: sh test-integration/01-generate-app-sample.sh $NHI_APP_FOLDER $NHI_ENTITY
+              run: nhipster generate-sample $NHI_APP_FOLDER --template $NHI_APP
             - name: 'INSTALL DEPENDENCIES of generated app'
               run: npm install
             - name: 'RUN UNIT TESTS of generated app'

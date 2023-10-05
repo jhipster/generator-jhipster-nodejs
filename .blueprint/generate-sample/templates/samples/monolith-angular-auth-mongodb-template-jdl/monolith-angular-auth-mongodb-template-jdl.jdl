@@ -12,17 +12,10 @@ application {
 		applicationType monolith,
 		baseName monolithClientAuthMongodbJdlApp,
 		packageName com.jhipster.node,
-		serverPort 8081,
-		cacheProvider no,
-		enableHibernateCache false,
 		authenticationType REPLACE_AUTH,
 		databaseType mongodb,
-		prodDatabaseType mongodb,
-		serviceDiscoveryType false,
-		clientPackageManager npm,
-		skipUserManagement false,
 		enableTranslation false,
-		clientFramework angularX
+		clientFramework angular
 	}
 	entities *
 }

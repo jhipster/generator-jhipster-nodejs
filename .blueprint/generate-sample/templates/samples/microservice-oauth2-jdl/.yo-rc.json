@@ -5,51 +5,18 @@
                 "name": "generator-jhipster-nodejs"
             }
         ],
-        "otherModules": [
-            {
-                "name": "generator-jhipster-nodejs"
-            }
-        ],
         "applicationType": "microservice",
         "baseName": "microserviceOauth2SqlJdlApp",
-        "logo": false,
-        "skipClient": true,
-        "skipServer": false,
-        "skipUserManagement": true,
-        "skipCheckLengthOfIdentifier": false,
-        "skipFakeData": false,
-        "jhiPrefix": "jhi",
-        "entitySuffix": "",
-        "dtoSuffix": "DTO",
         "testFrameworks": [],
-        "pages": [],
         "creationTimestamp": 1615471285814,
-        "composedWith": [],
-        "experimental": false,
-        "optionsParsed": true,
-        "blueprintConfigured": true,
-        "skipPrompts": true,
-        "serverPort": "8081",
         "packageName": "com.jhipster.node",
-        "cacheProvider": "no",
-        "enableHibernateCache": false,
-        "websocket": false,
         "databaseType": "sql",
         "devDatabaseType": "sqlite",
         "prodDatabaseType": "mysql",
-        "searchEngine": false,
-        "messageBroker": false,
-        "serviceDiscoveryType": false,
-        "buildTool": "maven",
-        "enableSwaggerCodegen": false,
         "authenticationType": "oauth2",
         "enableTranslation": false,
         "nativeLanguage": "en",
         "packageFolder": "com/jhipster/node",
-        "clientPackageManager": "npm",
-        "reactive": false,
-        "languages": ["en"],
-        "sharedEntities": {},
-        "sharedLiquibaseFakeData": {}
+        "languages": ["en"]
     }
 }
