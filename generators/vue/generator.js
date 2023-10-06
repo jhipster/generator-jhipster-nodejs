@@ -7,10 +7,10 @@ export default class extends BaseApplicationGenerator {
 
   get [BaseApplicationGenerator.POST_WRITING]() {
     return this.asPostWritingTaskGroup({
-      async postWritingTemplateTask() {
-        this.packageJson.merge({
+      async postWritingTemplateTask({ application }) {
+        this.mergeDestinationJson(`${application.clientRootDir}package.json`, {
           scripts: {
-            pretest: undefined,
+            pretest: '',
           },
         });
       },
