@@ -22,7 +22,27 @@
   "description": "Description for <%= baseName %>",
   "private": true,
   "license": "UNLICENSED",
+  "cacheDirectories": [
+    "node_modules"
+  ],
   "devDependencies": {
+    <%_ if (!skipJhipsterDependencies) { _%>
+    "generator-jhipster": "<%= jhipsterVersion %>",
+        <%_ blueprints.forEach(module => { _%>
+    "<%= module.name %>": "<%= module.version %>",
+        <%_ });
+    } _%>
+    <%_ if (!skipCommitHook) { _%>
+    "husky": "<%= nodeDependencies['husky'] %>",
+    "lint-staged": "<%= nodeDependencies['lint-staged'] %>",
+    <%_ } _%>
+    "browser-sync-client": "2.27.9",
+    "@typescript-eslint/eslint-plugin": "2.11.0",
+    "@typescript-eslint/eslint-plugin-tslint": "2.11.0",
+    "@typescript-eslint/parser": "2.11.0",
+    "eslint": "6.7.2",
+    "eslint-config-prettier": "6.7.0",
+    "eslint-loader": "3.0.3",
     "prettier": "<%= nodeDependencies['prettier'] %>",
     "prettier-plugin-packagejson": "<%= nodeDependencies['prettier-plugin-packagejson'] %>"
   },
@@ -31,7 +51,7 @@
   },
   "workspaces": {
     "packages": [
-<%_ if (clientFrameworkAny) { _%>
+<%_ if (!skipServer) { _%>
       "client",
 <%_ } _%>
       "server"
