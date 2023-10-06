@@ -50,7 +50,7 @@ entity SingleCourse {
 	// isnotonlyfordegree Boolean required,
 	cfu Integer,
 	// courseimage Blob,
-	amount BigDecimal
+	// amount BigDecimal
 }
 
 entity Activity {
