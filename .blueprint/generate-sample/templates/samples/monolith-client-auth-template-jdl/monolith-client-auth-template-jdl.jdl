@@ -12,12 +12,11 @@ application {
 		applicationType monolith,
 		baseName monolithClientAuthSqlJdlApp,
 		packageName com.jhipster.node,
-		authenticationType REPLACE_AUTH,
 		databaseType sql,
 		prodDatabaseType mssql,
 		enableTranslation false,
-		clientFramework REPLACE_CLIENT_FRAMEWORK
 		testFrameworks [cypress]
+		// jhipster-needle-jdl-application-config
 	}
 	entities *
 }

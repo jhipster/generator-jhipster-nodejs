@@ -12,11 +12,11 @@ application {
 		applicationType monolith,
 		baseName monolithClientAuthMongodbJdlApp,
 		packageName com.jhipster.node,
-		authenticationType REPLACE_AUTH,
 		databaseType mongodb,
 		enableTranslation false,
 		clientFramework angular
 		testFrameworks [cypress]
+		// jhipster-needle-jdl-application-config
 	}
 	entities *
 }

@@ -1,5 +1,6 @@
 import { readdir } from 'node:fs/promises';
 import BaseGenerator from 'generator-jhipster/generators/base';
+import { createNeedleCallback } from 'generator-jhipster/dist/types/generators/base/support/needles.mjs';
 import command from './command.mjs';
 
 export default class extends BaseGenerator {
@@ -52,13 +53,22 @@ export default class extends BaseGenerator {
           const databaseType = this._.intersection(databaseTypes, split)[0];
 
           if (clientFramework) {
-            this.editFile(`${this.sampleName}.jdl`, content => content.replace('REPLACE_CLIENT_FRAMEWORK', clientFramework));
+            this.editFile(`${this.sampleName}.jdl`, createNeedleCallback({
+              needle: 'jhipster-needle-jdl-application-config',
+              content: `clientFramework ${clientFramework}`,
+            }));
           }
           if (authenticationType) {
-            this.editFile(`${this.sampleName}.jdl`, content => content.replace('REPLACE_AUTH', authenticationType));
+            this.editFile(`${this.sampleName}.jdl`, createNeedleCallback({
+              needle: 'jhipster-needle-jdl-application-config',
+              content: `authenticationType ${authenticationType}`,
+            }));
           }
           if (databaseType) {
-            this.editFile(`${this.sampleName}.jdl`, content => content.replace('REPLACE_PROD_DATABASE_TYPE', databaseType));
+            this.editFile(`${this.sampleName}.jdl`, createNeedleCallback({
+              needle: 'jhipster-needle-jdl-application-config',
+              content: `${databaseType === 'mongodb' ? 'databaseType' : 'prodDatabaseType'} ${databaseType}`,
+            }));
           }
         }
       },

@@ -12,10 +12,9 @@ application {
 		baseName monolithClientDatabaseProdJdlApp,
 		packageName com.jhipster.node,
 		authenticationType jwt,
-		prodDatabaseType REPLACE_PROD_DATABASE_TYPE,
 		enableTranslation false,
-		clientFramework REPLACE_CLIENT_FRAMEWORK
 		testFrameworks [cypress]
+		// jhipster-needle-jdl-application-config
 	}
 	entities *
 }

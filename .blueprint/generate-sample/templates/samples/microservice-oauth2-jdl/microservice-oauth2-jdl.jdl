@@ -20,6 +20,7 @@ application {
         authenticationType oauth2,
         enableTranslation false,
         nativeLanguage en,
+		// jhipster-needle-jdl-application-config
     }
 }
 

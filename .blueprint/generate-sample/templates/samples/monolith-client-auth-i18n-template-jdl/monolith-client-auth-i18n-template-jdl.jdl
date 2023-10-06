@@ -12,15 +12,14 @@ application {
     baseName HealthPoints
     packageName com.okta.developer,
     serverPort 8081,
-    authenticationType REPLACE_AUTH,
     prodDatabaseType postgresql,
     buildTool gradle,
     searchEngine elasticsearch,
     testFrameworks [cypress],
-    clientFramework REPLACE_CLIENT_FRAMEWORK,
     enableTranslation true,
     nativeLanguage en,
     languages [en, es]
+		// jhipster-needle-jdl-application-config
   }
   entities Points, BloodPressure, Weight, Preferences
 }
