@@ -60,9 +60,9 @@ entity Activity {
 	// creationtime ZonedDateTime
 }
 
-relationship OneToOne {
-	Activity to SingleCourse
-}
+// relationship OneToOne {
+//	Activity to SingleCourse
+//}
 
 relationship ManyToOne {
 	Activity {demetrauser} to DemetraUser
