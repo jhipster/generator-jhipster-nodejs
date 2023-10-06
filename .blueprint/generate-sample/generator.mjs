@@ -1,6 +1,6 @@
 import { readdir } from 'node:fs/promises';
 import BaseGenerator from 'generator-jhipster/generators/base';
-import { createNeedleCallback } from 'generator-jhipster/dist/types/generators/base/support/needles.mjs';
+import { createNeedleCallback } from 'generator-jhipster/generators/base/support';
 import command from './command.mjs';
 
 export default class extends BaseGenerator {
@@ -55,19 +55,19 @@ export default class extends BaseGenerator {
           if (clientFramework) {
             this.editFile(`${this.sampleName}.jdl`, createNeedleCallback({
               needle: 'jhipster-needle-jdl-application-config',
-              content: `clientFramework ${clientFramework}`,
+              contentToAdd: `clientFramework ${clientFramework}`,
             }));
           }
           if (authenticationType) {
             this.editFile(`${this.sampleName}.jdl`, createNeedleCallback({
               needle: 'jhipster-needle-jdl-application-config',
-              content: `authenticationType ${authenticationType}`,
+              contentToAdd: `authenticationType ${authenticationType}`,
             }));
           }
           if (databaseType) {
             this.editFile(`${this.sampleName}.jdl`, createNeedleCallback({
               needle: 'jhipster-needle-jdl-application-config',
-              content: `${databaseType === 'mongodb' ? 'databaseType' : 'prodDatabaseType'} ${databaseType}`,
+              contentToAdd: `${databaseType === 'mongodb' ? 'databaseType' : 'prodDatabaseType'} ${databaseType}`,
             }));
           }
         }
