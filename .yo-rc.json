@@ -81,6 +81,12 @@
         "priorities": ["initializing", "composing"],
         "sbs": false,
         "written": true
+      },
+      "vue": {
+        "command": false,
+        "priorities": ["postWriting"],
+        "sbs": true,
+        "written": true
       }
     },
     "jhipsterVersion": "8.0.0-beta.3",
@@ -88,6 +94,6 @@
     "localBlueprint": false,
     "sampleWritten": true,
     "skipCommitHook": true,
-    "subGenerators": ["ci-cd", "cypress", "docker", "languages", "server"]
+    "subGenerators": ["ci-cd", "cypress", "docker", "languages", "server", "vue"]
   }
 }
