@@ -39,9 +39,7 @@ export class <%= entityClass %>Controller {
     const [results, count] = await this.<%= entityInstance %>Service.findAndCount({
       skip: +pageRequest.page * pageRequest.size,
       take: +pageRequest.size,
-<%_ if (!databaseTypeMongodb) { %>
-      order: pageRequest.sort.asOrder(),
-<%_ } _%>
+      <% if (databaseTypeMongodb) { %>// <% } %>order: pageRequest.sort.asOrder(),
     });
     HeaderUtil.addPaginationHeaders(req.res, new Page(results, count, pageRequest));
     return results;
