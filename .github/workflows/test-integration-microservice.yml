@@ -3,52 +3,52 @@ on: [push, pull_request]
 env:
   NODE_OPTIONS: --dns-result-order=ipv4first
 jobs:
-    applications:
-        name: ${{ matrix.app-type }}
-        runs-on: ${{ matrix.os }}
-        if: "!contains(github.event.head_commit.message, '[ci skip]') && !contains(github.event.head_commit.message, '[skip ci]')"
-        timeout-minutes: 40
-        defaults:
-            run:
-                working-directory: ${{ github.workspace }}/app    
-        strategy:
-            fail-fast: false
-            matrix:
-                node_version: [18.17.1]
-                os: [ubuntu-latest]
-                app-type:
-                    - microservice-oauth2-jdl
-                include:
-                    - app-type: microservice-oauth2-jdl
-                      app-folder: microservice-oauth2-jdl
-                      entity: post-import-jdl
-                      e2e: 'no'
-        env:
-            NHI_APP: ${{ matrix.app-type }}
-            NHI_APP_FOLDER: ${{ matrix.app-folder }}
-            NHI_ENTITY: ${{ matrix.entity }}
-            NHI_E2E: ${{ matrix.e2e }}
+  applications:
+    name: ${{ matrix.app-type }}
+    runs-on: ${{ matrix.os }}
+    if: "!contains(github.event.head_commit.message, '[ci skip]') && !contains(github.event.head_commit.message, '[skip ci]')"
+    timeout-minutes: 40
+    defaults:
+      run:
+        working-directory: ${{ github.workspace }}/app
+    strategy:
+      fail-fast: false
+      matrix:
+        node_version: [18.17.1]
+        os: [ubuntu-latest]
+        app-type:
+          - microservice-oauth2-jdl
+        include:
+          - app-type: microservice-oauth2-jdl
+            app-folder: microservice-oauth2-jdl
+            entity: post-import-jdl
+            e2e: 'no'
+    env:
+      NHI_APP: ${{ matrix.app-type }}
+      NHI_APP_FOLDER: ${{ matrix.app-folder }}
+      NHI_ENTITY: ${{ matrix.entity }}
+      NHI_E2E: ${{ matrix.e2e }}
 
-        steps:
-            - uses: actions/checkout@v4
-              with:
-                path: generator-jhipster-nodejs
-            - uses: actions/setup-node@v3
-              with:
-                  node-version: ${{ matrix.node-version }}
-            - run: mkdir ${{ github.workspace }}/app
-              working-directory: ${{ github.workspace }}/generator-jhipster-nodejs
-            - name: GIT HISTORY
-              run: git --no-pager log -n 10 --graph --pretty='%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue) <%an>%Creset' --abbrev-commit
-              working-directory: ${{ github.workspace }}/generator-jhipster-nodejs
-            - name: Link blueprint
-              run: npm install && npm link
-              working-directory: ${{ github.workspace }}/generator-jhipster-nodejs
-            - name: 'GENERATE NHipster app'
-              run: nhipster generate-sample $NHI_APP_FOLDER --template-name $NHI_APP
-            - name: 'INSTALL DEPENDENCIES of generated app'
-              run: npm install
-            - name: 'RUN UNIT TESTS of generated app'
-              run: npm test --workspaces
-            - name: 'RUN SERVER E2E TESTS of generated app'
-              run: npm run test:server:e2e
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: generator-jhipster-nodejs
+      - uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+      - run: mkdir ${{ github.workspace }}/app
+        working-directory: ${{ github.workspace }}/generator-jhipster-nodejs
+      - name: GIT HISTORY
+        run: git --no-pager log -n 10 --graph --pretty='%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue) <%an>%Creset' --abbrev-commit
+        working-directory: ${{ github.workspace }}/generator-jhipster-nodejs
+      - name: Link blueprint
+        run: npm install && npm link
+        working-directory: ${{ github.workspace }}/generator-jhipster-nodejs
+      - name: 'GENERATE NHipster app'
+        run: nhipster generate-sample $NHI_APP_FOLDER --template-name $NHI_APP
+      - name: 'INSTALL DEPENDENCIES of generated app'
+        run: npm install
+      - name: 'RUN UNIT TESTS of generated app'
+        run: npm test --workspaces
+      - name: 'RUN SERVER E2E TESTS of generated app'
+        run: npm run test:server:e2e

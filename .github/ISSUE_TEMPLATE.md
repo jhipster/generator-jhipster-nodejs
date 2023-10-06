@@ -10,4 +10,4 @@
 
 ## JHipster Version(s)
 
--   [ ] Checking this box is mandatory (this is just to show you read everything)
+- [ ] Checking this box is mandatory (this is just to show you read everything)

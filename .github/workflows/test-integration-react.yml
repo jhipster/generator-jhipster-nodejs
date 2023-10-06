@@ -3,96 +3,96 @@ on: [push, pull_request]
 env:
   NODE_OPTIONS: --dns-result-order=ipv4first
 jobs:
-    applications:
-        name: ${{ matrix.app-type }}
-        runs-on: ${{ matrix.os }}
-        if: "!contains(github.event.head_commit.message, '[ci skip]') && !contains(github.event.head_commit.message, '[skip ci]')"
-        timeout-minutes: 40
-        defaults:
-            run:
-                working-directory: ${{ github.workspace }}/app    
-        strategy:
-            fail-fast: false
-            matrix:
-                node_version: [18.17.1]
-                os: [ubuntu-latest]
-                app-type:
-                    - monolith-react-jwt-jdl
-                    - monolith-react-jwt-i18n-jdl
-                    - monolith-react-oauth2-jdl
-                    - monolith-react-oauth2-i18n-jdl
-                    - monolith-react-mysql-prod-jdl
-                    - monolith-react-mongodb-prod-jdl
-                    - monolith-react-oauth2-dev
-                include:
-                    - app-type: monolith-react-jwt-jdl
-                      app-folder: monolith-client-auth-template-jdl
-                      entity: import-jdl
-                      e2e: jwt
-                    - app-type: monolith-react-jwt-i18n-jdl
-                      app-folder: monolith-client-auth-i18n-template-jdl
-                      entity: import-jdl
-                      e2e: jwt
-                    - app-type: monolith-react-oauth2-jdl
-                      app-folder: monolith-client-auth-template-jdl
-                      entity: import-jdl
-                      e2e: oauth2
-                    - app-type: monolith-react-oauth2-i18n-jdl
-                      app-folder: monolith-client-auth-i18n-template-jdl
-                      entity: import-jdl
-                      e2e: oauth2
-                    - app-type: monolith-react-mysql-prod-jdl
-                      app-folder: monolith-client-database-prod-template-jdl
-                      entity: import-jdl
-                      e2e: jwt
-                    - app-type: monolith-react-mongodb-prod-jdl
-                      app-folder: monolith-client-database-prod-template-jdl
-                      entity: import-jdl
-                      e2e: jwt
-                    - app-type: monolith-react-oauth2-dev
-                      app-folder: monolith-react-oauth2-dev
-                      entity: 'no'
-                      e2e: oauth2
-        env:
-            NHI_APP: ${{ matrix.app-type }}
-            NHI_APP_FOLDER: ${{ matrix.app-folder }}
-            NHI_ENTITY: ${{ matrix.entity }}
-            NHI_E2E: ${{ matrix.e2e }}
+  applications:
+    name: ${{ matrix.app-type }}
+    runs-on: ${{ matrix.os }}
+    if: "!contains(github.event.head_commit.message, '[ci skip]') && !contains(github.event.head_commit.message, '[skip ci]')"
+    timeout-minutes: 40
+    defaults:
+      run:
+        working-directory: ${{ github.workspace }}/app
+    strategy:
+      fail-fast: false
+      matrix:
+        node_version: [18.17.1]
+        os: [ubuntu-latest]
+        app-type:
+          - monolith-react-jwt-jdl
+          - monolith-react-jwt-i18n-jdl
+          - monolith-react-oauth2-jdl
+          - monolith-react-oauth2-i18n-jdl
+          - monolith-react-mysql-prod-jdl
+          - monolith-react-mongodb-prod-jdl
+          - monolith-react-oauth2-dev
+        include:
+          - app-type: monolith-react-jwt-jdl
+            app-folder: monolith-client-auth-template-jdl
+            entity: import-jdl
+            e2e: jwt
+          - app-type: monolith-react-jwt-i18n-jdl
+            app-folder: monolith-client-auth-i18n-template-jdl
+            entity: import-jdl
+            e2e: jwt
+          - app-type: monolith-react-oauth2-jdl
+            app-folder: monolith-client-auth-template-jdl
+            entity: import-jdl
+            e2e: oauth2
+          - app-type: monolith-react-oauth2-i18n-jdl
+            app-folder: monolith-client-auth-i18n-template-jdl
+            entity: import-jdl
+            e2e: oauth2
+          - app-type: monolith-react-mysql-prod-jdl
+            app-folder: monolith-client-database-prod-template-jdl
+            entity: import-jdl
+            e2e: jwt
+          - app-type: monolith-react-mongodb-prod-jdl
+            app-folder: monolith-client-database-prod-template-jdl
+            entity: import-jdl
+            e2e: jwt
+          - app-type: monolith-react-oauth2-dev
+            app-folder: monolith-react-oauth2-dev
+            entity: 'no'
+            e2e: oauth2
+    env:
+      NHI_APP: ${{ matrix.app-type }}
+      NHI_APP_FOLDER: ${{ matrix.app-folder }}
+      NHI_ENTITY: ${{ matrix.entity }}
+      NHI_E2E: ${{ matrix.e2e }}
 
-        steps:
-            - uses: actions/checkout@v4
-              with:
-                path: generator-jhipster-nodejs
-            - uses: actions/setup-node@v3
-              with:
-                  node-version: ${{ matrix.node-version }}
-            - run: mkdir ${{ github.workspace }}/app
-              working-directory: ${{ github.workspace }}/generator-jhipster-nodejs
-            - name: GIT HISTORY
-              run: git --no-pager log -n 10 --graph --pretty='%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue) <%an>%Creset' --abbrev-commit
-              working-directory: ${{ github.workspace }}/generator-jhipster-nodejs
-            - name: Link blueprint
-              run: npm install && npm link
-              working-directory: ${{ github.workspace }}/generator-jhipster-nodejs
-            - name: 'GENERATE NHipster app'
-              run: nhipster generate-sample $NHI_APP_FOLDER --template-name $NHI_APP
-            - name: 'INSTALL DEPENDENCIES of generated app'
-              run: npm install
-            - name: 'RUN UNIT TESTS of generated app'
-              run: npm test --workspaces
-            - name: 'RUN SERVER E2E TESTS of generated app'
-              run: npm run test:server:e2e
-            - name: 'BUILD AND RUN SERVER APP'
-              run: npm run app:up
-            - name: 'START APP WITH EVENTUAL CLIENT E2E TESTS'
-              run: npm run e2e:headless --workspace client
-              id: e2e
-            - name: 'E2E: Store failure screenshots'
-              uses: actions/upload-artifact@v3
-              if: always() && steps.e2e.outcome == 'failure'
-              with:
-                  name: screenshots-${{ matrix.app-type }}
-                  path: ${{ github.workspace }}/app/**/cypress/screenshots
-            - name: Dump docker logs
-              if: always()
-              uses: jwalton/gh-docker-logs@v2
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: generator-jhipster-nodejs
+      - uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+      - run: mkdir ${{ github.workspace }}/app
+        working-directory: ${{ github.workspace }}/generator-jhipster-nodejs
+      - name: GIT HISTORY
+        run: git --no-pager log -n 10 --graph --pretty='%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue) <%an>%Creset' --abbrev-commit
+        working-directory: ${{ github.workspace }}/generator-jhipster-nodejs
+      - name: Link blueprint
+        run: npm install && npm link
+        working-directory: ${{ github.workspace }}/generator-jhipster-nodejs
+      - name: 'GENERATE NHipster app'
+        run: nhipster generate-sample $NHI_APP_FOLDER --template-name $NHI_APP
+      - name: 'INSTALL DEPENDENCIES of generated app'
+        run: npm install
+      - name: 'RUN UNIT TESTS of generated app'
+        run: npm test --workspaces
+      - name: 'RUN SERVER E2E TESTS of generated app'
+        run: npm run test:server:e2e
+      - name: 'BUILD AND RUN SERVER APP'
+        run: npm run app:up
+      - name: 'START APP WITH EVENTUAL CLIENT E2E TESTS'
+        run: npm run e2e:headless --workspace client
+        id: e2e
+      - name: 'E2E: Store failure screenshots'
+        uses: actions/upload-artifact@v3
+        if: always() && steps.e2e.outcome == 'failure'
+        with:
+          name: screenshots-${{ matrix.app-type }}
+          path: ${{ github.workspace }}/app/**/cypress/screenshots
+      - name: Dump docker logs
+        if: always()
+        uses: jwalton/gh-docker-logs@v2
