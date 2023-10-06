@@ -68,27 +68,26 @@ relationship ManyToOne {
 	Activity {demetrauser} to DemetraUser
 }
 
-\*
-relationship ManyToMany {
 
-	DemetraUser {
-		coursetitle(title)
-	}
-	to SingleCourse {
-		cfstudent(cf)
-	},
-}
+//relationship ManyToMany {
+
+//	DemetraUser {
+//		coursetitle(title)
+//	}
+//	to SingleCourse {
+//		cfstudent(cf)
+//	},
+//}
 
 
 
-relationship OneToMany {
+//relationship OneToMany {
 
-	DemetraUser {
-		singlecourseteacher
-	}
-	to SingleCourse {
-		cfteacher(cf)
-	}
+//	DemetraUser {
+//		singlecourseteacher
+//	}
+//	to SingleCourse {
+//		cfteacher(cf)
+//	}
 
-}
-*\
+//}
