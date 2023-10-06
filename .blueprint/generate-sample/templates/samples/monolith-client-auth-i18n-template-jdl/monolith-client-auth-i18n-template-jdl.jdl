@@ -37,7 +37,7 @@ entity Weight {
   weight Float
 }
 entity Points {
-  date LocalDate required
+  // date LocalDate required
   exercise Integer
   meals Integer
   alcohol Integer
