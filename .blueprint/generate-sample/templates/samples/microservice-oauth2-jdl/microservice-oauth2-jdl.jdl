@@ -7,6 +7,23 @@
  * model modified from: https://github.com/jhipster/jdl-samples/blob/master/online-shop.jh
  */
 
+application {
+    config {
+        applicationType microservice
+        baseName microserviceOauth2SqlJdlApp
+        testFrameworks [],
+        creationTimestamp 1615471285814,
+        packageName com.jhipster.node,
+        databaseType sql,
+        devDatabaseType sqlite,
+        prodDatabaseType mysql,
+        authenticationType oauth2,
+        enableTranslation false,
+        nativeLanguage en,
+        packageFolder com/jhipster/node,
+    }
+}
+
 
 // JDL definition entity for online shop application
 
