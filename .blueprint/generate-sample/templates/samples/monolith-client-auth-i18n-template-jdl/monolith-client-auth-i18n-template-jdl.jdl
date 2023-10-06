@@ -19,7 +19,7 @@ application {
     enableTranslation true,
     nativeLanguage en,
     languages [en, es]
-		// jhipster-needle-jdl-application-config
+    // jhipster-needle-jdl-application-config
   }
   entities Points, BloodPressure, Weight, Preferences
 }

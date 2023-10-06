@@ -20,7 +20,7 @@ application {
         authenticationType oauth2,
         enableTranslation false,
         nativeLanguage en,
-		// jhipster-needle-jdl-application-config
+        // jhipster-needle-jdl-application-config
     }
 }
 
@@ -49,7 +49,7 @@ entity Product {
 }
 
 entity Customer {
-	firstName String,
+    firstName String,
     lastName String,
     email String,
     telephone String
@@ -64,7 +64,7 @@ entity Address {
 }
 
 entity WishList {
-	title String required,
+    title String required,
     // restricted Boolean
 }
 
@@ -85,12 +85,12 @@ relationship OneToMany {
 
 
 relationship ManyToOne {
-	Category{parent} to Category
+    Category{parent} to Category
 }
 
 
 relationship ManyToMany {
-	Category{product(title)} to Product{category}
+    Category{product(title)} to Product{category}
 }
 
 

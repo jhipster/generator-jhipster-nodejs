@@ -7,16 +7,16 @@
  */
 
 application {
-	config {
-		applicationType monolith,
-		baseName monolithClientDatabaseProdJdlApp,
-		packageName com.jhipster.node,
-		authenticationType jwt,
-		enableTranslation false,
-		testFrameworks [cypress]
-		// jhipster-needle-jdl-application-config
-	}
-	entities *
+    config {
+        applicationType monolith,
+        baseName monolithClientDatabaseProdJdlApp,
+        packageName com.jhipster.node,
+        authenticationType jwt,
+        enableTranslation false,
+        testFrameworks [cypress]
+        // jhipster-needle-jdl-application-config
+    }
+    entities *
 }
 
 // JDL definition entity for application

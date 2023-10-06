@@ -8,17 +8,17 @@
  */
 
 application {
-	config {
-		applicationType monolith,
-		baseName monolithClientAuthSqlJdlApp,
-		packageName com.jhipster.node,
-		databaseType sql,
-		prodDatabaseType mssql,
-		enableTranslation false,
-		testFrameworks [cypress]
-		// jhipster-needle-jdl-application-config
-	}
-	entities *
+    config {
+        applicationType monolith,
+        baseName monolithClientAuthSqlJdlApp,
+        packageName com.jhipster.node,
+        databaseType sql,
+        prodDatabaseType mssql,
+        enableTranslation false,
+        testFrameworks [cypress]
+        // jhipster-needle-jdl-application-config
+    }
+    entities *
 }
 
 // JDL definition entity for application
@@ -35,58 +35,58 @@ TEACHER
 
 
 entity DemetraUser {
-	gender Gender required,
-	address String minlength(1) maxlength(100) required,
-	borndate LocalDate required,
-	cf String required unique,
-	usertype UserType required,
-	// profileimage ImageBlob
+    gender Gender required,
+    address String minlength(1) maxlength(100) required,
+    borndate LocalDate required,
+    cf String required unique,
+    usertype UserType required,
+    // profileimage ImageBlob
 }
 
 entity SingleCourse {
-	title String,
-	// description String pattern(/^[A-Z]$/),
-	// isnotonlyfordegree Boolean required,
-	cfu Integer,
-	// courseimage Blob,
-	// amount BigDecimal
+    title String,
+    // description String pattern(/^[A-Z]$/),
+    // isnotonlyfordegree Boolean required,
+    cfu Integer,
+    // courseimage Blob,
+    // amount BigDecimal
 }
 
 entity Activity {
-	name UUID unique,
-	description String,
-	// mynumber Double,
-	// creationtime ZonedDateTime
+    name UUID unique,
+    description String,
+    // mynumber Double,
+    // creationtime ZonedDateTime
 }
 
 // relationship OneToOne {
-//	Activity to SingleCourse
+//    Activity to SingleCourse
 //}
 
 relationship ManyToOne {
-	Activity {demetrauser} to DemetraUser
+    Activity {demetrauser} to DemetraUser
 }
 
 
 //relationship ManyToMany {
 
-//	DemetraUser {
-//		coursetitle(title)
-//	}
-//	to SingleCourse {
-//		cfstudent(cf)
-//	},
+//    DemetraUser {
+//        coursetitle(title)
+//    }
+//    to SingleCourse {
+//        cfstudent(cf)
+//    },
 //}
 
 
 
 //relationship OneToMany {
 
-//	DemetraUser {
-//		singlecourseteacher
-//	}
-//	to SingleCourse {
-//		cfteacher(cf)
-//	}
+//    DemetraUser {
+//        singlecourseteacher
+//    }
+//    to SingleCourse {
+//        cfteacher(cf)
+//    }
 
 //}
