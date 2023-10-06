@@ -20,7 +20,6 @@ application {
         authenticationType oauth2,
         enableTranslation false,
         nativeLanguage en,
-        packageFolder com/jhipster/node,
     }
 }
 
