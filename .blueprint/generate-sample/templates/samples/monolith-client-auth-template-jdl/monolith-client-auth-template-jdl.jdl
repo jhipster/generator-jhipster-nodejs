@@ -85,7 +85,7 @@ relationship OneToMany {
 		singlecourseteacher
 	}
 	to SingleCourse {
-		cfteacher(cf)required
+		cfteacher(cf)
 	}
 
 }
