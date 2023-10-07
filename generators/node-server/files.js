@@ -7,7 +7,7 @@ export const serverFiles = {
     {
       templates: [
         '.dockerignore',
-        // 'README.md',
+        'README.md.jhi.nodejs',
         '.gitignore.jhi.nodejs',
         'Dockerfile',
       ],

@@ -23,4 +23,27 @@ describe('SubGenerator node-server of nodejs JHipster blueprint', () => {
       expect(result.getStateSnapshot()).toMatchSnapshot();
     });
   });
+  describe('without client', () => {
+    beforeAll(async function () {
+      await helpers
+        .run(SUB_GENERATOR_NAMESPACE)
+        .withJHipsterConfig({
+          skipClient: true,
+        })
+        .withOptions({
+          ignoreNeedlesError: true,
+          blueprint: 'nodejs',
+        })
+        .withJHipsterLookup()
+        .withParentBlueprintLookup();
+    });
+
+    it('should succeed', () => {
+      expect(result.getStateSnapshot()).toMatchSnapshot();
+    });
+
+    it('README should match snapshot', () => {
+      expect(result.getSnapshot('**/README.md')).toMatchSnapshot();
+    });
+  });
 });
