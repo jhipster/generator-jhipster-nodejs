@@ -17,34 +17,16 @@
  * limitations under the License.
  */
 
-const SERVER_NODEJS_SRC_DIR = 'server';
-const PACKAGE_NAME_NODEJS = 'com.jhipster.node';
-const CACHE_PROVIDER_NODEJS = 'no';
-const ENABLE_HIBERNATE_CACHE_NODEJS = false;
-const WEB_SOCKET_NODEJS = false;
-const DATABASE_TYPE_NODEJS = 'sql';
-const DEV_DATABASE_TYPE_NODEJS = 'sqlite';
-const MONGODB_DATABASE_TYPE_NODEJS = 'mongodb';
-const SEARCH_ENGINE_NODEJS = false;
-const MESSAGE_BROKER_NODEJS = false;
-const SERVICE_DISCOVERY_TYPE_NODEJS = false;
-const ENABLE_SWAGGER_CODEGEN_NODEJS = false;
-const BUILD_TOOL_NODEJS = 'maven';
-
-const constants = {
-    SERVER_NODEJS_SRC_DIR,
-    PACKAGE_NAME_NODEJS,
-    CACHE_PROVIDER_NODEJS,
-    ENABLE_HIBERNATE_CACHE_NODEJS,
-    WEB_SOCKET_NODEJS,
-    DATABASE_TYPE_NODEJS,
-    DEV_DATABASE_TYPE_NODEJS,
-    MONGODB_DATABASE_TYPE_NODEJS,
-    SEARCH_ENGINE_NODEJS,
-    MESSAGE_BROKER_NODEJS,
-    SERVICE_DISCOVERY_TYPE_NODEJS,
-    ENABLE_SWAGGER_CODEGEN_NODEJS,
-    BUILD_TOOL_NODEJS
-};
-
-module.exports = constants;
+export const SERVER_NODEJS_SRC_DIR = 'server';
+export const PACKAGE_NAME_NODEJS = 'com.jhipster.node';
+export const CACHE_PROVIDER_NODEJS = 'no';
+export const ENABLE_HIBERNATE_CACHE_NODEJS = false;
+export const WEB_SOCKET_NODEJS = false;
+export const DATABASE_TYPE_NODEJS = 'sql';
+export const DEV_DATABASE_TYPE_NODEJS = 'sqlite';
+export const MONGODB_DATABASE_TYPE_NODEJS = 'mongodb';
+export const SEARCH_ENGINE_NODEJS = false;
+export const MESSAGE_BROKER_NODEJS = false;
+export const SERVICE_DISCOVERY_TYPE_NODEJS = false;
+export const ENABLE_SWAGGER_CODEGEN_NODEJS = false;
+export const BUILD_TOOL_NODEJS = 'maven';

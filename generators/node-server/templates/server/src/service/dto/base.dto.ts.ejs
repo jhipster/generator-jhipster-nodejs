@@ -1,0 +1,20 @@
+<%_ if (databaseType === 'mongodb') { _%>
+import { Transform } from 'class-transformer';
+<%_ } _%>
+
+/**
+ * A DTO base object.
+ */
+export class BaseDTO  {
+
+  <%_ if (databaseType === 'mongodb') { _%>@Transform(id => id?.toHexString ? id?.toHexString() : id, {toPlainOnly: true})<%_ } _%>
+  id?:<%_ if (databaseType === 'sql') { _%>number<%_ } else { _%>string<%_ } _%>;
+
+  createdBy?: string;
+
+  createdDate?: Date;
+
+  lastModifiedBy?: string;
+
+  lastModifiedDate?: Date;
+}

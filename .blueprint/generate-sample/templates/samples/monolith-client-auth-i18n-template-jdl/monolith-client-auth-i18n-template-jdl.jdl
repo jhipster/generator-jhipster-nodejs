@@ -1,0 +1,65 @@
+
+/*
+ * This is the application and entity model for the 21-Points (https://github.com/mraible/21-points) application from Matt Raible
+ * Use "jhipster import-jdl model-name.jdl --blueprints nodejs" to generate the entity application
+ * Use jhipster 6.x (example 6.8.0)
+ * model modified from that committed in: https://github.com/jhipster/jdl-samples/blob/master/21-points.jh
+ */
+
+application {
+  config {
+    applicationType monolith,
+    baseName HealthPoints
+    packageName com.okta.developer,
+    serverPort 8081,
+    prodDatabaseType postgresql,
+    buildTool gradle,
+    searchEngine elasticsearch,
+    testFrameworks [cypress],
+    enableTranslation true,
+    nativeLanguage en,
+    languages [en, es]
+    // jhipster-needle-jdl-application-config
+  }
+  entities Points, BloodPressure, Weight, Preferences
+}
+
+// JDL definition for application 'TwentyOnePoints' generated with command 'jhipster export-jdl'
+
+entity BloodPressure {
+  // timestamp ZonedDateTime required
+  systolic Integer required
+  diastolic Integer required
+}
+entity Weight {
+  // timestamp ZonedDateTime required
+  weight Float
+}
+entity Points {
+  // date LocalDate required
+  exercise Integer
+  meals Integer
+  alcohol Integer
+  // notes String maxlength(140)
+}
+entity Preferences {
+  weeklyGoal Integer
+  weightUnits Units required
+}
+
+enum Units {
+  KG,
+  LB
+}
+
+relationship OneToOne {
+  Preferences{user(login)} to User with builtInEntity
+}
+relationship ManyToOne {
+  BloodPressure{user(login)} to User with builtInEntity
+  Weight{user(login)} to User with builtInEntity
+  Points{user(login)} to User with builtInEntity
+}
+
+paginate BloodPressure, Weight with infinite-scroll
+paginate Points with pagination

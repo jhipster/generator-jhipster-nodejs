@@ -1,7 +1,0 @@
-Description:
-    Creates a new NHipster server side application based on the selected options
-
-Example:
-    nhipster server
-
-    This will create a NestJS server side app

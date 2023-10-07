@@ -1,0 +1,213 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`SubGenerator node-server of nodejs JHipster blueprint > run > should succeed 1`] = `
+{
+  ".dockerignore": {
+    "stateCleared": "modified",
+  },
+  ".yo-rc.json": {
+    "stateCleared": "modified",
+  },
+  "Dockerfile": {
+    "stateCleared": "modified",
+  },
+  "docker/app.yml": {
+    "stateCleared": "modified",
+  },
+  "docker/postgresql.yml": {
+    "stateCleared": "modified",
+  },
+  "docker/prometheus/prometheus.yml": {
+    "stateCleared": "modified",
+  },
+  "docker/services.yml": {
+    "stateCleared": "modified",
+  },
+  "docker/sonar.yml": {
+    "stateCleared": "modified",
+  },
+  "package.json": {
+    "stateCleared": "modified",
+  },
+  "server/.env": {
+    "stateCleared": "modified",
+  },
+  "server/.server.eslintignore": {
+    "stateCleared": "modified",
+  },
+  "server/.server.eslintrc.json": {
+    "stateCleared": "modified",
+  },
+  "server/README.md": {
+    "stateCleared": "modified",
+  },
+  "server/e2e/account.e2e-spec.ts": {
+    "stateCleared": "modified",
+  },
+  "server/e2e/app.e2e-spec.ts": {
+    "stateCleared": "modified",
+  },
+  "server/e2e/jest.e2e.config.json": {
+    "stateCleared": "modified",
+  },
+  "server/e2e/setup.test.js": {
+    "stateCleared": "modified",
+  },
+  "server/e2e/user.e2e-spec.ts": {
+    "stateCleared": "modified",
+  },
+  "server/nest-cli.json": {
+    "stateCleared": "modified",
+  },
+  "server/package.json": {
+    "stateCleared": "modified",
+  },
+  "server/scripts/copy-resources.ts": {
+    "stateCleared": "modified",
+  },
+  "server/sonar-project.properties": {
+    "stateCleared": "modified",
+  },
+  "server/src/app.module.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/client/header-util.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/client/interceptors/logging.interceptor.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/client/request.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/config.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/config/application-dev.yml": {
+    "stateCleared": "modified",
+  },
+  "server/src/config/application-prod.yml": {
+    "stateCleared": "modified",
+  },
+  "server/src/config/application-test.yml": {
+    "stateCleared": "modified",
+  },
+  "server/src/config/application.yml": {
+    "stateCleared": "modified",
+  },
+  "server/src/domain/authority.entity.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/domain/base/base.entity.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/domain/base/pagination.entity.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/domain/user.entity.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/main.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/migrations/1570200270081-CreateTables.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/migrations/1570200490072-SeedUsersRoles.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/module/auth.module.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/module/user.module.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/orm.config.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/repository/authority.repository.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/repository/user.repository.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/security/decorators/auth-user.decorator.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/security/decorators/roles.decorator.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/security/guards/auth.guard.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/security/guards/roles.guard.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/security/index.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/security/passport.jwt.strategy.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/security/password-util.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/security/payload.interface.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/security/role-type.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/service/auth.service.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/service/dto/base.dto.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/service/dto/password-change.dto.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/service/dto/user-login.dto.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/service/dto/user.dto.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/service/mapper/user.mapper.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/service/user.service.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/swagger.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/web/rest/account.controller.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/web/rest/management.controller.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/web/rest/public.user.controller.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/web/rest/user.controller.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/web/rest/user.jwt.controller.ts": {
+    "stateCleared": "modified",
+  },
+  "server/test/admin/management.controller.spec.ts": {
+    "stateCleared": "modified",
+  },
+  "server/tsconfig.build.json": {
+    "stateCleared": "modified",
+  },
+  "server/tsconfig.json": {
+    "stateCleared": "modified",
+  },
+  "server/webpack.server.prod.config.js": {
+    "stateCleared": "modified",
+  },
+}
+`;

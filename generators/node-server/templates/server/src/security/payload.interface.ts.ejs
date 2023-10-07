@@ -1,0 +1,7 @@
+export interface Payload {
+
+  id: <%= databaseType === 'sql' ? 'number' : 'string' %>;
+  username: string;
+  authorities?: string[];
+
+}

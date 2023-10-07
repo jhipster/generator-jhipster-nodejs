@@ -1,0 +1,36 @@
+import { <%= user.persistClass %> } from '../../domain/user.entity';
+import { <%= user.dtoClass%> } from '../dto/user.dto';
+
+/**
+ * An User mapper object.
+ */
+export class UserMapper {
+
+  static fromDTOtoEntity (userDTO: <%= user.dtoClass%>): <%= user.persistClass %> {
+    if (!userDTO) {
+      return;
+    }
+    let user = new <%= user.persistClass %>();
+    const fields = Object.getOwnPropertyNames(userDTO);
+    fields.forEach(field => {
+         user[field] = userDTO[field];
+    });
+    return user;
+
+  }
+
+  static fromEntityToDTO (user: <%= user.persistClass %>): <%= user.dtoClass%> {
+    if (!user) {
+      return;
+    }
+    let userDTO = new <%= user.dtoClass%>();
+
+    const fields = Object.getOwnPropertyNames(user);
+
+    fields.forEach(field => {
+         userDTO[field] = user[field];
+    });
+
+    return userDTO;
+  }
+}

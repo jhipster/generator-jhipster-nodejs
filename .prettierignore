@@ -1,7 +1,6 @@
 node_modules
-travis
-docs
+package-lock.json
 .git
-.jhipster
-.vscode
+
+# blueprint rules:
 **/templates/**/

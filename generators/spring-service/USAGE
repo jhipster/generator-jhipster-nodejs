@@ -1,9 +1,0 @@
-Description:
-    Creates a new NHipster service: this is a simple nestjs service class.
-
-Example:
-    nhipster nestjs-service Foo
-
-    This will create:
-        server/src/service/foo.service.ts
-

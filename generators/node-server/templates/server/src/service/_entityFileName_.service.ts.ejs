@@ -1,0 +1,90 @@
+import { Injectable, HttpException, HttpStatus, Logger } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { FindManyOptions, FindOneOptions } from 'typeorm';
+import { <%= dtoClass %> }  from '../service/dto/<%= entityFileName %>.dto';
+import { <%= entityClass %>Mapper }  from '../service/mapper/<%= entityFileName %>.mapper';
+import { <%= entityClass %>Repository } from '../repository/<%= entityFileName %>.repository';
+
+const relationshipNames = [];
+<%_
+for (idx in relationships) {
+
+ const relationshipType = relationships[idx].relationshipType;
+ const relationshipFieldName = relationships[idx].relationshipFieldName;
+ const relationshipFieldNamePlural = relationships[idx].relationshipFieldNamePlural;
+ const ownerSide = relationships[idx].ownerSide;
+
+   if (relationshipType === 'many-to-one') { _%>
+    relationshipNames.push('<%-relationshipFieldName %>');
+   <%_ } else if (relationshipType === 'many-to-many' && ownerSide === true) { _%>
+    relationshipNames.push('<%- relationshipFieldNamePlural %>');
+   <%_ }
+}
+const pkType = primaryKey.tsType;
+_%>
+
+
+@Injectable()
+export class <%= entityClass %>Service {
+    logger = new Logger('<%= entityClass %>Service');
+
+    constructor(@InjectRepository(<%= entityClass %>Repository) private <%= entityInstance %>Repository: <%= entityClass %>Repository) {}
+
+      async findById(id: <%= pkType %>): Promise<<%= dtoClass %> | undefined> {
+        const options = { relations: relationshipNames };
+        const result = await this.<%= entityInstance %>Repository.findOne(id, options);
+        return <%= entityClass %>Mapper.fromEntityToDTO(result);
+      }
+
+      async findByFields(options: FindOneOptions<<%= dtoClass %>>): Promise<<%= dtoClass %> | undefined> {
+        const result = await this.<%= entityInstance %>Repository.findOne(options);
+        return <%= entityClass %>Mapper.fromEntityToDTO(result);
+      }
+
+      async findAndCount(options: FindManyOptions<<%= dtoClass %>>): Promise<[<%= dtoClass %>[], number]> {
+        options.relations = relationshipNames;
+        const resultList = await this.<%= entityInstance %>Repository.findAndCount(options);
+        const <%= entityInstance %>DTO: <%= dtoClass %>[] = [];
+        if (resultList && resultList[0]) {
+            resultList[0].forEach(<%= entityInstance %> => <%= entityInstance %>DTO.push(<%= entityClass %>Mapper.fromEntityToDTO(<%= entityInstance %>)));
+            resultList[0] = <%= entityInstance %>DTO;
+        }
+        return resultList;
+      }
+
+      async save(<%= entityInstance %>DTO: <%= dtoClass %>, creator?: string): Promise<<%= dtoClass %> | undefined> {
+        const entity = <%= entityClass %>Mapper.fromDTOtoEntity(<%= entityInstance %>DTO);
+        if (creator) {
+            if (!entity.createdBy) {
+                entity.createdBy = creator;
+            }
+            entity.lastModifiedBy = creator;
+        }
+        const result = await this.<%= entityInstance %>Repository.save(entity);
+        return <%= entityClass %>Mapper.fromEntityToDTO(result);
+      }
+
+      async update(<%= entityInstance %>DTO: <%= dtoClass %>, updater?: string): Promise<<%= dtoClass %> | undefined> {
+        const entity = <%= entityClass %>Mapper.fromDTOtoEntity(<%= entityInstance %>DTO);
+        if (updater) {
+            entity.lastModifiedBy = updater;
+        }
+      <%_ if (databaseType === 'mongodb') { _%>
+        await this.<%= entityInstance %>Repository.update(entity.id, entity);
+        return <%= entityInstance %>DTO;
+      <%_ } else { _%>
+        const result = await this.<%= entityInstance %>Repository.save(entity);
+        return <%= entityClass %>Mapper.fromEntityToDTO(result);
+      <%_ } _%>
+      }
+
+      async deleteById(id: <%= pkType %>): Promise<void | undefined> {
+        await this.<%= entityInstance %>Repository.delete(id);
+        const entityFind = await this.findById(id);
+        if (entityFind) {
+          throw new HttpException('Error, entity not deleted!', HttpStatus.NOT_FOUND);
+        }
+        return;
+      }
+
+}

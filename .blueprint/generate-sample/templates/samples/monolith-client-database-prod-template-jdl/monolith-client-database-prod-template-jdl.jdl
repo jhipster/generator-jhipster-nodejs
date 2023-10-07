@@ -1,0 +1,39 @@
+/*
+ * This is the application and entity model modified for the space (https://github.com/jhipster/jdl-samples/main/space.jdl)
+ * Use "jhipster import-jdl model-name.jdl --blueprints nodejs" to generate the entire application
+ * Use jhipster 6.x (example 6.8.0)
+ * relationship info: https://www.jhipster.tech/managing-relationships/
+ * REMEMBER TO FILL prodDatabaseType and clientFramework
+ */
+
+application {
+    config {
+        applicationType monolith,
+        baseName monolithClientDatabaseProdJdlApp,
+        packageName com.jhipster.node,
+        authenticationType jwt,
+        enableTranslation false,
+        testFrameworks [cypress]
+        // jhipster-needle-jdl-application-config
+    }
+    entities *
+}
+
+// JDL definition entity for application
+
+entity SpaceEvent {
+  name String required
+  date LocalDate required
+  description String
+  type SpaceEventType required
+}
+
+entity Mission {
+  name String required
+  description String
+}
+
+enum SpaceEventType {
+  LAUNCH,
+  LANDING
+}

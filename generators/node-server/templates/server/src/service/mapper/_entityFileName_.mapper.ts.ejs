@@ -1,0 +1,37 @@
+import { <%= persistClass %> } from '../../domain/<%= entityFileName %>.entity';
+import { <%= dtoClass %> } from '../dto/<%= entityFileName %>.dto';
+
+
+/**
+ * A <%= entityClass %> mapper object.
+ */
+export class <%= entityClass %>Mapper {
+
+  static fromDTOtoEntity (entityDTO: <%= dtoClass %>): <%= persistClass %> {
+    if (!entityDTO) {
+      return;
+    }
+    let entity = new <%= persistClass %>();
+    const fields = Object.getOwnPropertyNames(entityDTO);
+    fields.forEach(field => {
+        entity[field] = entityDTO[field];
+    });
+    return entity;
+
+  }
+
+  static fromEntityToDTO (entity: <%= persistClass %>): <%= dtoClass %> {
+    if (!entity) {
+      return;
+    }
+    let entityDTO = new <%= dtoClass %>();
+
+    const fields = Object.getOwnPropertyNames(entity);
+
+    fields.forEach(field => {
+        entityDTO[field] = entity[field];
+    });
+
+    return entityDTO;
+  }
+}

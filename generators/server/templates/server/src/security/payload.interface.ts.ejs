@@ -1,7 +1,0 @@
-export interface Payload {
-
-  id: <%= getPkType(databaseType) === 'Long' ? 'number' : 'string' %>;
-  username: string;
-  authorities?: string[];
-
-}

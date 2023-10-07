@@ -1,21 +1,21 @@
 {
-    "tags": {
-        "allowUnknownTags": true
-    },
-    "source": {
-        "include": ["generators/generator-nodejs-constants.js", "generators/utils.js"]
-    },
-    "plugins": [],
-    "templates": {
-        "cleverLinks": true,
-        "monospaceLinks": true,
-        "default": {
-            "outputSourceFiles": true
-        }
-    },
-    "opts": {
-        "recurse": true,
-        "destination": "./docs/",
-        "readme": "README.md"
+  "tags": {
+    "allowUnknownTags": true
+  },
+  "source": {
+    "include": ["generators/generator-nodejs-constants.js", "generators/utils.js"]
+  },
+  "plugins": [],
+  "templates": {
+    "cleverLinks": true,
+    "monospaceLinks": true,
+    "default": {
+      "outputSourceFiles": true
     }
+  },
+  "opts": {
+    "recurse": true,
+    "destination": "./docs/",
+    "readme": "README.md"
+  }
 }

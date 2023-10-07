@@ -1,0 +1,23 @@
+{
+    "generator-jhipster": {
+        "blueprints": [
+            {
+                "name": "generator-jhipster-nodejs"
+            }
+        ],
+        "applicationType": "monolith",
+        "baseName": "monolithAngularJwtDevApp",
+        "testFrameworks": ["cypress"],
+        "creationTimestamp": 1615471285814,
+        "packageName": "com.jhipster.node",
+        "databaseType": "sql",
+        "devDatabaseType": "sqlite",
+        "prodDatabaseType": "mysql",
+        "authenticationType": "jwt",
+        "clientFramework": "angular",
+        "enableTranslation": true,
+        "nativeLanguage": "en",
+        "packageFolder": "com/jhipster/node",
+        "languages": ["en", "fr"]
+    }
+}

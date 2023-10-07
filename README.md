@@ -30,9 +30,9 @@
 > The UI is inherited from standard JHipster app client. So only backend generation changes.
 > For this, a live app running is less useful than the code and the app structure shows in:
 >
-> -   **The sample repo app with** [React client and Okta OAuth2](https://github.com/jhipster/jhipster-sample-app-nodejs-oauth2/tree/v2.0.0)
-> -   **The sample repo app with** [Angular client and JWT auth](https://github.com/jhipster/jhipster-sample-app-nodejs/tree/v2.0.0)
-> -   **The sample repo app with** [Vue.js client and mongodb](https://github.com/jhipster/jhipster-sample-app-nodejs-vuejs/tree/v2.0.0)
+> - **The sample repo app with** [React client and Okta OAuth2](https://github.com/jhipster/jhipster-sample-app-nodejs-oauth2/tree/v2.0.0)
+> - **The sample repo app with** [Angular client and JWT auth](https://github.com/jhipster/jhipster-sample-app-nodejs/tree/v2.0.0)
+> - **The sample repo app with** [Vue.js client and mongodb](https://github.com/jhipster/jhipster-sample-app-nodejs-vuejs/tree/v2.0.0)
 
 <div align="center">
 	<a href="https://github.com/jhipster/generator-jhipster-nodejs">
@@ -46,15 +46,15 @@ This project adds nodejs for your backend, **all TypeScript files generation, no
 
 > The generator applies this standard configuration for the NodeJS app:
 
-> -   NestJS base app with web controllers, [swagger doc](https://github.com/nestjs/swagger) and [JWT or OAuth2 passport auth](https://github.com/nestjs/passport) services
+> - NestJS base app with web controllers, [swagger doc](https://github.com/nestjs/swagger) and [JWT or OAuth2 passport auth](https://github.com/nestjs/passport) services
 
-> -   The app starts with four seed users (admin, basic user and anonymous roles), as standard JHipster monolithic app, with SQLite for dev and configurable sql db for prod. But from the 1.5.0 release you can choose mongodb that uses a memory version for dev/test
+> - The app starts with four seed users (admin, basic user and anonymous roles), as standard JHipster monolithic app, with SQLite for dev and configurable sql db for prod. But from the 1.5.0 release you can choose mongodb that uses a memory version for dev/test
 
-> -   The app uses [TypeORM](https://github.com/nestjs/typeorm) and asks you a question for another sql db or for mongodb
+> - The app uses [TypeORM](https://github.com/nestjs/typeorm) and asks you a question for another sql db or for mongodb
 
-> -   TypeORM is also used for the automatically migration and versioning of the database scripts
+> - TypeORM is also used for the automatically migration and versioning of the database scripts
 
-> -   The app runs also as a full stack app including, for the monolitich choice, the Angular/React client with the home page set for NHipster and CRUD operations for entity generated with subgenerator and jdl import
+> - The app runs also as a full stack app including, for the monolitich choice, the Angular/React client with the home page set for NHipster and CRUD operations for entity generated with subgenerator and jdl import
 
 <div align="center">
 		<img src="https://raw.githubusercontent.com/jhipster/generator-jhipster-nodejs/v2.0.0/nhipster-cli.gif">
@@ -70,8 +70,8 @@ This project adds nodejs for your backend, **all TypeScript files generation, no
 
 As this is a [JHipster](https://www.jhipster.tech/) blueprint, we expect you have JHipster and its related tools already installed:
 
--   [Installing JHipster](https://www.jhipster.tech/installation/)
--   [node.js 14.16.0](https://nodejs.org/de/blog/release/v14.16.0/)
+- [Installing JHipster](https://www.jhipster.tech/installation/)
+- [node.js 14.16.0](https://nodejs.org/de/blog/release/v14.16.0/)
 
 **Please attention to install that node.js version!!**
 
@@ -123,27 +123,27 @@ However, it also ships with an `nhipster` CLI that you can use as a shortcut.
 
 ✅ General App generation
 
--   `nhipster`
+- `nhipster`
 
 ✅ Controller generation
 
--   `nhipster spring-controller <controller-name>`
+- `nhipster spring-controller <controller-name>`
 
 ✅ Service generation
 
--   `nhipster spring-service <service-name>`
+- `nhipster spring-service <service-name>`
 
 ✅ Entity generation
 
--   `nhipster entity <entity-name>`
+- `nhipster entity <entity-name>`
 
 ✅ JDL Entity model support generation
 
--   `nhipster import-jdl my_file.jdl`
+- `nhipster import-jdl my_file.jdl`
 
 ✅ Ci-cd generation
 
--   `nhipster ci-cd`
+- `nhipster ci-cd`
 
 For the last, in the **test-integration/samples/FOLDER_NAME-jdl** there are some examples of jdl models.
 
@@ -172,13 +172,13 @@ cd app
 
 4. Run the generator image in one of the two following options.
 
--   Run the generator from image to generate service:
+- Run the generator from image to generate service:
 
 ```bash
 docker run -it --rm -v $PWD:/home/jhipster/app jhipster-generator-nodejs
 ```
 
--   Run and attach interactive shell to the generator docker container to work from inside the running container:
+- Run and attach interactive shell to the generator docker container to work from inside the running container:
 
 ```bash
 docker run -it --rm -v $PWD:/home/jhipster/app jhipster-generator-nodejs /bin/bash
@@ -210,7 +210,7 @@ $ npm link generator-jhipster-nodejs
 Now you will develop under the **generator-jhipster-nodejs** that you have cloned with git.
 After finish, to generate the app and check your feature, run in **test-generation** folder:
 
--   `nhipster`
+- `nhipster`
 
 ## ❤️ For community
 

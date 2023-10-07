@@ -1,0 +1,111 @@
+import { Body, ClassSerializerInterceptor, Controller, Delete, Get, Logger, Param, Post as PostMethod, Put, UseGuards, Req, UseInterceptors } from '@nestjs/common';
+import { <% if (authenticationType === 'jwt') { _%> ApiBearerAuth, <% } else if (authenticationType === 'oauth2') { _%> ApiSecurity, <% } _%> ApiTags, ApiResponse, ApiOperation } from '@nestjs/swagger';
+import { <%= dtoClass %> } from '../../service/dto/<%= entityFileName %>.dto';
+import { <%= entityClass %>Service } from '../../service/<%= entityFileName %>.service';
+import { PageRequest, Page } from '../../domain/base/pagination.entity';
+import { AuthGuard,  Roles, RolesGuard, RoleType } from '../../security';
+import { HeaderUtil } from '../../client/header-util';
+import { Request } from '../../client/request';
+import { LoggingInterceptor } from '../../client/interceptors/logging.interceptor';
+
+<%_
+const pkType = primaryKey.tsType;
+_%>
+
+@Controller('api/<%= entityApiUrl %>')
+@UseGuards(AuthGuard, RolesGuard)
+@UseInterceptors(LoggingInterceptor, ClassSerializerInterceptor)
+<%_ if (authenticationType === 'jwt') { _%>
+@ApiBearerAuth()
+<%_ } else if (authenticationType === 'oauth2') { _%>
+@ApiSecurity({})
+<%_ } _%>
+@ApiTags('<%= entityApiUrl %>')
+export class <%= entityClass %>Controller {
+  logger = new Logger('<%= entityClass %>Controller');
+
+  constructor(private readonly <%= entityInstance %>Service: <%= entityClass %>Service) {}
+
+
+  @Get('/')
+  @Roles(RoleType.USER)
+  @ApiResponse({
+    status: 200,
+    description: 'List all records',
+    type: <%= dtoClass %>,
+  })
+  async getAll(@Req() req: Request): Promise<<%= dtoClass %> []>  {
+    const pageRequest: PageRequest = new PageRequest(req.query.page, req.query.size, req.query.sort);
+    const [results, count] = await this.<%= entityInstance %>Service.findAndCount({
+      skip: +pageRequest.page * pageRequest.size,
+      take: +pageRequest.size,
+      <% if (databaseTypeMongodb) { %>// <% } %>order: pageRequest.sort.asOrder(),
+    });
+    HeaderUtil.addPaginationHeaders(req.res, new Page(results, count, pageRequest));
+    return results;
+  }
+
+  @Get('/:id')
+  @Roles(RoleType.USER)
+  @ApiResponse({
+    status: 200,
+    description: 'The found record',
+    type: <%= dtoClass %>,
+  })
+  async getOne(@Param('id') id: <%= pkType %>): Promise<<%= dtoClass %>>  {
+    return await this.<%= entityInstance %>Service.findById(id);
+  }
+
+  @PostMethod('/')
+  @Roles(RoleType.USER)
+  @ApiOperation({ summary: 'Create <%= entityInstance %>' })
+  @ApiResponse({
+    status: 201,
+    description: 'The record has been successfully created.',
+    type: <%= dtoClass %>,
+  })
+  @ApiResponse({ status: 403, description: 'Forbidden.' })
+  async post(@Req() req: Request, @Body() <%= entityInstance %>DTO: <%= dtoClass %>): Promise<<%= dtoClass %>>  {
+    const created = await this.<%= entityInstance %>Service.save(<%= entityInstance %>DTO, req.user?.login);
+    HeaderUtil.addEntityCreatedHeaders(req.res, '<%= entityClass %>', created.id);
+    return created;
+  }
+
+  @Put('/')
+  @Roles(RoleType.USER)
+  @ApiOperation({ summary: 'Update <%= entityInstance %>' })
+  @ApiResponse({
+    status: 200,
+    description: 'The record has been successfully updated.',
+    type: <%= dtoClass %>,
+  })
+  async put(@Req() req: Request, @Body() <%= entityInstance %>DTO: <%= dtoClass %>): Promise<<%= dtoClass %>>  {
+    HeaderUtil.addEntityCreatedHeaders(req.res, '<%= entityClass %>', <%= entityInstance %>DTO.id);
+    return await this.<%= entityInstance %>Service.update(<%= entityInstance %>DTO, req.user?.login);
+  }
+
+  @Put('/:id')
+  @Roles(RoleType.USER)
+  @ApiOperation({ summary: 'Update <%= entityInstance %> with id' })
+  @ApiResponse({
+    status: 200,
+    description: 'The record has been successfully updated.',
+    type: <%= dtoClass %>,
+  })
+  async putId(@Req() req: Request, @Body() <%= entityInstance %>DTO: <%= dtoClass %>): Promise<<%= dtoClass %>>  {
+    HeaderUtil.addEntityCreatedHeaders(req.res, '<%= entityClass %>', <%= entityInstance %>DTO.id);
+    return await this.<%= entityInstance %>Service.update(<%= entityInstance %>DTO, req.user?.login);
+  }
+
+  @Delete('/:id')
+  @Roles(RoleType.USER)
+  @ApiOperation({ summary: 'Delete <%= entityInstance %>' })
+  @ApiResponse({
+    status: 204,
+    description: 'The record has been successfully deleted.',
+  })
+  async deleteById(@Req() req: Request, @Param('id') id: <%= pkType %>): Promise<void>  {
+    HeaderUtil.addEntityDeletedHeaders(req.res, '<%= entityClass %>', id);
+    return await this.<%= entityInstance %>Service.deleteById(id);
+  }
+}

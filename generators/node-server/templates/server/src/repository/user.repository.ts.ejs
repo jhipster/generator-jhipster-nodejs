@@ -1,0 +1,5 @@
+import { EntityRepository, Repository } from 'typeorm';
+import { <%= user.persistClass %> } from '../domain/user.entity';
+
+@EntityRepository(<%= user.persistClass %>)
+export class UserRepository extends Repository<<%= user.persistClass %>> {}
