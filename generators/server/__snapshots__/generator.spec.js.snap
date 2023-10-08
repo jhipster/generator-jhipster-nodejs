@@ -5,13 +5,37 @@ exports[`SubGenerator server of nodejs JHipster blueprint > run > should succeed
   ".dockerignore": {
     "stateCleared": "modified",
   },
+  ".editorconfig": {
+    "stateCleared": "modified",
+  },
+  ".gitattributes": {
+    "stateCleared": "modified",
+  },
+  ".gitignore": {
+    "stateCleared": "modified",
+  },
+  ".husky/pre-commit": {
+    "stateCleared": "modified",
+  },
   ".jhipster/Foo.json": {
+    "stateCleared": "modified",
+  },
+  ".lintstagedrc.js": {
+    "stateCleared": "modified",
+  },
+  ".prettierignore": {
+    "stateCleared": "modified",
+  },
+  ".prettierrc": {
     "stateCleared": "modified",
   },
   ".yo-rc.json": {
     "stateCleared": "modified",
   },
   "Dockerfile": {
+    "stateCleared": "modified",
+  },
+  "README.md": {
     "stateCleared": "modified",
   },
   "docker/app.yml": {
@@ -237,6 +261,9 @@ exports[`SubGenerator server of nodejs JHipster blueprint > run > should succeed
     "stateCleared": "modified",
   },
   "server/webpack.server.prod.config.js": {
+    "stateCleared": "modified",
+  },
+  "sonar-project.properties": {
     "stateCleared": "modified",
   },
 }

@@ -47,6 +47,7 @@ const dbTypes = {
 export default class extends BaseApplicationGenerator {
   async beforeQueue() {
     await this.dependsOnJHipster('bootstrap-application');
+    await this.dependsOnJHipster('common');
   }
 
   get [BaseApplicationGenerator.INITIALIZING]() {
