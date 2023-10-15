@@ -8,3 +8,8 @@ generators/languages/generator.js skip
 generators/ci-cd/generator.js skip
 generators/docker/generator.js skip
 generators/server/generator.spec.js skip
+.blueprint/generate-sample/generator.mjs skip
+cli/cli.cjs skip
+generators/cypress/generator.js skip
+generators/node-server/generator.spec.js skip
+generators/vue/generator.js skip
