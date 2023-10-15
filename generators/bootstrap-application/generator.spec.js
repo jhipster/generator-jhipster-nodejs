@@ -22,5 +22,9 @@ describe('SubGenerator bootstrap-application of nodejs JHipster blueprint', () =
     it('should succeed', () => {
       expect(result.getStateSnapshot()).toMatchSnapshot();
     });
+
+    it('application should match snapshot', () => {
+      expect({ ...result.generator.sharedData.getApplication(), user: undefined }).toMatchSnapshot();
+    });
   });
 });
