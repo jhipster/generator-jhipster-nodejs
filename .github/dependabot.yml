@@ -1,0 +1,33 @@
+version: 2
+
+updates:
+  - package-ecosystem: 'github-actions'
+    directory: '/'
+    schedule:
+      interval: 'weekly'
+
+  - package-ecosystem: 'npm'
+    directory: '/generators/node-server/resources'
+    schedule:
+      interval: 'daily'
+    open-pull-requests-limit: 10
+    groups:
+      jest:
+        patterns:
+          - 'jest'
+          - '@types/jest'
+          - 'ts-jest'
+      nestjs:
+        patterns:
+          - '@nestjs/common'
+          - '@nestjs/core'
+          - '@nestjs/microservices'
+          - '@nestjs/platform-express'
+          - '@nestjs/platform-fastify'
+          - '@nestjs/platform-socket.io'
+          - '@nestjs/platform-ws'
+          - '@nestjs/testing'
+          - '@nestjs/websockets'
+      typescript-eslint:
+        patterns:
+          - '@typescript-eslint/*'

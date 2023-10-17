@@ -25,98 +25,96 @@
     "test:e2e": "jest --silent --force-exit --coverage --config ./e2e/jest.e2e.config.json"
   },
   "dependencies": {
-    "browser-sync-client": "2.27.9",
-    "@nestjs/common": "7.5.1",
-    "@nestjs/core": "7.5.1",
-    <%_ if (authenticationType === 'jwt') { _%>
-    "@nestjs/jwt": "7.2.0",
-    <%_ } _%>
-    "@nestjs/passport": "7.1.0",
-    "@nestjs/platform-express": "7.5.1",
-    <%_ if (!skipClient) { _%>
-    "@nestjs/serve-static": "2.1.4",
-    <%_ } _%>
-    "@nestjs/swagger": "4.8.0",
-    "@nestjs/typeorm": "7.1.4",
-    <%_ if (authenticationType === 'jwt') { _%>
-    "bcrypt": "5.1.1",
-    <%_ } _%>
-    "class-transformer": "0.3.1",
-    "class-validator": "0.13.1",
-    "cloud-config-client": "1.4.2",
-    "dotenv": "8.2.0",
-    "eureka-js-client": "4.5.0",
-    <%_ if (authenticationType === 'oauth2') { _%>
-    "express-session": "1.17.1",
-    <%_ } _%>
-    "js-yaml": "4.1.0",
-    <%_ if (authenticationType === 'oauth2') { _%>
-    "jwt-decode": "3.1.1",
-    <%_ } _%>
-    <%_ if (prodDatabaseType === 'mongodb') { _%>
-        "mongodb": "6.1.0",
-    <%_ } else if (prodDatabaseType === 'mysql') {_%>
-        "mysql2": "2.2.5",
-    <%_ } else if (prodDatabaseType === 'postgresql') {_%>
-        "pg": "8.4.2",
-    <%_ } else if (prodDatabaseType === 'oracle') {_%>
-        "oracledb": "5.0.0",
-    <%_ } else if (prodDatabaseType === 'mssql') {_%>
-        "mssql": "6.2.3",
-    <%_ } _%>
-    "passport": "0.4.1",
-    <%_ if (authenticationType === 'jwt') { _%>
-    "passport-jwt": "4.0.0",
-    <%_ } else if (authenticationType === 'oauth2') {_%>
-    "passport-oauth2": "1.5.0",
-    <%_ } _%>
-    "reflect-metadata": "0.1.13",
-    "rxjs": "6.6.3",
-    "shelljs": "0.8.4",
-    <%_ if (databaseType === 'mongodb') { _%>
-    "mongodb-memory-server": "6.9.2",
-    <%_ } else {_%>
-    "sqlite3": "5.1.6",
-    <%_ } _%>
-    "swagger-ui-express": "4.0.7",
-    "typeorm": "0.2.45",
-    "typeorm-encrypted": "0.5.6"
+    "browser-sync-client": "<%- nodeServerDependencies['browser-sync-client'] %>",
+    "@nestjs/common": "<%- nodeServerDependencies['@nestjs/common'] %>",
+    "@nestjs/core": "<%- nodeServerDependencies['@nestjs/core'] %>",
+<%_ if (authenticationType === 'jwt') { _%>
+    "@nestjs/jwt": "<%- nodeServerDependencies['@nestjs/jwt'] %>",
+<%_ } _%>
+    "@nestjs/passport": "<%- nodeServerDependencies['@nestjs/passport'] %>",
+    "@nestjs/platform-express": "<%- nodeServerDependencies['@nestjs/platform-express'] %>",
+<%_ if (!skipClient) { _%>
+    "@nestjs/serve-static": "<%- nodeServerDependencies['@nestjs/serve-static'] %>",
+<%_ } _%>
+    "@nestjs/swagger": "<%- nodeServerDependencies['@nestjs/swagger'] %>",
+    "@nestjs/typeorm": "<%- nodeServerDependencies['@nestjs/typeorm'] %>",
+<%_ if (authenticationType === 'jwt') { _%>
+    "bcrypt": "<%- nodeServerDependencies['bcrypt'] %>",
+<%_ } _%>
+    "class-transformer": "<%- nodeServerDependencies['class-transformer'] %>",
+    "class-validator": "<%- nodeServerDependencies['class-validator'] %>",
+    "cloud-config-client": "<%- nodeServerDependencies['cloud-config-client'] %>",
+    "dotenv": "<%- nodeServerDependencies['dotenv'] %>",
+    "eureka-js-client": "<%- nodeServerDependencies['eureka-js-client'] %>",
+<%_ if (authenticationType === 'oauth2') { _%>
+    "express-session": "<%- nodeServerDependencies['express-session'] %>",
+<%_ } _%>
+    "js-yaml": "<%- nodeServerDependencies['js-yaml'] %>",
+<%_ if (authenticationType === 'oauth2') { _%>
+    "jwt-decode": "<%- nodeServerDependencies['jwt-decode'] %>",
+<%_ } _%>
+<%_ if (prodDatabaseType === 'mongodb') { _%>
+    "mongodb": "<%- nodeServerDependencies['mongodb'] %>",
+<%_ } else if (prodDatabaseType === 'mysql') {_%>
+    "mysql2": "<%- nodeServerDependencies['mysql2'] %>",
+<%_ } else if (prodDatabaseType === 'postgresql') {_%>
+    "pg": "<%- nodeServerDependencies['pg'] %>",
+<%_ } else if (prodDatabaseType === 'oracle') {_%>
+    "oracledb": "<%- nodeServerDependencies['oracledb'] %>",
+<%_ } else if (prodDatabaseType === 'mssql') {_%>
+    "mssql": "<%- nodeServerDependencies['mssql'] %>",
+<%_ } _%>
+    "passport": "<%- nodeServerDependencies['passport'] %>",
+<%_ if (authenticationType === 'jwt') { _%>
+    "passport-jwt": "<%- nodeServerDependencies['passport-jwt'] %>",
+<%_ } else if (authenticationType === 'oauth2') {_%>
+    "passport-oauth2": "<%- nodeServerDependencies['passport-oauth2'] %>",
+<%_ } _%>
+    "reflect-metadata": "<%- nodeServerDependencies['reflect-metadata'] %>",
+    "rxjs": "<%- nodeServerDependencies['rxjs'] %>",
+    "shelljs": "<%- nodeServerDependencies['shelljs'] %>",
+<%_ if (databaseType === 'mongodb') { _%>
+    "mongodb-memory-server": "<%- nodeServerDependencies['mongodb-memory-server'] %>",
+<%_ } else {_%>
+    "sqlite3": "<%- nodeServerDependencies['sqlite3'] %>",
+<%_ } _%>
+    "swagger-ui-express": "<%- nodeServerDependencies['swagger-ui-express'] %>",
+    "typeorm": "<%- nodeServerDependencies['typeorm'] %>",
+    "typeorm-encrypted": "<%- nodeServerDependencies['typeorm-encrypted'] %>"
   },
   "devDependencies": {
-    "@jest/globals": "26.6.2",
-    "@nestjs/testing": "7.5.1",
-    "@types/bcrypt": "5.0.0",
-    "@types/express": "4.17.1",
-    "@types/express-serve-static-core": "4.17.3",
-    "@types/jest": "25.2.3",
-    "@types/superagent": "4.1.10",
-    <%_ if (authenticationType === 'oauth2') { _%>
-    "@types/jwt-decode": "3.1.0",
-    <%_ } _%>
+    "@jest/globals": "<%- nodeServerDependencies['@jest/globals'] %>",
+    "@nestjs/testing": "<%- nodeServerDependencies['@nestjs/testing'] %>",
+    "@types/bcrypt": "<%- nodeServerDependencies['@types/bcrypt'] %>",
+    "@types/express": "<%- nodeServerDependencies['@types/express'] %>",
+    "@types/express-serve-static-core": "<%- nodeServerDependencies['@types/express-serve-static-core'] %>",
+    "@types/jest": "<%- nodeServerDependencies['@types/jest'] %>",
+    "@types/superagent": "<%- nodeServerDependencies['@types/superagent'] %>",
+<%_ if (authenticationType === 'oauth2') { _%>
+    "@types/jwt-decode": "<%- nodeServerDependencies['@types/jwt-decode'] %>",
+<%_ } _%>
     "@types/node": "^14.18.10",
-    <%_ if (authenticationType === 'jwt') { _%>
-    "@types/passport-jwt": "3.0.3",
-    <%_ } _%>
-    "@types/supertest": "2.0.10",
-    "@typescript-eslint/eslint-plugin": "2.11.0",
-    "@typescript-eslint/eslint-plugin-tslint": "2.11.0",
-    "@typescript-eslint/parser": "2.11.0",
-    "browser-sync-client": "2.27.9",
-    "eslint": "6.7.2",
-    "eslint-config-prettier": "6.7.0",
-    "eslint-plugin-prettier": "3.3.1",
-    "jest": "26.6.3",
-    "nodemon": "1.19.1",
-    "prettier": "1.19.0",
-    "rimraf": "3.0.2",
-    "sonarqube-scanner": "2.5.0",
-    "supertest": "6.0.1",
-    "ts-jest": "26.5.6",
-    "ts-node": "8.1.0",
-    "tsc-watch": "2.2.1",
-    "tsconfig-paths": "3.8.0",
-    "tslint": "5.20.1",
-    "typescript": "4.1.6"
+<%_ if (authenticationType === 'jwt') { _%>
+    "@types/passport-jwt": "<%- nodeServerDependencies['@types/passport-jwt'] %>",
+<%_ } _%>
+    "@types/supertest": "<%- nodeServerDependencies['@types/supertest'] %>",
+    "@typescript-eslint/eslint-plugin": "<%- nodeServerDependencies['@typescript-eslint/eslint-plugin'] %>",
+    "@typescript-eslint/eslint-plugin-tslint": "<%- nodeServerDependencies['@typescript-eslint/eslint-plugin-tslint'] %>",
+    "@typescript-eslint/parser": "<%- nodeServerDependencies['@typescript-eslint/parser'] %>",
+    "browser-sync-client": "<%- nodeServerDependencies['browser-sync-client'] %>",
+    "eslint": "<%- nodeServerDependencies['eslint'] %>",
+    "eslint-config-prettier": "<%- nodeServerDependencies['eslint-config-prettier'] %>",
+    "eslint-plugin-prettier": "<%- nodeServerDependencies['eslint-plugin-prettier'] %>",
+    "jest": "<%- nodeServerDependencies['jest'] %>",
+    "nodemon": "<%- nodeServerDependencies['nodemon'] %>",
+    "rimraf": "<%- nodeServerDependencies['rimraf'] %>",
+    "sonarqube-scanner": "<%- nodeServerDependencies['sonarqube-scanner'] %>",
+    "supertest": "<%- nodeServerDependencies['supertest'] %>",
+    "ts-jest": "<%- nodeServerDependencies['ts-jest'] %>",
+    "ts-node": "<%- nodeServerDependencies['ts-node'] %>",
+    "tsc-watch": "<%- nodeServerDependencies['tsc-watch'] %>",
+    "tsconfig-paths": "<%- nodeServerDependencies['tsconfig-paths'] %>",
+    "typescript": "<%- nodeServerDependencies['typescript'] %>"
   },
   "jest": {
     "moduleFileExtensions": [

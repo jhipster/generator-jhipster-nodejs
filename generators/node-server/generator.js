@@ -86,6 +86,15 @@ export default class extends BaseApplicationGenerator {
     });
   }
 
+  get [BaseApplicationGenerator.LOADING]() {
+    return this.asLoadingTaskGroup({
+      async loadingTemplateTask({ application }) {
+        application.nodeServerDependencies = {};
+        this.loadNodeDependenciesFromPackageJson(application.nodeServerDependencies, this.templatePath('../resources/package.json'));
+      },
+    });
+  }
+
   get [BaseApplicationGenerator.CONFIGURING_EACH_ENTITY]() {
     return this.asConfiguringEachEntityTaskGroup({
       async configuringEachEntityTemplateTask({ entityConfig }) {
