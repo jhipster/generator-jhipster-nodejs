@@ -26,22 +26,12 @@
     "node_modules"
   ],
   "devDependencies": {
-    <%_ if (!skipJhipsterDependencies) { _%>
-    "generator-jhipster": "<%= jhipsterVersion %>",
-        <%_ blueprints.forEach(module => { _%>
-    "<%= module.name %>": "<%= module.version %>",
-        <%_ });
-    } _%>
-    <%_ if (!skipCommitHook) { _%>
-    "husky": "<%= nodeDependencies['husky'] %>",
-    "lint-staged": "<%= nodeDependencies['lint-staged'] %>",
-    <%_ } _%>
-    "browser-sync-client": "2.27.9",
-    "@typescript-eslint/eslint-plugin": "2.11.0",
-    "@typescript-eslint/eslint-plugin-tslint": "2.11.0",
-    "@typescript-eslint/parser": "2.11.0",
-    "eslint": "6.7.2",
-    "eslint-config-prettier": "6.7.0",
+    "browser-sync-client": "<%- nodeServerDependencies['browser-sync-client'] %>",
+    "@typescript-eslint/eslint-plugin": "<%- nodeServerDependencies['@typescript-eslint/eslint-plugin'] %>",
+    "@typescript-eslint/eslint-plugin-tslint": "<%- nodeServerDependencies['@typescript-eslint/eslint-plugin-tslint'] %>",
+    "@typescript-eslint/parser": "<%- nodeServerDependencies['@typescript-eslint/parser'] %>",
+    "eslint": "<%- nodeServerDependencies['eslint'] %>",
+    "eslint-config-prettier": "<%- nodeServerDependencies['eslint-config-prettier'] %>",
     "prettier": "<%= nodeDependencies['prettier'] %>",
     "prettier-plugin-packagejson": "<%= nodeDependencies['prettier-plugin-packagejson'] %>"
   },
