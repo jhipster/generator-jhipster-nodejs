@@ -1,5 +1,11 @@
 name: Test Integration Vue
-on: [push, pull_request]
+on:
+  push:
+    branches-ignore:
+      - 'dependabot/**'
+  pull_request:
+    branches:
+      - '*'
 env:
   NODE_OPTIONS: --dns-result-order=ipv4first
 jobs:
