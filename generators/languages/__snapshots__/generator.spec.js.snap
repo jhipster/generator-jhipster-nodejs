@@ -5,106 +5,70 @@ exports[`SubGenerator languages of nodejs JHipster blueprint > run > should succ
   ".yo-rc.json": {
     "stateCleared": "modified",
   },
-  "src/main/resources/i18n/messages_en.properties": {
+  "client/src/i18n/en/activate.json": {
     "stateCleared": "modified",
   },
-  "src/main/resources/i18n/messages_fr.properties": {
+  "client/src/i18n/en/error.json": {
     "stateCleared": "modified",
   },
-  "src/main/webapp/i18n/en/activate.json": {
+  "client/src/i18n/en/global.json": {
     "stateCleared": "modified",
   },
-  "src/main/webapp/i18n/en/configuration.json": {
+  "client/src/i18n/en/home.json": {
     "stateCleared": "modified",
   },
-  "src/main/webapp/i18n/en/error.json": {
+  "client/src/i18n/en/login.json": {
     "stateCleared": "modified",
   },
-  "src/main/webapp/i18n/en/global.json": {
+  "client/src/i18n/en/password.json": {
     "stateCleared": "modified",
   },
-  "src/main/webapp/i18n/en/health.json": {
+  "client/src/i18n/en/register.json": {
     "stateCleared": "modified",
   },
-  "src/main/webapp/i18n/en/home.json": {
+  "client/src/i18n/en/reset.json": {
     "stateCleared": "modified",
   },
-  "src/main/webapp/i18n/en/login.json": {
+  "client/src/i18n/en/sessions.json": {
     "stateCleared": "modified",
   },
-  "src/main/webapp/i18n/en/logs.json": {
+  "client/src/i18n/en/settings.json": {
     "stateCleared": "modified",
   },
-  "src/main/webapp/i18n/en/metrics.json": {
+  "client/src/i18n/en/user-management.json": {
     "stateCleared": "modified",
   },
-  "src/main/webapp/i18n/en/password.json": {
+  "client/src/i18n/fr/activate.json": {
     "stateCleared": "modified",
   },
-  "src/main/webapp/i18n/en/register.json": {
+  "client/src/i18n/fr/error.json": {
     "stateCleared": "modified",
   },
-  "src/main/webapp/i18n/en/reset.json": {
+  "client/src/i18n/fr/global.json": {
     "stateCleared": "modified",
   },
-  "src/main/webapp/i18n/en/sessions.json": {
+  "client/src/i18n/fr/home.json": {
     "stateCleared": "modified",
   },
-  "src/main/webapp/i18n/en/settings.json": {
+  "client/src/i18n/fr/login.json": {
     "stateCleared": "modified",
   },
-  "src/main/webapp/i18n/en/user-management.json": {
+  "client/src/i18n/fr/password.json": {
     "stateCleared": "modified",
   },
-  "src/main/webapp/i18n/fr/activate.json": {
+  "client/src/i18n/fr/register.json": {
     "stateCleared": "modified",
   },
-  "src/main/webapp/i18n/fr/configuration.json": {
+  "client/src/i18n/fr/reset.json": {
     "stateCleared": "modified",
   },
-  "src/main/webapp/i18n/fr/error.json": {
+  "client/src/i18n/fr/sessions.json": {
     "stateCleared": "modified",
   },
-  "src/main/webapp/i18n/fr/global.json": {
+  "client/src/i18n/fr/settings.json": {
     "stateCleared": "modified",
   },
-  "src/main/webapp/i18n/fr/health.json": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/i18n/fr/home.json": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/i18n/fr/login.json": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/i18n/fr/logs.json": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/i18n/fr/metrics.json": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/i18n/fr/password.json": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/i18n/fr/register.json": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/i18n/fr/reset.json": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/i18n/fr/sessions.json": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/i18n/fr/settings.json": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/i18n/fr/user-management.json": {
-    "stateCleared": "modified",
-  },
-  "src/test/resources/i18n/messages_en.properties": {
-    "stateCleared": "modified",
-  },
-  "src/test/resources/i18n/messages_fr.properties": {
+  "client/src/i18n/fr/user-management.json": {
     "stateCleared": "modified",
   },
 }

@@ -5,15 +5,6 @@ exports[`SubGenerator vue of nodejs JHipster blueprint > run > should succeed 1`
   ".editorconfig": {
     "stateCleared": "modified",
   },
-  ".eslintignore": {
-    "stateCleared": "modified",
-  },
-  ".eslintrc.cjs": {
-    "stateCleared": "modified",
-  },
-  ".eslintrc.json": {
-    "stateCleared": "modified",
-  },
   ".gitattributes": {
     "stateCleared": "modified",
   },
@@ -24,9 +15,6 @@ exports[`SubGenerator vue of nodejs JHipster blueprint > run > should succeed 1`
     "stateCleared": "modified",
   },
   ".lintstagedrc.js": {
-    "stateCleared": "modified",
-  },
-  ".postcssrc.js": {
     "stateCleared": "modified",
   },
   ".prettierignore": {
@@ -41,1198 +29,1009 @@ exports[`SubGenerator vue of nodejs JHipster blueprint > run > should succeed 1`
   "README.md": {
     "stateCleared": "modified",
   },
-  "angular.json": {
+  "client/.eslintignore": {
     "stateCleared": "modified",
   },
-  "jest.conf.js": {
+  "client/.eslintrc.cjs": {
     "stateCleared": "modified",
   },
-  "ngsw-config.json": {
+  "client/.eslintrc.json": {
+    "stateCleared": "modified",
+  },
+  "client/.postcssrc.js": {
+    "stateCleared": "modified",
+  },
+  "client/angular.json": {
+    "stateCleared": "modified",
+  },
+  "client/jest.conf.js": {
+    "stateCleared": "modified",
+  },
+  "client/ngsw-config.json": {
+    "stateCleared": "modified",
+  },
+  "client/package.json": {
+    "stateCleared": "modified",
+  },
+  "client/src/404.html": {
+    "stateCleared": "modified",
+  },
+  "client/src/WEB-INF/web.xml": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/account/account.route.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/account/account.service.spec.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/account/account.service.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/account/activate/activate.component.html": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/account/activate/activate.component.spec.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/account/activate/activate.component.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/account/activate/activate.route.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/account/activate/activate.service.spec.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/account/activate/activate.service.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/account/activate/activate.vue": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/account/change-password/change-password.component.spec.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/account/change-password/change-password.component.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/account/change-password/change-password.vue": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/account/login-form/login-form.component.spec.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/account/login-form/login-form.component.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/account/login-form/login-form.vue": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/account/login.service.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/account/password-reset/finish/password-reset-finish.component.html": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/account/password-reset/finish/password-reset-finish.component.spec.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/account/password-reset/finish/password-reset-finish.component.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/account/password-reset/finish/password-reset-finish.route.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/account/password-reset/finish/password-reset-finish.service.spec.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/account/password-reset/finish/password-reset-finish.service.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/account/password-reset/init/password-reset-init.component.html": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/account/password-reset/init/password-reset-init.component.spec.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/account/password-reset/init/password-reset-init.component.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/account/password-reset/init/password-reset-init.route.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/account/password-reset/init/password-reset-init.service.spec.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/account/password-reset/init/password-reset-init.service.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/account/password/password-strength-bar/password-strength-bar.component.html": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/account/password/password-strength-bar/password-strength-bar.component.scss": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/account/password/password-strength-bar/password-strength-bar.component.spec.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/account/password/password-strength-bar/password-strength-bar.component.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/account/password/password.component.html": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/account/password/password.component.spec.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/account/password/password.component.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/account/password/password.route.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/account/password/password.service.spec.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/account/password/password.service.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/account/register/register.component.html": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/account/register/register.component.spec.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/account/register/register.component.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/account/register/register.model.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/account/register/register.route.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/account/register/register.service.spec.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/account/register/register.service.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/account/register/register.vue": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/account/reset-password/finish/reset-password-finish.component.spec.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/account/reset-password/finish/reset-password-finish.component.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/account/reset-password/finish/reset-password-finish.vue": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/account/reset-password/init/reset-password-init.component.spec.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/account/reset-password/init/reset-password-init.component.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/account/reset-password/init/reset-password-init.vue": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/account/settings/settings.component.html": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/account/settings/settings.component.spec.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/account/settings/settings.component.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/account/settings/settings.route.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/account/settings/settings.vue": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/admin/admin-routing.module.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/admin/docs/docs.component.html": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/admin/docs/docs.component.scss": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/admin/docs/docs.component.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/admin/docs/docs.vue": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/admin/user-management/delete/user-management-delete-dialog.component.html": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/admin/user-management/delete/user-management-delete-dialog.component.spec.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/admin/user-management/delete/user-management-delete-dialog.component.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/admin/user-management/detail/user-management-detail.component.html": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/admin/user-management/detail/user-management-detail.component.spec.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/admin/user-management/detail/user-management-detail.component.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/admin/user-management/list/user-management.component.html": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/admin/user-management/list/user-management.component.spec.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/admin/user-management/list/user-management.component.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/admin/user-management/service/user-management.service.spec.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/admin/user-management/service/user-management.service.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/admin/user-management/update/user-management-update.component.html": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/admin/user-management/update/user-management-update.component.spec.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/admin/user-management/update/user-management-update.component.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/admin/user-management/user-management-edit.component.spec.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/admin/user-management/user-management-edit.component.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/admin/user-management/user-management-edit.vue": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/admin/user-management/user-management-view.component.spec.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/admin/user-management/user-management-view.component.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/admin/user-management/user-management-view.vue": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/admin/user-management/user-management.component.spec.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/admin/user-management/user-management.component.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/admin/user-management/user-management.model.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/admin/user-management/user-management.route.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/admin/user-management/user-management.service.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/admin/user-management/user-management.vue": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/app-page-title-strategy.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/app-routing.module.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/app.component.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/app.constants.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/app.module.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/app.vue": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/config/authority.constants.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/config/datepicker-adapter.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/config/dayjs.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/config/error.constants.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/config/font-awesome-icons.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/config/input.constants.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/config/language.constants.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/config/navigation.constants.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/config/pagination.constants.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/config/translation.config.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/config/uib-pagination.config.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/constants.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/core/auth/account.model.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/core/auth/account.service.spec.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/core/auth/account.service.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/core/auth/auth-jwt.service.spec.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/core/auth/auth-jwt.service.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/core/auth/state-storage.service.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/core/auth/user-route-access.service.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/core/config/application-config.service.spec.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/core/config/application-config.service.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/core/error/error.component.spec.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/core/error/error.component.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/core/error/error.vue": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/core/home/home.component.spec.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/core/home/home.component.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/core/home/home.vue": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/core/interceptor/auth-expired.interceptor.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/core/interceptor/auth.interceptor.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/core/interceptor/error-handler.interceptor.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/core/interceptor/index.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/core/interceptor/notification.interceptor.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/core/jhi-footer/jhi-footer.component.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/core/jhi-footer/jhi-footer.vue": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/core/jhi-navbar/jhi-navbar.component.spec.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/core/jhi-navbar/jhi-navbar.component.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/core/jhi-navbar/jhi-navbar.vue": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/core/request/request-util.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/core/request/request.model.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/core/ribbon/ribbon.component.spec.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/core/ribbon/ribbon.component.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/core/ribbon/ribbon.vue": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/core/util/alert.service.spec.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/core/util/alert.service.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/core/util/data-util.service.spec.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/core/util/data-util.service.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/core/util/event-manager.service.spec.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/core/util/event-manager.service.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/core/util/operators.spec.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/core/util/operators.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/core/util/parse-links.service.spec.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/core/util/parse-links.service.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/declarations.d.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/entities/entities-menu.component.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/entities/entities-menu.vue": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/entities/entities.component.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/entities/entities.vue": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/entities/entity-navbar-items.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/entities/entity-routing.module.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/entities/user/user.model.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/entities/user/user.service.spec.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/entities/user/user.service.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/home/home.component.html": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/home/home.component.scss": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/home/home.component.spec.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/home/home.component.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/layouts/error/error.component.html": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/layouts/error/error.component.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/layouts/error/error.route.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/layouts/footer/footer.component.html": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/layouts/footer/footer.component.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/layouts/main/main.component.html": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/layouts/main/main.component.spec.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/layouts/main/main.component.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/layouts/main/main.module.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/layouts/navbar/active-menu.directive.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/layouts/navbar/navbar-item.model.d.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/layouts/navbar/navbar.component.html": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/layouts/navbar/navbar.component.scss": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/layouts/navbar/navbar.component.spec.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/layouts/navbar/navbar.component.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/layouts/profiles/page-ribbon.component.scss": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/layouts/profiles/page-ribbon.component.spec.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/layouts/profiles/page-ribbon.component.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/layouts/profiles/profile-info.model.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/layouts/profiles/profile.service.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/locale/translation.service.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/login/login.component.html": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/login/login.component.spec.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/login/login.component.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/login/login.model.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/login/login.service.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/main.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/router/account.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/router/admin.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/router/entities.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/router/index.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/router/pages.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/shared/alert/alert-error.component.html": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/shared/alert/alert-error.component.spec.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/shared/alert/alert-error.component.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/shared/alert/alert-error.model.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/shared/alert/alert.component.html": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/shared/alert/alert.component.spec.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/shared/alert/alert.component.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/shared/alert/alert.service.spec.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/shared/alert/alert.service.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/shared/auth/has-any-authority.directive.spec.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/shared/auth/has-any-authority.directive.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/shared/composables/date-format.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/shared/composables/index.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/shared/composables/validation.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/shared/computables/arrays.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/shared/computables/index.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/shared/config/axios-interceptor.spec.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/shared/config/axios-interceptor.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/shared/config/config-bootstrap-vue.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/shared/config/config.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/shared/config/dayjs.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/shared/config/languages.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/shared/config/store/account-store.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/shared/config/store/translation-store.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/shared/data/data-utils.service.spec.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/shared/data/data-utils.service.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/shared/date/duration.pipe.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/shared/date/format-medium-date.pipe.spec.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/shared/date/format-medium-date.pipe.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/shared/date/format-medium-datetime.pipe.spec.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/shared/date/format-medium-datetime.pipe.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/shared/date/index.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/shared/filter/filter.component.html": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/shared/filter/filter.component.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/shared/filter/filter.model.spec.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/shared/filter/filter.model.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/shared/filter/index.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/shared/jhi-item-count.component.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/shared/jhi-item-count.vue": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/shared/language/find-language-from-key.pipe.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/shared/language/index.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/shared/language/translate.directive.spec.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/shared/language/translate.directive.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/shared/language/translation.module.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/shared/model/user.model.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/shared/pagination/index.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/shared/pagination/item-count.component.spec.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/shared/pagination/item-count.component.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/shared/security/authority.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/shared/shared.module.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/shared/sort/index.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/shared/sort/jhi-sort-indicator.component.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/shared/sort/jhi-sort-indicator.vue": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/shared/sort/sort-by.directive.spec.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/shared/sort/sort-by.directive.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/shared/sort/sort.directive.spec.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/shared/sort/sort.directive.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/shared/sort/sort.service.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/shared/sort/sorts.spec.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/shared/sort/sorts.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/shims-vue.d.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/store.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/test-setup.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/bootstrap.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/content/css/loading.css": {
+    "stateCleared": "modified",
+  },
+  "client/src/content/images/jhipster_family_member_0.svg": {
+    "stateCleared": "modified",
+  },
+  "client/src/content/images/jhipster_family_member_0_head-192.png": {
+    "stateCleared": "modified",
+  },
+  "client/src/content/images/jhipster_family_member_0_head-256.png": {
+    "stateCleared": "modified",
+  },
+  "client/src/content/images/jhipster_family_member_0_head-384.png": {
+    "stateCleared": "modified",
+  },
+  "client/src/content/images/jhipster_family_member_0_head-512.png": {
+    "stateCleared": "modified",
+  },
+  "client/src/content/images/jhipster_family_member_1.svg": {
+    "stateCleared": "modified",
+  },
+  "client/src/content/images/jhipster_family_member_1_head-192.png": {
+    "stateCleared": "modified",
+  },
+  "client/src/content/images/jhipster_family_member_1_head-256.png": {
+    "stateCleared": "modified",
+  },
+  "client/src/content/images/jhipster_family_member_1_head-384.png": {
+    "stateCleared": "modified",
+  },
+  "client/src/content/images/jhipster_family_member_1_head-512.png": {
+    "stateCleared": "modified",
+  },
+  "client/src/content/images/jhipster_family_member_2.svg": {
+    "stateCleared": "modified",
+  },
+  "client/src/content/images/jhipster_family_member_2_head-192.png": {
+    "stateCleared": "modified",
+  },
+  "client/src/content/images/jhipster_family_member_2_head-256.png": {
+    "stateCleared": "modified",
+  },
+  "client/src/content/images/jhipster_family_member_2_head-384.png": {
+    "stateCleared": "modified",
+  },
+  "client/src/content/images/jhipster_family_member_2_head-512.png": {
+    "stateCleared": "modified",
+  },
+  "client/src/content/images/jhipster_family_member_3.svg": {
+    "stateCleared": "modified",
+  },
+  "client/src/content/images/jhipster_family_member_3_head-192.png": {
+    "stateCleared": "modified",
+  },
+  "client/src/content/images/jhipster_family_member_3_head-256.png": {
+    "stateCleared": "modified",
+  },
+  "client/src/content/images/jhipster_family_member_3_head-384.png": {
+    "stateCleared": "modified",
+  },
+  "client/src/content/images/jhipster_family_member_3_head-512.png": {
+    "stateCleared": "modified",
+  },
+  "client/src/content/images/logo-jhipster.png": {
+    "stateCleared": "modified",
+  },
+  "client/src/content/scss/_bootstrap-variables.scss": {
+    "stateCleared": "modified",
+  },
+  "client/src/content/scss/global.scss": {
+    "stateCleared": "modified",
+  },
+  "client/src/content/scss/vendor.scss": {
+    "stateCleared": "modified",
+  },
+  "client/src/declarations.d.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/favicon.ico": {
+    "stateCleared": "modified",
+  },
+  "client/src/i18n/en/activate.json": {
+    "stateCleared": "modified",
+  },
+  "client/src/i18n/en/error.json": {
+    "stateCleared": "modified",
+  },
+  "client/src/i18n/en/global.json": {
+    "stateCleared": "modified",
+  },
+  "client/src/i18n/en/home.json": {
+    "stateCleared": "modified",
+  },
+  "client/src/i18n/en/login.json": {
+    "stateCleared": "modified",
+  },
+  "client/src/i18n/en/password.json": {
+    "stateCleared": "modified",
+  },
+  "client/src/i18n/en/register.json": {
+    "stateCleared": "modified",
+  },
+  "client/src/i18n/en/reset.json": {
+    "stateCleared": "modified",
+  },
+  "client/src/i18n/en/sessions.json": {
+    "stateCleared": "modified",
+  },
+  "client/src/i18n/en/settings.json": {
+    "stateCleared": "modified",
+  },
+  "client/src/i18n/en/user-management.json": {
+    "stateCleared": "modified",
+  },
+  "client/src/i18n/fr/activate.json": {
+    "stateCleared": "modified",
+  },
+  "client/src/i18n/fr/error.json": {
+    "stateCleared": "modified",
+  },
+  "client/src/i18n/fr/global.json": {
+    "stateCleared": "modified",
+  },
+  "client/src/i18n/fr/home.json": {
+    "stateCleared": "modified",
+  },
+  "client/src/i18n/fr/login.json": {
+    "stateCleared": "modified",
+  },
+  "client/src/i18n/fr/password.json": {
+    "stateCleared": "modified",
+  },
+  "client/src/i18n/fr/register.json": {
+    "stateCleared": "modified",
+  },
+  "client/src/i18n/fr/reset.json": {
+    "stateCleared": "modified",
+  },
+  "client/src/i18n/fr/sessions.json": {
+    "stateCleared": "modified",
+  },
+  "client/src/i18n/fr/settings.json": {
+    "stateCleared": "modified",
+  },
+  "client/src/i18n/fr/user-management.json": {
+    "stateCleared": "modified",
+  },
+  "client/src/index.html": {
+    "stateCleared": "modified",
+  },
+  "client/src/main.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/manifest.webapp": {
+    "stateCleared": "modified",
+  },
+  "client/src/robots.txt": {
+    "stateCleared": "modified",
+  },
+  "client/src/swagger-ui/dist/images/throbber.gif": {
+    "stateCleared": "modified",
+  },
+  "client/src/swagger-ui/index.html": {
+    "stateCleared": "modified",
+  },
+  "client/tsconfig.app.json": {
+    "stateCleared": "modified",
+  },
+  "client/tsconfig.json": {
+    "stateCleared": "modified",
+  },
+  "client/tsconfig.node.json": {
+    "stateCleared": "modified",
+  },
+  "client/tsconfig.spec.json": {
+    "stateCleared": "modified",
+  },
+  "client/tsconfig.vitest.json": {
+    "stateCleared": "modified",
+  },
+  "client/vite.config.ts": {
+    "stateCleared": "modified",
+  },
+  "client/vitest.config.ts": {
+    "stateCleared": "modified",
+  },
+  "client/webpack/environment.js": {
+    "stateCleared": "modified",
+  },
+  "client/webpack/logo-jhipster.png": {
+    "stateCleared": "modified",
+  },
+  "client/webpack/proxy.conf.js": {
+    "stateCleared": "modified",
+  },
+  "client/webpack/webpack.custom.js": {
     "stateCleared": "modified",
   },
   "package.json": {
     "stateCleared": "modified",
   },
   "sonar-project.properties": {
-    "stateCleared": "modified",
-  },
-  "src/main/resources/i18n/messages_en.properties": {
-    "stateCleared": "modified",
-  },
-  "src/main/resources/i18n/messages_fr.properties": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/404.html": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/WEB-INF/web.xml": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/account/account.route.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/account/account.service.spec.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/account/account.service.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/account/activate/activate.component.html": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/account/activate/activate.component.spec.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/account/activate/activate.component.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/account/activate/activate.route.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/account/activate/activate.service.spec.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/account/activate/activate.service.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/account/activate/activate.vue": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/account/change-password/change-password.component.spec.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/account/change-password/change-password.component.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/account/change-password/change-password.vue": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/account/login-form/login-form.component.spec.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/account/login-form/login-form.component.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/account/login-form/login-form.vue": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/account/login.service.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/account/password-reset/finish/password-reset-finish.component.html": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/account/password-reset/finish/password-reset-finish.component.spec.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/account/password-reset/finish/password-reset-finish.component.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/account/password-reset/finish/password-reset-finish.route.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/account/password-reset/finish/password-reset-finish.service.spec.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/account/password-reset/finish/password-reset-finish.service.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/account/password-reset/init/password-reset-init.component.html": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/account/password-reset/init/password-reset-init.component.spec.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/account/password-reset/init/password-reset-init.component.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/account/password-reset/init/password-reset-init.route.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/account/password-reset/init/password-reset-init.service.spec.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/account/password-reset/init/password-reset-init.service.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/account/password/password-strength-bar/password-strength-bar.component.html": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/account/password/password-strength-bar/password-strength-bar.component.scss": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/account/password/password-strength-bar/password-strength-bar.component.spec.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/account/password/password-strength-bar/password-strength-bar.component.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/account/password/password.component.html": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/account/password/password.component.spec.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/account/password/password.component.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/account/password/password.route.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/account/password/password.service.spec.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/account/password/password.service.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/account/register/register.component.html": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/account/register/register.component.spec.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/account/register/register.component.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/account/register/register.model.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/account/register/register.route.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/account/register/register.service.spec.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/account/register/register.service.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/account/register/register.vue": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/account/reset-password/finish/reset-password-finish.component.spec.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/account/reset-password/finish/reset-password-finish.component.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/account/reset-password/finish/reset-password-finish.vue": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/account/reset-password/init/reset-password-init.component.spec.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/account/reset-password/init/reset-password-init.component.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/account/reset-password/init/reset-password-init.vue": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/account/settings/settings.component.html": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/account/settings/settings.component.spec.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/account/settings/settings.component.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/account/settings/settings.route.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/account/settings/settings.vue": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/admin/admin-routing.module.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/admin/configuration/configuration.component.html": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/admin/configuration/configuration.component.spec.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/admin/configuration/configuration.component.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/admin/configuration/configuration.model.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/admin/configuration/configuration.service.spec.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/admin/configuration/configuration.service.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/admin/configuration/configuration.vue": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/admin/docs/docs.component.html": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/admin/docs/docs.component.scss": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/admin/docs/docs.component.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/admin/docs/docs.vue": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/admin/health/health-modal.component.spec.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/admin/health/health-modal.component.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/admin/health/health-modal.vue": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/admin/health/health.component.html": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/admin/health/health.component.spec.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/admin/health/health.component.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/admin/health/health.model.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/admin/health/health.service.spec.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/admin/health/health.service.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/admin/health/health.vue": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/admin/health/modal/health-modal.component.html": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/admin/health/modal/health-modal.component.spec.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/admin/health/modal/health-modal.component.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/admin/logs/log.model.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/admin/logs/logs.component.html": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/admin/logs/logs.component.spec.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/admin/logs/logs.component.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/admin/logs/logs.service.spec.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/admin/logs/logs.service.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/admin/logs/logs.vue": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/admin/metrics/blocks/jvm-memory/jvm-memory.component.html": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/admin/metrics/blocks/jvm-memory/jvm-memory.component.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/admin/metrics/blocks/jvm-threads/jvm-threads.component.html": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/admin/metrics/blocks/jvm-threads/jvm-threads.component.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/admin/metrics/blocks/metrics-cache/metrics-cache.component.html": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/admin/metrics/blocks/metrics-cache/metrics-cache.component.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/admin/metrics/blocks/metrics-datasource/metrics-datasource.component.html": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/admin/metrics/blocks/metrics-datasource/metrics-datasource.component.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/admin/metrics/blocks/metrics-endpoints-requests/metrics-endpoints-requests.component.html": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/admin/metrics/blocks/metrics-endpoints-requests/metrics-endpoints-requests.component.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/admin/metrics/blocks/metrics-garbagecollector/metrics-garbagecollector.component.html": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/admin/metrics/blocks/metrics-garbagecollector/metrics-garbagecollector.component.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/admin/metrics/blocks/metrics-modal-threads/metrics-modal-threads.component.html": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/admin/metrics/blocks/metrics-modal-threads/metrics-modal-threads.component.spec.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/admin/metrics/blocks/metrics-modal-threads/metrics-modal-threads.component.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/admin/metrics/blocks/metrics-request/metrics-request.component.html": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/admin/metrics/blocks/metrics-request/metrics-request.component.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/admin/metrics/blocks/metrics-system/metrics-system.component.html": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/admin/metrics/blocks/metrics-system/metrics-system.component.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/admin/metrics/metrics-modal.component.spec.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/admin/metrics/metrics-modal.component.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/admin/metrics/metrics-modal.vue": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/admin/metrics/metrics.component.html": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/admin/metrics/metrics.component.spec.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/admin/metrics/metrics.component.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/admin/metrics/metrics.model.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/admin/metrics/metrics.service.spec.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/admin/metrics/metrics.service.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/admin/metrics/metrics.vue": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/admin/user-management/delete/user-management-delete-dialog.component.html": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/admin/user-management/delete/user-management-delete-dialog.component.spec.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/admin/user-management/delete/user-management-delete-dialog.component.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/admin/user-management/detail/user-management-detail.component.html": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/admin/user-management/detail/user-management-detail.component.spec.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/admin/user-management/detail/user-management-detail.component.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/admin/user-management/list/user-management.component.html": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/admin/user-management/list/user-management.component.spec.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/admin/user-management/list/user-management.component.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/admin/user-management/service/user-management.service.spec.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/admin/user-management/service/user-management.service.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/admin/user-management/update/user-management-update.component.html": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/admin/user-management/update/user-management-update.component.spec.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/admin/user-management/update/user-management-update.component.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/admin/user-management/user-management-edit.component.spec.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/admin/user-management/user-management-edit.component.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/admin/user-management/user-management-edit.vue": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/admin/user-management/user-management-view.component.spec.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/admin/user-management/user-management-view.component.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/admin/user-management/user-management-view.vue": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/admin/user-management/user-management.component.spec.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/admin/user-management/user-management.component.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/admin/user-management/user-management.model.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/admin/user-management/user-management.route.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/admin/user-management/user-management.service.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/admin/user-management/user-management.vue": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/app-page-title-strategy.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/app-routing.module.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/app.component.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/app.constants.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/app.module.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/app.vue": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/config/authority.constants.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/config/datepicker-adapter.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/config/dayjs.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/config/error.constants.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/config/font-awesome-icons.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/config/input.constants.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/config/language.constants.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/config/navigation.constants.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/config/pagination.constants.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/config/translation.config.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/config/uib-pagination.config.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/constants.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/core/auth/account.model.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/core/auth/account.service.spec.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/core/auth/account.service.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/core/auth/auth-jwt.service.spec.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/core/auth/auth-jwt.service.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/core/auth/state-storage.service.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/core/auth/user-route-access.service.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/core/config/application-config.service.spec.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/core/config/application-config.service.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/core/error/error.component.spec.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/core/error/error.component.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/core/error/error.vue": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/core/home/home.component.spec.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/core/home/home.component.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/core/home/home.vue": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/core/interceptor/auth-expired.interceptor.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/core/interceptor/auth.interceptor.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/core/interceptor/error-handler.interceptor.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/core/interceptor/index.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/core/interceptor/notification.interceptor.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/core/jhi-footer/jhi-footer.component.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/core/jhi-footer/jhi-footer.vue": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/core/jhi-navbar/jhi-navbar.component.spec.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/core/jhi-navbar/jhi-navbar.component.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/core/jhi-navbar/jhi-navbar.vue": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/core/request/request-util.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/core/request/request.model.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/core/ribbon/ribbon.component.spec.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/core/ribbon/ribbon.component.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/core/ribbon/ribbon.vue": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/core/util/alert.service.spec.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/core/util/alert.service.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/core/util/data-util.service.spec.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/core/util/data-util.service.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/core/util/event-manager.service.spec.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/core/util/event-manager.service.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/core/util/operators.spec.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/core/util/operators.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/core/util/parse-links.service.spec.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/core/util/parse-links.service.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/declarations.d.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/entities/entities-menu.component.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/entities/entities-menu.vue": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/entities/entities.component.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/entities/entities.vue": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/entities/entity-navbar-items.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/entities/entity-routing.module.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/entities/user/user.model.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/entities/user/user.service.spec.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/entities/user/user.service.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/home/home.component.html": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/home/home.component.scss": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/home/home.component.spec.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/home/home.component.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/layouts/error/error.component.html": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/layouts/error/error.component.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/layouts/error/error.route.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/layouts/footer/footer.component.html": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/layouts/footer/footer.component.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/layouts/main/main.component.html": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/layouts/main/main.component.spec.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/layouts/main/main.component.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/layouts/main/main.module.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/layouts/navbar/active-menu.directive.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/layouts/navbar/navbar-item.model.d.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/layouts/navbar/navbar.component.html": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/layouts/navbar/navbar.component.scss": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/layouts/navbar/navbar.component.spec.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/layouts/navbar/navbar.component.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/layouts/profiles/page-ribbon.component.scss": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/layouts/profiles/page-ribbon.component.spec.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/layouts/profiles/page-ribbon.component.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/layouts/profiles/profile-info.model.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/layouts/profiles/profile.service.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/locale/translation.service.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/login/login.component.html": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/login/login.component.spec.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/login/login.component.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/login/login.model.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/login/login.service.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/main.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/router/account.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/router/admin.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/router/entities.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/router/index.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/router/pages.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/shared/alert/alert-error.component.html": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/shared/alert/alert-error.component.spec.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/shared/alert/alert-error.component.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/shared/alert/alert-error.model.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/shared/alert/alert.component.html": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/shared/alert/alert.component.spec.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/shared/alert/alert.component.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/shared/alert/alert.service.spec.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/shared/alert/alert.service.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/shared/auth/has-any-authority.directive.spec.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/shared/auth/has-any-authority.directive.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/shared/composables/date-format.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/shared/composables/index.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/shared/composables/validation.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/shared/computables/arrays.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/shared/computables/index.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/shared/config/axios-interceptor.spec.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/shared/config/axios-interceptor.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/shared/config/config-bootstrap-vue.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/shared/config/config.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/shared/config/dayjs.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/shared/config/languages.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/shared/config/store/account-store.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/shared/config/store/translation-store.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/shared/data/data-utils.service.spec.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/shared/data/data-utils.service.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/shared/date/duration.pipe.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/shared/date/format-medium-date.pipe.spec.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/shared/date/format-medium-date.pipe.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/shared/date/format-medium-datetime.pipe.spec.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/shared/date/format-medium-datetime.pipe.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/shared/date/index.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/shared/filter/filter.component.html": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/shared/filter/filter.component.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/shared/filter/filter.model.spec.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/shared/filter/filter.model.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/shared/filter/index.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/shared/jhi-item-count.component.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/shared/jhi-item-count.vue": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/shared/language/find-language-from-key.pipe.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/shared/language/index.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/shared/language/translate.directive.spec.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/shared/language/translate.directive.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/shared/language/translation.module.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/shared/model/user.model.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/shared/pagination/index.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/shared/pagination/item-count.component.spec.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/shared/pagination/item-count.component.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/shared/security/authority.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/shared/shared.module.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/shared/sort/index.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/shared/sort/jhi-sort-indicator.component.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/shared/sort/jhi-sort-indicator.vue": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/shared/sort/sort-by.directive.spec.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/shared/sort/sort-by.directive.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/shared/sort/sort.directive.spec.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/shared/sort/sort.directive.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/shared/sort/sort.service.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/shared/sort/sorts.spec.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/shared/sort/sorts.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/shims-vue.d.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/store.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/app/test-setup.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/bootstrap.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/content/css/loading.css": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/content/images/jhipster_family_member_0.svg": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/content/images/jhipster_family_member_0_head-192.png": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/content/images/jhipster_family_member_0_head-256.png": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/content/images/jhipster_family_member_0_head-384.png": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/content/images/jhipster_family_member_0_head-512.png": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/content/images/jhipster_family_member_1.svg": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/content/images/jhipster_family_member_1_head-192.png": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/content/images/jhipster_family_member_1_head-256.png": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/content/images/jhipster_family_member_1_head-384.png": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/content/images/jhipster_family_member_1_head-512.png": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/content/images/jhipster_family_member_2.svg": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/content/images/jhipster_family_member_2_head-192.png": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/content/images/jhipster_family_member_2_head-256.png": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/content/images/jhipster_family_member_2_head-384.png": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/content/images/jhipster_family_member_2_head-512.png": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/content/images/jhipster_family_member_3.svg": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/content/images/jhipster_family_member_3_head-192.png": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/content/images/jhipster_family_member_3_head-256.png": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/content/images/jhipster_family_member_3_head-384.png": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/content/images/jhipster_family_member_3_head-512.png": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/content/images/logo-jhipster.png": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/content/scss/_bootstrap-variables.scss": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/content/scss/global.scss": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/content/scss/vendor.scss": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/declarations.d.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/favicon.ico": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/i18n/en/activate.json": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/i18n/en/configuration.json": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/i18n/en/error.json": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/i18n/en/global.json": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/i18n/en/health.json": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/i18n/en/home.json": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/i18n/en/login.json": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/i18n/en/logs.json": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/i18n/en/metrics.json": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/i18n/en/password.json": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/i18n/en/register.json": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/i18n/en/reset.json": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/i18n/en/sessions.json": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/i18n/en/settings.json": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/i18n/en/user-management.json": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/i18n/fr/activate.json": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/i18n/fr/configuration.json": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/i18n/fr/error.json": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/i18n/fr/global.json": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/i18n/fr/health.json": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/i18n/fr/home.json": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/i18n/fr/login.json": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/i18n/fr/logs.json": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/i18n/fr/metrics.json": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/i18n/fr/password.json": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/i18n/fr/register.json": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/i18n/fr/reset.json": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/i18n/fr/sessions.json": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/i18n/fr/settings.json": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/i18n/fr/user-management.json": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/index.html": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/main.ts": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/manifest.webapp": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/robots.txt": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/swagger-ui/dist/images/throbber.gif": {
-    "stateCleared": "modified",
-  },
-  "src/main/webapp/swagger-ui/index.html": {
-    "stateCleared": "modified",
-  },
-  "src/test/resources/i18n/messages_en.properties": {
-    "stateCleared": "modified",
-  },
-  "src/test/resources/i18n/messages_fr.properties": {
-    "stateCleared": "modified",
-  },
-  "tsconfig.app.json": {
-    "stateCleared": "modified",
-  },
-  "tsconfig.json": {
-    "stateCleared": "modified",
-  },
-  "tsconfig.node.json": {
-    "stateCleared": "modified",
-  },
-  "tsconfig.spec.json": {
-    "stateCleared": "modified",
-  },
-  "tsconfig.vitest.json": {
-    "stateCleared": "modified",
-  },
-  "vite.config.ts": {
-    "stateCleared": "modified",
-  },
-  "vitest.config.ts": {
-    "stateCleared": "modified",
-  },
-  "webpack/environment.js": {
-    "stateCleared": "modified",
-  },
-  "webpack/logo-jhipster.png": {
-    "stateCleared": "modified",
-  },
-  "webpack/proxy.conf.js": {
-    "stateCleared": "modified",
-  },
-  "webpack/webpack.custom.js": {
     "stateCleared": "modified",
   },
 }
