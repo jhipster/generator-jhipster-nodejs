@@ -26,21 +26,21 @@ _%>
 
     let ormconfig: TypeOrmModuleOptions = {
         name: 'default',
-        type: '<%= nodeProdDatabaseDriver %>',
         <%_ if (databaseType === 'mongodb') { _%>
+        type: '<%= nodeProdDatabaseDriver %>',
         host: 'localhost',
         port: mongod?await mongod.getPort():0,
         database: mongod?await mongod.getDbName():'dev',
         useNewUrlParser: true,
         useUnifiedTopology: true,
         <%_ } else { _%>
+        type: 'sqlite',
         database: '../target/db/sqlite-dev-db.sql',
         <%_ } _%>
         logging: true,
         synchronize: true,
         entities: commonConf.ENTITIES,
         migrations: commonConf.MIGRATIONS,
-        cli: commonConf.CLI,
         migrationsRun: commonConf.MIGRATIONS_RUN,
     };
 
@@ -58,7 +58,6 @@ _%>
             synchronize: commonConf.SYNCRONIZE,
             entities: commonConf.ENTITIES,
             migrations: commonConf.MIGRATIONS,
-            cli: commonConf.CLI,
             migrationsRun: commonConf.MIGRATIONS_RUN,
         };
     }
@@ -82,7 +81,6 @@ _%>
         synchronize: true,
         entities: commonConf.ENTITIES,
         migrations: commonConf.MIGRATIONS,
-        cli: commonConf.CLI,
         migrationsRun: commonConf.MIGRATIONS_RUN,
         };
     }
