@@ -1,9 +1,10 @@
 {
-  "name": "<%= baseName %>",
+  "name": "<%= dasherizedBaseName %>-server",
   "version": "0.0.1",
   "description": "",
   "author": "",
   "license": "MIT",
+  "type": "commonjs",
   "scripts": {
     "clean": "rimraf dist ../target/db/",
     "build": "npm run clean && tsc -p tsconfig.build.json && npm run copy-resources",

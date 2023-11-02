@@ -8,11 +8,13 @@ export default class extends BaseApplicationGenerator {
   get [BaseApplicationGenerator.POST_WRITING]() {
     return this.asPostWritingTaskGroup({
       async postWritingTemplateTask({ application }) {
-        this.mergeDestinationJson(`${application.clientRootDir}package.json`, {
-          scripts: {
-            pretest: '',
-          },
-        });
+        if (application.clientFrameworkAny) {
+          const clientPackageJson = this.createStorage(`${application.clientRootDir}package.json`);
+          const clientName = clientPackageJson.get('name');
+          if (clientName === application.dasherizedBaseName) {
+            clientPackageJson.set('name', `${application.dasherizedBaseName}-client`);
+          }
+        }
       },
     });
   }
