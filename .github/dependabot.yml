@@ -14,8 +14,9 @@ updates:
     groups:
       jest:
         patterns:
-          - 'jest'
+          - '@jest/globals'
           - '@types/jest'
+          - 'jest'
           - 'ts-jest'
       nestjs:
         patterns:
@@ -28,6 +29,28 @@ updates:
           - '@nestjs/platform-ws'
           - '@nestjs/testing'
           - '@nestjs/websockets'
+          - 'rxjs'
+      passport:
+        patterns:
+          - '@nestjs/passport'
+          - '@types/jwt-decode'
+          - '@types/passport-jwt'
+          - 'jwt-decode'
+          - 'passport'
+          - 'passport-jwt'
+          - 'passport-oauth2'
+      typeorm:
+        patterns:
+          - '@nestjs/typeorm'
+          - 'typeorm'
+          - 'typeorm-encrypted'
+          - 'mongodb'
+          - 'mongodb-memory-server'
+          - 'mssql'
+          - 'mysql2'
+          - 'oracledb'
+          - 'pg'
+          - 'sqlite3'
       typescript-eslint:
         patterns:
           - '@typescript-eslint/*'
