@@ -1,5 +1,5 @@
 <%_ const UserEntity = user.persistClass %>
-import { MigrationInterface, QueryRunner, getRepository } from 'typeorm';
+import { MigrationInterface, QueryRunner } from 'typeorm';
 <%_ if (authenticationType !== 'oauth2') { _%>
 import { <%= UserEntity %> } from '../domain/user.entity';
 import { transformPassword } from '../security';
@@ -68,7 +68,7 @@ export class SeedUsersRoles1570200490072 implements MigrationInterface {
   // eslint-disable-next-line
   public async up(queryRunner: QueryRunner): Promise<any> {
 
-    const authorityRepository = getRepository("<%- jhiTablePrefix %>_authority");
+    const authorityRepository = queryRunner.connection.getRepository("<%- jhiTablePrefix %>_authority");
 
    <%_ if (authenticationType === 'oauth2') { _%>
 
@@ -79,7 +79,7 @@ export class SeedUsersRoles1570200490072 implements MigrationInterface {
     const adminRole = await authorityRepository.save(this.role1);
     const userRole = await authorityRepository.save(this.role2);
 
-    const userRepository = getRepository("<%- jhiTablePrefix %>_user");
+    const userRepository = queryRunner.connection.getRepository("<%- jhiTablePrefix %>_user");
 
     this.user1.authorities= [adminRole, userRole];
     this.user3.authorities= [adminRole, userRole];
