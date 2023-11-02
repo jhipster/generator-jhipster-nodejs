@@ -14,7 +14,7 @@ exports[`SubGenerator vue of nodejs JHipster blueprint > run > should succeed 1`
   ".husky/pre-commit": {
     "stateCleared": "modified",
   },
-  ".lintstagedrc.js": {
+  ".lintstagedrc.cjs": {
     "stateCleared": "modified",
   },
   ".prettierignore": {

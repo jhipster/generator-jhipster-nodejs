@@ -41,23 +41,24 @@
     "ejslint": "ejslint generators/**/*.ejs",
     "lint": "eslint .",
     "lint-fix": "npm run ejslint && npm run lint -- --fix",
-    "prettier-check": "prettier --check \"**/*.{md,json,yml,html,js,ts,tsx,css,scss,vue,java}\"",
-    "prettier-format": "prettier --write \"**/*.{md,json,yml,html,js,ts,tsx,css,scss,vue,java}\"",
-    "pretest": "npm run prettier-check && npm run lint",
+    "prettier-check": "prettier --check \"{,**/}*.{md,json,yml,html,js,ts,tsx,css,scss,vue,java}\"",
+    "prettier-format": "prettier --write \"{,**/}*.{md,json,yml,html,js,ts,tsx,css,scss,vue,java}\"",
     "sonar:scanner": "sonar-scanner",
+    "pretest": "npm run prettier-check && npm run lint",
     "test": "vitest run",
     "update-snapshot": "vitest run --update",
     "vitest": "vitest"
   },
   "dependencies": {
     "chalk": "^5.3.0",
-    "generator-jhipster": "8.0.0-rc.1"
+    "generator-jhipster": "8.0.0"
   },
   "devDependencies": {
     "ejs-lint": "2.0.0",
-    "eslint": "8.51.0",
+    "eslint": "8.52.0",
+    "eslint-config-airbnb-base": "15.0.0",
     "eslint-config-prettier": "9.0.0",
-    "eslint-plugin-import": "2.28.1",
+    "eslint-plugin-import": "2.29.0",
     "eslint-plugin-prettier": "5.0.1",
     "prettier": "3.0.3",
     "sonarqube-scanner": "2.9.1",
@@ -65,6 +66,6 @@
     "yeoman-test": ">=8.0.0-rc.1"
   },
   "engines": {
-    "node": "^18.13.0 || >= 20.2.0"
+    "node": "^18.13.0 || >= 20.6.1"
   }
 }
