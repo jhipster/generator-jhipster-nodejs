@@ -1,9 +1,10 @@
 {
-  "name": "<%= baseName %>",
+  "name": "<%= dasherizedBaseName %>-server",
   "version": "0.0.1",
   "description": "",
   "author": "",
   "license": "MIT",
+  "type": "commonjs",
   "scripts": {
     "clean": "rimraf dist ../target/db/",
     "build": "npm run clean && tsc -p tsconfig.build.json && npm run copy-resources",
@@ -72,7 +73,6 @@
 <%_ } _%>
     "reflect-metadata": "<%- nodeServerDependencies['reflect-metadata'] %>",
     "rxjs": "<%- nodeServerDependencies['rxjs'] %>",
-    "shelljs": "<%- nodeServerDependencies['shelljs'] %>",
 <%_ if (databaseType === 'mongodb') { _%>
     "mongodb-memory-server": "<%- nodeServerDependencies['mongodb-memory-server'] %>",
 <%_ } else {_%>
@@ -93,7 +93,7 @@
 <%_ if (authenticationType === 'oauth2') { _%>
     "@types/jwt-decode": "<%- nodeServerDependencies['@types/jwt-decode'] %>",
 <%_ } _%>
-    "@types/node": "^14.18.10",
+    "@types/node": "^<%- nodeVersion %>",
 <%_ if (authenticationType === 'jwt') { _%>
     "@types/passport-jwt": "<%- nodeServerDependencies['@types/passport-jwt'] %>",
 <%_ } _%>

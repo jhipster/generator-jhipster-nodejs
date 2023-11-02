@@ -40,6 +40,12 @@
         "sbs": false,
         "written": true
       },
+      "client": {
+        "command": false,
+        "priorities": ["postWriting"],
+        "sbs": true,
+        "written": true
+      },
       "cypress": {
         "command": false,
         "priorities": [],
@@ -87,12 +93,6 @@
         "priorities": ["initializing", "composing"],
         "sbs": false,
         "written": true
-      },
-      "vue": {
-        "command": false,
-        "priorities": ["postWriting"],
-        "sbs": true,
-        "written": true
       }
     },
     "jhipsterVersion": "8.0.0-beta.3",
@@ -100,6 +100,6 @@
     "localBlueprint": false,
     "sampleWritten": true,
     "skipCommitHook": true,
-    "subGenerators": ["bootstrap-application", "ci-cd", "cypress", "docker", "languages", "server", "vue"]
+    "subGenerators": ["bootstrap-application", "ci-cd", "client", "cypress", "docker", "languages", "server"]
   }
 }

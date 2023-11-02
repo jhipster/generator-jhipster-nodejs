@@ -28,7 +28,6 @@
     "passport-oauth2": "1.7.0",
     "reflect-metadata": "0.1.13",
     "rxjs": "6.6.3",
-    "shelljs": "0.8.5",
     "mongodb-memory-server": "6.9.2",
     "sqlite3": "5.1.6",
     "swagger-ui-express": "4.0.7",
