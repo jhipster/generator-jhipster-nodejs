@@ -1,13 +1,12 @@
-import * as shell from 'shelljs';
-import * as fs from 'fs';
-import * as path from 'path';
+import fs from 'fs';
+import path from 'path';
 
 const out = path.join(__dirname, '..', 'dist');
 createFolderIfNotExist(out);
 
 createFolderIfNotExist(path.join(out, 'config'));
 
-shell.cp('-R', 'src/config/*.yml', 'dist/config');
+fs.cpSync('src/config/', 'dist/config/', { recursive: true });
 
 function createFolderIfNotExist(outDir: string): void {
   if (!fs.existsSync(outDir)) {
