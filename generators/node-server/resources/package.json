@@ -12,7 +12,7 @@
     "bcrypt": "5.1.1",
     "class-transformer": "0.5.1",
     "class-validator": "0.13.1",
-    "cloud-config-client": "1.4.2",
+    "cloud-config-client": "1.6.2",
     "dotenv": "16.3.1",
     "eureka-js-client": "4.5.0",
     "express-session": "1.17.1",
