@@ -94,7 +94,7 @@ jobs:
         run: npm run e2e:headless --workspace client
         id: e2e
       - name: 'E2E: Store failure screenshots'
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         if: always() && steps.e2e.outcome == 'failure'
         with:
           name: screenshots-${{ matrix.app-type }}
