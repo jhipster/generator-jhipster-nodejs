@@ -31,8 +31,8 @@ export class <%= entityClass %>Service {
     constructor(@InjectRepository(<%= entityClass %>Repository) private <%= entityInstance %>Repository: <%= entityClass %>Repository) {}
 
       async findById(id: <%= pkType %>): Promise<<%= dtoClass %> | undefined> {
-        const options = { relations: relationshipNames };
-        const result = await this.<%= entityInstance %>Repository.findOne(id, options);
+        const options = { where: { id: id }, relations: relationshipNames };
+        const result = await this.<%= entityInstance %>Repository.findOne(options);
         return <%= entityClass %>Mapper.fromEntityToDTO(result);
       }
 

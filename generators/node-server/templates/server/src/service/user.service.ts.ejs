@@ -12,7 +12,7 @@ export class UserService {
     constructor(@InjectRepository(UserRepository) private userRepository: UserRepository) {}
 
     async findById(id: <%= user.primaryKey.tsType %>): Promise<<%= user.dtoClass%> | undefined> {
-        const result = await this.userRepository.findOne(id);
+        const result = await this.userRepository.findOneBy({ id });
         return UserMapper.fromEntityToDTO(this.flatAuthorities(result))
     }
 
