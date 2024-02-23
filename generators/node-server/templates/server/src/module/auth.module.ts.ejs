@@ -15,13 +15,13 @@ import { UserOauth2Controller } from '../web/rest/user.oauth2.controller';
 import { config } from '../config';
 <%_ } _%>
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { AuthorityRepository } from '../repository/authority.repository';
+import { Authority } from '../domain/authority.entity';
 
 import { PublicUserController } from '../web/rest/public.user.controller';
 import { AccountController } from '../web/rest/account.controller';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([AuthorityRepository]),
+  imports: [TypeOrmModule.forFeature([Authority]),
   UserModule,
   PassportModule,
   <%_ if (authenticationType === 'jwt') { _%>
