@@ -31,7 +31,7 @@
     "mongodb-memory-server": "6.9.2",
     "sqlite3": "5.1.6",
     "swagger-ui-express": "5.0.0",
-    "typeorm": "0.2.45",
+    "typeorm": "0.3.0",
     "typeorm-encrypted": "0.5.6"
   },
   "devDependencies": {
