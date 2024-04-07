@@ -14,8 +14,6 @@ export const serverFiles = {
         'src/web/rest/account.controller.ts',
         'src/web/rest/public.user.controller.ts',
         'src/web/rest/management.controller.ts',
-        'src/repository/user.repository.ts',
-        'src/repository/authority.repository.ts',
         'src/module/user.module.ts',
         'src/module/auth.module.ts',
         'src/config/application-dev.yml',

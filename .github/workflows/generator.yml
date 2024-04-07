@@ -19,6 +19,8 @@ jobs:
         with:
           node-version: 18
           cache: 'npm'
+      - run: npm install
+        working-directory: ${{github.workspace}}/generators/node-server/resources
       - run: npm ci
       - run: npm run test
       - name: Run npm sonar:scanner
