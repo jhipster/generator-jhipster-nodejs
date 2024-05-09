@@ -365,13 +365,16 @@ exports[`SubGenerator client of nodejs JHipster blueprint > run > should succeed
   "client/src/app/entities/entity.routes.ts": {
     "stateCleared": "modified",
   },
+  "client/src/app/entities/user/service/user.service.spec.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/entities/user/service/user.service.ts": {
+    "stateCleared": "modified",
+  },
   "client/src/app/entities/user/user.model.ts": {
     "stateCleared": "modified",
   },
-  "client/src/app/entities/user/user.service.spec.ts": {
-    "stateCleared": "modified",
-  },
-  "client/src/app/entities/user/user.service.ts": {
+  "client/src/app/entities/user/user.test-samples.ts": {
     "stateCleared": "modified",
   },
   "client/src/app/home/home.component.html": {
@@ -554,10 +557,16 @@ exports[`SubGenerator client of nodejs JHipster blueprint > run > should succeed
   "client/src/app/shared/sort/sort-by.directive.ts": {
     "stateCleared": "modified",
   },
+  "client/src/app/shared/sort/sort-state.ts": {
+    "stateCleared": "modified",
+  },
   "client/src/app/shared/sort/sort.directive.spec.ts": {
     "stateCleared": "modified",
   },
   "client/src/app/shared/sort/sort.directive.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/shared/sort/sort.service.spec.ts": {
     "stateCleared": "modified",
   },
   "client/src/app/shared/sort/sort.service.ts": {
