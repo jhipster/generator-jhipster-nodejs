@@ -38,38 +38,5 @@ exports[`SubGenerator languages of nodejs JHipster blueprint > run > should succ
   "client/src/i18n/en/user-management.json": {
     "stateCleared": "modified",
   },
-  "client/src/i18n/fr/activate.json": {
-    "stateCleared": "modified",
-  },
-  "client/src/i18n/fr/error.json": {
-    "stateCleared": "modified",
-  },
-  "client/src/i18n/fr/global.json": {
-    "stateCleared": "modified",
-  },
-  "client/src/i18n/fr/home.json": {
-    "stateCleared": "modified",
-  },
-  "client/src/i18n/fr/login.json": {
-    "stateCleared": "modified",
-  },
-  "client/src/i18n/fr/password.json": {
-    "stateCleared": "modified",
-  },
-  "client/src/i18n/fr/register.json": {
-    "stateCleared": "modified",
-  },
-  "client/src/i18n/fr/reset.json": {
-    "stateCleared": "modified",
-  },
-  "client/src/i18n/fr/sessions.json": {
-    "stateCleared": "modified",
-  },
-  "client/src/i18n/fr/settings.json": {
-    "stateCleared": "modified",
-  },
-  "client/src/i18n/fr/user-management.json": {
-    "stateCleared": "modified",
-  },
 }
 `;
