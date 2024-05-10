@@ -6,21 +6,8 @@ export default class extends BaseApplicationGenerator {
     super(args, opts, { ...features, sbsBlueprint: true });
   }
 
-  get initializing() {
-    return this.asInitializingTaskGroup({
-      validateNode() {
-        // Until this blueprint implements syncUserWithIdp option, this will remain true by default
-        if (this.jhipsterConfig.syncUserWithIdp) {
-          return;
-        }
-        this.log.warn('Option syncUserWithIdp is not supported in this blueprint, setting to default value true');
-        this.jhipsterConfig.syncUserWithIdp = true;
-      },
-    });
-  }
-
-  get [BaseApplicationGenerator.INITIALIZING]() {
-    return this.delegateTasksToBlueprint(() => this.initializing);
+  get [BaseApplicationGenerator.LOADING]() {
+    return this.loading;
   }
 
   get [BaseApplicationGenerator.LOADING]() {
@@ -34,6 +21,16 @@ export default class extends BaseApplicationGenerator {
         application.backendType = 'NodeJS';
         application.nodeServerRootDir = `${SERVER_NODEJS_SRC_DIR}/`;
         application.dbPortValue = undefined;
+      },
+
+      defaultSyncUserWithIdp({ application, applicationDefaults }) {
+        // Until this blueprint implements syncUserWithIdp option, this will remain true by default
+        if (application.syncUserWithIdp === undefined && application.authenticationType === 'oauth2') {
+          this.log.warn('Option syncUserWithIdp is not supported in this blueprint, setting to default value true');
+          applicationDefaults({
+            syncUserWithIdp: true,
+          });
+        }
       },
     });
   }
