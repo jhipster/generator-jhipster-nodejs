@@ -24,12 +24,11 @@ describe('SubGenerator bootstrap-application of nodejs JHipster blueprint', () =
     });
 
     it('application should match snapshot', () => {
-      var clone = Object.assign({}, { ...result.generator.sharedData.getApplication(), user: undefined });
-      // Temp test failure relief
-      // 'faker' attribute in the object key is causing 'val.getMockName is not a function' error in jest/packages/pretty-format which is usedby vitest
-      delete clone.authority;
-      delete clone.userManagement;
-      expect(clone).toMatchSnapshot();
+    expect(result.generator.sharedData.getApplication()).toMatchSnapshot({
+      user: expect.any(Object),
+      authority: expect.any(Object),
+      userManagement: expect.any(Object),
+    });
     });
   });
 });
