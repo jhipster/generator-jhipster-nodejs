@@ -18,14 +18,15 @@ export default class extends BaseApplicationGenerator {
         application.nodeServerRootDir = `${SERVER_NODEJS_SRC_DIR}/`;
         application.dbPortValue = undefined;
       },
-    });
-  }
 
-  get [BaseApplicationGenerator.PREPARING]() {
-    return this.asPreparingTaskGroup({
-      defaultSyncUserWithIdp({ application }) {
-        // Main generator is overriding this value.
-        application.generateBuiltInUserEntity = true;
+      defaultSyncUserWithIdp({ application, applicationDefaults }) {
+        // Until this blueprint implements syncUserWithIdp option, this will remain true by default
+        if (application.syncUserWithIdp === undefined && application.authenticationType === 'oauth2') {
+          this.log.warn('Option syncUserWithIdp is not supported in this blueprint, setting to default value true');
+          applicationDefaults({
+            syncUserWithIdp: true,
+          });
+        }
       },
     });
   }
