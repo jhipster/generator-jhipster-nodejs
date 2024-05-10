@@ -7,10 +7,6 @@ export default class extends BaseApplicationGenerator {
   }
 
   get [BaseApplicationGenerator.LOADING]() {
-    return this.loading;
-  }
-
-  get [BaseApplicationGenerator.LOADING]() {
     return this.asLoadingTaskGroup({
       async loadingTemplateTask({ application }) {
         application.clientRootDir = 'client/';
