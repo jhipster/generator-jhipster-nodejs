@@ -28,7 +28,7 @@ export default class extends BaseApplicationGenerator {
         if (application.syncUserWithIdp === undefined && application.authenticationType === 'oauth2') {
           this.log.warn('Option syncUserWithIdp is not supported in this blueprint, setting to default value true');
           applicationDefaults({
-            syncUserWithIdp: true,
+            generateBuiltInUserEntity: true,
           });
         }
       },
