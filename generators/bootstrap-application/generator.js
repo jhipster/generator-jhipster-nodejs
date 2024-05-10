@@ -6,6 +6,23 @@ export default class extends BaseApplicationGenerator {
     super(args, opts, { ...features, sbsBlueprint: true });
   }
 
+  get initializing() {
+    return this.asInitializingTaskGroup({
+      validateNode() {
+        // Until this blueprint implements syncUserWithIdp option, this will remain true by default
+        if (this.jhipsterConfig.syncUserWithIdp) {
+          return;
+        }
+        this.log.warn('Option syncUserWithIdp is not supported in this blueprint, setting to default value true');
+        this.jhipsterConfig.syncUserWithIdp = true;
+      },
+    });
+  }
+
+  get [BaseApplicationGenerator.INITIALIZING]() {
+    return this.delegateTasksToBlueprint(() => this.initializing);
+  }
+
   get [BaseApplicationGenerator.LOADING]() {
     return this.asLoadingTaskGroup({
       async loadingTemplateTask({ application }) {

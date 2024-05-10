@@ -199,6 +199,24 @@ export default class extends BaseApplicationGenerator {
     });
   }
 
+  get postWriting() {
+    return this.asPostWritingTaskGroup({
+      adjustWorkspacePackageJson({ application }) {
+        if (application.clientFrameworkAngular) {
+          this.packageJson.merge({
+            overrides: {
+              'browser-sync': application.nodeDependencies['browser-sync'],
+            },
+          });
+        }
+      },
+    });
+  }
+
+  get [BaseApplicationGenerator.POST_WRITING]() {
+    return this.delegateTasksToBlueprint(() => this.postWriting);
+  }
+
   get [BaseApplicationGenerator.END]() {
     return this.asEndTaskGroup({
       async endTemplateTask() {},
