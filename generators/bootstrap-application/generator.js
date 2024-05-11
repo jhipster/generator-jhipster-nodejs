@@ -18,6 +18,16 @@ export default class extends BaseApplicationGenerator {
         application.nodeServerRootDir = `${SERVER_NODEJS_SRC_DIR}/`;
         application.dbPortValue = undefined;
       },
+
+      defaultSyncUserWithIdp({ application, applicationDefaults }) {
+        // Until this blueprint implements syncUserWithIdp option, this will remain true by default
+        if (application.syncUserWithIdp === undefined && application.authenticationType === 'oauth2') {
+          this.log.warn('Option syncUserWithIdp is not supported in this blueprint, setting to default value true');
+          applicationDefaults({
+            syncUserWithIdp: true,
+          });
+        }
+      },
     });
   }
 

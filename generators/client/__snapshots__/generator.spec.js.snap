@@ -173,7 +173,7 @@ exports[`SubGenerator client of nodejs JHipster blueprint > run > should succeed
   "client/src/app/account/settings/settings.route.ts": {
     "stateCleared": "modified",
   },
-  "client/src/app/admin/admin-routing.module.ts": {
+  "client/src/app/admin/admin.routes.ts": {
     "stateCleared": "modified",
   },
   "client/src/app/admin/docs/docs.component.html": {
@@ -236,13 +236,16 @@ exports[`SubGenerator client of nodejs JHipster blueprint > run > should succeed
   "client/src/app/app-page-title-strategy.ts": {
     "stateCleared": "modified",
   },
-  "client/src/app/app-routing.module.ts": {
+  "client/src/app/app.component.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/app.config.ts": {
     "stateCleared": "modified",
   },
   "client/src/app/app.constants.ts": {
     "stateCleared": "modified",
   },
-  "client/src/app/app.module.ts": {
+  "client/src/app/app.routes.ts": {
     "stateCleared": "modified",
   },
   "client/src/app/config/authority.constants.ts": {
@@ -359,16 +362,19 @@ exports[`SubGenerator client of nodejs JHipster blueprint > run > should succeed
   "client/src/app/entities/entity-navbar-items.ts": {
     "stateCleared": "modified",
   },
-  "client/src/app/entities/entity-routing.module.ts": {
+  "client/src/app/entities/entity.routes.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/entities/user/service/user.service.spec.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/entities/user/service/user.service.ts": {
     "stateCleared": "modified",
   },
   "client/src/app/entities/user/user.model.ts": {
     "stateCleared": "modified",
   },
-  "client/src/app/entities/user/user.service.spec.ts": {
-    "stateCleared": "modified",
-  },
-  "client/src/app/entities/user/user.service.ts": {
+  "client/src/app/entities/user/user.test-samples.ts": {
     "stateCleared": "modified",
   },
   "client/src/app/home/home.component.html": {
@@ -405,9 +411,6 @@ exports[`SubGenerator client of nodejs JHipster blueprint > run > should succeed
     "stateCleared": "modified",
   },
   "client/src/app/layouts/main/main.component.ts": {
-    "stateCleared": "modified",
-  },
-  "client/src/app/layouts/main/main.module.ts": {
     "stateCleared": "modified",
   },
   "client/src/app/layouts/navbar/active-menu.directive.ts": {
@@ -554,10 +557,16 @@ exports[`SubGenerator client of nodejs JHipster blueprint > run > should succeed
   "client/src/app/shared/sort/sort-by.directive.ts": {
     "stateCleared": "modified",
   },
+  "client/src/app/shared/sort/sort-state.ts": {
+    "stateCleared": "modified",
+  },
   "client/src/app/shared/sort/sort.directive.spec.ts": {
     "stateCleared": "modified",
   },
   "client/src/app/shared/sort/sort.directive.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/shared/sort/sort.service.spec.ts": {
     "stateCleared": "modified",
   },
   "client/src/app/shared/sort/sort.service.ts": {
@@ -678,39 +687,6 @@ exports[`SubGenerator client of nodejs JHipster blueprint > run > should succeed
     "stateCleared": "modified",
   },
   "client/src/i18n/en/user-management.json": {
-    "stateCleared": "modified",
-  },
-  "client/src/i18n/fr/activate.json": {
-    "stateCleared": "modified",
-  },
-  "client/src/i18n/fr/error.json": {
-    "stateCleared": "modified",
-  },
-  "client/src/i18n/fr/global.json": {
-    "stateCleared": "modified",
-  },
-  "client/src/i18n/fr/home.json": {
-    "stateCleared": "modified",
-  },
-  "client/src/i18n/fr/login.json": {
-    "stateCleared": "modified",
-  },
-  "client/src/i18n/fr/password.json": {
-    "stateCleared": "modified",
-  },
-  "client/src/i18n/fr/register.json": {
-    "stateCleared": "modified",
-  },
-  "client/src/i18n/fr/reset.json": {
-    "stateCleared": "modified",
-  },
-  "client/src/i18n/fr/sessions.json": {
-    "stateCleared": "modified",
-  },
-  "client/src/i18n/fr/settings.json": {
-    "stateCleared": "modified",
-  },
-  "client/src/i18n/fr/user-management.json": {
     "stateCleared": "modified",
   },
   "client/src/index.html": {
