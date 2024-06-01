@@ -41,8 +41,8 @@
     "ejslint": "ejslint generators/**/*.ejs",
     "lint": "eslint .",
     "lint-fix": "npm run ejslint && npm run lint -- --fix",
-    "prettier-check": "prettier --check \"{,**/}*.{md,json,yml,html,js,ts,tsx,css,scss,vue,java}\"",
-    "prettier-format": "prettier --write \"{,**/}*.{md,json,yml,html,js,ts,tsx,css,scss,vue,java}\"",
+    "prettier-check": "prettier --check \"{,**/}*.{md,json,yml,html,cjs,mjs,js,cts,mts,ts,tsx,css,scss,vue,java}\"",
+    "prettier-format": "prettier --write \"{,**/}*.{md,json,yml,html,cjs,mjs,js,cts,mts,ts,tsx,css,scss,vue,java}\"",
     "sonar:scanner": "sonar-scanner",
     "pretest": "npm run prettier-check && npm run lint",
     "test": "vitest run",
@@ -51,7 +51,7 @@
   },
   "dependencies": {
     "chalk": "^5.3.0",
-    "generator-jhipster": "8.4.0"
+    "generator-jhipster": "8.5.0"
   },
   "devDependencies": {
     "ejs-lint": "2.0.0",
@@ -63,7 +63,7 @@
     "prettier": "3.2.5",
     "sonarqube-scanner": "3.5.0",
     "vitest": "1.6.0",
-    "yeoman-test": ">=8.0.0-rc.1"
+    "yeoman-test": ">=8.2.0"
   },
   "engines": {
     "node": "^18.13.0 || >= 20.6.1"
