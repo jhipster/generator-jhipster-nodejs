@@ -2,6 +2,7 @@
 
 exports[`SubGenerator bootstrap-application of nodejs JHipster blueprint > run > application should match snapshot 1`] = `
 {
+  "anyEntityHasRelationshipWithUser": false,
   "applicationType": "monolith",
   "applicationTypeAny": true,
   "applicationTypeGateway": false,
@@ -231,6 +232,7 @@ exports[`SubGenerator bootstrap-application of nodejs JHipster blueprint > run >
   "fakerSeed": undefined,
   "feignClient": undefined,
   "frontendAppName": "jhipsterApp",
+  "gatewayRoutes": undefined,
   "gatewayServerPort": undefined,
   "gatlingTests": false,
   "generateAuthenticationApi": true,
@@ -275,6 +277,7 @@ exports[`SubGenerator bootstrap-application of nodejs JHipster blueprint > run >
     "gradle-git-properties": "'GRADLE-GIT-PROPERTIES-VERSION'",
     "gradle-liquibase": "'GRADLE-LIQUIBASE-VERSION'",
     "gradle-modernizer-plugin": "'GRADLE-MODERNIZER-PLUGIN-VERSION'",
+    "gradle-openapi-generator": "'GRADLE-OPENAPI-GENERATOR-VERSION'",
     "gradle-sonarqube": "'GRADLE-SONARQUBE-VERSION'",
     "jackson-databind-nullable": "'JACKSON-DATABIND-NULLABLE-VERSION'",
     "jacoco-maven-plugin": "'JACOCO-MAVEN-PLUGIN-VERSION'",

@@ -34,7 +34,9 @@ export default class extends BaseGenerator {
   get [BaseGenerator.WRITING]() {
     return this.asWritingTaskGroup({
       async copySample() {
-        this.copyTemplate(`samples/${this.sampleName}/{.,}**`, '');
+        this.copyTemplate(`{.,}**`, '', {
+          fromBasePath: this.templatePath(`samples/${this.sampleName}`),
+        });
 
         if (this.sampleName.includes('-template-')) {
           if (!this.templateName) {
@@ -53,22 +55,31 @@ export default class extends BaseGenerator {
           const databaseType = this._.intersection(databaseTypes, split)[0];
 
           if (clientFramework) {
-            this.editFile(`${this.sampleName}.jdl`, createNeedleCallback({
-              needle: 'jhipster-needle-jdl-application-config',
-              contentToAdd: `clientFramework ${clientFramework}`,
-            }));
+            this.editFile(
+              `${this.sampleName}.jdl`,
+              createNeedleCallback({
+                needle: 'jhipster-needle-jdl-application-config',
+                contentToAdd: `clientFramework ${clientFramework}`,
+              }),
+            );
           }
           if (authenticationType) {
-            this.editFile(`${this.sampleName}.jdl`, createNeedleCallback({
-              needle: 'jhipster-needle-jdl-application-config',
-              contentToAdd: `authenticationType ${authenticationType}`,
-            }));
+            this.editFile(
+              `${this.sampleName}.jdl`,
+              createNeedleCallback({
+                needle: 'jhipster-needle-jdl-application-config',
+                contentToAdd: `authenticationType ${authenticationType}`,
+              }),
+            );
           }
           if (databaseType) {
-            this.editFile(`${this.sampleName}.jdl`, createNeedleCallback({
-              needle: 'jhipster-needle-jdl-application-config',
-              contentToAdd: `${databaseType === 'mongodb' ? 'databaseType' : 'prodDatabaseType'} ${databaseType}`,
-            }));
+            this.editFile(
+              `${this.sampleName}.jdl`,
+              createNeedleCallback({
+                needle: 'jhipster-needle-jdl-application-config',
+                contentToAdd: `${databaseType === 'mongodb' ? 'databaseType' : 'prodDatabaseType'} ${databaseType}`,
+              }),
+            );
           }
         }
       },
@@ -89,9 +100,6 @@ export default class extends BaseGenerator {
             skipInstall: true,
           },
         });
-      },
-      async jhipsterInfo() {
-        await this.composeWithJHipster('info');
       },
     });
   }
