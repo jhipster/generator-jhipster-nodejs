@@ -21,7 +21,7 @@ exports[`SubGenerator bootstrap-application of nodejs JHipster blueprint > run >
   "blueprints": [
     {
       "name": "generator-jhipster-nodejs",
-      "version": "2.0.0",
+      "version": "3.0.0",
     },
   ],
   "buildTool": "maven",
