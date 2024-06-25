@@ -2,10 +2,10 @@ import BaseApplicationGenerator from 'generator-jhipster/generators/base-applica
 import { createNeedleCallback } from 'generator-jhipster/generators/base/support';
 import { getEnumInfo } from 'generator-jhipster/generators/base-application/support';
 import { TEMPLATES_WEBAPP_SOURCES_DIR } from 'generator-jhipster';
+import { SERVER_NODEJS_SRC_DIR } from '../generator-nodejs-constants.js';
 import command from './command.js';
 import { serverFiles } from './files.js';
 import { entityFiles } from './entity-files.js';
-import { SERVER_NODEJS_SRC_DIR } from '../generator-nodejs-constants.js';
 
 function sanitizeDbType(fieldType, dbType) {
   if (dbType === 'sqlite') {
