@@ -1,5 +1,5 @@
 /**
- * Copyright 2013-2023 the original author or authors from the JHipster project.
+ * Copyright 2013-2024 the original author or authors from the JHipster project.
  *
  * This file is part of the JHipster project, see https://www.jhipster.tech/
  * for more information.
@@ -20,6 +20,10 @@
 const defaultCommands = {
   'generate-sample': {
     desc: 'Generate a test sample',
+    blueprint: '@jhipster/jhipster-dev',
+  },
+  'github-build-matrix': {
+    desc: 'Build a matrix of jobs for github actions',
     blueprint: '@jhipster/jhipster-dev',
   },
 };
