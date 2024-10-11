@@ -51,7 +51,7 @@
   },
   "dependencies": {
     "chalk": "^5.3.0",
-    "generator-jhipster": "8.5.0"
+    "generator-jhipster": "8.7.1"
   },
   "devDependencies": {
     "ejs-lint": "2.0.0",
