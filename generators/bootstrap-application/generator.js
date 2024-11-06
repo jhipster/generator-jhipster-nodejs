@@ -6,6 +6,14 @@ export default class extends BaseApplicationGenerator {
     super(args, opts, { ...features, sbsBlueprint: true });
   }
 
+  get [BaseApplicationGenerator.CONFIGURING]() {
+    return this.asConfiguringTaskGroup({
+      async configuring() {
+        this.jhipsterConfig.withAdminUi = false;
+      },
+    });
+  }
+
   get [BaseApplicationGenerator.LOADING]() {
     return this.asLoadingTaskGroup({
       async loadingTemplateTask({ application }) {
