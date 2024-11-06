@@ -3,7 +3,6 @@ import { createNeedleCallback } from 'generator-jhipster/generators/base/support
 import { getEnumInfo } from 'generator-jhipster/generators/base-application/support';
 import { TEMPLATES_WEBAPP_SOURCES_DIR } from 'generator-jhipster';
 import { SERVER_NODEJS_SRC_DIR } from '../generator-nodejs-constants.js';
-import command from './command.js';
 import { serverFiles } from './files.js';
 import { entityFiles } from './entity-files.js';
 
@@ -45,27 +44,13 @@ const dbTypes = {
 };
 
 export default class extends BaseApplicationGenerator {
+  constructor(args, opts, features) {
+    super(args, opts, { ...features, queueCommandTasks: true });
+  }
+
   async beforeQueue() {
     await this.dependsOnJHipster('bootstrap-application');
     await this.dependsOnJHipster('common');
-  }
-
-  get [BaseApplicationGenerator.INITIALIZING]() {
-    return this.asInitializingTaskGroup({
-      async initializingTemplateTask() {
-        this.parseJHipsterCommand(command);
-      },
-    });
-  }
-
-  get [BaseApplicationGenerator.PROMPTING]() {
-    return this.asPromptingTaskGroup({
-      async promptingTemplateTask({ control }) {
-        if (control.existingProject && !this.options.askAnswered) return;
-
-        await this.prompt(this.prepareQuestions(command.configs));
-      },
-    });
   }
 
   get [BaseApplicationGenerator.CONFIGURING]() {
@@ -95,47 +80,13 @@ export default class extends BaseApplicationGenerator {
     });
   }
 
-  get [BaseApplicationGenerator.CONFIGURING_EACH_ENTITY]() {
-    return this.asConfiguringEachEntityTaskGroup({
-      async configuringEachEntityTemplateTask({ entityConfig }) {
-        entityConfig.dto = true;
-      },
-    });
-  }
-
   get [BaseApplicationGenerator.LOADING_ENTITIES]() {
     return this.asLoadingEntitiesTaskGroup({
-      async loadingEntitiesTemplateTask() {},
-    });
-  }
-
-  get [BaseApplicationGenerator.PREPARING_EACH_ENTITY]() {
-    return this.asPreparingEachEntityTaskGroup({
-      async preparingEachEntityTemplateTask() {},
-    });
-  }
-
-  get [BaseApplicationGenerator.PREPARING_EACH_ENTITY_FIELD]() {
-    return this.asPreparingEachEntityFieldTaskGroup({
-      async preparingEachEntityFieldTemplateTask() {},
-    });
-  }
-
-  get [BaseApplicationGenerator.PREPARING_EACH_ENTITY_RELATIONSHIP]() {
-    return this.asPreparingEachEntityRelationshipTaskGroup({
-      async preparingEachEntityRelationshipTemplateTask() {},
-    });
-  }
-
-  get [BaseApplicationGenerator.POST_PREPARING_EACH_ENTITY]() {
-    return this.asPostPreparingEachEntityTaskGroup({
-      async postPreparingEachEntityTemplateTask() {},
-    });
-  }
-
-  get [BaseApplicationGenerator.DEFAULT]() {
-    return this.asDefaultTaskGroup({
-      async defaultTemplateTask() {},
+      async loadingEntitiesTemplateTask({ entitiesToLoad }) {
+        for (const entity of entitiesToLoad) {
+          entity.entityBootstrap.dto = true;
+        }
+      },
     });
   }
 
