@@ -44,9 +44,11 @@ export default class extends BaseGenerator {
       async generateSample() {
         const packageJson = JSON.parse(readFileSync(new URL('../../package.json', import.meta.url)));
         const projectVersion = `${packageJson.version}-git`;
+        const folderFiles = await readdir(this.destinationPath());
+        const jdlFiles = folderFiles.filter(file => file.endsWith('.jdl')),
 
         await this.composeWithJHipster('jdl', {
-          generatorArgs: (await readdir(this.destinationPath())).map(file => file.endsWith('.jdl')),
+          generatorArgs: jdlFiles,
           generatorOptions: {
             skipJhipsterDependencies: true,
             insight: false,
