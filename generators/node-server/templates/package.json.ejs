@@ -39,14 +39,9 @@
   "engines": {
     "node": ">=<%= nodeVersion %>"
   },
-  "workspaces": {
-    "packages": [
-<%_ if (!skipServer) { _%>
-      "client",
-<%_ } _%>
+  "workspaces": [
       "server"
-    ]
-  },
+  ],
   "scripts": {
     "build:app": "cd server && <%= clientPackageManager %> run build",
     "lint:fix": "echo \"INFO: no client found\"",
