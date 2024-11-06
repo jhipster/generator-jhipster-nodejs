@@ -10,6 +10,7 @@ export default class extends BaseApplicationGenerator {
     return this.asConfiguringTaskGroup({
       async configuring() {
         this.jhipsterConfig.withAdminUi = false;
+        this.jhipsterConfig.backendType = 'NodeJS';
       },
     });
   }
@@ -22,7 +23,6 @@ export default class extends BaseApplicationGenerator {
         application.clientTestDir = 'client/test/';
         application.dockerServicesDir = 'docker/';
         application.withAdminUi = false;
-        application.backendType = 'NodeJS';
         application.nodeServerRootDir = `${SERVER_NODEJS_SRC_DIR}/`;
         application.dbPortValue = undefined;
       },
