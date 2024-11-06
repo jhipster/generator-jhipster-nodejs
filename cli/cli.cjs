@@ -13,7 +13,6 @@ const blueprint = packageFolderName.startsWith('jhipster-') ? `generator-${packa
 (async () => {
   const { runJHipster, done, logger } = await import('generator-jhipster/cli');
   const executableName = Object.keys(bin)[0];
-  const { getLogo } = await import('./logo.js');
 
   runJHipster({
     executableName,
@@ -23,10 +22,12 @@ const blueprint = packageFolderName.startsWith('jhipster-') ? `generator-${packa
     blueprints: {
       [blueprint]: version,
     },
-    printLogo: () => {
-      console.log(getLogo(version));
+    printBlueprintLogo: () => {
+      console.log('===================== JHipster Nodejs =====================');
+      console.log('');
     },
-    lookups: [{ packagePaths: [packagePath], lookups: ['generators'] }],
+    lookups: [{ packagePaths: [packagePath] }],
+    ...require('./cli-customizations.cjs'),
   }).catch(done);
 
   process.on('unhandledRejection', up => {

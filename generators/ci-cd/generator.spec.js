@@ -13,7 +13,7 @@ describe('SubGenerator ci-cd of nodejs JHipster blueprint', () => {
         .withJHipsterConfig()
         .withOptions({
           ignoreNeedlesError: true,
-          blueprint: 'nodejs',
+          blueprint: ['nodejs'],
         })
         .withJHipsterLookup()
         .withParentBlueprintLookup();

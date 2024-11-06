@@ -96,9 +96,10 @@
       }
     },
     "githubWorkflows": true,
-    "jhipsterVersion": "8.0.0-beta.3",
+    "jhipsterVersion": "8.7.3",
     "js": true,
     "localBlueprint": false,
+    "packageJsonType": "module",
     "sampleWritten": true,
     "skipCommitHook": true,
     "subGenerators": ["bootstrap-application", "ci-cd", "client", "cypress", "docker", "languages", "server"]

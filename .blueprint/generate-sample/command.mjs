@@ -17,7 +17,7 @@
  * limitations under the License.
  */
 import { GENERATOR_APP } from 'generator-jhipster/generators';
-import { getSamples } from './get-samples.mjs';
+import { getGithubSamplesGroups } from 'generator-jhipster/testing';
 
 /**
  * @type {import('generator-jhipster').JHipsterCommandDefinition}
@@ -29,12 +29,20 @@ const command = {
     },
   },
   configs: {
+    samplesFolder: {
+      description: 'Path to the samples folder',
+      cli: {
+        type: String,
+      },
+      default: 'samples',
+      scope: 'generator',
+    },
     sampleName: {
       prompt: gen => ({
         when: !gen.all,
         type: 'list',
         message: 'which sample do you want to generate?',
-        choices: async () => getSamples(gen.templatePath(gen.samplesFolder)),
+        choices: async () => getGithubSamplesGroups(gen.templatePath(gen.samplesFolder)),
       }),
       scope: 'generator',
     },
@@ -43,14 +51,6 @@ const command = {
       cli: {
         type: Boolean,
       },
-      scope: 'generator',
-    },
-    samplesFolder: {
-      description: 'Path to the samples folder',
-      cli: {
-        type: String,
-      },
-      default: 'samples',
       scope: 'generator',
     },
   },
