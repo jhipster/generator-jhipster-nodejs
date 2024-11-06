@@ -12,70 +12,30 @@ env:
   NODE_OPTIONS: --dns-result-order=ipv4first
   FORCE_COLOR: 2
 jobs:
+  build-matrix:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.build.outputs.matrix }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - id: build
+        run: |
+          npm install
+          ./cli/cli.cjs github-build-matrix
   samples:
-    name: ${{ matrix.app-type }}
+    name: ${{ matrix.job-name || matrix.sample }}
     runs-on: ${{ matrix.os }}
-    if: "!contains(github.event.head_commit.message, '[ci skip]') && !contains(github.event.head_commit.message, '[skip ci]')"
-    timeout-minutes: 40
+    needs: build-matrix
     defaults:
       run:
         working-directory: ${{ github.workspace }}/app
+    timeout-minutes: 30
     strategy:
       fail-fast: false
-      matrix:
-        node-version: [20]
-        os: [ubuntu-latest]
-        app-type:
-          - monolith-angular-jwt-jdl
-          - monolith-angular-jwt-i18n-jdl
-          - monolith-angular-oauth2-jdl
-          - monolith-angular-oauth2-mongodb-jdl
-          - monolith-angular-oauth2-i18n-jdl
-          - monolith-angular-jwt-i18n-dev
-          - monolith-angular-jwt-mongodb-jdl
-          - monolith-angular-mssql-prod-jdl
-          - monolith-angular-postgresql-prod-jdl
-        include:
-          - app-type: monolith-angular-jwt-jdl
-            app-folder: monolith-client-auth-template-jdl
-            entity: import-jdl
-            e2e: jwt
-          - app-type: monolith-angular-jwt-mongodb-jdl
-            app-folder: monolith-angular-auth-mongodb-template-jdl
-            entity: import-jdl
-            e2e: jwt
-          - app-type: monolith-angular-jwt-i18n-jdl
-            app-folder: monolith-client-auth-i18n-template-jdl
-            entity: import-jdl
-            e2e: jwt
-          - app-type: monolith-angular-oauth2-jdl
-            app-folder: monolith-client-auth-template-jdl
-            entity: import-jdl
-            e2e: oauth2
-          - app-type: monolith-angular-oauth2-mongodb-jdl
-            app-folder: monolith-angular-auth-mongodb-template-jdl
-            entity: import-jdl
-            e2e: oauth2
-          - app-type: monolith-angular-oauth2-i18n-jdl
-            app-folder: monolith-client-auth-i18n-template-jdl
-            entity: import-jdl
-            e2e: oauth2
-          - app-type: monolith-angular-jwt-i18n-dev
-            app-folder: monolith-angular-jwt-i18n-dev
-            entity: 'no'
-            e2e: jwt
-          - app-type: monolith-angular-mssql-prod-jdl
-            app-folder: monolith-client-database-prod-template-jdl
-            entity: import-jdl
-            e2e: jwt
-          - app-type: monolith-angular-postgresql-prod-jdl
-            app-folder: monolith-client-database-prod-template-jdl
-            entity: import-jdl
-            e2e: jwt
-    env:
-      NHI_ENTITY: ${{ matrix.entity }}
-      NHI_E2E: ${{ matrix.e2e }}
-
+      matrix: ${{fromJson(needs.build-matrix.outputs.matrix)}}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -87,7 +47,7 @@ jobs:
           binary-dir: ${{ github.workspace }}/generator-jhipster-nodejs/cli/
       - run: npm install
         working-directory: ${{ github.workspace }}/generator-jhipster-nodejs
-      - run: cli.cjs generate-sample ${{ matrix.app-type }} --samples-folder angular --skip-jhipster-dependencies --skip-install ${{ matrix.extra-args }}
+      - run: cli.cjs generate-sample ${{ matrix.sample }} --samples-folder angular --skip-jhipster-dependencies --skip-install ${{ matrix.extra-args }}
       - uses: jhipster/actions/compare-sample@v0
         id: compare
         if: >-
@@ -95,23 +55,28 @@ jobs:
           !contains(github.event.pull_request.labels.*.name, 'pr: disable-compare')
         with:
           generator-path: generator-jhipster-nodejs
-          cmd: cli.cjs generate-sample ${{ matrix.app-folder }} --template-name ${{ matrix.app-type }} --skip-jhipster-dependencies --skip-install ${{ matrix.extra-args }}
+          cmd: cli.cjs generate-sample ${{ matrix.sample-file }} --template-name ${{ matrix.sample }} --skip-jhipster-dependencies --skip-install ${{ matrix.extra-args }}
       - name: 'INSTALL DEPENDENCIES of generated app'
         run: npm install
+        if: steps.compare.outputs.equals != 'true'
       - name: 'RUN UNIT TESTS of generated app'
         run: npm test --workspaces
+        if: steps.compare.outputs.equals != 'true'
       - name: 'RUN SERVER E2E TESTS of generated app'
         run: npm run test:server:e2e
+        if: steps.compare.outputs.equals != 'true'
       - name: 'BUILD AND RUN SERVER APP'
         run: npm run app:up
+        if: steps.compare.outputs.equals != 'true'
       - name: 'START APP WITH EVENTUAL CLIENT E2E TESTS'
         run: npm run e2e:headless --workspace client
+        if: steps.compare.outputs.equals != 'true'
         id: e2e
       - name: Store cypress screenshots
         uses: actions/upload-artifact@v4
         if: always() && steps.e2e.outcome == 'failure'
         with:
-          name: screenshots-${{ matrix.app-type }}
+          name: screenshots-${{ matrix.job-name || matrix.sample }}
           path: ${{ github.workspace }}/app/**/cypress/screenshots
       - name: Dump docker logs
         if: always()
