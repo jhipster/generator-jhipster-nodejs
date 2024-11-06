@@ -88,7 +88,7 @@ jobs:
           binary-dir: ${{ github.workspace }}/generator-jhipster-nodejs/cli/
       - run: npm install
         working-directory: ${{ github.workspace }}/generator-jhipster-nodejs
-      - run: cli.cjs generate-sample ${{ matrix.app-type }}
+      - run: cli.cjs generate-sample ${{ matrix.app-type }} --samples-folder angular
       - uses: jhipster/actions/compare-sample@v0
         id: compare
         if: >-
@@ -96,7 +96,7 @@ jobs:
           !contains(github.event.pull_request.labels.*.name, 'pr: disable-compare')
         with:
           generator-path: generator-jhipster-nodejs
-          cmd: cli.cjs generate-sample ${{ matrix.app-type }} --skip-jhipster-dependencies --skip-install ${{ matrix.extra-args }}
+          cmd: cli.cjs generate-sample ${{ matrix.app-type }} --samples-folder angular --skip-jhipster-dependencies --skip-install ${{ matrix.extra-args }}
       - name: 'INSTALL DEPENDENCIES of generated app'
         run: npm install
       - name: 'RUN UNIT TESTS of generated app'
