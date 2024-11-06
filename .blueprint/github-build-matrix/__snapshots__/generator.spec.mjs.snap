@@ -12,7 +12,7 @@ exports[`generator - github-build-matrix > with samples > should match matrix va
       "npm-version": "10.9.0",
       "os": "ubuntu-latest",
       "sample": "microservice-oauth2-jdl",
-      "sample-type": "yo-rc",
+      "sample-type": "jdl",
       "samples-group": "samples",
     },
     {
@@ -24,7 +24,7 @@ exports[`generator - github-build-matrix > with samples > should match matrix va
       "npm-version": "10.9.0",
       "os": "ubuntu-latest",
       "sample": "monolith-angular-auth-mongodb-template-jdl",
-      "sample-type": "yo-rc",
+      "sample-type": "jdl",
       "samples-group": "samples",
     },
     {
@@ -48,7 +48,7 @@ exports[`generator - github-build-matrix > with samples > should match matrix va
       "npm-version": "10.9.0",
       "os": "ubuntu-latest",
       "sample": "monolith-client-auth-i18n-template-jdl",
-      "sample-type": "yo-rc",
+      "sample-type": "jdl",
       "samples-group": "samples",
     },
     {
@@ -60,7 +60,7 @@ exports[`generator - github-build-matrix > with samples > should match matrix va
       "npm-version": "10.9.0",
       "os": "ubuntu-latest",
       "sample": "monolith-client-auth-template-jdl",
-      "sample-type": "yo-rc",
+      "sample-type": "jdl",
       "samples-group": "samples",
     },
     {
@@ -72,7 +72,7 @@ exports[`generator - github-build-matrix > with samples > should match matrix va
       "npm-version": "10.9.0",
       "os": "ubuntu-latest",
       "sample": "monolith-client-database-prod-template-jdl",
-      "sample-type": "yo-rc",
+      "sample-type": "jdl",
       "samples-group": "samples",
     },
     {
