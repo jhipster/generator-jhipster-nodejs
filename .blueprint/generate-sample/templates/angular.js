@@ -44,4 +44,4 @@ export default {
     'sample-folder': 'samples/',
     'sample-type': 'jdl',
   },
-}
+};
