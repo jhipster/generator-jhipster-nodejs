@@ -73,8 +73,6 @@ jobs:
             entity: import-jdl
             e2e: jwt
     env:
-      NHI_APP: ${{ matrix.app-type }}
-      NHI_APP_FOLDER: ${{ matrix.app-folder }}
       NHI_ENTITY: ${{ matrix.entity }}
       NHI_E2E: ${{ matrix.e2e }}
 
@@ -88,7 +86,7 @@ jobs:
           binary-dir: ${{ github.workspace }}/generator-jhipster-nodejs/cli/
       - run: npm install
         working-directory: ${{ github.workspace }}/generator-jhipster-nodejs
-      - run: cli.cjs generate-sample ${{ matrix.app-type }} --samples-folder angular
+      - run: cli.cjs generate-sample ${{ matrix.app-type }} --samples-folder angular --skip-jhipster-dependencies --skip-install ${{ matrix.extra-args }}
       - uses: jhipster/actions/compare-sample@v0
         id: compare
         if: >-
@@ -96,7 +94,7 @@ jobs:
           !contains(github.event.pull_request.labels.*.name, 'pr: disable-compare')
         with:
           generator-path: generator-jhipster-nodejs
-          cmd: cli.cjs generate-sample ${{ matrix.app-type }} --samples-folder angular --skip-jhipster-dependencies --skip-install ${{ matrix.extra-args }}
+          cmd: cli.cjs generate-sample ${{ matrix.app-folder }} --template-name ${{ matrix.app-type }} --skip-jhipster-dependencies --skip-install ${{ matrix.extra-args }}
       - name: 'INSTALL DEPENDENCIES of generated app'
         run: npm install
       - name: 'RUN UNIT TESTS of generated app'
