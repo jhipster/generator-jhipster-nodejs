@@ -86,6 +86,8 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
           binary-dir: ${{ github.workspace }}/generator-jhipster-nodejs/cli/
+      - run: npm install
+        working-directory: ${{ github.workspace }}/generator-jhipster-nodejs
       - run: cli.cjs generate-sample ${{ matrix.app-type }}
       - uses: jhipster/actions/compare-sample@v0
         id: compare
