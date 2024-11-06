@@ -54,7 +54,7 @@
   },
   "dependencies": {
     "chalk": "^5.3.0",
-    "generator-jhipster": "github:jhipster/generator-jhipster#main"
+    "generator-jhipster": "github:mshima/generator-jhipster#client-workspaces"
   },
   "devDependencies": {
     "ejs-lint": "2.0.0",
