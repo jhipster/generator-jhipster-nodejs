@@ -8,6 +8,8 @@ export default class extends BaseGenerator {
   sampleName;
   all;
   samplesFolder;
+  sampleType;
+  sampleFile;
 
   constructor(args, opts, features) {
     super(args, opts, { ...features, queueCommandTasks: true, jhipsterBootstrap: false });
@@ -44,7 +46,7 @@ export default class extends BaseGenerator {
         const projectVersion = `${packageJson.version}-git`;
 
         await this.composeWithJHipster('jdl', {
-          generatorArgs: this.all ? await readdir(this.templatePath('samples')) : [this.sampleName],
+          generatorArgs: (await readdir(this.destinationPath())).map(file => file.endsWith('.jdl')),
           generatorOptions: {
             skipJhipsterDependencies: true,
             insight: false,
