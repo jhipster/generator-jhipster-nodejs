@@ -23,13 +23,13 @@ export default class extends BaseGenerator {
           this.copyTemplate(join(samplesFolder, sampleName), sampleName, { noGlob: true });
         } else {
           const { samples } = await getGithubSamplesGroup(this.templatePath(), samplesFolder);
-          const { 'sample-type': sampleType, 'sample-file': sampleFile = sampleName } = samples[sampleName];
+          const { 'sample-type': sampleType, 'sample-file': sampleFile = sampleName, 'sample-folder': sampleFolder = samplesFolder } = samples[sampleName];
           if (sampleType === 'jdl') {
             const jdlFile = `${sampleFile}.jdl`;
-            this.copyTemplate(join(samplesFolder, jdlFile), jdlFile, { noGlob: true });
+            this.copyTemplate(join(sampleFolder, jdlFile), jdlFile, { noGlob: true });
           } else if (sampleType === 'yo-rc') {
-            this.copyTemplate(join(samplesFolder, sampleFile, '**'), '', {
-              fromBasePath: this.templatesPath(samplesFolder, sampleFile),
+            this.copyTemplate(join(sampleFolder, sampleFile, '**'), '', {
+              fromBasePath: this.templatesPath(sampleFolder, sampleFile),
             });
           }
         }
