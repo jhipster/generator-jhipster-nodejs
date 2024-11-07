@@ -65,12 +65,11 @@ describe('User', () => {
 
     it('/PUT update user', async () => {
         testUserDTO.login = 'TestUserUpdate';
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const { password: savedPassword, lastModifiedDate: savedLastModifiedDate, ...savedUser } = await service.save(testUserDTO);
+        const { password: _savedPassword, lastModifiedDate: _savedLastModifiedDate, ...savedUser } = await service.save(testUserDTO);
         savedUser.firstName = 'Updated Name';
 
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const { password: updatedPassword, lastModifiedDate: updatedLastModifiedDate, ...updatedUser } = (
+        const { password: _updatedPassword lastModifiedDate: _updatedLastModifiedDate, ...updatedUser } = (
             await request(app.getHttpServer())
                 .put('/api/admin/users')
                 .send(savedUser)
