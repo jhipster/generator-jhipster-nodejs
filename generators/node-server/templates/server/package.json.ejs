@@ -93,7 +93,7 @@
 <%_ if (authenticationType === 'oauth2') { _%>
     "@types/jwt-decode": "<%- nodeServerDependencies['@types/jwt-decode'] %>",
 <%_ } _%>
-    "@types/node": "^<%- nodeDependencies['@types/node'] %>",
+    "@types/node": "<%- nodeDependencies['@types/node'] %>",
 <%_ if (authenticationType === 'jwt') { _%>
     "@types/passport-jwt": "<%- nodeServerDependencies['@types/passport-jwt'] %>",
 <%_ } _%>
