@@ -39,6 +39,7 @@ export default class extends BaseGenerator {
           } else if (sampleType === 'yo-rc') {
             this.copyTemplate('**', '', {
               fromBasePath: this.templatePath(sampleFolder, sampleFile),
+              globOptions: { dot: true },
             });
           }
         }
