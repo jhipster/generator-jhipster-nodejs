@@ -6,6 +6,10 @@ exports[`generator - github-build-matrix > with angular > should match matrix va
     {
       "default-environment": "prod",
       "extra-args": "--client-framework angular --auth jwt",
+      "generatorOptions": {
+        "authenticationType": "jwt",
+        "clientFramework": "angular",
+      },
       "java-version": "17",
       "job-name": "monolith-angular-jwt-jdl",
       "jwt-secret-key": "ZjY4MTM4YjI5YzMwZjhjYjI2OTNkNTRjMWQ5Y2Q0Y2YwOWNmZTE2NzRmYzU3NTMwM2NjOTE3MTllOTM3MWRkMzcyYTljMjVmNmQ0Y2MxOTUzODc0MDhhMTlkMDIxMzI2YzQzZDM2ZDE3MmQ3NjVkODk3OTVmYzljYTQyZDNmMTQ=",
@@ -21,6 +25,10 @@ exports[`generator - github-build-matrix > with angular > should match matrix va
     {
       "default-environment": "prod",
       "extra-args": "--client-framework angular --auth jwt",
+      "generatorOptions": {
+        "authenticationType": "jwt",
+        "clientFramework": "angular",
+      },
       "java-version": "17",
       "job-name": "monolith-angular-jwt-i18n-jdl",
       "jwt-secret-key": "ZjY4MTM4YjI5YzMwZjhjYjI2OTNkNTRjMWQ5Y2Q0Y2YwOWNmZTE2NzRmYzU3NTMwM2NjOTE3MTllOTM3MWRkMzcyYTljMjVmNmQ0Y2MxOTUzODc0MDhhMTlkMDIxMzI2YzQzZDM2ZDE3MmQ3NjVkODk3OTVmYzljYTQyZDNmMTQ=",
@@ -36,6 +44,10 @@ exports[`generator - github-build-matrix > with angular > should match matrix va
     {
       "default-environment": "prod",
       "extra-args": "--client-framework angular --auth oauth2",
+      "generatorOptions": {
+        "authenticationType": "oauth2",
+        "clientFramework": "angular",
+      },
       "java-version": "17",
       "job-name": "monolith-angular-oauth2-jdl",
       "jwt-secret-key": "ZjY4MTM4YjI5YzMwZjhjYjI2OTNkNTRjMWQ5Y2Q0Y2YwOWNmZTE2NzRmYzU3NTMwM2NjOTE3MTllOTM3MWRkMzcyYTljMjVmNmQ0Y2MxOTUzODc0MDhhMTlkMDIxMzI2YzQzZDM2ZDE3MmQ3NjVkODk3OTVmYzljYTQyZDNmMTQ=",
@@ -51,6 +63,10 @@ exports[`generator - github-build-matrix > with angular > should match matrix va
     {
       "default-environment": "prod",
       "extra-args": "--client-framework angular --auth oauth2",
+      "generatorOptions": {
+        "authenticationType": "oauth2",
+        "clientFramework": "angular",
+      },
       "java-version": "17",
       "job-name": "monolith-angular-oauth2-mongodb-jdl",
       "jwt-secret-key": "ZjY4MTM4YjI5YzMwZjhjYjI2OTNkNTRjMWQ5Y2Q0Y2YwOWNmZTE2NzRmYzU3NTMwM2NjOTE3MTllOTM3MWRkMzcyYTljMjVmNmQ0Y2MxOTUzODc0MDhhMTlkMDIxMzI2YzQzZDM2ZDE3MmQ3NjVkODk3OTVmYzljYTQyZDNmMTQ=",
@@ -66,6 +82,10 @@ exports[`generator - github-build-matrix > with angular > should match matrix va
     {
       "default-environment": "prod",
       "extra-args": "--client-framework angular --auth oauth2",
+      "generatorOptions": {
+        "authenticationType": "oauth2",
+        "clientFramework": "angular",
+      },
       "java-version": "17",
       "job-name": "monolith-angular-oauth2-i18n-jdl",
       "jwt-secret-key": "ZjY4MTM4YjI5YzMwZjhjYjI2OTNkNTRjMWQ5Y2Q0Y2YwOWNmZTE2NzRmYzU3NTMwM2NjOTE3MTllOTM3MWRkMzcyYTljMjVmNmQ0Y2MxOTUzODc0MDhhMTlkMDIxMzI2YzQzZDM2ZDE3MmQ3NjVkODk3OTVmYzljYTQyZDNmMTQ=",
@@ -95,6 +115,10 @@ exports[`generator - github-build-matrix > with angular > should match matrix va
     {
       "default-environment": "prod",
       "extra-args": "--client-framework angular --auth jwt",
+      "generatorOptions": {
+        "authenticationType": "jwt",
+        "clientFramework": "angular",
+      },
       "java-version": "17",
       "job-name": "monolith-angular-jwt-mongodb-jdl",
       "jwt-secret-key": "ZjY4MTM4YjI5YzMwZjhjYjI2OTNkNTRjMWQ5Y2Q0Y2YwOWNmZTE2NzRmYzU3NTMwM2NjOTE3MTllOTM3MWRkMzcyYTljMjVmNmQ0Y2MxOTUzODc0MDhhMTlkMDIxMzI2YzQzZDM2ZDE3MmQ3NjVkODk3OTVmYzljYTQyZDNmMTQ=",
@@ -110,6 +134,10 @@ exports[`generator - github-build-matrix > with angular > should match matrix va
     {
       "default-environment": "prod",
       "extra-args": "--client-framework angular --prod-database-type mssql",
+      "generatorOptions": {
+        "clientFramework": "angular",
+        "prodDatabaseType": "mssql",
+      },
       "java-version": "17",
       "job-name": "monolith-angular-mssql-prod-jdl",
       "jwt-secret-key": "ZjY4MTM4YjI5YzMwZjhjYjI2OTNkNTRjMWQ5Y2Q0Y2YwOWNmZTE2NzRmYzU3NTMwM2NjOTE3MTllOTM3MWRkMzcyYTljMjVmNmQ0Y2MxOTUzODc0MDhhMTlkMDIxMzI2YzQzZDM2ZDE3MmQ3NjVkODk3OTVmYzljYTQyZDNmMTQ=",
@@ -125,6 +153,10 @@ exports[`generator - github-build-matrix > with angular > should match matrix va
     {
       "default-environment": "prod",
       "extra-args": "--client-framework angular --prod-database-type postgresql",
+      "generatorOptions": {
+        "clientFramework": "angular",
+        "prodDatabaseType": "postgresql",
+      },
       "java-version": "17",
       "job-name": "monolith-angular-postgresql-prod-jdl",
       "jwt-secret-key": "ZjY4MTM4YjI5YzMwZjhjYjI2OTNkNTRjMWQ5Y2Q0Y2YwOWNmZTE2NzRmYzU3NTMwM2NjOTE3MTllOTM3MWRkMzcyYTljMjVmNmQ0Y2MxOTUzODc0MDhhMTlkMDIxMzI2YzQzZDM2ZDE3MmQ3NjVkODk3OTVmYzljYTQyZDNmMTQ=",

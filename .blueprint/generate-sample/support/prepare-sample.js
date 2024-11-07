@@ -29,11 +29,21 @@ export const prepareSample = sample => {
     .filter(s => s !== 'jdl')
     .map(s => (s === clientFramework ? 'client' : s === authenticationType ? 'auth' : s === prodDatabaseType ? 'database' : s));
 
-  const extraArgs = [
-    ...(clientFramework ? [`--client-framework ${clientFramework}`] : []),
-    ...(authenticationType ? [`--auth ${authenticationType}`] : []),
-    ...(prodDatabaseType ? [`--prod-database-type ${prodDatabaseType}`] : []),
-  ];
+  const generatorOptions = {};
+  const extraArgs = [];
+
+  if (clientFramework) {
+    generatorOptions.clientFramework = clientFramework;
+    extraArgs.push(`--client-framework ${clientFramework}`);
+  }
+  if (authenticationType) {
+    generatorOptions.authenticationType = authenticationType;
+    extraArgs.push(`--auth ${authenticationType}`);
+  }
+  if (prodDatabaseType) {
+    generatorOptions.prodDatabaseType = prodDatabaseType;
+    extraArgs.push(`--prod-database-type ${prodDatabaseType}`);
+  }
 
   const sampleFile = [...split, 'template', 'jdl'].join('-');
   const file = path.join(__dirname, '../templates/samples', `${sampleFile}.jdl`);
@@ -44,5 +54,6 @@ export const prepareSample = sample => {
     'sample-folder': 'samples/',
     'extra-args': extraArgs.join(' '),
     'sample-type': 'jdl',
+    generatorOptions,
   };
 };

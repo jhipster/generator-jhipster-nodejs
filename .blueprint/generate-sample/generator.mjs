@@ -10,6 +10,7 @@ export default class extends BaseGenerator {
   samplesFolder;
   sampleType;
   sampleFile;
+  generatorOptions;
 
   constructor(args, opts, features) {
     super(args, opts, { ...features, queueCommandTasks: true, jhipsterBootstrap: false });
@@ -29,7 +30,9 @@ export default class extends BaseGenerator {
             'sample-type': sampleType,
             'sample-file': sampleFile = sampleName,
             'sample-folder': sampleFolder = samplesFolder,
+            generatorOptions,
           } = samples[sampleName];
+          this.generatorOptions = generatorOptions;
           if (sampleType === 'jdl') {
             const jdlFile = `${sampleFile}.jdl`;
             this.copyTemplate(join(sampleFolder, jdlFile), jdlFile, { noGlob: true });
@@ -58,6 +61,7 @@ export default class extends BaseGenerator {
             insight: false,
             skipChecks: true,
             projectVersion,
+            ...this.generatorOptions,
             ...(this.all ? { workspaces: true, monorepository: true } : { skipInstall: true }),
           },
         });
