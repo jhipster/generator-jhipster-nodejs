@@ -33,6 +33,7 @@ export default class extends BaseGenerator {
             generatorOptions,
           } = samples[sampleName];
           this.generatorOptions = generatorOptions;
+          this.sampleType = sampleType;
           if (sampleType === 'jdl') {
             const jdlFile = `${sampleFile}.jdl`;
             this.copyTemplate(join(sampleFolder, jdlFile), jdlFile, { noGlob: true });
@@ -52,17 +53,22 @@ export default class extends BaseGenerator {
       async generateSample() {
         const packageJson = JSON.parse(readFileSync(new URL('../../package.json', import.meta.url)));
         const projectVersion = `${packageJson.version}-git`;
+        const generatorOptions = {
+          skipJhipsterDependencies: true,
+          projectVersion,
+          ...this.generatorOptions,
+        };
+        if (this.sampleType === 'yo-rc') {
+          await this.composeWithJHipster('app', { generatorOptions });
+          return;
+        }
         const folderFiles = await readdir(this.destinationPath());
         const jdlFiles = folderFiles.filter(file => file.endsWith('.jdl'));
 
         await this.composeWithJHipster('jdl', {
           generatorArgs: jdlFiles,
           generatorOptions: {
-            skipJhipsterDependencies: true,
-            insight: false,
-            skipChecks: true,
-            projectVersion,
-            ...this.generatorOptions,
+            ...generatorOptions,
             ...(this.all ? { workspaces: true, monorepository: true } : { skipInstall: true }),
           },
         });
