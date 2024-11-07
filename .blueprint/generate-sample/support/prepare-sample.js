@@ -52,7 +52,6 @@ export const prepareSample = sample => {
   return {
     'sample-file': sampleFile,
     'sample-folder': 'samples/',
-    // 'extra-args': extraArgs.join(' '),
     'sample-type': 'jdl',
     generatorOptions,
   };

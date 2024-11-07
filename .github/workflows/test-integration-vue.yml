@@ -6,78 +6,77 @@ on:
   pull_request:
     branches:
       - '*'
+permissions:
+  contents: read
 env:
   NODE_OPTIONS: --dns-result-order=ipv4first
+  FORCE_COLOR: 2
 jobs:
-  applications:
-    name: ${{ matrix.app-type }}
+  build-matrix:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.build.outputs.matrix }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - id: build
+        run: |
+          npm install
+          ./cli/cli.cjs github-build-matrix vue
+  samples:
+    name: ${{ matrix.job-name || matrix.sample }}
     runs-on: ${{ matrix.os }}
-    if: "!contains(github.event.head_commit.message, '[ci skip]') && !contains(github.event.head_commit.message, '[skip ci]')"
-    timeout-minutes: 40
+    needs: build-matrix
     defaults:
       run:
         working-directory: ${{ github.workspace }}/app
+    timeout-minutes: 30
     strategy:
       fail-fast: false
-      matrix:
-        node-version: [20]
-        os: [ubuntu-latest]
-        app-type:
-          - monolith-vue-jwt-i18n-jdl
-          - monolith-vue-oauth2-i18n-jdl
-          - monolith-vue-mongodb-prod-jdl
-        include:
-          - app-type: monolith-vue-jwt-i18n-jdl
-            app-folder: monolith-client-auth-i18n-template-jdl
-            entity: import-jdl
-            e2e: jwt
-          - app-type: monolith-vue-oauth2-i18n-jdl
-            app-folder: monolith-client-auth-i18n-template-jdl
-            entity: import-jdl
-            e2e: oauth2
-          - app-type: monolith-vue-mongodb-prod-jdl
-            app-folder: monolith-client-database-prod-template-jdl
-            entity: import-jdl
-            e2e: jwt
-    env:
-      NHI_APP: ${{ matrix.app-type }}
-      NHI_APP_FOLDER: ${{ matrix.app-folder }}
-      NHI_ENTITY: ${{ matrix.entity }}
-      NHI_E2E: ${{ matrix.e2e }}
-
+      matrix: ${{fromJson(needs.build-matrix.outputs.matrix)}}
     steps:
       - uses: actions/checkout@v4
         with:
           path: generator-jhipster-nodejs
-      - uses: actions/setup-node@v4
+          fetch-depth: 2
+      - uses: jhipster/actions/setup-runner@v0
         with:
           node-version: ${{ matrix.node-version }}
-      - run: mkdir ${{ github.workspace }}/app
+          binary-dir: ${{ github.workspace }}/generator-jhipster-nodejs/cli/
+      - run: npm install
         working-directory: ${{ github.workspace }}/generator-jhipster-nodejs
-      - name: GIT HISTORY
-        run: git --no-pager log -n 10 --graph --pretty='%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue) <%an>%Creset' --abbrev-commit
-        working-directory: ${{ github.workspace }}/generator-jhipster-nodejs
-      - name: Link blueprint
-        run: npm install && npm link
-        working-directory: ${{ github.workspace }}/generator-jhipster-nodejs
-      - name: 'GENERATE NHipster app'
-        run: nhipster generate-sample $NHI_APP_FOLDER --template-name $NHI_APP
+      - run: cli.cjs generate-sample ${{ matrix.sample }} --samples-folder vue --skip-jhipster-dependencies --skip-install ${{ matrix.extra-args }}
+      - uses: jhipster/actions/compare-sample@v0
+        id: compare
+        if: >-
+          github.event.pull_request &&
+          !contains(github.event.pull_request.labels.*.name, 'pr: disable-compare')
+        with:
+          generator-path: generator-jhipster-nodejs
+          cmd: cli.cjs generate-sample ${{ matrix.sample-file }} --template-name ${{ matrix.sample }} --skip-jhipster-dependencies --skip-install ${{ matrix.extra-args }}
       - name: 'INSTALL DEPENDENCIES of generated app'
         run: npm install
+        if: steps.compare.outputs.equals != 'true'
       - name: 'RUN UNIT TESTS of generated app'
         run: npm test --workspaces
+        if: steps.compare.outputs.equals != 'true'
       - name: 'RUN SERVER E2E TESTS of generated app'
         run: npm run test:server:e2e
+        if: steps.compare.outputs.equals != 'true'
       - name: 'BUILD AND RUN SERVER APP'
         run: npm run app:up
+        if: steps.compare.outputs.equals != 'true'
       - name: 'START APP WITH EVENTUAL CLIENT E2E TESTS'
         run: npm run e2e:headless --workspace client
+        if: steps.compare.outputs.equals != 'true'
         id: e2e
-      - name: 'E2E: Store failure screenshots'
+      - name: Store cypress screenshots
         uses: actions/upload-artifact@v4
         if: always() && steps.e2e.outcome == 'failure'
         with:
-          name: screenshots-${{ matrix.app-type }}
+          name: screenshots-${{ matrix.job-name || matrix.sample }}
           path: ${{ github.workspace }}/app/**/cypress/screenshots
       - name: Dump docker logs
         if: always()
@@ -86,12 +85,12 @@ jobs:
     permissions:
       contents: none
     runs-on: ubuntu-latest
-    needs: [applications]
+    needs: [samples]
     if: always()
     steps:
       - run: |
           echo '${{ toJSON(needs) }}'
-          if [ 'skipped' == '${{ needs.applications.result }}' ] || [ 'success' == '${{ needs.applications.result }}' ] || [ 'closed' == '${{ github.event.action }}' ]; then
+          if [ 'skipped' == '${{ needs.samples.result }}' ] || [ 'success' == '${{ needs.samples.result }}' ] || [ 'closed' == '${{ github.event.action }}' ]; then
             exit 0
           fi
           exit 1
