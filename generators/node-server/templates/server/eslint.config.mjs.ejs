@@ -17,7 +17,6 @@ export default tseslint.config(
     files: ['**/*.{js,cjs,mjs}'],
     rules: {
       'no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
-      'no-prototype-builtins': 'off',
     },
   },
   {
@@ -29,6 +28,7 @@ export default tseslint.config(
       },
     },
     rules: {
+      'no-prototype-builtins': 'off',
       '@typescript-eslint/no-explicit-any': 'off',
       '@typescript-eslint/no-floating-promises': 'off',
       '@typescript-eslint/no-redundant-type-constituents': 'off',
