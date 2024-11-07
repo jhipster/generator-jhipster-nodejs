@@ -1,3 +1,4 @@
+import { readFile } from 'node:fs/promises';
 import BaseApplicationGenerator from 'generator-jhipster/generators/base-application';
 import { createNeedleCallback } from 'generator-jhipster/generators/base/support';
 import { getEnumInfo } from 'generator-jhipster/generators/base-application/support';
@@ -44,6 +45,9 @@ const dbTypes = {
 };
 
 export default class extends BaseApplicationGenerator {
+  oldNodejsVersion;
+  nodejsPackageJson;
+
   constructor(args, opts, features) {
     super(args, opts, { ...features, queueCommandTasks: true });
   }
@@ -51,6 +55,16 @@ export default class extends BaseApplicationGenerator {
   async beforeQueue() {
     await this.dependsOnJHipster('bootstrap-application');
     await this.dependsOnJHipster('common');
+  }
+
+  get [BaseApplicationGenerator.INITIALIZING]() {
+    return this.asInitializingTaskGroup({
+      async initializing() {
+        this.oldNodejsVersion = this.blueprintConfig.nodejsVersion ?? '3.0.0';
+        this.nodejsPackageJson = JSON.parse((await readFile(this.templatePath('../../../package.json'), 'utf-8')).toString());
+        this.blueprintConfig.nodejsVersion = this.nodejsPackageJson.version;
+      },
+    });
   }
 
   get [BaseApplicationGenerator.CONFIGURING]() {
@@ -92,6 +106,13 @@ export default class extends BaseApplicationGenerator {
 
   get [BaseApplicationGenerator.WRITING]() {
     return this.asWritingTaskGroup({
+      async cleanup({ control }) {
+        if (control.existingProject) {
+          await control.cleanupFiles(this.oldNodejsVersion, {
+            '3.0.1': ['.server.eslintrc.json', '.server.eslintignore'],
+          });
+        }
+      },
       async writingTemplateTask({ application }) {
         await this.writeFiles({
           sections: serverFiles,
@@ -130,6 +151,20 @@ export default class extends BaseApplicationGenerator {
     });
   }
 
+  get [BaseApplicationGenerator.POST_WRITING]() {
+    return this.asPostWritingTaskGroup({
+      adjustWorkspacePackageJson({ application }) {
+        if (application.clientFrameworkAngular) {
+          this.packageJson.merge({
+            overrides: {
+              'browser-sync': application.nodeDependencies['browser-sync'],
+            },
+          });
+        }
+      },
+    });
+  }
+
   get [BaseApplicationGenerator.POST_WRITING_ENTITIES]() {
     return this.asPostWritingEntitiesTaskGroup({
       async postWritingEntitiesTemplateTask({ entities }) {
@@ -148,24 +183,6 @@ export default class extends BaseApplicationGenerator {
         }
       },
     });
-  }
-
-  get postWriting() {
-    return this.asPostWritingTaskGroup({
-      adjustWorkspacePackageJson({ application }) {
-        if (application.clientFrameworkAngular) {
-          this.packageJson.merge({
-            overrides: {
-              'browser-sync': application.nodeDependencies['browser-sync'],
-            },
-          });
-        }
-      },
-    });
-  }
-
-  get [BaseApplicationGenerator.POST_WRITING]() {
-    return this.delegateTasksToBlueprint(() => this.postWriting);
   }
 
   get [BaseApplicationGenerator.END]() {

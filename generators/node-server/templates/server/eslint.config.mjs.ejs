@@ -1,0 +1,32 @@
+import globals from 'globals';
+import prettier from 'eslint-plugin-prettier/recommended';
+import tseslint from 'typescript-eslint';
+
+export default tseslint.config(
+  {
+    languageOptions: {
+      globals: {
+        ...globals.node,
+      },
+    },
+  },
+  { ignores: ['dist', 'coverage'] },
+  eslint.configs.recommended,
+  {
+    files: ['**/*.{js,cjs,mjs}'],
+    rules: {
+      'no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
+    },
+  },
+  {
+    files: ['**/*.ts'],
+    extends: [...tseslint.configs.recommendedTypeChecked],
+    languageOptions: {
+      parserOptions: {
+        "project": ["./tsconfig.json"],
+      },
+    },
+    rules: {},
+  },
+  prettier,
+);

@@ -56,12 +56,6 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > run > should su
   "server/.env": {
     "stateCleared": "modified",
   },
-  "server/.server.eslintignore": {
-    "stateCleared": "modified",
-  },
-  "server/.server.eslintrc.json": {
-    "stateCleared": "modified",
-  },
   "server/README.md": {
     "stateCleared": "modified",
   },
@@ -78,6 +72,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > run > should su
     "stateCleared": "modified",
   },
   "server/e2e/user.e2e-spec.ts": {
+    "stateCleared": "modified",
+  },
+  "server/eslint.config.mjs": {
     "stateCleared": "modified",
   },
   "server/nest-cli.json": {
@@ -614,12 +611,6 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > without client 
   "server/.env": {
     "stateCleared": "modified",
   },
-  "server/.server.eslintignore": {
-    "stateCleared": "modified",
-  },
-  "server/.server.eslintrc.json": {
-    "stateCleared": "modified",
-  },
   "server/README.md": {
     "stateCleared": "modified",
   },
@@ -636,6 +627,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > without client 
     "stateCleared": "modified",
   },
   "server/e2e/user.e2e-spec.ts": {
+    "stateCleared": "modified",
+  },
+  "server/eslint.config.mjs": {
     "stateCleared": "modified",
   },
   "server/nest-cli.json": {
