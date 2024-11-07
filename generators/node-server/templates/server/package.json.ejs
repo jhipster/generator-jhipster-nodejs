@@ -19,6 +19,7 @@
     "start": "npm run clean && npm run copy-resources && nodemon --watch src -e ts,tsx --exec ts-node src/main.ts",
     "lint": "eslint .",
     "lint:fix": "npm run lint -- --fix",
+    "pretest": "npm run lint",
     "test": "jest",
     "test:cov": "jest --coverage",
     "test:watch": "jest --watch",
