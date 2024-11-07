@@ -38,7 +38,7 @@ export default class extends BaseGenerator {
             this.copyTemplate(join(sampleFolder, jdlFile), jdlFile, { noGlob: true });
           } else if (sampleType === 'yo-rc') {
             this.copyTemplate(join(sampleFolder, sampleFile, '**'), '', {
-              fromBasePath: this.templatesPath(sampleFolder, sampleFile),
+              fromBasePath: this.templatePath(sampleFolder, sampleFile),
             });
           }
         }
