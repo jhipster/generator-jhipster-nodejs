@@ -5,7 +5,6 @@ exports[`generator - github-build-matrix > with angular > should match matrix va
   "include": [
     {
       "default-environment": "prod",
-      "extra-args": "--client-framework angular --auth jwt",
       "generatorOptions": {
         "authenticationType": "jwt",
         "clientFramework": "angular",
@@ -24,7 +23,6 @@ exports[`generator - github-build-matrix > with angular > should match matrix va
     },
     {
       "default-environment": "prod",
-      "extra-args": "--client-framework angular --auth jwt",
       "generatorOptions": {
         "authenticationType": "jwt",
         "clientFramework": "angular",
@@ -43,7 +41,6 @@ exports[`generator - github-build-matrix > with angular > should match matrix va
     },
     {
       "default-environment": "prod",
-      "extra-args": "--client-framework angular --auth oauth2",
       "generatorOptions": {
         "authenticationType": "oauth2",
         "clientFramework": "angular",
@@ -62,7 +59,6 @@ exports[`generator - github-build-matrix > with angular > should match matrix va
     },
     {
       "default-environment": "prod",
-      "extra-args": "--client-framework angular --auth oauth2",
       "generatorOptions": {
         "authenticationType": "oauth2",
         "clientFramework": "angular",
@@ -81,7 +77,6 @@ exports[`generator - github-build-matrix > with angular > should match matrix va
     },
     {
       "default-environment": "prod",
-      "extra-args": "--client-framework angular --auth oauth2",
       "generatorOptions": {
         "authenticationType": "oauth2",
         "clientFramework": "angular",
@@ -114,7 +109,6 @@ exports[`generator - github-build-matrix > with angular > should match matrix va
     },
     {
       "default-environment": "prod",
-      "extra-args": "--client-framework angular --auth jwt",
       "generatorOptions": {
         "authenticationType": "jwt",
         "clientFramework": "angular",
@@ -133,7 +127,6 @@ exports[`generator - github-build-matrix > with angular > should match matrix va
     },
     {
       "default-environment": "prod",
-      "extra-args": "--client-framework angular --prod-database-type mssql",
       "generatorOptions": {
         "clientFramework": "angular",
         "prodDatabaseType": "mssql",
@@ -152,7 +145,6 @@ exports[`generator - github-build-matrix > with angular > should match matrix va
     },
     {
       "default-environment": "prod",
-      "extra-args": "--client-framework angular --prod-database-type postgresql",
       "generatorOptions": {
         "clientFramework": "angular",
         "prodDatabaseType": "postgresql",

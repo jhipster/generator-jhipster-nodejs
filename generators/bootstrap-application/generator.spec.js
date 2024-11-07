@@ -28,6 +28,7 @@ describe('SubGenerator bootstrap-application of nodejs JHipster blueprint', () =
         user: expect.any(Object),
         authority: expect.any(Object),
         userManagement: expect.any(Object),
+        jhipsterPackageJson: expect.any(Object),
       });
     });
   });

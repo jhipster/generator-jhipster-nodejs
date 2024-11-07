@@ -351,6 +351,7 @@ exports[`SubGenerator bootstrap-application of nodejs JHipster blueprint > run >
   "jhiPrefixCapitalized": "Jhi",
   "jhiPrefixDashed": "jhi",
   "jhiTablePrefix": "jhi",
+  "jhipsterPackageJson": Any<Object>,
   "jhipsterVersion": "JHIPSTER_VERSION",
   "jwtSecretKey": undefined,
   "languages": [],
