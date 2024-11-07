@@ -9,7 +9,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 export const prepareSample = sample => {
   const clientFrameworks = ['angular', 'vue', 'react'];
   const authenticationTypes = ['jwt', 'oauth2'];
-  const prodDatabaseTypes = ['mysql', 'mssql', 'postgresql'];
+  const databaseTypes = ['mysql', 'mssql', 'postgresql', 'mongodb'];
 
   let split = sample.split('-');
   if (!split.includes('jdl')) {
@@ -24,25 +24,25 @@ export const prepareSample = sample => {
   intersection(clientFrameworks, split);
   const clientFramework = intersection(clientFrameworks, split)[0];
   const authenticationType = intersection(authenticationTypes, split)[0];
-  const prodDatabaseType = intersection(prodDatabaseTypes, split)[0];
+  const databaseType = intersection(databaseTypes, split)[0];
   split = split
     .filter(s => s !== 'jdl')
-    .map(s => (s === clientFramework ? 'client' : s === authenticationType ? 'auth' : s === prodDatabaseType ? 'database' : s));
+    .map(s => (s === clientFramework ? 'client' : s === authenticationType ? 'auth' : s === databaseType ? 'database' : s));
 
   const generatorOptions = {};
-  const extraArgs = [];
 
   if (clientFramework) {
     generatorOptions.clientFramework = clientFramework;
-    extraArgs.push(`--client-framework ${clientFramework}`);
   }
   if (authenticationType) {
     generatorOptions.authenticationType = authenticationType;
-    extraArgs.push(`--auth ${authenticationType}`);
   }
-  if (prodDatabaseType) {
-    generatorOptions.prodDatabaseType = prodDatabaseType;
-    extraArgs.push(`--prod-database-type ${prodDatabaseType}`);
+  if (databaseType) {
+    if (databaseType === 'mongodb') {
+      generatorOptions.databaseType = databaseType;
+    } else {
+      generatorOptions.prodDatabaseType = databaseType;
+    }
   }
 
   const sampleFile = [...split, 'template', 'jdl'].join('-');
