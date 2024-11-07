@@ -37,7 +37,7 @@ export default class extends BaseGenerator {
             const jdlFile = `${sampleFile}.jdl`;
             this.copyTemplate(join(sampleFolder, jdlFile), jdlFile, { noGlob: true });
           } else if (sampleType === 'yo-rc') {
-            this.copyTemplate(join(sampleFolder, sampleFile, '**'), '', {
+            this.copyTemplate('**', '', {
               fromBasePath: this.templatePath(sampleFolder, sampleFile),
             });
           }
