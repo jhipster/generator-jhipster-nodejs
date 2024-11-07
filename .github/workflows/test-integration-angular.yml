@@ -24,7 +24,7 @@ jobs:
       - id: build
         run: |
           npm install
-          ./cli/cli.cjs github-build-matrix
+          ./cli/cli.cjs github-build-matrix angular
   samples:
     name: ${{ matrix.job-name || matrix.sample }}
     runs-on: ${{ matrix.os }}
