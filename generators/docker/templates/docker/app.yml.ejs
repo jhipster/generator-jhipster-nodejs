@@ -29,3 +29,8 @@ services:
     ports:
       - <%= serverPort %>:<%= serverPort %>
 <%_ } _%>
+    healthcheck:
+      test: ['CMD', 'nc', '-vz', '-w1', 'localhost', '<%= serverPort %>']
+      interval: 5s
+      timeout: 5s
+      retries: 10

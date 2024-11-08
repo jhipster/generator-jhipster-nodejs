@@ -83,10 +83,16 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > run > should su
   "server/nest-cli.json": {
     "stateCleared": "modified",
   },
+  "server/ormconfig.ts": {
+    "stateCleared": "modified",
+  },
   "server/package.json": {
     "stateCleared": "modified",
   },
   "server/scripts/copy-resources.ts": {
+    "stateCleared": "modified",
+  },
+  "server/scripts/entrypoint.sh": {
     "stateCleared": "modified",
   },
   "server/sonar-project.properties": {
@@ -641,10 +647,16 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > without client 
   "server/nest-cli.json": {
     "stateCleared": "modified",
   },
+  "server/ormconfig.ts": {
+    "stateCleared": "modified",
+  },
   "server/package.json": {
     "stateCleared": "modified",
   },
   "server/scripts/copy-resources.ts": {
+    "stateCleared": "modified",
+  },
+  "server/scripts/entrypoint.sh": {
     "stateCleared": "modified",
   },
   "server/sonar-project.properties": {
