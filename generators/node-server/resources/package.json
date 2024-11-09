@@ -18,9 +18,9 @@
     "express-session": "1.17.3",
     "js-yaml": "4.1.0",
     "jwt-decode": "3.1.1",
-    "mongodb": "6.2.0",
-    "mysql2": "3.9.8",
-    "pg": "8.4.2",
+    "mongodb": "6.10.0",
+    "mysql2": "3.11.4",
+    "pg": "8.13.1",
     "oracledb": "5.0.0",
     "mssql": "6.2.3",
     "passport": "0.4.1",
@@ -29,10 +29,10 @@
     "reflect-metadata": "0.1.14",
     "rxjs": "6.6.3",
     "mongodb-memory-server": "6.9.2",
-    "sqlite3": "5.1.6",
+    "sqlite3": "5.1.7",
     "swagger-ui-express": "5.0.0",
-    "typeorm": "0.2.45",
-    "typeorm-encrypted": "0.5.6"
+    "typeorm": "0.3.20",
+    "typeorm-encrypted": "0.8.0"
   },
   "devDependencies": {
     "@jest/globals": "29.7.0",
