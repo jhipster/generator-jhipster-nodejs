@@ -11,9 +11,6 @@ updates:
     schedule:
       interval: 'daily'
     open-pull-requests-limit: 10
-    update-types:
-      - 'minor'
-      - 'patch'
     groups:
       jest:
         patterns:
@@ -22,6 +19,9 @@ updates:
           - 'jest'
           - 'ts-jest'
       nestjs:
+        update-types:
+          - 'minor'
+          - 'patch'
         patterns:
           - '@nestjs/common'
           - '@nestjs/core'
@@ -34,6 +34,9 @@ updates:
           - '@nestjs/websockets'
           - 'rxjs'
       passport:
+        update-types:
+          - 'minor'
+          - 'patch'
         patterns:
           - '@nestjs/passport'
           - '@types/jwt-decode'
@@ -43,6 +46,9 @@ updates:
           - 'passport-jwt'
           - 'passport-oauth2'
       typeorm:
+        update-types:
+          - 'minor'
+          - 'patch'
         patterns:
           - '@nestjs/typeorm'
           - 'typeorm'
