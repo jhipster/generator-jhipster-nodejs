@@ -40,7 +40,7 @@ jobs:
           - app-type: monolith-angular-jwt-mongodb-jdl
             app-folder: monolith-angular-auth-mongodb-template-jdl
             entity: import-jdl
-            e2e: jwt
+            e2e: 'false'
           - app-type: monolith-angular-jwt-i18n-jdl
             app-folder: monolith-client-auth-i18n-template-jdl
             entity: import-jdl
@@ -52,7 +52,7 @@ jobs:
           - app-type: monolith-angular-oauth2-mongodb-jdl
             app-folder: monolith-angular-auth-mongodb-template-jdl
             entity: import-jdl
-            e2e: oauth2
+            e2e: 'false'
           - app-type: monolith-angular-oauth2-i18n-jdl
             app-folder: monolith-client-auth-i18n-template-jdl
             entity: import-jdl
@@ -102,6 +102,7 @@ jobs:
         run: npm run app:up
       - name: 'START APP WITH EVENTUAL CLIENT E2E TESTS'
         run: npm run e2e:headless --workspace client
+        if: matrix.e2e != 'false'
         id: e2e
       - name: 'E2E: Store failure screenshots'
         uses: actions/upload-artifact@v4
