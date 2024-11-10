@@ -6,7 +6,7 @@
     "@nestjs/passport": "10.0.3",
     "@nestjs/platform-express": "8.4.7",
     "@nestjs/serve-static": "2.2.2",
-    "@nestjs/swagger": "5.2.1",
+    "@nestjs/swagger": "8.0.5",
     "@nestjs/typeorm": "8.0.5",
     "bcrypt": "5.1.1",
     "browser-sync-client": "3.0.3",
