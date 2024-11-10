@@ -30,8 +30,11 @@
     "typeorm:schema:sync": "npm run typeorm -- schema:sync"
   },
   "dependencies": {
-    "browser-sync-client": "<%- nodeServerDependencies['browser-sync-client'] %>",
+<%_ if (authenticationType === 'oauth2') { _%>
     "@nestjs/axios": "<%- nodeServerDependencies['@nestjs/axios'] %>",
+    "express-session": "<%- nodeServerDependencies['express-session'] %>",
+<%_ } _%>
+    "browser-sync-client": "<%- nodeServerDependencies['browser-sync-client'] %>",
     "@nestjs/common": "<%- nodeServerDependencies['@nestjs/common'] %>",
     "@nestjs/core": "<%- nodeServerDependencies['@nestjs/core'] %>",
 <%_ if (authenticationType === 'jwt') { _%>
@@ -52,9 +55,6 @@
     "cloud-config-client": "<%- nodeServerDependencies['cloud-config-client'] %>",
     "dotenv": "<%- nodeServerDependencies['dotenv'] %>",
     "eureka-js-client": "<%- nodeServerDependencies['eureka-js-client'] %>",
-<%_ if (authenticationType === 'oauth2') { _%>
-    "express-session": "<%- nodeServerDependencies['express-session'] %>",
-<%_ } _%>
     "js-yaml": "<%- nodeServerDependencies['js-yaml'] %>",
 <%_ if (authenticationType === 'oauth2') { _%>
     "jwt-decode": "<%- nodeServerDependencies['jwt-decode'] %>",
