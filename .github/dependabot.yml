@@ -18,6 +18,17 @@ updates:
           - '@types/jest'
           - 'jest'
           - 'ts-jest'
+      nestjs:
+        patterns:
+          - '@nestjs/common'
+          - '@nestjs/core'
+          - '@nestjs/microservices'
+          - '@nestjs/platform-express'
+          - '@nestjs/platform-fastify'
+          - '@nestjs/platform-socket.io'
+          - '@nestjs/platform-ws'
+          - '@nestjs/testing'
+          - '@nestjs/websockets'
       typescript-eslint:
         patterns:
           - '@typescript-eslint/*'
