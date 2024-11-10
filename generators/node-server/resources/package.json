@@ -57,7 +57,7 @@
     "nodemon": "3.0.2",
     "rimraf": "5.0.5",
     "sonarqube-scanner": "3.3.0",
-    "supertest": "6.3.3",
+    "supertest": "7.0.0",
     "ts-jest": "29.2.5",
     "ts-node": "10.9.2",
     "tsc-watch": "6.0.4",
