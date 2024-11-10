@@ -48,7 +48,8 @@
     ]
   },
   "scripts": {
-    "build:app": "cd server && <%= clientPackageManager %> run build",
+    "build": "<%= clientPackageManager %> run build -w server && <%= clientPackageManager %> run build -w client",
+    "build:app": "<%= clientPackageManager %> run build -w server",
     "lint:fix": "echo \"INFO: no client found\"",
     "prettier:check": "prettier --check \"{,src/**/}*.{<%= prettierExtensions %>}\"",
     "prettier:format": "prettier --write \"{,src/**/}*.{<%= prettierExtensions %>}\"",
