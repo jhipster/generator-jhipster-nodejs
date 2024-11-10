@@ -131,6 +131,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > run > should su
   "server/src/domain/base/base.entity.ts": {
     "stateCleared": "modified",
   },
+  "server/src/domain/base/pagination.entity.spec.ts": {
+    "stateCleared": "modified",
+  },
   "server/src/domain/base/pagination.entity.ts": {
     "stateCleared": "modified",
   },
@@ -693,6 +696,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > without client 
     "stateCleared": "modified",
   },
   "server/src/domain/base/base.entity.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/domain/base/pagination.entity.spec.ts": {
     "stateCleared": "modified",
   },
   "server/src/domain/base/pagination.entity.ts": {
