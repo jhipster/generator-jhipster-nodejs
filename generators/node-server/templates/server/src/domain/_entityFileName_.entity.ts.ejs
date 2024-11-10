@@ -85,14 +85,14 @@ export class <%= persistClass %> extends BaseEntity  {
     @Column({<%_ if(fieldColumnType) { _%> type: '<%-fieldColumnType%>' ,<%_ }_%>  name: "<%-fieldNameAsDatabaseColumn %>"<% if (fieldValidate === true) { %><% if (fieldValidateRules.includes('maxlength')) { %>, length: <%= fieldValidateRulesMaxlength %><% } %> <% } %><% if (!required) { %>, nullable: true<% } %><% if (unique) { %>, unique: true<% }%>})
         <%_ } _%>
         <%_ if (field.fieldIsEnum) { _%>
-    <%= fieldName %>: <%= fieldType %>;
+    <%= fieldName %><%- field.fieldValidationRequired ? '' : '?' %>: <%= fieldType %>;
         <%_ } else { _%>
-    <%= fieldName %>: <%= this.getTsType(fieldType) %>;
+    <%= fieldName %><%- field.fieldValidationRequired ? '' : '?' %>: <%= this.getTsType(fieldType) %>;
         <%_ } _%>
 
     <%_ if ((fieldType === 'byte[]' || fieldType === 'ByteBuffer') && fieldTypeBlobContent !== 'text') { _%>
     @Column({name: '<%-fieldNameAsDatabaseColumn %>_content_type'<% if (!required) { %>, nullable: true<% } %>})
-    <%= fieldName %>ContentType: string;
+    <%= fieldName %>ContentType<%- field.fieldValidationRequired ? '' : '?' %>: string;
     <%_ }
     } _%>
 
@@ -117,11 +117,11 @@ export class <%= persistClass %> extends BaseEntity  {
 
         if (relationshipType === 'one-to-many') {_%>
     @OneToMany(type => <%= otherEntityClass %> <%_ if (userRelationship === false) { _%>, other => other.<%= otherEntityRelationshipName %><%_ } _%>)
-    <%= relationshipFieldNamePlural %>: <%= otherEntityClass %>[];
+    <%= relationshipFieldNamePlural %><%- relationship.relationshipValidationRequired ? '' : '?' %>: <%= otherEntityClass %>[];
 
     <%_ } else if (relationshipType === 'many-to-one') { _%>
     @ManyToOne(type => <%= otherEntityClass %> <%_ if (!ownerSide && userRelationship === false ) { _%>, other => other.<%= otherEntityRelationshipNamePlural %>  <%_ } _%>)
-    <%= relationshipFieldName %>: <%= otherEntityClass %>;
+    <%= relationshipFieldName %><%- relationship.relationshipValidationRequired ? '' : '?' %>: <%= otherEntityClass %>;
 
     <%_ } else if (relationshipType === 'many-to-many') { _%>
     @ManyToMany(type => <%= otherEntityClass %> )
@@ -132,12 +132,12 @@ export class <%= persistClass %> extends BaseEntity  {
         inverseJoinColumn: { name: '<%= relationship.columnName %>_id', referencedColumnName: "id" }
     })
         <%_ } _%>
-    <%= relationshipFieldNamePlural %>: <%= otherEntityClass %>[];
+    <%= relationshipFieldNamePlural %><%- relationship.relationshipValidationRequired ? '' : '?' %>: <%= otherEntityClass %>[];
 
     <%_ } else { _%>
     @OneToOne(type => <%= otherEntityClass %>)
     <%_ if (ownerSide === true) { _%>@JoinColumn()<%_ } _%>
-    <%= relationshipFieldName %>: <%= otherEntityClass %>;
+    <%= relationshipFieldName %><%- relationship.relationshipValidationRequired ? '' : '?' %>: <%= otherEntityClass %>;
 
     <%_ }
     } _%>
