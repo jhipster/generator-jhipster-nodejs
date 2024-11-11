@@ -25,6 +25,8 @@ async function bootstrap(): Promise<void> {
   app.useGlobalPipes(
     new ValidationPipe({
       exceptionFactory: (): BadRequestException  => new BadRequestException('Validation error'),
+      // https://github.com/nestjs/nest/issues/10683#issuecomment-1349614194
+      forbidUnknownValues: false,
     }),
   );
   // Disable cache.
@@ -62,9 +64,6 @@ async function bootstrap(): Promise<void> {
     logger.log(`The client is not been generated`);
   <%_ } _%>
   setupSwagger(app);
-
-  // https://github.com/nestjs/nest/issues/10683#issuecomment-1349614194
-  app.useGlobalPipes(new ValidationPipe({forbidUnknownValues: false}));
 
   await app.listen(port);
   logger.log(`Application listening on port ${port}`);
