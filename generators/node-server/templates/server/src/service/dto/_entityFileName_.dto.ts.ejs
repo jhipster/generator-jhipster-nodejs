@@ -61,7 +61,6 @@ export class <%= dtoClass %> extends BaseDTO {
         const fieldName = field.fieldName;
         const fieldNameUnderscored = field.fieldNameUnderscored;
         const fieldNameAsDatabaseColumn = field.fieldNameAsDatabaseColumn;
-        const fieldColumnType=this.addDbType(fieldType);
         if (fieldValidate === true) {
             if (fieldValidateRules.includes('required')) {
                 required = true;
@@ -74,53 +73,22 @@ export class <%= dtoClass %> extends BaseDTO {
             <%_ } else { _%>
             @ApiProperty({ <%_ if (typeof field.javadoc != 'undefined') { _%> description: '<%- formatAsApiDescription(field.javadoc) %>' <%_ } else { _%> description: '<%= fieldName %> field' <%_ } if (!required) { _%>, required: false <%_ } _%>})
             <%_ } _%>
-            <%_ if (field.fieldIsEnum) { _%>
-        <%= fieldName %>: <%= fieldType %>;
-            <%_ } else { _%>
-        <%= fieldName %>: <%= this.getTsType(fieldType) %>;
-            <%_ } _%>
+        <%= fieldName %><%- field.fieldValidationRequired ? '' : '?' %>: <%= field.nodejsFieldType %>;
 
         <%_ if ((fieldType === 'byte[]' || fieldType === 'ByteBuffer') && fieldTypeBlobContent !== 'text') { _%>
 
-        <%= fieldName %>ContentType: string;
+        <%= fieldName %>ContentType<%- field.fieldValidationRequired ? '' : '?' %>: string;
         <%_ }
         } _%>
 
         <%_
-        for (idx in relationships) {
-            const relationship = relationships[idx];
-            const otherEntityRelationshipName = relationship.otherEntityRelationshipName;
-            const otherEntityRelationshipNamePlural = relationship.otherEntityRelationshipNamePlural;
-            const relationshipName = relationship.relationshipName;
-            const relationshipFieldName = relationship.relationshipFieldName;
-            const relationshipFieldNamePlural = relationship.relationshipFieldNamePlural;
-            const relationshipType = relationship.relationshipType;
-            const relationshipValidate = relationship.relationshipValidate;
-            const relationshipRequired = relationship.relationshipRequired;
-            const otherEntityNameCapitalized = relationship.otherEntityNameCapitalized;
-            const otherEntityDto = relationship.otherEntity.dtoClass;
-
-        if (typeof relationships.javadoc != 'undefined') { _%>
-    <%- formatAsFieldJavadoc(relationships.javadoc) %>
+  for (const relationship of relationships) {
+        if (typeof relationship.javadoc != 'undefined') { _%>
+  <%- formatAsFieldJavadoc(relationship.javadoc) %>
         <%_ } _%>
-          <%_ if (relationshipType === 'one-to-many') { _%>
-         @ApiProperty({ type: () => <%= otherEntityDto %>, isArray: true, <%_ if (typeof relationships.javadoc != 'undefined') { _%>  description: '<%- formatAsApiDescription(relationships.javadoc) %>' <%_ } else { _%> description: '<%= relationshipFieldNamePlural %> relationship' <%_ } _%> })
-        <%= relationshipFieldNamePlural %>: <%= otherEntityDto %>[];
+  @ApiProperty({ type: () => <%= relationship.otherEntity.dtoClass %><%- relationship.collection ? ', isArray: true' : '' %>, <%_ if (typeof relationship.javadoc != 'undefined') { _%>  description: '<%- formatAsApiDescription(relationship.javadoc) %>' <%_ } else { _%> description: '<%= relationship.propertyName %> relationship' <%_ } _%> })
+  <%= relationship.propertyName %><%- relationship.relationshipValidationRequired ? '' : '?' %>: <%= relationship.otherEntity.dtoClass %><%- relationship.collection ? '[]' : '' %>;
+  <%_ } _%>
 
-        <%_ } else if (relationshipType === 'many-to-one') { _%>
-        @ApiProperty({ type: () => <%= otherEntityDto %>, <%_ if (typeof relationships.javadoc != 'undefined') { _%>  description: '<%- formatAsApiDescription(relationships.javadoc) %>' <%_ } else { _%> description: '<%= relationshipFieldName %> relationship' <%_ } _%> })
-        <%= relationshipFieldName %>: <%= otherEntityDto %>;
-
-        <%_ } else if (relationshipType === 'many-to-many') { _%>
-        @ApiProperty({ type: () => <%= otherEntityDto %>, isArray: true, <%_ if (typeof relationships.javadoc != 'undefined') { _%>  description: '<%- formatAsApiDescription(relationships.javadoc) %>' <%_ } else { _%> description: '<%= relationshipFieldNamePlural %> relationship' <%_ } _%> })
-        <%= relationshipFieldNamePlural %>: <%= otherEntityDto %>[];
-
-        <%_ } else { _%>
-        @ApiProperty({ type: () => <%= otherEntityDto %>, <%_ if (typeof relationships.javadoc != 'undefined') { _%>  description: '<%- formatAsApiDescription(relationships.javadoc) %>' <%_ } else { _%> description: '<%= relationshipFieldName %> relationship' <%_ } _%> })
-        <%= relationshipFieldName %>: <%= otherEntityDto %>;
-
-        <%_ }
-        } _%>
-        // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
-
-    }
+  // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
+}

@@ -119,7 +119,13 @@ export default class extends BaseApplicationGenerator {
 
   get [BaseApplicationGenerator.PREPARING_EACH_ENTITY]() {
     return this.asPreparingEachEntityTaskGroup({
-      async preparingEachEntityTemplateTask() {},
+      async preparingEachEntityTemplateTask({ entity, application }) {
+        for (const field of entity.fields) {
+          const { fieldType } = field;
+          field.nodejsFieldType = field.fieldValues ? fieldType : fieldTypes[fieldType] ?? 'any';
+          field.nodejsColumnType = sanitizeDbType(dbTypes[fieldType], application.devDatabaseType);
+        }
+      },
     });
   }
 
@@ -229,13 +235,5 @@ export default class extends BaseApplicationGenerator {
     return this.asEndTaskGroup({
       async endTemplateTask() {},
     });
-  }
-
-  getTsType(fieldType) {
-    return fieldTypes[fieldType] || 'any';
-  }
-
-  addDbType(fieldType) {
-    return sanitizeDbType(dbTypes[fieldType], this.devDatabaseType);
   }
 }
