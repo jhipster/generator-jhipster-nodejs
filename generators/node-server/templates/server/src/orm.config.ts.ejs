@@ -21,8 +21,8 @@ _%>
 <%_ if (databaseType === 'mongodb') { _%>
     type: '<%= nodeProdDatabaseDriver %>',
     host: 'localhost',
-    port: mongod?.port ?? 0,
-    database: mongod?.dbName ?? 'dev',
+    port: mongod?.instanceInfo?.port ?? 0,
+    database: mongod?.instanceInfo?.dbName ?? 'dev',
     useNewUrlParser: true,
     useUnifiedTopology: true,
 <%_ } else { _%>
@@ -54,8 +54,8 @@ _%>
 <%_ } else { _%>
       type: '<%= nodeProdDatabaseDriver %>',
       host: 'localhost',
-      port: mongod.port,
-      database: mongod.dbName,
+      port: mongod.instanceInfo.port,
+      database: mongod.instanceInfo.dbName,
       useNewUrlParser: true,
       useUnifiedTopology: true,
 <%_ } _%>
