@@ -216,10 +216,22 @@ export default class extends BaseApplicationGenerator {
   get postWriting() {
     return this.asPostWritingTaskGroup({
       adjustWorkspacePackageJson({ application }) {
+        const { nodeServerDependencies, nodeDependencies } = application;
+
+        const overrides = {
+          '@nestjs/typeorm': {
+            '@nestjs/common': nodeServerDependencies['@nestjs/common'],
+            '@nestjs/core': nodeServerDependencies['@nestjs/core'],
+          },
+        };
+
+        this.packageJson.merge({ overrides });
+        this.mergeDestinationJson('server/package.json', { overrides });
+
         if (application.clientFrameworkAngular) {
           this.packageJson.merge({
             overrides: {
-              'browser-sync': application.nodeDependencies['browser-sync'],
+              'browser-sync': nodeDependencies['browser-sync'],
             },
           });
         }
