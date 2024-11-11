@@ -8,7 +8,7 @@ import { User } from '../domain/user.entity';
 import { transformPassword } from '../security';
 
 <%_ if (typeormRelationsSupport) { _%>
-const relations = ['authorities'];
+const relations = { authorities: true } as const;
 
 <%_ } _%>
 @Injectable()
@@ -16,7 +16,7 @@ export class UserService {
     constructor(@InjectRepository(User) private userRepository: Repository<User>) {}
 
     async findById(id: <%= user.primaryKey.tsType %>): Promise<<%= user.dtoClass%> | undefined> {
-        const result = await this.userRepository.findOne(id);
+        const result = await this.userRepository.findOneBy({ id });
         return UserMapper.fromEntityToDTO(this.flatAuthorities(result))
     }
 
