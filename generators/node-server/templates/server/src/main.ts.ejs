@@ -25,6 +25,8 @@ async function bootstrap(): Promise<void> {
   app.useGlobalPipes(
     new ValidationPipe({
       exceptionFactory: (): BadRequestException  => new BadRequestException('Validation error'),
+      // https://github.com/nestjs/nest/issues/10683#issuecomment-1349614194
+      forbidUnknownValues: false,
     }),
   );
   // Disable cache.
