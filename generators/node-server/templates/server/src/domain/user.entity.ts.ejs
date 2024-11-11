@@ -1,10 +1,18 @@
 import { Authority } from './authority.entity';
-import { Entity, Column<%_ if (databaseType !== 'mongodb') { _%>, ManyToMany, JoinTable <%_ } _%> } from 'typeorm';
+import { <%_ if (databaseType === 'mongodb') { _%> ObjectIdColumn <%_ } else { _%> PrimaryGeneratedColumn <%_ } _%>, Entity, Column<%_ if (databaseType !== 'mongodb') { _%>, ManyToMany, JoinTable <%_ } _%> } from 'typeorm';
 import { BaseEntity } from './base/base.entity';
 import { Exclude } from 'class-transformer';
 
 @Entity('<%- jhiTablePrefix %>_user')
 export class <%= user.persistClass %> extends BaseEntity {
+
+<%_ if (databaseTypeMongodb) { _%>
+  @ObjectIdColumn({ name: '_<%- user.primaryKey.name %>' })
+<%_ } else if (databaseTypeSql) { _%>
+  @PrimaryGeneratedColumn(<%- user.primaryKey.typeUUID ? "'uuid'" : '' %>)
+<%_ } _%>
+  <%- user.primaryKey.name %>?: <%- user.primaryKey.tsType %>;
+
   @Column({ unique: true })
   login: string;
   @Column({ nullable: true })

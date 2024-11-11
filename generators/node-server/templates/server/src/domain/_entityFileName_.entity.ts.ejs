@@ -1,20 +1,16 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { Entity, Column <%_ if (databaseType !== 'mongodb') { _%>, JoinColumn, OneToOne, ManyToOne, OneToMany, ManyToMany, JoinTable <%_ } _%> } from 'typeorm';
+import { <%_ if (databaseType === 'mongodb') { _%> ObjectIdColumn <%_ } else { _%> PrimaryGeneratedColumn <%_ } _%>, Entity, Column <%_ if (databaseType !== 'mongodb') { _%>, JoinColumn, OneToOne, ManyToOne, OneToMany, ManyToMany, JoinTable <%_ } _%> } from 'typeorm';
 import { BaseEntity } from './base/base.entity';
 
 <%_
 let isUserRelationship = false;
 const uniqueEntities = {};
 const uniqueEnums = {};
-const fieldsWithoutId = [];
 
 for (idx in fields) {
     if (fields[idx].fieldIsEnum && (
             !uniqueEnums[fields[idx].fieldType] || (uniqueEnums[fields[idx].fieldType] && fields[idx].fieldValues.length !== 0))) {
         uniqueEnums[fields[idx].fieldType] = this._.kebabCase(fields[idx].fieldType);
-    }
-    if (fields[idx].fieldName !== 'id') {
-        fieldsWithoutId.push(fields[idx]);
     }
 }
 for (idx in relationships) {
@@ -50,8 +46,14 @@ import { <%= user.persistClass %> } from './user.entity';
 @Entity('<%= entityTableName %>')
 export class <%= persistClass %> extends BaseEntity  {
 
-<%_ for (idx in fieldsWithoutId) {
-    const field = fieldsWithoutId[idx];
+<%_ if (databaseTypeMongodb) { _%>
+  @ObjectIdColumn({ name: '_<%- primaryKey.name %>' })
+<%_ } else if (databaseTypeSql) { _%>
+  @PrimaryGeneratedColumn(<%- primaryKey.typeUUID ? "'uuid'" : '' %>)
+<%_ } _%>
+  <%- primaryKey.name %>?: <%- primaryKey.tsType %>;
+
+<%_ for (const field of fields.filter(field => !field.id)) {
     if (typeof field.javadoc !== 'undefined') { _%>
 <%- formatAsFieldJavadoc(field.javadoc) %>
     <%_ }
