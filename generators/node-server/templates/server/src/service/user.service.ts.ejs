@@ -7,6 +7,10 @@ import { UserRepository } from '../repository/user.repository';
 import { FindManyOptions, FindOneOptions } from 'typeorm';
 import { transformPassword } from '../security';
 
+<%_ if (typeormRelationsSupport) { _%>
+const relations = ['authorities'];
+
+<%_ } _%>
 @Injectable()
 export class UserService {
     constructor(@InjectRepository(UserRepository) private userRepository: UserRepository) {}
@@ -17,10 +21,13 @@ export class UserService {
     }
 
     async findByFields(options: FindOneOptions<<%= user.dtoClass%>>): Promise<<%= user.dtoClass%> | undefined> {
-        <%_ if (databaseType !== 'mongodb') { _%>
-        options.relations = ['authorities'];
-        <%_ } _%>
-        const result = await this.userRepository.findOne(options);
+        const result = await this.userRepository.findOne(
+<%_ if (typeormRelationsSupport) { _%>
+          { ...options, relations },
+<%_ } else { _%>
+          options,
+<%_ } _%>
+        );
         return UserMapper.fromEntityToDTO(this.flatAuthorities(result));
     }
 
@@ -30,10 +37,13 @@ export class UserService {
     }
 
     async findAndCount(options: FindManyOptions<<%= user.dtoClass%>>): Promise<[<%= user.dtoClass%>[], number]> {
-        <%_ if (databaseType !== 'mongodb') { _%>
-        options.relations = ['authorities'];
-        <%_ } _%>
-        const resultList = await this.userRepository.findAndCount(options);
+        const resultList = await this.userRepository.findAndCount(
+<%_ if (typeormRelationsSupport) { _%>
+          { ...options, relations },
+<%_ } else { _%>
+          options,
+<%_ } _%>
+        );
         const usersDTO: <%= user.dtoClass%>[] = [];
         if (resultList && resultList[0]) {
             resultList[0].forEach(user => usersDTO.push(UserMapper.fromEntityToDTO(this.flatAuthorities(user))));

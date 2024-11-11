@@ -5,25 +5,18 @@ import { <%= dtoClass %> }  from '../service/dto/<%= entityFileName %>.dto';
 import { <%= entityClass %>Mapper }  from '../service/mapper/<%= entityFileName %>.mapper';
 import { <%= entityClass %>Repository } from '../repository/<%= entityFileName %>.repository';
 
-const relationshipNames = [];
 <%_
-for (idx in relationships) {
-
- const relationshipType = relationships[idx].relationshipType;
- const relationshipFieldName = relationships[idx].relationshipFieldName;
- const relationshipFieldNamePlural = relationships[idx].relationshipFieldNamePlural;
- const ownerSide = relationships[idx].ownerSide;
-
-   if (relationshipType === 'many-to-one') { _%>
-    relationshipNames.push('<%-relationshipFieldName %>');
-   <%_ } else if (relationshipType === 'many-to-many' && ownerSide === true) { _%>
-    relationshipNames.push('<%- relationshipFieldNamePlural %>');
-   <%_ }
-}
+const eagerLoadRelations = relationships.filter(rel => rel.ownerSide).map(rel => rel.propertyName);
 const pkType = primaryKey.tsType;
 _%>
+<%_ if (typeormRelationsSupport && eagerLoadRelations.length > 0) { _%>
+const relations = [
+  <%_ for (const rel of eagerLoadRelations) { _%>
+  '<%= rel %>',
+  <%_ } _%>
+];
 
-
+<%_ } _%>
 @Injectable()
 export class <%= entityClass %>Service {
     logger = new Logger('<%= entityClass %>Service');
@@ -32,7 +25,9 @@ export class <%= entityClass %>Service {
 
       async findById(id: <%= pkType %>): Promise<<%= dtoClass %> | undefined> {
         const result = await this.<%= entityInstance %>Repository.findOne({
-          relations: relationshipNames,
+<%_ if (typeormRelationsSupport && eagerLoadRelations.length > 0) { _%>
+          relations,
+<%_ } _%>
           where: { id },
         });
         return <%= entityClass %>Mapper.fromEntityToDTO(result);
@@ -44,8 +39,13 @@ export class <%= entityClass %>Service {
       }
 
       async findAndCount(options: FindManyOptions<<%= dtoClass %>>): Promise<[<%= dtoClass %>[], number]> {
-        options.relations = relationshipNames;
-        const resultList = await this.<%= entityInstance %>Repository.findAndCount(options);
+        const resultList = await this.<%= entityInstance %>Repository.findAndCount(
+<%_ if (typeormRelationsSupport && eagerLoadRelations.length > 0) { _%>
+          { ...options, relations },
+<%_ } else { _%>
+          options,
+<%_ } _%>
+        );
         const <%= entityInstance %>DTO: <%= dtoClass %>[] = [];
         if (resultList && resultList[0]) {
             resultList[0].forEach(<%= entityInstance %> => <%= entityInstance %>DTO.push(<%= entityClass %>Mapper.fromEntityToDTO(<%= entityInstance %>)));
