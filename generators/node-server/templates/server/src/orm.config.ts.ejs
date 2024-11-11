@@ -1,5 +1,7 @@
 import { TypeOrmModuleOptions } from '@nestjs/typeorm';
-<%_ if (databaseType === 'mongodb') { _%> import { MongoMemoryServer } from 'mongodb-memory-server'; <%_ } _%>
+<%_ if (databaseType === 'mongodb') { _%>
+import { MongoMemoryServer } from 'mongodb-memory-server';
+<%_ } _%>
 
 <%_ if (databaseType === 'mongodb') { _%>
 async function ormConfig(): Promise<TypeOrmModuleOptions> {
@@ -19,8 +21,8 @@ _%>
 <%_ if (databaseType === 'mongodb') { _%>
     type: '<%= nodeProdDatabaseDriver %>',
     host: 'localhost',
-    port: mongod?await mongod.getPort():0,
-    database: mongod?await mongod.getDbName():'dev',
+    port: mongod?.port ?? 0,
+    database: mongod?.dbName ?? 'dev',
     useNewUrlParser: true,
     useUnifiedTopology: true,
 <%_ } else { _%>
@@ -52,8 +54,8 @@ _%>
 <%_ } else { _%>
       type: '<%= nodeProdDatabaseDriver %>',
       host: 'localhost',
-      port: await mongod.getPort(),
-      database: await mongod.getDbName(),
+      port: mongod.port,
+      database: mongod.dbName,
       useNewUrlParser: true,
       useUnifiedTopology: true,
 <%_ } _%>
