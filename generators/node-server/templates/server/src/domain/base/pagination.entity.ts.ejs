@@ -59,7 +59,7 @@ export class PageRequest {
     return fallback;
   }
 
-  public static handleQueryType<const T>(pa: PaginationQueryType): string | undefined {
+  public static handleQueryType(pa: PaginationQueryType): string | undefined {
     pa = Array.isArray(pa) ? pa[0] : pa;
     if (typeof pa === 'string') {
       return pa;
