@@ -1,15 +1,15 @@
 import { Injectable, <%_ if (authenticationType === 'jwt') { _%> HttpException, HttpStatus,  <%_ } _%> Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { FindManyOptions, Repository } from 'typeorm';
 <%_ if (authenticationType === 'jwt') { _%>
+import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import { UserLoginDTO } from '../service/dto/user-login.dto';
 import { Payload } from '../security/payload.interface';
-import * as bcrypt from 'bcrypt';
 <%_ } _%>
-import { AuthorityRepository } from '../repository/authority.repository';
+import { Authority } from '../domain/authority.entity';
 import { UserService } from '../service/user.service';
 import { <%= user.dtoClass%> } from './dto/user.dto';
-import { FindManyOptions } from 'typeorm';
 
 <%_
 const userIdType = user.primaryKey.tsType;
@@ -23,7 +23,7 @@ export class AuthService {
     <%_ if (authenticationType === 'jwt') { _%>
     private readonly jwtService: JwtService,
     <%_ } _%>
-    @InjectRepository(AuthorityRepository) private authorityRepository: AuthorityRepository,
+    @InjectRepository(Authority) private authorityRepository: Repository<Authority>,
     private userService: UserService,
   ) {}
 

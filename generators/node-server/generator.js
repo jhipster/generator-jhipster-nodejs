@@ -1,3 +1,4 @@
+import { readFile } from 'node:fs/promises';
 import BaseApplicationGenerator from 'generator-jhipster/generators/base-application';
 import { createNeedleCallback } from 'generator-jhipster/generators/base/support';
 import { getEnumInfo } from 'generator-jhipster/generators/base-application/support';
@@ -45,6 +46,13 @@ const dbTypes = {
 };
 
 export default class extends BaseApplicationGenerator {
+  oldNodejsVersion;
+  nodejsPackageJson;
+
+  constructor(args, opts, features) {
+    super(args, opts, { ...features, queueCommandTasks: true });
+  }
+
   async beforeQueue() {
     await this.dependsOnJHipster('bootstrap-application');
     await this.dependsOnJHipster('common');
@@ -52,6 +60,11 @@ export default class extends BaseApplicationGenerator {
 
   get [BaseApplicationGenerator.INITIALIZING]() {
     return this.asInitializingTaskGroup({
+      async initializing() {
+        this.oldNodejsVersion = this.blueprintConfig.nodejsVersion ?? '3.0.0';
+        this.nodejsPackageJson = JSON.parse((await readFile(this.templatePath('../../../package.json'), 'utf-8')).toString());
+        this.blueprintConfig.nodejsVersion = this.nodejsPackageJson.version;
+      },
       async initializingTemplateTask() {
         this.parseJHipsterCommand(command);
       },
@@ -103,17 +116,13 @@ export default class extends BaseApplicationGenerator {
     });
   }
 
-  get [BaseApplicationGenerator.CONFIGURING_EACH_ENTITY]() {
-    return this.asConfiguringEachEntityTaskGroup({
-      async configuringEachEntityTemplateTask({ entityConfig }) {
-        entityConfig.dto = true;
-      },
-    });
-  }
-
   get [BaseApplicationGenerator.LOADING_ENTITIES]() {
     return this.asLoadingEntitiesTaskGroup({
-      async loadingEntitiesTemplateTask() {},
+      async loadingEntitiesTemplateTask({ entitiesToLoad }) {
+        for (const entity of entitiesToLoad) {
+          entity.entityBootstrap.dto = true;
+        }
+      },
     });
   }
 
@@ -129,32 +138,16 @@ export default class extends BaseApplicationGenerator {
     });
   }
 
-  get [BaseApplicationGenerator.PREPARING_EACH_ENTITY_FIELD]() {
-    return this.asPreparingEachEntityFieldTaskGroup({
-      async preparingEachEntityFieldTemplateTask() {},
-    });
-  }
-
-  get [BaseApplicationGenerator.PREPARING_EACH_ENTITY_RELATIONSHIP]() {
-    return this.asPreparingEachEntityRelationshipTaskGroup({
-      async preparingEachEntityRelationshipTemplateTask() {},
-    });
-  }
-
-  get [BaseApplicationGenerator.POST_PREPARING_EACH_ENTITY]() {
-    return this.asPostPreparingEachEntityTaskGroup({
-      async postPreparingEachEntityTemplateTask() {},
-    });
-  }
-
-  get [BaseApplicationGenerator.DEFAULT]() {
-    return this.asDefaultTaskGroup({
-      async defaultTemplateTask() {},
-    });
-  }
-
   get [BaseApplicationGenerator.WRITING]() {
     return this.asWritingTaskGroup({
+      async cleanup({ control }) {
+        if (control.existingProject) {
+          if (this.isVersionLessThan(this.oldNodejsVersion, '3.0.1')) {
+            this.removeFile('server/src/repository/authority.repository.ts');
+            this.removeFile('server/src/repository/user.repository.ts');
+          }
+        }
+      },
       async writingTemplateTask({ application }) {
         await this.writeFiles({
           sections: serverFiles,
@@ -166,6 +159,15 @@ export default class extends BaseApplicationGenerator {
 
   get [BaseApplicationGenerator.WRITING_ENTITIES]() {
     return this.asWritingEntitiesTaskGroup({
+      async cleanup({ control, entities }) {
+        if (control.existingProject) {
+          if (this.isVersionLessThan(this.oldNodejsVersion, '3.0.1')) {
+            for (const entity of entities) {
+              this.removeFile(`server/src/repository/${entity.entityFileName}.repository.ts`);
+            }
+          }
+        }
+      },
       async customEntityServerFiles({ application, entities }) {
         if (this.databaseType === 'mongodb' && this.relationships.length > 0) {
           throw new Error('relationships not supported in mongodb!');
@@ -213,7 +215,7 @@ export default class extends BaseApplicationGenerator {
     });
   }
 
-  get postWriting() {
+  get [BaseApplicationGenerator.POST_WRITING]() {
     return this.asPostWritingTaskGroup({
       adjustWorkspacePackageJson({ application }) {
         if (application.clientFrameworkAngular) {
@@ -224,16 +226,6 @@ export default class extends BaseApplicationGenerator {
           });
         }
       },
-    });
-  }
-
-  get [BaseApplicationGenerator.POST_WRITING]() {
-    return this.delegateTasksToBlueprint(() => this.postWriting);
-  }
-
-  get [BaseApplicationGenerator.END]() {
-    return this.asEndTaskGroup({
-      async endTemplateTask() {},
     });
   }
 }

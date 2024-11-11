@@ -158,12 +158,6 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > run > should su
   "server/src/orm.config.ts": {
     "stateCleared": "modified",
   },
-  "server/src/repository/authority.repository.ts": {
-    "stateCleared": "modified",
-  },
-  "server/src/repository/user.repository.ts": {
-    "stateCleared": "modified",
-  },
   "server/src/security/decorators/auth-user.decorator.ts": {
     "stateCleared": "modified",
   },
@@ -723,12 +717,6 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > without client 
     "stateCleared": "modified",
   },
   "server/src/orm.config.ts": {
-    "stateCleared": "modified",
-  },
-  "server/src/repository/authority.repository.ts": {
-    "stateCleared": "modified",
-  },
-  "server/src/repository/user.repository.ts": {
     "stateCleared": "modified",
   },
   "server/src/security/decorators/auth-user.decorator.ts": {

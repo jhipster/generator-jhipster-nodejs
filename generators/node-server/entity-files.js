@@ -14,7 +14,6 @@ export const entityFiles = {
       templates: [
         'src/domain/_entityFileName_.entity.ts',
         'src/module/_entityFileName_.module.ts',
-        'src/repository/_entityFileName_.repository.ts',
         'src/service/_entityFileName_.service.ts',
         'src/service/dto/_entityFileName_.dto.ts',
         'src/service/mapper/_entityFileName_.mapper.ts',
