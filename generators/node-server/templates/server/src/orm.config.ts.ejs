@@ -2,6 +2,7 @@ import { TypeOrmModuleOptions } from '@nestjs/typeorm';
 <%_ if (databaseType === 'mongodb') { _%>
 import { MongoMemoryServer } from 'mongodb-memory-server';
 <%_ } _%>
+// jhipster-needle-add-entity-to-ormconfig-imports - JHipster will add code here, do not remove
 
 <%_ if (databaseType === 'mongodb') { _%>
 async function ormConfig(): Promise<TypeOrmModuleOptions> {
@@ -81,7 +82,9 @@ _%>
   return {
     synchronize: process.env.BACKEND_ENV === 'test',
     migrationsRun: true,
-    entities: [__dirname + '/domain/*.entity{.ts,.js}'],
+    entities: [
+      // jhipster-needle-add-entity-to-ormconfig-entities - JHipster will add code here, do not remove
+    ],
     migrations: [__dirname + '/migrations/**/*{.ts,.js}'],
     cli: {
         migrationsDir: 'src/migrations',

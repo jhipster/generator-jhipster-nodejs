@@ -97,6 +97,32 @@ export default class extends BaseApplicationGenerator {
 
   get [BaseApplicationGenerator.PREPARING]() {
     return this.asPreparingTaskGroup({
+      async source({ source }) {
+        source.addEntityToNodeConfig = ({ entityFileName, persistClass }) =>
+          this.editFile(
+            `${SERVER_NODEJS_SRC_DIR}/src/orm.config.ts`,
+            createNeedleCallback({
+              needle: 'add-entity-to-ormconfig-imports',
+              contentToAdd: `import { ${persistClass} } from './domain/${entityFileName}.entity';`,
+            }),
+            createNeedleCallback({
+              needle: 'add-entity-to-ormconfig-entities',
+              contentToAdd: `${persistClass},`,
+            }),
+          );
+        source.addEntityToAppModule = ({ entityClass, entityFileName }) =>
+          this.editFile(
+            `${SERVER_NODEJS_SRC_DIR}/src/app.module.ts`,
+            createNeedleCallback({
+              needle: 'jhipster-needle-add-entity-module-to-main-import',
+              contentToAdd: `import { ${entityClass}Module } from './module/${entityFileName}.module';`,
+            }),
+            createNeedleCallback({
+              needle: 'jhipster-needle-add-entity-module-to-main',
+              contentToAdd: `${entityClass}Module,`,
+            }),
+          );
+      },
       async preparing({ application }) {
         application.typeormOrderSupport = !application.databaseTypeMongodb;
       },
@@ -195,19 +221,15 @@ export default class extends BaseApplicationGenerator {
 
   get [BaseApplicationGenerator.POST_WRITING_ENTITIES]() {
     return this.asPostWritingEntitiesTaskGroup({
-      async postWritingEntitiesTemplateTask({ entities }) {
-        for (const entity of entities.filter(entity => !entity.skipServer && !entity.builtIn)) {
-          this.editFile(
-            `${SERVER_NODEJS_SRC_DIR}/src/app.module.ts`,
-            createNeedleCallback({
-              needle: 'jhipster-needle-add-entity-module-to-main-import',
-              contentToAdd: `import { ${entity.entityClass}Module } from './module/${entity.entityFileName}.module';`,
-            }),
-            createNeedleCallback({
-              needle: 'jhipster-needle-add-entity-module-to-main',
-              contentToAdd: `${entity.entityClass}Module,`,
-            }),
-          );
+      async postWritingEntitiesTemplateTask({ entities, source }) {
+        for (const entity of entities.filter(entity => !entity.skipServer)) {
+          const { entityFileName, persistClass, entityClass } = entity;
+          if (!entity.builtInUserManagement) {
+            source.addEntityToNodeConfig({ entityFileName, persistClass });
+          }
+          if (!entity.builtIn) {
+            source.addEntityToAppModule({ entityFileName, entityClass });
+          }
         }
       },
     });
