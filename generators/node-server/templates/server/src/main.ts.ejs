@@ -63,6 +63,9 @@ async function bootstrap(): Promise<void> {
   <%_ } _%>
   setupSwagger(app);
 
+  // https://github.com/nestjs/nest/issues/10683#issuecomment-1349614194
+  app.useGlobalPipes(new ValidationPipe({forbidUnknownValues: false}));
+
   await app.listen(port);
   logger.log(`Application listening on port ${port}`);
 }
