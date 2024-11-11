@@ -65,7 +65,6 @@ export class <%= persistClass %> extends BaseEntity  {
     const fieldName = field.fieldName;
     const fieldNameUnderscored = field.fieldNameUnderscored;
     const fieldNameAsDatabaseColumn = field.fieldNameAsDatabaseColumn;
-    const fieldColumnType=this.addDbType(fieldType);
     if (fieldValidate === true) {
         if (fieldValidateRules.includes('required')) {
             required = true;
@@ -78,17 +77,13 @@ export class <%= persistClass %> extends BaseEntity  {
         <%_ if (field.fieldIsEnum) { _%>
     @Column({type: 'simple-enum', name: '<%-fieldNameAsDatabaseColumn %>', enum: <%= fieldType %>})
         <%_ } else if (['Instant', 'ZonedDateTime', 'LocalDate'].includes(fieldType)) { _%>
-    @Column({<%_ if(fieldColumnType) { _%> type: '<%-fieldColumnType%>' ,<%_ }_%> name: "<%-fieldNameAsDatabaseColumn %>"<% if (!required) { %>, nullable: true<% } %><% if (unique) { %>, unique: true<% } %>})
+    @Column({<%_ if(field.nodejsColumnType) { _%> type: '<%-field.nodejsColumnType%>' ,<%_ }_%> name: "<%-fieldNameAsDatabaseColumn %>"<% if (!required) { %>, nullable: true<% } %><% if (unique) { %>, unique: true<% } %>})
         <%_ } else if (fieldType === 'BigDecimal') { _%>
-    @Column({<%_ if(fieldColumnType) { _%> type: '<%-fieldColumnType%>' ,<%_ }_%> name: "<%-fieldNameAsDatabaseColumn %>", precision : 10, scale : 2<% if (!required) { %>, nullable: true<% } %><% if (unique) { %>, unique: true<% } %>})
+    @Column({<%_ if(field.nodejsColumnType) { _%> type: '<%-field.nodejsColumnType%>' ,<%_ }_%> name: "<%-fieldNameAsDatabaseColumn %>", precision : 10, scale : 2<% if (!required) { %>, nullable: true<% } %><% if (unique) { %>, unique: true<% } %>})
         <%_ } else { _%>
-    @Column({<%_ if(fieldColumnType) { _%> type: '<%-fieldColumnType%>' ,<%_ }_%>  name: "<%-fieldNameAsDatabaseColumn %>"<% if (fieldValidate === true) { %><% if (fieldValidateRules.includes('maxlength')) { %>, length: <%= fieldValidateRulesMaxlength %><% } %> <% } %><% if (!required) { %>, nullable: true<% } %><% if (unique) { %>, unique: true<% }%>})
+    @Column({<%_ if(field.nodejsColumnType) { _%> type: '<%-field.nodejsColumnType%>' ,<%_ }_%>  name: "<%-fieldNameAsDatabaseColumn %>"<% if (fieldValidate === true) { %><% if (fieldValidateRules.includes('maxlength')) { %>, length: <%= fieldValidateRulesMaxlength %><% } %> <% } %><% if (!required) { %>, nullable: true<% } %><% if (unique) { %>, unique: true<% }%>})
         <%_ } _%>
-        <%_ if (field.fieldIsEnum) { _%>
-    <%= fieldName %><%- field.fieldValidationRequired ? '' : '?' %>: <%= fieldType %>;
-        <%_ } else { _%>
-    <%= fieldName %><%- field.fieldValidationRequired ? '' : '?' %>: <%= this.getTsType(fieldType) %>;
-        <%_ } _%>
+    <%= fieldName %><%- field.fieldValidationRequired ? '' : '?' %>: <%= field.nodejsFieldType %>;
 
     <%_ if ((fieldType === 'byte[]' || fieldType === 'ByteBuffer') && fieldTypeBlobContent !== 'text') { _%>
     @Column({name: '<%-fieldNameAsDatabaseColumn %>_content_type'<% if (!required) { %>, nullable: true<% } %>})
