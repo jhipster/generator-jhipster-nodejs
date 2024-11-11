@@ -1,7 +1,9 @@
 /* eslint-disable max-classes-per-file */
 import { BaseEntity } from './base.entity';
 import { Type, Expose as JsonProperty } from 'class-transformer';
+import { ParsedQs } from 'qs';
 
+<%_ if (typeormOrderSupport) { _%>
 export class Sort {
   public property: string;
   public direction: 'ASC' | 'DESC' | string;
@@ -17,19 +19,52 @@ export class Sort {
     return order;
   }
 }
+<%_ } _%>
+
+export type PaginationQueryType = string | string[] | ParsedQs | ParsedQs[];
 
 export class PageRequest {
   @JsonProperty()
-  page: number = 0;
+  page = 0;
   @JsonProperty()
-  size: number = 20;
+  size = 20;
+<%_ if (typeormOrderSupport) { _%>
   @Type(() => Sort)
   sort: Sort = new Sort('id,ASC');
+<%_ } _%>
 
-  constructor(page: number | string, size: number | string, sort: string) {
-    this.page = +page || this.page;
-    this.size = +size || this.size;
-    this.sort = sort ? new Sort(sort) : this.sort;
+  constructor(
+    page: number | PaginationQueryType,
+    size: number | PaginationQueryType
+<%_ if (typeormOrderSupport) { _%>
+    ,sort: PaginationQueryType
+<%_ } _%>
+  ) {
+    this.page = PageRequest.handleNumberTypes(page, this.page);
+    this.size = PageRequest.handleNumberTypes(size, this.size);
+<%_ if (typeormOrderSupport) { _%>
+    this.sort = new Sort(PageRequest.handleQueryType(sort));
+<%_ } _%>
+  }
+
+  public static handleNumberTypes(pp: number | PaginationQueryType, fallback: number): number {
+    if (typeof pp === 'number') {
+      return pp;
+    }
+    const query = PageRequest.handleQueryType(pp);
+    if (query) {
+      const parsed = parseInt(query, 10);
+      return Number.isNaN(parsed) ? fallback : parsed;
+    }
+    return fallback;
+  }
+
+  public static handleQueryType(pa: PaginationQueryType): string | undefined {
+    pa = Array.isArray(pa) ? pa[0] : pa;
+    if (typeof pa === 'string') {
+      return pa;
+    }
+    return undefined;
   }
 }
 

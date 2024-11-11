@@ -35,11 +35,19 @@ export class <%= entityClass %>Controller {
     type: <%= dtoClass %>,
   })
   async getAll(@Req() req: Request): Promise<<%= dtoClass %> []>  {
-    const pageRequest: PageRequest = new PageRequest(req.query.page, req.query.size, req.query.sort);
+    const pageRequest: PageRequest = new PageRequest(
+      req.query.page,
+      req.query.size,
+<%_ if (typeormOrderSupport) { _%>
+      req.query.sort ?? '<%- primaryKey.name %>,ASC'
+<%_ } _%>
+    );
     const [results, count] = await this.<%= entityInstance %>Service.findAndCount({
       skip: +pageRequest.page * pageRequest.size,
       take: +pageRequest.size,
-      <% if (databaseTypeMongodb) { %>// <% } %>order: pageRequest.sort.asOrder(),
+<%_ if (typeormOrderSupport) { _%>
+      order: pageRequest.sort.asOrder(),
+<%_ } _%>
     });
     HeaderUtil.addPaginationHeaders(req.res, new Page(results, count, pageRequest));
     return results;

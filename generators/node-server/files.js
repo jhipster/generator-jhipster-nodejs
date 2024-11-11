@@ -24,6 +24,7 @@ export const serverFiles = {
         'src/config/application-prod.yml',
         'src/config/application.yml',
         'src/domain/base/pagination.entity.ts',
+        'src/domain/base/pagination.entity.spec.ts',
         'src/domain/base/base.entity.ts',
         'src/domain/user.entity.ts',
         'src/domain/authority.entity.ts',

@@ -95,6 +95,14 @@ export default class extends BaseApplicationGenerator {
     });
   }
 
+  get [BaseApplicationGenerator.PREPARING]() {
+    return this.asPreparingTaskGroup({
+      async preparing({ application }) {
+        application.typeormOrderSupport = !application.databaseTypeMongodb;
+      },
+    });
+  }
+
   get [BaseApplicationGenerator.CONFIGURING_EACH_ENTITY]() {
     return this.asConfiguringEachEntityTaskGroup({
       async configuringEachEntityTemplateTask({ entityConfig }) {
