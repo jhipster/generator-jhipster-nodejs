@@ -62,12 +62,6 @@ jobs:
             app-folder: monolith-react-oauth2-dev
             entity: 'no'
             e2e: oauth2
-    env:
-      NHI_APP: ${{ matrix.app-type }}
-      NHI_APP_FOLDER: ${{ matrix.app-folder }}
-      NHI_ENTITY: ${{ matrix.entity }}
-      NHI_E2E: ${{ matrix.e2e }}
-
     steps:
       - uses: actions/checkout@v4
         with:
@@ -79,7 +73,7 @@ jobs:
           binary-dir: ${{ github.workspace }}/generator-jhipster-nodejs/cli/
       - run: npm install
         working-directory: ${{ github.workspace }}/generator-jhipster-nodejs
-      - run: cli.cjs generate-sample $NHI_APP_FOLDER --template-name $NHI_APP --skip-jhipster-dependencies --skip-install
+      - run: cli.cjs generate-sample ${{ matrix.app-folder }} --template-name ${{ matrix.app-type }} --skip-jhipster-dependencies --skip-install
       - uses: jhipster/actions/compare-sample@v0
         id: compare
         if: >-
@@ -87,7 +81,7 @@ jobs:
           !contains(github.event.pull_request.labels.*.name, 'pr: disable-compare')
         with:
           generator-path: generator-jhipster-nodejs
-          cmd: cli.cjs generate-sample $NHI_APP_FOLDER --template-name $NHI_APP --skip-jhipster-dependencies --skip-install
+          cmd: cli.cjs generate-sample ${{ matrix.app-folder }} --template-name ${{ matrix.app-type }} --skip-jhipster-dependencies --skip-install
       - name: 'INSTALL DEPENDENCIES of generated app'
         run: npm install
         if: steps.compare.outputs.equals != 'true'
