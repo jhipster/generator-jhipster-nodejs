@@ -178,11 +178,9 @@ export default class extends BaseApplicationGenerator {
     return this.asWritingEntitiesTaskGroup({
       async cleanup({ control, entities }) {
         if (control.existingProject) {
-          if (this.isVersionLessThan(this.oldNodejsVersion, '3.0.1')) {
-            for (const entity of entities) {
-              this.removeFile(`server/src/repository/${entity.entityFileName}.repository.ts`);
-            }
-          }
+          await control.cleanupFiles(this.oldNodejsVersion, {
+            '3.0.1': entities.filter(e => !e.skipServer).map(e => `server/src/repository/${e.entityFileName}.repository.ts`),
+          });
         }
       },
       async customEntityServerFiles({ application, entities }) {
