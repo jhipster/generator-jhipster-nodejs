@@ -65,6 +65,7 @@ exports[`generator - github-build-matrix > with angular > should match matrix va
     },
     {
       "default-environment": "prod",
+      "e2e": "false",
       "generatorOptions": {
         "authenticationType": "oauth2",
         "clientFramework": "angular",
@@ -122,6 +123,7 @@ exports[`generator - github-build-matrix > with angular > should match matrix va
     },
     {
       "default-environment": "prod",
+      "e2e": "false",
       "generatorOptions": {
         "authenticationType": "jwt",
         "clientFramework": "angular",
@@ -310,6 +312,7 @@ exports[`generator - github-build-matrix > with react > should match matrix valu
     },
     {
       "default-environment": "prod",
+      "e2e": "false",
       "generatorOptions": {
         "clientFramework": "react",
         "prodDatabaseType": "mongodb",
@@ -484,6 +487,7 @@ exports[`generator - github-build-matrix > with vue > should match matrix value 
     },
     {
       "default-environment": "prod",
+      "e2e": "false",
       "generatorOptions": {
         "clientFramework": "vue",
         "prodDatabaseType": "mongodb",

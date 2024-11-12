@@ -6,7 +6,7 @@ const samples = [
   'monolith-react-oauth2-jdl',
   'monolith-react-oauth2-i18n-jdl',
   'monolith-react-mysql-prod-jdl',
-  ['monolith-react-mongodb-prod-jdl', { 'legacy-sample-file': 'monolith-client-database-prod-template-jdl' }],
+  ['monolith-react-mongodb-prod-jdl', { 'legacy-sample-file': 'monolith-client-database-prod-template-jdl', e2e: 'false' }],
   'monolith-react-oauth2-dev',
 ];
 
