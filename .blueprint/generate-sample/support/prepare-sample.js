@@ -16,6 +16,7 @@ export const prepareSample = sample => {
     assert(existsSync(path.join(__dirname, '../templates/samples', `${sample}`)), `The sample ${sample} does not exist.`);
     return {
       'sample-file': sample,
+      'legacy-sample-file': sample,
       'sample-folder': 'samples/',
       'sample-type': 'yo-rc',
     };
@@ -47,6 +48,7 @@ export const prepareSample = sample => {
 
   return {
     'sample-file': sampleFile,
+    'legacy-sample-file': sample,
     'sample-folder': 'samples/',
     'sample-type': 'jdl',
     generatorOptions,
