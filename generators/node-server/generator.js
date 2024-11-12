@@ -112,6 +112,7 @@ export default class extends BaseApplicationGenerator {
     return this.asPreparingTaskGroup({
       async preparing({ application }) {
         application.typeormOrderSupport = !application.databaseTypeMongodb;
+        application.typeormRelationsSupport = !application.databaseTypeMongodb;
       },
     });
   }
