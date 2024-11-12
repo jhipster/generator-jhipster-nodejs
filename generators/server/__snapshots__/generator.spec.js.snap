@@ -173,15 +173,6 @@ exports[`SubGenerator server of nodejs JHipster blueprint > run > should succeed
   "server/src/orm.config.ts": {
     "stateCleared": "modified",
   },
-  "server/src/repository/authority.repository.ts": {
-    "stateCleared": "modified",
-  },
-  "server/src/repository/foo.repository.ts": {
-    "stateCleared": "modified",
-  },
-  "server/src/repository/user.repository.ts": {
-    "stateCleared": "modified",
-  },
   "server/src/security/decorators/auth-user.decorator.ts": {
     "stateCleared": "modified",
   },

@@ -1,9 +1,9 @@
 import { Injectable, HttpException, HttpStatus, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { FindManyOptions, FindOneOptions } from 'typeorm';
+import { FindManyOptions, FindOneOptions, Repository } from 'typeorm';
+import { <%= entityClass %> } from '../domain/<%= entityFileName %>.entity';
 import { <%= dtoClass %> }  from '../service/dto/<%= entityFileName %>.dto';
 import { <%= entityClass %>Mapper }  from '../service/mapper/<%= entityFileName %>.mapper';
-import { <%= entityClass %>Repository } from '../repository/<%= entityFileName %>.repository';
 
 const relationshipNames = [];
 <%_
@@ -28,7 +28,7 @@ _%>
 export class <%= entityClass %>Service {
     logger = new Logger('<%= entityClass %>Service');
 
-    constructor(@InjectRepository(<%= entityClass %>Repository) private <%= entityInstance %>Repository: <%= entityClass %>Repository) {}
+    constructor(@InjectRepository(<%= entityClass %>) private <%= entityInstance %>Repository: Repository<<%= entityClass %>>) {}
 
       async findById(id: <%= pkType %>): Promise<<%= dtoClass %> | undefined> {
         const result = await this.<%= entityInstance %>Repository.findOne({
