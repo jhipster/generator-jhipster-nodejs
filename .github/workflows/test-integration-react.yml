@@ -70,7 +70,7 @@ jobs:
         if: steps.compare.outputs.equals != 'true'
       - name: 'START APP WITH EVENTUAL CLIENT E2E TESTS'
         run: npm run e2e:headless --workspace client
-        if: steps.compare.outputs.equals != 'true'
+        if: matrix.e2e != 'false' && steps.compare.outputs.equals != 'true'
         id: e2e
       - name: Store cypress screenshots
         uses: actions/upload-artifact@v4
