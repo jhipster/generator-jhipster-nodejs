@@ -38,11 +38,7 @@ export const prepareSample = sample => {
     generatorOptions.authenticationType = authenticationType;
   }
   if (databaseType) {
-    if (databaseType === 'mongodb') {
-      generatorOptions.databaseType = databaseType;
-    } else {
-      generatorOptions.prodDatabaseType = databaseType;
-    }
+    generatorOptions.prodDatabaseType = databaseType;
   }
 
   const sampleFile = [...split, 'template', 'jdl'].join('-');
