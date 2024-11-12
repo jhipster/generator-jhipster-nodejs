@@ -6,7 +6,7 @@ import { intersection } from 'lodash-es';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-export const prepareSample = sample => {
+export const prepareSample = (sample, data) => {
   const clientFrameworks = ['angular', 'vue', 'react'];
   const authenticationTypes = ['jwt', 'oauth2'];
   const databaseTypes = ['mysql', 'mssql', 'postgresql', 'mongodb'];
@@ -16,9 +16,11 @@ export const prepareSample = sample => {
     assert(existsSync(path.join(__dirname, '../templates/samples', `${sample}`)), `The sample ${sample} does not exist.`);
     return {
       'sample-file': sample,
+      'legacy-template-name': sample,
       'legacy-sample-file': sample,
       'sample-folder': 'samples/',
       'sample-type': 'yo-rc',
+      ...data,
     };
   }
 
@@ -48,9 +50,11 @@ export const prepareSample = sample => {
 
   return {
     'sample-file': sampleFile,
-    'legacy-sample-file': sample,
+    'legacy-template-name': sample,
+    'legacy-sample-file': sampleFile,
     'sample-folder': 'samples/',
     'sample-type': 'jdl',
     generatorOptions,
+    ...data,
   };
 };
