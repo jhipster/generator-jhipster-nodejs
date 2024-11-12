@@ -144,7 +144,7 @@ export default class extends BaseApplicationGenerator {
       async preparingEachEntityTemplateTask({ entity, application }) {
         for (const field of entity.fields) {
           const { fieldType } = field;
-          field.nodejsFieldType = field.fieldValues ? fieldType : fieldTypes[fieldType] ?? 'any';
+          field.nodejsFieldType = field.fieldValues ? fieldType : (fieldTypes[fieldType] ?? 'any');
           field.nodejsColumnType = sanitizeDbType(dbTypes[fieldType], application.devDatabaseType);
         }
       },
