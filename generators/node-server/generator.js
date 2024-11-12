@@ -246,17 +246,7 @@ export default class extends BaseApplicationGenerator {
   get [BaseApplicationGenerator.POST_WRITING]() {
     return this.asPostWritingTaskGroup({
       adjustWorkspacePackageJson({ application }) {
-        const { nodeServerDependencies, nodeDependencies } = application;
-
-        const overrides = {
-          '@nestjs/typeorm': {
-            '@nestjs/common': nodeServerDependencies['@nestjs/common'],
-            '@nestjs/core': nodeServerDependencies['@nestjs/core'],
-          },
-        };
-
-        this.packageJson.merge({ overrides });
-        this.mergeDestinationJson('server/package.json', { overrides });
+        const { nodeDependencies } = application;
 
         if (application.clientFrameworkAngular) {
           this.packageJson.merge({
