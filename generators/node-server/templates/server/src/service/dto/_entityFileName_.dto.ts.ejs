@@ -3,6 +3,9 @@ import { ApiProperty } from '@nestjs/swagger';
 <%_ if (anyPropertyHasValidation) { _%>
 import { IsNotEmpty, MinLength, MaxLength, Length, Min, Max, Matches } from 'class-validator';
 <%_ } _%>
+<%_ if (databaseTypeMongodb) { _%>
+import { Transform } from 'class-transformer';
+<%_ } _%>
 import { BaseDTO } from './base.dto';
 
 <%_
@@ -47,6 +50,10 @@ import { <%= user.dtoClass%> } from './user.dto';
  * A <%= dtoClass %> object.
  */
 export class <%= dtoClass %> extends BaseDTO {
+<%_ if (databaseTypeMongodb) { _%>
+  @Transform(({ value }) => value?.toHexString ? value?.toHexString() : value, {toPlainOnly: true})
+<%_ } _%>
+  <%= primaryKey.name %>?: <%= primaryKey.tsType %>;
 
     <%_ for (idx in fieldsWithoutId) {
         const field = fieldsWithoutId[idx];

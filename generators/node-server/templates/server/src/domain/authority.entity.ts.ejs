@@ -1,17 +1,19 @@
-import { Entity, <%_ if (databaseType === 'mongodb') { _%> Column <%_ } else { _%> PrimaryColumn <%_ } _%> } from 'typeorm';
+import { Entity, <%_ if (databaseType === 'mongodb') { _%> ObjectIdColumn, <%_ } _%><%_ if (databaseType === 'mongodb') { _%> Column <%_ } else { _%> PrimaryColumn <%_ } _%> } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
 <%_ if (databaseType === 'mongodb') { _%>
 import { BaseEntity } from './base/base.entity';
 <%_ } _%>
 
 @Entity('<%- jhiTablePrefix %>_authority')
-<%_ if (databaseType === 'mongodb') { _%>
+<%_ if (databaseTypeMongodb) { _%>
 export class Authority extends BaseEntity {
+    @ObjectIdColumn({ name: '_id' })
+    id?: string;
 <%_ } else { _%>
 export class Authority {
 <%_ } _%>
   @ApiProperty({ example: 'ROLE_USER', description: 'User role' })
-  <%_ if (databaseType === 'mongodb') { _%>
+  <%_ if (databaseTypeMongodb) { _%>
   @Column({ unique: true })
   <%_ } else { _%>
   @PrimaryColumn()

@@ -1,12 +1,20 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsString, IsEmail } from 'class-validator';
-import { BaseDTO } from './base.dto';
+<%_ if (databaseTypeMongodb) { _%>
+import { Transform } from 'class-transformer';
+<%_ } _%>
 import { Exclude } from 'class-transformer';
+import { BaseDTO } from './base.dto';
 
 /**
  * An User DTO object.
  */
 export class <%= user.dtoClass %> extends BaseDTO {
+<%_ if (databaseTypeMongodb) { _%>
+  @Transform(({ value }) => value?.toHexString ? value?.toHexString() : value, {toPlainOnly: true})
+<%_ } _%>
+  <%= user.primaryKey.name %>?: <%= user.primaryKey.tsType %>;
+
   @ApiProperty({ uniqueItems: true, example: 'myuser', description: 'User login' })
   @IsString()
   login: string;
