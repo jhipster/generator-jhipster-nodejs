@@ -6,7 +6,8 @@ import { intersection } from 'lodash-es';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-export const prepareSample = (sample, data) => {
+export const prepareSampleEntry = sampleData => {
+  const [sample, data = {}] = Array.isArray(sampleData) ? sampleData : [sampleData];
   const clientFrameworks = ['angular', 'vue', 'react'];
   const authenticationTypes = ['jwt', 'oauth2'];
   const databaseTypes = ['mysql', 'mssql', 'postgresql', 'mongodb'];
@@ -14,14 +15,17 @@ export const prepareSample = (sample, data) => {
   let split = sample.split('-');
   if (!split.includes('jdl')) {
     assert(existsSync(path.join(__dirname, '../templates/samples', `${sample}`)), `The sample ${sample} does not exist.`);
-    return {
-      'sample-file': sample,
-      'legacy-template-name': sample,
-      'legacy-sample-file': sample,
-      'sample-folder': 'samples/',
-      'sample-type': 'yo-rc',
-      ...data,
-    };
+    return [
+      sample,
+      {
+        'sample-file': sample,
+        'legacy-template-name': sample,
+        'legacy-sample-file': sample,
+        'sample-folder': 'samples/',
+        'sample-type': 'yo-rc',
+        ...data,
+      },
+    ];
   }
 
   intersection(clientFrameworks, split);
@@ -48,13 +52,16 @@ export const prepareSample = (sample, data) => {
   const file = path.join(__dirname, '../templates/samples', `${sampleFile}.jdl`);
   assert(existsSync(file), `The sample ${file} does not exist.`);
 
-  return {
-    'sample-file': sampleFile,
-    'legacy-template-name': sample,
-    'legacy-sample-file': sampleFile,
-    'sample-folder': 'samples/',
-    'sample-type': 'jdl',
-    generatorOptions,
-    ...data,
-  };
+  return [
+    sample,
+    {
+      'sample-file': sampleFile,
+      'legacy-template-name': sample,
+      'legacy-sample-file': sampleFile,
+      'sample-folder': 'samples/',
+      'sample-type': 'jdl',
+      generatorOptions,
+      ...data,
+    },
+  ];
 };

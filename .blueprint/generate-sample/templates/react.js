@@ -1,4 +1,4 @@
-import { prepareSample } from '../support/prepare-sample.js';
+import { prepareSampleEntry } from '../support/prepare-sample.js';
 
 const samples = [
   'monolith-react-jwt-jdl',
@@ -6,8 +6,8 @@ const samples = [
   'monolith-react-oauth2-jdl',
   'monolith-react-oauth2-i18n-jdl',
   'monolith-react-mysql-prod-jdl',
-  'monolith-react-mongodb-prod-jdl',
+  ['monolith-react-mongodb-prod-jdl', { 'legacy-sample-file': 'monolith-client-database-prod-template-jdl' }],
   'monolith-react-oauth2-dev',
 ];
 
-export default Object.fromEntries(samples.map(sample => [sample, prepareSample(sample)]));
+export default Object.fromEntries(samples.map(sample => prepareSampleEntry(sample)));
