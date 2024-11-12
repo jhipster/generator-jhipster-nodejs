@@ -70,8 +70,11 @@ export default class extends BaseApplicationGenerator {
   get [BaseApplicationGenerator.CONFIGURING]() {
     return this.asConfiguringTaskGroup({
       async configuringTemplateTask() {
-        if (this.jhipsterConfigWithDefaults.prodDatabaseType === 'mongodb') {
-          this.jhipsterConfig.databaseType = 'mongodb';
+        const { prodDatabaseType, databaseType } = this.jhipsterConfigWithDefaults;
+        const databaseTypeMongodb = (prodDatabaseType ?? databaseType) === 'mongodb';
+        this.jhipsterConfig.databaseType = databaseTypeMongodb ? 'mongodb' : 'sql';
+        if (databaseTypeMongodb) {
+          this.jhipsterConfig.prodDatabaseType = 'mongodb';
         }
       },
     });
@@ -184,11 +187,11 @@ export default class extends BaseApplicationGenerator {
         }
       },
       async customEntityServerFiles({ application, entities }) {
-        if (this.databaseType === 'mongodb' && this.relationships.length > 0) {
-          throw new Error('relationships not supported in mongodb!');
-        }
-
         for (const entity of entities.filter(entity => !entity.skipServer && !entity.builtIn)) {
+          if (application.databaseType === 'mongodb' && entity.relationships.length > 0) {
+            throw new Error('relationships not supported in mongodb!');
+          }
+
           await this.writeFiles({
             sections: entityFiles,
             context: { ...application, ...entity },
