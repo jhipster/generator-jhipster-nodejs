@@ -24,9 +24,17 @@
     "test:cov": "jest --coverage",
     "test:watch": "jest --watch",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:e2e": "jest --silent --force-exit --coverage --config ./e2e/jest.e2e.config.json"
+    "test:e2e": "jest --silent --force-exit --coverage --config ./e2e/jest.e2e.config.json",
+    "typeorm": "ts-node -P ./tsconfig.json -r tsconfig-paths/register ../node_modules/.bin/typeorm -f ormconfig.ts",
+    "typeorm:migration:generate": "npm run typeorm -- migration:generate -n schema",
+    "typeorm:migration:run": "npm run typeorm -- migration:run",
+    "typeorm:schema:sync": "npm run typeorm -- schema:sync"
   },
   "dependencies": {
+<%_ if (authenticationType === 'oauth2') { _%>
+    "@nestjs/axios": "<%- nodeServerDependencies['@nestjs/axios'] %>",
+    "express-session": "<%- nodeServerDependencies['express-session'] %>",
+<%_ } _%>
     "browser-sync-client": "<%- nodeServerDependencies['browser-sync-client'] %>",
     "@nestjs/common": "<%- nodeServerDependencies['@nestjs/common'] %>",
     "@nestjs/core": "<%- nodeServerDependencies['@nestjs/core'] %>",
@@ -48,9 +56,6 @@
     "cloud-config-client": "<%- nodeServerDependencies['cloud-config-client'] %>",
     "dotenv": "<%- nodeServerDependencies['dotenv'] %>",
     "eureka-js-client": "<%- nodeServerDependencies['eureka-js-client'] %>",
-<%_ if (authenticationType === 'oauth2') { _%>
-    "express-session": "<%- nodeServerDependencies['express-session'] %>",
-<%_ } _%>
     "js-yaml": "<%- nodeServerDependencies['js-yaml'] %>",
 <%_ if (authenticationType === 'oauth2') { _%>
     "jwt-decode": "<%- nodeServerDependencies['jwt-decode'] %>",

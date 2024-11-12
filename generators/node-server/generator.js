@@ -94,6 +94,41 @@ export default class extends BaseApplicationGenerator {
     });
   }
 
+  get [BaseApplicationGenerator.PREPARING]() {
+    return this.asPreparingTaskGroup({
+      async source({ source }) {
+        source.addEntityToNodeConfig = ({ entityFileName, persistClass }) =>
+          this.editFile(
+            `${SERVER_NODEJS_SRC_DIR}/src/orm.config.ts`,
+            createNeedleCallback({
+              needle: 'add-entity-to-ormconfig-imports',
+              contentToAdd: `import { ${persistClass} } from './domain/${entityFileName}.entity';`,
+            }),
+            createNeedleCallback({
+              needle: 'add-entity-to-ormconfig-entities',
+              contentToAdd: `${persistClass},`,
+            }),
+          );
+        source.addEntityToAppModule = ({ entityClass, entityFileName }) =>
+          this.editFile(
+            `${SERVER_NODEJS_SRC_DIR}/src/app.module.ts`,
+            createNeedleCallback({
+              needle: 'jhipster-needle-add-entity-module-to-main-import',
+              contentToAdd: `import { ${entityClass}Module } from './module/${entityFileName}.module';`,
+            }),
+            createNeedleCallback({
+              needle: 'jhipster-needle-add-entity-module-to-main',
+              contentToAdd: `${entityClass}Module,`,
+            }),
+          );
+      },
+      async preparing({ application }) {
+        application.typeormOrderSupport = !application.databaseTypeMongodb;
+        application.typeormRelationsSupport = !application.databaseTypeMongodb;
+      },
+    });
+  }
+
   get [BaseApplicationGenerator.LOADING_ENTITIES]() {
     return this.asLoadingEntitiesTaskGroup({
       async loadingEntitiesTemplateTask({ entitiesToLoad }) {
@@ -104,12 +139,29 @@ export default class extends BaseApplicationGenerator {
     });
   }
 
+  get [BaseApplicationGenerator.PREPARING_EACH_ENTITY]() {
+    return this.asPreparingEachEntityTaskGroup({
+      async preparingEachEntityTemplateTask({ entity, application }) {
+        for (const field of entity.fields) {
+          const { fieldType } = field;
+          field.nodejsFieldType = field.fieldValues ? fieldType : fieldTypes[fieldType] ?? 'any';
+          field.nodejsColumnType = sanitizeDbType(dbTypes[fieldType], application.devDatabaseType);
+        }
+      },
+    });
+  }
+
   get [BaseApplicationGenerator.WRITING]() {
     return this.asWritingTaskGroup({
       async cleanup({ control }) {
         if (control.existingProject) {
           await control.cleanupFiles(this.oldNodejsVersion, {
-            '3.0.1': ['.server.eslintrc.json', '.server.eslintignore'],
+            '3.0.1': [
+              '.server.eslintrc.json',
+              '.server.eslintignore',
+              'server/src/repository/authority.repository.ts',
+              'server/src/repository/user.repository.ts',
+            ],
           });
         }
       },
@@ -124,6 +176,15 @@ export default class extends BaseApplicationGenerator {
 
   get [BaseApplicationGenerator.WRITING_ENTITIES]() {
     return this.asWritingEntitiesTaskGroup({
+      async cleanup({ control, entities }) {
+        if (control.existingProject) {
+          if (this.isVersionLessThan(this.oldNodejsVersion, '3.0.1')) {
+            for (const entity of entities) {
+              this.removeFile(`server/src/repository/${entity.entityFileName}.repository.ts`);
+            }
+          }
+        }
+      },
       async customEntityServerFiles({ application, entities }) {
         if (this.databaseType === 'mongodb' && this.relationships.length > 0) {
           throw new Error('relationships not supported in mongodb!');
@@ -167,35 +228,43 @@ export default class extends BaseApplicationGenerator {
 
   get [BaseApplicationGenerator.POST_WRITING_ENTITIES]() {
     return this.asPostWritingEntitiesTaskGroup({
-      async postWritingEntitiesTemplateTask({ entities }) {
-        for (const entity of entities.filter(entity => !entity.skipServer && !entity.builtIn)) {
-          this.editFile(
-            `${SERVER_NODEJS_SRC_DIR}/src/app.module.ts`,
-            createNeedleCallback({
-              needle: 'jhipster-needle-add-entity-module-to-main-import',
-              contentToAdd: `import { ${entity.entityClass}Module } from './module/${entity.entityFileName}.module';`,
-            }),
-            createNeedleCallback({
-              needle: 'jhipster-needle-add-entity-module-to-main',
-              contentToAdd: `${entity.entityClass}Module,`,
-            }),
-          );
+      async postWritingEntitiesTemplateTask({ entities, source }) {
+        for (const entity of entities.filter(entity => !entity.skipServer)) {
+          const { entityFileName, persistClass, entityClass } = entity;
+          if (!entity.builtInUserManagement) {
+            source.addEntityToNodeConfig({ entityFileName, persistClass });
+          }
+          if (!entity.builtIn) {
+            source.addEntityToAppModule({ entityFileName, entityClass });
+          }
         }
       },
     });
   }
 
-  get [BaseApplicationGenerator.END]() {
-    return this.asEndTaskGroup({
-      async endTemplateTask() {},
+  get [BaseApplicationGenerator.POST_WRITING]() {
+    return this.asPostWritingTaskGroup({
+      adjustWorkspacePackageJson({ application }) {
+        const { nodeServerDependencies, nodeDependencies } = application;
+
+        const overrides = {
+          '@nestjs/typeorm': {
+            '@nestjs/common': nodeServerDependencies['@nestjs/common'],
+            '@nestjs/core': nodeServerDependencies['@nestjs/core'],
+          },
+        };
+
+        this.packageJson.merge({ overrides });
+        this.mergeDestinationJson('server/package.json', { overrides });
+
+        if (application.clientFrameworkAngular) {
+          this.packageJson.merge({
+            overrides: {
+              'browser-sync': nodeDependencies['browser-sync'],
+            },
+          });
+        }
+      },
     });
-  }
-
-  getTsType(fieldType) {
-    return fieldTypes[fieldType] || 'any';
-  }
-
-  addDbType(fieldType) {
-    return sanitizeDbType(dbTypes[fieldType], this.devDatabaseType);
   }
 }

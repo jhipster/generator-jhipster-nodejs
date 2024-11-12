@@ -80,10 +80,16 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > run > should su
   "server/nest-cli.json": {
     "stateCleared": "modified",
   },
+  "server/ormconfig.ts": {
+    "stateCleared": "modified",
+  },
   "server/package.json": {
     "stateCleared": "modified",
   },
   "server/scripts/copy-resources.ts": {
+    "stateCleared": "modified",
+  },
+  "server/scripts/entrypoint.sh": {
     "stateCleared": "modified",
   },
   "server/sonar-project.properties": {
@@ -122,6 +128,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > run > should su
   "server/src/domain/base/base.entity.ts": {
     "stateCleared": "modified",
   },
+  "server/src/domain/base/pagination.entity.spec.ts": {
+    "stateCleared": "modified",
+  },
   "server/src/domain/base/pagination.entity.ts": {
     "stateCleared": "modified",
   },
@@ -144,12 +153,6 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > run > should su
     "stateCleared": "modified",
   },
   "server/src/orm.config.ts": {
-    "stateCleared": "modified",
-  },
-  "server/src/repository/authority.repository.ts": {
-    "stateCleared": "modified",
-  },
-  "server/src/repository/user.repository.ts": {
     "stateCleared": "modified",
   },
   "server/src/security/decorators/auth-user.decorator.ts": {
@@ -421,11 +424,6 @@ if(process.env.BACKEND_ENV==='prod'){
       username: 'sa',
       password: 'yourStrong(!)Password',
       logging: false,
-      synchronize: commonConf.SYNCRONIZE,
-      entities: commonConf.ENTITIES,
-      migrations: commonConf.MIGRATIONS,
-      cli: commonConf.CLI,
-      migrationsRun: commonConf.MIGRATIONS_RUN,
   };
 }
 
@@ -635,10 +633,16 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > without client 
   "server/nest-cli.json": {
     "stateCleared": "modified",
   },
+  "server/ormconfig.ts": {
+    "stateCleared": "modified",
+  },
   "server/package.json": {
     "stateCleared": "modified",
   },
   "server/scripts/copy-resources.ts": {
+    "stateCleared": "modified",
+  },
+  "server/scripts/entrypoint.sh": {
     "stateCleared": "modified",
   },
   "server/sonar-project.properties": {
@@ -677,6 +681,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > without client 
   "server/src/domain/base/base.entity.ts": {
     "stateCleared": "modified",
   },
+  "server/src/domain/base/pagination.entity.spec.ts": {
+    "stateCleared": "modified",
+  },
   "server/src/domain/base/pagination.entity.ts": {
     "stateCleared": "modified",
   },
@@ -699,12 +706,6 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > without client 
     "stateCleared": "modified",
   },
   "server/src/orm.config.ts": {
-    "stateCleared": "modified",
-  },
-  "server/src/repository/authority.repository.ts": {
-    "stateCleared": "modified",
-  },
-  "server/src/repository/user.repository.ts": {
     "stateCleared": "modified",
   },
   "server/src/security/decorators/auth-user.decorator.ts": {

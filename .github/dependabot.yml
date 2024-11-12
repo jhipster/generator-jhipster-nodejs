@@ -29,25 +29,6 @@ updates:
           - '@nestjs/platform-ws'
           - '@nestjs/testing'
           - '@nestjs/websockets'
-          - 'rxjs'
-      passport:
+      typescript-eslint:
         patterns:
-          - '@nestjs/passport'
-          - '@types/jwt-decode'
-          - '@types/passport-jwt'
-          - 'jwt-decode'
-          - 'passport'
-          - 'passport-jwt'
-          - 'passport-oauth2'
-      typeorm:
-        patterns:
-          - '@nestjs/typeorm'
-          - 'typeorm'
-          - 'typeorm-encrypted'
-          - 'mongodb'
-          - 'mongodb-memory-server'
-          - 'mssql'
-          - 'mysql2'
-          - 'oracledb'
-          - 'pg'
-          - 'sqlite3'
+          - '@typescript-eslint/*'

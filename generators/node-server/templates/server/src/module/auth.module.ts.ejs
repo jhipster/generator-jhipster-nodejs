@@ -1,5 +1,7 @@
-
-import { Module <%_ if (authenticationType === 'oauth2') { _%> , HttpModule <%_ } _%> } from '@nestjs/common';
+<%_ if (authenticationType === 'oauth2') { _%>
+import { HttpModule } from '@nestjs/axios';
+<%_ } _%>
+import { Module } from '@nestjs/common';
 import { AuthService } from '../service/auth.service';
 import { UserModule } from '../module/user.module';
 import { PassportModule } from '@nestjs/passport';
@@ -15,13 +17,13 @@ import { UserOauth2Controller } from '../web/rest/user.oauth2.controller';
 import { config } from '../config';
 <%_ } _%>
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { AuthorityRepository } from '../repository/authority.repository';
+import { Authority } from '../domain/authority.entity';
 
 import { PublicUserController } from '../web/rest/public.user.controller';
 import { AccountController } from '../web/rest/account.controller';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([AuthorityRepository]),
+  imports: [TypeOrmModule.forFeature([Authority]),
   UserModule,
   PassportModule,
   <%_ if (authenticationType === 'jwt') { _%>
