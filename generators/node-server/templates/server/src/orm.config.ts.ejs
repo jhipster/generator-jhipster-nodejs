@@ -2,6 +2,8 @@ import { TypeOrmModuleOptions } from '@nestjs/typeorm';
 <%_ if (databaseType === 'mongodb') { _%>
 import { MongoMemoryServer } from 'mongodb-memory-server';
 <%_ } _%>
+import { SeedUsersRoles1570200490072 } from './migrations/1570200490072-SeedUsersRoles';
+import { CreateTables1570200270081 } from './migrations/1570200270081-CreateTables';
 // jhipster-needle-add-entity-to-ormconfig-imports - JHipster will add code here, do not remove
 
 <%_ if (databaseType === 'mongodb') { _%>
@@ -85,7 +87,11 @@ _%>
     entities: [
       // jhipster-needle-add-entity-to-ormconfig-entities - JHipster will add code here, do not remove
     ],
-    migrations: [__dirname + '/migrations/**/*{.ts,.js}'],
+    migrations: [
+      CreateTables1570200270081,
+      SeedUsersRoles1570200490072,
+      // jhipster-needle-add-migration-to-ormconfig-migrations - JHipster will add code here, do not remove
+    ],
     autoLoadEntities: true,
 <%_ if (prodDatabaseTypeMssql) { _%>
     extra: {
