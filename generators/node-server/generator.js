@@ -1,6 +1,6 @@
 import { readFile } from 'node:fs/promises';
 import BaseApplicationGenerator from 'generator-jhipster/generators/base-application';
-import { createNeedleCallback } from 'generator-jhipster/generators/base/support';
+import { createNeedleCallback, mutateData } from 'generator-jhipster/generators/base/support';
 import { getEnumInfo } from 'generator-jhipster/generators/base-application/support';
 import { TEMPLATES_WEBAPP_SOURCES_DIR } from 'generator-jhipster';
 import { SERVER_NODEJS_SRC_DIR } from '../generator-nodejs-constants.js';
@@ -142,13 +142,24 @@ export default class extends BaseApplicationGenerator {
     });
   }
 
-  get [BaseApplicationGenerator.PREPARING_EACH_ENTITY]() {
-    return this.asPreparingEachEntityTaskGroup({
-      async preparingEachEntityTemplateTask({ entity, application }) {
-        for (const field of entity.fields) {
-          const { fieldType } = field;
-          field.nodejsFieldType = field.fieldValues ? fieldType : (fieldTypes[fieldType] ?? 'any');
-          field.nodejsColumnType = sanitizeDbType(dbTypes[fieldType], application.devDatabaseType);
+  get [BaseApplicationGenerator.PREPARING_EACH_ENTITY_FIELD]() {
+    return this.asPreparingEachEntityFieldTaskGroup({
+      async preparingEachEntityTemplateTask({ application, field }) {
+        const { fieldType } = field;
+        if (field.skipServer) return;
+
+        if (field.fieldValues) {
+          mutateData(field, {
+            __override__: true,
+            nodejsFieldType: fieldType,
+            nodejsColumnType: application.prodDatabaseTypePostgresql ? 'varchar' : 'simple-enum',
+          });
+        } else {
+          mutateData(field, {
+            __override__: true,
+            nodejsFieldType: fieldTypes[fieldType] ?? 'any',
+            nodejsColumnType: sanitizeDbType(dbTypes[fieldType], application.devDatabaseType),
+          });
         }
       },
     });
