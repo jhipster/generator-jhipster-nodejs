@@ -23,7 +23,7 @@ _%>
     name: 'default',
 <%_ if (databaseType === 'mongodb') { _%>
     type: '<%= nodeProdDatabaseDriver %>',
-    host: 'localhost',
+    host: '127.0.0.1',
     port: mongod?.instanceInfo?.port ?? 0,
     database: mongod?.instanceInfo?.dbName ?? 'dev',
     useNewUrlParser: true,
@@ -56,7 +56,7 @@ _%>
       database: ':memory:',
 <%_ } else { _%>
       type: '<%= nodeProdDatabaseDriver %>',
-      host: 'localhost',
+      host: '127.0.0.1',
       port: mongod.instanceInfo.port,
       database: mongod.instanceInfo.dbName,
       useNewUrlParser: true,
@@ -72,7 +72,7 @@ _%>
       name: 'default',
       type: '<%= nodeDevDatabaseDriver %>',
       database: '<%= (databaseType === 'sql') ? devDatabaseName : baseName %>',
-      host: 'localhost',
+      host: '127.0.0.1',
       // port: <%= dbPortValue %>,
       username: '<%- (databaseType === 'sql') ? devDatabaseUsername : '' %>',
       password: '<%- (databaseType === 'sql') ? devDatabasePassword : '' %>',
