@@ -5,7 +5,9 @@ import { <%= user.persistClass %> } from '../domain/user.entity';
 import { <%= user.dtoClass%> } from './dto/user.dto';
 import { UserMapper } from './mapper/user.mapper';
 import { User } from '../domain/user.entity';
+<%_ if (authenticationType === 'jwt') { _%>
 import { transformPassword } from '../security';
+<%_ } _%>
 
 <%_ if (typeormRelationsSupport) { _%>
 const relations = { authorities: true } as const;
@@ -52,11 +54,13 @@ export class UserService {
         return resultList;
     }
 
-    async save(userDTO: <%= user.dtoClass%>, creator?: string, updatePassword = false): Promise<<%= user.dtoClass%> | undefined> {
+    async save(userDTO: <%= user.dtoClass%>, creator?: string<% if (authenticationType === 'jwt') { %>, updatePassword = false<% } %>): Promise<<%= user.dtoClass%> | undefined> {
         const user = this.convertInAuthorities(UserMapper.fromDTOtoEntity(userDTO));
+<%_ if (authenticationType === 'jwt') { _%>
         if (updatePassword) {
             await transformPassword(user);
         }
+<%_ } _%>
         if (creator) {
             if (!user.createdBy ) {
                 user.createdBy = creator;

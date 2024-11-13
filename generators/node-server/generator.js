@@ -167,7 +167,7 @@ export default class extends BaseApplicationGenerator {
 
   get [BaseApplicationGenerator.WRITING]() {
     return this.asWritingTaskGroup({
-      async cleanup({ control }) {
+      async cleanup({ application, control }) {
         if (control.existingProject) {
           await control.cleanupFiles(this.oldNodejsVersion, {
             '3.0.1': [
@@ -175,6 +175,7 @@ export default class extends BaseApplicationGenerator {
               '.server.eslintignore',
               'server/src/repository/authority.repository.ts',
               'server/src/repository/user.repository.ts',
+              [application.authenticationTypeOauth2, 'node/src/security/password-util.ts'],
             ],
           });
         }
