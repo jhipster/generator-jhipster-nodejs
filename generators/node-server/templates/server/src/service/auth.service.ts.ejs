@@ -120,7 +120,7 @@ export class AuthService {
     userFind.email = newUserInfo.email;
     userFind.langKey = newUserInfo.langKey;
     await this.userService.save(userFind, userLogin);
-    return;
+    return userFind;
   }
 
   <%_ } else if (authenticationType === 'oauth2') { _%>

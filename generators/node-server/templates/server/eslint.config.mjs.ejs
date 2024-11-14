@@ -1,0 +1,45 @@
+import eslint from '@eslint/js';
+import globals from 'globals';
+import prettier from 'eslint-plugin-prettier/recommended';
+import tseslint from 'typescript-eslint';
+
+export default tseslint.config(
+  {
+    languageOptions: {
+      globals: {
+        ...globals.node,
+      },
+    },
+  },
+  { ignores: ['dist', 'coverage'] },
+  eslint.configs.recommended,
+  {
+    files: ['**/*.{js,cjs,mjs}'],
+    rules: {
+      'no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
+    },
+  },
+  {
+    files: ['**/*.ts'],
+    extends: [...tseslint.configs.recommendedTypeChecked],
+    languageOptions: {
+      parserOptions: {
+        'project': ['./tsconfig.json'],
+      },
+    },
+    rules: {
+      'no-prototype-builtins': 'off',
+      '@typescript-eslint/no-explicit-any': 'off',
+      '@typescript-eslint/no-floating-promises': 'off',
+      '@typescript-eslint/no-redundant-type-constituents': 'off',
+      '@typescript-eslint/no-require-imports': 'off',
+      '@typescript-eslint/no-unsafe-argument': 'off',
+      '@typescript-eslint/no-unsafe-assignment': 'off',
+      '@typescript-eslint/no-unsafe-call': 'off',
+      '@typescript-eslint/no-unsafe-member-access': 'off',
+      '@typescript-eslint/no-unsafe-return': 'off',
+      '@typescript-eslint/no-unused-vars': ['error', { 'argsIgnorePattern': '^_', 'varsIgnorePattern': '^_' }],
+    },
+  },
+  prettier,
+);

@@ -14,7 +14,6 @@ application {
         packageName com.jhipster.node,
         databaseType mongodb,
         enableTranslation false,
-        clientFramework angular
         testFrameworks [cypress]
         // jhipster-needle-jdl-application-config
     }

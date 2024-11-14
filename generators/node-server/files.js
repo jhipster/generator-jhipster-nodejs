@@ -56,14 +56,7 @@ export const serverFiles = {
           file: 'env',
           renameTo: () => '.env',
         },
-        {
-          file: 'server.eslintrc.json',
-          renameTo: () => '.server.eslintrc.json',
-        },
-        {
-          file: 'server.eslintignore',
-          renameTo: () => '.server.eslintignore',
-        },
+        'eslint.config.mjs',
         'package.json',
         'tsconfig.json',
         'README.md',

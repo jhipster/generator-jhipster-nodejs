@@ -29,13 +29,10 @@ exports[`SubGenerator client of nodejs JHipster blueprint > run > should succeed
   "README.md": {
     "stateCleared": "modified",
   },
-  "client/.eslintignore": {
-    "stateCleared": "modified",
-  },
-  "client/.eslintrc.json": {
-    "stateCleared": "modified",
-  },
   "client/angular.json": {
+    "stateCleared": "modified",
+  },
+  "client/eslint.config.mjs": {
     "stateCleared": "modified",
   },
   "client/jest.conf.js": {

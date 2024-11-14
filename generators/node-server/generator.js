@@ -3,10 +3,9 @@ import BaseApplicationGenerator from 'generator-jhipster/generators/base-applica
 import { createNeedleCallback } from 'generator-jhipster/generators/base/support';
 import { getEnumInfo } from 'generator-jhipster/generators/base-application/support';
 import { TEMPLATES_WEBAPP_SOURCES_DIR } from 'generator-jhipster';
-import command from './command.js';
+import { SERVER_NODEJS_SRC_DIR } from '../generator-nodejs-constants.js';
 import { serverFiles } from './files.js';
 import { entityFiles } from './entity-files.js';
-import { SERVER_NODEJS_SRC_DIR } from '../generator-nodejs-constants.js';
 
 function sanitizeDbType(fieldType, dbType) {
   if (dbType === 'sqlite') {
@@ -65,27 +64,17 @@ export default class extends BaseApplicationGenerator {
         this.nodejsPackageJson = JSON.parse((await readFile(this.templatePath('../../../package.json'), 'utf-8')).toString());
         this.blueprintConfig.nodejsVersion = this.nodejsPackageJson.version;
       },
-      async initializingTemplateTask() {
-        this.parseJHipsterCommand(command);
-      },
-    });
-  }
-
-  get [BaseApplicationGenerator.PROMPTING]() {
-    return this.asPromptingTaskGroup({
-      async promptingTemplateTask({ control }) {
-        if (control.existingProject && !this.options.askAnswered) return;
-
-        await this.prompt(this.prepareQuestions(command.configs));
-      },
     });
   }
 
   get [BaseApplicationGenerator.CONFIGURING]() {
     return this.asConfiguringTaskGroup({
       async configuringTemplateTask() {
-        if (this.jhipsterConfigWithDefaults.prodDatabaseType === 'mongodb') {
-          this.jhipsterConfig.databaseType = 'mongodb';
+        const { prodDatabaseType, databaseType } = this.jhipsterConfigWithDefaults;
+        const databaseTypeMongodb = (prodDatabaseType ?? databaseType) === 'mongodb';
+        this.jhipsterConfig.databaseType = databaseTypeMongodb ? 'mongodb' : 'sql';
+        if (databaseTypeMongodb) {
+          this.jhipsterConfig.prodDatabaseType = 'mongodb';
         }
       },
     });
@@ -158,7 +147,7 @@ export default class extends BaseApplicationGenerator {
       async preparingEachEntityTemplateTask({ entity, application }) {
         for (const field of entity.fields) {
           const { fieldType } = field;
-          field.nodejsFieldType = field.fieldValues ? fieldType : fieldTypes[fieldType] ?? 'any';
+          field.nodejsFieldType = field.fieldValues ? fieldType : (fieldTypes[fieldType] ?? 'any');
           field.nodejsColumnType = sanitizeDbType(dbTypes[fieldType], application.devDatabaseType);
         }
       },
@@ -169,10 +158,14 @@ export default class extends BaseApplicationGenerator {
     return this.asWritingTaskGroup({
       async cleanup({ control }) {
         if (control.existingProject) {
-          if (this.isVersionLessThan(this.oldNodejsVersion, '3.0.1')) {
-            this.removeFile('server/src/repository/authority.repository.ts');
-            this.removeFile('server/src/repository/user.repository.ts');
-          }
+          await control.cleanupFiles(this.oldNodejsVersion, {
+            '3.0.1': [
+              '.server.eslintrc.json',
+              '.server.eslintignore',
+              'server/src/repository/authority.repository.ts',
+              'server/src/repository/user.repository.ts',
+            ],
+          });
         }
       },
       async writingTemplateTask({ application }) {
@@ -188,19 +181,17 @@ export default class extends BaseApplicationGenerator {
     return this.asWritingEntitiesTaskGroup({
       async cleanup({ control, entities }) {
         if (control.existingProject) {
-          if (this.isVersionLessThan(this.oldNodejsVersion, '3.0.1')) {
-            for (const entity of entities) {
-              this.removeFile(`server/src/repository/${entity.entityFileName}.repository.ts`);
-            }
-          }
+          await control.cleanupFiles(this.oldNodejsVersion, {
+            '3.0.1': entities.filter(e => !e.skipServer).map(e => `server/src/repository/${e.entityFileName}.repository.ts`),
+          });
         }
       },
       async customEntityServerFiles({ application, entities }) {
-        if (this.databaseType === 'mongodb' && this.relationships.length > 0) {
-          throw new Error('relationships not supported in mongodb!');
-        }
-
         for (const entity of entities.filter(entity => !entity.skipServer && !entity.builtIn)) {
+          if (application.databaseType === 'mongodb' && entity.relationships.length > 0) {
+            throw new Error('relationships not supported in mongodb!');
+          }
+
           await this.writeFiles({
             sections: entityFiles,
             context: { ...application, ...entity },
@@ -217,6 +208,20 @@ export default class extends BaseApplicationGenerator {
               enumInfo,
             );
           }
+        }
+      },
+    });
+  }
+
+  get [BaseApplicationGenerator.POST_WRITING]() {
+    return this.asPostWritingTaskGroup({
+      adjustWorkspacePackageJson({ application }) {
+        if (application.clientFrameworkAngular) {
+          this.packageJson.merge({
+            overrides: {
+              'browser-sync': application.nodeDependencies['browser-sync'],
+            },
+          });
         }
       },
     });

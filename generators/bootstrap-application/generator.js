@@ -3,7 +3,16 @@ import { SERVER_NODEJS_SRC_DIR } from '../generator-nodejs-constants.js';
 
 export default class extends BaseApplicationGenerator {
   constructor(args, opts, features) {
-    super(args, opts, { ...features, sbsBlueprint: true });
+    super(args, opts, { ...features, queueCommandTasks: true, sbsBlueprint: true });
+  }
+
+  get [BaseApplicationGenerator.CONFIGURING]() {
+    return this.asConfiguringTaskGroup({
+      async configuring() {
+        this.jhipsterConfig.withAdminUi = false;
+        this.jhipsterConfig.backendType = 'NodeJS';
+      },
+    });
   }
 
   get [BaseApplicationGenerator.LOADING]() {
@@ -14,7 +23,6 @@ export default class extends BaseApplicationGenerator {
         application.clientTestDir = 'client/test/';
         application.dockerServicesDir = 'docker/';
         application.withAdminUi = false;
-        application.backendType = 'NodeJS';
         application.nodeServerRootDir = `${SERVER_NODEJS_SRC_DIR}/`;
         application.dbPortValue = undefined;
       },

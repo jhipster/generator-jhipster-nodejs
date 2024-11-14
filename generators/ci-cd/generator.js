@@ -3,10 +3,7 @@ import command from './command.js';
 
 export default class extends CiCdGenerator {
   constructor(args, opts, features) {
-    super(args, opts, {
-      ...features,
-      checkBlueprint: true,
-    });
+    super(args, opts, { ...features, queueCommandTasks: true, checkBlueprint: true });
   }
 
   async beforeQueue() {

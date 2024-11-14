@@ -1,5 +1,5 @@
 /**
- * Copyright 2013-2023 the original author or authors from the JHipster project.
+ * Copyright 2013-2024 the original author or authors from the JHipster project.
  *
  * This file is part of the JHipster project, see https://www.jhipster.tech/
  * for more information.
@@ -17,6 +17,8 @@
  * limitations under the License.
  */
 import { GENERATOR_APP } from 'generator-jhipster/generators';
+import { getGithubSamplesGroups } from 'generator-jhipster/testing';
+
 /**
  * @type {import('generator-jhipster').JHipsterCommandDefinition}
  */
@@ -26,12 +28,33 @@ const command = {
       type: String,
     },
   },
-  options: {
-    templateName: {
-      type: String,
+  configs: {
+    samplesFolder: {
+      description: 'Path to the samples folder',
+      cli: {
+        type: String,
+      },
+      default: 'samples',
+      scope: 'generator',
+    },
+    sampleName: {
+      prompt: gen => ({
+        when: !gen.all,
+        type: 'list',
+        message: 'which sample do you want to generate?',
+        choices: async () => getGithubSamplesGroups(gen.templatePath(gen.samplesFolder)),
+      }),
+      scope: 'generator',
+    },
+    all: {
+      description: 'Generate every sample in a workspace',
+      cli: {
+        type: Boolean,
+      },
       scope: 'generator',
     },
   },
+  options: {},
   import: [GENERATOR_APP],
 };
 

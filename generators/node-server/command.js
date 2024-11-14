@@ -3,10 +3,9 @@ import { command as serverCommand } from 'generator-jhipster/generators/server';
 
 const { applicationType } = serverCommand.configs;
 
-/**
- * @type {import('generator-jhipster').JHipsterCommandDefinition}
- */
-const command = {
+import { asCommand } from 'generator-jhipster';
+
+export default asCommand({
   options: {},
   configs: {
     applicationType,
@@ -50,6 +49,4 @@ const command = {
       ],
     },
   },
-};
-
-export default command;
+});

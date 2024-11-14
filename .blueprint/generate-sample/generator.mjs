@@ -1,85 +1,55 @@
 import { readdir } from 'node:fs/promises';
+import { readFileSync } from 'node:fs';
+import { extname, join } from 'node:path';
 import BaseGenerator from 'generator-jhipster/generators/base';
-import { createNeedleCallback } from 'generator-jhipster/generators/base/support';
-import command from './command.mjs';
+import { getGithubSamplesGroup } from 'generator-jhipster/testing';
 
 export default class extends BaseGenerator {
+  /** @type {string} */
   sampleName;
-  templateName;
+  /** @type {boolean} */
+  all;
+  /** @type {string} */
+  samplesFolder;
+  /** @type {string} */
+  sampleType;
+  /** @type {string} */
+  sampleFile;
+  /** @type {any} */
+  generatorOptions;
 
-  get [BaseGenerator.INITIALIZING]() {
-    return this.asInitializingTaskGroup({
-      async initializeOptions() {
-        this.parseJHipsterCommand(command);
-      },
-    });
-  }
-
-  get [BaseGenerator.PROMPTING]() {
-    return this.asPromptingTaskGroup({
-      async askForSample() {
-        if (!this.sampleName) {
-          const answers = await this.prompt({
-            type: 'list',
-            name: 'sampleName',
-            message: 'which sample do you want to generate?',
-            choices: async () => readdir(this.templatePath('samples')),
-          });
-          this.sampleName = answers.sampleName;
-        }
-      },
-    });
+  constructor(args, opts, features) {
+    super(args, opts, { ...features, queueCommandTasks: true, jhipsterBootstrap: false });
   }
 
   get [BaseGenerator.WRITING]() {
     return this.asWritingTaskGroup({
       async copySample() {
-        this.copyTemplate(`{.,}**`, '', {
-          fromBasePath: this.templatePath(`samples/${this.sampleName}`),
-        });
-
-        if (this.sampleName.includes('-template-')) {
-          if (!this.templateName) {
-            throw new Error('Template name is required');
-          }
-
-          const clientFrameworks = ['angular', 'vue', 'react'];
-          const authenticationTypes = ['jwt', 'oauth2'];
-          const databaseTypes = ['mysql', 'mssql', 'postgresql', 'mongodb'];
-
-          const split = this.templateName.split('-');
-
-          this._.intersection(clientFrameworks, split);
-          const clientFramework = this._.intersection(clientFrameworks, split)[0];
-          const authenticationType = this._.intersection(authenticationTypes, split)[0];
-          const databaseType = this._.intersection(databaseTypes, split)[0];
-
-          if (clientFramework) {
-            this.editFile(
-              `${this.sampleName}.jdl`,
-              createNeedleCallback({
-                needle: 'jhipster-needle-jdl-application-config',
-                contentToAdd: `clientFramework ${clientFramework}`,
-              }),
-            );
-          }
-          if (authenticationType) {
-            this.editFile(
-              `${this.sampleName}.jdl`,
-              createNeedleCallback({
-                needle: 'jhipster-needle-jdl-application-config',
-                contentToAdd: `authenticationType ${authenticationType}`,
-              }),
-            );
-          }
-          if (databaseType) {
-            this.editFile(
-              `${this.sampleName}.jdl`,
-              createNeedleCallback({
-                needle: 'jhipster-needle-jdl-application-config',
-                contentToAdd: `${databaseType === 'mongodb' ? 'databaseType' : 'prodDatabaseType'} ${databaseType}`,
-              }),
-            );
+        const { samplesFolder, all, sampleName } = this;
+        if (all) {
+          this.copyTemplate(`${samplesFolder}/*.jdl`, '');
+          this.sampleType = 'jdl';
+        } else if (extname(sampleName) === '.jdl') {
+          this.copyTemplate(join(samplesFolder, sampleName), sampleName, { noGlob: true });
+          this.sampleType = 'jdl';
+        } else {
+          const { samples } = await getGithubSamplesGroup(this.templatePath(), samplesFolder);
+          const {
+            'sample-type': sampleType,
+            'sample-file': sampleFile = sampleName,
+            'sample-folder': sampleFolder = samplesFolder,
+            generatorOptions,
+          } = samples[sampleName];
+          this.generatorOptions = generatorOptions;
+          this.sampleType = sampleType;
+          if (sampleType === 'jdl') {
+            const jdlFile = `${sampleFile}.jdl`;
+            this.copyTemplate(join(sampleFolder, jdlFile), jdlFile, { noGlob: true });
+          } else if (sampleType === 'yo-rc') {
+            this.copyTemplate('**', '', {
+              fromBasePath: this.templatePath(sampleFolder, sampleFile),
+              globOptions: { dot: true },
+            });
           }
         }
       },
@@ -88,19 +58,40 @@ export default class extends BaseGenerator {
 
   get [BaseGenerator.END]() {
     return this.asEndTaskGroup({
-      async generateSample() {
-        const generator = this.sampleName.endsWith('-jdl') ? 'jdl' : 'app';
-        const generatorArgs = this.sampleName.endsWith('-jdl') ? [this.sampleName] : undefined;
-        await this.composeWithJHipster(generator, {
-          generatorArgs,
+      async generateYoRcSample() {
+        if (this.sampleType !== 'yo-rc') return;
+
+        const generatorOptions = this.getDefaultComposeOptions();
+        await this.composeWithJHipster('app', { generatorOptions });
+      },
+      async generateJdlSample() {
+        if (this.sampleType !== 'jdl') return;
+
+        const generatorOptions = this.getDefaultComposeOptions();
+        const folderContent = await readdir(this.destinationPath());
+        const jdlFiles = folderContent.filter(file => file.endsWith('.jdl'));
+
+        await this.composeWithJHipster('jdl', {
+          generatorArgs: jdlFiles,
           generatorOptions: {
-            skipJhipsterDependencies: true,
-            insight: false,
-            skipChecks: true,
-            skipInstall: true,
+            ...generatorOptions,
+            ...(this.all ? { workspaces: true, monorepository: true } : { skipInstall: true }),
           },
         });
       },
+      async jhipsterInfo() {
+        await this.composeWithJHipster('info');
+      },
     });
+  }
+
+  getDefaultComposeOptions() {
+    const packageJson = JSON.parse(readFileSync(new URL('../../package.json', import.meta.url)));
+    const projectVersion = `${packageJson.version}-git`;
+    return {
+      skipJhipsterDependencies: true,
+      projectVersion,
+      ...this.generatorOptions,
+    };
   }
 }

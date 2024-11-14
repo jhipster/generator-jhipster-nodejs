@@ -1,11 +1,5 @@
 name: Generator
-on:
-  push:
-    branches-ignore:
-      - 'dependabot/**'
-  pull_request:
-    branches:
-      - '*'
+on: [push, pull_request]
 permissions:
   contents: read
 jobs:
@@ -21,9 +15,3 @@ jobs:
           cache: 'npm'
       - run: npm ci
       - run: npm run test
-      - name: Run npm sonar:scanner
-        run: npm run sonar:scanner
-        if: "github.repository == 'jhipster/generator-jhipster-nodejs' && github.event_name != 'pull_request'"
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}

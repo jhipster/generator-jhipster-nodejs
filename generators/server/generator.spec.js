@@ -21,7 +21,7 @@ describe('SubGenerator server of nodejs JHipster blueprint', () => {
         ])
         .withOptions({
           ignoreNeedlesError: true,
-          blueprint: 'nodejs',
+          blueprint: ['nodejs'],
         })
         .withJHipsterLookup()
         .withParentBlueprintLookup();

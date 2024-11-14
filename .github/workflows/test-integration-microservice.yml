@@ -1,4 +1,8 @@
 name: Test Integration Microservice
+concurrency:
+  # Group PRs by head_ref, push to main branch by commit id, and others branch by ref.
+  group: ${{ github.workflow }}-${{ github.head_ref || (github.ref == 'refs/heads/main' && github.sha) || github.ref }}
+  cancel-in-progress: true
 on:
   push:
     branches:
@@ -12,26 +16,30 @@ env:
   NODE_OPTIONS: --dns-result-order=ipv4first
   FORCE_COLOR: 2
 jobs:
-  applications:
-    name: ${{ matrix.app-type }}
+  build-matrix:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.build.outputs.matrix }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - id: build
+        run: |
+          npm install
+          ./cli/cli.cjs github-build-matrix microservice
+  samples:
+    name: ${{ matrix.job-name || matrix.sample }}
     runs-on: ${{ matrix.os }}
-    if: "!contains(github.event.head_commit.message, '[ci skip]') && !contains(github.event.head_commit.message, '[skip ci]')"
-    timeout-minutes: 40
+    needs: build-matrix
     defaults:
       run:
         working-directory: ${{ github.workspace }}/app
+    timeout-minutes: 30
     strategy:
       fail-fast: false
-      matrix:
-        node-version: [20]
-        os: [ubuntu-latest]
-        app-type:
-          - microservice-oauth2-jdl
-        include:
-          - app-type: microservice-oauth2-jdl
-            app-folder: microservice-oauth2-jdl
-            entity: post-import-jdl
-            e2e: 'no'
+      matrix: ${{fromJson(needs.build-matrix.outputs.matrix)}}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -43,7 +51,7 @@ jobs:
           binary-dir: ${{ github.workspace }}/generator-jhipster-nodejs/cli/
       - run: npm install
         working-directory: ${{ github.workspace }}/generator-jhipster-nodejs
-      - run: cli.cjs generate-sample ${{ matrix.app-folder }} --template-name ${{ matrix.app-type }} --skip-jhipster-dependencies --skip-install
+      - run: cli.cjs generate-sample ${{ matrix.sample }} --samples-folder ${{ matrix.samples-group }} --skip-jhipster-dependencies --skip-install ${{ matrix.extra-args }}
       - uses: jhipster/actions/compare-sample@v0
         id: compare
         if: >-
@@ -51,7 +59,7 @@ jobs:
           !contains(github.event.pull_request.labels.*.name, 'pr: disable-compare')
         with:
           generator-path: generator-jhipster-nodejs
-          cmd: cli.cjs generate-sample ${{ matrix.app-folder }} --template-name ${{ matrix.app-type }} --skip-jhipster-dependencies --skip-install
+          cmd: cli.cjs generate-sample ${{ matrix.sample }} --template-name ${{ matrix.sample }} --skip-jhipster-dependencies --skip-install ${{ matrix.extra-args }}
       - name: 'INSTALL DEPENDENCIES of generated app'
         run: npm install
         if: steps.compare.outputs.equals != 'true'
@@ -65,12 +73,12 @@ jobs:
     permissions:
       contents: none
     runs-on: ubuntu-latest
-    needs: [applications]
+    needs: [samples]
     if: always()
     steps:
       - run: |
           echo '${{ toJSON(needs) }}'
-          if [ 'skipped' == '${{ needs.applications.result }}' ] || [ 'success' == '${{ needs.applications.result }}' ] || [ 'closed' == '${{ github.event.action }}' ]; then
+          if [ 'skipped' == '${{ needs.samples.result }}' ] || [ 'success' == '${{ needs.samples.result }}' ] || [ 'closed' == '${{ github.event.action }}' ]; then
             exit 0
           fi
           exit 1

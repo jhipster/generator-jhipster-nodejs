@@ -22,31 +22,25 @@
   "description": "Description for <%= baseName %>",
   "private": true,
   "license": "UNLICENSED",
-  "type": "commonjs",
   "cacheDirectories": [
     "node_modules"
   ],
   "devDependencies": {
+    "@eslint/js": "<%- nodeServerDependencies['@eslint/js'] %>",
     "browser-sync-client": "<%- nodeServerDependencies['browser-sync-client'] %>",
-    "@typescript-eslint/eslint-plugin": "<%- nodeServerDependencies['@typescript-eslint/eslint-plugin'] %>",
-    "@typescript-eslint/eslint-plugin-tslint": "<%- nodeServerDependencies['@typescript-eslint/eslint-plugin-tslint'] %>",
-    "@typescript-eslint/parser": "<%- nodeServerDependencies['@typescript-eslint/parser'] %>",
     "eslint": "<%- nodeServerDependencies['eslint'] %>",
     "eslint-config-prettier": "<%- nodeServerDependencies['eslint-config-prettier'] %>",
+    "globals": "<%- nodeServerDependencies['globals'] %>",
     "prettier": "<%= nodeDependencies['prettier'] %>",
-    "prettier-plugin-packagejson": "<%= nodeDependencies['prettier-plugin-packagejson'] %>"
+    "prettier-plugin-packagejson": "<%= nodeDependencies['prettier-plugin-packagejson'] %>",
+    "typescript-eslint": "<%- nodeServerDependencies['typescript-eslint'] %>"
   },
   "engines": {
     "node": ">=<%= nodeVersion %>"
   },
-  "workspaces": {
-    "packages": [
-<%_ if (!skipServer) { _%>
-      "client",
-<%_ } _%>
+  "workspaces": [
       "server"
-    ]
-  },
+  ],
   "scripts": {
     "build": "<%= clientPackageManager %> run build -w server && <%= clientPackageManager %> run build -w client",
     "build:app": "<%= clientPackageManager %> run build -w server",

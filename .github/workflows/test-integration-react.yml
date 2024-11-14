@@ -1,4 +1,8 @@
 name: Test Integration React
+concurrency:
+  # Group PRs by head_ref, push to main branch by commit id, and others branch by ref.
+  group: ${{ github.workflow }}-${{ github.head_ref || (github.ref == 'refs/heads/main' && github.sha) || github.ref }}
+  cancel-in-progress: true
 on:
   push:
     branches:
@@ -12,56 +16,30 @@ env:
   NODE_OPTIONS: --dns-result-order=ipv4first
   FORCE_COLOR: 2
 jobs:
-  applications:
-    name: ${{ matrix.app-type }}
+  build-matrix:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.build.outputs.matrix }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - id: build
+        run: |
+          npm install
+          ./cli/cli.cjs github-build-matrix react
+  samples:
+    name: ${{ matrix.job-name || matrix.sample }}
     runs-on: ${{ matrix.os }}
-    if: "!contains(github.event.head_commit.message, '[ci skip]') && !contains(github.event.head_commit.message, '[skip ci]')"
-    timeout-minutes: 40
+    needs: build-matrix
     defaults:
       run:
         working-directory: ${{ github.workspace }}/app
+    timeout-minutes: 30
     strategy:
       fail-fast: false
-      matrix:
-        node-version: [20]
-        os: [ubuntu-latest]
-        app-type:
-          - monolith-react-jwt-jdl
-          - monolith-react-jwt-i18n-jdl
-          - monolith-react-oauth2-jdl
-          - monolith-react-oauth2-i18n-jdl
-          - monolith-react-mysql-prod-jdl
-          - monolith-react-mongodb-prod-jdl
-          - monolith-react-oauth2-dev
-        include:
-          - app-type: monolith-react-jwt-jdl
-            app-folder: monolith-client-auth-template-jdl
-            entity: import-jdl
-            e2e: jwt
-          - app-type: monolith-react-jwt-i18n-jdl
-            app-folder: monolith-client-auth-i18n-template-jdl
-            entity: import-jdl
-            e2e: jwt
-          - app-type: monolith-react-oauth2-jdl
-            app-folder: monolith-client-auth-template-jdl
-            entity: import-jdl
-            e2e: oauth2
-          - app-type: monolith-react-oauth2-i18n-jdl
-            app-folder: monolith-client-auth-i18n-template-jdl
-            entity: import-jdl
-            e2e: oauth2
-          - app-type: monolith-react-mysql-prod-jdl
-            app-folder: monolith-client-database-prod-template-jdl
-            entity: import-jdl
-            e2e: jwt
-          - app-type: monolith-react-mongodb-prod-jdl
-            app-folder: monolith-client-database-prod-template-jdl
-            entity: import-jdl
-            e2e: 'false'
-          - app-type: monolith-react-oauth2-dev
-            app-folder: monolith-react-oauth2-dev
-            entity: 'no'
-            e2e: oauth2
+      matrix: ${{fromJson(needs.build-matrix.outputs.matrix)}}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -73,7 +51,7 @@ jobs:
           binary-dir: ${{ github.workspace }}/generator-jhipster-nodejs/cli/
       - run: npm install
         working-directory: ${{ github.workspace }}/generator-jhipster-nodejs
-      - run: cli.cjs generate-sample ${{ matrix.app-folder }} --template-name ${{ matrix.app-type }} --skip-jhipster-dependencies --skip-install
+      - run: cli.cjs generate-sample ${{ matrix.sample }} --samples-folder ${{ matrix.samples-group }} --skip-jhipster-dependencies --skip-install ${{ matrix.extra-args }}
       - uses: jhipster/actions/compare-sample@v0
         id: compare
         if: >-
@@ -81,7 +59,7 @@ jobs:
           !contains(github.event.pull_request.labels.*.name, 'pr: disable-compare')
         with:
           generator-path: generator-jhipster-nodejs
-          cmd: cli.cjs generate-sample ${{ matrix.app-folder }} --template-name ${{ matrix.app-type }} --skip-jhipster-dependencies --skip-install
+          cmd: cli.cjs generate-sample ${{ matrix.legacy-sample-file }} --template-name ${{ matrix.legacy-template-name }} --skip-jhipster-dependencies --skip-install ${{ matrix.extra-args }}
       - name: 'INSTALL DEPENDENCIES of generated app'
         run: npm install
         if: steps.compare.outputs.equals != 'true'
@@ -102,7 +80,7 @@ jobs:
         uses: actions/upload-artifact@v4
         if: always() && steps.e2e.outcome == 'failure'
         with:
-          name: screenshots-${{ matrix.app-type }}
+          name: screenshots-${{ matrix.job-name || matrix.sample }}
           path: ${{ github.workspace }}/app/**/cypress/screenshots
       - name: Dump docker logs
         if: always()
@@ -111,12 +89,12 @@ jobs:
     permissions:
       contents: none
     runs-on: ubuntu-latest
-    needs: [applications]
+    needs: [samples]
     if: always()
     steps:
       - run: |
           echo '${{ toJSON(needs) }}'
-          if [ 'skipped' == '${{ needs.applications.result }}' ] || [ 'success' == '${{ needs.applications.result }}' ] || [ 'closed' == '${{ github.event.action }}' ]; then
+          if [ 'skipped' == '${{ needs.samples.result }}' ] || [ 'success' == '${{ needs.samples.result }}' ] || [ 'closed' == '${{ github.event.action }}' ]; then
             exit 0
           fi
           exit 1

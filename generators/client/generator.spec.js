@@ -13,7 +13,7 @@ describe('SubGenerator client of nodejs JHipster blueprint', () => {
         .withJHipsterConfig()
         .withOptions({
           ignoreNeedlesError: true,
-          blueprint: 'nodejs',
+          blueprint: ['nodejs'],
         })
         .withJHipsterLookup()
         .withParentBlueprintLookup();

@@ -17,8 +17,9 @@
     "start:debug": "npm run copy-resources && tsc-watch -p tsconfig.build.json --onSuccess \"node --inspect-brk dist/main.js\"",
     "start:prod": "npm run copy-resources && node dist/main.js",
     "start": "npm run clean && npm run copy-resources && nodemon --watch src -e ts,tsx --exec ts-node src/main.ts",
-    "lint": "eslint . --ignore-path .server.eslintignore --no-eslintrc --config .server.eslintrc.json --ext .js,.ts",
+    "lint": "eslint .",
     "lint:fix": "npm run lint -- --fix",
+    "pretest": "npm run lint",
     "test": "jest",
     "test:cov": "jest --coverage",
     "test:watch": "jest --watch",
@@ -98,14 +99,11 @@
 <%_ if (authenticationType === 'oauth2') { _%>
     "@types/jwt-decode": "<%- nodeServerDependencies['@types/jwt-decode'] %>",
 <%_ } _%>
-    "@types/node": "^<%- nodeVersion %>",
+    "@types/node": "<%- nodeDependencies['@types/node'] %>",
 <%_ if (authenticationType === 'jwt') { _%>
     "@types/passport-jwt": "<%- nodeServerDependencies['@types/passport-jwt'] %>",
 <%_ } _%>
     "@types/supertest": "<%- nodeServerDependencies['@types/supertest'] %>",
-    "@typescript-eslint/eslint-plugin": "<%- nodeServerDependencies['@typescript-eslint/eslint-plugin'] %>",
-    "@typescript-eslint/eslint-plugin-tslint": "<%- nodeServerDependencies['@typescript-eslint/eslint-plugin-tslint'] %>",
-    "@typescript-eslint/parser": "<%- nodeServerDependencies['@typescript-eslint/parser'] %>",
     "browser-sync-client": "<%- nodeServerDependencies['browser-sync-client'] %>",
     "eslint": "<%- nodeServerDependencies['eslint'] %>",
     "eslint-config-prettier": "<%- nodeServerDependencies['eslint-config-prettier'] %>",

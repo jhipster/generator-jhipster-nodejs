@@ -11,10 +11,10 @@ exports[`SubGenerator cypress of nodejs JHipster blueprint > run > should succee
   "client/package.json": {
     "stateCleared": "modified",
   },
-  "client/test/cypress/.eslintrc.json": {
+  "client/test/cypress/e2e/account/login-page.cy.ts": {
     "stateCleared": "modified",
   },
-  "client/test/cypress/e2e/account/login-page.cy.ts": {
+  "client/test/cypress/e2e/account/logout.cy.ts": {
     "stateCleared": "modified",
   },
   "client/test/cypress/e2e/account/password-page.cy.ts": {
