@@ -86,9 +86,12 @@ _%>
       // jhipster-needle-add-entity-to-ormconfig-entities - JHipster will add code here, do not remove
     ],
     migrations: [__dirname + '/migrations/**/*{.ts,.js}'],
-    cli: {
-        migrationsDir: 'src/migrations',
+    autoLoadEntities: true,
+<%_ if (prodDatabaseTypeMssql) { _%>
+    extra: {
+      trustServerCertificate: true,
     },
+<%_ } _%>
     ...ormconfig,
   };
 }
