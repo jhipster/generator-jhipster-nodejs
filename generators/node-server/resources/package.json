@@ -36,7 +36,7 @@
     "typeorm-encrypted": "0.7.0"
   },
   "devDependencies": {
-    "@eslint/js": "9.14.0",
+    "@eslint/js": "9.15.0",
     "@jest/globals": "29.7.0",
     "@nestjs/testing": "10.4.8",
     "@types/bcrypt": "5.0.2",
