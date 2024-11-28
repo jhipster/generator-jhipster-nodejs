@@ -52,7 +52,7 @@ const databaseDrivers = {
   mssql: 'mssql',
 };
 
-const databaseDevDrives = {
+const databaseDevDrivers = {
   mongodb: 'mongodb-memory-server',
   mysql: 'sqlite3',
   postgresql: 'sqlite3',
@@ -119,7 +119,7 @@ export default class extends BaseApplicationGenerator {
         applicationDefaults({
           __override__: false,
           nodeProdDatabaseDriver: ({ databaseType, prodDatabaseType = databaseType }) => databaseDrivers[prodDatabaseType],
-          nodeDevDatabaseDriver: ({ databaseType, prodDatabaseType = databaseType }) => databaseDevDrives[prodDatabaseType],
+          nodeDevDatabaseDriver: ({ databaseType, prodDatabaseType = databaseType }) => databaseDevDrivers[prodDatabaseType],
           nodeProdDatabaseType: ({ databaseType, prodDatabaseType = databaseType }) =>
             prodDatabaseType === 'postgresql' ? 'postgres' : prodDatabaseType,
           nodeDevDatabaseType: ({ databaseType, devDatabaseType = databaseType }) =>

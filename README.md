@@ -48,7 +48,7 @@ This project adds nodejs for your backend, **all TypeScript files generation, no
 
 > - NestJS base app with web controllers, [swagger doc](https://github.com/nestjs/swagger) and [JWT or OAuth2 passport auth](https://github.com/nestjs/passport) services
 
-> - The app starts with four seed users (admin, basic user and anonymous roles), as standard JHipster monolithic app, with SQLite for dev and configurable sql db for prod. But from the 1.5.0 release you can choose mongodb that uses a memory version for dev/test
+> - The app starts with four seed users (admin, basic user and anonymous roles), as standard JHipster monolithic app, with SQLite for dev and configurable sql db for prod. MongoDB support is experimental in [TypeORM](https://github.com/typeorm/typeorm/blob/fdbb013d2279264e851dacc4c5c2e94567b65ab7/README.md?plain=1#L255) so is in JHipster NodeJS.
 
 > - The app uses [TypeORM](https://github.com/nestjs/typeorm) and asks you a question for another sql db or for mongodb
 
