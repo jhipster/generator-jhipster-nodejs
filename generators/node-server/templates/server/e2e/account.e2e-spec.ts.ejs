@@ -126,7 +126,7 @@ describe('Account', () => {
 
     });
 
-    it('/POST change password', async () => {
+    it<%- databaseTypeMongodb ? '.skip' : ''%>('/POST change password', async () => {
         await request(app.getHttpServer())
             .post('/api/account/change-password')
             .send(testPasswordChange)

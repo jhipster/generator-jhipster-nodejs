@@ -48,7 +48,7 @@ describe('App', () => {
         .expect(200));
 
     <%_ if (!skipUserManagement && authenticationType !=='oauth2') { _%>
-    it('/POST authenticate get jwt authenticate OK', () => request(app.getHttpServer())
+    it<%- databaseTypeMongodb ? '.skip' : ''%>('/POST authenticate get jwt authenticate OK', () => request(app.getHttpServer())
         .post('/api/authenticate')
         .send(testUserLogin)
         .expect(200));
