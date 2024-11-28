@@ -44,6 +44,22 @@ const dbTypes = {
   'byte[]': 'blob',
 };
 
+const databaseDrivers = {
+  mongodb: 'mongodb',
+  mysql: 'mysql2',
+  postgresql: 'pg',
+  oracle: 'oracledb',
+  mssql: 'mssql',
+};
+
+const databaseDevDrives = {
+  mongodb: 'mongodb-memory-server',
+  mysql: 'sqlite3',
+  postgresql: 'sqlite3',
+  oracle: 'sqlite3',
+  mssql: 'sqlite3',
+};
+
 export default class extends BaseApplicationGenerator {
   oldNodejsVersion;
   nodejsPackageJson;
@@ -99,6 +115,17 @@ export default class extends BaseApplicationGenerator {
 
   get [BaseApplicationGenerator.PREPARING]() {
     return this.asPreparingTaskGroup({
+      drivers({ applicationDefaults }) {
+        applicationDefaults({
+          __override__: false,
+          nodeProdDatabaseDriver: ({ databaseType, prodDatabaseType = databaseType }) => databaseDrivers[prodDatabaseType],
+          nodeDevDatabaseDriver: ({ databaseType, prodDatabaseType = databaseType }) => databaseDevDrives[prodDatabaseType],
+          nodeProdDatabaseType: ({ databaseType, prodDatabaseType = databaseType }) =>
+            prodDatabaseType === 'postgresql' ? 'postgres' : prodDatabaseType,
+          nodeDevDatabaseType: ({ databaseType, devDatabaseType = databaseType }) =>
+            devDatabaseType === 'postgresql' ? 'postgres' : devDatabaseType,
+        });
+      },
       async source({ source }) {
         source.addEntityToNodeConfig = ({ entityFileName, persistClass }) =>
           this.editFile(

@@ -31,6 +31,8 @@
     "typeorm:schema:sync": "npm run typeorm -- schema:sync"
   },
   "dependencies": {
+    "<%- nodeProdDatabaseDriver %>": "<%- nodeServerDependencies[nodeProdDatabaseDriver] %>",
+    "<%- nodeDevDatabaseDriver %>": "<%- nodeServerDependencies[nodeDevDatabaseDriver] %>",
 <%_ if (authenticationType === 'oauth2') { _%>
     "@nestjs/axios": "<%- nodeServerDependencies['@nestjs/axios'] %>",
     "express-session": "<%- nodeServerDependencies['express-session'] %>",
@@ -60,17 +62,6 @@
 <%_ if (authenticationType === 'oauth2') { _%>
     "jwt-decode": "<%- nodeServerDependencies['jwt-decode'] %>",
 <%_ } _%>
-<%_ if (prodDatabaseType === 'mongodb') { _%>
-    "mongodb": "<%- nodeServerDependencies['mongodb'] %>",
-<%_ } else if (prodDatabaseType === 'mysql') {_%>
-    "mysql2": "<%- nodeServerDependencies['mysql2'] %>",
-<%_ } else if (prodDatabaseType === 'postgresql') {_%>
-    "pg": "<%- nodeServerDependencies['pg'] %>",
-<%_ } else if (prodDatabaseType === 'oracle') {_%>
-    "oracledb": "<%- nodeServerDependencies['oracledb'] %>",
-<%_ } else if (prodDatabaseType === 'mssql') {_%>
-    "mssql": "<%- nodeServerDependencies['mssql'] %>",
-<%_ } _%>
     "passport": "<%- nodeServerDependencies['passport'] %>",
 <%_ if (authenticationType === 'jwt') { _%>
     "passport-jwt": "<%- nodeServerDependencies['passport-jwt'] %>",
@@ -79,11 +70,6 @@
 <%_ } _%>
     "reflect-metadata": "<%- nodeServerDependencies['reflect-metadata'] %>",
     "rxjs": "<%- nodeServerDependencies['rxjs'] %>",
-<%_ if (databaseType === 'mongodb') { _%>
-    "mongodb-memory-server": "<%- nodeServerDependencies['mongodb-memory-server'] %>",
-<%_ } else {_%>
-    "sqlite3": "<%- nodeServerDependencies['sqlite3'] %>",
-<%_ } _%>
     "swagger-ui-express": "<%- nodeServerDependencies['swagger-ui-express'] %>",
     "typeorm": "<%- nodeServerDependencies['typeorm'] %>",
     "typeorm-encrypted": "<%- nodeServerDependencies['typeorm-encrypted'] %>"
