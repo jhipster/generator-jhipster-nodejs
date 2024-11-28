@@ -155,6 +155,6 @@ describe('Account', () => {
 
     afterEach(async () => {
         await service.delete(userAuthenticated);
-        await app.close();
+        await app?.close();
     });
 });
