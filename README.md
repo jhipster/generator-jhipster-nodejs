@@ -1,15 +1,11 @@
 # generator-jhipster-nodejs
 
 [![NPM version][npm-image]][npm-url]
-[![Dependency Status][daviddm-image]][daviddm-url]
-[![Generator Build Status][github-actions-generator-ci-image]][github-actions-url]
-[![Generator Test Status][github-actions-generator-test-image]][github-actions-url]
-[![Sonar Cloud Quality Gate][sonar-gate-image]][sonar-url]
-[![Sonar Cloud Coverage Rate][sonar-coverage-image]][sonar-coverage-url]
-[![Sonar Cloud Reliability Rate][sonar-reliability-image]][sonar-url]
-[![Sonar Cloud Security Rate][sonar-security-image]][sonar-url]
-[![Sonar Cloud Maintainability Rate][sonar-maintainability-image]][sonar-url]
-[![Sonar Cloud Duplicated Code][sonar-duplication-image]][sonar-url]
+[![Generator Build Status][github-actions-generator-image]][github-actions-generator-link]
+[![Generator Angular Samples Status][github-actions-angular-samples-image]][github-actions-angular-samples-link]
+[![Generator React Samples Status][github-actions-react-samples-image]][github-actions-react-samples-link]
+[![Generator Vue Samples Status][github-actions-vue-samples-image]][github-actions-vue-samples-link]
+[![Generator Microservice Samples Status][github-actions-microservice-samples-image]][github-actions-microservice-samples-link]
 [![Gitter][gitter-image]][gitter-url]
 [![Downloads][npmcharts-image]][npmcharts-url]
 
@@ -116,7 +112,7 @@ yarn global upgrade generator-jhipster-nodejs
 This is a blueprint that is runnable by:
 
 ```bash
-jhipster --blueprints nodejs
+nhipster
 ```
 
 However, it also ships with an `nhipster` CLI that you can use as a shortcut.
@@ -125,27 +121,15 @@ However, it also ships with an `nhipster` CLI that you can use as a shortcut.
 
 - `nhipster`
 
-✅ Controller generation
+✅ JDL model support generation
 
-- `nhipster spring-controller <controller-name>`
-
-✅ Service generation
-
-- `nhipster spring-service <service-name>`
-
-✅ Entity generation
-
-- `nhipster entity <entity-name>`
-
-✅ JDL Entity model support generation
-
-- `nhipster import-jdl my_file.jdl`
+- `nhipster jdl my_file.jdl`
 
 ✅ Ci-cd generation
 
 - `nhipster ci-cd`
 
-For the last, in the **test-integration/samples/FOLDER_NAME-jdl** there are some examples of jdl models.
+For the last, in the [generate-sample samples folder](https://github.com/jhipster/generator-jhipster-nodejs/tree/main/.blueprint/generate-sample/templates/samples) and [jdl-samples](https://github.com/jhipster/jdl-samples) there are some examples of jdl models.
 
 ## Using Docker
 
@@ -195,16 +179,8 @@ $ git checkout -b feature/my-feature
 $ npm install
 $ npm link
 $ cd ..
-$ git clone https://github.com/jhipster/generator-jhipster.git
-$ cd generator-jhipster
-$ git checkout v7.0.0
-$ npm install
-$ npm link
-$ cd ..
 $ mkdir test-generation
 $ cd test-generation
-$ npm link generator-jhipster
-$ npm link generator-jhipster-nodejs
 ```
 
 Now you will develop under the **generator-jhipster-nodejs** that you have cloned with git.
@@ -248,8 +224,16 @@ Apache-2.0 © [Angelo Manganiello](https://github.com/amanganiello90)
 
 [npm-image]: https://img.shields.io/npm/v/generator-jhipster-nodejs.svg
 [npm-url]: https://npmjs.org/package/generator-jhipster-nodejs
-[github-actions-generator-ci-image]: https://github.com/jhipster/generator-jhipster-nodejs/workflows/Generator%20CI/badge.svg
-[github-actions-generator-test-image]: https://github.com/jhipster/generator-jhipster-nodejs/workflows/Test%20Integration/badge.svg
+[github-actions-generator-image]: https://github.com/jhipster/generator-jhipster-nodejs/actions/workflows/generator.yml/badge.svg
+[github-actions-generator-link]: https://github.com/jhipster/generator-jhipster-nodejs/actions/workflows/generator.yml
+[github-actions-angular-samples-image]: https://github.com/jhipster/generator-jhipster-nodejs/actions/workflows/test-integration-angular.yml/badge.svg
+[github-actions-angular-samples-link]: https://github.com/jhipster/generator-jhipster-nodejs/actions/workflows/test-integration-angular.yml
+[github-actions-react-samples-image]: https://github.com/jhipster/generator-jhipster-nodejs/actions/workflows/test-integration-react.yml/badge.svg
+[github-actions-react-samples-link]: https://github.com/jhipster/generator-jhipster-nodejs/actions/workflows/test-integration-react.yml
+[github-actions-vue-samples-image]: https://github.com/jhipster/generator-jhipster-nodejs/actions/workflows/test-integration-vue.yml/badge.svg
+[github-actions-vue-samples-link]: https://github.com/jhipster/generator-jhipster-nodejs/actions/workflows/test-integration-vue.yml
+[github-actions-microservice-samples-image]: https://github.com/jhipster/generator-jhipster-nodejs/actions/workflows/test-integration-microservice.yml/badge.svg
+[github-actions-microservice-samples-link]: https://github.com/jhipster/generator-jhipster-nodejs/actions/workflows/test-integration-microservice.yml
 [github-actions-url]: https://github.com/jhipster/generator-jhipster-nodejs/actions
 [sonar-url]: https://sonarcloud.io/dashboard?branch=main&id=jhipster_generator-jhipster-nodejs
 [sonar-coverage-url]: https://sonarcloud.io/component_measures?branch=main&id=jhipster_generator-jhipster-nodejs&metric=coverage&view=list
