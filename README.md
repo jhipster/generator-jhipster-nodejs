@@ -5,7 +5,7 @@
 [![Generator Angular Samples Status][github-actions-angular-samples-image]][github-actions-angular-samples-link]
 [![Generator React Samples Status][github-actions-react-samples-image]][github-actions-react-samples-link]
 [![Generator Vue Samples Status][github-actions-vue-samples-image]][github-actions-vue-samples-link]
-[![Generator Microservices Samples Status][github-actions-microservices-samples-image]][github-actions-microservices-samples-link]
+[![Generator Microservice Samples Status][github-actions-microservice-samples-image]][github-actions-microservice-samples-link]
 [![Gitter][gitter-image]][gitter-url]
 [![Downloads][npmcharts-image]][npmcharts-url]
 
