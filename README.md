@@ -121,27 +121,15 @@ However, it also ships with an `nhipster` CLI that you can use as a shortcut.
 
 - `nhipster`
 
-✅ Controller generation
+✅ JDL model support generation
 
-- `nhipster spring-controller <controller-name>`
-
-✅ Service generation
-
-- `nhipster spring-service <service-name>`
-
-✅ Entity generation
-
-- `nhipster entity <entity-name>`
-
-✅ JDL Entity model support generation
-
-- `nhipster import-jdl my_file.jdl`
+- `nhipster jdl my_file.jdl`
 
 ✅ Ci-cd generation
 
 - `nhipster ci-cd`
 
-For the last, in the **test-integration/samples/FOLDER_NAME-jdl** there are some examples of jdl models.
+For the last, in the [generate-sample samples folder](https://github.com/jhipster/generator-jhipster-nodejs/tree/main/.blueprint/generate-sample/templates/samples) and [jdl-samples](https://github.com/jhipster/jdl-samples) there are some examples of jdl models.
 
 ## Using Docker
 
@@ -191,16 +179,8 @@ $ git checkout -b feature/my-feature
 $ npm install
 $ npm link
 $ cd ..
-$ git clone https://github.com/jhipster/generator-jhipster.git
-$ cd generator-jhipster
-$ git checkout v7.0.0
-$ npm install
-$ npm link
-$ cd ..
 $ mkdir test-generation
 $ cd test-generation
-$ npm link generator-jhipster
-$ npm link generator-jhipster-nodejs
 ```
 
 Now you will develop under the **generator-jhipster-nodejs** that you have cloned with git.
