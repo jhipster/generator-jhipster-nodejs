@@ -47,13 +47,15 @@
     "lint:fix": "echo \"INFO: no client found\"",
     "prettier:check": "prettier --check \"{,src/**/}*.{<%= prettierExtensions %>}\"",
     "prettier:format": "prettier --write \"{,src/**/}*.{<%= prettierExtensions %>}\"",
-    "start:app": "cd server && <%= clientPackageManager %> run start",
-    "test:client": "<%= clientPackageManager %> test --workspace client",
-    "test:server": "<%= clientPackageManager %> test --workspace server",
+    "start": "concurrently -k -s first -n application,client -c red,green npm:start:server npm:start:client",
+    "start:server": "<%= clientPackageManager %> run start -w server",
+    "start:client": "<%= clientPackageManager %> run start -w client",
+    "test:client": "<%= clientPackageManager %> test -w client",
+    "test:server": "<%= clientPackageManager %> test -w server",
 <%_ if (!databaseTypeSql) { _%>
     "pretest:server:e2e": "npm run docker:db:up",
 <%_ } _%>
-    "test:server:e2e": "<%= clientPackageManager %> run test:e2e --workspace server",
+    "test:server:e2e": "<%= clientPackageManager %> run test:e2e -w server",
 <%_ if (!databaseTypeSql) { _%>
     "posttest:server:e2e": "npm run docker:db:down",
 <%_ } _%>

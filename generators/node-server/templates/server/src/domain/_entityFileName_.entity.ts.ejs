@@ -77,7 +77,7 @@ export class <%= persistClass %> extends BaseEntity  {
 
     <%_ } _%>
         <%_ if (field.fieldIsEnum) { _%>
-    @Column({type: 'simple-enum', name: '<%-fieldNameAsDatabaseColumn %>', enum: <%= fieldType %>})
+    @Column({type: '<%- field.nodejsColumnType %>', name: '<%-fieldNameAsDatabaseColumn %>', enum: <%= fieldType %>})
         <%_ } else if (['Instant', 'ZonedDateTime', 'LocalDate'].includes(fieldType)) { _%>
     @Column({<%_ if(field.nodejsColumnType) { _%> type: '<%-field.nodejsColumnType%>' ,<%_ }_%> name: "<%-fieldNameAsDatabaseColumn %>"<% if (!required) { %>, nullable: true<% } %><% if (unique) { %>, unique: true<% } %>})
         <%_ } else if (fieldType === 'BigDecimal') { _%>

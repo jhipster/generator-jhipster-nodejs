@@ -10,11 +10,11 @@ const eagerLoadRelations = relationships.filter(rel => rel.ownerSide).map(rel =>
 const pkType = primaryKey.tsType;
 _%>
 <%_ if (typeormRelationsSupport && eagerLoadRelations.length > 0) { _%>
-const relations = [
+const relations = {
   <%_ for (const rel of eagerLoadRelations) { _%>
-  '<%= rel %>',
+  '<%= rel %>': true,
   <%_ } _%>
-];
+} as const;
 
 <%_ } _%>
 @Injectable()

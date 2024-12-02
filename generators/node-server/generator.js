@@ -1,6 +1,6 @@
 import { readFile } from 'node:fs/promises';
 import BaseApplicationGenerator from 'generator-jhipster/generators/base-application';
-import { createNeedleCallback } from 'generator-jhipster/generators/base/support';
+import { createNeedleCallback, mutateData } from 'generator-jhipster/generators/base/support';
 import { getEnumInfo } from 'generator-jhipster/generators/base-application/support';
 import { TEMPLATES_WEBAPP_SOURCES_DIR } from 'generator-jhipster';
 import { SERVER_NODEJS_SRC_DIR } from '../generator-nodejs-constants.js';
@@ -42,6 +42,22 @@ const dbTypes = {
   Blob: 'blob',
   TextBlob: 'blob',
   'byte[]': 'blob',
+};
+
+const databaseDrivers = {
+  mongodb: 'mongodb',
+  mysql: 'mysql2',
+  postgresql: 'pg',
+  oracle: 'oracledb',
+  mssql: 'mssql',
+};
+
+const databaseDevDrivers = {
+  mongodb: 'mongodb-memory-server',
+  mysql: 'sqlite3',
+  postgresql: 'sqlite3',
+  oracle: 'sqlite3',
+  mssql: 'sqlite3',
 };
 
 export default class extends BaseApplicationGenerator {
@@ -99,6 +115,17 @@ export default class extends BaseApplicationGenerator {
 
   get [BaseApplicationGenerator.PREPARING]() {
     return this.asPreparingTaskGroup({
+      drivers({ applicationDefaults }) {
+        applicationDefaults({
+          __override__: false,
+          nodeProdDatabaseDriver: ({ databaseType, prodDatabaseType = databaseType }) => databaseDrivers[prodDatabaseType],
+          nodeDevDatabaseDriver: ({ databaseType, prodDatabaseType = databaseType }) => databaseDevDrivers[prodDatabaseType],
+          nodeProdDatabaseType: ({ databaseType, prodDatabaseType = databaseType }) =>
+            prodDatabaseType === 'postgresql' ? 'postgres' : prodDatabaseType,
+          nodeDevDatabaseType: ({ databaseType, devDatabaseType = databaseType }) =>
+            devDatabaseType === 'postgresql' ? 'postgres' : devDatabaseType,
+        });
+      },
       async source({ source }) {
         source.addEntityToNodeConfig = ({ entityFileName, persistClass }) =>
           this.editFile(
@@ -142,13 +169,24 @@ export default class extends BaseApplicationGenerator {
     });
   }
 
-  get [BaseApplicationGenerator.PREPARING_EACH_ENTITY]() {
-    return this.asPreparingEachEntityTaskGroup({
-      async preparingEachEntityTemplateTask({ entity, application }) {
-        for (const field of entity.fields) {
-          const { fieldType } = field;
-          field.nodejsFieldType = field.fieldValues ? fieldType : (fieldTypes[fieldType] ?? 'any');
-          field.nodejsColumnType = sanitizeDbType(dbTypes[fieldType], application.devDatabaseType);
+  get [BaseApplicationGenerator.PREPARING_EACH_ENTITY_FIELD]() {
+    return this.asPreparingEachEntityFieldTaskGroup({
+      async preparingEachEntityTemplateTask({ application, field }) {
+        const { fieldType } = field;
+        if (field.skipServer) return;
+
+        if (field.fieldValues) {
+          mutateData(field, {
+            __override__: true,
+            nodejsFieldType: fieldType,
+            nodejsColumnType: application.prodDatabaseTypePostgresql ? 'varchar' : 'simple-enum',
+          });
+        } else {
+          mutateData(field, {
+            __override__: true,
+            nodejsFieldType: fieldTypes[fieldType] ?? 'any',
+            nodejsColumnType: sanitizeDbType(dbTypes[fieldType], application.devDatabaseType),
+          });
         }
       },
     });
@@ -156,7 +194,7 @@ export default class extends BaseApplicationGenerator {
 
   get [BaseApplicationGenerator.WRITING]() {
     return this.asWritingTaskGroup({
-      async cleanup({ control }) {
+      async cleanup({ application, control }) {
         if (control.existingProject) {
           await control.cleanupFiles(this.oldNodejsVersion, {
             '3.0.1': [
@@ -164,6 +202,7 @@ export default class extends BaseApplicationGenerator {
               '.server.eslintignore',
               'server/src/repository/authority.repository.ts',
               'server/src/repository/user.repository.ts',
+              [application.authenticationTypeOauth2, 'node/src/security/password-util.ts'],
             ],
           });
         }
@@ -246,17 +285,7 @@ export default class extends BaseApplicationGenerator {
   get [BaseApplicationGenerator.POST_WRITING]() {
     return this.asPostWritingTaskGroup({
       adjustWorkspacePackageJson({ application }) {
-        const { nodeServerDependencies, nodeDependencies } = application;
-
-        const overrides = {
-          '@nestjs/typeorm': {
-            '@nestjs/common': nodeServerDependencies['@nestjs/common'],
-            '@nestjs/core': nodeServerDependencies['@nestjs/core'],
-          },
-        };
-
-        this.packageJson.merge({ overrides });
-        this.mergeDestinationJson('server/package.json', { overrides });
+        const { nodeDependencies } = application;
 
         if (application.clientFrameworkAngular) {
           this.packageJson.merge({

@@ -2,7 +2,7 @@ import { Injectable, <%_ if (authenticationType === 'jwt') { _%> HttpException, 
 import { InjectRepository } from '@nestjs/typeorm';
 import { FindManyOptions, Repository } from 'typeorm';
 <%_ if (authenticationType === 'jwt') { _%>
-import * as bcrypt from 'bcrypt';
+import { comparePassword } from '../security/password-util';
 import { JwtService } from '@nestjs/jwt';
 import { UserLoginDTO } from '../service/dto/user-login.dto';
 import { Payload } from '../security/payload.interface';
@@ -36,7 +36,7 @@ export class AuthService {
     }
 
     const userFind = await this.userService.findByFields({ where: { login: loginUserName } });
-    const validPassword = !!userFind && (await bcrypt.compare(loginPassword, userFind.password));
+    const validPassword = !!userFind && comparePassword(loginPassword, userFind.password);
     if (!userFind || !validPassword) {
       throw new HttpException('Invalid login name or password!', HttpStatus.UNAUTHORIZED);
     }
@@ -83,7 +83,7 @@ export class AuthService {
       throw new HttpException('Invalid login name!', HttpStatus.BAD_REQUEST);
     }
 
-    if (!(await bcrypt.compare(currentClearTextPassword, userFind.password))) {
+    if (!comparePassword(currentClearTextPassword, userFind.password)) {
       throw new HttpException('Invalid password!', HttpStatus.BAD_REQUEST);
     }
     userFind.password = newPassword;

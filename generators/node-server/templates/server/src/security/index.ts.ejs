@@ -2,5 +2,7 @@ export * from './guards/auth.guard';
 export * from './guards/roles.guard';
 export * from './decorators/roles.decorator';
 export * from './decorators/auth-user.decorator';
+<%_ if (authenticationType === 'jwt') { _%>
 export * from './password-util';
+<%_ } _%>
 export * from './role-type';

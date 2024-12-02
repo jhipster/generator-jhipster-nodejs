@@ -2,6 +2,8 @@ import { TypeOrmModuleOptions } from '@nestjs/typeorm';
 <%_ if (databaseType === 'mongodb') { _%>
 import { MongoMemoryServer } from 'mongodb-memory-server';
 <%_ } _%>
+import { SeedUsersRoles1570200490072 } from './migrations/1570200490072-SeedUsersRoles';
+import { CreateTables1570200270081 } from './migrations/1570200270081-CreateTables';
 // jhipster-needle-add-entity-to-ormconfig-imports - JHipster will add code here, do not remove
 
 <%_ if (databaseType === 'mongodb') { _%>
@@ -13,31 +15,14 @@ if (process.env.BACKEND_ENV !== 'prod') {
 <%_ } else { _%>
 function ormConfig(): TypeOrmModuleOptions {
 <%_ } _%>
-<%_
-  const nodeProdDatabaseDriver = databaseType !== 'sql' ? databaseType : (prodDatabaseType === 'postgresql') ? 'postgres' : prodDatabaseType;
-  const nodeDevDatabaseDriver = databaseType !== 'sql' ? databaseType : (devDatabaseType === 'postgresql') ? 'postgres' : devDatabaseType;
-_%>
-  let ormconfig: TypeOrmModuleOptions = {
-    name: 'default',
-<%_ if (databaseType === 'mongodb') { _%>
-    type: '<%= nodeProdDatabaseDriver %>',
-    host: 'localhost',
-    port: mongod?.instanceInfo?.port ?? 0,
-    database: mongod?.instanceInfo?.dbName ?? 'dev',
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-<%_ } else { _%>
-    type: 'sqlite',
-    database: __dirname + '../../target/db/sqlite-dev-db.sql',
-<%_ } _%>
-    logging: true,
-  };
-
+  let ormconfig: TypeOrmModuleOptions;
 
   if (process.env.BACKEND_ENV === 'prod') {
     ormconfig = {
       name: 'default',
-      type: '<%= nodeProdDatabaseDriver %>',
+      type: '<%= nodeProdDatabaseType %>',
+      // typeorm fails to auto load driver due to workspaces resolution
+      driver: require('<%= nodeProdDatabaseDriver %>'),
       database: '<%= (databaseType === 'sql') ? prodDatabaseName : baseName %>',
       host: '<%= (databaseType === 'sql') ? prodDatabaseType : databaseType %>',
       // port: <%= dbPortValue %>,
@@ -51,14 +36,16 @@ _%>
       name: 'default',
 <%_ if (databaseTypeSql) { _%>
       type: 'sqlite',
+      // typeorm fails to auto load driver due to workspaces resolution
+      driver: require('sqlite3'),
       database: ':memory:',
 <%_ } else { _%>
-      type: '<%= nodeProdDatabaseDriver %>',
-      host: 'localhost',
+      type: '<%= nodeProdDatabaseType %>',
+      // typeorm fails to auto load driver due to workspaces resolution
+      driver: require('<%= nodeProdDatabaseDriver %>'),
+      host: '127.0.0.1',
       port: mongod.instanceInfo.port,
       database: mongod.instanceInfo.dbName,
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
 <%_ } _%>
       keepConnectionAlive: true,
       logging: true,
@@ -68,15 +55,35 @@ _%>
   } else if (process.env.BACKEND_ENV === 'dev') {
     ormconfig = {
       name: 'default',
-      type: '<%= nodeDevDatabaseDriver %>',
+      type: '<%= nodeDevDatabaseType %>',
+      // typeorm fails to auto load driver due to workspaces resolution
+      driver: require('<%= nodeDevDatabaseDriver %>'),
       database: '<%= (databaseType === 'sql') ? devDatabaseName : baseName %>',
-      host: 'localhost',
+      host: '127.0.0.1',
       // port: <%= dbPortValue %>,
       username: '<%- (databaseType === 'sql') ? devDatabaseUsername : '' %>',
       password: '<%- (databaseType === 'sql') ? devDatabasePassword : '' %>',
       logging: false,
     };
 <%_ } _%>
+  } else {
+    ormconfig = {
+      name: 'default',
+<%_ if (databaseType === 'mongodb') { _%>
+      type: '<%= nodeDevDatabaseType %>',
+      // typeorm fails to auto load driver due to workspaces resolution
+      driver: require('<%= nodeDevDatabaseDriver %>'),
+      host: '127.0.0.1',
+      port: mongod?.instanceInfo?.port ?? 0,
+      database: mongod?.instanceInfo?.dbName ?? 'dev',
+<%_ } else { _%>
+      type: 'sqlite',
+      // typeorm fails to auto load driver due to workspaces resolution
+      driver: require('sqlite3'),
+      database: __dirname + '../../target/db/sqlite-dev-db.sql',
+<%_ } _%>
+      logging: true,
+    };  
   }
 
   return {
@@ -85,10 +92,17 @@ _%>
     entities: [
       // jhipster-needle-add-entity-to-ormconfig-entities - JHipster will add code here, do not remove
     ],
-    migrations: [__dirname + '/migrations/**/*{.ts,.js}'],
-    cli: {
-        migrationsDir: 'src/migrations',
+    migrations: [
+      CreateTables1570200270081,
+      SeedUsersRoles1570200490072,
+      // jhipster-needle-add-migration-to-ormconfig-migrations - JHipster will add code here, do not remove
+    ],
+    autoLoadEntities: true,
+<%_ if (prodDatabaseTypeMssql) { _%>
+    extra: {
+      trustServerCertificate: true,
     },
+<%_ } _%>
     ...ormconfig,
   };
 }
