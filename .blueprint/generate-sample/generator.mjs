@@ -5,12 +5,14 @@ import BaseGenerator from 'generator-jhipster/generators/base';
 import { getGithubSamplesGroup } from 'generator-jhipster/testing';
 
 export default class extends BaseGenerator {
+  /** @type {string | undefined} */
+  samplesFolder;
+  /** @type {string} */
+  samplesGroup;
   /** @type {string} */
   sampleName;
   /** @type {boolean} */
   all;
-  /** @type {string} */
-  samplesFolder;
   /** @type {string} */
   sampleType;
   /** @type {string} */
@@ -25,23 +27,26 @@ export default class extends BaseGenerator {
   get [BaseGenerator.WRITING]() {
     return this.asWritingTaskGroup({
       async copySample() {
-        const { samplesFolder, all, sampleName } = this;
+        const { samplesFolder, samplesGroup, all, sampleName } = this;
+        const samplesPath = samplesFolder ? join(samplesFolder, samplesGroup) : samplesGroup;
         if (all) {
-          this.copyTemplate(`${samplesFolder}/*.jdl`, '');
+          this.copyTemplate(`${samplesPath}/*.jdl`, '');
           this.sampleType = 'jdl';
         } else if (extname(sampleName) === '.jdl') {
-          this.copyTemplate(join(samplesFolder, sampleName), sampleName, { noGlob: true });
+          this.copyTemplate(join(samplesPath, sampleName), sampleName, { noGlob: true });
           this.sampleType = 'jdl';
         } else {
-          const { samples } = await getGithubSamplesGroup(this.templatePath(), samplesFolder);
+          const { samples } = await getGithubSamplesGroup(this.templatePath(), samplesPath);
           const {
             'sample-type': sampleType,
             'sample-file': sampleFile = sampleName,
-            'sample-folder': sampleFolder = samplesFolder,
+            'sample-folder': sampleFolder = samplesPath,
             generatorOptions,
           } = samples[sampleName];
+
           this.generatorOptions = generatorOptions;
           this.sampleType = sampleType;
+
           if (sampleType === 'jdl') {
             const jdlFile = `${sampleFile}.jdl`;
             this.copyTemplate(join(sampleFolder, jdlFile), jdlFile, { noGlob: true });

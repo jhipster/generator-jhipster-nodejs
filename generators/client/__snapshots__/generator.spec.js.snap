@@ -239,9 +239,6 @@ exports[`SubGenerator client of nodejs JHipster blueprint > run > should succeed
   "client/src/app/app.config.ts": {
     "stateCleared": "modified",
   },
-  "client/src/app/app.constants.ts": {
-    "stateCleared": "modified",
-  },
   "client/src/app/app.routes.ts": {
     "stateCleared": "modified",
   },
@@ -650,6 +647,12 @@ exports[`SubGenerator client of nodejs JHipster blueprint > run > should succeed
   "client/src/declarations.d.ts": {
     "stateCleared": "modified",
   },
+  "client/src/environments/environment.development.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/environments/environment.ts": {
+    "stateCleared": "modified",
+  },
   "client/src/favicon.ico": {
     "stateCleared": "modified",
   },
@@ -696,9 +699,6 @@ exports[`SubGenerator client of nodejs JHipster blueprint > run > should succeed
     "stateCleared": "modified",
   },
   "client/src/robots.txt": {
-    "stateCleared": "modified",
-  },
-  "client/src/swagger-ui/dist/images/throbber.gif": {
     "stateCleared": "modified",
   },
   "client/src/swagger-ui/index.html": {
