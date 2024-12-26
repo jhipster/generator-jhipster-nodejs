@@ -13,7 +13,6 @@ application {
         baseName monolithClientAuthSqlJdlApp,
         packageName com.jhipster.node,
         databaseType sql,
-        prodDatabaseType mssql,
         enableTranslation false,
         testFrameworks [cypress]
         // jhipster-needle-jdl-application-config

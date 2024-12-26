@@ -23,6 +23,14 @@ export default class extends BaseApplicationGenerator {
           );
         }
       },
+      npmScripts({ application }) {
+        const clientPackageJson = this.createStorage(this.destinationPath(application.clientRootDir, 'package.json'));
+        clientPackageJson.merge({
+          scripts: {
+            'pree2e:headless': '',
+          },
+        });
+      },
     });
   }
 }

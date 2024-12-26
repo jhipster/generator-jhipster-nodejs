@@ -156,6 +156,11 @@ export default class extends BaseApplicationGenerator {
         application.typeormOrderSupport = !application.databaseTypeMongodb;
         application.typeormRelationsSupport = !application.databaseTypeMongodb;
       },
+      adjusts({ application }) {
+        application.dockerContainers.mssql = 'mcr.microsoft.com/mssql/server:2022-CU16-ubuntu-22.04';
+        application.dockerContainers.mssqlTag = '2022-CU16-ubuntu-22.04';
+        application.dockerContainers.mssqlImage = 'mcr.microsoft.com/mssql/server';
+      },
     });
   }
 
@@ -277,22 +282,6 @@ export default class extends BaseApplicationGenerator {
           if (!entity.builtIn) {
             source.addEntityToAppModule({ entityFileName, entityClass });
           }
-        }
-      },
-    });
-  }
-
-  get [BaseApplicationGenerator.POST_WRITING]() {
-    return this.asPostWritingTaskGroup({
-      adjustWorkspacePackageJson({ application }) {
-        const { nodeDependencies } = application;
-
-        if (application.clientFrameworkAngular) {
-          this.packageJson.merge({
-            overrides: {
-              'browser-sync': nodeDependencies['browser-sync'],
-            },
-          });
         }
       },
     });
