@@ -294,20 +294,4 @@ export default class extends BaseApplicationGenerator {
       },
     });
   }
-
-  get [BaseApplicationGenerator.POST_WRITING]() {
-    return this.asPostWritingTaskGroup({
-      adjustWorkspacePackageJson({ application }) {
-        const { nodeDependencies } = application;
-
-        if (application.clientFrameworkAngular) {
-          this.packageJson.merge({
-            overrides: {
-              'browser-sync': nodeDependencies['browser-sync'],
-            },
-          });
-        }
-      },
-    });
-  }
 }
