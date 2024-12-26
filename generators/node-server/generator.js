@@ -156,11 +156,6 @@ export default class extends BaseApplicationGenerator {
         application.typeormOrderSupport = !application.databaseTypeMongodb;
         application.typeormRelationsSupport = !application.databaseTypeMongodb;
       },
-      adjusts({ application }) {
-        application.dockerContainers.mssql = 'mcr.microsoft.com/mssql/server:2022-CU16-ubuntu-22.04';
-        application.dockerContainers.mssqlTag = '2022-CU16-ubuntu-22.04';
-        application.dockerContainers.mssqlImage = 'mcr.microsoft.com/mssql/server';
-      },
     });
   }
 
