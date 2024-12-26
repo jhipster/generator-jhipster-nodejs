@@ -260,14 +260,6 @@ export default class extends BaseApplicationGenerator {
   get [BaseApplicationGenerator.POST_WRITING]() {
     return this.asPostWritingTaskGroup({
       adjustWorkspacePackageJson({ application }) {
-        if (application.clientTestFrameworksCypress) {
-          const clientPackageJson = this.createStorage(this.destinationPath(application.clientRootDir, 'package.json'));
-          clientPackageJson.merge({
-            scripts: {
-              'pree2e:headless': '',
-            },
-          });
-        }
         if (application.clientFrameworkAngular) {
           this.packageJson.merge({
             overrides: {
