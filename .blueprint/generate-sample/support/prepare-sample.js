@@ -28,7 +28,6 @@ export const prepareSampleEntry = sampleData => {
     ];
   }
 
-  intersection(clientFrameworks, split);
   const clientFramework = intersection(clientFrameworks, split)[0];
   const authenticationType = intersection(authenticationTypes, split)[0];
   const databaseType = intersection(databaseTypes, split)[0];
