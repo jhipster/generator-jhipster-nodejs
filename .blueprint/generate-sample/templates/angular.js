@@ -8,6 +8,7 @@ const samples = [
   'monolith-angular-oauth2-i18n-jdl',
   'monolith-angular-jwt-i18n-dev',
   ['monolith-angular-jwt-mongodb-jdl', { 'legacy-sample-file': 'monolith-client-auth-database-template-jdl', e2e: 'false' }],
+  // Disabled due to https://github.com/jhipster/generator-jhipster/issues/28258
   // 'monolith-angular-mssql-prod-jdl',
   'monolith-angular-postgresql-prod-jdl',
 ];
