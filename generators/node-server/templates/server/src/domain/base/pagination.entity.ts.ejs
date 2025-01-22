@@ -21,7 +21,7 @@ export class Sort {
 }
 <%_ } _%>
 
-export type PaginationQueryType = string | string[] | ParsedQs | ParsedQs[];
+export type PaginationQueryType = string | ParsedQs | (string | ParsedQs)[];
 
 export class PageRequest {
   @JsonProperty()
