@@ -6,7 +6,7 @@
     "@nestjs/jwt": "11.0.0",
     "@nestjs/passport": "11.0.5",
     "@nestjs/platform-express": "10.4.15",
-    "@nestjs/serve-static": "4.0.2",
+    "@nestjs/serve-static": "5.0.1",
     "@nestjs/swagger": "8.1.1",
     "@nestjs/typeorm": "11.0.0",
     "bcrypt": "5.1.1",
