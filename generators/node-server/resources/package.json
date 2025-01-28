@@ -41,7 +41,7 @@
     "@nestjs/testing": "11.0.6",
     "@types/bcrypt": "5.0.2",
     "@types/express": "5.0.0",
-    "@types/express-serve-static-core": "5.0.5",
+    "@types/express-serve-static-core": "5.0.6",
     "@types/jest": "29.5.14",
     "@types/jwt-decode": "3.1.0",
     "@types/node": "22.12.0",
