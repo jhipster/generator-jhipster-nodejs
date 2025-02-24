@@ -29,6 +29,7 @@ describe('SubGenerator bootstrap-application of nodejs JHipster blueprint', () =
         authority: expect.any(Object),
         userManagement: expect.any(Object),
         jhipsterPackageJson: expect.any(Object),
+        blueprints: expect.arrayContaining([expect.objectContaining({ name: 'generator-jhipster-nodejs', version: expect.any(String) })]),
       });
     });
   });

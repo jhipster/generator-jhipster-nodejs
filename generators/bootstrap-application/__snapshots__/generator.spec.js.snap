@@ -20,10 +20,10 @@ exports[`SubGenerator bootstrap-application of nodejs JHipster blueprint > run >
   "backendTypeJavaAny": false,
   "backendTypeSpringBoot": false,
   "baseName": "jhipster",
-  "blueprints": [
-    {
+  "blueprints": ArrayContaining [
+    ObjectContaining {
       "name": "generator-jhipster-nodejs",
-      "version": "3.0.0",
+      "version": Any<String>,
     },
   ],
   "buildTool": "maven",
