@@ -269,6 +269,7 @@ exports[`SubGenerator bootstrap-application of nodejs JHipster blueprint > run >
   "githubWorkflows": undefined,
   "graalvmSupport": undefined,
   "gradleEnterpriseHost": undefined,
+  "hasNonBuiltInEntity": false,
   "hipster": "jhipster_family_member_3",
   "hipsterBugTrackerLink": "https://github.com/jhipster/generator-jhipster/issues?state=open",
   "hipsterBugTrackerProductName": "JHipster",
