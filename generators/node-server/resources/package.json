@@ -54,7 +54,7 @@
     "eslint-plugin-prettier": "5.2.6",
     "globals": "16.0.0",
     "jest": "29.7.0",
-    "nodemon": "3.1.9",
+    "nodemon": "3.1.10",
     "rimraf": "5.0.10",
     "sonarqube-scanner": "4.3.0",
     "supertest": "7.1.0",
