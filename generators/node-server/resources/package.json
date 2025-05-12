@@ -9,7 +9,7 @@
     "@nestjs/serve-static": "5.0.3",
     "@nestjs/swagger": "11.2.0",
     "@nestjs/typeorm": "11.0.0",
-    "bcrypt": "5.1.1",
+    "bcrypt": "6.0.0",
     "browser-sync-client": "3.0.4",
     "class-transformer": "0.5.1",
     "class-validator": "0.14.2",
