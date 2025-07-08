@@ -63,7 +63,7 @@
     "tsc-watch": "7.1.1",
     "tsconfig-paths": "4.2.0",
     "typescript": "5.8.3",
-    "typescript-eslint": "8.35.1"
+    "typescript-eslint": "8.36.0"
   },
   "packageManager": "npm@11"
 }
