@@ -50,7 +50,7 @@
     "@types/supertest": "6.0.3",
     "browser-sync-client": "3.0.4",
     "eslint": "9.14.0",
-    "eslint-config-prettier": "10.1.5",
+    "eslint-config-prettier": "10.1.8",
     "eslint-plugin-prettier": "5.5.1",
     "globals": "16.3.0",
     "jest": "30.0.4",
