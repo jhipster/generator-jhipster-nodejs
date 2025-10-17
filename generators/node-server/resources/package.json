@@ -44,7 +44,7 @@
     "@types/express-serve-static-core": "5.1.0",
     "@types/jest": "30.0.0",
     "@types/jwt-decode": "3.1.0",
-    "@types/node": "24.7.2",
+    "@types/node": "24.8.1",
     "@types/passport-jwt": "4.0.1",
     "@types/superagent": "8.1.9",
     "@types/supertest": "6.0.3",
