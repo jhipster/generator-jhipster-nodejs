@@ -3,7 +3,7 @@
     "@nestjs/axios": "4.0.1",
     "@nestjs/common": "11.1.9",
     "@nestjs/core": "11.1.9",
-    "@nestjs/jwt": "11.0.1",
+    "@nestjs/jwt": "11.0.2",
     "@nestjs/passport": "11.0.5",
     "@nestjs/platform-express": "11.1.9",
     "@nestjs/serve-static": "5.0.4",
