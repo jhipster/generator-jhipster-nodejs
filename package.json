@@ -58,7 +58,7 @@
   },
   "devDependencies": {
     "ejs-lint": "2.0.1",
-    "eslint": "9.23.0",
+    "eslint": "9.26.0",
     "eslint-config-prettier": "10.1.1",
     "eslint-plugin-prettier": "5.2.5",
     "globals": "16.0.0",
