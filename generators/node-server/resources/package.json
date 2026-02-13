@@ -14,7 +14,7 @@
     "class-transformer": "0.5.1",
     "class-validator": "0.14.3",
     "cloud-config-client": "1.6.2",
-    "dotenv": "17.2.4",
+    "dotenv": "17.3.1",
     "eureka-js-client": "4.5.0",
     "express-session": "1.19.0",
     "js-yaml": "4.1.1",
