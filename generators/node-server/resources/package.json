@@ -22,7 +22,7 @@
     "mongodb": "5.9.2",
     "mongodb-memory-server": "11.0.1",
     "mssql": "12.2.0",
-    "mysql2": "3.17.0",
+    "mysql2": "3.17.1",
     "oracledb": "6.10.0",
     "passport": "0.7.0",
     "passport-jwt": "4.0.1",
