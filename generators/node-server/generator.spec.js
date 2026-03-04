@@ -46,4 +46,28 @@ describe('SubGenerator node-server of nodejs JHipster blueprint', () => {
       expect(result.getSnapshot('**/README.md')).toMatchSnapshot();
     });
   });
+
+  describe('with graphql', () => {
+    beforeAll(async function () {
+      await helpers
+        .run(SUB_GENERATOR_NAMESPACE)
+        .withJHipsterConfig({
+          graphql: true,
+        })
+        .withOptions({
+          ignoreNeedlesError: true,
+          blueprint: ['nodejs'],
+        })
+        .withJHipsterLookup()
+        .withParentBlueprintLookup();
+    });
+
+    it('should succeed', () => {
+      expect(result.getStateSnapshot()).toMatchSnapshot();
+    });
+
+    it('graphql module should match snapshot', () => {
+      expect(result.getSnapshot('**/server/src/graphql/graphql.module.ts')).toMatchSnapshot();
+    });
+  });
 });

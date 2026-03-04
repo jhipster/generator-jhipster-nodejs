@@ -32,6 +32,16 @@ export default asCommand({
         { value: 'oauth2', name: 'OAuth 2.0 / OIDC Authentication (stateful, works with Okta)' },
       ],
     },
+    graphql: {
+      cli: {
+        type: Boolean,
+      },
+      prompt: {
+        type: 'confirm',
+        message: `Do you want to enable ${chalk.yellow('*GraphQL*')} support?`,
+        default: false,
+      },
+    },
     prodDatabaseType: {
       cli: {
         type: String,

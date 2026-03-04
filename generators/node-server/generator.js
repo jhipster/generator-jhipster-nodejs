@@ -118,6 +118,7 @@ export default class extends BaseApplicationGenerator {
       drivers({ applicationDefaults }) {
         applicationDefaults({
           __override__: false,
+          graphql: false,
           nodeProdDatabaseDriver: ({ databaseType, prodDatabaseType = databaseType }) => databaseDrivers[prodDatabaseType],
           nodeDevDatabaseDriver: ({ databaseType, prodDatabaseType = databaseType }) => databaseDevDrivers[prodDatabaseType],
           nodeProdDatabaseType: ({ databaseType, prodDatabaseType = databaseType }) =>

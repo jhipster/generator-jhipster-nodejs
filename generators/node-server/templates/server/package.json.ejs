@@ -40,6 +40,11 @@
     "browser-sync-client": "<%- nodeServerDependencies['browser-sync-client'] %>",
     "@nestjs/common": "<%- nodeServerDependencies['@nestjs/common'] %>",
     "@nestjs/core": "<%- nodeServerDependencies['@nestjs/core'] %>",
+<%_ if (graphql) { _%>
+    "@apollo/server": "<%- nodeServerDependencies['@apollo/server'] %>",
+    "@nestjs/apollo": "<%- nodeServerDependencies['@nestjs/apollo'] %>",
+    "@nestjs/graphql": "<%- nodeServerDependencies['@nestjs/graphql'] %>",
+<%_ } _%>
 <%_ if (authenticationType === 'jwt') { _%>
     "@nestjs/jwt": "<%- nodeServerDependencies['@nestjs/jwt'] %>",
 <%_ } _%>
@@ -67,6 +72,9 @@
     "passport-jwt": "<%- nodeServerDependencies['passport-jwt'] %>",
 <%_ } else if (authenticationType === 'oauth2') {_%>
     "passport-oauth2": "<%- nodeServerDependencies['passport-oauth2'] %>",
+<%_ } _%>
+<%_ if (graphql) { _%>
+    "graphql": "<%- nodeServerDependencies['graphql'] %>",
 <%_ } _%>
     "reflect-metadata": "<%- nodeServerDependencies['reflect-metadata'] %>",
     "rxjs": "<%- nodeServerDependencies['rxjs'] %>",

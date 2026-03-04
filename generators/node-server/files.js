@@ -64,6 +64,11 @@ export const serverFiles = {
         'ormconfig.ts',
       ],
     },
+    {
+      path: SERVER_NODEJS_DIR,
+      condition: generator => generator.graphql,
+      templates: ['src/graphql/graphql.module.ts', 'src/graphql/graphql.resolver.ts'],
+    },
   ],
   e2e: [
     {
