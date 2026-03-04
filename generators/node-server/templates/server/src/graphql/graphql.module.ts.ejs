@@ -1,0 +1,19 @@
+import { Module } from '@nestjs/common';
+import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
+import { GraphQLModule } from '@nestjs/graphql';
+import { GraphqlResolver } from './graphql.resolver';
+import { config } from '../config';
+
+@Module({
+  imports: [
+    GraphQLModule.forRoot<ApolloDriverConfig>({
+      driver: ApolloDriver,
+      autoSchemaFile: true,
+      path: config.get('jhipster.graphql.path'),
+      playground: config.get('jhipster.graphql.playground'),
+      sortSchema: true,
+    }),
+  ],
+  providers: [GraphqlResolver],
+})
+export class GraphqlModule {}

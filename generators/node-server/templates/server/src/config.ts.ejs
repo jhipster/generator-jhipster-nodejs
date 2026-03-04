@@ -28,6 +28,10 @@ export class Config {
   'jhipster.swagger.description' = '<%= baseName %> API documentation';
   'jhipster.swagger.version' = '0.0.1';
   'jhipster.swagger.path' = '/api/v2/api-docs';
+<%_ if (graphql) { _%>
+  'jhipster.graphql.path' = '/graphql';
+  'jhipster.graphql.playground' = true;
+<%_ } _%>
   'eureka.client.enabled' = true;
   'eureka.client.healthcheck.enabled' = true;
   'eureka.client.fetch-registry' = true;

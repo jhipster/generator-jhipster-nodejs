@@ -126,6 +126,20 @@ So to get a token, you have to pass a POST request on the _api/authenticate_ url
 For this you can use **swagger ui** on **/api/v2/api-docs** path, or the client login page (if you have generated it).
 <%_ } _%>
 
+<%_ if (graphql) { _%>
+### GraphQL API
+
+GraphQL support is enabled for this application and exposed on `/graphql`.
+
+The generated GraphQL schema includes a basic `health` query:
+
+```graphql
+query {
+  health
+}
+```
+<%_ } _%>
+
 ### Using NestJS CLI
 
 You can also use [NestJS CLI][] to generate some custom server code.
