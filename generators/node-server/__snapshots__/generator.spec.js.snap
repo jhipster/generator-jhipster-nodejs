@@ -348,17 +348,19 @@ npm run sonar:scanner
 For more information, refer to the [Code quality page][].
 
 
-[JHipster Homepage and latest documentation]: https://www.jhipster.tech
-[JHipster JHIPSTER_VERSION archive]: https://www.jhipster.tech/documentation-archive/vJHIPSTER_VERSION
-[Using JHipster in development]: https://www.jhipster.tech/documentation-archive/vJHIPSTER_VERSION/development/
-[Using Docker and Docker-Compose]: https://www.jhipster.tech/documentation-archive/vJHIPSTER_VERSION/docker-compose
-[Using JHipster in production]: https://www.jhipster.tech/documentation-archive/vJHIPSTER_VERSION/production/
-[Running tests page]: https://www.jhipster.tech/documentation-archive/vJHIPSTER_VERSION/running-tests/
-[Code quality page]: https://www.jhipster.tech/documentation-archive/vJHIPSTER_VERSION/code-quality/
-[Setting up Continuous Integration]: https://www.jhipster.tech/documentation-archive/vJHIPSTER_VERSION/setting-up-ci/
 
-[Node.js]: https://nodejs.org/
-[NPM]: https://www.npmjs.com/
+## References
+
+- [JHipster Homepage and latest documentation](https://www.jhipster.tech/)
+- [JHipster JHIPSTER_VERSION archive](https://www.jhipster.tech/documentation-archive/vJHIPSTER_VERSION)
+- [Using JHipster in development](https://www.jhipster.tech/documentation-archive/vJHIPSTER_VERSION/development/)
+- [Using Docker and Docker-Compose](https://www.jhipster.tech/documentation-archive/vJHIPSTER_VERSION/docker-compose)
+- [Using JHipster in production](https://www.jhipster.tech/documentation-archive/vJHIPSTER_VERSION/production/)
+- [Running tests page](https://www.jhipster.tech/documentation-archive/vJHIPSTER_VERSION/running-tests/)
+- [Code quality page](https://www.jhipster.tech/documentation-archive/vJHIPSTER_VERSION/code-quality/)
+- [Setting up Continuous Integration](https://www.jhipster.tech/documentation-archive/vJHIPSTER_VERSION/setting-up-ci/)
+- [Node.js](https://nodejs.org/)
+- [NPM](https://www.npmjs.com/)
 [Node.js]: https://nodejs.org/
 [Webpack]: https://webpack.github.io/
 [Jest]: https://facebook.github.io/jest/

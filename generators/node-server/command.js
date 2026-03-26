@@ -1,12 +1,15 @@
 import chalk from 'chalk';
+import { asCommand } from 'generator-jhipster';
 import { command as serverCommand } from 'generator-jhipster/generators/server';
 
-const { applicationType } = serverCommand.configs;
-
-import { asCommand } from 'generator-jhipster';
+const applicationType = serverCommand.configs.applicationType ?? {
+  cli: {
+    type: String,
+  },
+  scope: 'storage',
+};
 
 export default asCommand({
-  options: {},
   configs: {
     applicationType,
     serverPort: {
@@ -24,7 +27,7 @@ export default asCommand({
         type: String,
       },
       prompt: {
-        type: 'list',
+        type: 'select',
         message: `Which ${chalk.yellow('*type*')} of authentication would you like to use?`,
       },
       choices: [
@@ -37,7 +40,7 @@ export default asCommand({
         type: String,
       },
       prompt: {
-        type: 'list',
+        type: 'select',
         message: `Which ${chalk.yellow('*production*')} database would you like to use?`,
       },
       choices: [

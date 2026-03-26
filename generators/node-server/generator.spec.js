@@ -9,14 +9,14 @@ describe('SubGenerator node-server of nodejs JHipster blueprint', () => {
   describe('run', () => {
     beforeAll(async function () {
       await helpers
-        .run(SUB_GENERATOR_NAMESPACE)
-        .withJHipsterConfig()
+        .runJHipster(SUB_GENERATOR_NAMESPACE)
+        .withJHipsterConfig({ backendType: 'NodeJS' })
         .withOptions({
           ignoreNeedlesError: true,
           blueprint: ['nodejs'],
         })
-        .withJHipsterLookup()
-        .withParentBlueprintLookup();
+        .withJHipsterGenerators()
+        .withConfiguredBlueprint();
     });
 
     it('should succeed', () => {
@@ -26,16 +26,17 @@ describe('SubGenerator node-server of nodejs JHipster blueprint', () => {
   describe('without client', () => {
     beforeAll(async function () {
       await helpers
-        .run(SUB_GENERATOR_NAMESPACE)
+        .runJHipster(SUB_GENERATOR_NAMESPACE)
         .withJHipsterConfig({
+          backendType: 'NodeJS',
           skipClient: true,
         })
         .withOptions({
           ignoreNeedlesError: true,
           blueprint: ['nodejs'],
         })
-        .withJHipsterLookup()
-        .withParentBlueprintLookup();
+        .withJHipsterGenerators()
+        .withConfiguredBlueprint();
     });
 
     it('should succeed', () => {

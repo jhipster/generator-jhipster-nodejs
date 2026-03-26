@@ -1,11 +1,15 @@
 import { readFile } from 'node:fs/promises';
-import BaseApplicationGenerator from 'generator-jhipster/generators/base-application';
-import { createNeedleCallback, mutateData } from 'generator-jhipster/generators/base/support';
-import { getEnumInfo } from 'generator-jhipster/generators/base-application/support';
+
 import { TEMPLATES_WEBAPP_SOURCES_DIR } from 'generator-jhipster';
+import BaseApplicationGenerator from 'generator-jhipster/generators/base-application';
+import { getEnumInfo } from 'generator-jhipster/generators/base-application/support';
+import { createNeedleCallback } from 'generator-jhipster/generators/base-core/support';
+import { mutateData } from 'generator-jhipster/utils';
+
 import { SERVER_NODEJS_SRC_DIR } from '../generator-nodejs-constants.js';
-import { serverFiles } from './files.js';
+
 import { entityFiles } from './entity-files.js';
+import { serverFiles } from './files.js';
 
 function sanitizeDbType(fieldType, dbType) {
   if (dbType === 'sqlite') {
@@ -69,7 +73,7 @@ export default class extends BaseApplicationGenerator {
   }
 
   async beforeQueue() {
-    await this.dependsOnJHipster('bootstrap-application');
+    await this.dependsOnJHipster('jhipster-nodejs:bootstrap-application');
     await this.dependsOnJHipster('common');
   }
 
@@ -118,8 +122,16 @@ export default class extends BaseApplicationGenerator {
       drivers({ applicationDefaults }) {
         applicationDefaults({
           __override__: false,
+          jhiTablePrefix: ({ jhiPrefix }) => this._.snakeCase(jhiPrefix),
           nodeProdDatabaseDriver: ({ databaseType, prodDatabaseType = databaseType }) => databaseDrivers[prodDatabaseType],
           nodeDevDatabaseDriver: ({ databaseType, prodDatabaseType = databaseType }) => databaseDevDrivers[prodDatabaseType],
+          prodDatabaseName: ({ baseName }) => baseName,
+          devDatabaseName: ({ baseName }) => baseName,
+          prodDatabaseUsername: ({ baseName }) => baseName,
+          prodDatabasePassword: () => '',
+          devDatabaseUsername: ({ baseName }) => baseName,
+          devDatabasePassword: () => '',
+          clientPackageManager: ({ nodePackageManager = 'npm' }) => nodePackageManager,
           nodeProdDatabaseType: ({ databaseType, prodDatabaseType = databaseType }) =>
             prodDatabaseType === 'postgresql' ? 'postgres' : prodDatabaseType,
           nodeDevDatabaseType: ({ databaseType, devDatabaseType = databaseType }) =>
