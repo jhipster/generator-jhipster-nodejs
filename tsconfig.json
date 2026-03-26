@@ -1,5 +1,6 @@
 /* tsconfig.json is provided for ui autocomplete support, jhipster types are experimental */
 {
+  "include": ["./cli", "./generators"],
   "compilerOptions": {
     /* Language and Environment */
     "target": "ES2022" /* Set the JavaScript language version for emitted JavaScript and include compatible library declarations. */,

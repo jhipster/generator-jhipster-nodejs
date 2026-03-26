@@ -1,10 +1,10 @@
 import assert from 'node:assert';
 import { existsSync } from 'node:fs';
 import path from 'node:path';
-import { fileURLToPath } from 'node:url';
+
 import { intersection } from 'lodash-es';
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const __dirname = import.meta.dirname;
 
 export const prepareSampleEntry = sampleData => {
   const [sample, data = {}] = Array.isArray(sampleData) ? sampleData : [sampleData];

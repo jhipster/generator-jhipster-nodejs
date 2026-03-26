@@ -1,5 +1,4 @@
 import CiCdGenerator from 'generator-jhipster/generators/ci-cd';
-import command from './command.js';
 
 export default class extends CiCdGenerator {
   constructor(args, opts, features) {
@@ -13,10 +12,7 @@ export default class extends CiCdGenerator {
   get [CiCdGenerator.INITIALIZING]() {
     return this.asInitializingTaskGroup({
       ...super.initializing,
-      async initializingTemplateTask() {
-        this.parseJHipsterArguments(command.arguments);
-        this.parseJHipsterOptions(command.options);
-      },
+      async initializingTemplateTask() {},
     });
   }
 
