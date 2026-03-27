@@ -12,10 +12,11 @@ describe('SubGenerator node-server of nodejs JHipster blueprint', () => {
   describe('run', () => {
     beforeAll(async function () {
       await helpers
-        .runJHipster(SUB_GENERATOR_PATH, { useEnvironmentBuilder: true })
+        .runJHipster(SUB_GENERATOR_PATH, { prepareEnvironment: true })
         .withJHipsterConfig({ backendType: 'NodeJS' })
         .withOptions({
           commandName: SUB_GENERATOR,
+          skipChecks: true,
           ignoreNeedlesError: true,
           blueprint: ['nodejs'],
         })
@@ -31,13 +32,14 @@ describe('SubGenerator node-server of nodejs JHipster blueprint', () => {
   describe('without client', () => {
     beforeAll(async function () {
       await helpers
-        .runJHipster(SUB_GENERATOR_PATH, { useEnvironmentBuilder: true })
+        .runJHipster(SUB_GENERATOR_PATH, { prepareEnvironment: true })
         .withJHipsterConfig({
           backendType: 'NodeJS',
           skipClient: true,
         })
         .withOptions({
           commandName: SUB_GENERATOR,
+          skipChecks: true,
           ignoreNeedlesError: true,
           blueprint: ['nodejs'],
         })

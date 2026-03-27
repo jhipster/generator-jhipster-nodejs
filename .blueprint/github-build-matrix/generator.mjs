@@ -1,7 +1,9 @@
 import { join } from 'node:path';
 
-import { convertToGitHubMatrix, getGithubOutputFile, getGithubSamplesGroup, setGithubTaskOutput } from 'generator-jhipster/ci';
+import { convertToGitHubMatrix, getGithubOutputFile, setGithubTaskOutput } from 'generator-jhipster/ci';
 import BaseCoreGenerator from 'generator-jhipster/generators/base-core';
+
+import { getBlueprintSamplesGroup } from '../generate-sample/support/samples-group.js';
 
 export default class extends BaseCoreGenerator {
   /** @type {string} */
@@ -17,7 +19,7 @@ export default class extends BaseCoreGenerator {
         const { samplesGroup = 'samples' } = this;
         const templatePath = this.templatePath('../../generate-sample/templates/');
         const samplesFolder = this.samplesFolder ? join(templatePath, this.samplesFolder) : templatePath;
-        const { samples, warnings } = await getGithubSamplesGroup(samplesFolder, samplesGroup);
+        const { samples, warnings } = await getBlueprintSamplesGroup(samplesFolder, samplesGroup);
         if (warnings.length > 0) {
           this.log.info(warnings.join('\n'));
         }
