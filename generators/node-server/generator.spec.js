@@ -1,20 +1,25 @@
 import { beforeAll, describe, expect, it } from 'vitest';
+import { join } from 'node:path';
 
 import { defaultHelpers as helpers, result } from 'generator-jhipster/testing';
 
+import BootstrapApplicationGenerator from '../bootstrap-application/index.js';
+
 const SUB_GENERATOR = 'node-server';
-const SUB_GENERATOR_NAMESPACE = `jhipster-nodejs:${SUB_GENERATOR}`;
+const SUB_GENERATOR_PATH = join(import.meta.dirname, 'index.js');
 
 describe('SubGenerator node-server of nodejs JHipster blueprint', () => {
   describe('run', () => {
     beforeAll(async function () {
       await helpers
-        .runJHipster(SUB_GENERATOR_NAMESPACE)
+        .runJHipster(SUB_GENERATOR_PATH, { useEnvironmentBuilder: true })
         .withJHipsterConfig({ backendType: 'NodeJS' })
         .withOptions({
+          commandName: SUB_GENERATOR,
           ignoreNeedlesError: true,
           blueprint: ['nodejs'],
         })
+        .withGenerators([[BootstrapApplicationGenerator, { namespace: 'jhipster-nodejs:bootstrap-application' }]])
         .withJHipsterGenerators()
         .withConfiguredBlueprint();
     });
@@ -26,15 +31,17 @@ describe('SubGenerator node-server of nodejs JHipster blueprint', () => {
   describe('without client', () => {
     beforeAll(async function () {
       await helpers
-        .runJHipster(SUB_GENERATOR_NAMESPACE)
+        .runJHipster(SUB_GENERATOR_PATH, { useEnvironmentBuilder: true })
         .withJHipsterConfig({
           backendType: 'NodeJS',
           skipClient: true,
         })
         .withOptions({
+          commandName: SUB_GENERATOR,
           ignoreNeedlesError: true,
           blueprint: ['nodejs'],
         })
+        .withGenerators([[BootstrapApplicationGenerator, { namespace: 'jhipster-nodejs:bootstrap-application' }]])
         .withJHipsterGenerators()
         .withConfiguredBlueprint();
     });
