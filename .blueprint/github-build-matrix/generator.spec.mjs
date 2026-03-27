@@ -11,7 +11,10 @@ describe(`generator - ${generator}`, async () => {
   for (const workflow of groups.map(sample => sample.split('.')[0])) {
     describe(`with ${workflow}`, () => {
       beforeAll(async () => {
-        await helpers.runJHipster(join(import.meta.dirname, 'index.mjs'), { prepareEnvironment: true }).withArguments(workflow);
+        await helpers
+          .runJHipster(join(import.meta.dirname, 'index.mjs'), { prepareEnvironment: true })
+          .withArguments(workflow)
+          .withOptions({ skipChecks: true });
       });
 
       it('should match matrix value', () => {

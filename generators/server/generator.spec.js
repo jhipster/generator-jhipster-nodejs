@@ -8,7 +8,7 @@ describe('SubGenerator server of nodejs JHipster blueprint', () => {
   describe('run', () => {
     beforeAll(async function () {
       await helpers
-        .runJHipster(SUB_GENERATOR)
+        .runJHipster(SUB_GENERATOR, { prepareEnvironment: true })
         .withJHipsterConfig({ backendType: 'NodeJS' }, [
           {
             name: 'Foo',
@@ -19,6 +19,7 @@ describe('SubGenerator server of nodejs JHipster blueprint', () => {
           },
         ])
         .withOptions({
+          skipChecks: true,
           ignoreNeedlesError: true,
           blueprint: ['nodejs'],
         })

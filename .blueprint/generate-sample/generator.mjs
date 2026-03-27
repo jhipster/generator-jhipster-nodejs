@@ -2,8 +2,9 @@ import { readFileSync } from 'node:fs';
 import { readdir } from 'node:fs/promises';
 import { extname, join } from 'node:path';
 
-import { getGithubSamplesGroup } from 'generator-jhipster/ci';
 import BaseCoreGenerator from 'generator-jhipster/generators/base-core';
+
+import { getBlueprintSamplesGroup } from './support/samples-group.js';
 
 export default class extends BaseCoreGenerator {
   /** @type {string | undefined} */
@@ -33,7 +34,7 @@ export default class extends BaseCoreGenerator {
           this.copyTemplate(join(samplesPath, sampleName), sampleName, { noGlob: true });
           this.sampleType = 'jdl';
         } else {
-          const { samples } = await getGithubSamplesGroup(this.templatePath(), samplesPath);
+          const { samples } = await getBlueprintSamplesGroup(this.templatePath(), samplesPath);
           const {
             'sample-type': sampleType,
             'sample-file': sampleFile = sampleName,
