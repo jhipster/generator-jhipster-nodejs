@@ -35,6 +35,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > run > should su
   "README.md": {
     "stateCleared": "modified",
   },
+  "docker/app.yml": {
+    "stateCleared": "modified",
+  },
   "docker/postgresql.yml": {
     "stateCleared": "modified",
   },
@@ -585,6 +588,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > without client 
     "stateCleared": "modified",
   },
   "README.md": {
+    "stateCleared": "modified",
+  },
+  "docker/app.yml": {
     "stateCleared": "modified",
   },
   "docker/postgresql.yml": {
