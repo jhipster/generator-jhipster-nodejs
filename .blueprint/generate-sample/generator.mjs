@@ -1,10 +1,12 @@
-import { readdir } from 'node:fs/promises';
 import { readFileSync } from 'node:fs';
+import { readdir } from 'node:fs/promises';
 import { extname, join } from 'node:path';
-import BaseGenerator from 'generator-jhipster/generators/base';
-import { getGithubSamplesGroup } from 'generator-jhipster/testing';
 
-export default class extends BaseGenerator {
+import BaseCoreGenerator from 'generator-jhipster/generators/base-core';
+
+import { getBlueprintSamplesGroup } from './support/samples-group.js';
+
+export default class extends BaseCoreGenerator {
   /** @type {string | undefined} */
   samplesFolder;
   /** @type {string} */
@@ -20,12 +22,8 @@ export default class extends BaseGenerator {
   /** @type {any} */
   generatorOptions;
 
-  constructor(args, opts, features) {
-    super(args, opts, { ...features, queueCommandTasks: true, jhipsterBootstrap: false });
-  }
-
-  get [BaseGenerator.WRITING]() {
-    return this.asWritingTaskGroup({
+  get [BaseCoreGenerator.WRITING]() {
+    return this.asAnyTaskGroup({
       async copySample() {
         const { samplesFolder, samplesGroup, all, sampleName } = this;
         const samplesPath = samplesFolder ? join(samplesFolder, samplesGroup) : samplesGroup;
@@ -36,7 +34,7 @@ export default class extends BaseGenerator {
           this.copyTemplate(join(samplesPath, sampleName), sampleName, { noGlob: true });
           this.sampleType = 'jdl';
         } else {
-          const { samples } = await getGithubSamplesGroup(this.templatePath(), samplesPath);
+          const { samples } = await getBlueprintSamplesGroup(this.templatePath(), samplesPath);
           const {
             'sample-type': sampleType,
             'sample-file': sampleFile = sampleName,
@@ -61,8 +59,8 @@ export default class extends BaseGenerator {
     });
   }
 
-  get [BaseGenerator.END]() {
-    return this.asEndTaskGroup({
+  get [BaseCoreGenerator.END]() {
+    return this.asAnyTaskGroup({
       async generateYoRcSample() {
         if (this.sampleType !== 'yo-rc') return;
 

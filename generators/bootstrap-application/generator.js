@@ -1,4 +1,5 @@
 import BaseApplicationGenerator from 'generator-jhipster/generators/base-application';
+
 import { SERVER_NODEJS_SRC_DIR } from '../generator-nodejs-constants.js';
 
 export default class extends BaseApplicationGenerator {
