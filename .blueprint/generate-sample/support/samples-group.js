@@ -6,12 +6,16 @@ export const getBlueprintSamplesGroup = async (samplesGroupFolder, group) => {
   let samples = {};
   const warnings = [];
   const samplesFolderContent = await readdir(samplesGroupFolder);
-  const availableGroups = samplesFolderContent.filter(sample => !sample.startsWith('_') && ['.json', '.js', '.ts', ''].includes(extname(sample)));
+  const availableGroups = samplesFolderContent.filter(
+    sample => !sample.startsWith('_') && ['.json', '.js', '.ts', ''].includes(extname(sample)),
+  );
   const groupExt = ['js', 'ts', 'json'].find(ext => availableGroups.includes(`${group}.${ext}`));
 
   if (groupExt === 'js' || groupExt === 'ts') {
     const groupModule = await import(pathToFileURL(join(samplesGroupFolder, `${group}.${groupExt}`)).href);
-    samples = Object.fromEntries(Object.entries(groupModule.default).map(([sample, value]) => [sample, { ...value, 'samples-group': group }]));
+    samples = Object.fromEntries(
+      Object.entries(groupModule.default).map(([sample, value]) => [sample, { ...value, 'samples-group': group }]),
+    );
   } else if (groupExt === 'json') {
     const jsonFile = await readFile(join(samplesGroupFolder, `${group}.json`));
     samples = Object.fromEntries(
