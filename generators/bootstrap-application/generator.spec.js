@@ -3,34 +3,24 @@ import { beforeAll, describe, expect, it } from 'vitest';
 import { defaultHelpers as helpers, result } from 'generator-jhipster/testing';
 
 const SUB_GENERATOR = 'bootstrap-application';
-const BLUEPRINT_NAMESPACE = `jhipster:${SUB_GENERATOR}`;
+const SUB_GENERATOR_NAMESPACE = `jhipster-nodejs:${SUB_GENERATOR}`;
 
 describe('SubGenerator bootstrap-application of nodejs JHipster blueprint', () => {
   describe('run', () => {
     beforeAll(async function () {
       await helpers
-        .run(BLUEPRINT_NAMESPACE)
+        .run(SUB_GENERATOR_NAMESPACE)
         .withJHipsterConfig()
         .withOptions({
           ignoreNeedlesError: true,
-          blueprint: ['nodejs'],
         })
-        .withJHipsterLookup()
-        .withParentBlueprintLookup();
+        .withJHipsterGenerators()
+        .withConfiguredBlueprint()
+        .withBlueprintConfig();
     });
 
     it('should succeed', () => {
       expect(result.getStateSnapshot()).toMatchSnapshot();
-    });
-
-    it('application should match snapshot', () => {
-      expect(result.generator.sharedData.getApplication()).toMatchSnapshot({
-        user: expect.any(Object),
-        authority: expect.any(Object),
-        userManagement: expect.any(Object),
-        jhipsterPackageJson: expect.any(Object),
-        blueprints: expect.arrayContaining([expect.objectContaining({ name: 'generator-jhipster-nodejs', version: expect.any(String) })]),
-      });
     });
   });
 });

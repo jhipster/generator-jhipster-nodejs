@@ -64,10 +64,6 @@ export default class extends BaseApplicationGenerator {
   oldNodejsVersion;
   nodejsPackageJson;
 
-  constructor(args, opts, features) {
-    super(args, opts, { ...features, queueCommandTasks: true });
-  }
-
   async beforeQueue() {
     await this.dependsOnJHipster('bootstrap-application');
     await this.dependsOnJHipster('common');
