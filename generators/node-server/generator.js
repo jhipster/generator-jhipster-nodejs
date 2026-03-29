@@ -263,6 +263,14 @@ export default class extends BaseApplicationGenerator {
           });
         }
       },
+      ignoreClientIssues({ application, source }) {
+        source.addEslintConfig?.({
+          config: String.raw`{
+  files: ["${application.clientSrcDir}**/*"],
+  rules: { "@typescript-eslint/no-unsafe-return": "off" },
+},`,
+        });
+      },
     });
   }
 
