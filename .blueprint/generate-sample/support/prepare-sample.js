@@ -2,6 +2,7 @@ import assert from 'node:assert';
 import { existsSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+
 import { intersection } from 'lodash-es';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));

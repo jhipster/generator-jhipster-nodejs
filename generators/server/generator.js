@@ -2,7 +2,7 @@ import ServerGenerator from 'generator-jhipster/generators/server';
 
 export default class extends ServerGenerator {
   constructor(args, opts, features) {
-    super(args, opts, { ...features, queueCommandTasks: true, sbsBlueprint: true, checkBlueprint: true });
+    super(args, opts, { ...features, sbsBlueprint: true, checkBlueprint: true });
   }
 
   get [ServerGenerator.COMPOSING]() {
