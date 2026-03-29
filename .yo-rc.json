@@ -6,12 +6,6 @@
     "cliName": "nhipster",
     "entities": [],
     "generators": {
-      "bootstrap-application": {
-        "command": false,
-        "priorities": ["loading", "preparing"],
-        "sbs": true,
-        "written": true
-      },
       "ci-cd": {
         "command": false,
         "priorities": [
@@ -98,6 +92,12 @@
         "command": false,
         "priorities": ["initializing", "composing"],
         "sbs": false,
+        "written": true
+      },
+      "server:bootstrap": {
+        "command": false,
+        "priorities": ["composing"],
+        "sbs": true,
         "written": true
       }
     },

@@ -70,7 +70,7 @@ export default class extends BaseApplicationGenerator {
 
   async beforeQueue() {
     await this.dependsOnJHipster('jhipster-nodejs:node-server:bootstrap');
-    await this.dependsOnJHipster('common');
+    await this.dependsOnJHipster('server');
   }
 
   get [BaseApplicationGenerator.INITIALIZING]() {
