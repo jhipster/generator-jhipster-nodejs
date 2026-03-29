@@ -30,7 +30,7 @@ for (idx in relationships) {
         isUserRelationship = true;
     }
     else if (!uniqueEntities[otherDto] && otherDto != dtoClass) {
-        uniqueEntities[otherDto] = relationship.otherEntityFileName;
+        uniqueEntities[otherDto] = relationship.otherEntity.entityFileName;
     }
 }
 _%>

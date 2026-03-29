@@ -263,6 +263,20 @@ export default class extends BaseApplicationGenerator {
           });
         }
       },
+      ignoreClientIssues({ application }) {
+        if (application.clientFrameworkNo) return;
+        // TODO use source.addEslintConfig
+        this.editFile(
+          `${application.clientRootDir}/eslint.config.ts`,
+          createNeedleCallback({
+            needle: 'eslint-add-config',
+            contentToAdd: String.raw`{
+  files: ["${this.relativeDir(application.clientRootDir, application.clientSrcDir)}**/*"],
+  rules: { "@typescript-eslint/no-unsafe-return": "off" },
+},`,
+          }),
+        );
+      },
     });
   }
 

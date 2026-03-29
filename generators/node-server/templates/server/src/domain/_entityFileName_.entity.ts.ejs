@@ -20,7 +20,7 @@ for (idx in relationships) {
         isUserRelationship = true;
     }
     else if (!uniqueEntities[otherEntityClass] && otherEntityClass != persistClass) {
-        uniqueEntities[otherEntityClass] = relationship.otherEntityFileName;
+        uniqueEntities[otherEntityClass] = relationship.otherEntity.entityFileName;
     }
 }
 _%>
@@ -104,7 +104,6 @@ export class <%= persistClass %> extends BaseEntity  {
         const relationshipType = relationships[idx].relationshipType;
         const relationshipValidate = relationships[idx].relationshipValidate;
         const relationshipRequired = relationships[idx].relationshipRequired;
-        const otherEntityNameCapitalized = relationships[idx].otherEntityNameCapitalized;
         const ownerSide = relationships[idx].ownerSide; // before was ownerSide === true in and userRel many-to-one
         const otherEntityClass = relationships[idx].otherEntity.persistClass;
         let userRelationship = false;

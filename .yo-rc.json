@@ -4,6 +4,7 @@
     "baseName": "nodejs",
     "cli": true,
     "cliName": "nhipster",
+    "defaultCommand": "generate-blueprint",
     "entities": [],
     "generators": {
       "ci-cd": {

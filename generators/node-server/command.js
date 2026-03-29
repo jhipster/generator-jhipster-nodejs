@@ -5,7 +5,6 @@ import { command as commonCommand } from 'generator-jhipster/generators/common';
 const { applicationType } = commonCommand.configs;
 
 export default asCommand({
-  options: {},
   configs: {
     applicationType,
     serverPort: {

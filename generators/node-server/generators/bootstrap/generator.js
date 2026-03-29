@@ -10,6 +10,8 @@ export default class extends BaseApplicationGenerator {
   }
 
   async beforeQueue() {
+    // Node server is a Typescript server, we need typescript preparation.
+    await this.dependsOnBootstrap('client');
     await this.dependsOnBootstrap('server');
   }
 
@@ -28,7 +30,6 @@ export default class extends BaseApplicationGenerator {
           dockerServicesDir: 'docker/',
           nodeServerRootDir: `${SERVER_NODEJS_SRC_DIR}/`,
           jhiTablePrefix: ({ jhiPrefix }) => hibernateSnakeCase(jhiPrefix),
-          generateBuiltInUserEntity: true,
           clientPackageManager: 'npm',
           dbPortValue: undefined,
         });
@@ -48,6 +49,9 @@ export default class extends BaseApplicationGenerator {
 
   get [BaseApplicationGenerator.PREPARING]() {
     return this.asPreparingTaskGroup({
+      workarounds({ application }) {
+        application.withAdminUi = false;
+      },
       preparing({ application, applicationDefaults }) {
         if (application.databaseTypeSql) {
           prepareSqlApplicationProperties({ application });
@@ -60,6 +64,16 @@ export default class extends BaseApplicationGenerator {
             devDatabaseUsername: undefined,
             devDatabasePassword: undefined,
           });
+        }
+      },
+    });
+  }
+
+  get [BaseApplicationGenerator.DEFAULT]() {
+    return this.asDefaultTaskGroup({
+      postPreparing({ application }) {
+        if (application.authority) {
+          application.authority.skipClient = !application.clientFrameworkAngular;
         }
       },
     });
