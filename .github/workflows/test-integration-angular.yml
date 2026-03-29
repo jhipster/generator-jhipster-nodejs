@@ -59,6 +59,7 @@ jobs:
           !contains(github.event.pull_request.labels.*.name, 'pr: disable-compare')
         with:
           generator-path: generator-jhipster-nodejs
+          compare-folder: app/server
           cmd: cli.cjs generate-sample ${{ matrix.sample }} --samples-group ${{ matrix.samples-group }} --skip-jhipster-dependencies --skip-install ${{ matrix.extra-args }}
       - name: 'INSTALL DEPENDENCIES of generated app'
         run: npm install
