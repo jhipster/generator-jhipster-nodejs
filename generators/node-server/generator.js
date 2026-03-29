@@ -1,11 +1,15 @@
 import { readFile } from 'node:fs/promises';
-import BaseApplicationGenerator from 'generator-jhipster/generators/base-application';
-import { createNeedleCallback, mutateData } from 'generator-jhipster/generators/base/support';
-import { getEnumInfo } from 'generator-jhipster/generators/base-application/support';
+
 import { TEMPLATES_WEBAPP_SOURCES_DIR } from 'generator-jhipster';
+import BaseApplicationGenerator from 'generator-jhipster/generators/base-application';
+import { getEnumInfo } from 'generator-jhipster/generators/base-application/support';
+import { createNeedleCallback } from 'generator-jhipster/generators/base-core/support';
+import { mutateData } from 'generator-jhipster/utils';
+
 import { SERVER_NODEJS_SRC_DIR } from '../generator-nodejs-constants.js';
-import { serverFiles } from './files.js';
+
 import { entityFiles } from './entity-files.js';
+import { serverFiles } from './files.js';
 
 function sanitizeDbType(fieldType, dbType) {
   if (dbType === 'sqlite') {
@@ -65,7 +69,7 @@ export default class extends BaseApplicationGenerator {
   nodejsPackageJson;
 
   async beforeQueue() {
-    await this.dependsOnJHipster('bootstrap-application');
+    await this.dependsOnJHipster('jhipster-nodejs:node-server:bootstrap');
     await this.dependsOnJHipster('common');
   }
 

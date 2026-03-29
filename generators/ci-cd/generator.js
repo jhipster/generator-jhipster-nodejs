@@ -1,5 +1,4 @@
 import CiCdGenerator from 'generator-jhipster/generators/ci-cd';
-import command from './command.js';
 
 export default class extends CiCdGenerator {
   constructor(args, opts, features) {

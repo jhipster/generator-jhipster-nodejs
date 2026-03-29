@@ -88,6 +88,12 @@
         "sbs": null,
         "written": true
       },
+      "node-server:bootstrap": {
+        "command": false,
+        "priorities": [],
+        "sbs": true,
+        "written": true
+      },
       "server": {
         "command": false,
         "priorities": ["initializing", "composing"],
@@ -102,6 +108,6 @@
     "packageJsonType": "module",
     "sampleWritten": true,
     "skipCommitHook": true,
-    "subGenerators": ["bootstrap-application", "ci-cd", "client", "cypress", "docker", "languages", "server"]
+    "subGenerators": ["ci-cd", "client", "cypress", "docker", "languages", "server"]
   }
 }
