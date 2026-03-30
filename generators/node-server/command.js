@@ -1,9 +1,8 @@
 import chalk from 'chalk';
-import { command as serverCommand } from 'generator-jhipster/generators/server';
-
-const { applicationType } = serverCommand.configs;
-
 import { asCommand } from 'generator-jhipster';
+import { command as commonCommand } from 'generator-jhipster/generators/common';
+
+const { applicationType } = commonCommand.configs;
 
 export default asCommand({
   options: {},
@@ -18,6 +17,7 @@ export default asCommand({
           'As you are running in a microservice architecture, on which port would like your server to run? It should be unique to avoid port conflicts.',
         default: answers => (answers.applicationType === 'gateway' ? '8080' : '8081'),
       },
+      scope: 'storage',
     },
     authenticationType: {
       cli: {
@@ -31,6 +31,7 @@ export default asCommand({
         { value: 'jwt', name: 'JWT authentication (stateless, with a token)' },
         { value: 'oauth2', name: 'OAuth 2.0 / OIDC Authentication (stateful, works with Okta)' },
       ],
+      scope: 'storage',
     },
     prodDatabaseType: {
       cli: {
@@ -47,6 +48,7 @@ export default asCommand({
         { value: 'mssql', name: 'Microsoft SQL Server' },
         { value: 'mongodb', name: 'MongoDB' },
       ],
+      scope: 'storage',
     },
   },
 });

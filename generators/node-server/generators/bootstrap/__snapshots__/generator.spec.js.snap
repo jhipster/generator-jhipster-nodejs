@@ -1,6 +1,6 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`SubGenerator languages of nodejs JHipster blueprint > run > should succeed 1`] = `
+exports[`SubGenerator node-server:bootstrap of nodejs JHipster blueprint > run > should succeed 1`] = `
 {
   ".yo-rc.json": {
     "stateCleared": "modified",
