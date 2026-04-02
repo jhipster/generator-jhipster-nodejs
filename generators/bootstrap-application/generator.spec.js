@@ -1,35 +1,39 @@
 import { beforeAll, describe, expect, it } from 'vitest';
+import { join } from 'node:path';
 
 import { defaultHelpers as helpers, result } from 'generator-jhipster/testing';
 
 const SUB_GENERATOR = 'bootstrap-application';
-const BLUEPRINT_NAMESPACE = `jhipster:${SUB_GENERATOR}`;
+const SUB_GENERATOR_PATH = join(import.meta.dirname, 'index.js');
 
 describe('SubGenerator bootstrap-application of nodejs JHipster blueprint', () => {
   describe('run', () => {
     beforeAll(async function () {
       await helpers
-        .run(BLUEPRINT_NAMESPACE)
+        .runJHipster(SUB_GENERATOR_PATH, { useEnvironmentBuilder: true })
         .withJHipsterConfig()
         .withOptions({
+          commandName: SUB_GENERATOR,
           ignoreNeedlesError: true,
           blueprint: ['nodejs'],
         })
-        .withJHipsterLookup()
-        .withParentBlueprintLookup();
+        .withJHipsterGenerators()
+        .withConfiguredBlueprint();
     });
 
     it('should succeed', () => {
       expect(result.getStateSnapshot()).toMatchSnapshot();
     });
 
-    it('application should match snapshot', () => {
-      expect(result.generator.sharedData.getApplication()).toMatchSnapshot({
-        user: expect.any(Object),
-        authority: expect.any(Object),
-        userManagement: expect.any(Object),
-        jhipsterPackageJson: expect.any(Object),
-        blueprints: expect.arrayContaining([expect.objectContaining({ name: 'generator-jhipster-nodejs', version: expect.any(String) })]),
+    it('application should expose expected NodeJS defaults', () => {
+      expect(result.application).toMatchObject({
+        clientRootDir: 'client/',
+        clientSrcDir: 'client/src/',
+        clientTestDir: 'client/test/',
+        dockerServicesDir: 'docker/',
+        nodeServerRootDir: 'server/',
+        temporaryDir: 'tmp/',
+        withAdminUi: false,
       });
     });
   });

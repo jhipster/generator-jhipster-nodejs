@@ -5,37 +5,61 @@ exports[`SubGenerator languages of nodejs JHipster blueprint > run > should succ
   ".yo-rc.json": {
     "stateCleared": "modified",
   },
-  "client/src/i18n/en/activate.json": {
+  "src/main/resources/i18n/messages.properties": {
     "stateCleared": "modified",
   },
-  "client/src/i18n/en/error.json": {
+  "src/main/resources/i18n/messages_en.properties": {
     "stateCleared": "modified",
   },
-  "client/src/i18n/en/global.json": {
+  "src/main/webapp/i18n/en/activate.json": {
     "stateCleared": "modified",
   },
-  "client/src/i18n/en/home.json": {
+  "src/main/webapp/i18n/en/adminAuthority.json": {
     "stateCleared": "modified",
   },
-  "client/src/i18n/en/login.json": {
+  "src/main/webapp/i18n/en/configuration.json": {
     "stateCleared": "modified",
   },
-  "client/src/i18n/en/password.json": {
+  "src/main/webapp/i18n/en/error.json": {
     "stateCleared": "modified",
   },
-  "client/src/i18n/en/register.json": {
+  "src/main/webapp/i18n/en/global.json": {
     "stateCleared": "modified",
   },
-  "client/src/i18n/en/reset.json": {
+  "src/main/webapp/i18n/en/health.json": {
     "stateCleared": "modified",
   },
-  "client/src/i18n/en/sessions.json": {
+  "src/main/webapp/i18n/en/home.json": {
     "stateCleared": "modified",
   },
-  "client/src/i18n/en/settings.json": {
+  "src/main/webapp/i18n/en/login.json": {
     "stateCleared": "modified",
   },
-  "client/src/i18n/en/user-management.json": {
+  "src/main/webapp/i18n/en/logs.json": {
+    "stateCleared": "modified",
+  },
+  "src/main/webapp/i18n/en/metrics.json": {
+    "stateCleared": "modified",
+  },
+  "src/main/webapp/i18n/en/password.json": {
+    "stateCleared": "modified",
+  },
+  "src/main/webapp/i18n/en/register.json": {
+    "stateCleared": "modified",
+  },
+  "src/main/webapp/i18n/en/reset.json": {
+    "stateCleared": "modified",
+  },
+  "src/main/webapp/i18n/en/sessions.json": {
+    "stateCleared": "modified",
+  },
+  "src/main/webapp/i18n/en/settings.json": {
+    "stateCleared": "modified",
+  },
+  "src/main/webapp/i18n/en/user-management.json": {
+    "stateCleared": "modified",
+  },
+  "src/test/resources/i18n/messages_en.properties": {
     "stateCleared": "modified",
   },
 }
