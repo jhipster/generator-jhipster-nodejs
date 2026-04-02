@@ -58,7 +58,7 @@
     "rimraf": "5.0.10",
     "sonarqube-scanner": "4.3.5",
     "supertest": "7.2.2",
-    "ts-jest": "29.4.6",
+    "ts-jest": "29.4.9",
     "ts-node": "10.9.2",
     "tsc-watch": "7.2.0",
     "tsconfig-paths": "4.2.0",
