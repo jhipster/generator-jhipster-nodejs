@@ -15,11 +15,11 @@ export default class extends BaseApplicationGenerator {
 
   get [BaseApplicationGenerator.LOADING]() {
     return this.asLoadingTaskGroup({
-      async loadingTemplateTask({ application, applicationDefaults }) {
-        application.withAdminUi = false;
+      async loadingTemplateTask({ applicationDefaults }) {
         applicationDefaults({
           backendType: 'NodeJS',
           backendTypeJavaAny: false,
+          withAdminUi: false,
           clientRootDir: 'client/',
           clientSrcDir: 'client/src/',
           clientTestDir: 'client/test/',
@@ -28,8 +28,6 @@ export default class extends BaseApplicationGenerator {
           dockerServicesDir: 'docker/',
           nodeServerRootDir: `${SERVER_NODEJS_SRC_DIR}/`,
           jhiTablePrefix: ({ jhiPrefix }) => hibernateSnakeCase(jhiPrefix),
-          generateBuiltInUserEntity: ({ authenticationType }) => authenticationType === 'jwt',
-          generateBuiltInAuthorityEntity: ({ authenticationType }) => authenticationType === 'jwt',
           clientPackageManager: 'npm',
           dbPortValue: undefined,
         });
@@ -49,6 +47,9 @@ export default class extends BaseApplicationGenerator {
 
   get [BaseApplicationGenerator.PREPARING]() {
     return this.asPreparingTaskGroup({
+      workarounds({ application }) {
+        application.withAdminUi = false;
+      },
       preparing({ application, applicationDefaults }) {
         if (application.databaseTypeSql) {
           prepareSqlApplicationProperties({ application });
@@ -66,11 +67,11 @@ export default class extends BaseApplicationGenerator {
     });
   }
 
-  get [BaseApplicationGenerator.POST_PREPARING]() {
-    return this.asPostPreparingTaskGroup({
+  get [BaseApplicationGenerator.DEFAULT]() {
+    return this.asDefaultTaskGroup({
       postPreparing({ application }) {
         if (application.authority) {
-          application.authority.skipClient = false;
+          application.authority.skipClient = !application.clientFrameworkAngular;
         }
       },
     });
