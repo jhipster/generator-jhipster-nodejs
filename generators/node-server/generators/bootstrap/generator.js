@@ -28,7 +28,8 @@ export default class extends BaseApplicationGenerator {
           dockerServicesDir: 'docker/',
           nodeServerRootDir: `${SERVER_NODEJS_SRC_DIR}/`,
           jhiTablePrefix: ({ jhiPrefix }) => hibernateSnakeCase(jhiPrefix),
-          generateBuiltInUserEntity: true,
+          generateBuiltInUserEntity: ({ authenticationType }) => authenticationType === 'jwt',
+          generateBuiltInAuthorityEntity: ({ authenticationType }) => authenticationType === 'jwt',
           clientPackageManager: 'npm',
           dbPortValue: undefined,
         });
@@ -68,7 +69,6 @@ export default class extends BaseApplicationGenerator {
   get [BaseApplicationGenerator.POST_PREPARING]() {
     return this.asPostPreparingTaskGroup({
       postPreparing({ application }) {
-        console.log(application.generateBuiltInAuthorityEntity, application.authority);
         if (application.authority) {
           application.authority.skipClient = false;
         }

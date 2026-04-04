@@ -41,12 +41,6 @@
         "sbs": true,
         "written": true
       },
-      "client:bootstrap": {
-        "command": false,
-        "priorities": ["loading"],
-        "sbs": true,
-        "written": true
-      },
       "cypress": {
         "command": false,
         "priorities": [],
