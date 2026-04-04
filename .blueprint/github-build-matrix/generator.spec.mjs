@@ -1,19 +1,17 @@
-import { basename, dirname, join } from 'path';
-import { fileURLToPath } from 'url';
 import { beforeAll, describe, expect, it } from 'vitest';
-import { getGithubSamplesGroups, defaultHelpers as helpers, runResult } from 'generator-jhipster/testing';
+import { basename, join } from 'path';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
+import { getGithubSamplesGroups } from 'generator-jhipster/ci';
+import { defaultHelpers as helpers, runResult } from 'generator-jhipster/testing';
 
-const generator = basename(__dirname);
+const generator = basename(import.meta.dirname);
 
 describe(`generator - ${generator}`, async () => {
-  const groups = await getGithubSamplesGroups(join(__dirname, '../generate-sample/templates/'));
+  const groups = await getGithubSamplesGroups(join(import.meta.dirname, '../generate-sample/templates/'));
   for (const workflow of groups.map(sample => sample.split('.')[0])) {
     describe(`with ${workflow}`, () => {
       beforeAll(async () => {
-        await helpers.runJHipster(join(__dirname, 'index.mjs'), { useEnvironmentBuilder: true }).withArguments(workflow);
+        await helpers.runJHipster(join(import.meta.dirname, 'index.mjs'), { prepareEnvironment: true }).withArguments(workflow);
       });
 
       it('should match matrix value', () => {

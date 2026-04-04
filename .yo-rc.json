@@ -4,14 +4,9 @@
     "baseName": "nodejs",
     "cli": true,
     "cliName": "nhipster",
+    "defaultCommand": "generate-blueprint",
     "entities": [],
     "generators": {
-      "bootstrap-application": {
-        "command": false,
-        "priorities": ["loading", "preparing"],
-        "sbs": true,
-        "written": true
-      },
       "ci-cd": {
         "command": false,
         "priorities": [
@@ -88,20 +83,32 @@
         "sbs": null,
         "written": true
       },
+      "node-server:bootstrap": {
+        "command": false,
+        "priorities": [],
+        "sbs": true,
+        "written": true
+      },
       "server": {
         "command": false,
         "priorities": ["initializing", "composing"],
         "sbs": false,
         "written": true
+      },
+      "server:bootstrap": {
+        "command": false,
+        "priorities": ["composing"],
+        "sbs": true,
+        "written": true
       }
     },
     "githubWorkflows": true,
-    "jhipsterVersion": "8.10.0",
+    "jhipsterVersion": "9.0.0",
     "js": true,
     "localBlueprint": false,
     "packageJsonType": "module",
     "sampleWritten": true,
     "skipCommitHook": true,
-    "subGenerators": ["bootstrap-application", "ci-cd", "client", "cypress", "docker", "languages", "server"]
+    "subGenerators": ["ci-cd", "client", "cypress", "docker", "languages", "server"]
   }
 }
