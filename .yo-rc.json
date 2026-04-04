@@ -4,6 +4,7 @@
     "baseName": "nodejs",
     "cli": true,
     "cliName": "nhipster",
+    "defaultCommand": "generate-blueprint",
     "entities": [],
     "generators": {
       "ci-cd": {
@@ -37,6 +38,12 @@
       "client": {
         "command": false,
         "priorities": ["postWriting"],
+        "sbs": true,
+        "written": true
+      },
+      "client:bootstrap": {
+        "command": false,
+        "priorities": ["loading"],
         "sbs": true,
         "written": true
       },
