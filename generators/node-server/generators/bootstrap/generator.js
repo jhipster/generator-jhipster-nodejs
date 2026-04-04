@@ -10,6 +10,8 @@ export default class extends BaseApplicationGenerator {
   }
 
   async beforeQueue() {
+    // Node server is a Typescript server, we need typescript preparation.
+    await this.dependsOnBootstrap('client');
     await this.dependsOnBootstrap('server');
   }
 
