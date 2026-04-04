@@ -15,11 +15,11 @@ export default class extends BaseApplicationGenerator {
 
   get [BaseApplicationGenerator.LOADING]() {
     return this.asLoadingTaskGroup({
-      async loadingTemplateTask({ applicationDefaults }) {
+      async loadingTemplateTask({ application, applicationDefaults }) {
+        application.withAdminUi = false;
         applicationDefaults({
           backendType: 'NodeJS',
           backendTypeJavaAny: false,
-          withAdminUi: false,
           clientRootDir: 'client/',
           clientSrcDir: 'client/src/',
           clientTestDir: 'client/test/',
@@ -60,6 +60,17 @@ export default class extends BaseApplicationGenerator {
             devDatabaseUsername: undefined,
             devDatabasePassword: undefined,
           });
+        }
+      },
+    });
+  }
+
+  get [BaseApplicationGenerator.POST_PREPARING]() {
+    return this.asPostPreparingTaskGroup({
+      postPreparing({ application }) {
+        console.log(application.generateBuiltInAuthorityEntity, application.authority);
+        if (application.authority) {
+          application.authority.skipClient = false;
         }
       },
     });
