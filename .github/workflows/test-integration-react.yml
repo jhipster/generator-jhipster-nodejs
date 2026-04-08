@@ -71,6 +71,8 @@ jobs:
         if: steps.compare.outputs.equals != 'true'
       - name: 'BUILD AND RUN SERVER APP'
         run: npm run app:up
+        env:
+          PYTHON: /usr/bin/python3
         if: steps.compare.outputs.equals != 'true'
       - name: 'START APP WITH EVENTUAL CLIENT E2E TESTS'
         run: npm run e2e:headless --workspace client
