@@ -49,7 +49,7 @@
     "@types/superagent": "8.1.9",
     "@types/supertest": "7.2.0",
     "browser-sync-client": "3.0.4",
-    "eslint": "10.2.0",
+    "eslint": "10.2.1",
     "eslint-config-prettier": "10.1.8",
     "eslint-plugin-prettier": "5.5.5",
     "globals": "17.5.0",
