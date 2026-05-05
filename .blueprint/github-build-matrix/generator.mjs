@@ -1,8 +1,9 @@
 import { join } from 'node:path';
-import BaseGenerator from 'generator-jhipster/generators/base';
-import { convertToGitHubMatrix, getGithubOutputFile, getGithubSamplesGroup, setGithubTaskOutput } from 'generator-jhipster/testing';
 
-export default class extends BaseGenerator {
+import { convertToGitHubMatrix, getGithubOutputFile, getGithubSamplesGroup, setGithubTaskOutput } from 'generator-jhipster/ci';
+import BaseCoreGenerator from 'generator-jhipster/generators/base-core';
+
+export default class extends BaseCoreGenerator {
   /** @type {string} */
   samplesFolder;
   /** @type {string} */
@@ -10,12 +11,8 @@ export default class extends BaseGenerator {
   /** @type {object} */
   matrix;
 
-  constructor(args, opts, features) {
-    super(args, opts, { ...features, queueCommandTasks: true, jhipsterBootstrap: false });
-  }
-
-  get [BaseGenerator.WRITING]() {
-    return this.asWritingTaskGroup({
+  get [BaseCoreGenerator.WRITING]() {
+    return this.asAnyTaskGroup({
       async buildMatrix() {
         const { samplesGroup = 'samples' } = this;
         const templatePath = this.templatePath('../../generate-sample/templates/');
