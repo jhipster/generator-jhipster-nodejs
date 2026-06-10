@@ -1,20 +1,20 @@
 FROM node:24.16.0-alpine
 
 # Create app directory
-
 WORKDIR /usr/node-app
 
 ENV NODE_SERVER_PORT=<%- serverPort %>
 ENV CYPRESS_INSTALL_BINARY=0
 
+RUN corepack enable
+
 COPY . .
 
-RUN npm install
-RUN npm run --workspace server build
-RUN npm run --workspace client build
-RUN npm cache clean --force
+RUN pnpm install --frozen-lockfile
+RUN pnpm --filter ./server run build
+RUN pnpm --filter ./client run build
+RUN pnpm store prune
 RUN rm -rf target tmp
 
 EXPOSE <%- serverPort %>
-
 ENTRYPOINT ["/usr/node-app/server/scripts/entrypoint.sh" ]
