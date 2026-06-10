@@ -1,4 +1,4 @@
-<%#
+﻿<%#
  Copyright 2019-2023 the original author or authors from the JHipster project.
 
  This file is part of the JHipster project, see https://www.jhipster.tech/
@@ -40,7 +40,8 @@
     "node": ">=24.0.0 <25"
   },
   "workspaces": [
-      "server"
+    "server",
+    "client"
   ],
   "pnpm": {
     "onlyBuiltDependencies": [
@@ -55,23 +56,27 @@
     ]
   },
   "scripts": {
-    "build": "<%= clientPackageManager %> run build -w server && <%= clientPackageManager %> run build -w client",
-    "build:app": "<%= clientPackageManager %> run build -w server",
-    "lint:fix": "echo \"INFO: no client found\"",
+    "build": "pnpm --filter ./server run build && pnpm --filter ./client run build",
+    "build:server": "pnpm --filter ./server run build",
+    "build:client": "pnpm --filter ./client run build",
+    "build:app": "pnpm run build",
+    "lint": "pnpm --filter ./server run lint && pnpm --filter ./client run lint",
+    "lint:fix": "pnpm --filter ./server run lint:fix && pnpm --filter ./client run lint:fix",
     "prettier:check": "prettier --check \"{,src/**/}*.{<%= prettierExtensions %>}\"",
     "prettier:format": "prettier --write \"{,src/**/}*.{<%= prettierExtensions %>}\"",
-    "start": "concurrently -k -s first -n application,client -c red,green npm:start:server npm:start:client",
-    "start:server": "<%= clientPackageManager %> run start -w server",
-    "start:client": "<%= clientPackageManager %> run start -w client",
-    "test:client": "<%= clientPackageManager %> test -w client",
-    "test:server": "<%= clientPackageManager %> test -w server",
+    "start": "concurrently -k -s first -n application,client -c red,green \"pnpm run start:server\" \"pnpm run start:client\"",
+    "start:server": "pnpm --filter ./server run start",
+    "start:client": "pnpm --filter ./client run start",
+    "test": "pnpm run test:server && pnpm run test:client",
+    "test:server": "pnpm --filter ./server run test",
+    "test:client": "pnpm --filter ./client run test",
 <%_ if (!databaseTypeSql) { _%>
-    "pretest:server:e2e": "npm run docker:db:up",
+    "pretest:server:e2e": "pnpm run docker:db:up",
 <%_ } _%>
-    "test:server:e2e": "<%= clientPackageManager %> run test:e2e -w server",
+    "test:server:e2e": "pnpm --filter ./server run test:e2e",
 <%_ if (!databaseTypeSql) { _%>
-    "posttest:server:e2e": "npm run docker:db:down",
+    "posttest:server:e2e": "pnpm run docker:db:down",
 <%_ } _%>
-    "test": "echo \"INFO: no client test found\""
+    "webapp:build": "pnpm --filter ./client run build"
   }
 }
