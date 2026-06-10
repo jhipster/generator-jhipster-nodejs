@@ -21,6 +21,7 @@
   "version": "0.0.0",
   "description": "Description for <%= baseName %>",
   "private": true,
+  "packageManager": "pnpm@10.26.0",
   "license": "UNLICENSED",
   "cacheDirectories": [
     "node_modules"
@@ -41,6 +42,18 @@
   "workspaces": [
       "server"
   ],
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "@nestjs/core",
+      "bcrypt",
+      "sqlite3",
+      "unrs-resolver"
+    ],
+    "ignoredBuiltDependencies": [
+      "@scarf/scarf",
+      "core-js"
+    ]
+  },
   "scripts": {
     "build": "<%= clientPackageManager %> run build -w server && <%= clientPackageManager %> run build -w client",
     "build:app": "<%= clientPackageManager %> run build -w server",
