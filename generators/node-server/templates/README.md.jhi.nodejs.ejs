@@ -144,13 +144,13 @@ will generate the file:
 #### Running
 
 ```bash
-<%= nodePackageManager %> run start:app
+pnpm run start
 ```
 
 #### Building
 
 ```bash
-<%= nodePackageManager %> run build:app
+pnpm run build:app
 ```
 
 The build folder with all compiled sources will be **<%= nodeServerRootDir %>/dist**.
@@ -175,7 +175,7 @@ You can run a Sonar analysis with using the [sonar-scanner](https://docs.sonarqu
 Then, run a Sonar analysis in the <%= nodeServerRootDir %> folder:
 
 ```sh
-npm run sonar:scanner
+pnpm run sonar:scanner
 ```
 
 For more information, refer to the [Code quality page][].

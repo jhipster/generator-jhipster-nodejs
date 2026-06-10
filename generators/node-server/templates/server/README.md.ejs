@@ -31,7 +31,7 @@
 ## Installation
 
 ```bash
-$ npm install
+$ pnpm install
 ```
 
 ## TypeORM configuration
@@ -71,22 +71,22 @@ The scripts are automatically run in the first start up, and after anymore.
 
 ```bash
 # development
-$ npm run start
+$ pnpm run start
 
 # watch mode
-$ npm run start:dev
+$ pnpm run start:dev
 
 # build transpiling files in javascript
-$ npm run build
+$ pnpm run build
 
 # run javascript build from the source project
-$ npm run start:prod
+$ pnpm run start:prod
 
 # run javascript build with node
 $ node dist/main.js
 
 # build bundle with webpack
-$ npm run webpack:prod
+$ pnpm run webpack:prod
 
 # run bundle with node (not require node_modules folder)
 $ node dist/bundle.js
@@ -108,9 +108,9 @@ For example:
 
 # development in prod environment
 # in linux
-$ BACKEND_ENV=prod npm run start
+$ BACKEND_ENV=prod pnpm run start
 # in windows
-$ set BACKEND_ENV=prod&& npm run start
+$ set BACKEND_ENV=prod&& pnpm run start
 
 # run javascript build with node in prod environment
 # in linux
@@ -128,10 +128,10 @@ $ node dist/bundle.js
 
 ```bash
 # run lint
-$ npm run lint
+$ pnpm run lint
 
 # fix lint issues
-$ npm run lint:fix
+$ pnpm run lint:fix
 
 ```
 
@@ -139,7 +139,7 @@ $ npm run lint:fix
 
 ```bash
 # run this and after you can execute debug task in VSCode
-$ npm run start:debug
+$ pnpm run start:debug
 
 ```
 
@@ -147,19 +147,19 @@ $ npm run start:debug
 
 ```bash
 # unit tests
-$ npm run test
+$ pnpm run test
 
 # lint
-$ npm run lint
+$ pnpm run lint
 
 # fix lint issues
-$ npm run lint:fix
+$ pnpm run lint:fix
 
 # test coverage of unit tests
-$ npm run test:cov
+$ pnpm run test:cov
 
 # e2e tests with full app coverage report
-$ npm run test:e2e
+$ pnpm run test:e2e
 
 ```
 
