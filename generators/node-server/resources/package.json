@@ -32,7 +32,7 @@
     "rxjs": "7.8.2",
     "sqlite3": "6.0.1",
     "swagger-ui-express": "5.0.1",
-    "typeorm": "0.3.20",
+    "typeorm": "1.0.0",
     "typeorm-encrypted": "0.8.0"
   },
   "devDependencies": {
