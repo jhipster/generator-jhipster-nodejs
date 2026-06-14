@@ -1,3 +1,4 @@
+import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import BaseApplicationGenerator from 'generator-jhipster/generators/base-application';
 
 const usePnpmInScript = script => {
@@ -10,6 +11,28 @@ const usePnpmInScript = script => {
     .replace(/\bnpm test\b/g, 'pnpm test')
     .replace(/npm:backend:start/g, "'pnpm run backend:start'")
     .replace(/\s+--(?=\s*(?:&&|$))/g, '');
+};
+
+const normalizePnpmDocumentation = content =>
+  content
+    .replace(/\bnpm install\b/g, 'pnpm install')
+    .replace(/\bnpm update\b/g, 'pnpm update')
+    .replace(/\bnpm run\b/g, 'pnpm run')
+    .replace(/\bnpm dependencies\b/g, 'Node dependencies');
+
+const normalizeGeneratedFile = (generator, filePath) => {
+  const destination = generator.destinationPath(filePath);
+
+  if (!existsSync(destination)) {
+    return;
+  }
+
+  const content = readFileSync(destination, 'utf8');
+  const updatedContent = normalizePnpmDocumentation(content);
+
+  if (updatedContent !== content) {
+    writeFileSync(destination, updatedContent);
+  }
 };
 
 const usePnpmInScripts = scripts =>
@@ -44,6 +67,9 @@ export default class extends BaseApplicationGenerator {
 
           clientPackageJson.set('scripts', usePnpmInScripts(clientPackageJson.get('scripts')));
         }
+
+        normalizeGeneratedFile(this, 'README.md');
+        normalizeGeneratedFile(this, `${application.clientRootDir}src/index.html`);
       },
     });
   }
