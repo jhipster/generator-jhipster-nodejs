@@ -9,6 +9,10 @@ export default class extends BaseApplicationGenerator {
   get [BaseApplicationGenerator.CONFIGURING]() {
     return this.asConfiguringTaskGroup({
       async configuring() {
+        this.env.options.nodePackageManager = 'pnpm';
+        this.options.nodePackageManager = 'pnpm';
+        this.jhipsterConfig.nodePackageManager = 'pnpm';
+        this.jhipsterConfig.clientPackageManager = 'pnpm';
         this.jhipsterConfig.withAdminUi = false;
         this.jhipsterConfig.backendType = 'NodeJS';
       },
@@ -22,6 +26,8 @@ export default class extends BaseApplicationGenerator {
         application.clientSrcDir = 'client/src/';
         application.clientTestDir = 'client/test/';
         application.dockerServicesDir = 'docker/';
+        application.nodePackageManager = 'pnpm';
+        application.clientPackageManager = 'pnpm';
         application.withAdminUi = false;
         application.nodeServerRootDir = `${SERVER_NODEJS_SRC_DIR}/`;
         application.dbPortValue = undefined;
