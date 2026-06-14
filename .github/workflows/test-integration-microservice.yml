@@ -21,8 +21,8 @@ jobs:
     outputs:
       matrix: ${{ steps.build.outputs.matrix }}
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
         with:
           node-version: 22
       - id: build
@@ -41,18 +41,18 @@ jobs:
       fail-fast: false
       matrix: ${{fromJson(needs.build-matrix.outputs.matrix)}}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           path: generator-jhipster-nodejs
           fetch-depth: 2
-      - uses: jhipster/actions/setup-runner@v0
+      - uses: jhipster/actions/setup-runner@v1
         with:
           node-version: ${{ matrix.node-version }}
           binary-dir: ${{ github.workspace }}/generator-jhipster-nodejs/cli/
       - run: npm install
         working-directory: ${{ github.workspace }}/generator-jhipster-nodejs
       - run: cli.cjs generate-sample ${{ matrix.sample }} --samples-group ${{ matrix.samples-group }} --skip-jhipster-dependencies --skip-install ${{ matrix.extra-args }}
-      - uses: jhipster/actions/compare-sample@v0
+      - uses: jhipster/actions/compare-sample@v1
         id: compare
         if: >-
           github.event.pull_request &&

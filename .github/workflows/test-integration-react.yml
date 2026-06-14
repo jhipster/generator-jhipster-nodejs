@@ -21,8 +21,8 @@ jobs:
     outputs:
       matrix: ${{ steps.build.outputs.matrix }}
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
         with:
           node-version: 22
       - id: build
@@ -41,18 +41,18 @@ jobs:
       fail-fast: false
       matrix: ${{fromJson(needs.build-matrix.outputs.matrix)}}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           path: generator-jhipster-nodejs
           fetch-depth: 2
-      - uses: jhipster/actions/setup-runner@v0
+      - uses: jhipster/actions/setup-runner@v1
         with:
           node-version: ${{ matrix.node-version }}
           binary-dir: ${{ github.workspace }}/generator-jhipster-nodejs/cli/
       - run: npm install
         working-directory: ${{ github.workspace }}/generator-jhipster-nodejs
       - run: cli.cjs generate-sample ${{ matrix.sample }} --samples-group ${{ matrix.samples-group }} --skip-jhipster-dependencies --skip-install ${{ matrix.extra-args }}
-      - uses: jhipster/actions/compare-sample@v0
+      - uses: jhipster/actions/compare-sample@v1
         id: compare
         if: >-
           github.event.pull_request &&
@@ -71,13 +71,15 @@ jobs:
         if: steps.compare.outputs.equals != 'true'
       - name: 'BUILD AND RUN SERVER APP'
         run: npm run app:up
+        env:
+          PYTHON: /usr/bin/python3
         if: steps.compare.outputs.equals != 'true'
       - name: 'START APP WITH EVENTUAL CLIENT E2E TESTS'
         run: npm run e2e:headless --workspace client
         if: matrix.e2e != 'false' && steps.compare.outputs.equals != 'true'
         id: e2e
       - name: Store cypress screenshots
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         if: always() && steps.e2e.outcome == 'failure'
         with:
           name: screenshots-${{ matrix.job-name || matrix.sample }}
