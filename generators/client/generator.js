@@ -8,7 +8,8 @@ const usePnpmInScript = script => {
   return script
     .replace(/\bnpm run\b/g, 'pnpm run')
     .replace(/\bnpm test\b/g, 'pnpm test')
-    .replace(/npm:backend:start/g, "'pnpm run backend:start'");
+    .replace(/npm:backend:start/g, "'pnpm run backend:start'")
+    .replace(/\s+--(?=\s*(?:&&|$))/g, '');
 };
 
 const usePnpmInScripts = scripts =>
