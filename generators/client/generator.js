@@ -1,4 +1,3 @@
-import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import BaseApplicationGenerator from 'generator-jhipster/generators/base-application';
 
 const usePnpmInScript = script => {
@@ -23,15 +22,15 @@ const normalizePnpmDocumentation = content =>
 const normalizeGeneratedFile = (generator, filePath) => {
   const destination = generator.destinationPath(filePath);
 
-  if (!existsSync(destination)) {
+  if (!generator.fs.exists(destination)) {
     return;
   }
 
-  const content = readFileSync(destination, 'utf8');
+  const content = generator.fs.read(destination);
   const updatedContent = normalizePnpmDocumentation(content);
 
   if (updatedContent !== content) {
-    writeFileSync(destination, updatedContent);
+    generator.fs.write(destination, updatedContent);
   }
 };
 
