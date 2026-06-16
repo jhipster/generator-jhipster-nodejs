@@ -1,11 +1,11 @@
 {
   "dependencies": {
     "@nestjs/axios": "4.0.1",
-    "@nestjs/common": "11.1.26",
-    "@nestjs/core": "11.1.26",
+    "@nestjs/common": "11.1.27",
+    "@nestjs/core": "11.1.27",
     "@nestjs/jwt": "11.0.2",
     "@nestjs/passport": "11.0.5",
-    "@nestjs/platform-express": "11.1.26",
+    "@nestjs/platform-express": "11.1.27",
     "@nestjs/serve-static": "5.0.5",
     "@nestjs/swagger": "11.4.4",
     "@nestjs/typeorm": "11.0.1",
@@ -38,7 +38,7 @@
   "devDependencies": {
     "@eslint/js": "10.0.1",
     "@jest/globals": "30.4.1",
-    "@nestjs/testing": "11.1.26",
+    "@nestjs/testing": "11.1.27",
     "@types/bcrypt": "6.0.0",
     "@types/express": "5.0.6",
     "@types/express-serve-static-core": "5.1.1",
