@@ -19,7 +19,7 @@
     "express-session": "1.19.0",
     "js-yaml": "5.1.0",
     "jwt-decode": "4.0.0",
-    "mongodb": "5.9.2",
+    "mongodb": "7.3.0",
     "mongodb-memory-server": "11.2.0",
     "mssql": "12.6.0",
     "mysql2": "3.22.5",
