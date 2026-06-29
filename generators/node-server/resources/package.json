@@ -17,7 +17,7 @@
     "dotenv": "17.4.2",
     "eureka-js-client": "4.5.0",
     "express-session": "1.19.0",
-    "js-yaml": "5.1.0",
+    "js-yaml": "5.2.0",
     "jwt-decode": "4.0.0",
     "mongodb": "5.9.2",
     "mongodb-memory-server": "11.2.0",
