@@ -8,7 +8,7 @@
     "@nestjs/platform-express": "11.1.27",
     "@nestjs/serve-static": "5.0.5",
     "@nestjs/swagger": "11.4.4",
-    "@nestjs/typeorm": "11.0.2",
+    "@nestjs/typeorm": "11.0.3",
     "bcrypt": "6.0.0",
     "browser-sync-client": "3.0.4",
     "class-transformer": "0.5.1",
