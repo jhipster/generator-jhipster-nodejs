@@ -26,7 +26,7 @@ export class AccountController {
     description: 'Registered user',
     type: <%- user.dtoClass %>,
   })
-  async registerAccount(@Req() req: Request, @Body() userDTO: <%- user.dtoClass %> & { password: string }): Promise <any> {
+  async registerAccount(@Req() req: { user: <%- user.dtoClass %> }, @Body() userDTO: <%- user.dtoClass %> & { password: string }): Promise <any> {
     return await this.authService.registerNewUser(userDTO);
   }
 
@@ -88,7 +88,7 @@ export class AccountController {
     description: 'user info updated',
     type: <%- user.dtoClass %>,
   })
-  async saveAccount(@Req() req: Request, @Body() newUserInfo: <%- user.dtoClass %>): Promise<any> {
+  async saveAccount(@Req() req: { user: <%- user.dtoClass %> }, @Body() newUserInfo: <%- user.dtoClass %>): Promise<any> {
     const { user } = req;
     return await this.authService.updateUserSettings(user.login, newUserInfo);
   }
@@ -117,7 +117,7 @@ export class AccountController {
     description: 'mail to reset password sent',
     type: 'string',
   })
-  requestPasswordReset(@Req() req: Request, @Body() email: string, @Res() res: Response): any {
+  requestPasswordReset(@Req() req: { user: <%- user.dtoClass %> }, @Body() email: string, @Res() res: Response): any {
     throw new InternalServerErrorException();
   }
 
