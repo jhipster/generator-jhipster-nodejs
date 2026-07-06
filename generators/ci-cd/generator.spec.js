@@ -16,7 +16,7 @@ describe('SubGenerator ci-cd of nodejs JHipster blueprint', () => {
         })
         .withJHipsterGenerators()
         .withConfiguredBlueprint()
-        .withBlueprintConfig();
+        .withBlueprintConfig({});
     });
 
     it('should succeed', () => {

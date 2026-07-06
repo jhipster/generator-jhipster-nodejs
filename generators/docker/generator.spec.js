@@ -16,7 +16,7 @@ describe('SubGenerator docker of nodejs JHipster blueprint', () => {
         })
         .withJHipsterGenerators()
         .withConfiguredBlueprint()
-        .withBlueprintConfig();
+        .withBlueprintConfig({});
     });
 
     it('should succeed', () => {

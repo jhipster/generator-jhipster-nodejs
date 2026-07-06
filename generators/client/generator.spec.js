@@ -16,7 +16,7 @@ describe('SubGenerator client of nodejs JHipster blueprint', () => {
         })
         .withJHipsterGenerators()
         .withConfiguredBlueprint()
-        .withBlueprintConfig();
+        .withBlueprintConfig({});
     });
 
     it('should succeed', () => {

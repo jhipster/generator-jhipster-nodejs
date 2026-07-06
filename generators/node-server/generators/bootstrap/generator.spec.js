@@ -16,7 +16,7 @@ describe('SubGenerator node-server:bootstrap of nodejs JHipster blueprint', () =
         })
         .withJHipsterGenerators()
         .withConfiguredBlueprint()
-        .withBlueprintConfig();
+        .withBlueprintConfig({});
     });
 
     it('should succeed', () => {

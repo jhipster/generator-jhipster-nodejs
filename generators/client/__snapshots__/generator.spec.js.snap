@@ -608,7 +608,7 @@ exports[`SubGenerator client of nodejs JHipster blueprint > run > should succeed
   "client/src/app/shared/language/translate.directive.ts": {
     "stateCleared": "modified",
   },
-  "client/src/app/shared/language/translation.module.ts": {
+  "client/src/app/shared/language/translation.provider.ts": {
     "stateCleared": "modified",
   },
   "client/src/app/shared/pagination/index.ts": {

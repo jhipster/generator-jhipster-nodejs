@@ -4,6 +4,7 @@
     "baseName": "nodejs",
     "cli": true,
     "cliName": "nhipster",
+    "creationTimestamp": 1783358272740,
     "defaultCommand": "generate-blueprint",
     "entities": [],
     "generators": {
@@ -103,7 +104,8 @@
       }
     },
     "githubWorkflows": true,
-    "jhipsterVersion": "9.0.0",
+    "javascriptBlueprint": true,
+    "jhipsterVersion": "9.1.0",
     "js": true,
     "localBlueprint": false,
     "packageJsonType": "module",
