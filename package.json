@@ -54,7 +54,7 @@
   },
   "dependencies": {
     "chalk": "^5.3.0",
-    "generator-jhipster": "9.1.0"
+    "generator-jhipster": "github:mshima/generator-jhipster#generate-blueprint-v9.2-"
   },
   "devDependencies": {
     "ejs-lint": "2.0.1",
