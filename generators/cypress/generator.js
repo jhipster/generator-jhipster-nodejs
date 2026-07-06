@@ -22,11 +22,10 @@ export default class extends BaseApplicationGenerator {
             content.replace("it('should be able to init reset password", "it.skip('should be able to init reset password"),
           );
         }
-        if (application.authenticationTypeJwt) {
-          this.editFile(`${application.cypressDir}/e2e/account/logout.cy.ts`, content =>
-            content.replace("it('go to home page when successfully logs in'", "it.skip('go to home page when successfully logs in'"),
-          );
-        }
+
+        this.editFile(`${application.cypressDir}/e2e/account/logout.cy.ts`, content =>
+          content.replace("it('go to home page when successfully logs in'", "it.skip('go to home page when successfully logs in'"),
+        );
       },
       npmScripts({ application }) {
         const clientPackageJson = this.createStorage(this.destinationPath(application.clientRootDir, 'package.json'));
