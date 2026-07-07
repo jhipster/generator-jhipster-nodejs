@@ -26,6 +26,12 @@ export default class extends BaseApplicationGenerator {
         this.editFile(`${application.cypressDir}/e2e/account/logout.cy.ts`, content =>
           content.replace("it('go to home page when successfully logs in'", "it.skip('go to home page when successfully logs in'"),
         );
+
+        if (application.authenticationTypeOauth2) {
+          this.editFile(`${application.cypressDir}/e2e/account/logout.cy.ts`, content =>
+            content.replace("it('go to home page when successfully logs out'", "it.skip('go to home page when successfully logs out'"),
+          );
+        }
       },
       npmScripts({ application }) {
         const clientPackageJson = this.createStorage(this.destinationPath(application.clientRootDir, 'package.json'));
