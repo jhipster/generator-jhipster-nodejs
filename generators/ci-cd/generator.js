@@ -1,23 +1,12 @@
 import CiCdGenerator from 'generator-jhipster/generators/ci-cd';
-import command from './command.js';
 
 export default class extends CiCdGenerator {
   constructor(args, opts, features) {
-    super(args, opts, { ...features, queueCommandTasks: true, checkBlueprint: true });
+    super(args, opts, { ...features, checkBlueprint: true });
   }
 
   async beforeQueue() {
     await super.beforeQueue();
-  }
-
-  get [CiCdGenerator.INITIALIZING]() {
-    return this.asInitializingTaskGroup({
-      ...super.initializing,
-      async initializingTemplateTask() {
-        this.parseJHipsterArguments(command.arguments);
-        this.parseJHipsterOptions(command.options);
-      },
-    });
   }
 
   get [CiCdGenerator.PROMPTING]() {

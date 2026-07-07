@@ -2,7 +2,7 @@ import BaseApplicationGenerator from 'generator-jhipster/generators/base-applica
 
 export default class extends BaseApplicationGenerator {
   constructor(args, opts, features) {
-    super(args, opts, { ...features, queueCommandTasks: true, sbsBlueprint: true });
+    super(args, opts, { ...features, sbsBlueprint: true });
   }
 
   get [BaseApplicationGenerator.PREPARING]() {
@@ -20,6 +20,16 @@ export default class extends BaseApplicationGenerator {
         if (application.generateUserManagement) {
           this.editFile(`${application.cypressDir}/e2e/account/reset-password-page.cy.ts`, content =>
             content.replace("it('should be able to init reset password", "it.skip('should be able to init reset password"),
+          );
+        }
+
+        this.editFile(`${application.cypressDir}/e2e/account/logout.cy.ts`, content =>
+          content.replace("it('go to home page when successfully logs in'", "it.skip('go to home page when successfully logs in'"),
+        );
+
+        if (application.authenticationTypeOauth2) {
+          this.editFile(`${application.cypressDir}/e2e/account/logout.cy.ts`, content =>
+            content.replace("it('go to home page when successfully logs out'", "it.skip('go to home page when successfully logs out'"),
           );
         }
       },

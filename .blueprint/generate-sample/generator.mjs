@@ -1,10 +1,11 @@
-import { readdir } from 'node:fs/promises';
 import { readFileSync } from 'node:fs';
+import { readdir } from 'node:fs/promises';
 import { extname, join } from 'node:path';
-import BaseGenerator from 'generator-jhipster/generators/base';
-import { getGithubSamplesGroup } from 'generator-jhipster/testing';
 
-export default class extends BaseGenerator {
+import { getGithubSamplesGroup } from 'generator-jhipster/ci';
+import BaseCoreGenerator from 'generator-jhipster/generators/base-core';
+
+export default class extends BaseCoreGenerator {
   /** @type {string | undefined} */
   samplesFolder;
   /** @type {string} */
@@ -20,12 +21,8 @@ export default class extends BaseGenerator {
   /** @type {any} */
   generatorOptions;
 
-  constructor(args, opts, features) {
-    super(args, opts, { ...features, queueCommandTasks: true, jhipsterBootstrap: false });
-  }
-
-  get [BaseGenerator.WRITING]() {
-    return this.asWritingTaskGroup({
+  get [BaseCoreGenerator.WRITING]() {
+    return this.asAnyTaskGroup({
       async copySample() {
         const { samplesFolder, samplesGroup, all, sampleName } = this;
         const samplesPath = samplesFolder ? join(samplesFolder, samplesGroup) : samplesGroup;
@@ -51,8 +48,9 @@ export default class extends BaseGenerator {
             const jdlFile = `${sampleFile}.jdl`;
             this.copyTemplate(join(sampleFolder, jdlFile), jdlFile, { noGlob: true });
           } else if (sampleType === 'yo-rc') {
-            this.copyTemplate('**', '', {
-              fromBasePath: this.templatePath(sampleFolder, sampleFile),
+            const fromBasePath = this.templatePath(sampleFolder, sampleFile);
+            this.copyTemplate(join(fromBasePath, '**'), '', {
+              fromBasePath,
               globOptions: { dot: true },
             });
           }
@@ -61,8 +59,8 @@ export default class extends BaseGenerator {
     });
   }
 
-  get [BaseGenerator.END]() {
-    return this.asEndTaskGroup({
+  get [BaseCoreGenerator.END]() {
+    return this.asAnyTaskGroup({
       async generateYoRcSample() {
         if (this.sampleType !== 'yo-rc') return;
 
@@ -91,7 +89,7 @@ export default class extends BaseGenerator {
   }
 
   getDefaultComposeOptions() {
-    const packageJson = JSON.parse(readFileSync(new URL('../../package.json', import.meta.url)));
+    const packageJson = JSON.parse(readFileSync(new URL('../../package.json', import.meta.url), { encoding: 'utf-8' }));
     const projectVersion = `${packageJson.version}-git`;
     return {
       skipJhipsterDependencies: true,
