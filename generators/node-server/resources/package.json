@@ -47,7 +47,7 @@
     "@types/node": "26.1.1",
     "@types/passport-jwt": "4.0.1",
     "@types/superagent": "8.1.11",
-    "@types/supertest": "7.2.0",
+    "@types/supertest": "7.2.1",
     "browser-sync-client": "3.0.4",
     "eslint": "10.7.0",
     "eslint-config-prettier": "10.1.8",
