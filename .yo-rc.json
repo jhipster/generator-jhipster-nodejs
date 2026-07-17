@@ -105,7 +105,7 @@
     },
     "githubWorkflows": true,
     "javascriptBlueprint": true,
-    "jhipsterVersion": "9.1.0",
+    "jhipsterVersion": "9.2.0",
     "js": true,
     "localBlueprint": false,
     "packageJsonType": "module",
