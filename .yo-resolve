@@ -1,3 +1,16 @@
 README.md skip
-.github/workflows/generator.yml skip
 .github/workflows/samples.yml skip
+generators/ci-cd/command.js skip
+generators/node-server/command.js skip
+generators/server/command.js skip
+generators/languages/generator.js skip
+generators/server/generators/bootstrap/generator.js skip
+generators/cypress/generator.js skip
+generators/ci-cd/generator.js skip
+generators/client/generator.js skip
+generators/node-server/generator.js skip
+generators/node-server/generators/bootstrap/generator.js skip
+generators/node-server/generator.spec.js skip
+generators/server/generator.js skip
+generators/docker/generator.js skip
+generators/server/generator.spec.js skip
