@@ -2,20 +2,18 @@
 
 ## [4.0.0](https://github.com/jhipster/generator-jhipster-nodejs/compare/v3.2.0...v4.0.0) (2026-07-21)
 
-
 ### ⚠ BREAKING CHANGES
 
-* force major release
+- force major release
 
 ### Features
 
-* bump to generator-jhipster v9.2.0 ([#1307](https://github.com/jhipster/generator-jhipster-nodejs/issues/1307)) ([93525be](https://github.com/jhipster/generator-jhipster-nodejs/commit/93525be5570f39f62026d156fed9348cd7ab4ff3))
-* force major release ([71a6cea](https://github.com/jhipster/generator-jhipster-nodejs/commit/71a6cea2ec5f4cf9fd1516bf5b73db25827b9bfd))
-
+- bump to generator-jhipster v9.2.0 ([#1307](https://github.com/jhipster/generator-jhipster-nodejs/issues/1307)) ([93525be](https://github.com/jhipster/generator-jhipster-nodejs/commit/93525be5570f39f62026d156fed9348cd7ab4ff3))
+- force major release ([71a6cea](https://github.com/jhipster/generator-jhipster-nodejs/commit/71a6cea2ec5f4cf9fd1516bf5b73db25827b9bfd))
 
 ### Bug Fixes
 
-* bump typescript-eslint from 8.58.2 to 8.59.1 in /generators/node-server/resources ([#1207](https://github.com/jhipster/generator-jhipster-nodejs/issues/1207)) ([53ee7a2](https://github.com/jhipster/generator-jhipster-nodejs/commit/53ee7a29228aa92ab7030e40c9d9eb2a324e5d28))
+- bump typescript-eslint from 8.58.2 to 8.59.1 in /generators/node-server/resources ([#1207](https://github.com/jhipster/generator-jhipster-nodejs/issues/1207)) ([53ee7a2](https://github.com/jhipster/generator-jhipster-nodejs/commit/53ee7a29228aa92ab7030e40c9d9eb2a324e5d28))
 
 <a name="2.0.0"></a>
 <a name="2.0.0-beta.1"></a>
