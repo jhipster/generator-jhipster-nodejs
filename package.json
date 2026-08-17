@@ -65,7 +65,7 @@
     "jiti": "2.7.0",
     "prettier": "3.9.5",
     "prettier-plugin-packagejson": "3.0.2",
-    "sonarqube-scanner": "3.5.0",
+    "sonarqube-scanner": "5.0.0",
     "vitest": "4.1.10",
     "yeoman-test": ">=10"
   },
