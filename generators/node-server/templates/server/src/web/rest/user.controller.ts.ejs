@@ -65,7 +65,7 @@ export class UserController {
       return created;
   }
 
-  @Put('/')
+  @Put(['/', '/:login'])
   @Roles(RoleType.ADMIN)
   @ApiOperation({ summary: 'Update user' })
   @ApiResponse({
