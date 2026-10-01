@@ -38,9 +38,6 @@ exports[`SubGenerator client of nodejs JHipster blueprint > run > should succeed
   "client/build-plugins/i18n-esbuild.ts": {
     "stateCleared": "modified",
   },
-  "client/build-plugins/package.json": {
-    "stateCleared": "modified",
-  },
   "client/eslint.config.ts": {
     "stateCleared": "modified",
   },
@@ -209,7 +206,13 @@ exports[`SubGenerator client of nodejs JHipster blueprint > run > should succeed
   "client/src/app/config/dayjs.ts": {
     "stateCleared": "modified",
   },
+  "client/src/app/config/endpoint.constants.ts": {
+    "stateCleared": "modified",
+  },
   "client/src/app/config/font-awesome-icons.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/config/index.ts": {
     "stateCleared": "modified",
   },
   "client/src/app/config/input.constants.ts": {
@@ -242,16 +245,16 @@ exports[`SubGenerator client of nodejs JHipster blueprint > run > should succeed
   "client/src/app/core/auth/auth-jwt.service.ts": {
     "stateCleared": "modified",
   },
+  "client/src/app/core/auth/index.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/core/auth/login.model.ts": {
+    "stateCleared": "modified",
+  },
   "client/src/app/core/auth/state-storage.service.ts": {
     "stateCleared": "modified",
   },
   "client/src/app/core/auth/user-route-access.service.ts": {
-    "stateCleared": "modified",
-  },
-  "client/src/app/core/config/application-config.service.spec.ts": {
-    "stateCleared": "modified",
-  },
-  "client/src/app/core/config/application-config.service.ts": {
     "stateCleared": "modified",
   },
   "client/src/app/core/interceptor/auth-expired.interceptor.ts": {
@@ -264,6 +267,9 @@ exports[`SubGenerator client of nodejs JHipster blueprint > run > should succeed
     "stateCleared": "modified",
   },
   "client/src/app/core/interceptor/notification.interceptor.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/core/request/index.ts": {
     "stateCleared": "modified",
   },
   "client/src/app/core/request/request-util.ts": {
@@ -288,6 +294,9 @@ exports[`SubGenerator client of nodejs JHipster blueprint > run > should succeed
     "stateCleared": "modified",
   },
   "client/src/app/core/util/event-manager.service.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/core/util/index.ts": {
     "stateCleared": "modified",
   },
   "client/src/app/core/util/operators.spec.ts": {
@@ -404,6 +413,12 @@ exports[`SubGenerator client of nodejs JHipster blueprint > run > should succeed
   "client/src/app/entities/admin/user-management/service/user-management.service.ts": {
     "stateCleared": "modified",
   },
+  "client/src/app/entities/admin/user-management/update/user-management-form.service.spec.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/entities/admin/user-management/update/user-management-form.service.ts": {
+    "stateCleared": "modified",
+  },
   "client/src/app/entities/admin/user-management/update/user-management-update.html": {
     "stateCleared": "modified",
   },
@@ -417,6 +432,9 @@ exports[`SubGenerator client of nodejs JHipster blueprint > run > should succeed
     "stateCleared": "modified",
   },
   "client/src/app/entities/admin/user-management/user-management.routes.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/entities/admin/user-management/user-management.test-samples.ts": {
     "stateCleared": "modified",
   },
   "client/src/app/entities/entity.routes.ts": {
@@ -506,9 +524,6 @@ exports[`SubGenerator client of nodejs JHipster blueprint > run > should succeed
   "client/src/app/login/login.html": {
     "stateCleared": "modified",
   },
-  "client/src/app/login/login.model.ts": {
-    "stateCleared": "modified",
-  },
   "client/src/app/login/login.service.ts": {
     "stateCleared": "modified",
   },
@@ -539,10 +554,16 @@ exports[`SubGenerator client of nodejs JHipster blueprint > run > should succeed
   "client/src/app/shared/alert/alert.ts": {
     "stateCleared": "modified",
   },
+  "client/src/app/shared/alert/index.ts": {
+    "stateCleared": "modified",
+  },
   "client/src/app/shared/auth/has-any-authority.directive.spec.ts": {
     "stateCleared": "modified",
   },
   "client/src/app/shared/auth/has-any-authority.directive.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/shared/auth/index.ts": {
     "stateCleared": "modified",
   },
   "client/src/app/shared/date/duration.pipe.ts": {
