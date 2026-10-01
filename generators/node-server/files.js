@@ -75,6 +75,11 @@ export const serverFiles = {
       condition: generator => !generator.skipUserManagement && generator.authenticationType !== 'oauth2',
       templates: ['e2e/account.e2e-spec.ts'],
     },
+    {
+      path: SERVER_NODEJS_DIR,
+      condition: generator => generator.databaseType === 'mongodb',
+      templates: ['e2e/global-setup.ts'],
+    },
   ],
   other: [
     {

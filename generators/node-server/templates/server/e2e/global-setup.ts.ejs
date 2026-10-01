@@ -1,0 +1,7 @@
+import { MongoBinary } from 'mongodb-memory-server';
+
+// Download the mongod binary once, before the test workers start,
+// so parallel workers don't race on the same download.
+export default async (): Promise<void> => {
+  await MongoBinary.getPath();
+};

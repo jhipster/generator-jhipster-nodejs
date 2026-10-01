@@ -10,5 +10,8 @@
   "setupFiles": [
 		"./e2e/setup.test.js"
   ],
+<%_ if (databaseType === 'mongodb') { _%>
+  "globalSetup": "<rootDir>/e2e/global-setup.ts",
+<%_ } _%>
   "testTimeout": 10000
 }
