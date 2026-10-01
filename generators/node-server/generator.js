@@ -255,6 +255,19 @@ export default class extends BaseApplicationGenerator {
   get [BaseApplicationGenerator.POST_WRITING]() {
     return this.asPostWritingTaskGroup({
       adjustWorkspacePackageJson({ application }) {
+        if (application.databaseTypeMongodb) {
+          // download the mongod binary at install time, into a directory shared by all workspaces
+          this.packageJson.merge({
+            allowScripts: {
+              'mongodb-memory-server': true,
+            },
+            config: {
+              mongodbMemoryServer: {
+                downloadDir: 'node_modules/.cache/mongodb-memory-server',
+              },
+            },
+          });
+        }
         if (application.clientFrameworkAngular) {
           this.packageJson.merge({
             overrides: {
