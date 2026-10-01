@@ -47,7 +47,6 @@ function ormConfig(): TypeOrmModuleOptions {
       port: mongod.instanceInfo.port,
       database: mongod.instanceInfo.dbName,
 <%_ } _%>
-      keepConnectionAlive: true,
       logging: true,
     };
 <%_ if (devDatabaseType !== 'sqlite') { _%>

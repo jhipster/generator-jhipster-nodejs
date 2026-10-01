@@ -2,10 +2,10 @@ import { beforeAll, describe, expect, it } from 'vitest';
 
 import { defaultHelpers as helpers, result } from 'generator-jhipster/testing';
 
-const SUB_GENERATOR = 'client';
+const SUB_GENERATOR = 'server:bootstrap';
 const BLUEPRINT_NAMESPACE = `jhipster:${SUB_GENERATOR}`;
 
-describe('SubGenerator client of nodejs JHipster blueprint', () => {
+describe('SubGenerator server:bootstrap of nodejs JHipster blueprint', () => {
   describe('run', () => {
     beforeAll(async function () {
       await helpers

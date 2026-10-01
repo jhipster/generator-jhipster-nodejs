@@ -1,11 +1,15 @@
 import { readFile } from 'node:fs/promises';
-import BaseApplicationGenerator from 'generator-jhipster/generators/base-application';
-import { createNeedleCallback, mutateData } from 'generator-jhipster/generators/base/support';
-import { getEnumInfo } from 'generator-jhipster/generators/base-application/support';
+
 import { TEMPLATES_WEBAPP_SOURCES_DIR } from 'generator-jhipster';
+import BaseApplicationGenerator from 'generator-jhipster/generators/base-application';
+import { getEnumInfo } from 'generator-jhipster/generators/base-application/support';
+import { createNeedleCallback } from 'generator-jhipster/generators/base-core/support';
+import { mutateData } from 'generator-jhipster/utils';
+
 import { SERVER_NODEJS_SRC_DIR } from '../generator-nodejs-constants.js';
-import { serverFiles } from './files.js';
+
 import { entityFiles } from './entity-files.js';
+import { serverFiles } from './files.js';
 
 function sanitizeDbType(fieldType, dbType) {
   if (dbType === 'sqlite') {
@@ -64,13 +68,9 @@ export default class extends BaseApplicationGenerator {
   oldNodejsVersion;
   nodejsPackageJson;
 
-  constructor(args, opts, features) {
-    super(args, opts, { ...features, queueCommandTasks: true });
-  }
-
   async beforeQueue() {
-    await this.dependsOnJHipster('bootstrap-application');
-    await this.dependsOnJHipster('common');
+    await this.dependsOnJHipster('jhipster-nodejs:node-server:bootstrap');
+    await this.dependsOnJHipster('server');
   }
 
   get [BaseApplicationGenerator.INITIALIZING]() {
@@ -262,6 +262,20 @@ export default class extends BaseApplicationGenerator {
             },
           });
         }
+      },
+      ignoreClientIssues({ application }) {
+        if (application.clientFrameworkNo) return;
+        // TODO use source.addEslintConfig
+        this.editFile(
+          `${application.clientRootDir}/eslint.config.ts`,
+          createNeedleCallback({
+            needle: 'eslint-add-config',
+            contentToAdd: String.raw`{
+  files: ["${this.relativeDir(application.clientRootDir, application.clientSrcDir)}**/*"],
+  rules: { "@typescript-eslint/no-unsafe-return": "off" },
+},`,
+          }),
+        );
       },
     });
   }
