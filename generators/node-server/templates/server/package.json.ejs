@@ -33,7 +33,9 @@
   },
   "dependencies": {
     "<%- nodeProdDatabaseDriver %>": "<%- nodeServerDependencies[nodeProdDatabaseDriver] %>",
+<%_ if (databaseType !== 'mongodb') { _%>
     "<%- nodeDevDatabaseDriver %>": "<%- nodeServerDependencies[nodeDevDatabaseDriver] %>",
+<%_ } _%>
 <%_ if (authenticationType === 'oauth2') { _%>
     "@nestjs/axios": "<%- nodeServerDependencies['@nestjs/axios'] %>",
     "express-session": "<%- nodeServerDependencies['express-session'] %>",
@@ -96,6 +98,9 @@
     "eslint-config-prettier": "<%- nodeServerDependencies['eslint-config-prettier'] %>",
     "eslint-plugin-prettier": "<%- nodeServerDependencies['eslint-plugin-prettier'] %>",
     "jest": "<%- nodeServerDependencies['jest'] %>",
+<%_ if (databaseType === 'mongodb') { _%>
+    "mongodb-memory-server": "<%- nodeServerDependencies['mongodb-memory-server'] %>",
+<%_ } _%>
     "nodemon": "<%- nodeServerDependencies['nodemon'] %>",
     "rimraf": "<%- nodeServerDependencies['rimraf'] %>",
     "sonarqube-scanner": "<%- nodeServerDependencies['sonarqube-scanner'] %>",
