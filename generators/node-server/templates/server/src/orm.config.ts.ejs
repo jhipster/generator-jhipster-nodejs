@@ -55,7 +55,7 @@ function ormConfig(): TypeOrmModuleOptions {
       name: 'default',
       type: '<%= nodeDevDatabaseType %>',
       // typeorm fails to auto load driver due to workspaces resolution
-      driver: require('<%= nodeDevDatabaseDriver %>'),
+      driver: require('<%= nodeProdDatabaseDriver %>'),
       database: '<%= (databaseType === 'sql') ? devDatabaseName : baseName %>',
       host: '127.0.0.1',
       // port: <%= dbPortValue %>,
@@ -70,7 +70,7 @@ function ormConfig(): TypeOrmModuleOptions {
 <%_ if (databaseType === 'mongodb') { _%>
       type: '<%= nodeDevDatabaseType %>',
       // typeorm fails to auto load driver due to workspaces resolution
-      driver: require('<%= nodeDevDatabaseDriver %>'),
+      driver: require('<%= nodeProdDatabaseDriver %>'),
       host: '127.0.0.1',
       port: mongod?.instanceInfo?.port ?? 0,
       database: mongod?.instanceInfo?.dbName ?? 'dev',
