@@ -2,11 +2,10 @@
 
 ## [4.1.0](https://github.com/jhipster/generator-jhipster-nodejs/compare/v4.0.0...v4.1.0) (2026-10-02)
 
-
 ### Features
 
-* update generator-jhipster to v9.4.0 ([#1374](https://github.com/jhipster/generator-jhipster-nodejs/issues/1374)) ([6c427fe](https://github.com/jhipster/generator-jhipster-nodejs/commit/6c427fe3523d931375adc367cab17bb87e304391))
-* update NestJS to v12 ([#1382](https://github.com/jhipster/generator-jhipster-nodejs/issues/1382)) ([45c28fe](https://github.com/jhipster/generator-jhipster-nodejs/commit/45c28fe96f63a63669039c55cc5611f0fe342a4d))
+- update generator-jhipster to v9.4.0 ([#1374](https://github.com/jhipster/generator-jhipster-nodejs/issues/1374)) ([6c427fe](https://github.com/jhipster/generator-jhipster-nodejs/commit/6c427fe3523d931375adc367cab17bb87e304391))
+- update NestJS to v12 ([#1382](https://github.com/jhipster/generator-jhipster-nodejs/issues/1382)) ([45c28fe](https://github.com/jhipster/generator-jhipster-nodejs/commit/45c28fe96f63a63669039c55cc5611f0fe342a4d))
 
 ## [4.0.0](https://github.com/jhipster/generator-jhipster-nodejs/compare/v3.2.0...v4.0.0) (2026-07-21)
 
