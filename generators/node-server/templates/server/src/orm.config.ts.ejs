@@ -18,7 +18,6 @@ function ormConfig(): TypeOrmModuleOptions {
 
   if (process.env.BACKEND_ENV === 'prod') {
     ormconfig = {
-      name: 'default',
       type: '<%= nodeProdDatabaseType %>',
       // typeorm fails to auto load driver due to workspaces resolution
       driver: require('<%= nodeProdDatabaseDriver %>'),
@@ -32,11 +31,10 @@ function ormConfig(): TypeOrmModuleOptions {
     };
   } else if (process.env.BACKEND_ENV === 'test') {
     ormconfig = {
-      name: 'default',
 <%_ if (databaseTypeSql) { _%>
-      type: 'sqlite',
+      type: 'better-sqlite3',
       // typeorm fails to auto load driver due to workspaces resolution
-      driver: require('sqlite3'),
+      driver: require('better-sqlite3'),
       database: ':memory:',
 <%_ } else { _%>
       type: '<%= nodeProdDatabaseType %>',
@@ -52,7 +50,6 @@ function ormConfig(): TypeOrmModuleOptions {
 
   } else if (process.env.BACKEND_ENV === 'dev') {
     ormconfig = {
-      name: 'default',
       type: '<%= nodeDevDatabaseType %>',
       // typeorm fails to auto load driver due to workspaces resolution
       driver: require('<%= nodeDevDatabaseDriver %>'),
@@ -66,7 +63,6 @@ function ormConfig(): TypeOrmModuleOptions {
 <%_ } _%>
   } else {
     ormconfig = {
-      name: 'default',
 <%_ if (databaseType === 'mongodb') { _%>
       type: '<%= nodeDevDatabaseType %>',
       // typeorm fails to auto load driver due to workspaces resolution
@@ -75,9 +71,9 @@ function ormConfig(): TypeOrmModuleOptions {
       port: mongod?.instanceInfo?.port ?? 0,
       database: mongod?.instanceInfo?.dbName ?? 'dev',
 <%_ } else { _%>
-      type: 'sqlite',
+      type: 'better-sqlite3',
       // typeorm fails to auto load driver due to workspaces resolution
-      driver: require('sqlite3'),
+      driver: require('better-sqlite3'),
       database: __dirname + '../../target/db/sqlite-dev-db.sql',
 <%_ } _%>
       logging: true,

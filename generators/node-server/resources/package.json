@@ -10,6 +10,7 @@
     "@nestjs/swagger": "12.0.2",
     "@nestjs/typeorm": "12.0.2",
     "bcrypt": "6.0.0",
+    "better-sqlite3": "12.11.1",
     "browser-sync-client": "3.0.4",
     "class-transformer": "0.5.1",
     "class-validator": "0.15.1",
@@ -19,7 +20,7 @@
     "express-session": "1.19.0",
     "js-yaml": "5.4.2",
     "jwt-decode": "4.0.0",
-    "mongodb": "5.9.2",
+    "mongodb": "7.7.0",
     "mongodb-memory-server": "11.2.0",
     "mssql": "12.7.2",
     "mysql2": "3.24.4",
@@ -30,10 +31,8 @@
     "pg": "8.23.0",
     "reflect-metadata": "0.2.2",
     "rxjs": "7.8.2",
-    "sqlite3": "6.0.1",
     "swagger-ui-express": "5.0.1",
-    "typeorm": "0.3.20",
-    "typeorm-encrypted": "0.8.0"
+    "typeorm": "1.1.1"
   },
   "devDependencies": {
     "@eslint/js": "10.0.1",
