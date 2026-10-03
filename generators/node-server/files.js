@@ -99,7 +99,13 @@ export const serverFiles = {
     {
       path: SERVER_NODEJS_DIR,
       condition: generator => generator.authenticationType === 'oauth2',
-      templates: ['src/web/rest/user.oauth2.controller.ts', 'src/security/passport.oauth2.strategy.ts', 'src/security/oauth2.config.ts'],
+      templates: [
+        'src/web/rest/user.oauth2.controller.ts',
+        'src/security/passport.oauth2.strategy.ts',
+        'src/security/oauth2.config.ts',
+        'src/security/oauth2.authorities.ts',
+        'test/security/oauth2.authorities.spec.ts',
+      ],
     },
   ],
 };
