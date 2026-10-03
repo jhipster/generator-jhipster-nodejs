@@ -58,10 +58,10 @@ const databaseDrivers = {
 
 const databaseDevDrivers = {
   mongodb: 'mongodb-memory-server',
-  mysql: 'sqlite3',
-  postgresql: 'sqlite3',
-  oracle: 'sqlite3',
-  mssql: 'sqlite3',
+  mysql: 'better-sqlite3',
+  postgresql: 'better-sqlite3',
+  oracle: 'better-sqlite3',
+  mssql: 'better-sqlite3',
 };
 
 export default class extends BaseApplicationGenerator {
@@ -265,6 +265,13 @@ export default class extends BaseApplicationGenerator {
               mongodbMemoryServer: {
                 downloadDir: 'node_modules/.cache/mongodb-memory-server',
               },
+            },
+          });
+        } else {
+          // better-sqlite3 (dev and test database) downloads or builds its native binding at install time
+          this.packageJson.merge({
+            allowScripts: {
+              'better-sqlite3': true,
             },
           });
         }

@@ -22,7 +22,12 @@ describe('Account', () => {
     };
 
     const testUserAuthenticated: any = {
+<%_ if (databaseType === 'mongodb') { _%>
+        // the mongodb driver rejects an id that is not a valid ObjectId
+        id: '000000000000000000000042',
+<%_ } else { _%>
         id: 42,
+<%_ } _%>
         login: 'userlogged',
         email: 'userlogged@localhost.it',
         password: 'userloggedPassword',
