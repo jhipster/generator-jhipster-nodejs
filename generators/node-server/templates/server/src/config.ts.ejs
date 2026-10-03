@@ -72,7 +72,24 @@ export class Config {
         this[property] = properties[property];
       }
     }
+    this.applyEnvironment();
     this.postProcess();
+  }
+
+  /**
+   * Environment variables override the properties, like the relaxed binding of Spring Boot: a property is set by its
+   * name in upper case with the dots as underscores and the dashes removed, like JHIPSTER_MAIL_BASEURL for
+   * jhipster.mail.base-url, or the dashes as underscores, like JHIPSTER_MAIL_BASE_URL.
+   */
+  private applyEnvironment(): void {
+    for (const property of Object.keys(this)) {
+      const name = property.toUpperCase().replace(/\./g, '_');
+      const value = process.env[name.replace(/-/g, '')] ?? process.env[name.replace(/-/g, '_')];
+      if (value !== undefined) {
+        const current = this[property];
+        this[property] = typeof current === 'number' ? Number(value) : typeof current === 'boolean' ? value === 'true' : value;
+      }
+    }
   }
 
   public postProcess(): any {

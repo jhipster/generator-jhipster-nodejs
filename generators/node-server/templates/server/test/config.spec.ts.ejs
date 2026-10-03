@@ -1,0 +1,42 @@
+import { afterEach, describe, expect, it } from '@jest/globals';
+import { Config } from '../src/config';
+
+describe('Config', () => {
+  const variables = [
+    'JHIPSTER_MAIL_BASEURL',
+    'JHIPSTER_MAIL_BASE_URL',
+    'EUREKA_CLIENT_INSTANCEINFOREPLICATIONINTERVALSECONDS',
+    'EUREKA_CLIENT_ENABLED',
+  ];
+
+  afterEach(() => {
+    for (const variable of variables) {
+      delete process.env[variable];
+    }
+  });
+
+  it('should keep the properties without environment variable', () => {
+    const config = new Config({ jhipster: { mail: { 'base-url': 'from-yaml' } } });
+    expect(config.get('jhipster.mail.base-url')).toBe('from-yaml');
+  });
+
+  it('should override a property with its canonical environment variable', () => {
+    process.env.JHIPSTER_MAIL_BASEURL = 'from-env';
+    const config = new Config({ jhipster: { mail: { 'base-url': 'from-yaml' } } });
+    expect(config.get('jhipster.mail.base-url')).toBe('from-env');
+  });
+
+  it('should override a property with the dashes as underscores', () => {
+    process.env.JHIPSTER_MAIL_BASE_URL = 'from-env';
+    const config = new Config({ jhipster: { mail: { 'base-url': 'from-yaml' } } });
+    expect(config.get('jhipster.mail.base-url')).toBe('from-env');
+  });
+
+  it('should keep the type of numbers and booleans', () => {
+    process.env.EUREKA_CLIENT_INSTANCEINFOREPLICATIONINTERVALSECONDS = '60';
+    process.env.EUREKA_CLIENT_ENABLED = 'false';
+    const config = new Config({});
+    expect(config.get('eureka.client.instance-info-replication-interval-seconds')).toBe(60);
+    expect(config.get('eureka.client.enabled')).toBe(false);
+  });
+});
