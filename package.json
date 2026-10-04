@@ -1,6 +1,6 @@
 {
   "name": "generator-jhipster-nodejs",
-  "version": "3.0.0",
+  "version": "4.0.0",
   "description": "A NodeJS blueprint that creates the backend using NodeJS with NestJS framework",
   "keywords": [
     "yeoman-generator",
@@ -38,11 +38,11 @@
     "generators",
     "!**/__*",
     "!**/*.snap",
-    "!**/*.spec.?(c|m)js"
+    "!**/*.spec.?(c|m)?(j|t)s"
   ],
   "scripts": {
     "ejslint": "ejslint generators/**/*.ejs",
-    "lint": "eslint .",
+    "lint": "eslint",
     "lint-fix": "npm run ejslint && npm run lint -- --fix",
     "prettier-check": "prettier --check \"{,**/}*.{md,json,yml,html,cjs,mjs,js,cts,mts,ts,tsx,css,scss,vue,java}\"",
     "prettier-format": "prettier --write \"{,**/}*.{md,json,yml,html,cjs,mjs,js,cts,mts,ts,tsx,css,scss,vue,java}\"",
@@ -54,22 +54,23 @@
   },
   "dependencies": {
     "chalk": "^5.3.0",
-    "generator-jhipster": "8.8.0"
+    "generator-jhipster": "9.4.0"
   },
   "devDependencies": {
     "ejs-lint": "2.0.1",
-    "eslint": "9.17.0",
-    "eslint-config-prettier": "9.1.0",
-    "eslint-plugin-prettier": "5.2.1",
-    "globals": "15.14.0",
-    "prettier": "3.4.2",
-    "prettier-plugin-packagejson": "2.5.6",
-    "sonarqube-scanner": "3.5.0",
-    "vitest": "2.1.8",
-    "yeoman-test": ">=8.2.0"
+    "eslint": "10.10.0",
+    "eslint-config-prettier": "10.1.8",
+    "eslint-plugin-prettier": "5.5.6",
+    "globals": "17.12.0",
+    "jiti": "2.7.0",
+    "prettier": "3.9.6",
+    "prettier-plugin-packagejson": "3.0.2",
+    "sonarqube-scanner": "5.0.1",
+    "vitest": "5.0.0",
+    "yeoman-test": ">=10"
   },
   "engines": {
-    "generator-jhipster": "8.8.0",
-    "node": "^18.19.0 || >= 20.6.1"
+    "generator-jhipster": "9.4.0",
+    "node": "^22.18.0 || >=24.11.0"
   }
 }

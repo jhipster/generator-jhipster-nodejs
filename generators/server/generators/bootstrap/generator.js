@@ -5,7 +5,11 @@ export default class extends BaseApplicationGenerator {
     super(args, opts, { ...features, sbsBlueprint: true });
   }
 
-  get [BaseApplicationGenerator.INITIALIZING]() {
-    return this.asInitializingTaskGroup({});
+  get [BaseApplicationGenerator.COMPOSING]() {
+    return this.asComposingTaskGroup({
+      async composingTemplateTask() {
+        await this.composeWithJHipster('jhipster-nodejs:node-server:bootstrap');
+      },
+    });
   }
 }

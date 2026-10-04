@@ -20,11 +20,12 @@
     "lint": "eslint .",
     "lint:fix": "npm run lint -- --fix",
     "pretest": "npm run lint",
-    "test": "jest",
-    "test:cov": "jest --coverage",
-    "test:watch": "jest --watch",
-    "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:e2e": "jest --silent --force-exit --coverage --config ./e2e/jest.e2e.config.json",
+    "jest": "node --experimental-vm-modules ../node_modules/jest/bin/jest.js",
+    "test": "npm run jest --",
+    "test:cov": "npm run jest -- --coverage",
+    "test:watch": "npm run jest -- --watch",
+    "test:debug": "node --experimental-vm-modules --inspect-brk -r tsconfig-paths/register -r ts-node/register ../node_modules/jest/bin/jest.js --runInBand",
+    "test:e2e": "npm run jest -- --silent --force-exit --coverage --config ./e2e/jest.e2e.config.json",
     "typeorm": "ts-node -P ./tsconfig.json -r tsconfig-paths/register ../node_modules/.bin/typeorm -f ormconfig.ts",
     "typeorm:migration:generate": "npm run typeorm -- migration:generate -n schema",
     "typeorm:migration:run": "npm run typeorm -- migration:run",
@@ -32,7 +33,9 @@
   },
   "dependencies": {
     "<%- nodeProdDatabaseDriver %>": "<%- nodeServerDependencies[nodeProdDatabaseDriver] %>",
+<%_ if (databaseType !== 'mongodb') { _%>
     "<%- nodeDevDatabaseDriver %>": "<%- nodeServerDependencies[nodeDevDatabaseDriver] %>",
+<%_ } _%>
 <%_ if (authenticationType === 'oauth2') { _%>
     "@nestjs/axios": "<%- nodeServerDependencies['@nestjs/axios'] %>",
     "express-session": "<%- nodeServerDependencies['express-session'] %>",
@@ -71,8 +74,7 @@
     "reflect-metadata": "<%- nodeServerDependencies['reflect-metadata'] %>",
     "rxjs": "<%- nodeServerDependencies['rxjs'] %>",
     "swagger-ui-express": "<%- nodeServerDependencies['swagger-ui-express'] %>",
-    "typeorm": "<%- nodeServerDependencies['typeorm'] %>",
-    "typeorm-encrypted": "<%- nodeServerDependencies['typeorm-encrypted'] %>"
+    "typeorm": "<%- nodeServerDependencies['typeorm'] %>"
   },
   "devDependencies": {
     "@jest/globals": "<%- nodeServerDependencies['@jest/globals'] %>",
@@ -95,6 +97,9 @@
     "eslint-config-prettier": "<%- nodeServerDependencies['eslint-config-prettier'] %>",
     "eslint-plugin-prettier": "<%- nodeServerDependencies['eslint-plugin-prettier'] %>",
     "jest": "<%- nodeServerDependencies['jest'] %>",
+<%_ if (databaseType === 'mongodb') { _%>
+    "mongodb-memory-server": "<%- nodeServerDependencies['mongodb-memory-server'] %>",
+<%_ } _%>
     "nodemon": "<%- nodeServerDependencies['nodemon'] %>",
     "rimraf": "<%- nodeServerDependencies['rimraf'] %>",
     "sonarqube-scanner": "<%- nodeServerDependencies['sonarqube-scanner'] %>",

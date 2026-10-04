@@ -1,7 +1,7 @@
 import { asCommand } from 'generator-jhipster';
 
 export default asCommand({
-  options: {},
+  configs: {},
   override: true,
   import: ['jhipster-nodejs:node-server'],
 });

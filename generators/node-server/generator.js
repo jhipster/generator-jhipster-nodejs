@@ -1,11 +1,15 @@
 import { readFile } from 'node:fs/promises';
-import BaseApplicationGenerator from 'generator-jhipster/generators/base-application';
-import { createNeedleCallback, mutateData } from 'generator-jhipster/generators/base/support';
-import { getEnumInfo } from 'generator-jhipster/generators/base-application/support';
+
 import { TEMPLATES_WEBAPP_SOURCES_DIR } from 'generator-jhipster';
+import BaseApplicationGenerator from 'generator-jhipster/generators/base-application';
+import { getEnumInfo } from 'generator-jhipster/generators/base-application/support';
+import { createNeedleCallback } from 'generator-jhipster/generators/base-core/support';
+import { mutateData } from 'generator-jhipster/utils';
+
 import { SERVER_NODEJS_SRC_DIR } from '../generator-nodejs-constants.js';
-import { serverFiles } from './files.js';
+
 import { entityFiles } from './entity-files.js';
+import { serverFiles } from './files.js';
 
 function sanitizeDbType(fieldType, dbType) {
   if (dbType === 'sqlite') {
@@ -54,23 +58,19 @@ const databaseDrivers = {
 
 const databaseDevDrivers = {
   mongodb: 'mongodb-memory-server',
-  mysql: 'sqlite3',
-  postgresql: 'sqlite3',
-  oracle: 'sqlite3',
-  mssql: 'sqlite3',
+  mysql: 'better-sqlite3',
+  postgresql: 'better-sqlite3',
+  oracle: 'better-sqlite3',
+  mssql: 'better-sqlite3',
 };
 
 export default class extends BaseApplicationGenerator {
   oldNodejsVersion;
   nodejsPackageJson;
 
-  constructor(args, opts, features) {
-    super(args, opts, { ...features, queueCommandTasks: true });
-  }
-
   async beforeQueue() {
-    await this.dependsOnJHipster('bootstrap-application');
-    await this.dependsOnJHipster('common');
+    await this.dependsOnJHipster('jhipster-nodejs:node-server:bootstrap');
+    await this.dependsOnJHipster('server');
   }
 
   get [BaseApplicationGenerator.INITIALIZING]() {
@@ -255,6 +255,26 @@ export default class extends BaseApplicationGenerator {
   get [BaseApplicationGenerator.POST_WRITING]() {
     return this.asPostWritingTaskGroup({
       adjustWorkspacePackageJson({ application }) {
+        if (application.databaseTypeMongodb) {
+          // download the mongod binary at install time, into a directory shared by all workspaces
+          this.packageJson.merge({
+            allowScripts: {
+              'mongodb-memory-server': true,
+            },
+            config: {
+              mongodbMemoryServer: {
+                downloadDir: 'node_modules/.cache/mongodb-memory-server',
+              },
+            },
+          });
+        } else {
+          // better-sqlite3 (dev and test database) downloads or builds its native binding at install time
+          this.packageJson.merge({
+            allowScripts: {
+              'better-sqlite3': true,
+            },
+          });
+        }
         if (application.clientFrameworkAngular) {
           this.packageJson.merge({
             overrides: {
@@ -262,6 +282,20 @@ export default class extends BaseApplicationGenerator {
             },
           });
         }
+      },
+      ignoreClientIssues({ application }) {
+        if (application.clientFrameworkNo) return;
+        // TODO use source.addEslintConfig
+        this.editFile(
+          `${application.clientRootDir}/eslint.config.ts`,
+          createNeedleCallback({
+            needle: 'eslint-add-config',
+            contentToAdd: String.raw`{
+  files: ["${this.relativeDir(application.clientRootDir, application.clientSrcDir)}**/*"],
+  rules: { "@typescript-eslint/no-unsafe-return": "off" },
+},`,
+          }),
+        );
       },
     });
   }

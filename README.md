@@ -13,13 +13,13 @@
 
 <div align="center">
 	<a href="https://github.com/jhipster/generator-jhipster-nodejs">
-		<img width="160" height="200" src="https://raw.githubusercontent.com/jhipster/generator-jhipster-nodejs/v2.0.0/logo-nhipster.png">
+		<img width="160" height="200" src="https://raw.githubusercontent.com/jhipster/generator-jhipster-nodejs/main/logo-nhipster.png">
 	</a>
 </div>
 
 > ## Notes
 >
-> For the features of the last release refers to [CHANGELOG.md](https://github.com/jhipster/generator-jhipster-nodejs/tree/v2.0.0/CHANGELOG.md).
+> For the features of the last release refers to [CHANGELOG.md](https://github.com/jhipster/generator-jhipster-nodejs/blob/main/CHANGELOG.md).
 
 > ## Demo
 >
@@ -29,10 +29,13 @@
 > - **The sample repo app with** [React client and Okta OAuth2](https://github.com/jhipster/jhipster-sample-app-nodejs-oauth2/tree/v2.0.0)
 > - **The sample repo app with** [Angular client and JWT auth](https://github.com/jhipster/jhipster-sample-app-nodejs/tree/v2.0.0)
 > - **The sample repo app with** [Vue.js client and mongodb](https://github.com/jhipster/jhipster-sample-app-nodejs-vuejs/tree/v2.0.0)
+>
+> These sample repos were generated with the blueprint `v2.0.0` (JHipster 7) and are not representative of the current release anymore.
+> For up-to-date application configurations, see the [samples built by the CI](https://github.com/jhipster/generator-jhipster-nodejs/tree/main/.blueprint/generate-sample/templates/samples).
 
 <div align="center">
 	<a href="https://github.com/jhipster/generator-jhipster-nodejs">
-		<img src="https://raw.githubusercontent.com/jhipster/generator-jhipster-nodejs/v2.0.0/nhipster-cli-logo.png">
+		<img src="https://raw.githubusercontent.com/jhipster/generator-jhipster-nodejs/main/nhipster-cli-logo.png">
 	</a>
 </div>
 
@@ -50,30 +53,31 @@ This project adds nodejs for your backend, **all TypeScript files generation, no
 
 > - TypeORM is also used for the automatically migration and versioning of the database scripts
 
-> - The app runs also as a full stack app including, for the monolitich choice, the Angular/React client with the home page set for NHipster and CRUD operations for entity generated with subgenerator and jdl import
+> - The app runs also as a full stack app including, for the monolitich choice, the Angular/React/Vue client with the home page set for NHipster and CRUD operations for entity generated with subgenerator and jdl import
 
 <div align="center">
-		<img src="https://raw.githubusercontent.com/jhipster/generator-jhipster-nodejs/v2.0.0/nhipster-cli.gif">
+		<img src="https://raw.githubusercontent.com/jhipster/generator-jhipster-nodejs/main/nhipster-cli.gif">
 </div>
 
 > A **previous of a jwt auth app:**
 
 <div align="center">
-		<img src="https://raw.githubusercontent.com/jhipster/generator-jhipster-nodejs/v2.0.0/demo-full-app.gif">
+		<img src="https://raw.githubusercontent.com/jhipster/generator-jhipster-nodejs/main/demo-full-app.gif">
 </div>
 
 # Prerequisites
 
-As this is a [JHipster](https://www.jhipster.tech/) blueprint, we expect you have JHipster and its related tools already installed:
+This blueprint bundles the [JHipster](https://www.jhipster.tech/) version it is built against and ships its own `nhipster` CLI, so the only requirement is a supported [Node.js](https://nodejs.org/) version:
 
-- [Installing JHipster](https://www.jhipster.tech/installation/)
-- [node.js 14.16.0](https://nodejs.org/de/blog/release/v14.16.0/)
+- **Node.js `^22.18.0 || >=24.11.0`**
 
-**Please attention to install that node.js version!!**
+The authoritative values are the `engines` of [package.json](https://github.com/jhipster/generator-jhipster-nodejs/blob/main/package.json), which also pins the supported `generator-jhipster` version.
+
+> A global `jhipster` or `yo` installation is **not** required: `generator-jhipster` is a direct dependency of this blueprint.
 
 # 🚀 How to get started
 
-1. Make sure you have followed the [JHipster installation guide](https://www.jhipster.tech/installation) and that both `yeoman` and `jhipster` are installed.
+1. Make sure you run a supported Node.js version (see [Prerequisites](#prerequisites)).
 2. Install the package with `npm install -g generator-jhipster-nodejs`
 3. And generate the application with `nhipster`
 
@@ -95,9 +99,11 @@ npm update -g generator-jhipster-nodejs
 
 ## With Yarn
 
+`yarn global` is only available in Yarn Classic (1.x); with Yarn 2+ (Berry) install the blueprint with npm.
+
 To install this blueprint:
 
-```
+```bash
 yarn global add generator-jhipster-nodejs
 ```
 
@@ -109,17 +115,15 @@ yarn global upgrade generator-jhipster-nodejs
 
 ## 🚦 What we have now
 
-This is a blueprint that is runnable by:
-
-```bash
-nhipster
-```
-
-However, it also ships with an `nhipster` CLI that you can use as a shortcut.
+This blueprint ships its own CLI, `nhipster`, which wraps the JHipster CLI with the blueprint already enabled. Both **monolith** and **microservice** application types are supported.
 
 ✅ General App generation
 
 - `nhipster`
+
+✅ Entity generation
+
+- `nhipster entity <entity-name>`
 
 ✅ JDL model support generation
 
@@ -138,7 +142,7 @@ For the last, in the [generate-sample samples folder](https://github.com/jhipste
 ```bash
 mkdir docker
 cd docker
-wget https://github.com/jhipster/generator-jhipster-nodejs/raw/master/docker/Dockerfile
+wget https://github.com/jhipster/generator-jhipster-nodejs/raw/main/docker/Dockerfile
 ```
 
 2. Build the Docker images:
@@ -192,9 +196,9 @@ After finish, to generate the app and check your feature, run in **test-generati
 
 Found an [issue](https://github.com/jhipster/generator-jhipster-nodejs/issues), check if is already opened or closed, otherwise open a new [feature or bug](https://github.com/jhipster/generator-jhipster-nodejs/issues/new/choose).
 
-Interested in contributing, check out our [contributing guide](https://github.com/jhipster/generator-jhipster-nodejs/blob/master/CONTRIBUTING.md) to get started.
+Interested in contributing, check out our [contributing guide](https://github.com/jhipster/generator-jhipster-nodejs/blob/main/CONTRIBUTING.md) to get started.
 
-Refer for contribution to [roadmap](https://github.com/jhipster/generator-jhipster-nodejs/blob/master/ROADMAP.md) or to [kanban board](https://github.com/jhipster/generator-jhipster-nodejs/projects/1?fullscreen=true).
+Refer for contribution to the [roadmap](https://github.com/jhipster/generator-jhipster-nodejs/blob/main/ROADMAP.md).
 
 Any questions [Angelo Manganiello](mailto:angelo.mang@libero.it).
 
@@ -208,13 +212,13 @@ Thanks goes to these wonderful people:
 
 <div align="left">
 		<a href="https://www.jetbrains.com/?from=generator-jhipster-nodejs">
-		  <img width="80" height="100" src="https://raw.githubusercontent.com/jhipster/generator-jhipster-nodejs/v2.0.0/jetbrains.png">
+		  <img width="80" height="100" src="https://raw.githubusercontent.com/jhipster/generator-jhipster-nodejs/main/jetbrains.png">
 		</a>
 		<a href="https://code.visualstudio.com">
-		  <img width="100" height="100" src="https://raw.githubusercontent.com/jhipster/generator-jhipster-nodejs/v2.0.0/visualstudio-code.png">
+		  <img width="100" height="100" src="https://raw.githubusercontent.com/jhipster/generator-jhipster-nodejs/main/visualstudio-code.png">
 		</a>
 		<a href="https://www.jhipster.tech">
-		  <img width="160" height="100" src="https://raw.githubusercontent.com/jhipster/generator-jhipster-nodejs/v2.0.0/jhipster-logo.png">
+		  <img width="160" height="100" src="https://raw.githubusercontent.com/jhipster/generator-jhipster-nodejs/main/jhipster-logo.png">
 		</a>
 </div>
 
@@ -234,17 +238,6 @@ Apache-2.0 © [Angelo Manganiello](https://github.com/amanganiello90)
 [github-actions-vue-samples-link]: https://github.com/jhipster/generator-jhipster-nodejs/actions/workflows/test-integration-vue.yml
 [github-actions-microservice-samples-image]: https://github.com/jhipster/generator-jhipster-nodejs/actions/workflows/test-integration-microservice.yml/badge.svg
 [github-actions-microservice-samples-link]: https://github.com/jhipster/generator-jhipster-nodejs/actions/workflows/test-integration-microservice.yml
-[github-actions-url]: https://github.com/jhipster/generator-jhipster-nodejs/actions
-[sonar-url]: https://sonarcloud.io/dashboard?branch=main&id=jhipster_generator-jhipster-nodejs
-[sonar-coverage-url]: https://sonarcloud.io/component_measures?branch=main&id=jhipster_generator-jhipster-nodejs&metric=coverage&view=list
-[sonar-gate-image]: https://sonarcloud.io/api/project_badges/measure?branch=main&project=jhipster_generator-jhipster-nodejs&metric=alert_status
-[sonar-coverage-image]: https://sonarcloud.io/api/project_badges/measure?branch=main&project=jhipster_generator-jhipster-nodejs&metric=coverage
-[sonar-reliability-image]: https://sonarcloud.io/api/project_badges/measure?branch=main&project=jhipster_generator-jhipster-nodejs&metric=reliability_rating
-[sonar-security-image]: https://sonarcloud.io/api/project_badges/measure?branch=main&project=jhipster_generator-jhipster-nodejs&metric=security_rating
-[sonar-maintainability-image]: https://sonarcloud.io/api/project_badges/measure?branch=main&project=jhipster_generator-jhipster-nodejs&metric=sqale_rating
-[sonar-duplication-image]: https://sonarcloud.io/api/project_badges/measure?branch=main&project=jhipster_generator-jhipster-nodejs&metric=duplicated_lines_density
-[daviddm-image]: https://david-dm.org/jhipster/generator-jhipster-nodejs.svg?theme=shields.io
-[daviddm-url]: https://david-dm.org/jhipster/generator-jhipster-nodejs
 [npmcharts-image]: https://img.shields.io/npm/dm/generator-jhipster-nodejs.svg?label=Downloads&style=flat
 [npmcharts-url]: https://npmcharts.com/compare/generator-jhipster-nodejs
 [gitter-image]: https://badges.gitter.im/generator-jhipster-nodejs/community.svg
