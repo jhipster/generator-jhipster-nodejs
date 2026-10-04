@@ -1,4 +1,3 @@
-<%_ const userDtoClass = user?.dtoClass ?? 'UserDTO'; _%>
 import { ApiProperty } from '@nestjs/swagger';
 import { IsString, IsEmail } from 'class-validator';
 <%_ if (databaseTypeMongodb) { _%>
@@ -10,7 +9,7 @@ import { BaseDTO } from './base.dto';
 /**
  * An User DTO object.
  */
-export class <%= userDtoClass %> extends BaseDTO {
+export class <%= userLoginVmClass %> extends BaseDTO {
 <%_ if (user) { _%>
 <%_ if (databaseTypeMongodb) { _%>
   @Transform(({ value }) => value?.toHexString ? value?.toHexString() : value, {toPlainOnly: true})

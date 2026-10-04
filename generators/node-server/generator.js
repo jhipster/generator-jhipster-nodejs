@@ -205,6 +205,16 @@ export default class extends BaseApplicationGenerator {
     });
   }
 
+  get [BaseApplicationGenerator.DEFAULT]() {
+    return this.asDefaultTaskGroup({
+      prepareUserLoginVm({ application }) {
+        // The class of the logged user's data: the DTO of the built-in User entity, prepared with the entities, else
+        // UserDTO (OAuth2 without syncUserWithIdp has no built-in User).
+        application.userLoginVmClass = application.user?.dtoClass ?? 'UserDTO';
+      },
+    });
+  }
+
   get [BaseApplicationGenerator.WRITING]() {
     return this.asWritingTaskGroup({
       async cleanup({ application, control }) {

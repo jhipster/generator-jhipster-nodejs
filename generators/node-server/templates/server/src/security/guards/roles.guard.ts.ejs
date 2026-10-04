@@ -1,7 +1,6 @@
-<%_ const userDtoClass = user?.dtoClass ?? 'UserDTO'; _%>
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { <%= userDtoClass%> } from '../../service/dto/user.dto';
+import { <%= userLoginVmClass%> } from '../../service/dto/user.dto';
 
 @Injectable()
 export class RolesGuard implements CanActivate {
@@ -15,7 +14,7 @@ export class RolesGuard implements CanActivate {
     }
 
     const request = context.switchToHttp().getRequest();
-    const user = request.user as <%= userDtoClass%>;
+    const user = request.user as <%= userLoginVmClass%>;
 
     return user && user.authorities && user.authorities.some(role => roles.indexOf(role) >= 0);
   }

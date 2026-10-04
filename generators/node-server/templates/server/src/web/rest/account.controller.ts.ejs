@@ -1,4 +1,3 @@
-<%_ const userDtoClass = user?.dtoClass ?? 'UserDTO'; _%>
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { <%_ if (authenticationType === 'jwt') { _%> Body, Param, Post, Res, UseGuards, <%_ } _%> Controller, Get, HttpCode, Logger, Req, UseInterceptors, ClassSerializerInterceptor, InternalServerErrorException } from '@nestjs/common';
 <%_ if (authenticationType === 'jwt') { _%>
@@ -6,7 +5,7 @@ import { Response, Request } from 'express';
 import { AuthGuard, Roles, RoleType, RolesGuard } from '../../security';
 import { PasswordChangeDTO } from '../../service/dto/password-change.dto';
 <%_ } _%>
-import { <%- userDtoClass %> } from '../../service/dto/user.dto';
+import { <%- userLoginVmClass %> } from '../../service/dto/user.dto';
 import { LoggingInterceptor } from '../../client/interceptors/logging.interceptor';
 import {<%_ if (authenticationType === 'jwt') { _%> ApiBearerAuth, <%_ } _%> ApiTags, ApiResponse, ApiOperation } from '@nestjs/swagger';
 import { AuthService } from '../../service/auth.service';
@@ -25,9 +24,9 @@ export class AccountController {
   @ApiResponse({
     status: 201,
     description: 'Registered user',
-    type: <%- userDtoClass %>,
+    type: <%- user.dtoClass %>,
   })
-  async registerAccount(@Req() req: { user: <%- userDtoClass %> }, @Body() userDTO: <%- userDtoClass %> & { password: string }): Promise <any> {
+  async registerAccount(@Req() req: { user: <%- userLoginVmClass %> }, @Body() userDTO: <%- user.dtoClass %> & { password: string }): Promise <any> {
     return await this.authService.registerNewUser(userDTO);
   }
 
@@ -52,7 +51,7 @@ export class AccountController {
     status: 200,
     description: 'login authenticated',
   })
-  isAuthenticated(@Req() req: { user: <%- userDtoClass %> }): any {
+  isAuthenticated(@Req() req: { user: <%- userLoginVmClass %> }): any {
     const { user } = req;
     return (user).login;
   }
@@ -65,7 +64,7 @@ export class AccountController {
     status: 200,
     description: 'user retrieved',
   })
-  async getAccount(@Req() req: { user: <%- userDtoClass %> }): Promise<any> {
+  async getAccount(@Req() req: { user: <%- userLoginVmClass %> }): Promise<any> {
     const { user } = req;
     const userProfileFound = await this.authService.getAccount(user.id);
     <%_ if (databaseType === 'mongodb') { _%>
@@ -87,9 +86,9 @@ export class AccountController {
   @ApiResponse({
     status: 200,
     description: 'user info updated',
-    type: <%- userDtoClass %>,
+    type: <%- user.dtoClass %>,
   })
-  async saveAccount(@Req() req: { user: <%- userDtoClass %> }, @Body() newUserInfo: <%- userDtoClass %>): Promise<any> {
+  async saveAccount(@Req() req: { user: <%- userLoginVmClass %> }, @Body() newUserInfo: <%- user.dtoClass %>): Promise<any> {
     const { user } = req;
     return await this.authService.updateUserSettings(user.login, newUserInfo);
   }
@@ -104,7 +103,7 @@ export class AccountController {
     description: 'user password changed',
     type: PasswordChangeDTO,
   })
-  async changePassword(@Req() req: { user: <%- userDtoClass %> }, @Body() passwordChange: PasswordChangeDTO): Promise<any> {
+  async changePassword(@Req() req: { user: <%- userLoginVmClass %> }, @Body() passwordChange: PasswordChangeDTO): Promise<any> {
     const { user } = req;
     return await this.authService.changePassword(user.login, passwordChange.currentPassword, passwordChange.newPassword);
   }
@@ -118,7 +117,7 @@ export class AccountController {
     description: 'mail to reset password sent',
     type: 'string',
   })
-  requestPasswordReset(@Req() req: { user: <%- userDtoClass %> }, @Body() email: string, @Res() res: Response): any {
+  requestPasswordReset(@Req() req: { user: <%- userLoginVmClass %> }, @Body() email: string, @Res() res: Response): any {
     throw new InternalServerErrorException();
   }
 
@@ -131,7 +130,7 @@ export class AccountController {
     description: 'password reset',
     type: 'string',
   })
-  finishPasswordReset(@Req() req: { user: <%- userDtoClass %> }, @Body() keyAndPassword: string, @Res() res: Response): any {
+  finishPasswordReset(@Req() req: { user: <%- userLoginVmClass %> }, @Body() keyAndPassword: string, @Res() res: Response): any {
     throw new InternalServerErrorException();
   }
 
@@ -142,13 +141,13 @@ export class AccountController {
   @ApiResponse({
     status: 200,
     description: 'User retrieved',
-    type: <%- userDtoClass %>,
+    type: <%- userLoginVmClass %>,
   })
   getAccount(@Req() req: any): any {
     if(!req.session) {
        return;
     }
-    const userDTO: <%- userDtoClass %> = req.session.user;
+    const userDTO: <%- userLoginVmClass %> = req.session.user;
     return this.authService.getAccount(userDTO);
   }
 
@@ -162,7 +161,7 @@ export class AccountController {
     status: 200,
     description: 'user retrieved',
   })
-  async getAccount(@Req() req: { user: <%- userDtoClass %> }): Promise<any> {
+  async getAccount(@Req() req: { user: <%- userLoginVmClass %> }): Promise<any> {
     const { user } = req;
     return await this.authService.getAccount(user.id!);
   }
