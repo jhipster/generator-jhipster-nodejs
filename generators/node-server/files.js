@@ -15,29 +15,28 @@ export const serverFiles = {
     },
     {
       path: SERVER_NODEJS_DIR,
-      // The users of the application, synchronized from the identity provider with OAuth2.
+      // The users of the application, synchronized from the identity provider with OAuth2 and syncUserWithIdp.
       condition: ctx => ctx.generateBuiltInUserEntity,
       templates: [
         'src/domain/user.entity.ts',
-        'src/service/dto/user.dto.ts',
         'src/service/mapper/user.mapper.ts',
         'src/service/user.service.ts',
         'src/module/user.module.ts',
-        'src/web/rest/account.controller.ts',
         'src/web/rest/public.user.controller.ts',
-        'src/web/rest/management.controller.ts',
-        'src/security/decorators/auth-user.decorator.ts',
-        'src/migrations/1570200490072-SeedUsersRoles.ts',
       ],
     },
     {
       path: SERVER_NODEJS_DIR,
       condition: ctx => ctx.generateBuiltInAuthorityEntity,
-      templates: ['src/domain/authority.entity.ts'],
+      templates: ['src/domain/authority.entity.ts', 'src/migrations/1570200490072-SeedUsersRoles.ts'],
     },
     {
       path: SERVER_NODEJS_DIR,
       templates: [
+        'src/service/dto/user.dto.ts',
+        'src/web/rest/account.controller.ts',
+        'src/web/rest/management.controller.ts',
+        'src/security/decorators/auth-user.decorator.ts',
         'src/module/auth.module.ts',
         'src/config/application-dev.yml',
         'src/config/application-test.yml',

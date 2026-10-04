@@ -1,6 +1,7 @@
 import BaseApplicationGenerator from 'generator-jhipster/generators/base-application';
 import { hibernateSnakeCase } from 'generator-jhipster/generators/server/support';
 import { prepareSqlApplicationProperties } from 'generator-jhipster/generators/spring-boot/generators/data-relational/support';
+import { mutateData } from 'generator-jhipster/utils';
 
 import { SERVER_NODEJS_SRC_DIR } from '../../../generator-nodejs-constants.js';
 
@@ -34,16 +35,6 @@ export default class extends BaseApplicationGenerator {
           dbPortValue: undefined,
         });
       },
-
-      defaultSyncUserWithIdp({ application, applicationDefaults }) {
-        // Until this blueprint implements syncUserWithIdp option, this will remain true by default
-        if (application.syncUserWithIdp === undefined && application.authenticationType === 'oauth2') {
-          this.log.warn('Option syncUserWithIdp is not supported in this blueprint, setting to default value true');
-          applicationDefaults({
-            syncUserWithIdp: true,
-          });
-        }
-      },
     });
   }
 
@@ -51,6 +42,22 @@ export default class extends BaseApplicationGenerator {
     return this.asPreparingTaskGroup({
       workarounds({ application }) {
         application.withAdminUi = false;
+      },
+      defaultSyncUserWithIdp({ application }) {
+        // As in JHipster's Spring Boot application, syncUserWithIdp is disabled by default, enabled for a gateway or
+        // when an entity has a relationship with User (JHipster only derives it for a Java backend).
+        if (
+          application.authenticationTypeOauth2 &&
+          this.jhipsterConfig.syncUserWithIdp === undefined &&
+          (application.applicationTypeGateway || application.anyEntityHasRelationshipWithUser)
+        ) {
+          mutateData(application, {
+            __override__: true,
+            syncUserWithIdp: true,
+            generateBuiltInUserEntity: true,
+            generateBuiltInAuthorityEntity: application.databaseType !== 'cassandra',
+          });
+        }
       },
       preparing({ application, applicationDefaults }) {
         if (application.databaseTypeSql) {

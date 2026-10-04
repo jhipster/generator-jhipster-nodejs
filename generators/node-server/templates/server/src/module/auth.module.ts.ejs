@@ -3,7 +3,9 @@ import { HttpModule } from '@nestjs/axios';
 <%_ } _%>
 import { Module } from '@nestjs/common';
 import { AuthService } from '../service/auth.service';
+<%_ if (generateBuiltInUserEntity) { _%>
 import { UserModule } from '../module/user.module';
+<%_ } _%>
 import { PassportModule } from '@nestjs/passport';
 <%_ if (authenticationType === 'jwt') { _%>
 import { JwtModule } from '@nestjs/jwt';
@@ -16,15 +18,25 @@ import { UserOauth2Controller } from '../web/rest/user.oauth2.controller';
 <%_ if (authenticationType === 'jwt') { _%>
 import { config } from '../config';
 <%_ } _%>
+<%_ if (generateBuiltInAuthorityEntity) { _%>
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Authority } from '../domain/authority.entity';
-
+<%_ } _%>
+<%_ if (generateBuiltInUserEntity) { _%>
 import { PublicUserController } from '../web/rest/public.user.controller';
+<%_ } else { _%>
+import { ManagementController } from '../web/rest/management.controller';
+<%_ } _%>
 import { AccountController } from '../web/rest/account.controller';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Authority]),
+  imports: [
+  <%_ if (generateBuiltInAuthorityEntity) { _%>
+  TypeOrmModule.forFeature([Authority]),
+  <%_ } _%>
+  <%_ if (generateBuiltInUserEntity) { _%>
   UserModule,
+  <%_ } _%>
   PassportModule,
   <%_ if (authenticationType === 'jwt') { _%>
     JwtModule.register({
@@ -41,7 +53,7 @@ import { AccountController } from '../web/rest/account.controller';
   <%_ } else if (authenticationType === 'oauth2') { _%>
   UserOauth2Controller,
   <%_ } _%>
-  PublicUserController, AccountController ],
+  <%- generateBuiltInUserEntity ? 'PublicUserController' : 'ManagementController' %>, AccountController ],
   providers: [AuthService,
   <%_ if (authenticationType === 'jwt') { _%>
   JwtStrategy

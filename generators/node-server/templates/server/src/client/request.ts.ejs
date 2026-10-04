@@ -1,6 +1,7 @@
+<%_ const userDtoClass = user?.dtoClass ?? 'UserDTO'; _%>
 import { Request as ExpressRequest} from 'express';
-import { <%= user.dtoClass%> } from '../service/dto/user.dto';
+import { <%= userDtoClass%> } from '../service/dto/user.dto';
 
 export interface Request extends ExpressRequest {
-  user?: <%= user.dtoClass%>;
+  user?: <%= userDtoClass%>;
 }

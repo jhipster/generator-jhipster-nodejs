@@ -66,8 +66,47 @@ describe('SubGenerator node-server of nodejs JHipster blueprint', () => {
       expect(result.getStateSnapshot()).toMatchSnapshot();
     });
 
+    it('should not generate built-in users by default (syncUserWithIdp disabled)', () => {
+      result.assertFile(['server/src/web/rest/account.controller.ts', 'server/src/web/rest/management.controller.ts']);
+      result.assertNoFile([
+        'server/src/domain/user.entity.ts',
+        'server/src/domain/authority.entity.ts',
+        'server/src/module/user.module.ts',
+        'server/src/web/rest/user.controller.ts',
+        'server/src/web/rest/public.user.controller.ts',
+        'server/src/migrations/1570200490072-SeedUsersRoles.ts',
+      ]);
+      result.assertFileContent('server/src/module/auth.module.ts', 'ManagementController');
+    });
+  });
+  describe('with oauth2 and syncUserWithIdp', () => {
+    beforeAll(async function () {
+      await helpers
+        .run(SUB_GENERATOR_NAMESPACE)
+        .withJHipsterConfig({
+          authenticationType: 'oauth2',
+          syncUserWithIdp: true,
+          skipClient: true,
+        })
+        .withOptions({
+          ignoreNeedlesError: true,
+        })
+        .withJHipsterGenerators()
+        .withConfiguredBlueprint()
+        .withBlueprintConfig({});
+    });
+
+    it('should succeed', () => {
+      expect(result.getStateSnapshot()).toMatchSnapshot();
+    });
+
     it('should generate the users of the identity provider without the users administration', () => {
-      result.assertFile(['server/src/domain/user.entity.ts', 'server/src/web/rest/account.controller.ts']);
+      result.assertFile([
+        'server/src/domain/user.entity.ts',
+        'server/src/domain/authority.entity.ts',
+        'server/src/web/rest/public.user.controller.ts',
+        'server/src/migrations/1570200490072-SeedUsersRoles.ts',
+      ]);
       result.assertNoFile(['server/src/web/rest/user.controller.ts', 'server/e2e/user.e2e-spec.ts']);
       result.assertNoFileContent('server/src/module/user.module.ts', 'UserController');
     });
