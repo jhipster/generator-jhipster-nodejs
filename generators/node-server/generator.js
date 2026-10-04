@@ -66,6 +66,7 @@ const databaseDevDrivers = {
 
 export default class extends BaseApplicationGenerator {
   oldNodejsVersion;
+  existingNodejsVersion;
   nodejsPackageJson;
 
   async beforeQueue() {
@@ -76,7 +77,8 @@ export default class extends BaseApplicationGenerator {
   get [BaseApplicationGenerator.INITIALIZING]() {
     return this.asInitializingTaskGroup({
       async initializing() {
-        this.oldNodejsVersion = this.blueprintConfig.nodejsVersion ?? '3.0.0';
+        this.existingNodejsVersion = this.blueprintConfig.nodejsVersion;
+        this.oldNodejsVersion = this.existingNodejsVersion ?? '3.0.0';
         this.nodejsPackageJson = JSON.parse((await readFile(this.templatePath('../../../package.json'), 'utf-8')).toString());
         this.blueprintConfig.nodejsVersion = this.nodejsPackageJson.version;
       },
@@ -91,6 +93,17 @@ export default class extends BaseApplicationGenerator {
         this.jhipsterConfig.databaseType = databaseTypeMongodb ? 'mongodb' : 'sql';
         if (databaseTypeMongodb) {
           this.jhipsterConfig.prodDatabaseType = 'mongodb';
+        }
+      },
+      keepSyncUserWithIdp() {
+        // OAuth2 applications generated before 4.0.1 always synchronized their users, keep it for them.
+        if (
+          this.existingNodejsVersion &&
+          this.isVersionLessThan(this.existingNodejsVersion, '4.0.1') &&
+          this.jhipsterConfigWithDefaults.authenticationType === 'oauth2' &&
+          this.jhipsterConfig.syncUserWithIdp === undefined
+        ) {
+          this.jhipsterConfig.syncUserWithIdp = true;
         }
       },
     });
@@ -203,6 +216,22 @@ export default class extends BaseApplicationGenerator {
               'server/src/repository/authority.repository.ts',
               'server/src/repository/user.repository.ts',
               [application.authenticationTypeOauth2, 'node/src/security/password-util.ts'],
+            ],
+            '4.0.1': [
+              [!application.generateUserManagement, 'server/src/web/rest/user.controller.ts', 'server/e2e/user.e2e-spec.ts'],
+              [
+                !application.generateBuiltInUserEntity,
+                'server/src/domain/user.entity.ts',
+                'server/src/service/mapper/user.mapper.ts',
+                'server/src/service/user.service.ts',
+                'server/src/module/user.module.ts',
+                'server/src/web/rest/public.user.controller.ts',
+              ],
+              [
+                !application.generateBuiltInAuthorityEntity,
+                'server/src/domain/authority.entity.ts',
+                'server/src/migrations/1570200490072-SeedUsersRoles.ts',
+              ],
             ],
           });
         }

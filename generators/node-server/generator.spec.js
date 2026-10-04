@@ -1,4 +1,6 @@
 import { beforeAll, describe, expect, it } from 'vitest';
+import { mkdirSync, writeFileSync } from 'node:fs';
+import { dirname, join } from 'node:path';
 
 import { defaultHelpers as helpers, result } from 'generator-jhipster/testing';
 
@@ -109,6 +111,71 @@ describe('SubGenerator node-server of nodejs JHipster blueprint', () => {
       ]);
       result.assertNoFile(['server/src/web/rest/user.controller.ts', 'server/e2e/user.e2e-spec.ts']);
       result.assertNoFileContent('server/src/module/user.module.ts', 'UserController');
+    });
+  });
+  describe('upgrading an oauth2 application generated with 4.0.0', () => {
+    const oldFiles = [
+      'server/src/web/rest/user.controller.ts',
+      'server/e2e/user.e2e-spec.ts',
+      'server/src/domain/user.entity.ts',
+      'server/src/module/user.module.ts',
+      'server/src/domain/authority.entity.ts',
+      'server/src/migrations/1570200490072-SeedUsersRoles.ts',
+    ];
+    // An existing project is read from the disk: its .yo-rc.json and its files.
+    const writeExistingProject = config => dir => {
+      writeFileSync(
+        join(dir, '.yo-rc.json'),
+        JSON.stringify({
+          'generator-jhipster': {
+            baseName: 'jhipster',
+            authenticationType: 'oauth2',
+            skipClient: true,
+            jhipsterVersion: '9.4.0',
+            ...config,
+          },
+          'generator-jhipster-nodejs': { nodejsVersion: '4.0.0' },
+        }),
+      );
+      for (const file of oldFiles) {
+        mkdirSync(dirname(join(dir, file)), { recursive: true });
+        writeFileSync(join(dir, file), '');
+      }
+    };
+
+    describe('without syncUserWithIdp', () => {
+      beforeAll(async function () {
+        await helpers
+          .run(SUB_GENERATOR_NAMESPACE)
+          .doInDir(writeExistingProject({}))
+          .withOptions({ ignoreNeedlesError: true })
+          .withJHipsterGenerators()
+          .withConfiguredBlueprint();
+      });
+
+      it('should keep synchronizing the users', () => {
+        result.assertJsonFileContent('.yo-rc.json', { 'generator-jhipster': { syncUserWithIdp: true } });
+        result.assertFile(['server/src/domain/user.entity.ts', 'server/src/domain/authority.entity.ts']);
+      });
+
+      it('should remove the users administration', () => {
+        result.assertNoFile(['server/src/web/rest/user.controller.ts', 'server/e2e/user.e2e-spec.ts']);
+      });
+    });
+
+    describe('with syncUserWithIdp disabled', () => {
+      beforeAll(async function () {
+        await helpers
+          .run(SUB_GENERATOR_NAMESPACE)
+          .doInDir(writeExistingProject({ syncUserWithIdp: false }))
+          .withOptions({ ignoreNeedlesError: true })
+          .withJHipsterGenerators()
+          .withConfiguredBlueprint();
+      });
+
+      it('should remove the built-in users and authorities', () => {
+        result.assertNoFile(oldFiles);
+      });
     });
   });
 });
