@@ -35,8 +35,8 @@ export default class extends BaseApplicationGenerator {
           // As in JHipster's Spring Boot application, syncUserWithIdp is disabled by default, enabled for a gateway or
           // when an entity has a relationship with User (JHipster only derives it for a Java backend). Delayed until
           // anyEntityHasRelationshipWithUser is defined, before JHipster derives the built-in entities from it.
-          syncUserWithIdp: ({ authenticationTypeOauth2, applicationTypeGateway, anyEntityHasRelationshipWithUser }) =>
-            Boolean(authenticationTypeOauth2 && (applicationTypeGateway || anyEntityHasRelationshipWithUser)),
+          syncUserWithIdp: ({ authenticationType, applicationType, anyEntityHasRelationshipWithUser }) =>
+            authenticationType === 'oauth2' && (applicationType === 'gateway' || anyEntityHasRelationshipWithUser),
         });
       },
     });
