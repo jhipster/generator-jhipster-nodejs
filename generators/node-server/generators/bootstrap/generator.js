@@ -1,7 +1,6 @@
 import BaseApplicationGenerator from 'generator-jhipster/generators/base-application';
 import { hibernateSnakeCase } from 'generator-jhipster/generators/server/support';
 import { prepareSqlApplicationProperties } from 'generator-jhipster/generators/spring-boot/generators/data-relational/support';
-import { overrideMutateDataProperty } from 'generator-jhipster/utils';
 
 import { SERVER_NODEJS_SRC_DIR } from '../../../generator-nodejs-constants.js';
 
@@ -33,6 +32,11 @@ export default class extends BaseApplicationGenerator {
           jhiTablePrefix: ({ jhiPrefix }) => hibernateSnakeCase(jhiPrefix),
           clientPackageManager: 'npm',
           dbPortValue: undefined,
+          // As in JHipster's Spring Boot application, syncUserWithIdp is disabled by default, enabled for a gateway or
+          // when an entity has a relationship with User (JHipster only derives it for a Java backend). Delayed until
+          // anyEntityHasRelationshipWithUser is defined, before JHipster derives the built-in entities from it.
+          syncUserWithIdp: ({ authenticationTypeOauth2, applicationTypeGateway, anyEntityHasRelationshipWithUser }) =>
+            Boolean(authenticationTypeOauth2 && (applicationTypeGateway || anyEntityHasRelationshipWithUser)),
         });
       },
     });
@@ -42,24 +46,6 @@ export default class extends BaseApplicationGenerator {
     return this.asPreparingTaskGroup({
       workarounds({ application }) {
         application.withAdminUi = false;
-      },
-      defaultSyncUserWithIdp({ applicationDefaults }) {
-        applicationDefaults({
-          // As in JHipster's Spring Boot application, syncUserWithIdp is disabled by default, enabled for a gateway or
-          // when an entity has a relationship with User (JHipster only derives it for a Java backend).
-          syncUserWithIdp: overrideMutateDataProperty(
-            ({ authenticationTypeOauth2, applicationTypeGateway, anyEntityHasRelationshipWithUser }) =>
-              this.jhipsterConfig.syncUserWithIdp ??
-              Boolean(authenticationTypeOauth2 && (applicationTypeGateway || anyEntityHasRelationshipWithUser)),
-          ),
-          // Derived from syncUserWithIdp as JHipster does.
-          generateBuiltInUserEntity: overrideMutateDataProperty(
-            ({ generateUserManagement, syncUserWithIdp }) => generateUserManagement || syncUserWithIdp,
-          ),
-          generateBuiltInAuthorityEntity: overrideMutateDataProperty(
-            ({ generateBuiltInUserEntity, databaseType }) => generateBuiltInUserEntity && databaseType !== 'cassandra',
-          ),
-        });
       },
       preparing({ application, applicationDefaults }) {
         if (application.databaseTypeSql) {
