@@ -9,34 +9,31 @@ export const serverFiles = {
     },
     {
       path: SERVER_NODEJS_DIR,
+      // The users administration API, not generated with OAuth2 (users come from the identity provider).
       condition: ctx => ctx.generateUserManagement,
-      templates: [
-        'src/web/rest/user.controller.ts',
-        'src/web/rest/account.controller.ts',
-        'src/web/rest/public.user.controller.ts',
-        'src/web/rest/management.controller.ts',
-        'src/module/user.module.ts',
-        'src/security/decorators/auth-user.decorator.ts',
-        'src/migrations/1570200490072-SeedUsersRoles.ts',
-        'e2e/user.e2e-spec.ts',
-      ],
+      templates: ['src/web/rest/user.controller.ts', 'e2e/user.e2e-spec.ts'],
     },
     {
       path: SERVER_NODEJS_DIR,
+      // The users of the application, synchronized from the identity provider with OAuth2.
       condition: ctx => ctx.generateBuiltInUserEntity,
       templates: [
         'src/domain/user.entity.ts',
         'src/service/dto/user.dto.ts',
         'src/service/mapper/user.mapper.ts',
         'src/service/user.service.ts',
+        'src/module/user.module.ts',
+        'src/web/rest/account.controller.ts',
+        'src/web/rest/public.user.controller.ts',
+        'src/web/rest/management.controller.ts',
+        'src/security/decorators/auth-user.decorator.ts',
+        'src/migrations/1570200490072-SeedUsersRoles.ts',
       ],
     },
     {
       path: SERVER_NODEJS_DIR,
       condition: ctx => ctx.generateBuiltInAuthorityEntity,
-      templates: [
-        'src/domain/authority.entity.ts',
-      ],
+      templates: ['src/domain/authority.entity.ts'],
     },
     {
       path: SERVER_NODEJS_DIR,
@@ -103,7 +100,7 @@ export const serverFiles = {
   jwt: [
     {
       path: SERVER_NODEJS_DIR,
-      condition: ctx => ctx.authenticationTypeJwt && ctx.generateUserManagement,
+      condition: ctx => ctx.authenticationTypeJwt,
       templates: [
         'src/web/rest/user.jwt.controller.ts',
         'src/security/password-util.ts',
