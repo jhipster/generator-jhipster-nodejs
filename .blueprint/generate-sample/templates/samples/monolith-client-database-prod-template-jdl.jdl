@@ -31,6 +31,8 @@ entity SpaceEvent {
 entity Mission {
   name String required
   description String
+  budget Long
+  launchedAt Instant
 }
 
 enum SpaceEventType {

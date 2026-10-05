@@ -11,15 +11,6 @@ import { SERVER_NODEJS_SRC_DIR } from '../generator-nodejs-constants.js';
 import { entityFiles } from './entity-files.js';
 import { serverFiles } from './files.js';
 
-function sanitizeDbType(fieldType, dbType) {
-  if (dbType === 'sqlite') {
-    if (fieldType === 'timestamp') {
-      return 'datetime';
-    }
-  }
-  return fieldType;
-}
-
 const fieldTypes = {
   Boolean: 'boolean',
   Integer: 'number',
@@ -29,18 +20,19 @@ const fieldTypes = {
   BigDecimal: 'number',
   String: 'string',
   UUID: 'string',
+  // Without a column type, TypeORM gives a Date the date-time type of the database in use.
+  Instant: 'Date',
+  ZonedDateTime: 'Date',
 };
 
 const dbTypes = {
   Boolean: 'boolean',
   Integer: 'integer',
-  Long: 'long',
+  Long: 'bigint',
   Float: 'float',
-  Double: 'double',
+  Double: 'double precision',
   BigDecimal: 'decimal',
   LocalDate: 'date',
-  Instant: 'timestamp',
-  ZonedDateTime: 'datetime',
   AnyBlob: 'blob',
   ImageBlob: 'blob',
   Blob: 'blob',
@@ -185,7 +177,7 @@ export default class extends BaseApplicationGenerator {
           mutateData(field, {
             __override__: true,
             nodejsFieldType: fieldTypes[fieldType] ?? 'any',
-            nodejsColumnType: sanitizeDbType(dbTypes[fieldType], application.devDatabaseType),
+            nodejsColumnType: dbTypes[fieldType],
           });
         }
       },
