@@ -1,0 +1,11 @@
+// Claim with the roles when the provider namespaces it, like Auth0.
+export const CLAIMS_NAMESPACE = 'https://www.jhipster.tech/';
+
+/**
+ * The authorities of an OIDC user, from the claims of its token, as JHipster's Spring Boot application reads them:
+ * the "groups" claim, else "roles", else the namespaced "roles", keeping the ROLE_ ones.
+ */
+export function extractAuthoritiesFromClaims(claims: Record<string, unknown>): string[] {
+  const roles = claims.groups ?? claims.roles ?? claims[`${CLAIMS_NAMESPACE}roles`] ?? [];
+  return Array.isArray(roles) ? roles.filter((role): role is string => typeof role === 'string' && role.startsWith('ROLE_')) : [];
+}
