@@ -1,21 +1,30 @@
 import { Injectable, <%_ if (authenticationType === 'jwt') { _%> HttpException, HttpStatus,  <%_ } _%> Logger } from '@nestjs/common';
+<%_ if (generateBuiltInAuthorityEntity) { _%>
 import { InjectRepository } from '@nestjs/typeorm';
-import { FindManyOptions, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
+<%_ } _%>
+<%_ if (generateBuiltInUserEntity) { _%>
+import { FindManyOptions } from 'typeorm';
+<%_ } _%>
 <%_ if (authenticationType === 'jwt') { _%>
 import { comparePassword } from '../security/password-util';
 import { JwtService } from '@nestjs/jwt';
 import { UserLoginDTO } from '../service/dto/user-login.dto';
 import { Payload } from '../security/payload.interface';
 <%_ } _%>
+<%_ if (generateBuiltInAuthorityEntity) { _%>
 import { Authority } from '../domain/authority.entity';
+<%_ } _%>
+<%_ if (generateBuiltInUserEntity) { _%>
 import { UserService } from '../service/user.service';
-import { <%= user.dtoClass%> } from './dto/user.dto';
+<%_ } _%>
+import { <%= userLoginVmClass %> } from './dto/user.dto';
 <%_ if (authenticationType === 'jwt') { _%>
 import { config } from '../config';
 <%_ } _%>
 
 <%_
-const userIdType = user.primaryKey.tsType;
+const userIdType = user?.primaryKey.tsType;
 _%>
 
 
@@ -26,8 +35,12 @@ export class AuthService {
     <%_ if (authenticationType === 'jwt') { _%>
     private readonly jwtService: JwtService,
     <%_ } _%>
+    <%_ if (generateBuiltInAuthorityEntity) { _%>
     @InjectRepository(Authority) private authorityRepository: Repository<Authority>,
+    <%_ } _%>
+    <%_ if (generateBuiltInUserEntity) { _%>
     private userService: UserService,
+    <%_ } _%>
   ) {}
 
   <%_ if (authenticationType === 'jwt') { _%>
@@ -64,21 +77,21 @@ export class AuthService {
   }
 
   /* eslint-enable */
-  async validateUser(payload: Payload): Promise<<%= user.dtoClass%> | undefined> {
+  async validateUser(payload: Payload): Promise<<%= user.dtoClass %> | undefined> {
     return await this.findUserWithAuthById(payload.id);
   }
 
-  async findUserWithAuthById(userId: <%= userIdType %>): Promise<<%= user.dtoClass%> | undefined> {
+  async findUserWithAuthById(userId: <%= userIdType %>): Promise<<%= user.dtoClass %> | undefined> {
     <%_ if (databaseType === 'mongodb') { _%>
-    const userDTO: <%= user.dtoClass%> = await this.userService.findById(userId);
+    const userDTO: <%= user.dtoClass %> = await this.userService.findById(userId);
     <%_ } else { _%>
-    const userDTO: <%= user.dtoClass%> = await this.userService.findByFields({ where: { id: userId } });
+    const userDTO: <%= user.dtoClass %> = await this.userService.findByFields({ where: { id: userId } });
     <%_ } _%>
     return userDTO;
   }
 
-  async getAccount(userId: <%= userIdType %>): Promise<<%= user.dtoClass%> | undefined> {
-    const userDTO: <%= user.dtoClass%> = await this.findUserWithAuthById(userId);
+  async getAccount(userId: <%= userIdType %>): Promise<<%= user.dtoClass %> | undefined> {
+    const userDTO: <%= user.dtoClass %> = await this.findUserWithAuthById(userId);
     if (!userDTO) {
       return;
     }
@@ -86,7 +99,7 @@ export class AuthService {
   }
 
   async changePassword(userLogin: string, currentClearTextPassword: string, newPassword: string): Promise<void> {
-    const userFind: <%= user.dtoClass%> = await this.userService.findByFields({ where: { login: userLogin } });
+    const userFind: <%= user.dtoClass %> = await this.userService.findByFields({ where: { login: userLogin } });
     if (!userFind) {
       throw new HttpException('Invalid login name!', HttpStatus.BAD_REQUEST);
     }
@@ -99,8 +112,8 @@ export class AuthService {
     return;
   }
 
-  async registerNewUser (newUser: <%= user.dtoClass%>) : Promise<<%= user.dtoClass%>> {
-    let userFind: <%= user.dtoClass%> = await this.userService.findByFields({ where: { login: newUser.login} });
+  async registerNewUser (newUser: <%= user.dtoClass %>) : Promise<<%= user.dtoClass %>> {
+    let userFind: <%= user.dtoClass %> = await this.userService.findByFields({ where: { login: newUser.login} });
     if (userFind) {
       throw new HttpException('Login name already used!', HttpStatus.BAD_REQUEST);
     }
@@ -109,16 +122,16 @@ export class AuthService {
       throw new HttpException('Email is already in use!', HttpStatus.BAD_REQUEST);
     }
     newUser.authorities = ['ROLE_USER'];
-    const user: <%= user.dtoClass%> = await this.userService.save(newUser, newUser.login, true);
+    const user: <%= user.dtoClass %> = await this.userService.save(newUser, newUser.login, true);
     return user;
   }
 
-  async updateUserSettings(userLogin: string, newUserInfo: <%= user.dtoClass%>) : Promise<<%= user.dtoClass%>> {
-    const userFind: <%= user.dtoClass%> = await this.userService.findByFields({ where: { login: userLogin } });
+  async updateUserSettings(userLogin: string, newUserInfo: <%= user.dtoClass %>) : Promise<<%= user.dtoClass %>> {
+    const userFind: <%= user.dtoClass %> = await this.userService.findByFields({ where: { login: userLogin } });
     if (!userFind) {
       throw new HttpException('Invalid login name!', HttpStatus.BAD_REQUEST);
     }
-    const userFindEmail: <%= user.dtoClass%> = await this.userService.findByFields({ where: { email: newUserInfo.email } });
+    const userFindEmail: <%= user.dtoClass %> = await this.userService.findByFields({ where: { email: newUserInfo.email } });
     if (userFindEmail && newUserInfo.email !== userFind.email) {
       throw new HttpException('Email is already in use!', HttpStatus.BAD_REQUEST);
     }
@@ -132,11 +145,12 @@ export class AuthService {
   }
 
   <%_ } else if (authenticationType === 'oauth2') { _%>
-    async findUserOrSave(loginUser: <%= user.dtoClass%>): Promise<<%= user.dtoClass%> | undefined> {
+    <%_ if (generateBuiltInUserEntity) { _%>
+    async findUserOrSave(loginUser: <%= userLoginVmClass %>): Promise<<%= userLoginVmClass %> | undefined> {
         if (loginUser.login && loginUser.password && !loginUser.email) {
             loginUser.email = loginUser.login + '@localhost.it';
         }
-        let userFound: <%= user.dtoClass%> = await this.userService.findByFields({ where: { login: loginUser.login } });
+        let userFound: <%= user.dtoClass %> = await this.userService.findByFields({ where: { login: loginUser.login } });
 
         if (!userFound) {
           const authoritiesName = [];
@@ -147,8 +161,9 @@ export class AuthService {
         }
         return loginUser;
       }
+    <%_ } _%>
 
-   getAccount(userDTO: <%= user.dtoClass%>): any {
+   getAccount(userDTO: <%= userLoginVmClass %>): any {
     if (!userDTO) {
        return;
     }
@@ -157,7 +172,9 @@ export class AuthService {
 
   <%_ } _%>
 
-  async getAllUsers(options: FindManyOptions<<%= user.dtoClass%>>): Promise<[<%= user.dtoClass%>[], number]> {
+  <%_ if (generateBuiltInUserEntity) { _%>
+  async getAllUsers(options: FindManyOptions<<%= user.dtoClass %>>): Promise<[<%= user.dtoClass %>[], number]> {
     return await this.userService.findAndCount(options);
   }
+  <%_ } _%>
 }

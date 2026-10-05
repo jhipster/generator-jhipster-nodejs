@@ -1,13 +1,15 @@
 import { Module } from '@nestjs/common';
 import { User } from '../domain/user.entity';
+<%_ if (generateUserManagement) { _%>
 import { UserController } from '../web/rest/user.controller';
+<%_ } _%>
 import { ManagementController } from '../web/rest/management.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserService } from '../service/user.service';
 
 @Module({
   imports: [TypeOrmModule.forFeature([User])],
-  controllers: [UserController, ManagementController],
+  controllers: [<% if (generateUserManagement) { %>UserController, <% } %>ManagementController],
   providers: [UserService],
   exports: [UserService],
 })

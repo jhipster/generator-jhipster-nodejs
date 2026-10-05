@@ -32,17 +32,12 @@ export default class extends BaseApplicationGenerator {
           jhiTablePrefix: ({ jhiPrefix }) => hibernateSnakeCase(jhiPrefix),
           clientPackageManager: 'npm',
           dbPortValue: undefined,
+          // As in JHipster's Spring Boot application, syncUserWithIdp is disabled by default, enabled for a gateway or
+          // when an entity has a relationship with User (JHipster only derives it for a Java backend). Delayed until
+          // anyEntityHasRelationshipWithUser is defined, before JHipster derives the built-in entities from it.
+          syncUserWithIdp: ({ authenticationType, applicationType, anyEntityHasRelationshipWithUser }) =>
+            authenticationType === 'oauth2' && (applicationType === 'gateway' || anyEntityHasRelationshipWithUser),
         });
-      },
-
-      defaultSyncUserWithIdp({ application, applicationDefaults }) {
-        // Until this blueprint implements syncUserWithIdp option, this will remain true by default
-        if (application.syncUserWithIdp === undefined && application.authenticationType === 'oauth2') {
-          this.log.warn('Option syncUserWithIdp is not supported in this blueprint, setting to default value true');
-          applicationDefaults({
-            syncUserWithIdp: true,
-          });
-        }
       },
     });
   }

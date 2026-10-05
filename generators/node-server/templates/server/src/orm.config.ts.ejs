@@ -1,5 +1,7 @@
 import { TypeOrmModuleOptions } from '@nestjs/typeorm';
+<%_ if (generateBuiltInAuthorityEntity) { _%>
 import { SeedUsersRoles1570200490072 } from './migrations/1570200490072-SeedUsersRoles';
+<%_ } _%>
 import { CreateTables1570200270081 } from './migrations/1570200270081-CreateTables';
 // jhipster-needle-add-entity-to-ormconfig-imports - JHipster will add code here, do not remove
 
@@ -88,7 +90,9 @@ function ormConfig(): TypeOrmModuleOptions {
     ],
     migrations: [
       CreateTables1570200270081,
+<%_ if (generateBuiltInAuthorityEntity) { _%>
       SeedUsersRoles1570200490072,
+<%_ } _%>
       // jhipster-needle-add-migration-to-ormconfig-migrations - JHipster will add code here, do not remove
     ],
     autoLoadEntities: true,
