@@ -50,6 +50,7 @@ export const serverFiles = {
         'scripts/entrypoint.sh',
         'tsconfig.build.json',
         'test/admin/management.controller.spec.ts',
+        'test/config.spec.ts',
         'nest-cli.json',
         {
           file: 'env',

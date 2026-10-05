@@ -224,6 +224,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > run > should su
   "server/test/admin/management.controller.spec.ts": {
     "stateCleared": "modified",
   },
+  "server/test/config.spec.ts": {
+    "stateCleared": "modified",
+  },
   "server/tsconfig.build.json": {
     "stateCleared": "modified",
   },
@@ -432,6 +435,13 @@ if(process.env.BACKEND_ENV==='prod'){
 \`\`\`
 
 **To use it at runtime read the below section.**
+
+### Configuration from environment variables
+
+Like in a Spring Boot application, an environment variable overrides a property of the \`src/config/application*.yml\`
+files: its name is the property in upper case, with the dots as underscores and the dashes removed (or as
+underscores). For example, \`JHIPSTER_MAIL_BASEURL\` sets \`jhipster.mail.base-url\`. Secrets, like the JWT secret, can
+be kept out of the configuration files this way in production.
 
 ### Migration data and schema
 
@@ -777,6 +787,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > without client 
     "stateCleared": "modified",
   },
   "server/test/admin/management.controller.spec.ts": {
+    "stateCleared": "modified",
+  },
+  "server/test/config.spec.ts": {
     "stateCleared": "modified",
   },
   "server/tsconfig.build.json": {
