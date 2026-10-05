@@ -4,6 +4,7 @@ import request = require('supertest');
 import { AppModule } from '../src/app.module';
 import { INestApplication } from '@nestjs/common';
 <%_ if (authenticationType === 'jwt' && !skipUserManagement) { _%>
+import { JwtService } from '@nestjs/jwt';
 import { UserLoginDTO } from '../src/service/dto/user-login.dto';
 <%_ } _%>
 
@@ -54,6 +55,14 @@ describe('App', () => {
         .post('/api/authenticate')
         .send(testUserLogin)
         .expect(200));
+
+    it('/GET account with an expired jwt is unauthorized', () => {
+        const expiredToken = app.get(JwtService).sign({ id: 1, username: 'system', authorities: [] }, { expiresIn: -10 });
+        return request(app.getHttpServer())
+            .get('/api/account')
+            .set('Authorization', `Bearer ${expiredToken}`)
+            .expect(401);
+    });
     <%_ } else if (authenticationType === 'oauth2') { _%>
     it('/POST security oauth2 does not perform logout', () => request(app.getHttpServer())
         .post('/api/logout')

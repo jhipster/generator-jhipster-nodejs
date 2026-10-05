@@ -19,6 +19,9 @@ import { Authority } from '../domain/authority.entity';
 import { UserService } from '../service/user.service';
 <%_ } _%>
 import { <%= userLoginVmClass %> } from './dto/user.dto';
+<%_ if (authenticationType === 'jwt') { _%>
+import { config } from '../config';
+<%_ } _%>
 
 <%_
 const userIdType = user?.primaryKey.tsType;
@@ -62,9 +65,14 @@ export class AuthService {
 
     const payload: Payload = { id: user.id, username: user.login, authorities: user.authorities };
 
+    const expiresIn = Number(
+      userLogin.rememberMe
+        ? config['jhipster.security.authentication.jwt.token-validity-in-seconds-for-remember-me']
+        : config['jhipster.security.authentication.jwt.token-validity-in-seconds'],
+    );
     /* eslint-disable */
     return {
-      id_token: this.jwtService.sign(payload),
+      id_token: this.jwtService.sign(payload, { expiresIn }),
     };
   }
 

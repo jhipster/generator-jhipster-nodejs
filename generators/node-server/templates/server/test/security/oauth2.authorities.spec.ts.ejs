@@ -1,0 +1,24 @@
+import { describe, expect, it } from '@jest/globals';
+import { CLAIMS_NAMESPACE, extractAuthoritiesFromClaims } from '../../src/security/oauth2.authorities';
+
+describe('OAuth2 authorities', () => {
+  it('should read the groups claim', () => {
+    expect(extractAuthoritiesFromClaims({ groups: ['ROLE_ADMIN', 'ROLE_USER'] })).toEqual(['ROLE_ADMIN', 'ROLE_USER']);
+  });
+
+  it('should read the roles claim', () => {
+    expect(extractAuthoritiesFromClaims({ roles: ['ROLE_USER'] })).toEqual(['ROLE_USER']);
+  });
+
+  it('should read the namespaced roles claim', () => {
+    expect(extractAuthoritiesFromClaims({ [`${CLAIMS_NAMESPACE}roles`]: ['ROLE_ADMIN'] })).toEqual(['ROLE_ADMIN']);
+  });
+
+  it('should keep only the ROLE_ values', () => {
+    expect(extractAuthoritiesFromClaims({ roles: ['ROLE_USER', 'offline_access', 'uma_authorization'] })).toEqual(['ROLE_USER']);
+  });
+
+  it('should give no authority without roles', () => {
+    expect(extractAuthoritiesFromClaims({ preferred_username: 'user' })).toEqual([]);
+  });
+});

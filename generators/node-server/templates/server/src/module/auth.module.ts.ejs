@@ -41,7 +41,7 @@ import { AccountController } from '../web/rest/account.controller';
   <%_ if (authenticationType === 'jwt') { _%>
     JwtModule.register({
       secret: config['jhipster.security.authentication.jwt.base64-secret'],
-      signOptions: { expiresIn: '300s' },
+      signOptions: { expiresIn: Number(config['jhipster.security.authentication.jwt.token-validity-in-seconds']) },
     }),
   <%_ } else if (authenticationType === 'oauth2') { _%>
   HttpModule,

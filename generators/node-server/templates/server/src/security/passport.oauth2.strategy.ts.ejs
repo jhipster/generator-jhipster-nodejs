@@ -5,6 +5,7 @@ import { Injectable, UnauthorizedException, Logger } from '@nestjs/common';
 import { config } from '../config';
 import { AuthService } from '../service/auth.service';
 import { oauth2Config } from './oauth2.config';
+import { extractAuthoritiesFromClaims } from './oauth2.authorities';
 
 const clientID = config.get('jhipster.security.oauth2.client.registration.oidc.client-id');
 const clientSecret = config.get('jhipster.security.oauth2.client.registration.oidc.client-secret');
@@ -52,7 +53,7 @@ export class Oauth2Strategy extends PassportStrategy(Strategy) {
                 langKey: 'en',
                 createdBy: 'system',
                 lastModifiedBy: 'system',
-                authorities: ['ROLE_ADMIN', 'ROLE_USER'],
+                authorities: extractAuthoritiesFromClaims(profile),
             };
 
             return done(null, userProfile);
