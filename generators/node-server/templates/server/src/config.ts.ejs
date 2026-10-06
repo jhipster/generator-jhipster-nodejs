@@ -6,6 +6,8 @@ import { Logger } from '@nestjs/common';
 const logger = new Logger('Config');
 
 export class Config {
+  [key: string]: any;
+
   debugLogging = 'debug';
   'server.port' = '<%= serverPort %>';
   'jhipster.clientApp.name' = '<%= baseName %>';
@@ -52,7 +54,7 @@ export class Config {
   'cloud.config.profile' = 'prod';
   'cloud.config.label' = 'master';
 
-  constructor(properties) {
+  constructor(properties: Record<string, any>) {
     this.addAll(properties);
   }
 
@@ -65,7 +67,7 @@ export class Config {
     return path.join(__dirname, '../dist/static');
   }
   <%_ } _%>
-  public addAll(properties): any {
+  public addAll(properties: Record<string, any>): any {
     properties = objectToArray(properties);
     for (const property in properties) {
       if (properties.hasOwnProperty(property)) {
@@ -103,7 +105,7 @@ export class Config {
     }
   }
 
-  private processTemplate(template, variables): any {
+  private processTemplate(template: any, variables: Record<string, any>): any {
     // console.log(template);
     if (typeof template === 'string') {
       return template.replace(new RegExp('\\${[^{]+}', 'g'), name => variables[name.substring(2, name.length - 1)]);
@@ -128,7 +130,7 @@ const config = new Config({ ...objectToArray(yamlConfig), ...objectToArray(envYa
 
 export { config };
 
-function objectToArray(source, currentKey?, target?): any {
+function objectToArray(source: any, currentKey?: string, target?: Record<string, any>): Record<string, any> {
   target = target || {};
   for (const property in source) {
     if (source.hasOwnProperty(property)) {

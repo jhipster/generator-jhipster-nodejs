@@ -117,7 +117,7 @@ function registerAsEurekaService(): void {
         port: eurekaUrl.port || 8761,
         servicePath: '/eureka/apps',
       },
-      requestMiddleware: (requestOpts, done): any => {
+      requestMiddleware: (requestOpts: any, done: (requestOpts: any) => void): void => {
         requestOpts.auth = {
           user: config.get('jhipster.registry.username') || 'admin',
           password: config.get('jhipster.registry.password') || 'admin',
@@ -126,7 +126,7 @@ function registerAsEurekaService(): void {
       },
     });
     client.logger.level('debug');
-    client.start(error => logger.log(error || 'Eureka registration complete'));
+    client.start((error: Error) => logger.log(error || 'Eureka registration complete'));
   }
 }
 
