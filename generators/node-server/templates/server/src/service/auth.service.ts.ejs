@@ -61,9 +61,12 @@ export class AuthService {
       throw new HttpException('Your account is not been activated!', HttpStatus.UNAUTHORIZED);
     }
 
-    const user = await this.findUserWithAuthById(userFind.id);
+    const user = await this.findUserWithAuthById(userFind.id!);
+    if (!user) {
+      throw new HttpException('Invalid login name or password!', HttpStatus.UNAUTHORIZED);
+    }
 
-    const payload: Payload = { id: user.id, username: user.login, authorities: user.authorities };
+    const payload: Payload = { id: user.id!, username: user.login, authorities: user.authorities };
 
     const expiresIn = Number(
       userLogin.rememberMe
@@ -83,15 +86,15 @@ export class AuthService {
 
   async findUserWithAuthById(userId: <%= userIdType %>): Promise<<%= user.dtoClass %> | undefined> {
     <%_ if (databaseType === 'mongodb') { _%>
-    const userDTO: <%= user.dtoClass %> = await this.userService.findById(userId);
+    const userDTO = await this.userService.findById(userId);
     <%_ } else { _%>
-    const userDTO: <%= user.dtoClass %> = await this.userService.findByFields({ where: { id: userId } });
+    const userDTO = await this.userService.findByFields({ where: { id: userId } });
     <%_ } _%>
     return userDTO;
   }
 
   async getAccount(userId: <%= userIdType %>): Promise<<%= user.dtoClass %> | undefined> {
-    const userDTO: <%= user.dtoClass %> = await this.findUserWithAuthById(userId);
+    const userDTO = await this.findUserWithAuthById(userId);
     if (!userDTO) {
       return;
     }
@@ -99,7 +102,7 @@ export class AuthService {
   }
 
   async changePassword(userLogin: string, currentClearTextPassword: string, newPassword: string): Promise<void> {
-    const userFind: <%= user.dtoClass %> = await this.userService.findByFields({ where: { login: userLogin } });
+    const userFind = await this.userService.findByFields({ where: { login: userLogin } });
     if (!userFind) {
       throw new HttpException('Invalid login name!', HttpStatus.BAD_REQUEST);
     }
@@ -113,7 +116,7 @@ export class AuthService {
   }
 
   async registerNewUser (newUser: <%= user.dtoClass %>) : Promise<<%= user.dtoClass %>> {
-    let userFind: <%= user.dtoClass %> = await this.userService.findByFields({ where: { login: newUser.login} });
+    let userFind = await this.userService.findByFields({ where: { login: newUser.login} });
     if (userFind) {
       throw new HttpException('Login name already used!', HttpStatus.BAD_REQUEST);
     }
@@ -122,16 +125,16 @@ export class AuthService {
       throw new HttpException('Email is already in use!', HttpStatus.BAD_REQUEST);
     }
     newUser.authorities = ['ROLE_USER'];
-    const user: <%= user.dtoClass %> = await this.userService.save(newUser, newUser.login, true);
+    const user = await this.userService.save(newUser, newUser.login, true);
     return user;
   }
 
   async updateUserSettings(userLogin: string, newUserInfo: <%= user.dtoClass %>) : Promise<<%= user.dtoClass %>> {
-    const userFind: <%= user.dtoClass %> = await this.userService.findByFields({ where: { login: userLogin } });
+    const userFind = await this.userService.findByFields({ where: { login: userLogin } });
     if (!userFind) {
       throw new HttpException('Invalid login name!', HttpStatus.BAD_REQUEST);
     }
-    const userFindEmail: <%= user.dtoClass %> = await this.userService.findByFields({ where: { email: newUserInfo.email } });
+    const userFindEmail = await this.userService.findByFields({ where: { email: newUserInfo.email } });
     if (userFindEmail && newUserInfo.email !== userFind.email) {
       throw new HttpException('Email is already in use!', HttpStatus.BAD_REQUEST);
     }
@@ -150,14 +153,12 @@ export class AuthService {
         if (loginUser.login && loginUser.password && !loginUser.email) {
             loginUser.email = loginUser.login + '@localhost.it';
         }
-        let userFound: <%= user.dtoClass %> = await this.userService.findByFields({ where: { login: loginUser.login } });
+        const userFound = await this.userService.findByFields({ where: { login: loginUser.login } });
 
         if (!userFound) {
           const authoritiesName: { name: string }[] = [];
-          loginUser.authorities.forEach(authority => authoritiesName.push({ name: authority }));
-          userFound = Object.assign({}, loginUser);
-          userFound.authorities = authoritiesName;
-          await this.userService.save(userFound, loginUser.login);
+          loginUser.authorities?.forEach(authority => authoritiesName.push({ name: authority }));
+          await this.userService.save({ ...loginUser, authorities: authoritiesName }, loginUser.login);
         }
         return loginUser;
       }

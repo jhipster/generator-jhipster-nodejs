@@ -1,4 +1,4 @@
-import { Body, ClassSerializerInterceptor, Controller, Delete, Get, Logger, Param, Post as PostMethod, Put, UseGuards, Req, UseInterceptors } from '@nestjs/common';
+import { BadRequestException, Body, ClassSerializerInterceptor, Controller, Delete, Get, Logger, NotFoundException, Param, Post as PostMethod, Put, UseGuards, Req, UseInterceptors } from '@nestjs/common';
 import { <% if (authenticationType === 'jwt') { _%> ApiBearerAuth, <% } else if (authenticationType === 'oauth2') { _%> ApiSecurity, <% } _%> ApiTags, ApiResponse, ApiOperation } from '@nestjs/swagger';
 import { <%= dtoClass %> } from '../../service/dto/<%= entityFileName %>.dto';
 import { <%= entityClass %>Service } from '../../service/<%= entityFileName %>.service';
@@ -61,7 +61,11 @@ export class <%= entityClass %>Controller {
     type: <%= dtoClass %>,
   })
   async getOne(@Param('id') id: <%= pkType %>): Promise<<%= dtoClass %>>  {
-    return await this.<%= entityInstance %>Service.findById(id);
+    const <%= entityInstance %>DTO = await this.<%= entityInstance %>Service.findById(id);
+    if (!<%= entityInstance %>DTO) {
+      throw new NotFoundException();
+    }
+    return <%= entityInstance %>DTO;
   }
 
   @PostMethod('/')
@@ -100,7 +104,10 @@ export class <%= entityClass %>Controller {
     description: 'The record has been successfully updated.',
     type: <%= dtoClass %>,
   })
-  async putId(@Req() req: Request, @Body() <%= entityInstance %>DTO: <%= dtoClass %>): Promise<<%= dtoClass %>>  {
+  async putId(@Req() req: Request, @Param('id') id: <%= pkType %>, @Body() <%= entityInstance %>DTO: <%= dtoClass %>): Promise<<%= dtoClass %>>  {
+    if (String(<%= entityInstance %>DTO.id) !== String(id)) {
+      throw new BadRequestException('Invalid id');
+    }
     HeaderUtil.addEntityCreatedHeaders(req.res, '<%= entityClass %>', <%= entityInstance %>DTO.id);
     return await this.<%= entityInstance %>Service.update(<%= entityInstance %>DTO, req.user?.login);
   }

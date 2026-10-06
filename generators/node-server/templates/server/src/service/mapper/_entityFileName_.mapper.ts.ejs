@@ -7,17 +7,20 @@ import { <%= dtoClass %> } from '../dto/<%= entityFileName %>.dto';
  */
 export class <%= entityClass %>Mapper {
 
-  static fromDTOtoEntity (entityDTO: <%= dtoClass %>): <%= persistClass %> {
+  static fromDTOtoEntity(entityDTO: <%= dtoClass %>): <%= persistClass %>;
+  static fromDTOtoEntity(entityDTO: <%= dtoClass %> | null | undefined): <%= persistClass %> | undefined;
+  static fromDTOtoEntity(entityDTO: <%= dtoClass %> | null | undefined): <%= persistClass %> | undefined {
     if (!entityDTO) {
-      return;
+      return undefined;
     }
     return Object.assign(new <%= persistClass %>(), entityDTO);
-
   }
 
-  static fromEntityToDTO (entity: <%= persistClass %>): <%= dtoClass %> {
+  static fromEntityToDTO(entity: <%= persistClass %>): <%= dtoClass %>;
+  static fromEntityToDTO(entity: <%= persistClass %> | null | undefined): <%= dtoClass %> | undefined;
+  static fromEntityToDTO(entity: <%= persistClass %> | null | undefined): <%= dtoClass %> | undefined {
     if (!entity) {
-      return;
+      return undefined;
     }
     return Object.assign(new <%= dtoClass %>(), entity);
   }

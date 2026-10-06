@@ -7,7 +7,7 @@ import { ParsedQs } from 'qs';
 export class Sort {
   public property: string;
   public direction: 'ASC' | 'DESC' | string;
-  constructor(sort: string) {
+  constructor(sort?: string) {
     if (sort) {
       [this.property, this.direction] = sort.split(',');
     }
@@ -34,10 +34,10 @@ export class PageRequest {
 <%_ } _%>
 
   constructor(
-    page: number | PaginationQueryType,
-    size: number | PaginationQueryType
+    page?: number | PaginationQueryType,
+    size?: number | PaginationQueryType
 <%_ if (typeormOrderSupport) { _%>
-    ,sort: PaginationQueryType
+    ,sort?: PaginationQueryType
 <%_ } _%>
   ) {
     this.page = PageRequest.handleNumberTypes(page, this.page);
@@ -47,7 +47,7 @@ export class PageRequest {
 <%_ } _%>
   }
 
-  public static handleNumberTypes(pp: number | PaginationQueryType, fallback: number): number {
+  public static handleNumberTypes(pp: number | PaginationQueryType | undefined, fallback: number): number {
     if (typeof pp === 'number') {
       return pp;
     }
@@ -59,7 +59,7 @@ export class PageRequest {
     return fallback;
   }
 
-  public static handleQueryType(pa: PaginationQueryType): string | undefined {
+  public static handleQueryType(pa: PaginationQueryType | undefined): string | undefined {
     pa = Array.isArray(pa) ? pa[0] : pa;
     if (typeof pa === 'string') {
       return pa;

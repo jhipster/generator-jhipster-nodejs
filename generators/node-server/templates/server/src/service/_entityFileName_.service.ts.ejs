@@ -54,7 +54,7 @@ export class <%= entityClass %>Service {
         return resultList;
       }
 
-      async save(<%= entityInstance %>DTO: <%= dtoClass %>, creator?: string): Promise<<%= dtoClass %> | undefined> {
+      async save(<%= entityInstance %>DTO: <%= dtoClass %>, creator?: string): Promise<<%= dtoClass %>> {
         const entity = <%= entityClass %>Mapper.fromDTOtoEntity(<%= entityInstance %>DTO);
         if (creator) {
             if (!entity.createdBy) {
@@ -66,13 +66,13 @@ export class <%= entityClass %>Service {
         return <%= entityClass %>Mapper.fromEntityToDTO(result);
       }
 
-      async update(<%= entityInstance %>DTO: <%= dtoClass %>, updater?: string): Promise<<%= dtoClass %> | undefined> {
+      async update(<%= entityInstance %>DTO: <%= dtoClass %>, updater?: string): Promise<<%= dtoClass %>> {
         const entity = <%= entityClass %>Mapper.fromDTOtoEntity(<%= entityInstance %>DTO);
         if (updater) {
             entity.lastModifiedBy = updater;
         }
       <%_ if (databaseType === 'mongodb') { _%>
-        await this.<%= entityInstance %>Repository.update(entity.id, entity);
+        await this.<%= entityInstance %>Repository.update(entity.id!, entity);
         return <%= entityInstance %>DTO;
       <%_ } else { _%>
         const result = await this.<%= entityInstance %>Repository.save(entity);

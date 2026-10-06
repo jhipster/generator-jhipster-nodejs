@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Logger, Param, Post, Put, UseGuards, Req, UseInterceptors, ClassSerializerInterceptor } from '@nestjs/common';
+import { Body, Controller, NotFoundException, Delete, Get, Logger, Param, Post, Put, UseGuards, Req, UseInterceptors, ClassSerializerInterceptor } from '@nestjs/common';
 import { AuthGuard,  Roles, RolesGuard, RoleType } from '../../security';
 import { PageRequest, Page } from '../../domain/base/pagination.entity';
 import { <%= user.dtoClass%> } from '../../service/dto/user.dto';
@@ -100,7 +100,11 @@ export class UserController {
       type: <%= user.dtoClass%>,
   })
   async getUser(@Param('login') loginValue: string): Promise<<%= user.dtoClass%>> {
-      return await this.userService.find({ where: { login: loginValue } });
+      const user = await this.userService.find({ where: { login: loginValue } });
+      if (!user) {
+        throw new NotFoundException();
+      }
+      return user;
   }
 
   @Delete('/:login')
@@ -111,9 +115,12 @@ export class UserController {
       description: 'The record has been successfully deleted.',
       type: <%= user.dtoClass%>
   })
-  async deleteUser(@Req() req: Request, @Param('login') loginValue: string): Promise<<%= user.dtoClass%>> {
-      HeaderUtil.addEntityDeletedHeaders(req.res, 'User', loginValue);
+  async deleteUser(@Req() req: Request, @Param('login') loginValue: string): Promise<<%= user.dtoClass%> | undefined> {
       const userToDelete = await this.userService.find({ where: { login: loginValue } });
+      if (!userToDelete) {
+        throw new NotFoundException();
+      }
+      HeaderUtil.addEntityDeletedHeaders(req.res, 'User', loginValue);
       return await this.userService.delete(userToDelete);
   }
 }

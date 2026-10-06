@@ -6,17 +6,20 @@ import { <%= user.dtoClass%> } from '../dto/user.dto';
  */
 export class UserMapper {
 
-  static fromDTOtoEntity (userDTO: <%= user.dtoClass%>): <%= user.persistClass %> {
+  static fromDTOtoEntity(userDTO: <%= user.dtoClass%>): <%= user.persistClass %>;
+  static fromDTOtoEntity(userDTO: <%= user.dtoClass%> | null | undefined): <%= user.persistClass %> | undefined;
+  static fromDTOtoEntity(userDTO: <%= user.dtoClass%> | null | undefined): <%= user.persistClass %> | undefined {
     if (!userDTO) {
-      return;
+      return undefined;
     }
     return Object.assign(new <%= user.persistClass %>(), userDTO);
-
   }
 
-  static fromEntityToDTO (user: <%= user.persistClass %>): <%= user.dtoClass%> {
+  static fromEntityToDTO(user: <%= user.persistClass %>): <%= user.dtoClass%>;
+  static fromEntityToDTO(user: <%= user.persistClass %> | null | undefined): <%= user.dtoClass%> | undefined;
+  static fromEntityToDTO(user: <%= user.persistClass %> | null | undefined): <%= user.dtoClass%> | undefined {
     if (!user) {
-      return;
+      return undefined;
     }
     return Object.assign(new <%= user.dtoClass%>(), user);
   }

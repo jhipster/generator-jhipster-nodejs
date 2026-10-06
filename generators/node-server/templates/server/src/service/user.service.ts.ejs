@@ -54,7 +54,7 @@ export class UserService {
         return resultList;
     }
 
-    async save(userDTO: <%= user.dtoClass%>, creator?: string<% if (authenticationType === 'jwt') { %>, updatePassword = false<% } %>): Promise<<%= user.dtoClass%> | undefined> {
+    async save(userDTO: <%= user.dtoClass%>, creator?: string<% if (authenticationType === 'jwt') { %>, updatePassword = false<% } %>): Promise<<%= user.dtoClass%>> {
         const user = this.convertInAuthorities(UserMapper.fromDTOtoEntity(userDTO));
 <%_ if (authenticationType === 'jwt') { _%>
         if (updatePassword) {
@@ -71,7 +71,7 @@ export class UserService {
         return UserMapper.fromEntityToDTO(this.flatAuthorities(result));
     }
 
-    async update(userDTO: <%= user.dtoClass%>, updater?: string): Promise<<%= user.dtoClass%> | undefined> {
+    async update(userDTO: <%= user.dtoClass%>, updater?: string): Promise<<%= user.dtoClass%>> {
         return this.save(userDTO, updater);
     }
 
@@ -81,11 +81,11 @@ export class UserService {
         return UserMapper.fromEntityToDTO(result);
     }
 
-    private flatAuthorities(user: any): <%= user.persistClass %> {
+    private flatAuthorities<T extends <%= user.persistClass %> | null>(user: T): T {
         if (user && user.authorities) {
             const authorities: string[] = [];
             user.authorities.forEach((authority: { name: string }) => authorities.push(authority.name));
-            user.authorities = authorities;
+            user.authorities = authorities as any[];
         }
         return user;
     }

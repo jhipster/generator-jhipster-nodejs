@@ -18,7 +18,7 @@ describe('<%= entityClass %> Controller', () => {
     }
 
     const serviceMock = {
-        findById: (): any => entityMock,
+        findById: (id: any): any => (id === entityMock.id ? entityMock : undefined),
         findAndCount: (): any => [entityMock, 0],
         save: (): any => entityMock,
         update: (): any => entityMock,
@@ -64,6 +64,12 @@ describe('<%= entityClass %> Controller', () => {
     }
     );
 
+    it('/GET <%= entityApiUrl %> by an unknown id', async () => {
+        await request(app.getHttpServer())
+            .get('/api/<%= entityApiUrl %>/unknownId')
+            .expect(404);
+    });
+
     it('/POST create <%= entityApiUrl %>', async () => {
 
         const createdEntity: <%= dtoClass %> = (await request(app.getHttpServer())
@@ -104,6 +110,12 @@ describe('<%= entityClass %> Controller', () => {
     }
     );
 
+    it('/PUT update <%= entityApiUrl %> from another id', async () => {
+        await request(app.getHttpServer())
+            .put('/api/<%= entityApiUrl %>/anotherId')
+            .send(entityMock)
+            .expect(400);
+    });
 
     it('/DELETE <%= entityApiUrl %>', async () => {
 

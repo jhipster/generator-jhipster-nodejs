@@ -125,9 +125,9 @@ describe('Account', () => {
             .send(savedTestUser)
             .expect(200);
 
-        const updatedUserSettings: <%= user.dtoClass%> = await service.findByFields({ where: { login: testUserAuthenticated.login } });
-        expect(updatedUserSettings.firstName).toEqual(savedTestUser.firstName);
-        expect(updatedUserSettings.lastName).toEqual(savedTestUser.lastName);
+        const updatedUserSettings = await service.findByFields({ where: { login: testUserAuthenticated.login } });
+        expect(updatedUserSettings?.firstName).toEqual(savedTestUser.firstName);
+        expect(updatedUserSettings?.lastName).toEqual(savedTestUser.lastName);
 
     });
 
