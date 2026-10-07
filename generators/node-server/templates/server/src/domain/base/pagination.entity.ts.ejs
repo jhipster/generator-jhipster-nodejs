@@ -14,7 +14,7 @@ export class Sort {
   }
 
   asOrder(): any {
-    const order = {};
+    const order: Record<string, string> = {};
     order[this.property] = this.direction;
     return order;
   }

@@ -10,12 +10,7 @@ export class UserMapper {
     if (!userDTO) {
       return;
     }
-    let user = new <%= user.persistClass %>();
-    const fields = Object.getOwnPropertyNames(userDTO);
-    fields.forEach(field => {
-         user[field] = userDTO[field];
-    });
-    return user;
+    return Object.assign(new <%= user.persistClass %>(), userDTO);
 
   }
 
@@ -23,14 +18,6 @@ export class UserMapper {
     if (!user) {
       return;
     }
-    let userDTO = new <%= user.dtoClass%>();
-
-    const fields = Object.getOwnPropertyNames(user);
-
-    fields.forEach(field => {
-         userDTO[field] = user[field];
-    });
-
-    return userDTO;
+    return Object.assign(new <%= user.dtoClass%>(), user);
   }
 }

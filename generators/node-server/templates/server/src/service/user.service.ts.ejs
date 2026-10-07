@@ -84,7 +84,7 @@ export class UserService {
     private flatAuthorities(user: any): <%= user.persistClass %> {
         if (user && user.authorities) {
             const authorities: string[] = [];
-            user.authorities.forEach(authority => authorities.push(authority.name));
+            user.authorities.forEach((authority: { name: string }) => authorities.push(authority.name));
             user.authorities = authorities;
         }
         return user;
@@ -93,7 +93,7 @@ export class UserService {
     private convertInAuthorities(user: any): <%= user.persistClass %> {
         if (user && user.authorities) {
             const authorities: any[] = [];
-            user.authorities.forEach(authority => authorities.push({ name: authority }));
+            user.authorities.forEach((authority: string) => authorities.push({ name: authority }));
             user.authorities = authorities;
         }
         return user;

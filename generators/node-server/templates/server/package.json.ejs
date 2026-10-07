@@ -85,11 +85,18 @@
     "@types/jest": "<%- nodeServerDependencies['@types/jest'] %>",
     "@types/superagent": "<%- nodeServerDependencies['@types/superagent'] %>",
 <%_ if (authenticationType === 'oauth2') { _%>
+    "@types/express-session": "<%- nodeServerDependencies['@types/express-session'] %>",
     "@types/jwt-decode": "<%- nodeServerDependencies['@types/jwt-decode'] %>",
 <%_ } _%>
     "@types/node": "<%- nodeDependencies['@types/node'] %>",
+<%_ if (authenticationType === 'oauth2') { _%>
+    "@types/passport": "<%- nodeServerDependencies['@types/passport'] %>",
+<%_ } _%>
 <%_ if (authenticationType === 'jwt') { _%>
     "@types/passport-jwt": "<%- nodeServerDependencies['@types/passport-jwt'] %>",
+<%_ } _%>
+<%_ if (authenticationType === 'oauth2') { _%>
+    "@types/passport-oauth2": "<%- nodeServerDependencies['@types/passport-oauth2'] %>",
 <%_ } _%>
     "@types/supertest": "<%- nodeServerDependencies['@types/supertest'] %>",
     "browser-sync-client": "<%- nodeServerDependencies['browser-sync-client'] %>",

@@ -12,26 +12,26 @@ export class HeaderUtil {
     res.set('X-' + applicationName + '-params', param);
   }
 
-  static addEntityCreatedHeaders(res: Response, entityName, param): any {
+  static addEntityCreatedHeaders(res: Response, entityName: string, param: string | number): any {
     res.status(201);
     const message = enableTranslation
       ? applicationName + '.' + entityName + '.created'
       : 'A new ' + entityName + ' is created with identifier ' + param;
-    this.createAlert(res, message, param);
+    this.createAlert(res, message, String(param));
   }
 
-  static addEntityUpdatedHeaders(res: Response, entityName, param): any {
+  static addEntityUpdatedHeaders(res: Response, entityName: string, param: string | number): any {
     res.status(200);
     const message = enableTranslation ? applicationName + '.' + entityName +
     '.updated' : 'A ' + entityName + ' is updated with identifier ' + param;
-    this.createAlert(res, message, param);
+    this.createAlert(res, message, String(param));
   }
 
-  static addEntityDeletedHeaders(res: Response, entityName, param): any {
+  static addEntityDeletedHeaders(res: Response, entityName: string, param: string | number): any {
     res.status(204);
     const message = enableTranslation ? applicationName + '.' + entityName +
     '.deleted' : 'A ' + entityName + ' is deleted with identifier ' + param;
-    this.createAlert(res, message, param);
+    this.createAlert(res, message, String(param));
   }
 
   static addPaginationHeaders<T>(res: Response, page: Page<T>): any {
@@ -39,7 +39,7 @@ export class HeaderUtil {
     res.set('X-Total-Count', page.total.toString());
     const pageNumber = page.pageable.page;
     const pageSize = page.pageable.size;
-    const links = [];
+    const links: string[] = [];
     if (pageNumber < page.total - 1) {
       links.push(this.prepareLink(url, pageNumber + 1, pageSize, 'next'));
     }
@@ -51,11 +51,10 @@ export class HeaderUtil {
     res.set('Link', links.join(','));
   }
 
-  private static prepareLink(url, pageNumber, pageSize, relType): any {
-    url = new URL('http://localhost' + url);
-    url.searchParams.set('page', pageNumber);
-    url.searchParams.set('size', pageSize);
-    url = url.toString().replace('http://localhost', '');
-    return `<${url}>; rel="${relType}"`;
+  private static prepareLink(url: string, pageNumber: number, pageSize: number, relType: string): string {
+    const link = new URL('http://localhost' + url);
+    link.searchParams.set('page', String(pageNumber));
+    link.searchParams.set('size', String(pageSize));
+    return `<${link.toString().replace('http://localhost', '')}>; rel="${relType}"`;
   }
 }

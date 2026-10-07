@@ -153,7 +153,7 @@ export class AuthService {
         let userFound: <%= user.dtoClass %> = await this.userService.findByFields({ where: { login: loginUser.login } });
 
         if (!userFound) {
-          const authoritiesName = [];
+          const authoritiesName: { name: string }[] = [];
           loginUser.authorities.forEach(authority => authoritiesName.push({ name: authority }));
           userFound = Object.assign({}, loginUser);
           userFound.authorities = authoritiesName;
