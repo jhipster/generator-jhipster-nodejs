@@ -44,7 +44,7 @@
     "@types/express-session": "1.19.0",
     "@types/jest": "30.0.0",
     "@types/jwt-decode": "3.1.0",
-    "@types/node": "26.6.4",
+    "@types/node": "24.19.1",
     "@types/passport": "1.0.17",
     "@types/passport-jwt": "4.0.1",
     "@types/passport-oauth2": "1.8.0",

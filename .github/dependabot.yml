@@ -11,6 +11,10 @@ updates:
     schedule:
       interval: 'daily'
     open-pull-requests-limit: 10
+    ignore:
+      # Keep @types/node aligned with the Node.js major version of the generated application
+      - dependency-name: '@types/node'
+        update-types: ['version-update:semver-major']
     groups:
       jest:
         patterns:
