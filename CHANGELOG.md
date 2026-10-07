@@ -2,19 +2,17 @@
 
 ## [4.2.0](https://github.com/jhipster/generator-jhipster-nodejs/compare/v4.1.0...v4.2.0) (2026-10-07)
 
-
 ### Features
 
-* **node-server:** enable noImplicitAny in the generated server ([#1409](https://github.com/jhipster/generator-jhipster-nodejs/issues/1409)) ([aa433ac](https://github.com/jhipster/generator-jhipster-nodejs/commit/aa433ac086f9e596c790e5537b79f5b600e5229c))
-* **node-server:** enable strictNullChecks in the generated server ([#1410](https://github.com/jhipster/generator-jhipster-nodejs/issues/1410)) ([7a987ce](https://github.com/jhipster/generator-jhipster-nodejs/commit/7a987ce11cb74ec5227833cb4c9f0cbbfd54ebc9))
-* **node-server:** generate the user files with JHipster's user management flags ([#1397](https://github.com/jhipster/generator-jhipster-nodejs/issues/1397)) ([1883509](https://github.com/jhipster/generator-jhipster-nodejs/commit/18835099247a7bbb6b7cd8cef6591e3fc12d05ab))
-* **node-server:** multi-stage Dockerfile for the generated application ([#1418](https://github.com/jhipster/generator-jhipster-nodejs/issues/1418)) ([c54cf0b](https://github.com/jhipster/generator-jhipster-nodejs/commit/c54cf0b20a2e550cfdb00662e6ebc04bbb85e024))
-
+- **node-server:** enable noImplicitAny in the generated server ([#1409](https://github.com/jhipster/generator-jhipster-nodejs/issues/1409)) ([aa433ac](https://github.com/jhipster/generator-jhipster-nodejs/commit/aa433ac086f9e596c790e5537b79f5b600e5229c))
+- **node-server:** enable strictNullChecks in the generated server ([#1410](https://github.com/jhipster/generator-jhipster-nodejs/issues/1410)) ([7a987ce](https://github.com/jhipster/generator-jhipster-nodejs/commit/7a987ce11cb74ec5227833cb4c9f0cbbfd54ebc9))
+- **node-server:** generate the user files with JHipster's user management flags ([#1397](https://github.com/jhipster/generator-jhipster-nodejs/issues/1397)) ([1883509](https://github.com/jhipster/generator-jhipster-nodejs/commit/18835099247a7bbb6b7cd8cef6591e3fc12d05ab))
+- **node-server:** multi-stage Dockerfile for the generated application ([#1418](https://github.com/jhipster/generator-jhipster-nodejs/issues/1418)) ([c54cf0b](https://github.com/jhipster/generator-jhipster-nodejs/commit/c54cf0b20a2e550cfdb00662e6ebc04bbb85e024))
 
 ### Bug Fixes
 
-* **node-server:** remove the Spring Boot-only keys from the application yml files ([#1416](https://github.com/jhipster/generator-jhipster-nodejs/issues/1416)) ([599ef0f](https://github.com/jhipster/generator-jhipster-nodejs/commit/599ef0f50f5bc9a3e03ec31c5ba2e34477b12f16))
-* **node-server:** render @types/node version in the generated server ([#1415](https://github.com/jhipster/generator-jhipster-nodejs/issues/1415)) ([7ea284b](https://github.com/jhipster/generator-jhipster-nodejs/commit/7ea284bd4fcfc6580af82e6054bf0a1171b2b8f3))
+- **node-server:** remove the Spring Boot-only keys from the application yml files ([#1416](https://github.com/jhipster/generator-jhipster-nodejs/issues/1416)) ([599ef0f](https://github.com/jhipster/generator-jhipster-nodejs/commit/599ef0f50f5bc9a3e03ec31c5ba2e34477b12f16))
+- **node-server:** render @types/node version in the generated server ([#1415](https://github.com/jhipster/generator-jhipster-nodejs/issues/1415)) ([7ea284b](https://github.com/jhipster/generator-jhipster-nodejs/commit/7ea284bd4fcfc6580af82e6054bf0a1171b2b8f3))
 
 ## [4.1.0](https://github.com/jhipster/generator-jhipster-nodejs/compare/v4.0.0...v4.1.0) (2026-10-05)
 
