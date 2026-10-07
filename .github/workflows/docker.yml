@@ -1,0 +1,30 @@
+name: Docker
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'docker/**'
+      - '.github/workflows/docker.yml'
+  pull_request:
+    paths:
+      - 'docker/**'
+      - '.github/workflows/docker.yml'
+permissions:
+  contents: read
+jobs:
+  docker:
+    name: docker-build
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+      - run: docker build -t jhipster-generator-nodejs docker
+      - name: Generate an application using the documented volume
+        run: |
+          mkdir app
+          # the image runs as the "node" user (uid 1000), the runner user may differ
+          chmod a+rwx app
+          docker run --rm -v "$PWD/app:/home/jhipster/app" jhipster-generator-nodejs nhipster --defaults --skip-install --skip-git
+          test -f app/.yo-rc.json
+          test -f app/server/package.json
