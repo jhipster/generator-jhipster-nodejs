@@ -62,7 +62,6 @@ export const serverFiles = {
         'src/migrations/1570200270081-CreateTables.ts',
         'src/orm.config.ts',
         'scripts/copy-resources.ts',
-        'scripts/entrypoint.sh',
         'tsconfig.build.json',
         'test/admin/management.controller.spec.ts',
         'test/config.spec.ts',

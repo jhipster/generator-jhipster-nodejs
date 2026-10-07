@@ -30,7 +30,11 @@ services:
       - <%= serverPort %>:<%= serverPort %>
 <%_ } _%>
     healthcheck:
-      test: ['CMD', 'nc', '-vz', '-w1', 'localhost', '<%= serverPort %>']
+      test:
+        - CMD
+        - node
+        - -e
+        - "fetch('http://localhost:<%= serverPort %>/management/info').then(r => process.exit(r.ok ? 0 : 1), () => process.exit(1))"
       interval: 5s
       timeout: 5s
       retries: 10

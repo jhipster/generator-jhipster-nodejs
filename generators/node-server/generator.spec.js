@@ -115,6 +115,7 @@ describe('SubGenerator node-server of nodejs JHipster blueprint', () => {
   });
   describe('upgrading an oauth2 application generated with 4.0.0', () => {
     const oldFiles = [
+      'server/scripts/entrypoint.sh',
       'server/src/web/rest/user.controller.ts',
       'server/e2e/user.e2e-spec.ts',
       'server/src/domain/user.entity.ts',
@@ -162,6 +163,10 @@ describe('SubGenerator node-server of nodejs JHipster blueprint', () => {
 
       it('should remove the users administration', () => {
         result.assertNoFile(['server/src/web/rest/user.controller.ts', 'server/e2e/user.e2e-spec.ts']);
+      });
+
+      it('should remove the entrypoint script', () => {
+        result.assertNoFile('server/scripts/entrypoint.sh');
       });
     });
 
