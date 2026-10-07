@@ -40,13 +40,6 @@ export class Config {
   'eureka.instance.instanceId' = '<%= baseName %>:${random.value}';
   'eureka.instance.lease-renewal-interval-in-seconds' = 5;
   'eureka.instance.lease-expiration-duration-in-seconds' = 10;
-  'eureka.instance.status-page-url-path' = '${management.endpoints.web.base-path}/info';
-  'eureka.instance.health-check-url-path' = '${management.endpoints.web.base-path}/health';
-  'eureka.instance.metadata-map.zone' = 'primary';
-  // 'eureka.instance.metadata-map.profile' = '${profiles.active}';
-  'eureka.instance.metadata-map.git-version' = '${git.commit.id.describe:}';
-  'eureka.instance.metadata-map.git-commit' = '${git.commit.id.abbrev:}';
-  'eureka.instance.metadata-map.git-branch' = '${git.branch:}';
   'eureka.instance.prefer-ip-address' = true;
   'eureka.client.service-url.defaultZone' = 'http://admin:${jhipster.registry.password}@localhost:8761/eureka/';
   'cloud.config.uri' = 'http://admin:${jhipster.registry.password}@localhost:8761/config';

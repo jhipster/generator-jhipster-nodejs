@@ -18,12 +18,6 @@ eureka:
     service-url:
       defaultZone: http://admin:${jhipster.registry.password}@localhost:8761/eureka/
 
-  mail:
-    host: localhost
-    port: 25
-    username:
-    password:
-
 # ===================================================================
 # To enable TLS in production, generate a certificate using:
 # keytool -genkey -alias <%= baseName %> -storetype PKCS12 -keyalg RSA -keysize 2048 -keystore keystore.p12 -validity 3650
@@ -45,10 +39,6 @@ eureka:
 # ===================================================================
 server:
   port: <%= serverPort %>
-  compression:
-    enabled: true
-    mime-types: text/html,text/xml,text/plain,text/css, application/javascript, application/json
-    min-response-size: 1024
 
 # ===================================================================
 # JHipster specific properties
