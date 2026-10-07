@@ -1,5 +1,253 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
+exports[`SubGenerator node-server of nodejs JHipster blueprint > entity column types > with mssql > should generate column types valid on the prod database and on SQLite 1`] = `
+{
+  "server/src/domain/sample.entity.ts": {
+    "contents": "/* eslint-disable @typescript-eslint/no-unused-vars */
+import {PrimaryGeneratedColumn, Entity, Column, JoinColumn, OneToOne, ManyToOne, OneToMany, ManyToMany, JoinTable} from 'typeorm';
+import { BaseEntity } from './base/base.entity';
+
+
+import { Level } from './enumeration/level';
+
+
+/**
+ * A Sample.
+ */
+@Entity('sample')
+export class Sample extends BaseEntity  {
+
+  @PrimaryGeneratedColumn()
+  id?: number;
+
+    @Column({type: 'integer' ,name: "count", nullable: true})
+    count?: number;
+
+    @Column({type: 'bigint' ,name: "big", nullable: true})
+    big?: number;
+
+    @Column({type: 'float' ,name: "ratio", nullable: true})
+    ratio?: number;
+
+    @Column({type: 'double precision' ,name: "rate", nullable: true})
+    rate?: number;
+
+    @Column({type: 'decimal' ,name: "amount", precision : 10, scale : 2, nullable: true})
+    amount?: number;
+
+    @Column({type: 'date' ,name: "day", nullable: true})
+    day?: any;
+
+    @Column({name: "active", nullable: true})
+    active?: boolean;
+
+    @Column({type: 'simple-enum', name: 'level', enum: Level})
+    level?: Level;
+
+    @Column({type: 'text' ,name: "photo", nullable: true})
+    photo?: any;
+
+    @Column({name: 'photo_content_type', nullable: true})
+    photoContentType?: string;
+    @Column({type: 'text' ,name: "notes", nullable: true})
+    notes?: any;
+
+
+    // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
+
+}
+",
+    "stateCleared": "modified",
+  },
+}
+`;
+
+exports[`SubGenerator node-server of nodejs JHipster blueprint > entity column types > with mysql > should generate column types valid on the prod database and on SQLite 1`] = `
+{
+  "server/src/domain/sample.entity.ts": {
+    "contents": "/* eslint-disable @typescript-eslint/no-unused-vars */
+import {PrimaryGeneratedColumn, Entity, Column, JoinColumn, OneToOne, ManyToOne, OneToMany, ManyToMany, JoinTable} from 'typeorm';
+import { BaseEntity } from './base/base.entity';
+
+
+import { Level } from './enumeration/level';
+
+
+/**
+ * A Sample.
+ */
+@Entity('sample')
+export class Sample extends BaseEntity  {
+
+  @PrimaryGeneratedColumn()
+  id?: number;
+
+    @Column({type: 'integer' ,name: "count", nullable: true})
+    count?: number;
+
+    @Column({type: 'bigint' ,name: "big", nullable: true})
+    big?: number;
+
+    @Column({type: 'float' ,name: "ratio", nullable: true})
+    ratio?: number;
+
+    @Column({type: 'double precision' ,name: "rate", nullable: true})
+    rate?: number;
+
+    @Column({type: 'decimal' ,name: "amount", precision : 10, scale : 2, nullable: true})
+    amount?: number;
+
+    @Column({type: 'date' ,name: "day", nullable: true})
+    day?: any;
+
+    @Column({type: 'boolean' ,name: "active", nullable: true})
+    active?: boolean;
+
+    @Column({type: 'simple-enum', name: 'level', enum: Level})
+    level?: Level;
+
+    @Column({type: 'blob' ,name: "photo", nullable: true})
+    photo?: any;
+
+    @Column({name: 'photo_content_type', nullable: true})
+    photoContentType?: string;
+    @Column({type: 'blob' ,name: "notes", nullable: true})
+    notes?: any;
+
+
+    // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
+
+}
+",
+    "stateCleared": "modified",
+  },
+}
+`;
+
+exports[`SubGenerator node-server of nodejs JHipster blueprint > entity column types > with oracle > should generate column types valid on the prod database and on SQLite 1`] = `
+{
+  "server/src/domain/sample.entity.ts": {
+    "contents": "/* eslint-disable @typescript-eslint/no-unused-vars */
+import {PrimaryGeneratedColumn, Entity, Column, JoinColumn, OneToOne, ManyToOne, OneToMany, ManyToMany, JoinTable} from 'typeorm';
+import { BaseEntity } from './base/base.entity';
+
+
+import { Level } from './enumeration/level';
+
+
+/**
+ * A Sample.
+ */
+@Entity('sample')
+export class Sample extends BaseEntity  {
+
+  @PrimaryGeneratedColumn()
+  id?: number;
+
+    @Column({type: 'integer' ,name: "count", nullable: true})
+    count?: number;
+
+    @Column({type: 'integer' ,name: "big", nullable: true})
+    big?: number;
+
+    @Column({type: 'float' ,name: "ratio", nullable: true})
+    ratio?: number;
+
+    @Column({type: 'double precision' ,name: "rate", nullable: true})
+    rate?: number;
+
+    @Column({type: 'decimal' ,name: "amount", precision : 10, scale : 2, nullable: true})
+    amount?: number;
+
+    @Column({type: 'date' ,name: "day", nullable: true})
+    day?: any;
+
+    @Column({name: "active", nullable: true})
+    active?: boolean;
+
+    @Column({type: 'varchar', name: 'jhi_level', enum: Level})
+    level?: Level;
+
+    @Column({type: 'blob' ,name: "photo", nullable: true})
+    photo?: any;
+
+    @Column({name: 'photo_content_type', nullable: true})
+    photoContentType?: string;
+    @Column({type: 'clob' ,name: "notes", nullable: true})
+    notes?: any;
+
+
+    // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
+
+}
+",
+    "stateCleared": "modified",
+  },
+}
+`;
+
+exports[`SubGenerator node-server of nodejs JHipster blueprint > entity column types > with postgresql > should generate column types valid on the prod database and on SQLite 1`] = `
+{
+  "server/src/domain/sample.entity.ts": {
+    "contents": "/* eslint-disable @typescript-eslint/no-unused-vars */
+import {PrimaryGeneratedColumn, Entity, Column, JoinColumn, OneToOne, ManyToOne, OneToMany, ManyToMany, JoinTable} from 'typeorm';
+import { BaseEntity } from './base/base.entity';
+
+
+import { Level } from './enumeration/level';
+
+
+/**
+ * A Sample.
+ */
+@Entity('sample')
+export class Sample extends BaseEntity  {
+
+  @PrimaryGeneratedColumn()
+  id?: number;
+
+    @Column({type: 'integer' ,name: "count", nullable: true})
+    count?: number;
+
+    @Column({type: 'bigint' ,name: "big", nullable: true})
+    big?: number;
+
+    @Column({type: 'float' ,name: "ratio", nullable: true})
+    ratio?: number;
+
+    @Column({type: 'double precision' ,name: "rate", nullable: true})
+    rate?: number;
+
+    @Column({type: 'decimal' ,name: "amount", precision : 10, scale : 2, nullable: true})
+    amount?: number;
+
+    @Column({type: 'date' ,name: "day", nullable: true})
+    day?: any;
+
+    @Column({type: 'boolean' ,name: "active", nullable: true})
+    active?: boolean;
+
+    @Column({type: 'varchar', name: 'level', enum: Level})
+    level?: Level;
+
+    @Column({type: 'text' ,name: "photo", nullable: true})
+    photo?: any;
+
+    @Column({name: 'photo_content_type', nullable: true})
+    photoContentType?: string;
+    @Column({type: 'text' ,name: "notes", nullable: true})
+    notes?: any;
+
+
+    // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
+
+}
+",
+    "stateCleared": "modified",
+  },
+}
+`;
+
 exports[`SubGenerator node-server of nodejs JHipster blueprint > run > should succeed 1`] = `
 {
   ".dockerignore": {

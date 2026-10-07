@@ -113,6 +113,42 @@ describe('SubGenerator node-server of nodejs JHipster blueprint', () => {
       result.assertNoFileContent('server/src/module/user.module.ts', 'UserController');
     });
   });
+  describe('entity column types', () => {
+    // The entities are shared by the prod database and by better-sqlite3 (dev and test).
+    const sampleEntity = {
+      name: 'Sample',
+      changelogDate: '20261007000000',
+      fields: [
+        { fieldName: 'count', fieldType: 'Integer' },
+        { fieldName: 'big', fieldType: 'Long' },
+        { fieldName: 'ratio', fieldType: 'Float' },
+        { fieldName: 'rate', fieldType: 'Double' },
+        { fieldName: 'amount', fieldType: 'BigDecimal' },
+        { fieldName: 'day', fieldType: 'LocalDate' },
+        { fieldName: 'active', fieldType: 'Boolean' },
+        { fieldName: 'level', fieldType: 'Level', fieldValues: 'LOW,HIGH' },
+        { fieldName: 'photo', fieldType: 'byte[]', fieldTypeBlobContent: 'image' },
+        { fieldName: 'notes', fieldType: 'byte[]', fieldTypeBlobContent: 'text' },
+      ],
+    };
+
+    for (const prodDatabaseType of ['postgresql', 'mysql', 'mssql', 'oracle']) {
+      describe(`with ${prodDatabaseType}`, () => {
+        beforeAll(async function () {
+          await helpers
+            .run(SUB_GENERATOR_NAMESPACE)
+            .withJHipsterConfig({ prodDatabaseType, skipClient: true }, [sampleEntity])
+            .withOptions({ ignoreNeedlesError: true })
+            .withJHipsterGenerators()
+            .withConfiguredBlueprint();
+        });
+
+        it('should generate column types valid on the prod database and on SQLite', () => {
+          expect(result.getSnapshot('**/sample.entity.ts')).toMatchSnapshot();
+        });
+      });
+    }
+  });
   describe('upgrading an oauth2 application generated with 4.0.0', () => {
     const oldFiles = [
       'server/src/web/rest/user.controller.ts',
