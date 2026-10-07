@@ -222,6 +222,8 @@ export default class extends BaseApplicationGenerator {
               [application.authenticationTypeOauth2, 'node/src/security/password-util.ts'],
             ],
             '4.1.1': [
+              // The Dockerfile starts node itself, the database readiness comes from the compose healthchecks.
+              'server/scripts/entrypoint.sh',
               [!application.generateUserManagement, 'server/src/web/rest/user.controller.ts', 'server/e2e/user.e2e-spec.ts'],
               [
                 !application.generateBuiltInUserEntity,

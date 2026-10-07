@@ -1,20 +1,51 @@
-FROM node:<%- nodeVersion %>-alpine
+<%_
+const serverDir = nodeServerRootDir.replace(/\/$/, '');
+const clientDir = clientRootDir.replace(/\/$/, '');
+_%>
+# Build stage: installs every dependency and builds the application.
+FROM node:<%- nodeVersion %>-alpine AS build
 
-# Create app directory
+WORKDIR /usr/src/app
 
-WORKDIR /usr/node-app
-
-ENV NODE_SERVER_PORT=<%- serverPort %>
-ENV CYPRESS_INSTALL_BINARY=0
+COPY package.json package-lock.json ./
+COPY <%- nodeServerRootDir %>package.json <%- nodeServerRootDir %>
+<%_ if (clientFrameworkAny) { _%>
+COPY <%- clientRootDir %>package.json <%- clientRootDir %>
+<%_ } _%>
+# The install scripts (native bindings of the development database, husky, Cypress) are not needed to build.
+RUN npm ci --ignore-scripts
 
 COPY . .
+RUN npm run build --workspace <%- serverDir %>
+<%_ if (clientFrameworkAny) { _%>
+# The client is built into <%- nodeServerRootDir %>dist/static, served by the server.
+RUN npm run build --workspace <%- clientDir %>
+<%_ } _%>
 
-RUN npm install
-RUN npm run --workspace server build
-RUN npm run --workspace client build
-RUN npm cache clean --force
-RUN rm -rf target tmp
+# Runtime stage: the production dependencies of the server and its build only.
+FROM node:<%- nodeVersion %>-alpine
+
+WORKDIR /usr/src/app
+
+ENV NODE_ENV=production
+ENV BACKEND_ENV=prod
+ENV NODE_SERVER_PORT=<%- serverPort %>
+
+COPY package.json package-lock.json ./
+COPY <%- nodeServerRootDir %>package.json <%- nodeServerRootDir %>
+<%_ if (clientFrameworkAny) { _%>
+COPY <%- clientRootDir %>package.json <%- clientRootDir %>
+<%_ } _%>
+RUN npm ci --omit=dev --ignore-scripts --workspace <%- serverDir %> && npm cache clean --force
+
+COPY --from=build /usr/src/app/<%- nodeServerRootDir %>dist <%- nodeServerRootDir %>dist
+
+USER node
+WORKDIR /usr/src/app/<%- serverDir %>
 
 EXPOSE <%- serverPort %>
 
-ENTRYPOINT ["/usr/node-app/server/scripts/entrypoint.sh" ]
+HEALTHCHECK --interval=10s --timeout=5s --start-period=30s --retries=5 \
+  CMD ["node", "-e", "fetch(`http://localhost:${process.env.NODE_SERVER_PORT}/management/info`).then(r => process.exit(r.ok ? 0 : 1), () => process.exit(1))"]
+
+CMD ["node", "dist/main.js"]

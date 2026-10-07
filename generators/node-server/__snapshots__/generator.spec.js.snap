@@ -89,9 +89,6 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > run > should su
   "server/scripts/copy-resources.ts": {
     "stateCleared": "modified",
   },
-  "server/scripts/entrypoint.sh": {
-    "stateCleared": "modified",
-  },
   "server/sonar-project.properties": {
     "stateCleared": "modified",
   },
@@ -334,9 +331,6 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > with oauth2 > s
   "server/scripts/copy-resources.ts": {
     "stateCleared": "modified",
   },
-  "server/scripts/entrypoint.sh": {
-    "stateCleared": "modified",
-  },
   "server/sonar-project.properties": {
     "stateCleared": "modified",
   },
@@ -550,9 +544,6 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > with oauth2 and
     "stateCleared": "modified",
   },
   "server/scripts/copy-resources.ts": {
-    "stateCleared": "modified",
-  },
-  "server/scripts/entrypoint.sh": {
     "stateCleared": "modified",
   },
   "server/sonar-project.properties": {
@@ -1109,9 +1100,6 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > without client 
     "stateCleared": "modified",
   },
   "server/scripts/copy-resources.ts": {
-    "stateCleared": "modified",
-  },
-  "server/scripts/entrypoint.sh": {
     "stateCleared": "modified",
   },
   "server/sonar-project.properties": {
