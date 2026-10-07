@@ -26,15 +26,6 @@ eureka:
     instanceId: <%= baseName %>:${random.value}
     lease-renewal-interval-in-seconds: 5
     lease-expiration-duration-in-seconds: 10
-    status-page-url-path: ${management.endpoints.web.base-path}/info
-    health-check-url-path: ${management.endpoints.web.base-path}/health
-    metadata-map:
-      zone: primary # This is needed for the load balancer
-      version: #project.version#
-      git-version: ${git.commit.id.describe:}
-      git-commit: ${git.commit.id.abbrev:}
-      git-branch: ${git.branch:}
-
 
 # ===================================================================
 # JHipster specific properties
