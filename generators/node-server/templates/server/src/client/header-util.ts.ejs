@@ -1,6 +1,7 @@
 import { config } from '../config';
 import { Response } from 'express';
 import { Page } from '../domain/base/pagination.entity';
+import { BaseEntity } from '../domain/base/base.entity';
 import { URL } from 'url';
 
 const applicationName = config.get('jhipster.clientApp.name');
@@ -12,7 +13,7 @@ export class HeaderUtil {
     res.set('X-' + applicationName + '-params', param);
   }
 
-  static addEntityCreatedHeaders(res: Response, entityName: string, param: string | number): any {
+  static addEntityCreatedHeaders(res: Response, entityName: string, param: string | number | undefined): any {
     res.status(201);
     const message = enableTranslation
       ? applicationName + '.' + entityName + '.created'
@@ -20,21 +21,21 @@ export class HeaderUtil {
     this.createAlert(res, message, String(param));
   }
 
-  static addEntityUpdatedHeaders(res: Response, entityName: string, param: string | number): any {
+  static addEntityUpdatedHeaders(res: Response, entityName: string, param: string | number | undefined): any {
     res.status(200);
     const message = enableTranslation ? applicationName + '.' + entityName +
     '.updated' : 'A ' + entityName + ' is updated with identifier ' + param;
     this.createAlert(res, message, String(param));
   }
 
-  static addEntityDeletedHeaders(res: Response, entityName: string, param: string | number): any {
+  static addEntityDeletedHeaders(res: Response, entityName: string, param: string | number | undefined): any {
     res.status(204);
     const message = enableTranslation ? applicationName + '.' + entityName +
     '.deleted' : 'A ' + entityName + ' is deleted with identifier ' + param;
     this.createAlert(res, message, String(param));
   }
 
-  static addPaginationHeaders<T>(res: Response, page: Page<T>): any {
+  static addPaginationHeaders<T extends BaseEntity>(res: Response, page: Page<T>): any {
     const url = res.req.url;
     res.set('X-Total-Count', page.total.toString());
     const pageNumber = page.pageable.page;

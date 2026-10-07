@@ -2,7 +2,7 @@ import { Controller, ClassSerializerInterceptor, Get, Logger, Req, UseIntercepto
 import { LoggingInterceptor } from '../../client/interceptors/logging.interceptor';
 import { PageRequest, Page } from '../../domain/base/pagination.entity';
 import { <%= user.dtoClass%> } from '../../service/dto/user.dto';
-import { Request } from 'express';
+import { Request } from '../../client/request';
 import { HeaderUtil } from '../../client/header-util';
 import { ApiTags, ApiResponse, ApiOperation } from '@nestjs/swagger';
 import { AuthService } from '../../service/auth.service';

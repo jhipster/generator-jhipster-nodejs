@@ -1,6 +1,8 @@
-import { Request as ExpressRequest} from 'express';
+import { Request as ExpressRequest, Response } from 'express';
 import { <%= userLoginVmClass%> } from '../service/dto/user.dto';
 
 export interface Request extends ExpressRequest {
   user?: <%= userLoginVmClass%>;
+  // Express always sets the response of a request
+  res: Response;
 }

@@ -43,8 +43,8 @@ function ormConfig(): TypeOrmModuleOptions {
       // typeorm fails to auto load driver due to workspaces resolution
       driver: require('<%= nodeProdDatabaseDriver %>'),
       host: '127.0.0.1',
-      port: mongod.instanceInfo.port,
-      database: mongod.instanceInfo.dbName,
+      port: mongod?.instanceInfo?.port,
+      database: mongod?.instanceInfo?.dbName,
 <%_ } _%>
       logging: true,
     };
