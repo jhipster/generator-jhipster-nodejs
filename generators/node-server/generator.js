@@ -40,6 +40,27 @@ const dbTypes = {
   'byte[]': 'blob',
 };
 
+/**
+ * Column types replacing the ones of dbTypes for a prodDatabaseType: the entities are shared by the prod database and by
+ * better-sqlite3 (dev and test), so a type must be supported by TypeORM for both drivers. An undefined type omits it,
+ * TypeORM then gives the type of the database for the TypeScript type (Boolean: bit on SQL Server, number on Oracle).
+ * A byte[] field is an ImageBlob or an AnyBlob, a TextBlob is a byte[] field with a text content.
+ */
+const prodDatabaseColumnTypes = {
+  // bytea is not a SQLite type: the blobs are kept as text, like the base64 strings the API exchanges.
+  postgresql: { 'byte[]': 'text', TextBlob: 'text' },
+  // SQL Server has no boolean type, and neither bit nor its binary types are SQLite ones.
+  mssql: { Boolean: undefined, 'byte[]': 'text', TextBlob: 'text' },
+  // Oracle has neither boolean nor bigint (integer is NUMBER(38)).
+  oracle: { Boolean: undefined, Long: 'integer', TextBlob: 'clob' },
+};
+
+/** Enum column types by prodDatabaseType, simple-enum otherwise: Oracle has no simple-enum. */
+const enumColumnTypes = {
+  postgresql: 'varchar',
+  oracle: 'varchar',
+};
+
 const databaseDrivers = {
   mongodb: 'mongodb',
   mysql: 'mysql2',
@@ -186,13 +207,14 @@ export default class extends BaseApplicationGenerator {
           mutateData(field, {
             __override__: true,
             nodejsFieldType: fieldType,
-            nodejsColumnType: application.prodDatabaseTypePostgresql ? 'varchar' : 'simple-enum',
+            nodejsColumnType: enumColumnTypes[application.prodDatabaseType] ?? 'simple-enum',
           });
         } else {
+          const columnTypes = { ...dbTypes, ...prodDatabaseColumnTypes[application.prodDatabaseType] };
           mutateData(field, {
             __override__: true,
             nodejsFieldType: fieldTypes[fieldType] ?? 'any',
-            nodejsColumnType: dbTypes[fieldType],
+            nodejsColumnType: columnTypes[field.fieldTypeBlobContent === 'text' ? 'TextBlob' : fieldType],
           });
         }
       },
