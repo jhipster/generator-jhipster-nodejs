@@ -81,6 +81,41 @@ describe('SubGenerator node-server of nodejs JHipster blueprint', () => {
       result.assertFileContent('server/src/module/auth.module.ts', 'ManagementController');
     });
   });
+  describe('jwt microservice', () => {
+    beforeAll(async function () {
+      await helpers
+        .run(SUB_GENERATOR_NAMESPACE)
+        .withJHipsterConfig({
+          applicationType: 'microservice',
+          authenticationType: 'jwt',
+          skipClient: true,
+        })
+        .withOptions({
+          ignoreNeedlesError: true,
+        })
+        .withJHipsterGenerators()
+        .withConfiguredBlueprint()
+        .withBlueprintConfig({});
+    });
+
+    it('should succeed', () => {
+      expect(result.getStateSnapshot()).toMatchSnapshot();
+    });
+
+    it('should only validate the tokens, without users nor authentication API', () => {
+      result.assertFile(['server/src/security/passport.jwt.strategy.ts', 'server/src/web/rest/account.controller.ts']);
+      result.assertNoFile([
+        'server/src/domain/user.entity.ts',
+        'server/src/service/user.service.ts',
+        'server/src/web/rest/user.jwt.controller.ts',
+        'server/src/security/password-util.ts',
+        'server/src/service/dto/user-login.dto.ts',
+        'server/src/service/dto/password-change.dto.ts',
+      ]);
+      result.assertNoFileContent('server/src/security/passport.jwt.strategy.ts', 'AuthService');
+    });
+  });
+
   describe('with oauth2 and syncUserWithIdp', () => {
     beforeAll(async function () {
       await helpers

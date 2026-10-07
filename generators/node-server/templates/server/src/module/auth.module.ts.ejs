@@ -8,14 +8,16 @@ import { UserModule } from '../module/user.module';
 <%_ } _%>
 import { PassportModule } from '@nestjs/passport';
 <%_ if (authenticationType === 'jwt') { _%>
+  <%_ if (generateBuiltInUserEntity) { _%>
 import { JwtModule } from '@nestjs/jwt';
-import { JwtStrategy } from '../security/passport.jwt.strategy';
 import { UserJWTController} from '../web/rest/user.jwt.controller';
+  <%_ } _%>
+import { JwtStrategy } from '../security/passport.jwt.strategy';
 <%_ } else if (authenticationType === 'oauth2') { _%>
 import { Oauth2Strategy } from '../security/passport.oauth2.strategy';
 import { UserOauth2Controller } from '../web/rest/user.oauth2.controller';
 <%_ } _%>
-<%_ if (authenticationType === 'jwt') { _%>
+<%_ if (authenticationType === 'jwt' && generateBuiltInUserEntity) { _%>
 import { config } from '../config';
 <%_ } _%>
 <%_ if (generateBuiltInAuthorityEntity) { _%>
@@ -38,7 +40,7 @@ import { AccountController } from '../web/rest/account.controller';
   UserModule,
   <%_ } _%>
   PassportModule,
-  <%_ if (authenticationType === 'jwt') { _%>
+  <%_ if (authenticationType === 'jwt' && generateBuiltInUserEntity) { _%>
     JwtModule.register({
       secret: config['jhipster.security.authentication.jwt.base64-secret'],
       signOptions: { expiresIn: Number(config['jhipster.security.authentication.jwt.token-validity-in-seconds']) },
@@ -48,7 +50,7 @@ import { AccountController } from '../web/rest/account.controller';
   <%_ } _%>
   ],
   controllers: [
-  <%_ if (authenticationType === 'jwt') { _%>
+  <%_ if (authenticationType === 'jwt' && generateBuiltInUserEntity) { _%>
   UserJWTController,
   <%_ } else if (authenticationType === 'oauth2') { _%>
   UserOauth2Controller,

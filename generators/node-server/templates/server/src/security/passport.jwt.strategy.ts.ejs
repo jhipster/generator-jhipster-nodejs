@@ -1,13 +1,21 @@
-import { ExtractJwt, Strategy, VerifiedCallback } from 'passport-jwt';
+import { ExtractJwt, Strategy<% if (generateBuiltInUserEntity) { %>, VerifiedCallback<% } %> } from 'passport-jwt';
 import { PassportStrategy } from '@nestjs/passport';
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable<% if (generateBuiltInUserEntity) { %>, UnauthorizedException<% } %> } from '@nestjs/common';
 import { Payload } from './payload.interface';
 import { config } from '../config';
+<%_ if (generateBuiltInUserEntity) { _%>
 import { AuthService } from '../service/auth.service';
+<%_ } else { _%>
+import { <%= userLoginVmClass %> } from '../service/dto/user.dto';
+<%_ } _%>
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
+<%_ if (generateBuiltInUserEntity) { _%>
   constructor(private readonly authService: AuthService) {
+<%_ } else { _%>
+  constructor() {
+<%_ } _%>
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
@@ -15,6 +23,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     });
   }
 
+<%_ if (generateBuiltInUserEntity) { _%>
  async validate(payload: Payload, done: VerifiedCallback): Promise<any> {
     const user = await this.authService.validateUser(payload);
     if (!user) {
@@ -23,4 +32,12 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
 
     return done(null, user);
   }
+<%_ } else { _%>
+  /**
+   * Without built-in User, the user is the one of the token, signed by the application issuing it (the gateway).
+   */
+  validate(payload: Payload): <%= userLoginVmClass %> {
+    return Object.assign(new <%= userLoginVmClass %>(), { login: payload.username, authorities: payload.authorities ?? [] });
+  }
+<%_ } _%>
 }

@@ -122,8 +122,12 @@ Your app uses, to get and use the token, the `<%= nodeServerRootDir %>/src/confi
 ```
 
 You can use the default secret created from the app, or change it.
+<%_ if (generateBuiltInUserEntity) { _%>
 So to get a token, you have to pass a POST request on the _api/authenticate_ url with **UserLoginDTO** as body.
 For this you can use **swagger ui** on **/api/v2/api-docs** path, or the client login page (if you have generated it).
+<%_ } else { _%>
+This application has no users of its own: it validates the tokens issued by the application sharing this secret (like the gateway), and the user of a request is the one of its token.
+<%_ } _%>
 <%_ } _%>
 
 ### Using NestJS CLI
