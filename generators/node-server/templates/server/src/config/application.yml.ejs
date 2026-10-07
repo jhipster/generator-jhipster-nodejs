@@ -12,6 +12,7 @@
 # Standard app properties.
 # ===================================================================
 
+<%_ if (serviceDiscoveryEureka) { _%>
 eureka:
   client:
     enabled: false
@@ -26,6 +27,7 @@ eureka:
     instanceId: <%= baseName %>:${random.value}
     lease-renewal-interval-in-seconds: 5
     lease-expiration-duration-in-seconds: 10
+<%_ } _%>
 
 # ===================================================================
 # JHipster specific properties
@@ -36,8 +38,10 @@ eureka:
 jhipster:
   clientApp:
     name: '<%= baseName %>'
+<%_ if (serviceDiscoveryEureka) { _%>
   registry:
     password: admin
+<%_ } _%>
   security:
 <%_ if (authenticationType === 'jwt') { _%>
     authentication:
@@ -76,6 +80,7 @@ jhipster:
     path: /api/v2/api-docs
 
 
+<%_ if (serviceDiscoveryEureka) { _%>
 cloud:
   config:
     uri: http://admin:${jhipster.registry.password}@localhost:8761/config
@@ -84,6 +89,7 @@ cloud:
     profile: prod # profile(s) of the property source
     label: master # toggle to switch to a different version of the configuration as stored in git
     # it can be set to any label, branch or commit of the configuration source Git repository
+<%_ } _%>
 
 # ===================================================================
 # Application specific properties

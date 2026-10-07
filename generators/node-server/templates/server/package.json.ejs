@@ -58,9 +58,13 @@
 <%_ } _%>
     "class-transformer": "<%- nodeServerDependencies['class-transformer'] %>",
     "class-validator": "<%- nodeServerDependencies['class-validator'] %>",
+<%_ if (serviceDiscoveryEureka) { _%>
     "cloud-config-client": "<%- nodeServerDependencies['cloud-config-client'] %>",
+<%_ } _%>
     "dotenv": "<%- nodeServerDependencies['dotenv'] %>",
+<%_ if (serviceDiscoveryEureka) { _%>
     "eureka-js-client": "<%- nodeServerDependencies['eureka-js-client'] %>",
+<%_ } _%>
     "js-yaml": "<%- nodeServerDependencies['js-yaml'] %>",
 <%_ if (authenticationType === 'oauth2') { _%>
     "jwt-decode": "<%- nodeServerDependencies['jwt-decode'] %>",
