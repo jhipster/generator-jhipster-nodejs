@@ -14,13 +14,13 @@ export class <%= user.persistClass %> extends BaseEntity {
   <%- user.primaryKey.name %>?: <%- user.primaryKey.tsType %>;
 
   @Column({ unique: true })
-  login: string;
+  login!: string;
   @Column({ nullable: true })
   firstName?: string;
   @Column({ nullable: true })
   lastName?: string;
   @Column()
-  email: string;
+  email!: string;
   @Column({ default: false})
   activated?: boolean;
   @Column({default: 'en'})
@@ -39,7 +39,7 @@ export class <%= user.persistClass %> extends BaseEntity {
     type: "varchar"
   })
   @Exclude()
-  password: string;
+  password!: string;
   @Column({ nullable: true })
   imageUrl?: string;
   @Column({ nullable: true })
