@@ -100,11 +100,15 @@ export const serverFiles = {
     {
       path: SERVER_NODEJS_DIR,
       condition: ctx => ctx.authenticationTypeJwt,
+      templates: ['src/security/passport.jwt.strategy.ts', 'src/security/payload.interface.ts'],
+    },
+    {
+      path: SERVER_NODEJS_DIR,
+      // The authentication API, without built-in User (a microservice) the application only validates the tokens.
+      condition: ctx => ctx.authenticationTypeJwt && ctx.generateBuiltInUserEntity,
       templates: [
         'src/web/rest/user.jwt.controller.ts',
         'src/security/password-util.ts',
-        'src/security/passport.jwt.strategy.ts',
-        'src/security/payload.interface.ts',
         'src/service/dto/password-change.dto.ts',
         'src/service/dto/user-login.dto.ts',
       ],

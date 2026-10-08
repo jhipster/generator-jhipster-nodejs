@@ -3,6 +3,8 @@ import { <%_ if (authenticationType === 'jwt') { _%> Body, Param, Post, Res, Use
 <%_ if (authenticationType === 'jwt') { _%>
 import { Response, Request } from 'express';
 import { AuthGuard, Roles, RoleType, RolesGuard } from '../../security';
+<%_ } _%>
+<%_ if (authenticationType === 'jwt' && generateUserManagement) { _%>
 import { PasswordChangeDTO } from '../../service/dto/password-change.dto';
 <%_ } _%>
 import { <%- userLoginVmClass %> } from '../../service/dto/user.dto';
@@ -17,7 +19,7 @@ export class AccountController {
   logger = new Logger('AccountController');
 
   constructor(private readonly authService: AuthService) { }
-  <%_ if (!skipUserManagement && authenticationType !=='oauth2') { _%>
+  <%_ if (authenticationType === 'jwt' && generateUserManagement) { _%>
 
   @Post('/register')
   @ApiOperation({ summary: 'Register user' })
@@ -161,10 +163,17 @@ export class AccountController {
     status: 200,
     description: 'user retrieved',
   })
+  <%_ if (generateBuiltInUserEntity) { _%>
   async getAccount(@Req() req: { user: <%- userLoginVmClass %> }): Promise<any> {
     const { user } = req;
     return await this.authService.getAccount(user.id!);
   }
+  <%_ } else { _%>
+  getAccount(@Req() req: { user: <%- userLoginVmClass %> }): <%- userLoginVmClass %> {
+    // The user of the token, without built-in User.
+    return req.user;
+  }
+  <%_ } _%>
   <%_ } _%>
 
 }

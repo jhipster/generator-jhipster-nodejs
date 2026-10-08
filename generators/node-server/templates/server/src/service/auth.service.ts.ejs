@@ -1,4 +1,4 @@
-import { Injectable, <%_ if (authenticationType === 'jwt') { _%> HttpException, HttpStatus,  <%_ } _%> Logger } from '@nestjs/common';
+import { Injectable, <%_ if (authenticationType === 'jwt' && generateBuiltInUserEntity) { _%> HttpException, HttpStatus,  <%_ } _%> Logger } from '@nestjs/common';
 <%_ if (generateBuiltInAuthorityEntity) { _%>
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -6,7 +6,7 @@ import { Repository } from 'typeorm';
 <%_ if (generateBuiltInUserEntity) { _%>
 import { FindManyOptions } from 'typeorm';
 <%_ } _%>
-<%_ if (authenticationType === 'jwt') { _%>
+<%_ if (authenticationType === 'jwt' && generateBuiltInUserEntity) { _%>
 import { comparePassword } from '../security/password-util';
 import { JwtService } from '@nestjs/jwt';
 import { UserLoginDTO } from '../service/dto/user-login.dto';
@@ -19,7 +19,7 @@ import { Authority } from '../domain/authority.entity';
 import { UserService } from '../service/user.service';
 <%_ } _%>
 import { <%= userLoginVmClass %> } from './dto/user.dto';
-<%_ if (authenticationType === 'jwt') { _%>
+<%_ if (authenticationType === 'jwt' && generateBuiltInUserEntity) { _%>
 import { config } from '../config';
 <%_ } _%>
 
@@ -32,7 +32,7 @@ _%>
 export class AuthService {
     logger = new Logger('AuthService');
   constructor(
-    <%_ if (authenticationType === 'jwt') { _%>
+    <%_ if (authenticationType === 'jwt' && generateBuiltInUserEntity) { _%>
     private readonly jwtService: JwtService,
     <%_ } _%>
     <%_ if (generateBuiltInAuthorityEntity) { _%>
@@ -43,7 +43,7 @@ export class AuthService {
     <%_ } _%>
   ) {}
 
-  <%_ if (authenticationType === 'jwt') { _%>
+  <%_ if (authenticationType === 'jwt' && generateBuiltInUserEntity) { _%>
   async login(userLogin: UserLoginDTO): Promise<any> {
     const loginUserName = userLogin.username;
     const loginPassword = userLogin.password;
