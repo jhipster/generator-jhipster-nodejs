@@ -239,6 +239,12 @@ export default class extends BaseApplicationGenerator {
                 'server/src/migrations/1570200490072-SeedUsersRoles.ts',
               ],
             ],
+            '4.3.1': [
+              // The HTTP helpers of the server moved from src/client (a name taken by the client workspace) to src/common.
+              'server/src/client/header-util.ts',
+              'server/src/client/request.ts',
+              'server/src/client/interceptors/logging.interceptor.ts',
+            ],
           });
         }
       },

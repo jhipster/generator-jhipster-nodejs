@@ -1,6 +1,6 @@
 import { Controller, Get, Logger, Post, Res, UseGuards, Req, UseInterceptors } from '@nestjs/common';
 import { AuthService } from '../../service/auth.service';
-import { LoggingInterceptor } from '../../client/interceptors/logging.interceptor';
+import { LoggingInterceptor } from '../../common/interceptors/logging.interceptor';
 import { ApiTags, ApiResponse, ApiOperation, ApiExcludeEndpoint } from '@nestjs/swagger';
 import { AuthGuard, RolesGuard } from '../../security';
 import { oauth2Config } from '../../security/oauth2.config';

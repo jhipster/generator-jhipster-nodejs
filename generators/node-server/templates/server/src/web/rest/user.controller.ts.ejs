@@ -2,9 +2,9 @@ import { Body, Controller, NotFoundException, Delete, Get, Logger, Param, Post, 
 import { AuthGuard,  Roles, RolesGuard, RoleType } from '../../security';
 import { PageRequest, Page } from '../../domain/base/pagination.entity';
 import { <%= user.dtoClass%> } from '../../service/dto/user.dto';
-import { HeaderUtil } from '../../client/header-util';
-import { Request } from '../../client/request';
-import { LoggingInterceptor } from '../../client/interceptors/logging.interceptor';
+import { HeaderUtil } from '../../common/header-util';
+import { Request } from '../../common/request';
+import { LoggingInterceptor } from '../../common/interceptors/logging.interceptor';
 import {<%_ if (authenticationType === 'jwt') { _%> ApiBearerAuth, <%_ } else if (authenticationType === 'oauth2') { _%> ApiSecurity, <%_ } _%> ApiTags, ApiResponse, ApiOperation } from '@nestjs/swagger';
 import { UserService } from '../../service/user.service';
 
