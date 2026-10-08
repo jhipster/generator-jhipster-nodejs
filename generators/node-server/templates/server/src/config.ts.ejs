@@ -11,7 +11,9 @@ export class Config {
   debugLogging = 'debug';
   'server.port' = '<%= serverPort %>';
   'jhipster.clientApp.name' = '<%= baseName %>';
+<%_ if (serviceDiscoveryEureka) { _%>
   'jhipster.registry.password' = 'admin';
+<%_ } _%>
 <%_ if (authenticationType === 'jwt') { _%>
   'jhipster.security.authentication.jwt.base64-secret' = '';
   'jhipster.security.authentication.jwt.token-validity-in-seconds' = 86400;
@@ -30,6 +32,7 @@ export class Config {
   'jhipster.swagger.description' = '<%= baseName %> API documentation';
   'jhipster.swagger.version' = '0.0.1';
   'jhipster.swagger.path' = '/api/v2/api-docs';
+<%_ if (serviceDiscoveryEureka) { _%>
   'eureka.client.enabled' = true;
   'eureka.client.healthcheck.enabled' = true;
   'eureka.client.fetch-registry' = true;
@@ -46,6 +49,7 @@ export class Config {
   'cloud.config.name' = '<%= baseName %>';
   'cloud.config.profile' = 'prod';
   'cloud.config.label' = 'master';
+<%_ } _%>
 
   constructor(properties: Record<string, any>) {
     this.addAll(properties);

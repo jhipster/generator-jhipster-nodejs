@@ -11,6 +11,7 @@
 # Standard app properties.
 # ===================================================================
 
+<%_ if (serviceDiscoveryEureka) { _%>
 eureka:
   instance:
     prefer-ip-address: true
@@ -18,6 +19,7 @@ eureka:
     service-url:
       defaultZone: http://admin:${jhipster.registry.password}@localhost:8761/eureka/
 
+<%_ } _%>
 # ===================================================================
 # To enable TLS in production, generate a certificate using:
 # keytool -genkey -alias <%= baseName %> -storetype PKCS12 -keyalg RSA -keysize 2048 -keystore keystore.p12 -validity 3650

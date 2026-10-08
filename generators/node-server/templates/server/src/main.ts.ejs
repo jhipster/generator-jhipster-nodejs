@@ -1,6 +1,8 @@
 require('dotenv').config({ path: '.env' });
 import { NestFactory } from '@nestjs/core';
+<%_ if (serviceDiscoveryEureka) { _%>
 import cloudConfigClient from 'cloud-config-client';
+<%_ } _%>
 import { AppModule } from './app.module';
 import { setupSwagger } from './swagger';
 import { config } from './config';
@@ -14,11 +16,15 @@ import session = require('express-session');
 <%_ } _%>
 const logger: Logger = new Logger('Main');
 const port = process.env.NODE_SERVER_PORT || config.get('server.port');
+<%_ if (serviceDiscoveryEureka) { _%>
 const useJHipsterRegistry = config.get('eureka.client.enabled');
+<%_ } _%>
 
 async function bootstrap(): Promise<void> {
-  loadCloudConfig();
+<%_ if (serviceDiscoveryEureka) { _%>
+  await loadCloudConfig();
   registerAsEurekaService();
+<%_ } _%>
 
   const appOptions = { cors: true };
   const app = await NestFactory.create(AppModule, appOptions);
@@ -69,6 +75,7 @@ async function bootstrap(): Promise<void> {
   logger.log(`Application listening on port ${port}`);
 }
 
+<%_ if (serviceDiscoveryEureka) { _%>
 async function loadCloudConfig(): Promise<void> {
   if (useJHipsterRegistry) {
     const endpoint = config.get('cloud.config.uri') || 'http://admin:admin@localhost:8761/config';
@@ -129,5 +136,6 @@ function registerAsEurekaService(): void {
     client.start((error: Error) => logger.log(error || 'Eureka registration complete'));
   }
 }
+<%_ } _%>
 
 bootstrap();
