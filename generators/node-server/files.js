@@ -80,8 +80,8 @@ export const serverFiles = {
     },
     {
       path: SERVER_NODEJS_DIR,
-      // DataSource of the typeorm CLI scripts, the migrations being SQL only.
-      condition: ctx => ctx.databaseTypeSql,
+      // DataSource of the typeorm CLI scripts (SQL and MongoDB).
+      condition: ctx => ctx.databaseTypeSql || ctx.databaseTypeMongodb,
       templates: ['ormconfig.ts'],
     },
   ],

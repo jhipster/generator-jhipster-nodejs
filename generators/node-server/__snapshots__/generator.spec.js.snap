@@ -1112,6 +1112,21 @@ According [typeORM migration guide](https://github.com/typeorm/typeorm/blob/mast
 there are under [src/migrations/](src/migrations/) the scripts to create the database schema and after to insert data seed.
 The scripts are automatically run in the first start up, and after anymore.
 
+The \`typeorm\` npm scripts run the typeorm CLI on the database \`BACKEND_ENV\` selects (see [ormconfig.ts](ormconfig.ts)):
+
+\`\`\`bash
+# generate a migration from the changes of the entities
+$ npm run typeorm:migration:generate
+# create an empty migration
+$ npm run typeorm:migration:create
+# run, revert or list the migrations
+$ npm run typeorm:migration:run
+$ npm run typeorm:migration:revert
+$ npm run typeorm:migration:show
+# show the SQL that would synchronize the schema with the entities
+$ npm run typeorm:schema:log
+\`\`\`
+
 ## Running the app
 
 \`\`\`bash
