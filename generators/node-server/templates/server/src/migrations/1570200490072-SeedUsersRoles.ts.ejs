@@ -65,7 +65,6 @@ export class SeedUsersRoles1570200490072 implements MigrationInterface {
   };
 
   <%_ } _%>
-  // eslint-disable-next-line
   public async up(queryRunner: QueryRunner): Promise<any> {
 
     const authorityRepository = queryRunner.manager.getRepository("<%- jhiTablePrefix %>_authority");
@@ -92,6 +91,5 @@ export class SeedUsersRoles1570200490072 implements MigrationInterface {
   }
 
 
-  // eslint-disable-next-line
-  public async down(queryRunner: QueryRunner): Promise<any> { }
+  public async down(_queryRunner: QueryRunner): Promise<any> { }
 }

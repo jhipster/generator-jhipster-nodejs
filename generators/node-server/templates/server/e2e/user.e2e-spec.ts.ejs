@@ -68,7 +68,6 @@ describe('User', () => {
         const { password: _savedPassword, lastModifiedDate: _savedLastModifiedDate, ...savedUser } = await service.save(testUserDTO);
         savedUser.firstName = 'Updated Name';
 
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const { password: _updatedPassword, lastModifiedDate: _updatedLastModifiedDate, ...updatedUser } = (
             await request(app.getHttpServer())
                 .put('/api/admin/users')
@@ -90,7 +89,6 @@ describe('User', () => {
         const { password: _savedPassword, lastModifiedDate: _savedLastModifiedDate, ...savedUser } = await service.save(testUserDTO);
         savedUser.firstName = 'Updated Name';
 
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const { password: _updatedPassword, lastModifiedDate: _updatedLastModifiedDate, ...updatedUser } = (
             await request(app.getHttpServer())
                 .put('/api/admin/users/' + savedUser.login)
@@ -110,8 +108,9 @@ describe('User', () => {
     it('/GET user with a login name', async () => {
         testUserDTO.login = 'TestUserGet';
         const savedUser: <%= user.dtoClass%> = await service.save(testUserDTO);
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const { password, ...savedUserWithoutPassword } = savedUser;
+        <%_ if (databaseType !== 'mongodb') { _%>
+        const { password: _password, ...savedUserWithoutPassword } = savedUser;
+        <%_ } _%>
 
         const getUser: <%= user.dtoClass%> = (
             await request(app.getHttpServer())

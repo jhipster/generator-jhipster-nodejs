@@ -73,13 +73,11 @@ export class AuthService {
         ? config['jhipster.security.authentication.jwt.token-validity-in-seconds-for-remember-me']
         : config['jhipster.security.authentication.jwt.token-validity-in-seconds'],
     );
-    /* eslint-disable */
     return {
       id_token: this.jwtService.sign(payload, { expiresIn }),
     };
   }
 
-  /* eslint-enable */
   async validateUser(payload: Payload): Promise<<%= user.dtoClass %> | undefined> {
     return await this.findUserWithAuthById(payload.id);
   }
