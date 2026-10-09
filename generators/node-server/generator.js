@@ -43,6 +43,8 @@ const dbTypes = {
 const databaseDrivers = {
   mongodb: 'mongodb',
   mysql: 'mysql2',
+  // TypeORM connects to MariaDB with the MySQL driver.
+  mariadb: 'mysql2',
   postgresql: 'pg',
   oracle: 'oracledb',
   mssql: 'mssql',
@@ -51,6 +53,7 @@ const databaseDrivers = {
 const databaseDevDrivers = {
   mongodb: 'mongodb-memory-server',
   mysql: 'better-sqlite3',
+  mariadb: 'better-sqlite3',
   postgresql: 'better-sqlite3',
   oracle: 'better-sqlite3',
   mssql: 'better-sqlite3',
@@ -81,6 +84,11 @@ export default class extends BaseApplicationGenerator {
     return this.asConfiguringTaskGroup({
       async configuringTemplateTask() {
         const { prodDatabaseType, databaseType } = this.jhipsterConfigWithDefaults;
+        if (!['sql', 'mongodb'].includes(databaseType)) {
+          throw new Error(
+            `The database type ${databaseType} is not supported by the JHipster NodeJS blueprint: use sql (with prodDatabaseType mysql, mariadb, postgresql, mssql or oracle) or mongodb.`,
+          );
+        }
         const databaseTypeMongodb = (prodDatabaseType ?? databaseType) === 'mongodb';
         this.jhipsterConfig.databaseType = databaseTypeMongodb ? 'mongodb' : 'sql';
         if (databaseTypeMongodb) {

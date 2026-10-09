@@ -48,6 +48,45 @@ describe('SubGenerator node-server of nodejs JHipster blueprint', () => {
       expect(result.getSnapshot('**/README.md')).toMatchSnapshot();
     });
   });
+  describe('with mariadb', () => {
+    beforeAll(async function () {
+      await helpers
+        .run(SUB_GENERATOR_NAMESPACE)
+        .withJHipsterConfig({
+          prodDatabaseType: 'mariadb',
+          skipClient: true,
+        })
+        .withOptions({
+          ignoreNeedlesError: true,
+        })
+        .withJHipsterGenerators()
+        .withConfiguredBlueprint()
+        .withBlueprintConfig({});
+    });
+
+    it('should use the MySQL driver', () => {
+      result.assertFileContent('server/src/orm.config.ts', "type: 'mariadb'");
+      result.assertFileContent('server/src/orm.config.ts', "driver: require('mysql2')");
+      result.assertJsonFileContent('server/package.json', { dependencies: { mysql2: /./ } });
+    });
+  });
+
+  for (const databaseType of ['cassandra', 'couchbase', 'neo4j', 'no']) {
+    describe(`with ${databaseType} database type`, () => {
+      it('should fail with an unsupported database type error', async () => {
+        await expect(
+          helpers
+            .run(SUB_GENERATOR_NAMESPACE)
+            .withJHipsterConfig({ databaseType, skipClient: true })
+            .withOptions({ ignoreNeedlesError: true })
+            .withJHipsterGenerators()
+            .withConfiguredBlueprint()
+            .withBlueprintConfig({}),
+        ).rejects.toThrow(`The database type ${databaseType} is not supported by the JHipster NodeJS blueprint`);
+      });
+    });
+  }
+
   describe('with oauth2', () => {
     beforeAll(async function () {
       await helpers
