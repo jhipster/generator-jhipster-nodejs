@@ -1,13 +1,29 @@
-import { beforeEach, describe, expect, it } from '@jest/globals';
+import { beforeEach, describe, expect, it, jest } from '@jest/globals';
+import { ServiceUnavailableException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
+import { DataSource } from 'typeorm';
 import { ManagementController } from '../../src/web/rest/management.controller';
 
 describe('Management Controller', () => {
   let controller: ManagementController;
+  const ping = jest.fn<() => Promise<unknown>>();
+  const dataSource = {
+    isInitialized: true,
+<%_ if (databaseTypeMongodb) { _%>
+    mongoManager: { mongoQueryRunner: { databaseConnection: { db: () => ({ command: ping }) } } },
+<%_ } else { _%>
+    options: { type: 'better-sqlite3' },
+    query: ping,
+<%_ } _%>
+  };
 
   beforeEach(async () => {
+    dataSource.isInitialized = true;
+    ping.mockReset();
+    ping.mockResolvedValue([]);
     const module: TestingModule = await Test.createTestingModule({
       controllers: [ManagementController],
+      providers: [{ provide: DataSource, useValue: dataSource }],
     }).compile();
 
     controller = module.get<ManagementController>(ManagementController);
@@ -15,5 +31,23 @@ describe('Management Controller', () => {
 
   it('should be defined', () => {
     expect(controller).toBeDefined();
+  });
+
+  it('health is UP when the database answers', async () => {
+    await expect(controller.health()).resolves.toEqual({ status: 'UP' });
+    expect(ping).toHaveBeenCalled();
+  });
+
+  it('health is DOWN when the database fails', async () => {
+    ping.mockRejectedValue(new Error('connection refused'));
+    await expect(controller.health()).rejects.toThrow(ServiceUnavailableException);
+  });
+
+  it('health is DOWN when the database is not initialized', async () => {
+    dataSource.isInitialized = false;
+    const error = await controller.health().catch((e: ServiceUnavailableException) => e);
+    expect(error).toBeInstanceOf(ServiceUnavailableException);
+    expect((error as ServiceUnavailableException).getResponse()).toEqual({ status: 'DOWN' });
+    expect(ping).not.toHaveBeenCalled();
   });
 });

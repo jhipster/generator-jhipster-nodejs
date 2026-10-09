@@ -28,6 +28,8 @@ async function bootstrap(): Promise<void> {
 
   const appOptions = { cors: true };
   const app = await NestFactory.create(AppModule, appOptions);
+  // Close the application (HTTP server, database connections) on SIGTERM, the signal docker stop sends.
+  app.enableShutdownHooks();
   app.useGlobalPipes(
     new ValidationPipe({
       exceptionFactory: (): BadRequestException  => new BadRequestException('Validation error'),
@@ -107,6 +109,8 @@ function registerAsEurekaService(): void {
         hostName: config.get('ipAddress') || 'localhost',
         ipAddr: config.get('ipAddress') || '127.0.0.1',
         status: `UP`,
+        statusPageUrl: `http://${config.get('ipAddress') || 'localhost'}:${port}/management/info`,
+        healthCheckUrl: `http://${config.get('ipAddress') || 'localhost'}:${port}/management/health`,
         port: {
            $: port,
           '@enabled': 'true',
