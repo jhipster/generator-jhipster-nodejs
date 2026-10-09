@@ -33,14 +33,10 @@
   },
   "dependencies": {
     "<%- nodeProdDatabaseDriver %>": "<%- nodeServerDependencies[nodeProdDatabaseDriver] %>",
-<%_ if (databaseType !== 'mongodb') { _%>
-    "<%- nodeDevDatabaseDriver %>": "<%- nodeServerDependencies[nodeDevDatabaseDriver] %>",
-<%_ } _%>
 <%_ if (authenticationType === 'oauth2') { _%>
     "@nestjs/axios": "<%- nodeServerDependencies['@nestjs/axios'] %>",
     "express-session": "<%- nodeServerDependencies['express-session'] %>",
 <%_ } _%>
-    "browser-sync-client": "<%- nodeServerDependencies['browser-sync-client'] %>",
     "@nestjs/common": "<%- nodeServerDependencies['@nestjs/common'] %>",
     "@nestjs/core": "<%- nodeServerDependencies['@nestjs/core'] %>",
 <%_ if (authenticationType === 'jwt') { _%>
@@ -90,7 +86,6 @@
     "@types/superagent": "<%- nodeServerDependencies['@types/superagent'] %>",
 <%_ if (authenticationType === 'oauth2') { _%>
     "@types/express-session": "<%- nodeServerDependencies['@types/express-session'] %>",
-    "@types/jwt-decode": "<%- nodeServerDependencies['@types/jwt-decode'] %>",
 <%_ } _%>
     "@types/node": "<%- nodeServerDependencies['@types/node'] %>",
 <%_ if (authenticationType === 'oauth2') { _%>
@@ -103,7 +98,9 @@
     "@types/passport-oauth2": "<%- nodeServerDependencies['@types/passport-oauth2'] %>",
 <%_ } _%>
     "@types/supertest": "<%- nodeServerDependencies['@types/supertest'] %>",
-    "browser-sync-client": "<%- nodeServerDependencies['browser-sync-client'] %>",
+<%_ if (databaseType !== 'mongodb') { _%>
+    "<%- nodeDevDatabaseDriver %>": "<%- nodeServerDependencies[nodeDevDatabaseDriver] %>",
+<%_ } _%>
     "eslint": "<%- nodeServerDependencies['eslint'] %>",
     "eslint-config-prettier": "<%- nodeServerDependencies['eslint-config-prettier'] %>",
     "eslint-plugin-prettier": "<%- nodeServerDependencies['eslint-plugin-prettier'] %>",
