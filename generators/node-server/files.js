@@ -76,13 +76,8 @@ export const serverFiles = {
         'README.md',
         'webpack.server.prod.config.js',
         'sonar-project.properties',
+        'ormconfig.ts',
       ],
-    },
-    {
-      path: SERVER_NODEJS_DIR,
-      // DataSource of the typeorm CLI scripts (SQL and MongoDB).
-      condition: ctx => ctx.databaseTypeSql || ctx.databaseTypeMongodb,
-      templates: ['ormconfig.ts'],
     },
   ],
   e2e: [
