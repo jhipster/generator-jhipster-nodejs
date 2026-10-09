@@ -27,13 +27,12 @@
   ],
   "devDependencies": {
     "@eslint/js": "<%- nodeServerDependencies['@eslint/js'] %>",
-    "browser-sync-client": "<%- nodeServerDependencies['browser-sync-client'] %>",
     "eslint": "<%- nodeServerDependencies['eslint'] %>",
     "eslint-config-prettier": "<%- nodeServerDependencies['eslint-config-prettier'] %>",
     "globals": "<%- nodeServerDependencies['globals'] %>",
     "prettier": "<%= nodeDependencies['prettier'] %>",
     "prettier-plugin-packagejson": "<%= nodeDependencies['prettier-plugin-packagejson'] %>",
-    "typescript-eslint": "<%- nodeDependencies['typescript-eslint'] %>"
+    "typescript-eslint": "<%- nodeServerDependencies['typescript-eslint'] %>"
   },
   "engines": {
     "node": ">=<%= nodeVersion %>"
@@ -42,15 +41,25 @@
       "server"
   ],
   "scripts": {
+<%_ if (clientFrameworkAny) { _%>
     "build": "<%= clientPackageManager %> run build -w server && <%= clientPackageManager %> run build -w client",
+<%_ } else { _%>
+    "build": "<%= clientPackageManager %> run build -w server",
+<%_ } _%>
     "build:app": "<%= clientPackageManager %> run build -w server",
     "lint:fix": "echo \"INFO: no client found\"",
     "prettier:check": "prettier --check \"{,src/**/}*.{<%= prettierExtensions %>}\"",
     "prettier:format": "prettier --write \"{,src/**/}*.{<%= prettierExtensions %>}\"",
+<%_ if (clientFrameworkAny) { _%>
     "start": "concurrently -k -s first -n application,client -c red,green npm:start:server npm:start:client",
+<%_ } else { _%>
+    "start": "<%= clientPackageManager %> run start:server",
+<%_ } _%>
     "start:server": "<%= clientPackageManager %> run start -w server",
+<%_ if (clientFrameworkAny) { _%>
     "start:client": "<%= clientPackageManager %> run start -w client",
     "test:client": "<%= clientPackageManager %> test -w client",
+<%_ } _%>
     "test:server": "<%= clientPackageManager %> test -w server",
 <%_ if (!databaseTypeSql) { _%>
     "pretest:server:e2e": "npm run docker:db:up",
