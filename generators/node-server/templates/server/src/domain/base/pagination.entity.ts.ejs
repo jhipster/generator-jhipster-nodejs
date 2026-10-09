@@ -22,11 +22,16 @@ export class Sort {
 
 export type PaginationQueryType = string | ParsedQs | (string | ParsedQs)[];
 
+/** Same as the default page size of Spring Data. */
+export const DEFAULT_PAGE_SIZE = 20;
+/** Same as the default `spring.data.web.pageable.max-page-size` of Spring Data, used by JHipster Spring Boot. */
+export const MAX_PAGE_SIZE = 2000;
+
 export class PageRequest {
   @JsonProperty()
   page = 0;
   @JsonProperty()
-  size = 20;
+  size = DEFAULT_PAGE_SIZE;
 <%_ if (typeormOrderSupport) { _%>
   @Type(() => Sort)
   sort: Sort = new Sort('id,ASC');
@@ -39,8 +44,10 @@ export class PageRequest {
     ,sort?: PaginationQueryType
 <%_ } _%>
   ) {
-    this.page = PageRequest.handleNumberTypes(page, this.page);
-    this.size = PageRequest.handleNumberTypes(size, this.size);
+    // Like Spring Data: a negative page is the first one, a size below 1 is the default one, and the size is capped
+    this.page = Math.max(PageRequest.handleNumberTypes(page, this.page), 0);
+    const requestedSize = PageRequest.handleNumberTypes(size, this.size);
+    this.size = requestedSize < 1 ? DEFAULT_PAGE_SIZE : Math.min(requestedSize, MAX_PAGE_SIZE);
 <%_ if (typeormOrderSupport) { _%>
     this.sort = new Sort(PageRequest.handleQueryType(sort));
 <%_ } _%>

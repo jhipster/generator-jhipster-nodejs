@@ -1,3 +1,9 @@
+<%_
+const numericId = primaryKey.tsType === 'number';
+const entityId = numericId ? '1' : primaryKey.typeUUID ? "'9fa62b09-6bd1-4c1b-8f7e-2a3e5f0c4d21'" : "'entityId'";
+const unknownId = numericId ? '999' : primaryKey.typeUUID ? "'0d5b3f4e-4f0a-4b77-9c1e-6f1d2a3b4c5d'" : "'unknownId'";
+const anotherId = numericId ? '2' : primaryKey.typeUUID ? "'5a0e8c2b-1d3f-4e6a-8b9c-0d1e2f3a4b5c'" : "'anotherId'";
+_%>
 import { afterEach, beforeEach, describe, expect, it } from '@jest/globals';
 import { Test, TestingModule } from '@nestjs/testing';
 import request = require('supertest');
@@ -8,20 +14,25 @@ import { RolesGuard } from '../src/security/guards/roles.guard';
 import { <%= dtoClass %> } from '../src/service/dto/<%= entityFileName %>.dto';
 import { <%= entityClass %>Service } from '../src/service/<%= entityFileName %>.service';
 
+const alertHeader = (headers: Record<string, unknown>, suffix: string): unknown =>
+    Object.entries(headers).find(([name]) => name.endsWith(suffix))?.[1];
+
 describe('<%= entityClass %> Controller', () => {
     let app: INestApplication;
 
     const authGuardMock = { canActivate: (): any => true };
     const rolesGuardMock = { canActivate: (): any => true };
     const entityMock: any = {
-        id: 'entityId'
+        id: <%- entityId %>
     }
+    const unknownId = <%- unknownId %>;
+    const anotherId = <%- anotherId %>;
 
     const serviceMock = {
-        findById: (id: any): any => (id === entityMock.id ? entityMock : undefined),
+        findById: (id: any): any => (id === entityMock.id ? { ...entityMock } : undefined),
         findAndCount: (): any => [entityMock, 0],
         save: (): any => entityMock,
-        update: (): any => entityMock,
+        update: (dto: any): any => dto,
         deleteById: (): any => entityMock
     };
 
@@ -66,9 +77,17 @@ describe('<%= entityClass %> Controller', () => {
 
     it('/GET <%= entityApiUrl %> by an unknown id', async () => {
         await request(app.getHttpServer())
-            .get('/api/<%= entityApiUrl %>/unknownId')
+            .get('/api/<%= entityApiUrl %>/' + unknownId)
             .expect(404);
     });
+<%_ if (numericId || primaryKey.typeUUID) { _%>
+
+    it('/GET <%= entityApiUrl %> by an invalid id', async () => {
+        await request(app.getHttpServer())
+            .get('/api/<%= entityApiUrl %>/invalid-id')
+            .expect(400);
+    });
+<%_ } _%>
 
     it('/POST create <%= entityApiUrl %>', async () => {
 
@@ -82,40 +101,82 @@ describe('<%= entityClass %> Controller', () => {
     }
     );
 
-    it('/PUT update <%= entityApiUrl %>', async () => {
-
-
-        const updatedEntity: <%= dtoClass %> = (await request(app.getHttpServer())
-            .put('/api/<%= entityApiUrl %>')
-            .send(entityMock)
-            .expect(201)).body;
-
-
-        expect(updatedEntity).toEqual(entityMock);
-
-    }
-    );
-
     it('/PUT update <%= entityApiUrl %> from id', async () => {
-
-
-        const updatedEntity: <%= dtoClass %> = (await request(app.getHttpServer())
+        const response = await request(app.getHttpServer())
             .put('/api/<%= entityApiUrl %>/' + entityMock.id)
             .send(entityMock)
-            .expect(201)).body;
+            .expect(200);
 
-
-        expect(updatedEntity).toEqual(entityMock);
-
+        expect(response.body).toEqual(entityMock);
+        expect(alertHeader(response.headers, '-alert')).toMatch(/\.<%= entityClass %>\.updated$/);
+        expect(alertHeader(response.headers, '-params')).toBe(String(entityMock.id));
     }
     );
 
     it('/PUT update <%= entityApiUrl %> from another id', async () => {
-        await request(app.getHttpServer())
-            .put('/api/<%= entityApiUrl %>/anotherId')
+        const response = await request(app.getHttpServer())
+            .put('/api/<%= entityApiUrl %>/' + anotherId)
             .send(entityMock)
             .expect(400);
+
+        expect(alertHeader(response.headers, '-error')).toBe('error.idinvalid');
     });
+
+    it('/PUT update <%= entityApiUrl %> without id', async () => {
+        const response = await request(app.getHttpServer())
+            .put('/api/<%= entityApiUrl %>/' + entityMock.id)
+            .send({ ...entityMock, id: undefined })
+            .expect(400);
+
+        expect(alertHeader(response.headers, '-error')).toBe('error.idnull');
+    });
+
+    it('/PUT update an unknown <%= entityApiUrl %>', async () => {
+        const response = await request(app.getHttpServer())
+            .put('/api/<%= entityApiUrl %>/' + unknownId)
+            .send({ ...entityMock, id: unknownId })
+            .expect(400);
+
+        expect(alertHeader(response.headers, '-error')).toBe('error.idnotfound');
+    });
+
+    it('/PATCH partial update <%= entityApiUrl %> from id', async () => {
+        const response = await request(app.getHttpServer())
+            .patch('/api/<%= entityApiUrl %>/' + entityMock.id)
+            .send({ id: entityMock.id, lastModifiedBy: 'patcher', createdBy: null })
+            .expect(200);
+
+        expect(response.body).toEqual({ ...entityMock, lastModifiedBy: 'patcher' });
+        expect(alertHeader(response.headers, '-alert')).toMatch(/\.<%= entityClass %>\.updated$/);
+        expect(alertHeader(response.headers, '-params')).toBe(String(entityMock.id));
+    });
+
+    it('/PATCH partial update <%= entityApiUrl %> from another id', async () => {
+        const response = await request(app.getHttpServer())
+            .patch('/api/<%= entityApiUrl %>/' + anotherId)
+            .send({ id: entityMock.id })
+            .expect(400);
+
+        expect(alertHeader(response.headers, '-error')).toBe('error.idinvalid');
+    });
+
+    it('/PATCH partial update an unknown <%= entityApiUrl %>', async () => {
+        const response = await request(app.getHttpServer())
+            .patch('/api/<%= entityApiUrl %>/' + unknownId)
+            .send({ id: unknownId })
+            .expect(400);
+
+        expect(alertHeader(response.headers, '-error')).toBe('error.idnotfound');
+    });
+<%_ if (numericId || primaryKey.typeUUID) { _%>
+
+    it('/PATCH partial update <%= entityApiUrl %> from an invalid id', async () => {
+        await request(app.getHttpServer())
+            .patch('/api/<%= entityApiUrl %>/invalid-id')
+            .send({ id: entityMock.id })
+            .expect(400);
+    });
+<%_ } _%>
 
     it('/DELETE <%= entityApiUrl %>', async () => {
 
@@ -132,4 +193,3 @@ describe('<%= entityClass %> Controller', () => {
         await app?.close();
     });
 });
-
