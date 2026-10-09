@@ -101,13 +101,13 @@ exports[`SubGenerator server of nodejs JHipster blueprint > run > should succeed
   "server/src/app.module.ts": {
     "stateCleared": "modified",
   },
-  "server/src/client/header-util.ts": {
+  "server/src/common/header-util.ts": {
     "stateCleared": "modified",
   },
-  "server/src/client/interceptors/logging.interceptor.ts": {
+  "server/src/common/interceptors/logging.interceptor.ts": {
     "stateCleared": "modified",
   },
-  "server/src/client/request.ts": {
+  "server/src/common/request.ts": {
     "stateCleared": "modified",
   },
   "server/src/config.ts": {
