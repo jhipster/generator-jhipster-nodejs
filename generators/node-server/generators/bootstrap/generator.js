@@ -47,6 +47,19 @@ export default class extends BaseApplicationGenerator {
       workarounds({ application }) {
         application.withAdminUi = false;
       },
+      prettierFolders({ application }) {
+        // The prettier:check and prettier:format scripts of the root package.json cover the server and the client
+        // workspaces (JHipster only adds the client sources, and the build plugins of Angular at the root).
+        const { nodeServerRootDir, clientRootDir } = application;
+        const folders = [nodeServerRootDir, ...['src', 'test', 'e2e', 'scripts'].map(dir => `${nodeServerRootDir}${dir}/**/`)];
+        if (application.clientFrameworkAny) {
+          folders.push(clientRootDir);
+          if (application.clientFrameworkAngular) {
+            folders.push(`${clientRootDir}build-plugins/**/`);
+          }
+        }
+        application.prettierFolders.push(...folders.filter(folder => !application.prettierFolders.includes(folder)));
+      },
       preparing({ application, applicationDefaults }) {
         if (application.databaseTypeSql) {
           prepareSqlApplicationProperties({ application });

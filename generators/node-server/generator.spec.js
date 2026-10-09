@@ -24,6 +24,17 @@ describe('SubGenerator node-server of nodejs JHipster blueprint', () => {
     it('should succeed', () => {
       expect(result.getStateSnapshot()).toMatchSnapshot();
     });
+
+    it('root scripts should run the server and the client workspaces', () => {
+      result.assertJsonFileContent('package.json', {
+        scripts: {
+          build: 'npm run build -w server && npm run build -w client',
+          lint: 'npm run lint --workspaces',
+          'lint:fix': 'npm run lint:fix --workspaces',
+          test: 'npm test --workspaces',
+        },
+      });
+    });
   });
   describe('without client', () => {
     beforeAll(async function () {
@@ -46,6 +57,19 @@ describe('SubGenerator node-server of nodejs JHipster blueprint', () => {
 
     it('README should match snapshot', () => {
       expect(result.getSnapshot('**/README.md')).toMatchSnapshot();
+    });
+
+    it('root scripts should run the server workspace', () => {
+      result.assertJsonFileContent('package.json', {
+        scripts: {
+          build: 'npm run build -w server',
+          lint: 'npm run lint --workspaces',
+          'lint:fix': 'npm run lint:fix --workspaces',
+          start: 'npm run start:server',
+          test: 'npm test --workspaces',
+        },
+      });
+      result.assertNoFileContent('package.json', 'no client');
     });
   });
   describe('with oauth2', () => {
