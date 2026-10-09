@@ -4,7 +4,7 @@
   "testEnvironment": "node",
   "testRegex": "(/e2e/.*|\\.(e2e-spec))\\.(ts)$",
   "transform": {
-    "^.+\\.(t|j)s$": "ts-jest"
+    "^.+\\.(t|j)s$": ["ts-jest", { "diagnostics": { "ignoreCodes": [151002] } }]
   },
   "coverageDirectory": "coverage",
   "setupFiles": [
