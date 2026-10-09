@@ -5,8 +5,8 @@ import { ParsedQs } from 'qs';
 
 <%_ if (typeormOrderSupport) { _%>
 export class Sort {
-  public property: string;
-  public direction: 'ASC' | 'DESC' | string;
+  public property = 'id';
+  public direction: 'ASC' | 'DESC' | string = 'ASC';
   constructor(sort?: string) {
     if (sort) {
       [this.property, this.direction] = sort.split(',');

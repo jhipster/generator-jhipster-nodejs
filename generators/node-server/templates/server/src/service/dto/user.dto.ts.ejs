@@ -21,7 +21,7 @@ export class <%= userLoginVmClass %> extends BaseDTO {
 
   @ApiProperty({ uniqueItems: true, example: 'myuser', description: 'User login' })
   @IsString()
-  login: string;
+  login!: string;
 
   @ApiProperty({ example: 'MyUser', description: 'User first name', required: false })
   firstName?: string;
@@ -31,7 +31,7 @@ export class <%= userLoginVmClass %> extends BaseDTO {
 
   @ApiProperty({ example: 'myuser@localhost.it', description: 'User email' })
   @IsEmail()
-  email: string;
+  email!: string;
 
   @ApiProperty({ example: 'true', description: 'User activation', required: false })
   activated?: boolean;
@@ -49,7 +49,7 @@ export class <%= userLoginVmClass %> extends BaseDTO {
 
   @Exclude()
   @ApiProperty({ example: 'myuser', description: 'User password' })
-  password: string;
+  password!: string;
 
   @ApiProperty({ example: 'http://my-image-url', description: 'Image url', required: false })
   imageUrl?: string;

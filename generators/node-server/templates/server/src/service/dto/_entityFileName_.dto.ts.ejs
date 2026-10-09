@@ -80,11 +80,11 @@ export class <%= dtoClass %> extends BaseDTO {
             <%_ } else { _%>
             @ApiProperty({ <%_ if (typeof field.javadoc != 'undefined') { _%> description: '<%- formatAsApiDescription(field.javadoc) %>' <%_ } else { _%> description: '<%= fieldName %> field' <%_ } if (!required) { _%>, required: false <%_ } _%>})
             <%_ } _%>
-        <%= fieldName %><%- field.fieldValidationRequired ? '' : '?' %>: <%= field.nodejsFieldType %>;
+        <%= fieldName %><%- field.fieldValidationRequired ? '!' : '?' %>: <%= field.nodejsFieldType %>;
 
         <%_ if ((fieldType === 'byte[]' || fieldType === 'ByteBuffer') && fieldTypeBlobContent !== 'text') { _%>
 
-        <%= fieldName %>ContentType<%- field.fieldValidationRequired ? '' : '?' %>: string;
+        <%= fieldName %>ContentType<%- field.fieldValidationRequired ? '!' : '?' %>: string;
         <%_ }
         } _%>
 
@@ -94,7 +94,7 @@ export class <%= dtoClass %> extends BaseDTO {
   <%- formatAsFieldJavadoc(relationship.javadoc) %>
         <%_ } _%>
   @ApiProperty({ type: () => <%= relationship.otherEntity.dtoClass %><%- relationship.collection ? ', isArray: true' : '' %>, <%_ if (typeof relationship.javadoc != 'undefined') { _%>  description: '<%- formatAsApiDescription(relationship.javadoc) %>' <%_ } else { _%> description: '<%= relationship.propertyName %> relationship' <%_ } _%> })
-  <%= relationship.propertyName %><%- relationship.relationshipValidationRequired ? '' : '?' %>: <%= relationship.otherEntity.dtoClass %><%- relationship.collection ? '[]' : '' %>;
+  <%= relationship.propertyName %><%- relationship.relationshipRequired ? '!' : '?' %>: <%= relationship.otherEntity.dtoClass %><%- relationship.collection ? '[]' : '' %>;
   <%_ } _%>
 
   // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
