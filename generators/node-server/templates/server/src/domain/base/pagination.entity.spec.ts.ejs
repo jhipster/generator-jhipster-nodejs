@@ -1,6 +1,6 @@
 import "reflect-metadata";
 import { describe, expect, it } from '@jest/globals';
-import { PageRequest } from './pagination.entity';
+import { DEFAULT_PAGE_SIZE, MAX_PAGE_SIZE, PageRequest } from './pagination.entity';
 
 describe('PageRequest', () => {
   it('passing default number parameters', () => {
@@ -46,5 +46,16 @@ describe('PageRequest', () => {
 <%_ if (typeormOrderSupport) { _%>
     expect(pageRequest.sort.asOrder()).toMatchObject({ foo: 'DESC' });
 <%_ } _%>
+  });
+
+  it('caps the size to the maximum page size', () => {
+    const pageRequest = new PageRequest('0', '100000');
+    expect(pageRequest.size).toBe(MAX_PAGE_SIZE);
+  });
+
+  it('uses the default size for a size below 1 and the first page for a negative page', () => {
+    const pageRequest = new PageRequest('-1', '0');
+    expect(pageRequest.page).toBe(0);
+    expect(pageRequest.size).toBe(DEFAULT_PAGE_SIZE);
   });
 });

@@ -1,5 +1,6 @@
 require('dotenv').config({ path: '.env' });
 import { NestFactory } from '@nestjs/core';
+import { NestExpressApplication } from '@nestjs/platform-express';
 <%_ if (serviceDiscoveryEureka) { _%>
 import cloudConfigClient from 'cloud-config-client';
 <%_ } _%>
@@ -27,7 +28,9 @@ async function bootstrap(): Promise<void> {
 <%_ } _%>
 
   const appOptions = { cors: true };
-  const app = await NestFactory.create(AppModule, appOptions);
+  const app = await NestFactory.create<NestExpressApplication>(AppModule, appOptions);
+  // Like JHipster Spring Boot, partial updates (PATCH) accept application/json and application/merge-patch+json
+  app.useBodyParser('json', { type: ['application/json', 'application/merge-patch+json'] });
   app.useGlobalPipes(
     new ValidationPipe({
       exceptionFactory: (): BadRequestException  => new BadRequestException('Validation error'),

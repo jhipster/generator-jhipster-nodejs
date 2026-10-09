@@ -35,6 +35,14 @@ export class HeaderUtil {
     this.createAlert(res, message, String(param));
   }
 
+  /**
+   * Like the failure alert of JHipster Spring Boot (BadRequestAlertException), the status comes from the thrown exception.
+   */
+  static addFailureAlertHeaders(res: Response, entityName: string, errorKey: string): any {
+    res.set('X-' + applicationName + '-error', 'error.' + errorKey);
+    res.set('X-' + applicationName + '-params', entityName);
+  }
+
   static addPaginationHeaders<T extends BaseEntity>(res: Response, page: Page<T>): any {
     const url = res.req.url;
     res.set('X-Total-Count', page.total.toString());
