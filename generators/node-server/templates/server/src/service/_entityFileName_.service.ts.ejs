@@ -66,14 +66,14 @@ export class <%= entityClass %>Service {
 
       async update(<%= entityInstance %>DTO: <%= dtoClass %>, updater?: string): Promise<<%= dtoClass %>> {
         const entity = <%= entityClass %>Mapper.fromDTOtoEntity(<%= entityInstance %>DTO);
-        // The creation audit fields stay as stored.
-        delete entity.createdBy;
-        delete entity.createdDate;
         if (updater) {
             entity.lastModifiedBy = updater;
         }
       <%_ if (databaseType === 'mongodb') { _%>
-        await this.<%= entityInstance %>Repository.update(entity.id!, entity);
+        // The MongoDB driver of TypeORM ignores the columns with update: false (the creation audit fields): leave them out.
+        const notUpdated = this.<%= entityInstance %>Repository.metadata.columns.filter(column => !column.isUpdate).map(column => column.propertyName);
+        const changes = Object.fromEntries(Object.entries(entity).filter(([property]) => !notUpdated.includes(property)));
+        await this.<%= entityInstance %>Repository.update(entity.id!, changes);
       <%_ } else { _%>
         await this.<%= entityInstance %>Repository.save(entity);
       <%_ } _%>
