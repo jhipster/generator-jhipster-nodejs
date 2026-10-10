@@ -47,6 +47,34 @@ describe('SubGenerator node-server of nodejs JHipster blueprint', () => {
     it('README should match snapshot', () => {
       expect(result.getSnapshot('**/README.md')).toMatchSnapshot();
     });
+
+    it('should generate header-util computing totalPages and enabling translation', () => {
+      result.assertFileContent(
+        'server/src/common/header-util.ts',
+        'const totalPages = pageSize > 0 ? Math.ceil(page.total / pageSize) : 0;',
+      );
+      result.assertFileContent('server/src/common/header-util.ts', 'const enableTranslation = true;');
+    });
+  });
+  describe('without translation', () => {
+    beforeAll(async function () {
+      await helpers
+        .run(SUB_GENERATOR_NAMESPACE)
+        .withJHipsterConfig({
+          enableTranslation: false,
+          skipClient: true,
+        })
+        .withOptions({
+          ignoreNeedlesError: true,
+        })
+        .withJHipsterGenerators()
+        .withConfiguredBlueprint()
+        .withBlueprintConfig({});
+    });
+
+    it('should generate header-util with enableTranslation disabled', () => {
+      result.assertFileContent('server/src/common/header-util.ts', 'const enableTranslation = false;');
+    });
   });
   describe('with oauth2', () => {
     beforeAll(async function () {

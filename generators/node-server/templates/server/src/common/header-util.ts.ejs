@@ -5,7 +5,7 @@ import { BaseEntity } from '../domain/base/base.entity';
 import { URL } from 'url';
 
 const applicationName = config.get('jhipster.clientApp.name');
-const enableTranslation = true;
+const enableTranslation = <%= Boolean(enableTranslation) %>;
 
 export class HeaderUtil {
   static createAlert(res: Response, message: string, param: string): any {
@@ -40,14 +40,16 @@ export class HeaderUtil {
     res.set('X-Total-Count', page.total.toString());
     const pageNumber = page.pageable.page;
     const pageSize = page.pageable.size;
+    const totalPages = pageSize > 0 ? Math.ceil(page.total / pageSize) : 0;
     const links: string[] = [];
-    if (pageNumber < page.total - 1) {
+    if (pageNumber < totalPages - 1) {
       links.push(this.prepareLink(url, pageNumber + 1, pageSize, 'next'));
     }
     if (pageNumber > 0) {
       links.push(this.prepareLink(url, pageNumber - 1, pageSize, 'prev'));
     }
-    links.push(this.prepareLink(url, page.total - 1, pageSize, 'last'));
+    const lastPage = totalPages > 0 ? totalPages - 1 : 0;
+    links.push(this.prepareLink(url, lastPage, pageSize, 'last'));
     links.push(this.prepareLink(url, 0, pageSize, 'first'));
     res.set('Link', links.join(','));
   }
