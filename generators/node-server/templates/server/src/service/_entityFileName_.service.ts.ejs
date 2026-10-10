@@ -57,9 +57,7 @@ export class <%= entityClass %>Service {
       async save(<%= entityInstance %>DTO: <%= dtoClass %>, creator?: string): Promise<<%= dtoClass %>> {
         const entity = <%= entityClass %>Mapper.fromDTOtoEntity(<%= entityInstance %>DTO);
         if (creator) {
-            if (!entity.createdBy) {
-                entity.createdBy = creator;
-            }
+            entity.createdBy = creator;
             entity.lastModifiedBy = creator;
         }
         const result = await this.<%= entityInstance %>Repository.save(entity);
@@ -68,25 +66,27 @@ export class <%= entityClass %>Service {
 
       async update(<%= entityInstance %>DTO: <%= dtoClass %>, updater?: string): Promise<<%= dtoClass %>> {
         const entity = <%= entityClass %>Mapper.fromDTOtoEntity(<%= entityInstance %>DTO);
+        // The creation audit fields stay as stored.
+        delete entity.createdBy;
+        delete entity.createdDate;
         if (updater) {
             entity.lastModifiedBy = updater;
         }
       <%_ if (databaseType === 'mongodb') { _%>
         await this.<%= entityInstance %>Repository.update(entity.id!, entity);
-        return <%= entityInstance %>DTO;
       <%_ } else { _%>
-        const result = await this.<%= entityInstance %>Repository.save(entity);
-        return <%= entityClass %>Mapper.fromEntityToDTO(result);
+        await this.<%= entityInstance %>Repository.save(entity);
       <%_ } _%>
+        // The stored entity, with its relationships and audit fields, rather than the request.
+        const result = await this.findById(entity.id!);
+        if (!result) {
+          throw new HttpException('Entity not found', HttpStatus.NOT_FOUND);
+        }
+        return result;
       }
 
-      async deleteById(id: <%= pkType %>): Promise<void | undefined> {
+      async deleteById(id: <%= pkType %>): Promise<void> {
         await this.<%= entityInstance %>Repository.delete(id);
-        const entityFind = await this.findById(id);
-        if (entityFind) {
-          throw new HttpException('Error, entity not deleted!', HttpStatus.NOT_FOUND);
-        }
-        return;
       }
 
 }
