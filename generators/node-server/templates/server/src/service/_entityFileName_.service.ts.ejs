@@ -73,7 +73,7 @@ export class <%= entityClass %>Service {
             entity.lastModifiedBy = updater;
         }
       <%_ if (databaseType === 'mongodb') { _%>
-        await this.<%= entityInstance %>Repository.update(entity.id!, updatableProperties(this.<%= entityInstance %>Repository, entity));
+        await this.<%= entityInstance %>Repository.update(entity.id!, updatableProperties(this.<%= entityInstance %>Repository.metadata, entity));
       <%_ } else { _%>
         await this.<%= entityInstance %>Repository.save(entity);
       <%_ } _%>
