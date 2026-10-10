@@ -182,6 +182,9 @@ exports[`SubGenerator server of nodejs JHipster blueprint > run > should succeed
   "server/src/security/index.ts": {
     "stateCleared": "modified",
   },
+  "server/src/security/jwt.util.ts": {
+    "stateCleared": "modified",
+  },
   "server/src/security/passport.jwt.strategy.ts": {
     "stateCleared": "modified",
   },

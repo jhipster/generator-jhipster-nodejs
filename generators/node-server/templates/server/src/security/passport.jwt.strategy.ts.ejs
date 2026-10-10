@@ -2,7 +2,7 @@ import { ExtractJwt, Strategy<% if (generateBuiltInUserEntity) { %>, VerifiedCal
 import { PassportStrategy } from '@nestjs/passport';
 import { Injectable<% if (generateBuiltInUserEntity) { %>, UnauthorizedException<% } %> } from '@nestjs/common';
 import { Payload } from './payload.interface';
-import { config } from '../config';
+import { JWT_ALGORITHM, jwtSecretKey } from './jwt.util';
 <%_ if (generateBuiltInUserEntity) { _%>
 import { AuthService } from '../service/auth.service';
 <%_ } else { _%>
@@ -19,7 +19,8 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
-      secretOrKey: config['jhipster.security.authentication.jwt.base64-secret'],
+      secretOrKey: jwtSecretKey(),
+      algorithms: [JWT_ALGORITHM],
     });
   }
 

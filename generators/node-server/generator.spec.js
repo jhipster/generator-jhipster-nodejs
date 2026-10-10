@@ -24,6 +24,13 @@ describe('SubGenerator node-server of nodejs JHipster blueprint', () => {
     it('should succeed', () => {
       expect(result.getStateSnapshot()).toMatchSnapshot();
     });
+
+    it('should sign and validate with the decoded base64 secret on HS512, like Spring Boot', () => {
+      result.assertFile('server/src/security/jwt.util.ts');
+      result.assertFileContent('server/src/module/auth.module.ts', 'secret: jwtSecretKey()');
+      result.assertFileContent('server/src/module/auth.module.ts', 'algorithm: JWT_ALGORITHM');
+      result.assertFileContent('server/src/security/passport.jwt.strategy.ts', 'algorithms: [JWT_ALGORITHM]');
+    });
   });
   describe('without client', () => {
     beforeAll(async function () {
@@ -103,7 +110,11 @@ describe('SubGenerator node-server of nodejs JHipster blueprint', () => {
     });
 
     it('should only validate the tokens, without users nor authentication API', () => {
-      result.assertFile(['server/src/security/passport.jwt.strategy.ts', 'server/src/web/rest/account.controller.ts']);
+      result.assertFile([
+        'server/src/security/passport.jwt.strategy.ts',
+        'server/src/security/jwt.util.ts',
+        'server/src/web/rest/account.controller.ts',
+      ]);
       result.assertNoFile([
         'server/src/domain/user.entity.ts',
         'server/src/service/user.service.ts',
@@ -112,6 +123,7 @@ describe('SubGenerator node-server of nodejs JHipster blueprint', () => {
         'server/src/service/dto/user-login.dto.ts',
         'server/src/service/dto/password-change.dto.ts',
       ]);
+      result.assertFileContent('server/src/security/passport.jwt.strategy.ts', 'secretOrKey: jwtSecretKey()');
       result.assertNoFileContent('server/src/security/passport.jwt.strategy.ts', 'AuthService');
     });
   });

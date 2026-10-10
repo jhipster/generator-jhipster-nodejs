@@ -19,6 +19,7 @@ import { UserOauth2Controller } from '../web/rest/user.oauth2.controller';
 <%_ } _%>
 <%_ if (authenticationType === 'jwt' && generateBuiltInUserEntity) { _%>
 import { config } from '../config';
+import { JWT_ALGORITHM, jwtSecretKey } from '../security/jwt.util';
 <%_ } _%>
 <%_ if (generateBuiltInAuthorityEntity) { _%>
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -42,8 +43,11 @@ import { AccountController } from '../web/rest/account.controller';
   PassportModule,
   <%_ if (authenticationType === 'jwt' && generateBuiltInUserEntity) { _%>
     JwtModule.register({
-      secret: config['jhipster.security.authentication.jwt.base64-secret'],
-      signOptions: { expiresIn: Number(config['jhipster.security.authentication.jwt.token-validity-in-seconds']) },
+      secret: jwtSecretKey(),
+      signOptions: {
+        algorithm: JWT_ALGORITHM,
+        expiresIn: Number(config['jhipster.security.authentication.jwt.token-validity-in-seconds']),
+      },
     }),
   <%_ } else if (authenticationType === 'oauth2') { _%>
   HttpModule,

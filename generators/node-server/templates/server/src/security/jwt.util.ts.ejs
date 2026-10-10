@@ -1,0 +1,8 @@
+import { config } from '../config';
+
+export const JWT_ALGORITHM = 'HS512';
+
+/** The base64-secret property is encoded, so it is decoded here to key on, like the Spring Boot `SecurityJwtConfiguration` does. */
+export function jwtSecretKey(): Buffer {
+  return Buffer.from(config['jhipster.security.authentication.jwt.base64-secret'], 'base64');
+}
