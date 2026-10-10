@@ -4,6 +4,9 @@ import { FindManyOptions, FindOneOptions, Repository } from 'typeorm';
 import { <%= entityClass %> } from '../domain/<%= entityFileName %>.entity';
 import { <%= dtoClass %> }  from '../service/dto/<%= entityFileName %>.dto';
 import { <%= entityClass %>Mapper }  from '../service/mapper/<%= entityFileName %>.mapper';
+<%_ if (databaseType === 'mongodb') { _%>
+import { updatableProperties } from '../common/updatable-properties';
+<%_ } _%>
 
 <%_
 const eagerLoadRelations = relationships.filter(rel => rel.ownerSide).map(rel => rel.propertyName);
@@ -70,10 +73,7 @@ export class <%= entityClass %>Service {
             entity.lastModifiedBy = updater;
         }
       <%_ if (databaseType === 'mongodb') { _%>
-        // The MongoDB driver of TypeORM ignores the columns with update: false (the creation audit fields): leave them out.
-        const notUpdated = this.<%= entityInstance %>Repository.metadata.columns.filter(column => !column.isUpdate).map(column => column.propertyName);
-        const changes = Object.fromEntries(Object.entries(entity).filter(([property]) => !notUpdated.includes(property)));
-        await this.<%= entityInstance %>Repository.update(entity.id!, changes);
+        await this.<%= entityInstance %>Repository.update(entity.id!, updatableProperties(this.<%= entityInstance %>Repository, entity));
       <%_ } else { _%>
         await this.<%= entityInstance %>Repository.save(entity);
       <%_ } _%>

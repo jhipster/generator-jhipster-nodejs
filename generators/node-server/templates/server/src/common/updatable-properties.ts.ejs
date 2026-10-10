@@ -1,0 +1,14 @@
+import { ObjectLiteral, QueryDeepPartialEntity, Repository } from 'typeorm';
+
+/**
+ * The properties of an entity a repository may update: every property but the columns declared with `update: false`,
+ * like the creation audit fields. The MongoDB driver of TypeORM ignores the update: false option and would write those
+ * columns.
+ */
+export function updatableProperties<Entity extends ObjectLiteral>(
+  repository: Repository<Entity>,
+  entity: Entity,
+): QueryDeepPartialEntity<Entity> {
+  const notUpdated = repository.metadata.columns.filter(column => !column.isUpdate).map(column => column.propertyName);
+  return Object.fromEntries(Object.entries(entity).filter(([property]) => !notUpdated.includes(property))) as QueryDeepPartialEntity<Entity>;
+}
