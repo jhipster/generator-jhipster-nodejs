@@ -33,6 +33,7 @@ export class <%= entityClass %>Controller {
     status: 200,
     description: 'List all records',
     type: <%= dtoClass %>,
+    isArray: true,
   })
   async getAll(@Req() req: Request): Promise<<%= dtoClass %> []>  {
     const pageRequest: PageRequest = new PageRequest(

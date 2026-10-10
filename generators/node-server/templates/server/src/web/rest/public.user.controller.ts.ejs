@@ -22,6 +22,7 @@ export class PublicUserController {
       status: 200,
       description: 'List all users records',
       type: <%= user.dtoClass%>,
+      isArray: true,
   })
   async getAllPublicUsers(@Req() req: Request): Promise<<%= user.dtoClass%>[]> {
       const pageRequest: PageRequest = new PageRequest(
