@@ -5,7 +5,7 @@ import { BaseEntity } from '../domain/base/base.entity';
 import { URL } from 'url';
 
 const applicationName = config.get('jhipster.clientApp.name');
-const enableTranslation = true;
+const enableTranslation = <%= enableTranslation %>;
 
 export class HeaderUtil {
   static createAlert(res: Response, message: string, param: string): any {
@@ -35,19 +35,33 @@ export class HeaderUtil {
     this.createAlert(res, message, String(param));
   }
 
+  /**
+   * The failure headers of a request, like the createFailureAlert of JHipster Spring Boot's HeaderUtil.
+   */
+  static addFailureAlertHeaders(res: Response, entityName: string, errorKey: string, defaultMessage: string): any {
+    const message = enableTranslation ? 'error.' + errorKey : defaultMessage;
+    res.set('X-' + applicationName + '-error', message);
+    res.set('X-' + applicationName + '-params', entityName);
+  }
+
+  /**
+   * The pagination headers, like the PaginationUtil of JHipster Spring Boot: the total count, and the links of the next,
+   * previous, last and first pages.
+   */
   static addPaginationHeaders<T extends BaseEntity>(res: Response, page: Page<T>): any {
     const url = res.req.url;
     res.set('X-Total-Count', page.total.toString());
     const pageNumber = page.pageable.page;
     const pageSize = page.pageable.size;
+    const totalPages = Math.ceil(page.total / pageSize);
     const links: string[] = [];
-    if (pageNumber < page.total - 1) {
+    if (pageNumber < totalPages - 1) {
       links.push(this.prepareLink(url, pageNumber + 1, pageSize, 'next'));
     }
     if (pageNumber > 0) {
       links.push(this.prepareLink(url, pageNumber - 1, pageSize, 'prev'));
     }
-    links.push(this.prepareLink(url, page.total - 1, pageSize, 'last'));
+    links.push(this.prepareLink(url, Math.max(totalPages - 1, 0), pageSize, 'last'));
     links.push(this.prepareLink(url, 0, pageSize, 'first'));
     res.set('Link', links.join(','));
   }

@@ -10,7 +10,19 @@ import { LoggingInterceptor } from '../../common/interceptors/logging.intercepto
 
 <%_
 const pkType = primaryKey.tsType;
+const sortProperties = [
+  primaryKey.name,
+  ...fields.filter(field => !field.id).map(field => field.fieldName),
+  ...relationships
+    .filter(relationship => relationship.ownerSide && !relationship.collection)
+    .flatMap(relationship => [`${relationship.propertyName}.id`, `${relationship.propertyName}.${relationship.otherEntityField}`]),
+  'createdBy', 'createdDate', 'lastModifiedBy', 'lastModifiedDate',
+].filter((value, index, all) => all.indexOf(value) === index);
 _%>
+<%_ if (typeormOrderSupport) { _%>
+/** The properties the list can be sorted on: the fields, the displayed field of the relationships and the audit fields. */
+const SORT_PROPERTIES = [<%- sortProperties.map(property => `'${property}'`).join(', ') %>];
+<%_ } _%>
 
 @Controller('api/<%= entityApiUrl %>')
 @UseGuards(AuthGuard, RolesGuard)
@@ -33,20 +45,22 @@ export class <%= entityClass %>Controller {
     status: 200,
     description: 'List all records',
     type: <%= dtoClass %>,
+    isArray: true,
   })
   async getAll(@Req() req: Request): Promise<<%= dtoClass %> []>  {
     const pageRequest: PageRequest = new PageRequest(
       req.query.page,
       req.query.size,
 <%_ if (typeormOrderSupport) { _%>
-      req.query.sort ?? '<%- primaryKey.name %>,ASC'
+      req.query.sort ?? '<%- primaryKey.name %>,ASC',
+      SORT_PROPERTIES,
 <%_ } _%>
     );
     const [results, count] = await this.<%= entityInstance %>Service.findAndCount({
       skip: +pageRequest.page * pageRequest.size,
       take: +pageRequest.size,
 <%_ if (typeormOrderSupport) { _%>
-      order: pageRequest.sort.asOrder(),
+      order: pageRequest.asOrder(),
 <%_ } _%>
     });
     HeaderUtil.addPaginationHeaders(req.res, new Page(results, count, pageRequest));
@@ -78,8 +92,14 @@ export class <%= entityClass %>Controller {
   })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
   async post(@Req() req: Request, @Body() <%= entityInstance %>DTO: <%= dtoClass %>): Promise<<%= dtoClass %>>  {
+    if (<%= entityInstance %>DTO.id !== undefined && <%= entityInstance %>DTO.id !== null) {
+      // Like JHipster Spring Boot, a new entity cannot have an id: it would update an existing one.
+      HeaderUtil.addFailureAlertHeaders(req.res, '<%= entityInstance %>', 'idexists', 'A new <%= entityInstance %> cannot already have an ID');
+      throw new BadRequestException('A new <%= entityInstance %> cannot already have an ID');
+    }
     const created = await this.<%= entityInstance %>Service.save(<%= entityInstance %>DTO, req.user?.login);
     HeaderUtil.addEntityCreatedHeaders(req.res, '<%= entityClass %>', created.id);
+    req.res.location(`/api/<%= entityApiUrl %>/${created.id}`);
     return created;
   }
 

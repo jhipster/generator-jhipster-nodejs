@@ -22,6 +22,7 @@ export class PublicUserController {
       status: 200,
       description: 'List all users records',
       type: <%= user.dtoClass%>,
+      isArray: true,
   })
   async getAllPublicUsers(@Req() req: Request): Promise<<%= user.dtoClass%>[]> {
       const pageRequest: PageRequest = new PageRequest(
@@ -29,13 +30,15 @@ export class PublicUserController {
         req.query.size,
 <%_ if (typeormOrderSupport) { _%>
         req.query.sort ?? '<%- user.primaryKey.name %>,ASC',
+        // The allowed ordered properties of JHipster Spring Boot's PublicUserResource.
+        ['id', 'login', 'firstName', 'lastName', 'email', 'activated', 'langKey'],
 <%_ } _%>
       );
       const [results, count] = await this.authService.getAllUsers({
           skip: +pageRequest.page * pageRequest.size,
           take: +pageRequest.size,
 <%_ if (typeormOrderSupport) { _%>
-          order: pageRequest.sort.asOrder(),
+          order: pageRequest.asOrder(),
 <%_ } _%>
       });
       HeaderUtil.addPaginationHeaders(req.res, new Page(results, count, pageRequest));

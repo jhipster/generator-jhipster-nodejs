@@ -71,13 +71,25 @@ describe('<%= entityClass %> Controller', () => {
     });
 
     it('/POST create <%= entityApiUrl %>', async () => {
-
-        const createdEntity: <%= dtoClass %> = (await request(app.getHttpServer())
+        const { id: _id, ...newEntity } = entityMock;
+        const response = await request(app.getHttpServer())
             .post('/api/<%= entityApiUrl %>')
-            .send(entityMock)
-            .expect(201)).body;
+            .send(newEntity)
+            .expect(201);
+        const createdEntity: <%= dtoClass %> = response.body;
 
         expect(createdEntity).toEqual(entityMock);
+        expect(response.headers.location).toBe(`/api/<%= entityApiUrl %>/${entityMock.id}`);
+    }
+    );
+
+    it('/POST create <%= entityApiUrl %> with an id', async () => {
+        const response = await request(app.getHttpServer())
+            .post('/api/<%= entityApiUrl %>')
+            .send(entityMock)
+            .expect(400);
+
+        expect(Object.entries(response.headers).find(([name]) => name.endsWith('-error'))?.[1]).toBe(<%- enableTranslation ? "'error.idexists'" : `'A new ${entityInstance} cannot already have an ID'` %>);
 
     }
     );

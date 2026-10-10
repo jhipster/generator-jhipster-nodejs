@@ -1,21 +1,31 @@
+<%_ if (typeormOrderSupport) { _%>
+import { BadRequestException } from '@nestjs/common';
+<%_ } _%>
 import { BaseEntity } from './base.entity';
 import { Type, Expose as JsonProperty } from 'class-transformer';
 import { ParsedQs } from 'qs';
 
 <%_ if (typeormOrderSupport) { _%>
+export type SortDirection = 'ASC' | 'DESC';
+
 export class Sort {
   public property = 'id';
-  public direction: 'ASC' | 'DESC' | string = 'ASC';
+  public direction: SortDirection = 'ASC';
   constructor(sort?: string) {
     if (sort) {
-      [this.property, this.direction] = sort.split(',');
+      const [property, direction] = sort.split(',');
+      this.property = property.trim();
+      // Like Spring Data, the direction is case insensitive and ascending by default.
+      this.direction = direction?.trim().toUpperCase() === 'DESC' ? 'DESC' : 'ASC';
     }
   }
 
+  /** The TypeORM order of the property, nested for a property of a relationship like `region.name`. */
   asOrder(): any {
-    const order: Record<string, string> = {};
-    order[this.property] = this.direction;
-    return order;
+    return this.property
+      .split('.')
+      .reverse()
+      .reduce<any>((order, key) => ({ [key]: order }), this.direction);
   }
 }
 <%_ } _%>
@@ -23,29 +33,63 @@ export class Sort {
 export type PaginationQueryType = string | ParsedQs | (string | ParsedQs)[];
 
 export class PageRequest {
+  /** The maximum size of a page, the default of Spring Data. */
+  static readonly MAX_SIZE = 2000;
+
   @JsonProperty()
   page = 0;
   @JsonProperty()
   size = 20;
 <%_ if (typeormOrderSupport) { _%>
   @Type(() => Sort)
-  sort: Sort = new Sort('id,ASC');
+  sort: Sort[] = [new Sort('id,ASC')];
 <%_ } _%>
 
   constructor(
     page?: number | PaginationQueryType,
     size?: number | PaginationQueryType
 <%_ if (typeormOrderSupport) { _%>
-    ,sort?: PaginationQueryType
+    ,sort?: PaginationQueryType,
+    /** The properties a request can sort on, like the allowed ordered properties of JHipster's UserResource: any when not given. */
+    sortProperties?: string[]
 <%_ } _%>
   ) {
-    this.page = PageRequest.handleNumberTypes(page, this.page);
-    this.size = PageRequest.handleNumberTypes(size, this.size);
+    this.page = Math.max(PageRequest.handleNumberTypes(page, this.page), 0);
+    const requestedSize = PageRequest.handleNumberTypes(size, this.size);
+    this.size = requestedSize < 1 ? this.size : Math.min(requestedSize, PageRequest.MAX_SIZE);
 <%_ if (typeormOrderSupport) { _%>
-    this.sort = new Sort(PageRequest.handleQueryType(sort));
+    const sorts = PageRequest.handleQueryTypes(sort).map(value => new Sort(value));
+    const invalid = sortProperties ? sorts.find(each => !sortProperties.includes(each.property)) : undefined;
+    if (invalid) {
+      throw new BadRequestException(`Invalid sort property: ${invalid.property}`);
+    }
+    if (sorts.length > 0) {
+      this.sort = sorts;
+    }
 <%_ } _%>
   }
 
+<%_ if (typeormOrderSupport) { _%>
+  /** The TypeORM order of every sort, in the order of the request, the properties of a relationship merged. */
+  asOrder(): any {
+    const order: any = {};
+    for (const { property, direction } of this.sort) {
+      const keys = property.split('.');
+      let target = order;
+      for (const key of keys.slice(0, -1)) {
+        target = target[key] ??= {};
+      }
+      target[keys[keys.length - 1]] = direction;
+    }
+    return order;
+  }
+
+  /** Every string of a query parameter given several times, like several `sort` parameters. */
+  public static handleQueryTypes(pa: PaginationQueryType | undefined): string[] {
+    return (Array.isArray(pa) ? pa : [pa]).filter((value): value is string => typeof value === 'string' && value.length > 0);
+  }
+
+<%_ } _%>
   public static handleNumberTypes(pp: number | PaginationQueryType | undefined, fallback: number): number {
     if (typeof pp === 'number') {
       return pp;
