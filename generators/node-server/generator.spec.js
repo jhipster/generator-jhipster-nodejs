@@ -35,6 +35,10 @@ describe('SubGenerator node-server of nodejs JHipster blueprint', () => {
         },
       });
     });
+
+    it('should set isArray on getAllUsers ApiResponse in user.controller.ts', () => {
+      result.assertFileContent('server/src/web/rest/user.controller.ts', 'isArray: true');
+    });
   });
   describe('without client', () => {
     beforeAll(async function () {
@@ -207,6 +211,7 @@ describe('SubGenerator node-server of nodejs JHipster blueprint', () => {
         'server/src/web/rest/public.user.controller.ts',
         'server/src/migrations/1570200490072-SeedUsersRoles.ts',
       ]);
+      result.assertFileContent('server/src/web/rest/public.user.controller.ts', 'isArray: true');
       result.assertNoFile(['server/src/web/rest/user.controller.ts', 'server/e2e/user.e2e-spec.ts']);
       result.assertNoFileContent('server/src/module/user.module.ts', 'UserController');
     });
