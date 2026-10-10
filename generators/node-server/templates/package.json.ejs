@@ -47,7 +47,8 @@
     "build": "<%= clientPackageManager %> run build -w server",
 <%_ } _%>
     "build:app": "<%= clientPackageManager %> run build -w server",
-    "lint:fix": "echo \"INFO: no client found\"",
+    "lint": "<%= clientPackageManager %> run lint --workspaces",
+    "lint:fix": "<%= clientPackageManager %> run lint:fix --workspaces",
     "prettier:check": "prettier --check \"{,src/**/}*.{<%= prettierExtensions %>}\"",
     "prettier:format": "prettier --write \"{,src/**/}*.{<%= prettierExtensions %>}\"",
 <%_ if (clientFrameworkAny) { _%>
@@ -68,6 +69,6 @@
 <%_ if (!databaseTypeSql) { _%>
     "posttest:server:e2e": "npm run docker:db:down",
 <%_ } _%>
-    "test": "echo \"INFO: no client test found\""
+    "test": "<%= clientPackageManager %> test --workspaces"
   }
 }
