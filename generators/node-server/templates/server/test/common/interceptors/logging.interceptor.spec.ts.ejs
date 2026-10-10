@@ -1,0 +1,120 @@
+import 'reflect-metadata';
+import { beforeEach, describe, expect, it, jest } from '@jest/globals';
+import { CallHandler, ExecutionContext, Logger } from '@nestjs/common';
+import { Reflector } from '@nestjs/core';
+import { firstValueFrom, of, throwError } from 'rxjs';
+import {
+  LoggingInterceptor,
+  SkipLogging,
+  SKIP_LOGGING_KEY,
+} from '../../../src/common/interceptors/logging.interceptor';
+
+describe('LoggingInterceptor', () => {
+  let interceptor: LoggingInterceptor;
+  let reflector: Reflector;
+  let debugSpy: any;
+
+  beforeEach(() => {
+    reflector = new Reflector();
+    interceptor = new LoggingInterceptor(reflector);
+    debugSpy = jest.spyOn(Logger.prototype, 'debug').mockImplementation(() => {});
+  });
+
+  const createMockContext = (options: {
+    className?: string;
+    handlerName?: string;
+    method?: string;
+    url?: string;
+    statusCode?: number;
+    handled?: boolean;
+  } = {}): ExecutionContext => {
+    const req: any = {
+      method: options.method ?? 'GET',
+      url: options.url ?? '/api/test',
+      __loggingInterceptorHandled: options.handled,
+    };
+    const res: any = {
+      statusCode: options.statusCode ?? 200,
+    };
+    const handler = function testHandler() {};
+    class TestController {}
+
+    return {
+      switchToHttp: () => ({
+        getRequest: () => req,
+        getResponse: () => res,
+      }),
+      getClass: () => TestController,
+      getHandler: () => handler,
+    } as unknown as ExecutionContext;
+  };
+
+  const createMockCallHandler = (response: any = { data: 'ok' }): CallHandler => ({
+    handle: () => of(response),
+  });
+
+  it('logs handler, method, url, status code and duration on success', async () => {
+    const context = createMockContext({ method: 'GET', url: '/api/entities', statusCode: 200 });
+    const next = createMockCallHandler();
+
+    await firstValueFrom(interceptor.intercept(context, next));
+
+    expect(debugSpy).toHaveBeenCalledTimes(1);
+    const logMessage = debugSpy.mock.calls[0][0];
+    expect(logMessage).toMatch(/^TestController\.testHandler\(\) : GET \/api\/entities 200 \d+ms$/);
+  });
+
+  it('logs status code and duration when handler throws an error', async () => {
+    const context = createMockContext({ method: 'POST', url: '/api/entities', statusCode: 500 });
+    const error = { status: 404, message: 'Not Found' };
+    const next: CallHandler = {
+      handle: () => throwError(() => error),
+    };
+
+    await expect(firstValueFrom(interceptor.intercept(context, next))).rejects.toEqual(error);
+
+    expect(debugSpy).toHaveBeenCalledTimes(1);
+    const logMessage = debugSpy.mock.calls[0][0];
+    expect(logMessage).toMatch(/^TestController\.testHandler\(\) : POST \/api\/entities 404 \d+ms$/);
+  });
+
+  it('skips logging when handler or class has SkipLogging metadata', async () => {
+    const context = createMockContext();
+    const next = createMockCallHandler();
+    jest.spyOn(reflector, 'getAllAndOverride').mockReturnValue(true);
+
+    await firstValueFrom(interceptor.intercept(context, next));
+
+    expect(debugSpy).not.toHaveBeenCalled();
+  });
+
+  it('prevents double logging if request was already handled by global interceptor', async () => {
+    const context = createMockContext({ handled: true });
+    const next = createMockCallHandler();
+
+    await firstValueFrom(interceptor.intercept(context, next));
+
+    expect(debugSpy).not.toHaveBeenCalled();
+  });
+
+  it('works when reflector is not provided', async () => {
+    const interceptorNoReflector = new LoggingInterceptor();
+    const context = createMockContext({ method: 'DELETE', url: '/api/entities/1', statusCode: 204 });
+    const next = createMockCallHandler();
+
+    await firstValueFrom(interceptorNoReflector.intercept(context, next));
+
+    expect(debugSpy).toHaveBeenCalledTimes(1);
+    const logMessage = debugSpy.mock.calls[0][0];
+    expect(logMessage).toMatch(/^TestController\.testHandler\(\) : DELETE \/api\/entities\/1 204 \d+ms$/);
+  });
+
+  it('exports SkipLogging decorator setting SKIP_LOGGING_KEY metadata', () => {
+    class SampleController {
+      @SkipLogging()
+      sampleEndpoint() {}
+    }
+    const metadata = Reflect.getMetadata(SKIP_LOGGING_KEY, SampleController.prototype.sampleEndpoint);
+    expect(metadata).toBe(true);
+  });
+});

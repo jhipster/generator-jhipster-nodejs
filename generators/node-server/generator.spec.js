@@ -35,6 +35,15 @@ describe('SubGenerator node-server of nodejs JHipster blueprint', () => {
         },
       });
     });
+
+    it('should generate the logging interceptor and test with status, duration and SkipLogging opt-out', () => {
+      result.assertFile([
+        'server/src/common/interceptors/logging.interceptor.ts',
+        'server/test/common/interceptors/logging.interceptor.spec.ts',
+      ]);
+      result.assertFileContent('server/src/common/interceptors/logging.interceptor.ts', 'export const SkipLogging');
+      result.assertFileContent('server/src/common/interceptors/logging.interceptor.ts', '${statusCode} ${duration}ms');
+    });
   });
   describe('without client', () => {
     beforeAll(async function () {

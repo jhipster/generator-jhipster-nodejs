@@ -1,12 +1,58 @@
-import { CallHandler, ExecutionContext, Injectable, NestInterceptor, Logger } from '@nestjs/common';
-import { Observable } from 'rxjs';
-import { Request } from 'express';
+import { CallHandler, ExecutionContext, Injectable, Logger, NestInterceptor, SetMetadata } from '@nestjs/common';
+import { Reflector } from '@nestjs/core';
+import { Observable, tap } from 'rxjs';
+import { Request, Response } from 'express';
+
+export const SKIP_LOGGING_KEY = 'skipLogging';
+export const SkipLogging = () => SetMetadata(SKIP_LOGGING_KEY, true);
 
 @Injectable()
 export class LoggingInterceptor implements NestInterceptor {
+  private readonly logger = new Logger('LoggingInterceptor');
+
+  constructor(private readonly reflector?: Reflector) {}
+
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
-    const req: Request = context.switchToHttp().getRequest();
-    Logger.debug(`${context.getClass().name}.${context.getHandler().name}() : ${req.method} ${req.url}`, 'LoggingInterceptor');
-    return next.handle();
+    if (this.reflector) {
+      const skip = this.reflector.getAllAndOverride<boolean>(SKIP_LOGGING_KEY, [
+        context.getHandler(),
+        context.getClass(),
+      ]);
+      if (skip) {
+        return next.handle();
+      }
+    }
+
+    const http = context.switchToHttp();
+    const req = http.getRequest<Request>();
+    const res = http.getResponse<Response>();
+
+    if (req && (req as any).__loggingInterceptorHandled) {
+      return next.handle();
+    }
+    if (req) {
+      (req as any).__loggingInterceptorHandled = true;
+    }
+
+    const startTime = Date.now();
+    const method = req?.method;
+    const url = req?.url;
+    const handler = `${context.getClass().name}.${context.getHandler().name}()`;
+
+    return next.handle().pipe(
+      tap({
+        next: () => {
+          const duration = Date.now() - startTime;
+          const statusCode = res?.statusCode ?? 200;
+          this.logger.debug(`${handler} : ${method} ${url} ${statusCode} ${duration}ms`);
+        },
+        error: (error: any) => {
+          const duration = Date.now() - startTime;
+          const statusCode = error?.status || error?.statusCode || res?.statusCode || 500;
+          this.logger.debug(`${handler} : ${method} ${url} ${statusCode} ${duration}ms`);
+        },
+      }),
+    );
   }
 }
+
