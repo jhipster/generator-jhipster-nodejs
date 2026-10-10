@@ -26,10 +26,18 @@
     "test:watch": "npm run jest -- --watch",
     "test:debug": "node --experimental-vm-modules --inspect-brk -r tsconfig-paths/register -r ts-node/register ../node_modules/jest/bin/jest.js --runInBand",
     "test:e2e": "npm run jest -- --silent --force-exit --coverage --config ./e2e/jest.e2e.config.json",
-    "typeorm": "ts-node -P ./tsconfig.json -r tsconfig-paths/register ../node_modules/.bin/typeorm -f ormconfig.ts",
-    "typeorm:migration:generate": "npm run typeorm -- migration:generate -n schema",
+    "typeorm": "typeorm-ts-node-commonjs -d ormconfig.ts",
+    "typeorm:migration:create": "typeorm-ts-node-commonjs migration:create src/migrations/migration",
+<%_ if (databaseTypeSql) { _%>
+    "typeorm:migration:generate": "npm run typeorm -- migration:generate src/migrations/schema",
+<%_ } _%>
     "typeorm:migration:run": "npm run typeorm -- migration:run",
+    "typeorm:migration:revert": "npm run typeorm -- migration:revert",
+    "typeorm:migration:show": "npm run typeorm -- migration:show"<% if (databaseTypeSql) { %>,<% } %>
+<%_ if (databaseTypeSql) { _%>
+    "typeorm:schema:log": "npm run typeorm -- schema:log",
     "typeorm:schema:sync": "npm run typeorm -- schema:sync"
+<%_ } _%>
   },
   "dependencies": {
     "<%- nodeProdDatabaseDriver %>": "<%- nodeServerDependencies[nodeProdDatabaseDriver] %>",

@@ -74,6 +74,31 @@ According [typeORM migration guide](https://github.com/typeorm/typeorm/blob/mast
 there are under [src/migrations/](src/migrations/) the scripts to create the database schema and after to insert data seed.
 The scripts are automatically run in the first start up, and after anymore.
 
+The `typeorm` npm scripts run the typeorm CLI on the database `BACKEND_ENV` selects (see [ormconfig.ts](ormconfig.ts)):
+
+```bash
+<%_ if (databaseTypeSql) { _%>
+# generate a migration from the changes of the entities
+$ npm run typeorm:migration:generate
+<%_ } _%>
+# create an empty migration
+$ npm run typeorm:migration:create
+# run, revert or list the migrations
+$ npm run typeorm:migration:run
+$ npm run typeorm:migration:revert
+$ npm run typeorm:migration:show
+<%_ if (databaseTypeSql) { _%>
+# show the SQL that would synchronize the schema with the entities
+$ npm run typeorm:schema:log
+<%_ } _%>
+```
+<%_ if (databaseTypeMongodb) { _%>
+
+With MongoDB, run them with `BACKEND_ENV=prod` (the dev and test profiles use an in-memory server). MongoDB has no
+schema to compare, so migrations are written by hand with the MongoDB API (`queryRunner.query()` does not support
+MongoDB): use `queryRunner.dataSource.mongoManager`.
+<%_ } _%>
+
 ## Running the app
 
 ```bash
