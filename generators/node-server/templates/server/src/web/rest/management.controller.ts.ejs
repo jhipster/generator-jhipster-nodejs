@@ -1,16 +1,23 @@
-import { Controller, Get, Logger, UseInterceptors } from '@nestjs/common';
+import { Controller, Get, Logger, ServiceUnavailableException, UseInterceptors } from '@nestjs/common';
+import { DataSource } from 'typeorm';
 import { LoggingInterceptor } from '../../common/interceptors/logging.interceptor';
 import { ApiTags, ApiResponse, ApiOperation, ApiExcludeEndpoint } from '@nestjs/swagger';
 
+export interface Health {
+  status: 'UP' | 'DOWN';
+}
+
 @Controller('management')
-@UseInterceptors(LoggingInterceptor)
 @ApiTags('management-controller')
 export class ManagementController {
 
   logger = new Logger('ManagementController');
 
+  constructor(private readonly dataSource: DataSource) {}
+
   @ApiExcludeEndpoint()
   @Get('/info')
+  @UseInterceptors(LoggingInterceptor)
   @ApiOperation({ summary: 'Microservice Info' })
   @ApiResponse({
     status: 200,
@@ -22,5 +29,36 @@ export class ManagementController {
           'display-ribbon-on-profiles': 'dev',
         };
     }
+
+  /**
+   * The health of the application, like the health endpoint of Spring Boot Actuator: UP when the database answers,
+   * DOWN with the status 503 otherwise. Public, and not logged by the LoggingInterceptor, the container and the service
+   * discovery health checks call it every few seconds.
+   */
+  @ApiExcludeEndpoint()
+  @Get('/health')
+  async health(): Promise<Health> {
+    if (!(await this.isDatabaseUp())) {
+      throw new ServiceUnavailableException({ status: 'DOWN' } satisfies Health);
+    }
+    return { status: 'UP' };
+  }
+
+  private async isDatabaseUp(): Promise<boolean> {
+    if (!this.dataSource.isInitialized) {
+      return false;
+    }
+    try {
+<%_ if (databaseTypeMongodb) { _%>
+      await this.dataSource.mongoManager.mongoQueryRunner.databaseConnection.db().command({ ping: 1 });
+<%_ } else { _%>
+      await this.dataSource.query(<% if (prodDatabaseTypeOracle) { %>this.dataSource.options.type === 'oracle' ? 'SELECT 1 FROM DUAL' : <% } %>'SELECT 1');
+<%_ } _%>
+      return true;
+    } catch (error) {
+      this.logger.warn(`The database is not reachable: ${error instanceof Error ? error.message : String(error)}`);
+      return false;
+    }
+  }
 
 }
