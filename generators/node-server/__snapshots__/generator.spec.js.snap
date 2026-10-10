@@ -197,6 +197,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > jwt microservic
   "server/test/admin/management.controller.spec.ts": {
     "stateCleared": "modified",
   },
+  "server/test/common/interceptors/logging.interceptor.spec.ts": {
+    "stateCleared": "modified",
+  },
   "server/test/config.spec.ts": {
     "stateCleared": "modified",
   },
@@ -436,6 +439,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > run > should su
   "server/test/admin/management.controller.spec.ts": {
     "stateCleared": "modified",
   },
+  "server/test/common/interceptors/logging.interceptor.spec.ts": {
+    "stateCleared": "modified",
+  },
   "server/test/config.spec.ts": {
     "stateCleared": "modified",
   },
@@ -646,6 +652,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > with oauth2 > s
     "stateCleared": "modified",
   },
   "server/test/admin/management.controller.spec.ts": {
+    "stateCleared": "modified",
+  },
+  "server/test/common/interceptors/logging.interceptor.spec.ts": {
     "stateCleared": "modified",
   },
   "server/test/config.spec.ts": {
@@ -882,6 +891,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > with oauth2 and
     "stateCleared": "modified",
   },
   "server/test/admin/management.controller.spec.ts": {
+    "stateCleared": "modified",
+  },
+  "server/test/common/interceptors/logging.interceptor.spec.ts": {
     "stateCleared": "modified",
   },
   "server/test/config.spec.ts": {
@@ -1447,6 +1459,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > without client 
     "stateCleared": "modified",
   },
   "server/test/admin/management.controller.spec.ts": {
+    "stateCleared": "modified",
+  },
+  "server/test/common/interceptors/logging.interceptor.spec.ts": {
     "stateCleared": "modified",
   },
   "server/test/config.spec.ts": {

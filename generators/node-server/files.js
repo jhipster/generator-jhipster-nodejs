@@ -64,6 +64,7 @@ export const serverFiles = {
         'scripts/copy-resources.ts',
         'tsconfig.build.json',
         'test/admin/management.controller.spec.ts',
+        'test/common/interceptors/logging.interceptor.spec.ts',
         'test/config.spec.ts',
         'nest-cli.json',
         {
