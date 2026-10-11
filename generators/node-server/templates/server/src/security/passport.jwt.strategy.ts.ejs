@@ -1,8 +1,8 @@
 import { ExtractJwt, Strategy<% if (generateBuiltInUserEntity) { %>, VerifiedCallback<% } %> } from 'passport-jwt';
 import { PassportStrategy } from '@nestjs/passport';
 import { Injectable<% if (generateBuiltInUserEntity) { %>, UnauthorizedException<% } %> } from '@nestjs/common';
-import { Payload } from './payload.interface';
-import { config } from '../config';
+import { Payload<% if (!generateBuiltInUserEntity) { %>, payloadAuthorities<% } %> } from './payload.interface';
+import { JWT_ALGORITHM, jwtSecretKey } from './jwt.config';
 <%_ if (generateBuiltInUserEntity) { _%>
 import { AuthService } from '../service/auth.service';
 <%_ } else { _%>
@@ -19,7 +19,8 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
-      secretOrKey: config['jhipster.security.authentication.jwt.base64-secret'],
+      secretOrKey: jwtSecretKey(),
+      algorithms: [JWT_ALGORITHM],
     });
   }
 
@@ -37,7 +38,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
    * Without built-in User, the user is the one of the token, signed by the application issuing it (the gateway).
    */
   validate(payload: Payload): <%= userLoginVmClass %> {
-    return Object.assign(new <%= userLoginVmClass %>(), { login: payload.username, authorities: payload.authorities ?? [] });
+    return Object.assign(new <%= userLoginVmClass %>(), { login: payload.sub, authorities: payloadAuthorities(payload) });
   }
 <%_ } _%>
 }

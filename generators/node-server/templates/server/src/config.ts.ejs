@@ -1,5 +1,6 @@
 import yaml from 'js-yaml';
 import * as fs from 'fs';
+import { randomBytes } from 'crypto';
 import * as path from 'path';
 import { Logger } from '@nestjs/common';
 
@@ -91,7 +92,8 @@ export class Config {
   }
 
   public postProcess(): any {
-    const variables = { ...this, ...process.env };
+    // ${random.value} is a random value, like in Spring Boot (the Eureka instance id).
+    const variables = { ...this, ...process.env, 'random.value': randomBytes(16).toString('hex') };
     for (const property in this) {
       if (this.hasOwnProperty(property)) {
         const value = this[property];
