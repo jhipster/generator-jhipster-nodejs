@@ -35,6 +35,21 @@ describe('SubGenerator node-server of nodejs JHipster blueprint', () => {
         },
       });
     });
+
+    it('root package.json should provide the tools and the server scripts the client scripts use', () => {
+      expect(result.fs.readJSON(join(result.cwd, 'package.json'))).toMatchObject({
+        config: { backend_port: 8080 },
+        devDependencies: { concurrently: expect.any(String), 'wait-on': expect.any(String) },
+        scripts: {
+          'backend:start': 'npm run start:server',
+          'ci:e2e:package': 'npm run build',
+          'ci:e2e:server:start': 'BACKEND_ENV=test npm run start:prod -w server',
+          'ci:server:await': expect.stringContaining(
+            'wait-on -t 180000 http-get://127.0.0.1:$npm_package_config_backend_port/management/health ',
+          ),
+        },
+      });
+    });
   });
   describe('without client', () => {
     beforeAll(async function () {
@@ -70,6 +85,8 @@ describe('SubGenerator node-server of nodejs JHipster blueprint', () => {
         },
       });
       result.assertNoFileContent('package.json', 'no client');
+      result.assertNoFileContent('package.json', 'concurrently');
+      result.assertNoFileContent('package.json', 'wait-on');
     });
   });
   describe('with mariadb', () => {
