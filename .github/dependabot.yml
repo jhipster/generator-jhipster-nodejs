@@ -15,9 +15,6 @@ updates:
       # Keep @types/node aligned with the Node.js major version of the generated application
       - dependency-name: '@types/node'
         update-types: ['version-update:semver-major']
-      # Keep TypeScript on the major version typescript-eslint supports (TypeScript 7 is not supported yet)
-      - dependency-name: 'typescript'
-        update-types: ['version-update:semver-major']
     groups:
       jest:
         patterns:
