@@ -1,5 +1,22 @@
 # Changelog
 
+## [4.3.0](https://github.com/jhipster/generator-jhipster-nodejs/compare/v4.2.0...v4.3.0) (2026-10-11)
+
+### Features
+
+- **node-server:** enable TypeScript strict mode in the generated server ([#1419](https://github.com/jhipster/generator-jhipster-nodejs/issues/1419)) ([1a3e4df](https://github.com/jhipster/generator-jhipster-nodejs/commit/1a3e4dfaa52ceb6c68c13ecded01f06dc9e3e3a5))
+- **node-server:** generate the Eureka and cloud config client only with Eureka service discovery ([#1420](https://github.com/jhipster/generator-jhipster-nodejs/issues/1420)) ([11aadd6](https://github.com/jhipster/generator-jhipster-nodejs/commit/11aadd67d710269a42917a469f22087f8b64ddbb))
+- **node-server:** management health endpoint and shutdown hooks ([#1431](https://github.com/jhipster/generator-jhipster-nodejs/issues/1431)) ([cfa2fee](https://github.com/jhipster/generator-jhipster-nodejs/commit/cfa2feeaff1f34261dc92a76927f19d9e9252429))
+
+### Bug Fixes
+
+- **node-server:** dependencies and scripts of the generated package.json files ([#1428](https://github.com/jhipster/generator-jhipster-nodejs/issues/1428)) ([0dbebc1](https://github.com/jhipster/generator-jhipster-nodejs/commit/0dbebc107e72ac22179d8ba9625d02416e0763f1))
+- **node-server:** entity service keeps the audit fields and returns the stored entity ([#1441](https://github.com/jhipster/generator-jhipster-nodejs/issues/1441)) ([6338dd0](https://github.com/jhipster/generator-jhipster-nodejs/commit/6338dd0d7846c89bd79f1044891bc6a49de87384))
+- **node-server:** generate JWT applications without built-in User ([#1421](https://github.com/jhipster/generator-jhipster-nodejs/issues/1421)) ([3e6435f](https://github.com/jhipster/generator-jhipster-nodejs/commit/3e6435fcbbf44830bcb38129320eae93e3b8191c))
+- **node-server:** MariaDB support and refuse the unsupported database types ([#1435](https://github.com/jhipster/generator-jhipster-nodejs/issues/1435)) ([bac502b](https://github.com/jhipster/generator-jhipster-nodejs/commit/bac502bda52c7ac2d45fcc2ff7d75f320d7d6cb8))
+- **node-server:** root scripts of a generated project with a client ([#1434](https://github.com/jhipster/generator-jhipster-nodejs/issues/1434)) ([bce14b2](https://github.com/jhipster/generator-jhipster-nodejs/commit/bce14b22d14ccdfddf831ca17d5c7251f75bb0a6))
+- **node-server:** typeorm scripts of the generated server for TypeORM 1 ([#1432](https://github.com/jhipster/generator-jhipster-nodejs/issues/1432)) ([9906a76](https://github.com/jhipster/generator-jhipster-nodejs/commit/9906a763edf21cb155bb75b7cb96a93cbb201a6e))
+
 ## [4.2.0](https://github.com/jhipster/generator-jhipster-nodejs/compare/v4.1.0...v4.2.0) (2026-10-07)
 
 ### Features
