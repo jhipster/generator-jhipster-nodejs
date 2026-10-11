@@ -23,12 +23,13 @@ export default class extends BaseApplicationGenerator {
           );
         }
 
-        this.editFile(`${application.cypressDir}/e2e/account/logout.cy.ts`, content =>
+        // A microservice has no account pages, so no account specs.
+        this.editFile(`${application.cypressDir}/e2e/account/logout.cy.ts`, { ignoreNonExisting: true }, content =>
           content.replace("it('go to home page when successfully logs in'", "it.skip('go to home page when successfully logs in'"),
         );
 
         if (application.authenticationTypeOauth2) {
-          this.editFile(`${application.cypressDir}/e2e/account/logout.cy.ts`, content =>
+          this.editFile(`${application.cypressDir}/e2e/account/logout.cy.ts`, { ignoreNonExisting: true }, content =>
             content.replace("it('go to home page when successfully logs out'", "it.skip('go to home page when successfully logs out'"),
           );
         }

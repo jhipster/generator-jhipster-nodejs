@@ -1,0 +1,50 @@
+/*
+ * A JHipster Spring Boot gateway and a NodeJS microservice (this blueprint) with an Angular microfrontend, sharing the
+ * JWT secret and the Eureka service discovery: the NodeJS microservice must accept the tokens of the Spring Boot gateway
+ * and expose its microfrontend to it.
+ * The translations stay enabled: with enableTranslation false, the gateway of JHipster 9.4.0 imports the locale of
+ * @angular/common without sharing it in its federation config, and its client does not start.
+ */
+
+application {
+  config {
+    baseName gateway
+    applicationType gateway
+    packageName com.mycompany.gateway
+    serviceDiscoveryType eureka
+    clientFramework angular
+    microfrontends [notes]
+    jwtSecretKey "ZWFhYTJmYjI5YzQ2ZjFmZGI1ZTk1YjA4NmQ3MTU4ZjVjYjI1NTg1NmJmNzhkZTRhN2E2NDE4ODYzNmZiNzJhMDA1YmMyMTkxNDg5MWVjNmU4ZjJmNzY4NjMzNTE3ZjQ1MzEwOWYxNmE5NTM3ZjE4ZGI3Zjc3NGEyN2UyYzFlODQ="
+  }
+  entities Note, Category
+}
+
+application {
+  config {
+    baseName notes
+    applicationType microservice
+    packageName com.mycompany.notes
+    serviceDiscoveryType eureka
+    clientFramework angular
+    microfrontend true
+    blueprints [generator-jhipster-nodejs]
+    jwtSecretKey "ZWFhYTJmYjI5YzQ2ZjFmZGI1ZTk1YjA4NmQ3MTU4ZjVjYjI1NTg1NmJmNzhkZTRhN2E2NDE4ODYzNmZiNzJhMDA1YmMyMTkxNDg5MWVjNmU4ZjJmNzY4NjMzNTE3ZjQ1MzEwOWYxNmE5NTM3ZjE4ZGI3Zjc3NGEyN2UyYzFlODQ="
+  }
+  entities Note, Category
+}
+
+entity Category {
+  name String required unique
+}
+
+entity Note {
+  title String required
+  content TextBlob
+}
+
+relationship ManyToOne {
+  Note{category(name)} to Category
+}
+
+microservice Note, Category with notes
+paginate Note with pagination

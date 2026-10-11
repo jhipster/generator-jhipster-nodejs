@@ -102,21 +102,24 @@ function registerAsEurekaService(): void {
     logger.log(`Registering with eureka ${config.get('cloud.config.uri')}`);
     const Eureka = require('eureka-js-client').Eureka;
     const eurekaUrl = require('url').parse(config.get('cloud.config.uri'));
+    const appName = config.get('eureka.instance.appname');
+    const host = config.get('ipAddress') || 'localhost';
     const client = new Eureka({
       instance: {
-        app: config.get('eureka.instance.appname'),
+        app: appName,
         instanceId: config.get('eureka.instance.instanceId'),
-        hostName: config.get('ipAddress') || 'localhost',
+        hostName: host,
         ipAddr: config.get('ipAddress') || '127.0.0.1',
         status: `UP`,
-        statusPageUrl: `http://${config.get('ipAddress') || 'localhost'}:${port}/management/info`,
-        healthCheckUrl: `http://${config.get('ipAddress') || 'localhost'}:${port}/management/health`,
+        statusPageUrl: `http://${host}:${port}/management/info`,
+        healthCheckUrl: `http://${host}:${port}/management/health`,
         port: {
            $: port,
           '@enabled': 'true',
         },
-        vipAddress: config.get('ipAddress') || 'localhost',
-        homePageUrl: `http://${config.get('ipAddress')}:${port}/`,
+        // The service id Spring Cloud looks the instances up by (the routes of a JHipster gateway), like its spring.application.name.
+        vipAddress: appName,
+        homePageUrl: `http://${host}:${port}/`,
         dataCenterInfo: {
           '@class': 'com.netflix.appinfo.InstanceInfo$DefaultDataCenterInfo',
            name : 'MyOwn',

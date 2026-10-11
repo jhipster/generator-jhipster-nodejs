@@ -411,6 +411,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > jwt microservic
   "server/src/security/index.ts": {
     "stateCleared": "modified",
   },
+  "server/src/security/jwt.config.ts": {
+    "stateCleared": "modified",
+  },
   "server/src/security/passport.jwt.strategy.ts": {
     "stateCleared": "modified",
   },
@@ -627,6 +630,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > run > should su
     "stateCleared": "modified",
   },
   "server/src/security/index.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/security/jwt.config.ts": {
     "stateCleared": "modified",
   },
   "server/src/security/passport.jwt.strategy.ts": {
@@ -1664,6 +1670,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > without client 
     "stateCleared": "modified",
   },
   "server/src/security/index.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/security/jwt.config.ts": {
     "stateCleared": "modified",
   },
   "server/src/security/passport.jwt.strategy.ts": {

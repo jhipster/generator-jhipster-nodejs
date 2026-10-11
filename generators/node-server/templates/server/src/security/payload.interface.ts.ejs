@@ -1,7 +1,14 @@
+/**
+ * The claims of a JWT, like the tokens of JHipster Spring Boot: the login as the subject, and the authorities separated
+ * by spaces.
+ */
 export interface Payload {
+  sub: string;
+  auth: string;
+  userId?: <%= databaseType === 'sql' ? 'number' : 'string' %>;
+}
 
-  id: <%= databaseType === 'sql' ? 'number' : 'string' %>;
-  username: string;
-  authorities?: string[];
-
+/** The authorities of the `auth` claim. */
+export function payloadAuthorities(payload: Payload): string[] {
+  return payload.auth ? payload.auth.split(/[\s,]+/).filter(Boolean) : [];
 }

@@ -23,4 +23,20 @@ describe('SubGenerator cypress of nodejs JHipster blueprint', () => {
       expect(result.getStateSnapshot()).toMatchSnapshot();
     });
   });
+
+  describe('microservice', () => {
+    beforeAll(async function () {
+      await helpers
+        .run(BLUEPRINT_NAMESPACE)
+        // Without ignoreNeedlesError: editing a file that does not exist must not fail.
+        .withJHipsterConfig({ applicationType: 'microservice', clientFramework: 'angular', microfrontend: true })
+        .withJHipsterGenerators()
+        .withConfiguredBlueprint()
+        .withBlueprintConfig({});
+    });
+
+    it('should succeed without the logout spec', () => {
+      expect(Object.keys(result.getSnapshot()).filter(file => file.endsWith('logout.cy.ts'))).toEqual([]);
+    });
+  });
 });

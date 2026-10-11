@@ -1,0 +1,12 @@
+import { config } from '../config';
+
+/**
+ * The algorithm and the key of the JWTs, like JHipster Spring Boot: HS512, with the base64 decoded
+ * `jhipster.security.authentication.jwt.base64-secret` as the key, so the applications of a microservice architecture
+ * sharing that secret (a Spring Boot gateway and NodeJS microservices, or the reverse) accept each other's tokens.
+ */
+export const JWT_ALGORITHM = 'HS512';
+
+export function jwtSecretKey(): Buffer {
+  return Buffer.from(config['jhipster.security.authentication.jwt.base64-secret'], 'base64');
+}

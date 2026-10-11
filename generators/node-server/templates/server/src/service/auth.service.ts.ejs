@@ -66,7 +66,7 @@ export class AuthService {
       throw new HttpException('Invalid login name or password!', HttpStatus.UNAUTHORIZED);
     }
 
-    const payload: Payload = { id: user.id!, username: user.login, authorities: user.authorities };
+    const payload: Payload = { sub: user.login, auth: (user.authorities ?? []).join(' '), userId: user.id };
 
     const expiresIn = Number(
       userLogin.rememberMe
@@ -79,7 +79,8 @@ export class AuthService {
   }
 
   async validateUser(payload: Payload): Promise<<%= user.dtoClass %> | undefined> {
-    return await this.findUserWithAuthById(payload.id);
+    // The user of the token subject, like the login of JHipster Spring Boot tokens.
+    return await this.userService.findByFields({ where: { login: payload.sub } });
   }
 
   async findUserWithAuthById(userId: <%= userIdType %>): Promise<<%= user.dtoClass %> | undefined> {
