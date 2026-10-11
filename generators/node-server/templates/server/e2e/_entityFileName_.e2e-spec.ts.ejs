@@ -1,8 +1,14 @@
 <%_
 const numericId = primaryKey.tsType === 'number';
-const entityId = numericId ? '1' : primaryKey.typeUUID ? "'9fa62b09-6bd1-4c1b-8f7e-2a3e5f0c4d21'" : "'entityId'";
-const unknownId = numericId ? '999' : primaryKey.typeUUID ? "'0d5b3f4e-4f0a-4b77-9c1e-6f1d2a3b4c5d'" : "'unknownId'";
-const anotherId = numericId ? '2' : primaryKey.typeUUID ? "'5a0e8c2b-1d3f-4e6a-8b9c-0d1e2f3a4b5c'" : "'anotherId'";
+// Fake ids of the type of the primary key (the faker of the entity is seeded: the same ids at each generation).
+const fakeId = () => numericId
+  ? String(faker.number.int({ min: 1, max: 1000000 }))
+  : `'${primaryKey.typeUUID ? faker.string.uuid() : databaseTypeMongodb ? faker.database.mongodbObjectId() : faker.string.alphanumeric(12)}'`;
+const fakeIds = new Set();
+while (fakeIds.size < 3) fakeIds.add(fakeId());
+const [entityId, unknownId, anotherId] = [...fakeIds];
+// An id the pipe of the path rejects: neither a number nor a UUID.
+const invalidId = faker.lorem.word({ length: { min: 5, max: 10 } });
 _%>
 import { afterEach, beforeEach, describe, expect, it } from '@jest/globals';
 import { Test, TestingModule } from '@nestjs/testing';
@@ -130,7 +136,7 @@ _%>
 
     it('/GET <%= entityApiUrl %> by an invalid id', async () => {
         await request(app.getHttpServer())
-            .get('/api/<%= entityApiUrl %>/invalid-id')
+            .get('/api/<%= entityApiUrl %>/<%= invalidId %>')
             .expect(400);
     });
 <%_ } _%>
