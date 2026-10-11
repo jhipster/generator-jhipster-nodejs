@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { FindManyOptions, FindOneOptions, Repository } from 'typeorm';
+import { <% if (typeormOrderSupport) { %>EntityMetadata, <% } %>FindManyOptions, FindOneOptions, Repository } from 'typeorm';
 import { <%= user.persistClass %> } from '../domain/user.entity';
 import { <%= user.dtoClass%> } from './dto/user.dto';
 import { UserMapper } from './mapper/user.mapper';
@@ -16,6 +16,13 @@ const relations = { authorities: true } as const;
 @Injectable()
 export class UserService {
     constructor(@InjectRepository(User) private userRepository: Repository<User>) {}
+<%_ if (typeormOrderSupport) { _%>
+
+    /** The TypeORM metadata of the user, the sort of the user lists is validated with. */
+    get metadata(): EntityMetadata {
+        return this.userRepository.metadata;
+    }
+<%_ } _%>
 
     async findById(id: <%= user.primaryKey.tsType %>): Promise<<%= user.dtoClass%> | undefined> {
         const result = await this.userRepository.findOneBy({ id });

@@ -73,10 +73,19 @@ _%>
     });
 <%_ if (sortRelationship) { _%>
 
-    it('/GET all <%= entityApiUrl %> sorted on a property of a relationship', async () => {
+    it('/GET all <%= entityApiUrl %> sorted on the id and the label of a relationship', async () => {
         await request(app.getHttpServer())
             .get('/api/<%= entityApiUrl %>?sort=<%= sortRelationship.propertyName %>.id,asc')
             .expect(200);
+        await request(app.getHttpServer())
+            .get('/api/<%= entityApiUrl %>?sort=<%= sortRelationship.propertyName %>.<%= sortRelationship.otherEntityField %>,desc')
+            .expect(200);
+    });
+
+    it('/GET all <%= entityApiUrl %> sorted on a deeper property of a relationship', async () => {
+        await request(app.getHttpServer())
+            .get('/api/<%= entityApiUrl %>?sort=<%= sortRelationship.propertyName %>.id.unknown,asc')
+            .expect(400);
     });
 <%_ } _%>
 
