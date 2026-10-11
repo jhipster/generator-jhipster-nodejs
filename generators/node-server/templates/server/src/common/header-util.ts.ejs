@@ -5,7 +5,6 @@ import { BaseEntity } from '../domain/base/base.entity';
 import { URL } from 'url';
 
 const applicationName = config.get('jhipster.clientApp.name');
-const enableTranslation = true;
 
 export class HeaderUtil {
   static createAlert(res: Response, message: string, param: string): any {
@@ -15,24 +14,32 @@ export class HeaderUtil {
 
   static addEntityCreatedHeaders(res: Response, entityName: string, param: string | number | undefined): any {
     res.status(201);
-    const message = enableTranslation
-      ? applicationName + '.' + entityName + '.created'
-      : 'A new ' + entityName + ' is created with identifier ' + param;
-    this.createAlert(res, message, String(param));
+<%_ if (enableTranslation) { _%>
+    // The translation key of the alert, translated by the client.
+    this.createAlert(res, applicationName + '.' + entityName + '.created', String(param));
+<%_ } else { _%>
+    this.createAlert(res, 'A new ' + entityName + ' is created with identifier ' + param, String(param));
+<%_ } _%>
   }
 
   static addEntityUpdatedHeaders(res: Response, entityName: string, param: string | number | undefined): any {
     res.status(200);
-    const message = enableTranslation ? applicationName + '.' + entityName +
-    '.updated' : 'A ' + entityName + ' is updated with identifier ' + param;
-    this.createAlert(res, message, String(param));
+<%_ if (enableTranslation) { _%>
+    // The translation key of the alert, translated by the client.
+    this.createAlert(res, applicationName + '.' + entityName + '.updated', String(param));
+<%_ } else { _%>
+    this.createAlert(res, 'A ' + entityName + ' is updated with identifier ' + param, String(param));
+<%_ } _%>
   }
 
   static addEntityDeletedHeaders(res: Response, entityName: string, param: string | number | undefined): any {
     res.status(204);
-    const message = enableTranslation ? applicationName + '.' + entityName +
-    '.deleted' : 'A ' + entityName + ' is deleted with identifier ' + param;
-    this.createAlert(res, message, String(param));
+<%_ if (enableTranslation) { _%>
+    // The translation key of the alert, translated by the client.
+    this.createAlert(res, applicationName + '.' + entityName + '.deleted', String(param));
+<%_ } else { _%>
+    this.createAlert(res, 'A ' + entityName + ' is deleted with identifier ' + param, String(param));
+<%_ } _%>
   }
 
   static addPaginationHeaders<T extends BaseEntity>(res: Response, page: Page<T>): any {
