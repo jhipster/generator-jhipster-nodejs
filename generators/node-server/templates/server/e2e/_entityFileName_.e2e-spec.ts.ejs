@@ -2,6 +2,7 @@ import { afterEach, beforeEach, describe, expect, it } from '@jest/globals';
 import { Test, TestingModule } from '@nestjs/testing';
 import request = require('supertest');
 import { AppModule } from '../src/app.module';
+import { configureApp } from '../src/app.config';
 import { INestApplication } from '@nestjs/common';
 import { AuthGuard } from '../src/security/guards/auth.guard';
 import { RolesGuard } from '../src/security/guards/roles.guard';
@@ -20,6 +21,23 @@ describe('<%= entityClass %> Controller', () => {
     const entityMock: any = {
         id: 'entityId'
     }
+<%_
+// The global ValidationPipe of configureApp validates the requests: a body with valid values of the validated fields.
+resetFakerSeed('nodejs-e2e');
+const validatedFields = fields.filter(field => !field.id && field.fieldValidate && field.fieldType !== 'byte[]');
+const validValues = Object.fromEntries(
+    validatedFields
+        .map(field => [field.fieldName, field.generateFakeData('json-serializable')])
+        .filter(([, value]) => value !== undefined && value !== null),
+);
+const requiredField = validatedFields.find(field => field.fieldValidateRules.includes('required'));
+_%>
+    const validEntity: any = {
+        ...entityMock,
+<%_ for (const [fieldName, value] of Object.entries(validValues)) { _%>
+        <%= fieldName %>: <%- JSON.stringify(value) %>,
+<%_ } _%>
+    };
 
     const serviceMock<% if (typeormOrderSupport) { %>: { metadata?: EntityMetadata, [method: string]: unknown }<% } %> = {
         findById: (id: any): any => (id === entityMock.id ? entityMock : undefined),
@@ -46,6 +64,7 @@ describe('<%= entityClass %> Controller', () => {
 <%_ } _%>
 
         app = moduleFixture.createNestApplication();
+        configureApp(app);
         await app.init();
     });
 
@@ -120,7 +139,7 @@ _%>
 
         const createdEntity: <%= dtoClass %> = (await request(app.getHttpServer())
             .post('/api/<%= entityApiUrl %>')
-            .send(entityMock)
+            .send(validEntity)
             .expect(201)).body;
 
         expect(createdEntity).toEqual(entityMock);
@@ -128,12 +147,25 @@ _%>
     }
     );
 
+<%_ if (requiredField) { _%>
+    it('/POST create <%= entityApiUrl %> without <%= requiredField.fieldName %> is a validation error', async () => {
+        const { <%= requiredField.fieldName %>: _<%= requiredField.fieldName %>, ...invalidEntity } = validEntity;
+
+        const error = (await request(app.getHttpServer())
+            .post('/api/<%= entityApiUrl %>')
+            .send(invalidEntity)
+            .expect(400)).body;
+
+        expect(error.message).toEqual('Validation error');
+    });
+
+<%_ } _%>
     it('/PUT update <%= entityApiUrl %>', async () => {
 
 
         const updatedEntity: <%= dtoClass %> = (await request(app.getHttpServer())
             .put('/api/<%= entityApiUrl %>')
-            .send(entityMock)
+            .send(validEntity)
             .expect(201)).body;
 
 
@@ -147,7 +179,7 @@ _%>
 
         const updatedEntity: <%= dtoClass %> = (await request(app.getHttpServer())
             .put('/api/<%= entityApiUrl %>/' + entityMock.id)
-            .send(entityMock)
+            .send(validEntity)
             .expect(201)).body;
 
 
@@ -159,7 +191,7 @@ _%>
     it('/PUT update <%= entityApiUrl %> from another id', async () => {
         await request(app.getHttpServer())
             .put('/api/<%= entityApiUrl %>/anotherId')
-            .send(entityMock)
+            .send(validEntity)
             .expect(400);
     });
 

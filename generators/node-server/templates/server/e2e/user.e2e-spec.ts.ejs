@@ -2,6 +2,7 @@ import { afterEach, beforeEach, describe, expect, it } from '@jest/globals';
 import { Test, TestingModule } from '@nestjs/testing';
 import request = require('supertest');
 import { AppModule } from '../src/app.module';
+import { configureApp } from '../src/app.config';
 import { INestApplication } from '@nestjs/common';
 import { AuthGuard } from '../src/security/guards/auth.guard';
 import { RolesGuard } from '../src/security/guards/roles.guard';
@@ -41,6 +42,7 @@ describe('User', () => {
             .compile();
 
         app = moduleFixture.createNestApplication();
+        configureApp(app);
         await app.init();
         service = moduleFixture.get<UserService>(UserService);
     });
@@ -55,6 +57,17 @@ describe('User', () => {
 
         expect(createdUser.login).toEqual(testUserRequestObject.login);
         await service.delete(createdUser);
+    });
+
+    it('/POST create user with an invalid email is a validation error', async () => {
+        const error = (
+            await request(app.getHttpServer())
+                .post('/api/admin/users')
+                .send({ ...testUserRequestObject, email: 'not an email' })
+                .expect(400)
+        ).body;
+
+        expect(error.message).toEqual('Validation error');
     });
 
     it('/GET all users', () => {

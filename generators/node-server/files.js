@@ -57,6 +57,7 @@ export const serverFiles = {
         'src/service/auth.service.ts',
         'src/service/dto/base.dto.ts',
         'src/main.ts',
+        'src/app.config.ts',
         'src/swagger.ts',
         'src/app.module.ts',
         'src/migrations/1570200270081-CreateTables.ts',
