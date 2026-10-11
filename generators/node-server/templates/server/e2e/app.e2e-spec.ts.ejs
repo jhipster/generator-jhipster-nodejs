@@ -50,6 +50,11 @@ describe('App', () => {
         .expect(200)
         .expect({ status: 'UP', components: { db: { status: 'UP' } } }));
 
+    it('/GET the liveness and readiness probes are UP without authentication', async () => {
+        await request(app.getHttpServer()).get('/management/health/liveness').expect(200).expect({ status: 'UP' });
+        await request(app.getHttpServer()).get('/management/health/readiness').expect(200).expect({ status: 'UP' });
+    });
+
 <%_ if (generateBuiltInUserEntity) { _%>
     it('/GET public roles OK', () => request(app.getHttpServer())
         .get('/api/authorities')

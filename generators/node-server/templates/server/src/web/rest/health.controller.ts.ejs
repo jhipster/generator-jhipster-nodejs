@@ -2,6 +2,8 @@ import { Controller, Get, ServiceUnavailableException } from '@nestjs/common';
 import { ApiExcludeEndpoint } from '@nestjs/swagger';
 import { HealthCheckResult, HealthCheckService, TypeOrmHealthIndicator } from '@nestjs/terminus';
 
+import { SkipLogging } from '../../common/interceptors/logging.interceptor';
+
 export type HealthStatus = 'UP' | 'DOWN';
 
 export interface Health {
@@ -23,6 +25,7 @@ export class HealthController {
 
   @ApiExcludeEndpoint()
   @Get('/health')
+  @SkipLogging()
   async health(): Promise<Health> {
     try {
       return toHealth(await this.healthCheckService.check([() => this.typeOrmHealthIndicator.pingCheck('db')]));
@@ -32,6 +35,27 @@ export class HealthController {
       }
       throw error;
     }
+  }
+
+  /**
+   * The liveness probe, like the liveness group of Spring Boot Actuator (livenessState): UP while the application answers.
+   */
+  @ApiExcludeEndpoint()
+  @Get('/health/liveness')
+  @SkipLogging()
+  liveness(): Pick<Health, 'status'> {
+    return { status: 'UP' };
+  }
+
+  /**
+   * The readiness probe, like the readiness group of Spring Boot Actuator (readinessState): UP once the application
+   * accepts requests. A JHipster gateway waits for it before routing to a microservice.
+   */
+  @ApiExcludeEndpoint()
+  @Get('/health/readiness')
+  @SkipLogging()
+  readiness(): Pick<Health, 'status'> {
+    return { status: 'UP' };
   }
 }
 
