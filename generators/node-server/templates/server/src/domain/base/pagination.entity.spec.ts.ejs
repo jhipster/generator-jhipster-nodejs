@@ -14,7 +14,7 @@ describe('PageRequest', () => {
     expect(pageRequest.page).toBe(0);
     expect(pageRequest.size).toBe(20);
 <%_ if (typeormOrderSupport) { _%>
-    expect(pageRequest.sort.asOrder()).toMatchObject({ id: 'ASC' });
+    expect(pageRequest.asOrder()).toMatchObject({ id: 'ASC' });
 <%_ } _%>
   });
 
@@ -29,7 +29,7 @@ describe('PageRequest', () => {
     expect(pageRequest.page).toBe(0);
     expect(pageRequest.size).toBe(20);
 <%_ if (typeormOrderSupport) { _%>
-    expect(pageRequest.sort.asOrder()).toMatchObject({ id: 'ASC' });
+    expect(pageRequest.asOrder()).toMatchObject({ id: 'ASC' });
 <%_ } _%>
   });
 
@@ -44,7 +44,31 @@ describe('PageRequest', () => {
     expect(pageRequest.page).toBe(10);
     expect(pageRequest.size).toBe(30);
 <%_ if (typeormOrderSupport) { _%>
-    expect(pageRequest.sort.asOrder()).toMatchObject({ foo: 'DESC' });
+    expect(pageRequest.asOrder()).toMatchObject({ foo: 'DESC' });
 <%_ } _%>
   });
+
+  it('caps the size like Spring Data, and ignores a negative page or a size below 1', () => {
+    expect(new PageRequest(0, 100000).size).toBe(2000);
+    const pageRequest = new PageRequest(-1, 0);
+    expect(pageRequest.page).toBe(0);
+    expect(pageRequest.size).toBe(20);
+  });
+<%_ if (typeormOrderSupport) { _%>
+
+  it('sorts on several properties, the direction case insensitive and ascending by default', () => {
+    const pageRequest = new PageRequest(0, 20, ['name,desc', 'id']);
+    expect(pageRequest.asOrder()).toEqual({ name: 'DESC', id: 'ASC' });
+  });
+
+  it('sorts on the properties of a relationship', () => {
+    const pageRequest = new PageRequest(0, 20, ['region.name,asc', 'region.id,desc']);
+    expect(pageRequest.asOrder()).toEqual({ region: { name: 'ASC', id: 'DESC' } });
+  });
+
+  it('rejects a property out of the sort properties', () => {
+    expect(() => new PageRequest(0, 20, 'password,asc', ['id', 'name'])).toThrow('Invalid sort property: password');
+    expect(new PageRequest(0, 20, 'name,asc', ['id', 'name']).asOrder()).toEqual({ name: 'ASC' });
+  });
+<%_ } _%>
 });
