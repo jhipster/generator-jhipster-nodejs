@@ -1,4 +1,9 @@
-import { BadRequestException, Body, ClassSerializerInterceptor, Controller, Delete, Get, Logger, NotFoundException, Param, Post as PostMethod, Put, UseGuards, Req, UseInterceptors } from '@nestjs/common';
+<%_
+const pkType = primaryKey.tsType;
+const idPipe = pkType === 'number' ? 'ParseIntPipe' : primaryKey.typeUUID ? 'ParseUUIDPipe' : undefined;
+const idParam = `@Param('id'${idPipe ? `, ${idPipe}` : ''}) id: ${pkType}`;
+_%>
+import { BadRequestException, Body, ClassSerializerInterceptor, Controller, Delete, Get, Logger, NotFoundException, Param,<% if (idPipe) { %> <%= idPipe %>,<% } %> Post as PostMethod, Put, UseGuards, Req, UseInterceptors } from '@nestjs/common';
 import { <% if (authenticationType === 'jwt') { _%> ApiBearerAuth, <% } else if (authenticationType === 'oauth2') { _%> ApiSecurity, <% } _%> ApiTags, ApiResponse, ApiOperation } from '@nestjs/swagger';
 import { <%= dtoClass %> } from '../../service/dto/<%= entityFileName %>.dto';
 import { <%= entityClass %>Service } from '../../service/<%= entityFileName %>.service';
@@ -10,9 +15,7 @@ import { isSortableProperty } from '../../common/sortable-properties';
 <%_ } _%>
 import { Request } from '../../common/request';
 
-<%_
-const pkType = primaryKey.tsType;
-_%>
+const ENTITY_NAME = '<%= entityClass %>';
 <%_ if (typeormOrderSupport) { _%>
 <%_
 const sortLabels = relationships
@@ -73,7 +76,7 @@ export class <%= entityClass %>Controller {
     description: 'The found record',
     type: <%= dtoClass %>,
   })
-  async getOne(@Param('id') id: <%= pkType %>): Promise<<%= dtoClass %>>  {
+  async getOne(<%- idParam %>): Promise<<%= dtoClass %>>  {
     const <%= entityInstance %>DTO = await this.<%= entityInstance %>Service.findById(id);
     if (!<%= entityInstance %>DTO) {
       throw new NotFoundException();
@@ -92,21 +95,8 @@ export class <%= entityClass %>Controller {
   @ApiResponse({ status: 403, description: 'Forbidden.' })
   async post(@Req() req: Request, @Body() <%= entityInstance %>DTO: <%= dtoClass %>): Promise<<%= dtoClass %>>  {
     const created = await this.<%= entityInstance %>Service.save(<%= entityInstance %>DTO, req.user?.login);
-    HeaderUtil.addEntityCreatedHeaders(req.res, '<%= entityClass %>', created.id);
+    HeaderUtil.addEntityCreatedHeaders(req.res, ENTITY_NAME, created.id);
     return created;
-  }
-
-  @Put('/')
-  @Roles(RoleType.USER)
-  @ApiOperation({ summary: 'Update <%= entityInstance %>' })
-  @ApiResponse({
-    status: 200,
-    description: 'The record has been successfully updated.',
-    type: <%= dtoClass %>,
-  })
-  async put(@Req() req: Request, @Body() <%= entityInstance %>DTO: <%= dtoClass %>): Promise<<%= dtoClass %>>  {
-    HeaderUtil.addEntityCreatedHeaders(req.res, '<%= entityClass %>', <%= entityInstance %>DTO.id);
-    return await this.<%= entityInstance %>Service.update(<%= entityInstance %>DTO, req.user?.login);
   }
 
   @Put('/:id')
@@ -117,12 +107,12 @@ export class <%= entityClass %>Controller {
     description: 'The record has been successfully updated.',
     type: <%= dtoClass %>,
   })
-  async putId(@Req() req: Request, @Param('id') id: <%= pkType %>, @Body() <%= entityInstance %>DTO: <%= dtoClass %>): Promise<<%= dtoClass %>>  {
-    if (String(<%= entityInstance %>DTO.id) !== String(id)) {
-      throw new BadRequestException('Invalid id');
-    }
-    HeaderUtil.addEntityCreatedHeaders(req.res, '<%= entityClass %>', <%= entityInstance %>DTO.id);
-    return await this.<%= entityInstance %>Service.update(<%= entityInstance %>DTO, req.user?.login);
+  @ApiResponse({ status: 400, description: 'Invalid id, or the record does not exist.' })
+  async putId(@Req() req: Request, <%- idParam %>, @Body() <%= entityInstance %>DTO: <%= dtoClass %>): Promise<<%= dtoClass %>>  {
+    await this.validateIdForUpdate(req, id, <%= entityInstance %>DTO);
+    const updated = await this.<%= entityInstance %>Service.update(<%= entityInstance %>DTO, req.user?.login);
+    HeaderUtil.addEntityUpdatedHeaders(req.res, ENTITY_NAME, id);
+    return updated;
   }
 
   @Delete('/:id')
@@ -132,8 +122,29 @@ export class <%= entityClass %>Controller {
     status: 204,
     description: 'The record has been successfully deleted.',
   })
-  async deleteById(@Req() req: Request, @Param('id') id: <%= pkType %>): Promise<void>  {
-    HeaderUtil.addEntityDeletedHeaders(req.res, '<%= entityClass %>', id);
+  async deleteById(@Req() req: Request, <%- idParam %>): Promise<void>  {
+    HeaderUtil.addEntityDeletedHeaders(req.res, ENTITY_NAME, id);
     return await this.<%= entityInstance %>Service.deleteById(id);
+  }
+
+  /**
+   * Checks the id of an update like JHipster Spring Boot: the body must have the id of the path,
+   * and the record must exist, otherwise answers 400.
+   */
+  private async validateIdForUpdate(req: Request, id: <%= pkType %>, <%= entityInstance %>DTO: Partial<<%= dtoClass %>> | undefined): Promise<<%= dtoClass %>> {
+    if (<%= entityInstance %>DTO?.id === undefined || <%= entityInstance %>DTO.id === null) {
+      HeaderUtil.addFailureAlertHeaders(req.res, ENTITY_NAME, 'idnull');
+      throw new BadRequestException('Invalid id');
+    }
+    if (String(<%= entityInstance %>DTO.id) !== String(id)) {
+      HeaderUtil.addFailureAlertHeaders(req.res, ENTITY_NAME, 'idinvalid');
+      throw new BadRequestException('Invalid ID');
+    }
+    const existing = await this.<%= entityInstance %>Service.findById(id);
+    if (!existing) {
+      HeaderUtil.addFailureAlertHeaders(req.res, ENTITY_NAME, 'idnotfound');
+      throw new BadRequestException('Entity not found');
+    }
+    return existing;
   }
 }
