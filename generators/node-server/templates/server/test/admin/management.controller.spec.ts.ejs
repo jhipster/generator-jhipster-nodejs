@@ -1,8 +1,10 @@
 import { beforeEach, describe, expect, it, jest } from '@jest/globals';
 import { ServiceUnavailableException } from '@nestjs/common';
+import { Reflector } from '@nestjs/core';
 import { Test, TestingModule } from '@nestjs/testing';
 import { DataSource } from 'typeorm';
 import { ManagementController } from '../../src/web/rest/management.controller';
+import { SKIP_LOGGING } from '../../src/common/interceptors/logging.interceptor';
 
 describe('Management Controller', () => {
   let controller: ManagementController;
@@ -31,6 +33,10 @@ describe('Management Controller', () => {
 
   it('should be defined', () => {
     expect(controller).toBeDefined();
+  });
+
+  it('health is not logged', () => {
+    expect(new Reflector().get<boolean>(SKIP_LOGGING, (ManagementController.prototype as any).health)).toBe(true);
   });
 
   it('health is UP when the database answers', async () => {
