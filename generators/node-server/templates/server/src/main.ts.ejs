@@ -1,6 +1,7 @@
 // The .env file, loaded before the configuration (an import runs before the code of this module).
 import 'dotenv/config';
 import { NestFactory } from '@nestjs/core';
+import { NestExpressApplication } from '@nestjs/platform-express';
 <%_ if (serviceDiscoveryEureka) { _%>
 import cloudConfigClient from 'cloud-config-client';
 <%_ } _%>
@@ -43,7 +44,9 @@ async function bootstrap(): Promise<void> {
   // abortOnError: false: an error of the initialization (the database still unreachable after the retries) rejects
   // to the catch of bootstrap() below, instead of Nest stopping the process by itself.
   const tlsOptions = httpsOptions();
-  const app = await NestFactory.create(AppModule, { abortOnError: false, logger: appLogger, httpsOptions: tlsOptions });
+  const app = await NestFactory.create<NestExpressApplication>(AppModule, { abortOnError: false, logger: appLogger, httpsOptions: tlsOptions });
+  // Like JHipster Spring Boot, partial updates (PATCH) accept application/json and application/merge-patch+json
+  app.useBodyParser('json', { type: ['application/json', 'application/merge-patch+json'] });
   // Close the application (HTTP server, database connections) on SIGTERM, the signal docker stop sends.
   app.enableShutdownHooks();
   // CORS, global validation and HTTP settings, shared with the e2e tests.
