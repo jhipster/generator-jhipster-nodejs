@@ -50,6 +50,12 @@ describe('SubGenerator node-server of nodejs JHipster blueprint', () => {
         },
       });
     });
+
+    it('should create the JWT secret', () => {
+      const { jwtSecretKey } = result.fs.readJSON(join(result.cwd, '.yo-rc.json'))['generator-jhipster'];
+      expect(jwtSecretKey).toBeTruthy();
+      result.assertFileContent('server/src/config/application.yml', `base64-secret: ${jwtSecretKey}`);
+    });
   });
   describe('without client', () => {
     beforeAll(async function () {
