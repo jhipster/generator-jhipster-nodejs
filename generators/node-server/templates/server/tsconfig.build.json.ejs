@@ -1,5 +1,9 @@
 {
   "extends": "./tsconfig.json",
+  "compilerOptions": {
+    // Emits dist/main.js; TypeScript 6 no longer infers it from the included files.
+    "rootDir": "src"
+  },
   "include": ["src/**/*"],
   "exclude": ["**/*spec.ts"]
 }

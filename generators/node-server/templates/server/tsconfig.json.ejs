@@ -6,6 +6,8 @@
     "module": "nodenext",
     "moduleResolution": "nodenext",
     "esModuleInterop": true,
+    // The ambient types (TypeScript 6 includes none by default); the specs import the jest API from @jest/globals.
+    "types": ["node"],
     "outDir": "dist",
     "sourceMap": true,
     "skipLibCheck": true,
