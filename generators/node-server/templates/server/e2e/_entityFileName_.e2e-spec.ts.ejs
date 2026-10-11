@@ -1,12 +1,13 @@
 <%_
 const numericId = primaryKey.tsType === 'number';
-// Fake ids of the type of the primary key (the faker of the entity is seeded: the same ids at each generation).
-const fakeId = () => numericId
-  ? String(faker.number.int({ min: 1, max: 1000000 }))
-  : `'${primaryKey.typeUUID ? faker.string.uuid() : databaseTypeMongodb ? faker.database.mongodbObjectId() : faker.string.alphanumeric(12)}'`;
-const fakeIds = new Set();
-while (fakeIds.size < 3) fakeIds.add(fakeId());
-const [entityId, unknownId, anotherId] = [...fakeIds];
+// The fake data of the fields, reproducible (the faker of the entity is seeded), as TypeScript literals: distinct ids of
+// the type of the primary key, and a value for each field of the entity.
+const idField = primaryKey.fields[0];
+const [entityId, unknownId, anotherId] = [idField.generateFakeData('ts'), idField.generateFakeData('ts'), idField.generateFakeData('ts')];
+const fakeFields = fields
+  .filter(field => !field.id && !field.transient && !field.collection)
+  .map(field => [field.propertyName, field.generateFakeData('ts')])
+  .filter(([, value]) => value !== undefined && value !== null);
 // An id the pipe of the path rejects: neither a number nor a UUID.
 const invalidId = faker.lorem.word({ length: { min: 5, max: 10 } });
 _%>
@@ -33,7 +34,10 @@ describe('<%= entityClass %> Controller', () => {
     const authGuardMock = { canActivate: (): any => true };
     const rolesGuardMock = { canActivate: (): any => true };
     const entityMock: any = {
-        id: <%- entityId %>
+        id: <%- entityId %>,
+<%_ for (const [propertyName, value] of fakeFields) { _%>
+        <%- propertyName %>: <%- value %>,
+<%_ } _%>
     }
     const unknownId = <%- unknownId %>;
     const anotherId = <%- anotherId %>;
