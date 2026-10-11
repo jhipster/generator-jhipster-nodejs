@@ -48,7 +48,7 @@ describe('App', () => {
     it('/GET health is UP without authentication', () => request(app.getHttpServer())
         .get('/management/health')
         .expect(200)
-        .expect({ status: 'UP' }));
+        .expect({ status: 'UP', components: { db: { status: 'UP' } } }));
 
 <%_ if (generateBuiltInUserEntity) { _%>
     it('/GET public roles OK', () => request(app.getHttpServer())
