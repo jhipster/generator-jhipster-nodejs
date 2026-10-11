@@ -3,8 +3,9 @@ const pkType = primaryKey.tsType;
 const idPipe = pkType === 'number' ? 'ParseIntPipe' : primaryKey.typeUUID ? 'ParseUUIDPipe' : undefined;
 const idParam = `@Param('id'${idPipe ? `, ${idPipe}` : ''}) id: ${pkType}`;
 _%>
-import { Body, ClassSerializerInterceptor, Controller, Delete, Get, Logger, NotFoundException, Param,<% if (idPipe) { %> <%= idPipe %>,<% } %> Post as PostMethod, Put, UseGuards, Req, UseInterceptors } from '@nestjs/common';
+import { Body, ClassSerializerInterceptor, Controller, Delete, Get, Logger, NotFoundException, Param,<% if (idPipe) { %> <%= idPipe %>,<% } %> Patch, Post as PostMethod, Put, UseGuards, Req, UseInterceptors } from '@nestjs/common';
 import { <% if (authenticationTypeJwt) { _%> ApiBearerAuth, <% } else { _%> ApiSecurity, <% } _%> ApiTags, ApiResponse, ApiOperation } from '@nestjs/swagger';
+import { validate } from 'class-validator';
 import { <%= dtoClass %> } from './dto/<%= entityFileName %>.dto.ts';
 import { <%= entityClass %>Service } from './<%= entityFileName %>.service.ts';
 <%_ if (pagination !== 'no') { _%>
@@ -141,6 +142,33 @@ export class <%= entityClass %>Controller {
     await this.validateIdForUpdate(req, id, <%= entityInstance %>DTO);
     const updated = await this.<%= entityInstance %>Service.update(<%= entityInstance %>DTO, req.user?.login);
     this.headerUtil.addEntityUpdatedHeaders(req.res, ENTITY_NAME, id);
+    return updated;
+  }
+
+  @Patch('/:id')
+  @Roles(RoleType.USER)
+  @ApiOperation({ summary: 'Partially update <%= entityInstance %> with id, fields that are null or absent are ignored' })
+  @ApiResponse({
+    status: 200,
+    description: 'The record has been successfully updated.',
+    type: <%= dtoClass %>,
+  })
+  @ApiResponse({ status: 400, description: 'Invalid id or values, or the record does not exist.' })
+  async patchId(@Req() req: Request, <%- idParam %>, @Body() <%= entityInstance %>DTO: Partial<<%= dtoClass %>>): Promise<<%= dtoClass %>>  {
+    const existing = await this.validateIdForUpdate(req, id, <%= entityInstance %>DTO);
+    const changes = Object.fromEntries(
+      Object.entries(<%= entityInstance %>DTO ?? {}).filter(([, value]) => value !== null && value !== undefined),
+    );
+    // The global ValidationPipe requires every mandatory field, here only the given ones are validated
+    const errors = await validate(Object.assign(new <%= dtoClass %>(), changes), {
+      skipMissingProperties: true,
+      forbidUnknownValues: false,
+    });
+    if (errors.length > 0) {
+      throw new BadRequestException('Validation error');
+    }
+    const updated = await this.<%= entityInstance %>Service.update(Object.assign(existing, changes), req.user?.login);
+    HeaderUtil.addEntityUpdatedHeaders(req.res, ENTITY_NAME, id);
     return updated;
   }
 
