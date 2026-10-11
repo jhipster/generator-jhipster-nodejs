@@ -9,16 +9,10 @@ application {
     baseName gateway
     applicationType gateway
     packageName com.mycompany.gateway
-    authenticationType jwt
     serviceDiscoveryType eureka
     clientFramework angular
     microfrontends [notes]
-    prodDatabaseType postgresql
-    buildTool maven
-    serverPort 8080
     enableTranslation false
-    testFrameworks []
-    creationTimestamp 1791695059000
     jwtSecretKey "ZWFhYTJmYjI5YzQ2ZjFmZGI1ZTk1YjA4NmQ3MTU4ZjVjYjI1NTg1NmJmNzhkZTRhN2E2NDE4ODYzNmZiNzJhMDA1YmMyMTkxNDg5MWVjNmU4ZjJmNzY4NjMzNTE3ZjQ1MzEwOWYxNmE5NTM3ZjE4ZGI3Zjc3NGEyN2UyYzFlODQ="
   }
   entities Note, Category
@@ -29,15 +23,10 @@ application {
     baseName notes
     applicationType microservice
     packageName com.mycompany.notes
-    authenticationType jwt
     serviceDiscoveryType eureka
     clientFramework angular
     microfrontend true
-    prodDatabaseType postgresql
-    serverPort 8081
     enableTranslation false
-    testFrameworks []
-    creationTimestamp 1791695059000
     blueprints [generator-jhipster-nodejs]
     jwtSecretKey "ZWFhYTJmYjI5YzQ2ZjFmZGI1ZTk1YjA4NmQ3MTU4ZjVjYjI1NTg1NmJmNzhkZTRhN2E2NDE4ODYzNmZiNzJhMDA1YmMyMTkxNDg5MWVjNmU4ZjJmNzY4NjMzNTE3ZjQ1MzEwOWYxNmE5NTM3ZjE4ZGI3Zjc3NGEyN2UyYzFlODQ="
   }
