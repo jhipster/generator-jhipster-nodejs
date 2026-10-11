@@ -1,9 +1,10 @@
 import { Column, CreateDateColumn, UpdateDateColumn } from 'typeorm';
 
 export abstract class BaseEntity {
-   @Column({ nullable: true })
+   // The creation audit columns are readable but never updated, like the updatable = false columns of JHipster Spring Boot.
+   @Column({ nullable: true, update: false })
    createdBy?: string;
-   @CreateDateColumn({ nullable: true })
+   @CreateDateColumn({ nullable: true, update: false })
    createdDate?: Date;
    @Column({ nullable: true })
    lastModifiedBy?: string;

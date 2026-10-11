@@ -1,0 +1,14 @@
+import { EntityMetadata, ObjectLiteral, QueryDeepPartialEntity } from 'typeorm';
+
+/**
+ * The properties of an entity an update may write: every property but the columns declared with `update: false`, like
+ * the creation audit fields. The MongoDB driver of TypeORM ignores the update: false option and would write those
+ * columns.
+ */
+export function updatableProperties<Entity extends ObjectLiteral>(metadata: EntityMetadata, entity: Entity): QueryDeepPartialEntity<Entity> {
+  const properties: ObjectLiteral = { ...entity };
+  for (const column of metadata.columns.filter(column => !column.isUpdate)) {
+    delete properties[column.propertyName];
+  }
+  return properties as QueryDeepPartialEntity<Entity>;
+}
