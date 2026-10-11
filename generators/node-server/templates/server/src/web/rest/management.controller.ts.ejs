@@ -1,6 +1,6 @@
-import { Controller, Get, Logger, ServiceUnavailableException, UseInterceptors } from '@nestjs/common';
+import { Controller, Get, Logger, ServiceUnavailableException } from '@nestjs/common';
 import { DataSource } from 'typeorm';
-import { LoggingInterceptor } from '../../common/interceptors/logging.interceptor';
+import { SkipLogging } from '../../common/interceptors/logging.interceptor';
 import { ApiTags, ApiResponse, ApiOperation, ApiExcludeEndpoint } from '@nestjs/swagger';
 
 export interface Health {
@@ -17,7 +17,6 @@ export class ManagementController {
 
   @ApiExcludeEndpoint()
   @Get('/info')
-  @UseInterceptors(LoggingInterceptor)
   @ApiOperation({ summary: 'Microservice Info' })
   @ApiResponse({
     status: 200,
@@ -32,11 +31,12 @@ export class ManagementController {
 
   /**
    * The health of the application, like the health endpoint of Spring Boot Actuator: UP when the database answers,
-   * DOWN with the status 503 otherwise. Public, and not logged by the LoggingInterceptor, the container and the service
-   * discovery health checks call it every few seconds.
+   * DOWN with the status 503 otherwise. Public, and not logged by the LoggingInterceptor (@SkipLogging), the container
+   * and the service discovery health checks call it every few seconds.
    */
   @ApiExcludeEndpoint()
   @Get('/health')
+  @SkipLogging()
   async health(): Promise<Health> {
     if (!(await this.isDatabaseUp())) {
       throw new ServiceUnavailableException({ status: 'DOWN' } satisfies Health);

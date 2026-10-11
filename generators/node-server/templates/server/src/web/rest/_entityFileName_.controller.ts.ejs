@@ -6,7 +6,6 @@ import { PageRequest, Page } from '../../domain/base/pagination.entity';
 import { AuthGuard,  Roles, RolesGuard, RoleType } from '../../security';
 import { HeaderUtil } from '../../common/header-util';
 import { Request } from '../../common/request';
-import { LoggingInterceptor } from '../../common/interceptors/logging.interceptor';
 
 <%_
 const pkType = primaryKey.tsType;
@@ -14,7 +13,7 @@ _%>
 
 @Controller('api/<%= entityApiUrl %>')
 @UseGuards(AuthGuard, RolesGuard)
-@UseInterceptors(LoggingInterceptor, ClassSerializerInterceptor)
+@UseInterceptors(ClassSerializerInterceptor)
 <%_ if (authenticationType === 'jwt') { _%>
 @ApiBearerAuth()
 <%_ } else if (authenticationType === 'oauth2') { _%>

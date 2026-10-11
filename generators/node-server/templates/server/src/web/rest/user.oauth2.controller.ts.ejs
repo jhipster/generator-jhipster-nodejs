@@ -1,6 +1,5 @@
-import { Controller, Get, Logger, Post, Res, UseGuards, Req, UseInterceptors } from '@nestjs/common';
+import { Controller, Get, Logger, Post, Res, UseGuards, Req } from '@nestjs/common';
 import { AuthService } from '../../service/auth.service';
-import { LoggingInterceptor } from '../../common/interceptors/logging.interceptor';
 import { ApiTags, ApiResponse, ApiOperation, ApiExcludeEndpoint } from '@nestjs/swagger';
 import { AuthGuard, RolesGuard } from '../../security';
 import { oauth2Config } from '../../security/oauth2.config';
@@ -9,7 +8,6 @@ import { config } from '../../config';
 <%_ } _%>
 
 @Controller()
-@UseInterceptors(LoggingInterceptor)
 @ApiTags('user-oauth2-controller')
 export class UserOauth2Controller {
   logger = new Logger('UserOauth2Controller');

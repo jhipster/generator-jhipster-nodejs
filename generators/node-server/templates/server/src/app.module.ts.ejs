@@ -1,7 +1,9 @@
 import { Module } from '@nestjs/common';
+import { APP_INTERCEPTOR } from '@nestjs/core';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from './module/auth.module';
 import { ormConfig } from './orm.config';
+import { LoggingInterceptor } from './common/interceptors/logging.interceptor';
 <%_ if (!skipClient) { _%>
 import { config } from './config';
 import { ServeStaticModule } from '@nestjs/serve-static';
@@ -25,6 +27,8 @@ import { ServeStaticModule } from '@nestjs/serve-static';
   // jhipster-needle-add-controller-module-to-main - JHipster will add controller modules here, do not remove
   ],
   providers: [
+    // Logs the requests of every controller, opt out with @SkipLogging().
+    { provide: APP_INTERCEPTOR, useClass: LoggingInterceptor },
   // jhipster-needle-add-service-module-to-main - JHipster will add service modules here, do not remove
   ],
 })

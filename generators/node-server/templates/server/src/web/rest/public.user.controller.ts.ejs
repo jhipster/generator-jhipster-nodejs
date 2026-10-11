@@ -1,5 +1,4 @@
 import { Controller, ClassSerializerInterceptor, Get, Logger, Req, UseInterceptors } from '@nestjs/common';
-import { LoggingInterceptor } from '../../common/interceptors/logging.interceptor';
 import { PageRequest, Page } from '../../domain/base/pagination.entity';
 import { <%= user.dtoClass%> } from '../../service/dto/user.dto';
 import { Request } from '../../common/request';
@@ -8,7 +7,7 @@ import { ApiTags, ApiResponse, ApiOperation } from '@nestjs/swagger';
 import { AuthService } from '../../service/auth.service';
 
 @Controller('api')
-@UseInterceptors(LoggingInterceptor, ClassSerializerInterceptor)
+@UseInterceptors(ClassSerializerInterceptor)
 @ApiTags('public-user-controller')
 export class PublicUserController {
 

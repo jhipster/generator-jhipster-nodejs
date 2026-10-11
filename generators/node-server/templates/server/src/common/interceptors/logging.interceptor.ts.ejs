@@ -1,12 +1,48 @@
-import { CallHandler, ExecutionContext, Injectable, NestInterceptor, Logger } from '@nestjs/common';
+import { CallHandler, CustomDecorator, ExecutionContext, Injectable, Logger, NestInterceptor, SetMetadata } from '@nestjs/common';
+import { Reflector } from '@nestjs/core';
 import { Observable } from 'rxjs';
-import { Request } from 'express';
+import { Request, Response } from 'express';
 
+export const SKIP_LOGGING = 'skipLogging';
+
+/**
+ * Excludes a controller, or one of its handlers, from the request logging of the LoggingInterceptor, like the health
+ * endpoint that the container and the service discovery health checks call every few seconds.
+ */
+export const SkipLogging = (): CustomDecorator<string> => SetMetadata(SKIP_LOGGING, true);
+
+/**
+ * Logs every request handled by a controller once its response is sent: method, URL, status and elapsed time.
+ * Registered globally in the AppModule (APP_INTERCEPTOR), opt out with @SkipLogging().
+ * Like the LoggingAspect of JHipster Spring Boot, the requests are logged at the debug level, the server errors (5xx) at the error level.
+ */
 @Injectable()
 export class LoggingInterceptor implements NestInterceptor {
+  private readonly logger = new Logger('LoggingInterceptor');
+
+  constructor(private readonly reflector: Reflector) {}
+
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
-    const req: Request = context.switchToHttp().getRequest();
-    Logger.debug(`${context.getClass().name}.${context.getHandler().name}() : ${req.method} ${req.url}`, 'LoggingInterceptor');
+    if (
+      context.getType() !== 'http' ||
+      this.reflector.getAllAndOverride<boolean>(SKIP_LOGGING, [context.getHandler(), context.getClass()])
+    ) {
+      return next.handle();
+    }
+    const request = context.switchToHttp().getRequest<Request>();
+    const response = context.switchToHttp().getResponse<Response>();
+    const handler = `${context.getClass().name}.${context.getHandler().name}()`;
+    const start = Date.now();
+    // Logged once the response is sent: the status of an exception is only set by the exception filters, after the
+    // interceptors, and the elapsed time includes the serialization of the response.
+    response.once('finish', () => {
+      const message = `${request.method} ${request.originalUrl} ${response.statusCode} ${Date.now() - start}ms - ${handler}`;
+      if (response.statusCode >= 500) {
+        this.logger.error(message);
+      } else {
+        this.logger.debug(message);
+      }
+    });
     return next.handle();
   }
 }

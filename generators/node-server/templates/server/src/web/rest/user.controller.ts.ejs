@@ -4,13 +4,12 @@ import { PageRequest, Page } from '../../domain/base/pagination.entity';
 import { <%= user.dtoClass%> } from '../../service/dto/user.dto';
 import { HeaderUtil } from '../../common/header-util';
 import { Request } from '../../common/request';
-import { LoggingInterceptor } from '../../common/interceptors/logging.interceptor';
 import {<%_ if (authenticationType === 'jwt') { _%> ApiBearerAuth, <%_ } else if (authenticationType === 'oauth2') { _%> ApiSecurity, <%_ } _%> ApiTags, ApiResponse, ApiOperation } from '@nestjs/swagger';
 import { UserService } from '../../service/user.service';
 
 @Controller('api/admin/users')
 @UseGuards(AuthGuard, RolesGuard)
-@UseInterceptors(LoggingInterceptor, ClassSerializerInterceptor)
+@UseInterceptors(ClassSerializerInterceptor)
 <%_ if (authenticationType === 'jwt') { _%>
 @ApiBearerAuth()
 <%_ } else if (authenticationType === 'oauth2') { _%>
