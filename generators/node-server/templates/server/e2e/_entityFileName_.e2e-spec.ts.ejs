@@ -7,6 +7,10 @@ import { AuthGuard } from '../src/security/guards/auth.guard';
 import { RolesGuard } from '../src/security/guards/roles.guard';
 import { <%= dtoClass %> } from '../src/service/dto/<%= entityFileName %>.dto';
 import { <%= entityClass %>Service } from '../src/service/<%= entityFileName %>.service';
+<%_ if (typeormOrderSupport) { _%>
+import { DataSource, EntityMetadata } from 'typeorm';
+import { <%= entityClass %> } from '../src/domain/<%= entityFileName %>.entity';
+<%_ } _%>
 
 describe('<%= entityClass %> Controller', () => {
     let app: INestApplication;
@@ -17,7 +21,7 @@ describe('<%= entityClass %> Controller', () => {
         id: 'entityId'
     }
 
-    const serviceMock = {
+    const serviceMock<% if (typeormOrderSupport) { %>: { metadata?: EntityMetadata, [method: string]: unknown }<% } %> = {
         findById: (id: any): any => (id === entityMock.id ? entityMock : undefined),
         findAndCount: (): any => [entityMock, 0],
         save: (): any => entityMock,
@@ -36,6 +40,10 @@ describe('<%= entityClass %> Controller', () => {
         .overrideProvider(<%= entityClass %>Service)
         .useValue(serviceMock)
         .compile();
+<%_ if (typeormOrderSupport) { _%>
+        // The sort is validated with the TypeORM metadata of the entity.
+        serviceMock.metadata = moduleFixture.get(DataSource).getMetadata(<%= entityClass %>);
+<%_ } _%>
 
         app = moduleFixture.createNestApplication();
         await app.init();
@@ -51,6 +59,35 @@ describe('<%= entityClass %> Controller', () => {
 
     }
     );
+
+<%_ if (typeormOrderSupport) { _%>
+<%_
+const sortField = fields.find(field => !field.id && !field.transient);
+const sortRelationship = relationships.find(relationship => relationship.ownerSide && !relationship.collection);
+_%>
+
+    it('/GET all <%= entityApiUrl %> sorted on a property of the entity', async () => {
+        await request(app.getHttpServer())
+            .get('/api/<%= entityApiUrl %>?sort=<%= sortField ? sortField.fieldName : primaryKey.name %>,desc')
+            .expect(200);
+    });
+<%_ if (sortRelationship) { _%>
+
+    it('/GET all <%= entityApiUrl %> sorted on a property of a relationship', async () => {
+        await request(app.getHttpServer())
+            .get('/api/<%= entityApiUrl %>?sort=<%= sortRelationship.propertyName %>.id,asc')
+            .expect(200);
+    });
+<%_ } _%>
+
+    it('/GET all <%= entityApiUrl %> sorted on an unknown property', async () => {
+        const response = await request(app.getHttpServer())
+            .get('/api/<%= entityApiUrl %>?sort=unknownProperty,asc')
+            .expect(400);
+
+        expect(response.body.message).toBe('Invalid sort property: unknownProperty');
+    });
+<%_ } _%>
 
     it('/GET <%= entityApiUrl %> by id', async () => {
 

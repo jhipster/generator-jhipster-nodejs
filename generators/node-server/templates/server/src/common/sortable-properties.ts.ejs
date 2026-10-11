@@ -1,0 +1,18 @@
+import { EntityMetadata } from 'typeorm';
+
+/**
+ * Whether a list of the entity can be sorted on a property, found by introspection of its TypeORM metadata like Spring
+ * Data validates the sort of a pageable: a column of the entity, or a column of an entity it references through a
+ * relationship to one, like `region.name`. A relationship itself or a collection cannot be sorted on.
+ */
+export function isSortableProperty(metadata: EntityMetadata, property: string): boolean {
+  const [name, ...path] = property.split('.');
+  const relation = metadata.findRelationWithPropertyPath(name);
+  if (path.length === 0) {
+    return relation === undefined && metadata.findColumnWithPropertyPath(name) !== undefined;
+  }
+  if (relation === undefined || relation.isOneToMany || relation.isManyToMany) {
+    return false;
+  }
+  return isSortableProperty(relation.inverseEntityMetadata, path.join('.'));
+}

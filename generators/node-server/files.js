@@ -86,6 +86,12 @@ export const serverFiles = {
       condition: ctx => ctx.databaseTypeMongodb,
       templates: ['src/common/updatable-properties.ts'],
     },
+    {
+      path: SERVER_NODEJS_DIR,
+      // Validates the sort of the entity lists by introspection of the TypeORM metadata.
+      condition: ctx => ctx.typeormOrderSupport,
+      templates: ['src/common/sortable-properties.ts'],
+    },
   ],
   e2e: [
     {
