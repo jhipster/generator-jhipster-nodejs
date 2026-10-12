@@ -110,6 +110,9 @@ exports[`SubGenerator server of nodejs JHipster blueprint > run > should succeed
   "server/src/common/request.ts": {
     "stateCleared": "modified",
   },
+  "server/src/common/sortable-properties.ts": {
+    "stateCleared": "modified",
+  },
   "server/src/config.ts": {
     "stateCleared": "modified",
   },

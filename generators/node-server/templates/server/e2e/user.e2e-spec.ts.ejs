@@ -139,6 +139,20 @@ describe('User', () => {
         expect(userUndefined).toBeUndefined();
     });
 
+<%_ if (typeormOrderSupport) { _%>
+    it('/GET users sorted on a property of the user', async () => {
+        await request(app.getHttpServer()).get('/api/admin/users?sort=login,desc').expect(200);
+        await request(app.getHttpServer()).get('/api/admin/users?sort=createdDate,asc').expect(200);
+    });
+
+    it('/GET users sorted on the password or a key of the user', async () => {
+        for (const property of ['password', 'activationKey', 'resetKey']) {
+            const response = await request(app.getHttpServer()).get(`/api/admin/users?sort=${property},asc`).expect(400);
+            expect(response.body.message).toBe(`Invalid sort property: ${property}`);
+        }
+    });
+
+<%_ } _%>
     afterEach(async () => {
         await app?.close();
     });

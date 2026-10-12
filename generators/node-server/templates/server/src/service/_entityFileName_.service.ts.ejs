@@ -1,6 +1,6 @@
 import { Injectable, HttpException, HttpStatus, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { FindManyOptions, FindOneOptions, Repository } from 'typeorm';
+import { <% if (typeormOrderSupport) { %>EntityMetadata, <% } %>FindManyOptions, FindOneOptions, Repository } from 'typeorm';
 import { <%= entityClass %> } from '../domain/<%= entityFileName %>.entity';
 import { <%= dtoClass %> }  from '../service/dto/<%= entityFileName %>.dto';
 import { <%= entityClass %>Mapper }  from '../service/mapper/<%= entityFileName %>.mapper';
@@ -25,6 +25,13 @@ export class <%= entityClass %>Service {
     logger = new Logger('<%= entityClass %>Service');
 
     constructor(@InjectRepository(<%= entityClass %>) private <%= entityInstance %>Repository: Repository<<%= entityClass %>>) {}
+<%_ if (typeormOrderSupport) { _%>
+
+    /** The TypeORM metadata of the entity, the sort of its lists is validated with. */
+    get metadata(): EntityMetadata {
+        return this.<%= entityInstance %>Repository.metadata;
+    }
+<%_ } _%>
 
       async findById(id: <%= pkType %>): Promise<<%= dtoClass %> | undefined> {
         const result = await this.<%= entityInstance %>Repository.findOne({
