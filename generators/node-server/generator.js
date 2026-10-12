@@ -10,6 +10,7 @@ import { SERVER_NODEJS_SRC_DIR } from '../generator-nodejs-constants.js';
 
 import { entityFiles } from './entity-files.js';
 import { serverFiles } from './files.js';
+import { getDatabasePort } from './support/index.js';
 
 const fieldTypes = {
   Boolean: 'boolean',
@@ -167,6 +168,7 @@ export default class extends BaseApplicationGenerator {
             prodDatabaseType === 'postgresql' ? 'postgres' : prodDatabaseType,
           nodeDevDatabaseType: ({ databaseType, devDatabaseType = databaseType }) =>
             devDatabaseType === 'postgresql' ? 'postgres' : devDatabaseType,
+          nodeDatabasePort: getDatabasePort,
         });
       },
       async source({ source }) {
