@@ -1,16 +1,17 @@
 import { Logger, INestApplication } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
-import { config } from './config';
 
 export function setupSwagger(app: INestApplication): any {
 
   const logger: Logger = new Logger('Swagger');
-  const swaggerEndpoint = config.get('jhipster.swagger.path');
+  const configService = app.get(ConfigService);
+  const swaggerEndpoint = configService.getOrThrow<string>('jhipster.swagger.path');
 
   const options = new DocumentBuilder()
-    .setTitle(config.get('jhipster.swagger.title'))
-    .setDescription(config.get('jhipster.swagger.description'))
-    .setVersion(config.get('jhipster.swagger.version'))
+    .setTitle(configService.getOrThrow<string>('jhipster.swagger.title'))
+    .setDescription(configService.getOrThrow<string>('jhipster.swagger.description'))
+    .setVersion(configService.getOrThrow<string>('jhipster.swagger.version'))
     <%_ if (authenticationType === 'jwt') { _%>
     .addBearerAuth()
     <%_ } _%>

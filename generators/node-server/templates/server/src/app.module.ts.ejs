@@ -1,8 +1,10 @@
 import { Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from './module/auth.module';
 import { ormConfig } from './orm.config';
+import { configuration } from './config';
 import { LoggingInterceptor } from './common/interceptors/logging.interceptor';
 <%_ if (!skipClient) { _%>
 import { config } from './config';
@@ -14,6 +16,8 @@ import { ServeStaticModule } from '@nestjs/serve-static';
 
 @Module({
   imports: [
+    // The configuration of the application*.yml files, read with ConfigService. main.ts loads the .env file.
+    ConfigModule.forRoot({ isGlobal: true, ignoreEnvFile: true, cache: true, load: [configuration] }),
   TypeOrmModule.forRootAsync({ useFactory: ormConfig }),
     <%_ if (!skipClient) { _%>
     ServeStaticModule.forRoot({

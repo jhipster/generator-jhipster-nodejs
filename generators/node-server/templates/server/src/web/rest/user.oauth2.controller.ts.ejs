@@ -4,7 +4,7 @@ import { ApiTags, ApiResponse, ApiOperation, ApiExcludeEndpoint } from '@nestjs/
 import { AuthGuard, RolesGuard } from '../../security';
 import { oauth2Config } from '../../security/oauth2.config';
 <%_ if (skipClient) { _%>
-import { config } from '../../config';
+import { ConfigService } from '@nestjs/config';
 <%_ } _%>
 
 @Controller()
@@ -12,7 +12,7 @@ import { config } from '../../config';
 export class UserOauth2Controller {
   logger = new Logger('UserOauth2Controller');
 
-  constructor(private readonly authService: AuthService) { }
+  constructor(private readonly authService: AuthService<% if (skipClient) { %>, private readonly configService: ConfigService<% } %>) { }
 
   @ApiExcludeEndpoint()
   @UseGuards(AuthGuard, RolesGuard)
@@ -27,7 +27,7 @@ export class UserOauth2Controller {
     res.session.user = req.user;
     res.session.idToken = req.idToken;
     <%_ if (skipClient) { _%>
-    let url = config.get('jhipster.swagger.path');
+    let url = this.configService.getOrThrow<string>('jhipster.swagger.path');
     <%_ } else { _%>
     let url = '/';
     <%_ } _%>

@@ -20,7 +20,7 @@ import { UserService } from '../service/user.service';
 <%_ } _%>
 import { <%= userLoginVmClass %> } from './dto/user.dto';
 <%_ if (authenticationType === 'jwt' && generateBuiltInUserEntity) { _%>
-import { config } from '../config';
+import { ConfigService } from '@nestjs/config';
 <%_ } _%>
 
 <%_
@@ -34,6 +34,7 @@ export class AuthService {
   constructor(
     <%_ if (authenticationType === 'jwt' && generateBuiltInUserEntity) { _%>
     private readonly jwtService: JwtService,
+    private readonly configService: ConfigService,
     <%_ } _%>
     <%_ if (generateBuiltInAuthorityEntity) { _%>
     @InjectRepository(Authority) private authorityRepository: Repository<Authority>,
@@ -70,8 +71,8 @@ export class AuthService {
 
     const expiresIn = Number(
       userLogin.rememberMe
-        ? config['jhipster.security.authentication.jwt.token-validity-in-seconds-for-remember-me']
-        : config['jhipster.security.authentication.jwt.token-validity-in-seconds'],
+        ? this.configService.getOrThrow('jhipster.security.authentication.jwt.token-validity-in-seconds-for-remember-me')
+        : this.configService.getOrThrow('jhipster.security.authentication.jwt.token-validity-in-seconds'),
     );
     return {
       id_token: this.jwtService.sign(payload, { expiresIn }),
