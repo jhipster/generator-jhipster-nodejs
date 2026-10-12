@@ -96,6 +96,12 @@ function ormConfig(): TypeOrmModuleOptions {
       // jhipster-needle-add-migration-to-ormconfig-migrations - JHipster will add code here, do not remove
     ],
     autoLoadEntities: true,
+    // A bounded start: TypeORM tries to connect (and to run the migrations) 5 times, 3 seconds apart (10 times by default), then the start fails
+    // and the process exits, for the container orchestrator (docker compose, Kubernetes) to restart it.
+    retryAttempts: 5,
+    retryDelay: 3000,
+    // The retry logs tell the error of the connection.
+    verboseRetryLog: true,
 <%_ if (prodDatabaseTypeMssql) { _%>
     extra: {
       trustServerCertificate: true,

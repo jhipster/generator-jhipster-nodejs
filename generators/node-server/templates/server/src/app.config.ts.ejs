@@ -1,0 +1,20 @@
+import { BadRequestException, INestApplication, ValidationPipe } from '@nestjs/common';
+
+/**
+ * Configures the application as it runs in production: main.ts and the e2e tests call it, so the e2e tests
+ * exercise the same validation and HTTP behaviour as the started application.
+ * It has no side effect at import (main.ts starts the application when imported), and does not listen.
+ */
+export function configureApp(app: INestApplication): INestApplication {
+  app.enableCors();
+  app.useGlobalPipes(
+    new ValidationPipe({
+      exceptionFactory: (): BadRequestException => new BadRequestException('Validation error'),
+      // https://github.com/nestjs/nest/issues/10683#issuecomment-1349614194
+      forbidUnknownValues: false,
+    }),
+  );
+  // Disable cache.
+  app.getHttpAdapter().getInstance().set('etag', false);
+  return app;
+}

@@ -390,6 +390,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > jwt microservic
   "server/sonar-project.properties": {
     "stateCleared": "modified",
   },
+  "server/src/app.config.ts": {
+    "stateCleared": "modified",
+  },
   "server/src/app.module.ts": {
     "stateCleared": "modified",
   },
@@ -609,6 +612,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > run > should su
     "stateCleared": "modified",
   },
   "server/sonar-project.properties": {
+    "stateCleared": "modified",
+  },
+  "server/src/app.config.ts": {
     "stateCleared": "modified",
   },
   "server/src/app.module.ts": {
@@ -871,6 +877,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > with oauth2 > s
   "server/sonar-project.properties": {
     "stateCleared": "modified",
   },
+  "server/src/app.config.ts": {
+    "stateCleared": "modified",
+  },
   "server/src/app.module.ts": {
     "stateCleared": "modified",
   },
@@ -1099,6 +1108,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > with oauth2 and
     "stateCleared": "modified",
   },
   "server/sonar-project.properties": {
+    "stateCleared": "modified",
+  },
+  "server/src/app.config.ts": {
     "stateCleared": "modified",
   },
   "server/src/app.module.ts": {
@@ -1685,6 +1697,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > without client 
     "stateCleared": "modified",
   },
   "server/sonar-project.properties": {
+    "stateCleared": "modified",
+  },
+  "server/src/app.config.ts": {
     "stateCleared": "modified",
   },
   "server/src/app.module.ts": {
