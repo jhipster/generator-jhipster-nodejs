@@ -32,14 +32,14 @@ server:
 # The database, read by orm.config.ts (TypeORM options): environment variables override each property, like
 # DATABASE_HOST or DATABASE_PASSWORD.
 database:
-<%_ if (databaseTypeSql && ['sqlite', 'h2Disk', 'h2Memory'].includes(devDatabaseType)) { _%>
+<%_ if (nodeDevDatabaseType === 'better-sqlite3') { _%>
   # SQLite, the embedded database of development like H2 in a Spring Boot application.
   type: better-sqlite3
-  name: <%- devDatabaseType === 'h2Memory' ? "':memory:'" : 'target/db/sqlite-dev-db.sql' %>
+  name: '<%- nodeDevSqliteDatabase %>'
   logging: true
 <%_ } else { _%>
   # The database of docker/<%= databaseTypeSql ? prodDatabaseType : 'mongodb' %>.yml (npm run docker:db:up).
-  type: <%= nodeProdDatabaseType %>
+  type: <%= nodeDevDatabaseType %>
   host: 127.0.0.1
   port: <%= nodeDatabasePort %>
 <%_ if (databaseTypeSql) { _%>
