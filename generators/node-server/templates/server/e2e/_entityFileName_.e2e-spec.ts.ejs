@@ -164,7 +164,7 @@ _%>
             .expect(200);
 
         expect(response.body).toEqual(entityMock);
-        expect(alertHeader(response.headers, '-alert')).toMatch(/\.<%= entityClass %>\.updated$/);
+        expect(alertHeader(response.headers, '-alert')).toMatch(<%- enableTranslation ? `/\\.${entityClass}\\.updated$/` : `/^A ${entityClass} is updated with identifier /` %>);
         expect(alertHeader(response.headers, '-params')).toBe(String(entityMock.id));
     }
     );
