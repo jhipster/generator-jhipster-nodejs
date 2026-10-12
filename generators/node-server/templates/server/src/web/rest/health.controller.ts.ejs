@@ -1,0 +1,69 @@
+import { Controller, Get, ServiceUnavailableException } from '@nestjs/common';
+import { ApiExcludeEndpoint } from '@nestjs/swagger';
+import { HealthCheckResult, HealthCheckService, TypeOrmHealthIndicator } from '@nestjs/terminus';
+
+import { SkipLogging } from '../../common/interceptors/logging.interceptor';
+
+export type HealthStatus = 'UP' | 'DOWN';
+
+export interface Health {
+  status: HealthStatus;
+  components: Record<string, { status: HealthStatus }>;
+}
+
+/**
+ * The health of the application in the format of Spring Boot Actuator: UP when every component (the database) is up,
+ * DOWN with the status 503 otherwise. Public and not logged, the container and service discovery health checks call it
+ * every few seconds.
+ */
+@Controller('management')
+export class HealthController {
+  constructor(
+    private readonly healthCheckService: HealthCheckService,
+    private readonly typeOrmHealthIndicator: TypeOrmHealthIndicator,
+  ) {}
+
+  @ApiExcludeEndpoint()
+  @Get('/health')
+  @SkipLogging()
+  async health(): Promise<Health> {
+    try {
+      return toHealth(await this.healthCheckService.check([() => this.typeOrmHealthIndicator.pingCheck('db')]));
+    } catch (error) {
+      if (error instanceof ServiceUnavailableException) {
+        throw new ServiceUnavailableException(toHealth(error.getResponse() as HealthCheckResult));
+      }
+      throw error;
+    }
+  }
+
+  /**
+   * The liveness probe, like the liveness group of Spring Boot Actuator (livenessState): UP while the application answers.
+   */
+  @ApiExcludeEndpoint()
+  @Get('/health/liveness')
+  @SkipLogging()
+  liveness(): Pick<Health, 'status'> {
+    return { status: 'UP' };
+  }
+
+  /**
+   * The readiness probe, like the readiness group of Spring Boot Actuator (readinessState): UP once the application
+   * accepts requests. A JHipster gateway waits for it before routing to a microservice.
+   */
+  @ApiExcludeEndpoint()
+  @Get('/health/readiness')
+  @SkipLogging()
+  readiness(): Pick<Health, 'status'> {
+    return { status: 'UP' };
+  }
+}
+
+function toHealth({ status, details }: HealthCheckResult): Health {
+  return {
+    status: status === 'ok' ? 'UP' : 'DOWN',
+    components: Object.fromEntries(
+      Object.entries(details).map(([name, { status }]) => [name, { status: status === 'up' ? 'UP' : 'DOWN' }]),
+    ),
+  };
+}

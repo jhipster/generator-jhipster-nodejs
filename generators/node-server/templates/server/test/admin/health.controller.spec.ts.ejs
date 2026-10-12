@@ -1,0 +1,56 @@
+import { beforeEach, describe, expect, it, jest } from '@jest/globals';
+import { ServiceUnavailableException } from '@nestjs/common';
+import { Reflector } from '@nestjs/core';
+import { Test, TestingModule } from '@nestjs/testing';
+import { HealthCheckService, TypeOrmHealthIndicator } from '@nestjs/terminus';
+import { SKIP_LOGGING } from '../../src/common/interceptors/logging.interceptor';
+import { HealthController } from '../../src/web/rest/health.controller';
+
+describe('Health Controller', () => {
+  let controller: HealthController;
+  const check = jest.fn<HealthCheckService['check']>();
+
+  beforeEach(async () => {
+    check.mockReset();
+    const module: TestingModule = await Test.createTestingModule({
+      controllers: [HealthController],
+      providers: [
+        { provide: HealthCheckService, useValue: { check } },
+        { provide: TypeOrmHealthIndicator, useValue: { pingCheck: jest.fn() } },
+      ],
+    }).compile();
+
+    controller = module.get<HealthController>(HealthController);
+  });
+
+  it('is UP when the database is up', async () => {
+    check.mockResolvedValue({ status: 'ok', info: { db: { status: 'up' } }, error: {}, details: { db: { status: 'up' } } });
+    await expect(controller.health()).resolves.toEqual({ status: 'UP', components: { db: { status: 'UP' } } });
+  });
+
+  it('is DOWN with the status 503 when the database is down', async () => {
+    check.mockRejectedValue(
+      new ServiceUnavailableException({
+        status: 'error',
+        info: {},
+        error: { db: { status: 'down', message: 'connection refused' } },
+        details: { db: { status: 'down', message: 'connection refused' } },
+      }),
+    );
+    const error = await controller.health().catch((e: ServiceUnavailableException) => e);
+    expect(error).toBeInstanceOf(ServiceUnavailableException);
+    expect((error as ServiceUnavailableException).getResponse()).toEqual({ status: 'DOWN', components: { db: { status: 'DOWN' } } });
+  });
+
+  it('the health checks are not logged', () => {
+    for (const name of ['health', 'liveness', 'readiness']) {
+      const method = Object.getOwnPropertyDescriptor(HealthController.prototype, name)?.value as () => unknown;
+      expect(new Reflector().get<boolean>(SKIP_LOGGING, method)).toBe(true);
+    }
+  });
+
+  it('answers the liveness and readiness probes', () => {
+    expect(controller.liveness()).toEqual({ status: 'UP' });
+    expect(controller.readiness()).toEqual({ status: 'UP' });
+  });
+});

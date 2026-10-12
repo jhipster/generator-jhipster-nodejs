@@ -438,6 +438,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > jwt microservic
   "server/src/module/auth.module.ts": {
     "stateCleared": "modified",
   },
+  "server/src/module/health.module.ts": {
+    "stateCleared": "modified",
+  },
   "server/src/orm.config.ts": {
     "stateCleared": "modified",
   },
@@ -483,7 +486,13 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > jwt microservic
   "server/src/web/rest/account.controller.ts": {
     "stateCleared": "modified",
   },
+  "server/src/web/rest/health.controller.ts": {
+    "stateCleared": "modified",
+  },
   "server/src/web/rest/management.controller.ts": {
+    "stateCleared": "modified",
+  },
+  "server/test/admin/health.controller.spec.ts": {
     "stateCleared": "modified",
   },
   "server/test/admin/management.controller.spec.ts": {
@@ -659,6 +668,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > run > should su
   "server/src/module/auth.module.ts": {
     "stateCleared": "modified",
   },
+  "server/src/module/health.module.ts": {
+    "stateCleared": "modified",
+  },
   "server/src/module/user.module.ts": {
     "stateCleared": "modified",
   },
@@ -722,6 +734,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > run > should su
   "server/src/web/rest/account.controller.ts": {
     "stateCleared": "modified",
   },
+  "server/src/web/rest/health.controller.ts": {
+    "stateCleared": "modified",
+  },
   "server/src/web/rest/management.controller.ts": {
     "stateCleared": "modified",
   },
@@ -732,6 +747,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > run > should su
     "stateCleared": "modified",
   },
   "server/src/web/rest/user.jwt.controller.ts": {
+    "stateCleared": "modified",
+  },
+  "server/test/admin/health.controller.spec.ts": {
     "stateCleared": "modified",
   },
   "server/test/admin/management.controller.spec.ts": {
@@ -901,6 +919,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > with oauth2 > s
   "server/src/module/auth.module.ts": {
     "stateCleared": "modified",
   },
+  "server/src/module/health.module.ts": {
+    "stateCleared": "modified",
+  },
   "server/src/orm.config.ts": {
     "stateCleared": "modified",
   },
@@ -946,10 +967,16 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > with oauth2 > s
   "server/src/web/rest/account.controller.ts": {
     "stateCleared": "modified",
   },
+  "server/src/web/rest/health.controller.ts": {
+    "stateCleared": "modified",
+  },
   "server/src/web/rest/management.controller.ts": {
     "stateCleared": "modified",
   },
   "server/src/web/rest/user.oauth2.controller.ts": {
+    "stateCleared": "modified",
+  },
+  "server/test/admin/health.controller.spec.ts": {
     "stateCleared": "modified",
   },
   "server/test/admin/management.controller.spec.ts": {
@@ -1131,6 +1158,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > with oauth2 and
   "server/src/module/auth.module.ts": {
     "stateCleared": "modified",
   },
+  "server/src/module/health.module.ts": {
+    "stateCleared": "modified",
+  },
   "server/src/module/user.module.ts": {
     "stateCleared": "modified",
   },
@@ -1185,6 +1215,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > with oauth2 and
   "server/src/web/rest/account.controller.ts": {
     "stateCleared": "modified",
   },
+  "server/src/web/rest/health.controller.ts": {
+    "stateCleared": "modified",
+  },
   "server/src/web/rest/management.controller.ts": {
     "stateCleared": "modified",
   },
@@ -1192,6 +1225,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > with oauth2 and
     "stateCleared": "modified",
   },
   "server/src/web/rest/user.oauth2.controller.ts": {
+    "stateCleared": "modified",
+  },
+  "server/test/admin/health.controller.spec.ts": {
     "stateCleared": "modified",
   },
   "server/test/admin/management.controller.spec.ts": {
@@ -1708,6 +1744,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > without client 
   "server/src/module/auth.module.ts": {
     "stateCleared": "modified",
   },
+  "server/src/module/health.module.ts": {
+    "stateCleared": "modified",
+  },
   "server/src/module/user.module.ts": {
     "stateCleared": "modified",
   },
@@ -1771,6 +1810,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > without client 
   "server/src/web/rest/account.controller.ts": {
     "stateCleared": "modified",
   },
+  "server/src/web/rest/health.controller.ts": {
+    "stateCleared": "modified",
+  },
   "server/src/web/rest/management.controller.ts": {
     "stateCleared": "modified",
   },
@@ -1781,6 +1823,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > without client 
     "stateCleared": "modified",
   },
   "server/src/web/rest/user.jwt.controller.ts": {
+    "stateCleared": "modified",
+  },
+  "server/test/admin/health.controller.spec.ts": {
     "stateCleared": "modified",
   },
   "server/test/admin/management.controller.spec.ts": {
