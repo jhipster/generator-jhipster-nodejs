@@ -57,6 +57,45 @@ describe('SubGenerator node-server of nodejs JHipster blueprint', () => {
       result.assertFileContent('server/src/config/application.yml', `base64-secret: ${jwtSecretKey}`);
     });
   });
+  describe('with translations', () => {
+    beforeAll(async function () {
+      await helpers
+        .run(SUB_GENERATOR_NAMESPACE)
+        .withJHipsterConfig({ skipClient: true, enableTranslation: true })
+        .withOptions({
+          ignoreNeedlesError: true,
+        })
+        .withJHipsterGenerators()
+        .withConfiguredBlueprint()
+        .withBlueprintConfig({});
+    });
+
+    it('alert headers should be translation keys', () => {
+      result.assertFileContent('server/src/common/header-util.ts', "applicationName + '.' + entityName + '.created'");
+      result.assertNoFileContent('server/src/common/header-util.ts', 'is created with identifier');
+    });
+  });
+
+  describe('without translations', () => {
+    beforeAll(async function () {
+      await helpers
+        .run(SUB_GENERATOR_NAMESPACE)
+        .withJHipsterConfig({ skipClient: true, enableTranslation: false })
+        .withOptions({
+          ignoreNeedlesError: true,
+        })
+        .withJHipsterGenerators()
+        .withConfiguredBlueprint()
+        .withBlueprintConfig({});
+    });
+
+    it('alert headers should be messages, without the translation keys', () => {
+      result.assertFileContent('server/src/common/header-util.ts', "'A new ' + entityName + ' is created with identifier ' + param");
+      result.assertNoFileContent('server/src/common/header-util.ts', "'.created'");
+      result.assertNoFileContent('server/src/common/header-util.ts', 'enableTranslation');
+    });
+  });
+
   describe('without client', () => {
     beforeAll(async function () {
       await helpers
