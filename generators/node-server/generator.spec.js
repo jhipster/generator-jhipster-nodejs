@@ -57,6 +57,28 @@ describe('SubGenerator node-server of nodejs JHipster blueprint', () => {
       result.assertFileContent('server/src/config/application.yml', `base64-secret: ${jwtSecretKey}`);
     });
   });
+  describe('application with an Angular client', () => {
+    beforeAll(async function () {
+      // The whole application: the client generators compose JHipster's java bootstrap, which enables the npm wrapper.
+      await helpers
+        .run('jhipster:app')
+        .withJHipsterConfig({ clientFramework: 'angular' })
+        .withOptions({
+          ignoreNeedlesError: true,
+          skipInstall: true,
+        })
+        .withJHipsterGenerators()
+        .withConfiguredBlueprint()
+        .withBlueprintConfig({});
+    });
+
+    it('should use npm, without the npm wrapper of a Java application', () => {
+      result.assertNoFileContent('.husky/pre-commit', 'npmw');
+      result.assertFileContent('.husky/pre-commit', '    npm install');
+      result.assertNoFileContent('README.md', 'npmw');
+    });
+  });
+
   describe('without client', () => {
     beforeAll(async function () {
       await helpers

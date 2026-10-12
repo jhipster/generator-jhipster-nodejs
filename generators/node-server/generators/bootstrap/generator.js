@@ -31,6 +31,10 @@ export default class extends BaseApplicationGenerator {
           nodeServerRootDir: `${SERVER_NODEJS_SRC_DIR}/`,
           jhiTablePrefix: ({ jhiPrefix }) => hibernateSnakeCase(jhiPrefix),
           clientPackageManager: 'npm',
+          // TODO remove with generator-jhipster 9.5.0. JHipster's java bootstrap enables the npm wrapper (./npmw as
+          // nodePackageManagerCommand in the README, .husky/pre-commit and index.html), but java:node, which writes
+          // npmw, is not composed for a NodeJS application: without this, the commands refer to a missing ./npmw.
+          useNpmWrapper: false,
           dbPortValue: undefined,
           // As in JHipster's Spring Boot application, syncUserWithIdp is disabled by default, enabled for a gateway or
           // when an entity has a relationship with User (JHipster only derives it for a Java backend). Delayed until
