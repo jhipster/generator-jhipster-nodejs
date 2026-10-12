@@ -33,6 +33,7 @@ export class Config {
   'jhipster.swagger.description' = '<%= baseName %> API documentation';
   'jhipster.swagger.version' = '0.0.1';
   'jhipster.swagger.path' = '/api/v2/api-docs';
+  'info.display-ribbon-on-profiles' = 'dev';
 <%_ if (serviceDiscoveryEureka) { _%>
   'eureka.client.enabled' = true;
   'eureka.client.fetch-registry' = true;
@@ -112,19 +113,42 @@ export class Config {
   }
 }
 
-const yamlConfigPath = path.join(__dirname, 'config', 'application.yml');
-const envYamlConfigPath = path.join(__dirname, 'config', `application-${process.env.BACKEND_ENV}.yml`);
+const configFolder = path.join(__dirname, 'config');
+const yamlConfig: any = yaml.load(fs.readFileSync(path.join(configFolder, 'application.yml'), 'utf8'));
 
-const yamlConfig = yaml.load(fs.readFileSync(yamlConfigPath, 'utf8'));
-logger.log(`Actual process.env.BACKEND_ENV value: ${process.env.BACKEND_ENV}`);
-logger.log('Standard allowed values are: dev, test or prod');
-logger.log('if you run with a non standard BACKEND_ENV value, remember to add your application-{process.env.BACKEND_ENV}.yml file');
-if (!fs.existsSync(envYamlConfigPath)) {
-   logger.error('An application-{process.env.BACKEND_ENV}.yml file with your process.env.BACKEND_ENV value does not exist under config folder!');
+/**
+ * The active profiles, like spring.profiles.active of Spring Boot: the comma separated profiles of BACKEND_ENV (the
+ * default profile without it), each followed by the profiles of its group (profiles.group of application.yml), like dev
+ * that activates secret-samples and api-docs.
+ */
+export const activeProfiles: string[] = expandProfiles((process.env.BACKEND_ENV || 'default').split(','), yamlConfig?.profiles?.group ?? {});
+
+/** Whether one of the profiles is active, like Environment.acceptsProfiles of Spring. */
+export function isProfileActive(...profiles: string[]): boolean {
+  return profiles.some(profile => activeProfiles.includes(profile));
 }
-const envYamlConfig = yaml.load(fs.readFileSync(envYamlConfigPath, 'utf8'));
 
-const config = new Config({ ...objectToArray(yamlConfig), ...objectToArray(envYamlConfig), ipAddress: ipAddress() });
+function expandProfiles(profiles: string[], groups: Record<string, string | string[]>, expanded: string[] = []): string[] {
+  for (const profile of profiles.map(name => name.trim()).filter(Boolean)) {
+    if (!expanded.includes(profile)) {
+      expanded.push(profile);
+      const group = groups[profile] ?? [];
+      expandProfiles(typeof group === 'string' ? group.split(',') : group, groups, expanded);
+    }
+  }
+  return expanded;
+}
+
+logger.log(`The following ${activeProfiles.length} profiles are active: ${activeProfiles.join(', ')}`);
+
+// The application-{profile}.yml file of each active profile, when there is one, in the order of the profiles: the last
+// one wins, like in Spring Boot.
+const profileConfigs = activeProfiles
+  .map(profile => path.join(configFolder, `application-${profile}.yml`))
+  .filter(profileConfigPath => fs.existsSync(profileConfigPath))
+  .map(profileConfigPath => objectToArray(yaml.load(fs.readFileSync(profileConfigPath, 'utf8'))));
+
+const config = new Config(Object.assign(objectToArray(yamlConfig), ...profileConfigs, { ipAddress: ipAddress() }));
 
 export { config };
 

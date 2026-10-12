@@ -44,6 +44,7 @@ export const serverFiles = {
         'src/config/application-test.yml',
         'src/config.ts',
         'src/config/application-prod.yml',
+        'src/config/application-secret-samples.yml',
         'src/config/application.yml',
         'src/domain/base/pagination.entity.ts',
         'src/domain/base/pagination.entity.spec.ts',

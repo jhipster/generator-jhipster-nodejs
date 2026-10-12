@@ -17,7 +17,8 @@ export function setupSwagger(app: INestApplication): any {
     <%_ } _%>
     .build();
   const document = SwaggerModule.createDocument(app, options);
-  SwaggerModule.setup(swaggerEndpoint, app, document);
+  // The OpenAPI document at the path of springdoc, which the API page of the JHipster clients reads.
+  SwaggerModule.setup(swaggerEndpoint, app, document, { jsonDocumentUrl: 'v3/api-docs' });
   logger.log(`Added swagger on endpoint ${swaggerEndpoint}`);
 
 }
