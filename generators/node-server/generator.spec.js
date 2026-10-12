@@ -33,6 +33,17 @@ describe('SubGenerator node-server of nodejs JHipster blueprint', () => {
       result.assertJsonFileContent('server/package.json', { dependencies: { '@nestjs/config': /./ } });
     });
 
+    it('should test the server with Vitest', () => {
+      result.assertJsonFileContent('server/package.json', {
+        scripts: { test: 'vitest run', 'test:e2e': 'vitest run --config ./vitest.config.e2e.ts --coverage --silent' },
+        devDependencies: { vitest: /./, vite: /./, '@vitest/coverage-v8': /./ },
+      });
+      const { dependencies, devDependencies } = result.fs.readJSON(join(result.cwd, 'server/package.json'));
+      expect(Object.keys({ ...dependencies, ...devDependencies }).filter(name => name.includes('jest'))).toEqual([]);
+      result.assertFile(['server/vitest.config.ts', 'server/vitest.config.e2e.ts']);
+      result.assertNoFile('server/e2e/jest.e2e.config.json');
+    });
+
     it('root scripts should run the server and the client workspaces', () => {
       result.assertJsonFileContent('package.json', {
         scripts: {

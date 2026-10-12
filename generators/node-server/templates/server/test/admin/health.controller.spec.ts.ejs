@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, jest } from '@jest/globals';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { ServiceUnavailableException } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { Test, TestingModule } from '@nestjs/testing';
@@ -8,7 +8,7 @@ import { HealthController } from '../../src/web/rest/health.controller';
 
 describe('Health Controller', () => {
   let controller: HealthController;
-  const check = jest.fn<HealthCheckService['check']>();
+  const check = vi.fn<HealthCheckService['check']>();
 
   beforeEach(async () => {
     check.mockReset();
@@ -16,7 +16,7 @@ describe('Health Controller', () => {
       controllers: [HealthController],
       providers: [
         { provide: HealthCheckService, useValue: { check } },
-        { provide: TypeOrmHealthIndicator, useValue: { pingCheck: jest.fn() } },
+        { provide: TypeOrmHealthIndicator, useValue: { pingCheck: vi.fn() } },
       ],
     }).compile();
 

@@ -1,4 +1,4 @@
-import { afterEach, beforeEach, describe, expect, it, jest } from '@jest/globals';
+import { afterEach, beforeEach, describe, expect, it, type MockInstance, vi } from 'vitest';
 import { CallHandler, Controller, ExecutionContext, Get, Logger } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { EventEmitter } from 'events';
@@ -32,8 +32,8 @@ describe('LoggingInterceptor', () => {
   const interceptor = new LoggingInterceptor(new Reflector());
   const next: CallHandler = { handle: () => of('result') };
   let response: EventEmitter & { statusCode: number };
-  let debug: jest.SpiedFunction<Logger['debug']>;
-  let error: jest.SpiedFunction<Logger['error']>;
+  let debug: MockInstance<Logger['debug']>;
+  let error: MockInstance<Logger['error']>;
 
   const contextOf = (controller: any, handler: string): ExecutionContext =>
     ({
@@ -48,12 +48,12 @@ describe('LoggingInterceptor', () => {
 
   beforeEach(() => {
     response = Object.assign(new EventEmitter(), { statusCode: 200 });
-    debug = jest.spyOn(Logger.prototype, 'debug').mockImplementation(() => undefined);
-    error = jest.spyOn(Logger.prototype, 'error').mockImplementation(() => undefined);
+    debug = vi.spyOn(Logger.prototype, 'debug').mockImplementation(() => undefined);
+    error = vi.spyOn(Logger.prototype, 'error').mockImplementation(() => undefined);
   });
 
   afterEach(() => {
-    jest.restoreAllMocks();
+    vi.restoreAllMocks();
   });
 
   it('logs the method, URL, status and elapsed time once the response is sent', () => {

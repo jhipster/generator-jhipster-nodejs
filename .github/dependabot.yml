@@ -16,12 +16,11 @@ updates:
       - dependency-name: '@types/node'
         update-types: ['version-update:semver-major']
     groups:
-      jest:
+      vitest:
         patterns:
-          - '@jest/globals'
-          - '@types/jest'
-          - 'jest'
-          - 'ts-jest'
+          - '@vitest/*'
+          - 'vite'
+          - 'vitest'
       nestjs:
         patterns:
           - '@nestjs/common'

@@ -19,13 +19,13 @@
     "start": "npm run clean && npm run copy-resources && nodemon --watch src -e ts,tsx --exec ts-node src/main.ts",
     "lint": "eslint .",
     "lint:fix": "npm run lint -- --fix",
-    "pretest": "npm run lint",
-    "jest": "node --experimental-vm-modules ../node_modules/jest/bin/jest.js",
-    "test": "npm run jest --",
-    "test:cov": "npm run jest -- --coverage",
-    "test:watch": "npm run jest -- --watch",
-    "test:debug": "node --experimental-vm-modules --inspect-brk -r tsconfig-paths/register -r ts-node/register ../node_modules/jest/bin/jest.js --runInBand",
-    "test:e2e": "npm run jest -- --silent --force-exit --coverage --config ./e2e/jest.e2e.config.json",
+    "pretest": "npm run lint && npm run typecheck",
+    "test": "vitest run",
+    "test:cov": "vitest run --coverage",
+    "test:watch": "vitest",
+    "test:debug": "vitest --inspect-brk --no-file-parallelism",
+    "test:e2e": "vitest run --config ./vitest.config.e2e.ts --coverage --silent",
+    "typecheck": "tsc --noEmit",
     "typeorm": "typeorm-ts-node-commonjs -d ormconfig.ts",
     "typeorm:migration:create": "typeorm-ts-node-commonjs migration:create src/migrations/migration",
 <%_ if (databaseTypeSql) { _%>
@@ -87,12 +87,10 @@
     "typeorm": "<%- nodeServerDependencies['typeorm'] %>"
   },
   "devDependencies": {
-    "@jest/globals": "<%- nodeServerDependencies['@jest/globals'] %>",
     "@nestjs/testing": "<%- nodeServerDependencies['@nestjs/testing'] %>",
     "@types/bcrypt": "<%- nodeServerDependencies['@types/bcrypt'] %>",
     "@types/express": "<%- nodeServerDependencies['@types/express'] %>",
     "@types/express-serve-static-core": "<%- nodeServerDependencies['@types/express-serve-static-core'] %>",
-    "@types/jest": "<%- nodeServerDependencies['@types/jest'] %>",
     "@types/superagent": "<%- nodeServerDependencies['@types/superagent'] %>",
 <%_ if (authenticationType === 'oauth2') { _%>
     "@types/express-session": "<%- nodeServerDependencies['@types/express-session'] %>",
@@ -108,13 +106,13 @@
     "@types/passport-oauth2": "<%- nodeServerDependencies['@types/passport-oauth2'] %>",
 <%_ } _%>
     "@types/supertest": "<%- nodeServerDependencies['@types/supertest'] %>",
+    "@vitest/coverage-v8": "<%- nodeServerDependencies['@vitest/coverage-v8'] %>",
 <%_ if (databaseType !== 'mongodb') { _%>
     "<%- nodeDevDatabaseDriver %>": "<%- nodeServerDependencies[nodeDevDatabaseDriver] %>",
 <%_ } _%>
     "eslint": "<%- nodeServerDependencies['eslint'] %>",
     "eslint-config-prettier": "<%- nodeServerDependencies['eslint-config-prettier'] %>",
     "eslint-plugin-prettier": "<%- nodeServerDependencies['eslint-plugin-prettier'] %>",
-    "jest": "<%- nodeServerDependencies['jest'] %>",
 <%_ if (databaseType === 'mongodb') { _%>
     "mongodb-memory-server": "<%- nodeServerDependencies['mongodb-memory-server'] %>",
 <%_ } _%>
@@ -122,24 +120,11 @@
     "rimraf": "<%- nodeServerDependencies['rimraf'] %>",
     "sonarqube-scanner": "<%- nodeServerDependencies['sonarqube-scanner'] %>",
     "supertest": "<%- nodeServerDependencies['supertest'] %>",
-    "ts-jest": "<%- nodeServerDependencies['ts-jest'] %>",
     "ts-node": "<%- nodeServerDependencies['ts-node'] %>",
     "tsc-watch": "<%- nodeServerDependencies['tsc-watch'] %>",
     "tsconfig-paths": "<%- nodeServerDependencies['tsconfig-paths'] %>",
-    "typescript": "<%- nodeServerDependencies['typescript'] %>"
-  },
-  "jest": {
-    "moduleFileExtensions": [
-      "js",
-      "json",
-      "ts"
-    ],
-    "testRegex": "(/test/.*|\\.(spec))\\.(ts)$",
-    "transform": {
-      "^.+\\.(t|j)s$": ["ts-jest", { "diagnostics": { "ignoreCodes": [151002] } }]
-    },
-    "coverageDirectory": "coverage",
-    "testEnvironment": "node",
-    "setupFiles": ["./e2e/setup.test.js"]
+    "typescript": "<%- nodeServerDependencies['typescript'] %>",
+    "vite": "<%- nodeServerDependencies['vite'] %>",
+    "vitest": "<%- nodeServerDependencies['vitest'] %>"
   }
 }
