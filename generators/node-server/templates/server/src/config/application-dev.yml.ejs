@@ -29,6 +29,29 @@ server:
 # Full reference is available at: https://www.jhipster.tech/common-application-properties/
 # ===================================================================
 
+# The database, read by orm.config.ts (TypeORM options): environment variables override each property, like
+# DATABASE_HOST or DATABASE_PASSWORD.
+database:
+<%_ if (nodeDevDatabaseType === 'better-sqlite3') { _%>
+  # SQLite, the embedded database of development like H2 in a Spring Boot application.
+  type: better-sqlite3
+  name: '<%- nodeDevSqliteDatabase %>'
+  logging: true
+<%_ } else { _%>
+  # The database of docker/<%= databaseTypeSql ? prodDatabaseType : 'mongodb' %>.yml (npm run docker:db:up).
+  type: <%= nodeDevDatabaseType %>
+  host: 127.0.0.1
+  port: <%= nodeDatabasePort %>
+<%_ if (databaseTypeSql) { _%>
+  username: <%- devDatabaseUsername %>
+  password: '<%- devDatabasePassword %>'
+  name: <%- devDatabaseName %>
+<%_ } else { _%>
+  name: <%= baseName %>
+<%_ } _%>
+  logging: false
+<%_ } _%>
+
 jhipster:
   mail: # specific JHipster mail property, for standard properties see MailProperties
     from: <%= baseName %>@localhost
