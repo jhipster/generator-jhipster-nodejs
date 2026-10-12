@@ -244,6 +244,48 @@ export class Sample extends BaseEntity  {
 }
 `;
 
+exports[`SubGenerator node-server of nodejs JHipster blueprint > entity validators > should accept a missing value of an optional validated field 1`] = `
+{
+  "server/src/service/dto/book.dto.ts": {
+    "contents": "import { ApiProperty } from '@nestjs/swagger';
+import { IsNotEmpty, IsOptional, MinLength, MaxLength, Length, Min, Max, Matches } from 'class-validator';
+import { BaseDTO } from './base.dto';
+
+
+
+
+/**
+ * A BookDTO object.
+ */
+export class BookDTO extends BaseDTO {
+  id?: number;
+
+            @IsNotEmpty()
+    @MaxLength(50)
+            @ApiProperty({description: 'title field'})
+        title!: string;
+
+            @IsOptional()
+    @Matches("^(?:^\\\\d{3}-[0-9]{6}$)$")
+            @ApiProperty({description: 'isbn field', required: false})
+        isbn?: string;
+
+            @IsOptional()
+    @Min(1)
+    @Max(5000)
+            @ApiProperty({description: 'pages field', required: false})
+        pages?: number;
+
+
+
+  // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
+}
+",
+    "stateCleared": "modified",
+  },
+}
+`;
+
 exports[`SubGenerator node-server of nodejs JHipster blueprint > jwt microservice > should succeed 1`] = `
 {
   ".dockerignore": {

@@ -234,6 +234,42 @@ describe('SubGenerator node-server of nodejs JHipster blueprint', () => {
       result.assertNoFileContent('server/src/module/user.module.ts', 'UserController');
     });
   });
+  describe('entity validators', () => {
+    const bookEntity = {
+      name: 'Book',
+      changelogDate: '20261012000000',
+      fields: [
+        { fieldName: 'title', fieldType: 'String', fieldValidateRules: ['required', 'maxlength'], fieldValidateRulesMaxlength: 50 },
+        { fieldName: 'isbn', fieldType: 'String', fieldValidateRules: ['pattern'], fieldValidateRulesPattern: '^\\d{3}-[0-9]{6}$' },
+        {
+          fieldName: 'pages',
+          fieldType: 'Integer',
+          fieldValidateRules: ['min', 'max'],
+          fieldValidateRulesMin: 1,
+          fieldValidateRulesMax: 5000,
+        },
+      ],
+    };
+
+    beforeAll(async function () {
+      await helpers
+        .run(SUB_GENERATOR_NAMESPACE)
+        .withJHipsterConfig({ skipClient: true }, [bookEntity])
+        .withOptions({ ignoreNeedlesError: true })
+        .withJHipsterGenerators()
+        .withConfiguredBlueprint();
+    });
+
+    it('should anchor the pattern of a field, like Bean Validation @Pattern', () => {
+      result.assertFileContent('server/src/service/dto/book.dto.ts', String.raw`@Matches("^(?:^\\d{3}-[0-9]{6}$)$")`);
+      result.assertNoFileContent('server/src/service/dto/book.dto.ts', 'undefined');
+    });
+
+    it('should accept a missing value of an optional validated field', () => {
+      expect(result.getSnapshot('**/book.dto.ts')).toMatchSnapshot();
+    });
+  });
+
   describe('entity column types', () => {
     // The entities are shared by the prod database and by better-sqlite3 (dev and test).
     const sampleEntity = {

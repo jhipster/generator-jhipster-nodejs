@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 <%_ if (anyPropertyHasValidation) { _%>
-import { IsNotEmpty, MinLength, MaxLength, Length, Min, Max, Matches } from 'class-validator';
+import { IsNotEmpty, IsOptional, MinLength, MaxLength, Length, Min, Max, Matches } from 'class-validator';
 <%_ } _%>
 <%_ if (databaseTypeMongodb) { _%>
 import { Transform } from 'class-transformer';
