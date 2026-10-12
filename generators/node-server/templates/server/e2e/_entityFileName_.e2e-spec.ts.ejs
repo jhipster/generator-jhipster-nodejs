@@ -306,7 +306,7 @@ _%>
 
     it('/PATCH partial update <%= entityApiUrl %> from id', async () => {
         const response = await request(app.getHttpServer())
-            .patch('/api/<%= entityApiUrl %>/' + entityMock.id)
+            .patch(`/api/<%= entityApiUrl %>/${entityMock.id}`)
             .send({ id: entityMock.id, lastModifiedBy: '<%= patcher %>', createdBy: null })
             .expect(200);
 
@@ -317,7 +317,7 @@ _%>
 
     it('/PATCH partial update <%= entityApiUrl %> from another id', async () => {
         const response = await request(app.getHttpServer())
-            .patch('/api/<%= entityApiUrl %>/' + anotherId)
+            .patch(`/api/<%= entityApiUrl %>/${anotherId}`)
             .send({ id: entityMock.id })
             .expect(400);
 
@@ -326,7 +326,7 @@ _%>
 
     it('/PATCH partial update an unknown <%= entityApiUrl %>', async () => {
         const response = await request(app.getHttpServer())
-            .patch('/api/<%= entityApiUrl %>/' + unknownId)
+            .patch(`/api/<%= entityApiUrl %>/${unknownId}`)
             .send({ id: unknownId })
             .expect(400);
 
