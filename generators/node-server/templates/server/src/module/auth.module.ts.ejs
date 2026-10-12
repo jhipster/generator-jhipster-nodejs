@@ -18,7 +18,7 @@ import { Oauth2Strategy } from '../security/passport.oauth2.strategy';
 import { UserOauth2Controller } from '../web/rest/user.oauth2.controller';
 <%_ } _%>
 <%_ if (authenticationType === 'jwt' && generateBuiltInUserEntity) { _%>
-import { config } from '../config';
+import { ConfigService } from '@nestjs/config';
 import { JWT_ALGORITHM, jwtSecretKey } from '../security/jwt.config';
 <%_ } _%>
 <%_ if (generateBuiltInAuthorityEntity) { _%>
@@ -42,9 +42,15 @@ import { AccountController } from '../web/rest/account.controller';
   <%_ } _%>
   PassportModule,
   <%_ if (authenticationType === 'jwt' && generateBuiltInUserEntity) { _%>
-    JwtModule.register({
-      secret: jwtSecretKey(),
-      signOptions: { algorithm: JWT_ALGORITHM, expiresIn: Number(config['jhipster.security.authentication.jwt.token-validity-in-seconds']) },
+    JwtModule.registerAsync({
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => ({
+        secret: jwtSecretKey(configService),
+        signOptions: {
+          algorithm: JWT_ALGORITHM,
+          expiresIn: Number(configService.getOrThrow('jhipster.security.authentication.jwt.token-validity-in-seconds')),
+        },
+      }),
     }),
   <%_ } else if (authenticationType === 'oauth2') { _%>
   HttpModule,

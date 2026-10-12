@@ -1,4 +1,4 @@
-import { config } from '../config';
+import { ConfigService } from '@nestjs/config';
 
 /**
  * The algorithm and the key of the JWTs, like JHipster Spring Boot: HS512, with the base64 decoded
@@ -7,6 +7,6 @@ import { config } from '../config';
  */
 export const JWT_ALGORITHM = 'HS512';
 
-export function jwtSecretKey(): Buffer {
-  return Buffer.from(config['jhipster.security.authentication.jwt.base64-secret'], 'base64');
+export function jwtSecretKey(configService: ConfigService): Buffer {
+  return Buffer.from(configService.getOrThrow<string>('jhipster.security.authentication.jwt.base64-secret'), 'base64');
 }

@@ -1,5 +1,7 @@
 import { afterEach, describe, expect, it } from '@jest/globals';
-import { Config } from '../src/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { Test } from '@nestjs/testing';
+import { Config, config, configuration } from '../src/config';
 
 describe('Config', () => {
   const variables = [
@@ -38,5 +40,26 @@ describe('Config', () => {
     const config = new Config({ sample: { 'interval-seconds': 10, enabled: true } });
     expect(config.get('sample.interval-seconds')).toBe(60);
     expect(config.get('sample.enabled')).toBe(false);
+  });
+});
+
+describe('ConfigService', () => {
+  const createConfigService = async (): Promise<ConfigService> => {
+    const module = await Test.createTestingModule({
+      imports: [ConfigModule.forRoot({ ignoreEnvFile: true, load: [configuration] })],
+    }).compile();
+    return module.get(ConfigService);
+  };
+
+  it('should read the properties of config by their dotted names', async () => {
+    const configService = await createConfigService();
+    expect(configService.get('jhipster.clientApp.name')).toBe(config.get('jhipster.clientApp.name'));
+    expect(configService.get('server.port')).toBe(config.get('server.port'));
+  });
+
+  it('should read the properties added before the application is created, like the cloud config', async () => {
+    config.addAll({ sample: { 'added-later': 'from the cloud config' } });
+    const configService = await createConfigService();
+    expect(configService.get('sample.added-later')).toBe('from the cloud config');
   });
 });

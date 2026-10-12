@@ -1,5 +1,6 @@
 import { ExtractJwt, Strategy<% if (generateBuiltInUserEntity) { %>, VerifiedCallback<% } %> } from 'passport-jwt';
 import { PassportStrategy } from '@nestjs/passport';
+import { ConfigService } from '@nestjs/config';
 import { Injectable<% if (generateBuiltInUserEntity) { %>, UnauthorizedException<% } %> } from '@nestjs/common';
 import { Payload<% if (!generateBuiltInUserEntity) { %>, payloadAuthorities<% } %> } from './payload.interface';
 import { JWT_ALGORITHM, jwtSecretKey } from './jwt.config';
@@ -12,14 +13,14 @@ import { <%= userLoginVmClass %> } from '../service/dto/user.dto';
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
 <%_ if (generateBuiltInUserEntity) { _%>
-  constructor(private readonly authService: AuthService) {
+  constructor(private readonly authService: AuthService, configService: ConfigService) {
 <%_ } else { _%>
-  constructor() {
+  constructor(configService: ConfigService) {
 <%_ } _%>
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
-      secretOrKey: jwtSecretKey(),
+      secretOrKey: jwtSecretKey(configService),
       algorithms: [JWT_ALGORITHM],
     });
   }

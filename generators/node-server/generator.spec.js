@@ -25,6 +25,14 @@ describe('SubGenerator node-server of nodejs JHipster blueprint', () => {
       expect(result.getStateSnapshot()).toMatchSnapshot();
     });
 
+    it('should register the configuration in the ConfigModule of @nestjs/config', () => {
+      result.assertFileContent(
+        'server/src/app.module.ts',
+        'ConfigModule.forRoot({ isGlobal: true, ignoreEnvFile: true, cache: true, load: [configuration] })',
+      );
+      result.assertJsonFileContent('server/package.json', { dependencies: { '@nestjs/config': /./ } });
+    });
+
     it('root scripts should run the server and the client workspaces', () => {
       result.assertJsonFileContent('package.json', {
         scripts: {
