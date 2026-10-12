@@ -2,11 +2,14 @@
 import 'dotenv/config';
 import { DataSource, DataSourceOptions } from 'typeorm';
 import { ormConfig } from './src/orm.config';
+<%_ if (databaseTypeMongodb) { _%>
+import { config } from './src/config';
+<%_ } _%>
 
 <%_ if (databaseTypeMongodb) { _%>
-// The dev and test profiles use an in-memory MongoDB server, a new and empty database for each command.
-if (process.env.BACKEND_ENV !== 'prod') {
-  throw new Error('The typeorm scripts need a MongoDB database: run them with BACKEND_ENV=prod.');
+// An embedded database (the in-memory MongoDB server of the test profile) is a new and empty database for each command.
+if (config.get('database.embedded')) {
+  throw new Error(`The typeorm scripts need a MongoDB database, not the embedded one of the ${process.env.BACKEND_ENV} profile.`);
 }
 
 // The configuration of MongoDB is asynchronous, the typeorm CLI awaits the exported DataSource.

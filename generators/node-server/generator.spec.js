@@ -159,8 +159,8 @@ describe('SubGenerator node-server of nodejs JHipster blueprint', () => {
     });
 
     it('should use the MySQL driver', () => {
-      result.assertFileContent('server/src/orm.config.ts', "type: 'mariadb'");
-      result.assertFileContent('server/src/orm.config.ts', "driver: require('mysql2')");
+      result.assertFileContent('server/src/config/application-prod.yml', 'type: mariadb');
+      result.assertFileContent('server/src/orm.config.ts', /'?mariadb'?: \(\) => require\('mysql2'\)/);
       result.assertJsonFileContent('server/package.json', { dependencies: { mysql2: /./ } });
     });
   });

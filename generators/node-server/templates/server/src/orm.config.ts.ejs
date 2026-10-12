@@ -5,85 +5,59 @@ import { SeedUsersRoles1570200490072 } from './migrations/1570200490072-SeedUser
 import { CreateTables1570200270081 } from './migrations/1570200270081-CreateTables';
 // jhipster-needle-add-entity-to-ormconfig-imports - JHipster will add code here, do not remove
 
-<%_ if (databaseType === 'mongodb') { _%>
-async function ormConfig(): Promise<TypeOrmModuleOptions> {
-let mongod;
-if (process.env.BACKEND_ENV !== 'prod') {
-    // mongodb-memory-server is a dev dependency, only load it outside production
-    const { MongoMemoryServer } = await import('mongodb-memory-server');
-    mongod = await MongoMemoryServer.create();
-}
-<%_ } else { _%>
-function ormConfig(): TypeOrmModuleOptions {
-<%_ } _%>
-  let ormconfig: TypeOrmModuleOptions;
+import { config } from './config';
 
-  if (process.env.BACKEND_ENV === 'prod') {
-    ormconfig = {
-      type: '<%= nodeProdDatabaseType %>',
-      // typeorm fails to auto load driver due to workspaces resolution
-      driver: require('<%= nodeProdDatabaseDriver %>'),
-      database: '<%= (databaseType === 'sql') ? prodDatabaseName : baseName %>',
-      host: '<%= (databaseType === 'sql') ? prodDatabaseType : databaseType %>',
-      // port: <%= dbPortValue %>,
-      username: '<%- (databaseType === 'sql') ? prodDatabaseUsername : '' %>',
-      password: '<%- (databaseType === 'sql') ? prodDatabasePassword : '' %>',
-      logging: false,
-      // synchronize: false,
-    };
-  } else if (process.env.BACKEND_ENV === 'test') {
-    ormconfig = {
+/** Reads a property of the configuration: ConfigService in the application, config outside of it (the typeorm CLI). */
+export type ConfigReader = (key: string) => any;
+
+// typeorm fails to auto load the drivers due to workspaces resolution: the driver of each database type.
+const drivers: Record<string, () => unknown> = {
 <%_ if (databaseTypeSql) { _%>
-      type: 'better-sqlite3',
-      // typeorm fails to auto load driver due to workspaces resolution
-      driver: require('better-sqlite3'),
-      database: ':memory:',
+  '<%= nodeProdDatabaseType %>': () => require('<%= nodeProdDatabaseDriver %>'),
+  'better-sqlite3': () => require('better-sqlite3'),
 <%_ } else { _%>
-      type: '<%= nodeProdDatabaseType %>',
-      // typeorm fails to auto load driver due to workspaces resolution
-      driver: require('<%= nodeProdDatabaseDriver %>'),
-      host: '127.0.0.1',
-      port: mongod?.instanceInfo?.port,
-      database: mongod?.instanceInfo?.dbName,
+  mongodb: () => require('mongodb'),
 <%_ } _%>
-      logging: true,
-    };
-<%_ if (devDatabaseType !== 'sqlite') { _%>
+};
 
-  } else if (process.env.BACKEND_ENV === 'dev') {
-    ormconfig = {
-      type: '<%= nodeDevDatabaseType %>',
-      // typeorm fails to auto load driver due to workspaces resolution
-      driver: require('<%= nodeDevDatabaseDriver %>'),
-      database: '<%= (databaseType === 'sql') ? devDatabaseName : baseName %>',
-      host: '127.0.0.1',
-      // port: <%= dbPortValue %>,
-      username: '<%- (databaseType === 'sql') ? devDatabaseUsername : '' %>',
-      password: '<%- (databaseType === 'sql') ? devDatabasePassword : '' %>',
-      logging: false,
-    };
-<%_ } _%>
-  } else {
-    ormconfig = {
-<%_ if (databaseType === 'mongodb') { _%>
-      type: '<%= nodeDevDatabaseType %>',
-      // typeorm fails to auto load driver due to workspaces resolution
-      driver: require('<%= nodeDevDatabaseDriver %>'),
-      host: '127.0.0.1',
-      port: mongod?.instanceInfo?.port ?? 0,
-      database: mongod?.instanceInfo?.dbName ?? 'dev',
+/**
+ * The TypeORM options of the database of the active profile: the database section of application-${BACKEND_ENV}.yml,
+ * which environment variables override (DATABASE_HOST, DATABASE_PASSWORD, ...).
+ */
+<%_ if (databaseTypeMongodb) { _%>
+async function ormConfig(read: ConfigReader = key => config.get(key)): Promise<TypeOrmModuleOptions> {
 <%_ } else { _%>
-      type: 'better-sqlite3',
-      // typeorm fails to auto load driver due to workspaces resolution
-      driver: require('better-sqlite3'),
-      database: __dirname + '../../target/db/sqlite-dev-db.sql',
+function ormConfig(read: ConfigReader = key => config.get(key)): TypeOrmModuleOptions {
 <%_ } _%>
-      logging: true,
-    };  
+  const type = read('database.type');
+  const driver = drivers[type];
+  if (!driver) {
+    throw new Error(`The database.type '${type}' of the ${process.env.BACKEND_ENV} profile is not supported`);
   }
+  <%= databaseTypeMongodb ? 'let' : 'const' %> host = read('database.host');
+  <%= databaseTypeMongodb ? 'let' : 'const' %> port = read('database.port');
+  <%= databaseTypeMongodb ? 'let' : 'const' %> database = read('database.name');
+<%_ if (databaseTypeMongodb) { _%>
+  if (read('database.embedded')) {
+    // An in-memory MongoDB server, mongodb-memory-server is a dev dependency only loaded for it (test profile).
+    const { MongoMemoryServer } = await import('mongodb-memory-server');
+    const mongod = await MongoMemoryServer.create();
+    host = '127.0.0.1';
+    port = mongod.instanceInfo?.port;
+    database = mongod.instanceInfo?.dbName;
+  }
+<%_ } _%>
 
   return {
-    synchronize: process.env.BACKEND_ENV === 'test',
+    type,
+    driver: driver(),
+    host,
+    port,
+    username: read('database.username'),
+    password: read('database.password'),
+    database,
+    logging: read('database.logging') ?? false,
+    synchronize: read('database.synchronize') ?? false,
     migrationsRun: true,
     entities: [
       // jhipster-needle-add-entity-to-ormconfig-entities - JHipster will add code here, do not remove
@@ -101,7 +75,6 @@ function ormConfig(): TypeOrmModuleOptions {
       trustServerCertificate: true,
     },
 <%_ } _%>
-    ...ormconfig,
   };
 }
 

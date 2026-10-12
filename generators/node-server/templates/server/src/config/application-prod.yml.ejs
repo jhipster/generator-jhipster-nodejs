@@ -48,6 +48,22 @@ server:
 # Full reference is available at: https://www.jhipster.tech/common-application-properties/
 # ===================================================================
 
+<%_ const databasePort = { postgres: 5432, mysql: 3306, mariadb: 3306, mssql: 1433, oracle: 1521, mongodb: 27017 }[nodeProdDatabaseType]; _%>
+# The database, read by orm.config.ts (TypeORM options): environment variables override each property, like
+# DATABASE_HOST or DATABASE_PASSWORD.
+database:
+  type: <%= nodeProdDatabaseType %>
+  host: <%= databaseTypeSql ? prodDatabaseType : 'mongodb' %>
+  port: <%= databasePort %>
+<%_ if (databaseTypeSql) { _%>
+  username: <%- prodDatabaseUsername %>
+  password: '<%- prodDatabasePassword %>'
+  name: <%- prodDatabaseName %>
+<%_ } else { _%>
+  name: <%= baseName %>
+<%_ } _%>
+  logging: false
+
 jhipster:
   mail: # specific JHipster mail property, for standard properties see MailProperties
     from: <%= baseName %>@localhost

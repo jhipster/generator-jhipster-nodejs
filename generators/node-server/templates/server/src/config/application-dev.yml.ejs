@@ -29,6 +29,30 @@ server:
 # Full reference is available at: https://www.jhipster.tech/common-application-properties/
 # ===================================================================
 
+<%_ const databasePort = { postgres: 5432, mysql: 3306, mariadb: 3306, mssql: 1433, oracle: 1521, mongodb: 27017 }[nodeProdDatabaseType]; _%>
+# The database, read by orm.config.ts (TypeORM options): environment variables override each property, like
+# DATABASE_HOST or DATABASE_PASSWORD.
+database:
+<%_ if (databaseTypeSql && ['sqlite', 'h2Disk', 'h2Memory'].includes(devDatabaseType)) { _%>
+  # SQLite, the embedded database of development like H2 in a Spring Boot application.
+  type: better-sqlite3
+  name: <%- devDatabaseType === 'h2Memory' ? "':memory:'" : 'target/db/sqlite-dev-db.sql' %>
+  logging: true
+<%_ } else { _%>
+  # The database of docker/<%= databaseTypeSql ? prodDatabaseType : 'mongodb' %>.yml (npm run docker:db:up).
+  type: <%= nodeProdDatabaseType %>
+  host: 127.0.0.1
+  port: <%= databasePort %>
+<%_ if (databaseTypeSql) { _%>
+  username: <%- devDatabaseUsername %>
+  password: '<%- devDatabasePassword %>'
+  name: <%- devDatabaseName %>
+<%_ } else { _%>
+  name: <%= baseName %>
+<%_ } _%>
+  logging: false
+<%_ } _%>
+
 jhipster:
   mail: # specific JHipster mail property, for standard properties see MailProperties
     from: <%= baseName %>@localhost
