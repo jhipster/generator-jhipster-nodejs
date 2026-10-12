@@ -140,7 +140,7 @@ there is one, in the order of the list (the last one wins), and the profiles of 
 
 - `dev`, `prod` and `test`: the database and the settings of each environment;
 - `api-docs`: the Swagger API documentation, at the `jhipster.swagger.path` path;
-- `secret-samples`: samples of the secrets (<%= authenticationType === 'oauth2' ? 'the session secret and the OAuth2 client' : 'the JWT secret' %>) for development and CI, in
+- `secret-samples`: samples of the secrets (<%= authenticationType === 'oauth2' ? 'the session secret and the OAuth2 client' : 'the JWT secret' %><%= databaseTypeSql ? ', the username and the password of the database' : '' %>) for development and CI, in
   [application-secret-samples.yml](src/config/application-secret-samples.yml). In production, set them with environment
   variables instead, like `<%= authenticationType === 'oauth2' ? 'JHIPSTER_SECURITY_OAUTH2_CLIENT_REGISTRATION_OIDC_CLIENTSECRET' : 'JHIPSTER_SECURITY_AUTHENTICATION_JWT_BASE64SECRET' %>`;
 

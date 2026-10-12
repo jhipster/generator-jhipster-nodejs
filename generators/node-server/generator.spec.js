@@ -70,6 +70,11 @@ describe('SubGenerator node-server of nodejs JHipster blueprint', () => {
       result.assertFile(['server/src/config/application-secret-samples.yml']);
       result.assertFileContent('server/src/main.ts', "if (isProfileActive('api-docs')) {");
     });
+
+    it('should keep the credentials of the prod database in the secret-samples profile', () => {
+      result.assertFileContent('server/src/config/application-prod.yml', "  username: ''\n  password: ''\n");
+      result.assertFileContent('server/src/config/application-secret-samples.yml', /^database:\n {2}username: \S+/m);
+    });
   });
   describe('with translations', () => {
     beforeAll(async function () {
