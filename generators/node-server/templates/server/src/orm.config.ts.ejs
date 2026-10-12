@@ -59,6 +59,8 @@ function ormConfig(read: ConfigReader = key => config.get(key)): TypeOrmModuleOp
     logging: read('database.logging') ?? false,
     synchronize: read('database.synchronize') ?? false,
     migrationsRun: true,
+    // each migration runs in its own transaction, unless it sets transaction = false (CreateTables)
+    migrationsTransactionMode: 'each',
     entities: [
       // jhipster-needle-add-entity-to-ormconfig-entities - JHipster will add code here, do not remove
     ],
