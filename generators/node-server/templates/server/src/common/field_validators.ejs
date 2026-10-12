@@ -29,6 +29,9 @@ if (field.fieldValidate === true) {
 
     if (rules.includes('required') && !isBlob) {
         validators.push('@IsNotEmpty()');
+    } else if (!rules.includes('required')) {
+        // Like Bean Validation, the other rules accept a missing (null or undefined) value.
+        validators.push('@IsOptional()');
     }
     if (rules.includes('minlength') && !rules.includes('maxlength')) {
         validators.push('@MinLength(' + field.fieldValidateRulesMinlength + ')');
@@ -56,7 +59,8 @@ if (field.fieldValidate === true) {
         validators.push('@Max(' + field.fieldValidateRulesMax + ')');
     }
     if (rules.includes('pattern')) {
-        validators.push('@Matches("' + field.fieldValidateRulesPatternJava  + '")');
+        // Like Bean Validation @Pattern, the whole value matches the pattern.
+        validators.push('@Matches(' + JSON.stringify('^(?:' + field.fieldValidateRulesPattern + ')$') + ')');
     }
     result =  validators.join('\n    ');
     result += '\n';
