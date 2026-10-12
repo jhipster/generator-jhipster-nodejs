@@ -195,16 +195,26 @@ _%>
 <%_ } _%>
 
     it('/POST create <%= entityApiUrl %>', async () => {
+        const { id: _id, ...newEntity } = validEntity;
+        const response = await request(app.getHttpServer())
+            .post('/api/<%= entityApiUrl %>')
+            .send(newEntity)
+            .expect(201);
 
-        const createdEntity: <%= dtoClass %> = (await request(app.getHttpServer())
+        expect(response.body).toEqual(entityMock);
+        expect(response.headers.location).toBe(`/api/<%= entityApiUrl %>/${entityMock.id}`);
+        expect(alertHeader(response.headers, '-alert')).toMatch(<%- enableTranslation ? `/\\.${entityClass}\\.created$/` : `/^A new ${entityClass} is created with identifier /` %>);
+    });
+
+    it('/POST create <%= entityApiUrl %> with an id', async () => {
+        const response = await request(app.getHttpServer())
             .post('/api/<%= entityApiUrl %>')
             .send(validEntity)
-            .expect(201)).body;
+            .expect(400);
 
-        expect(createdEntity).toEqual(entityMock);
-
-    }
-    );
+        expect(alertHeader(response.headers, '-error')).toBe('error.idexists');
+        expect(alertHeader(response.headers, '-params')).toBe('<%= entityClass %>');
+    });
 
 <%_ if (requiredField) { _%>
     it('/POST create <%= entityApiUrl %> without <%= requiredField.fieldName %> is a validation error', async () => {
