@@ -1,8 +1,9 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from './module/auth.module';
+import { HealthModule } from './module/health.module';
 import { ormConfig } from './orm.config';
 import { configuration } from './config';
 import { LoggingInterceptor } from './common/interceptors/logging.interceptor';
@@ -18,13 +19,18 @@ import { ServeStaticModule } from '@nestjs/serve-static';
   imports: [
     // The configuration of the application*.yml files, read with ConfigService. main.ts loads the .env file.
     ConfigModule.forRoot({ isGlobal: true, ignoreEnvFile: true, cache: true, load: [configuration] }),
-  TypeOrmModule.forRootAsync({ useFactory: ormConfig }),
+  // The database of the active profile, from the configuration (application-${BACKEND_ENV}.yml and the environment).
+  TypeOrmModule.forRootAsync({
+    inject: [ConfigService],
+    useFactory: (configService: ConfigService) => ormConfig(key => configService.get(key)),
+  }),
     <%_ if (!skipClient) { _%>
     ServeStaticModule.forRoot({
         rootPath: config.getClientPath(),
       }),
     <%_ } _%>
     AuthModule,
+    HealthModule,
   // jhipster-needle-add-entity-module-to-main - JHipster will add entity modules here, do not remove
   ],
   controllers: [

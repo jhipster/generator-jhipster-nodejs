@@ -4,9 +4,10 @@ import { NestFactory } from '@nestjs/core';
 import cloudConfigClient from 'cloud-config-client';
 <%_ } _%>
 import { AppModule } from './app.module';
+import { configureApp } from './app.config';
 import { setupSwagger } from './swagger';
 import { config } from './config';
-import { Logger, ValidationPipe, BadRequestException } from '@nestjs/common';
+import { Logger } from '@nestjs/common';
 <%_ if (!skipClient) { _%>
 import * as fs from 'fs';
 <%_ } _%>
@@ -26,19 +27,13 @@ async function bootstrap(): Promise<void> {
   registerAsEurekaService();
 <%_ } _%>
 
-  const appOptions = { cors: true };
-  const app = await NestFactory.create(AppModule, appOptions);
+  // abortOnError: false: an error of the initialization (the database still unreachable after the retries) rejects
+  // to the catch of bootstrap() below, instead of Nest stopping the process by itself.
+  const app = await NestFactory.create(AppModule, { abortOnError: false });
   // Close the application (HTTP server, database connections) on SIGTERM, the signal docker stop sends.
   app.enableShutdownHooks();
-  app.useGlobalPipes(
-    new ValidationPipe({
-      exceptionFactory: (): BadRequestException  => new BadRequestException('Validation error'),
-      // https://github.com/nestjs/nest/issues/10683#issuecomment-1349614194
-      forbidUnknownValues: false,
-    }),
-  );
-  // Disable cache.
-  app.getHttpAdapter().getInstance().set('etag', false);
+  // CORS, global validation and HTTP settings, shared with the e2e tests.
+  configureApp(app);
 
   <%_ if (authenticationType === 'oauth2') { _%>
   app.use(
@@ -145,4 +140,9 @@ function registerAsEurekaService(): void {
 }
 <%_ } _%>
 
-bootstrap();
+bootstrap().catch((error: unknown) => {
+  // A failed start (database unreachable after the retries, port in use, cloud config not loaded, ...) stops the process
+  // with a failure exit code, for the container orchestrator or the process manager to see it and restart it.
+  logger.error(`Application failed to start: ${error instanceof Error ? error.message : String(error)}`, error instanceof Error ? error.stack : undefined);
+  process.exit(1);
+});

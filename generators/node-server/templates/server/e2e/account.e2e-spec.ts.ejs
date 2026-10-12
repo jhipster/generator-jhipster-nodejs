@@ -2,6 +2,7 @@ import { afterEach, beforeEach, describe, expect, it } from '@jest/globals';
 import { Test, TestingModule } from '@nestjs/testing';
 import request = require('supertest');
 import { AppModule } from '../src/app.module';
+import { configureApp } from '../src/app.config';
 import { ExecutionContext, INestApplication } from '@nestjs/common';
 import { AuthGuard } from '../src/security/guards/auth.guard';
 import { RolesGuard } from '../src/security/guards/roles.guard';
@@ -62,6 +63,7 @@ describe('Account', () => {
             .compile();
 
         app = moduleFixture.createNestApplication();
+        configureApp(app);
         await app.init();
         service = moduleFixture.get<UserService>(UserService);
         authService = moduleFixture.get<AuthService>(AuthService);

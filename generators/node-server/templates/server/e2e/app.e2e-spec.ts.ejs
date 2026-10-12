@@ -2,6 +2,7 @@ import { afterEach, beforeEach, describe, expect, it } from '@jest/globals';
 import { Test, TestingModule } from '@nestjs/testing';
 import request = require('supertest');
 import { AppModule } from '../src/app.module';
+import { configureApp } from '../src/app.config';
 import { INestApplication } from '@nestjs/common';
 <%_ if (authenticationType === 'jwt') { _%>
 import { JwtService } from '@nestjs/jwt';
@@ -37,6 +38,7 @@ describe('App', () => {
         }).compile();
 
         app = moduleFixture.createNestApplication();
+        configureApp(app);
         await app.init();
     });
 
@@ -48,7 +50,12 @@ describe('App', () => {
     it('/GET health is UP without authentication', () => request(app.getHttpServer())
         .get('/management/health')
         .expect(200)
-        .expect({ status: 'UP' }));
+        .expect({ status: 'UP', components: { db: { status: 'UP' } } }));
+
+    it('/GET the liveness and readiness probes are UP without authentication', async () => {
+        await request(app.getHttpServer()).get('/management/health/liveness').expect(200).expect({ status: 'UP' });
+        await request(app.getHttpServer()).get('/management/health/readiness').expect(200).expect({ status: 'UP' });
+    });
 
 <%_ if (generateBuiltInUserEntity) { _%>
     it('/GET public roles OK', () => request(app.getHttpServer())
@@ -65,6 +72,12 @@ describe('App', () => {
         .post('/api/authenticate')
         .send(testUserLogin)
         .expect(200));
+
+    it('/POST authenticate without credentials is a validation error', () => request(app.getHttpServer())
+        .post('/api/authenticate')
+        .send({})
+        .expect(400)
+        .expect(response => expect(response.body.message).toEqual('Validation error')));
 
     it('/GET account with an expired jwt is unauthorized', () => {
         const expiredToken = app.get(JwtService).sign({ sub: 'system', auth: '' }, { expiresIn: -10 });

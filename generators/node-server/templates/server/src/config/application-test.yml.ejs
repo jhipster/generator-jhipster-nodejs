@@ -29,6 +29,20 @@ server:
 # Full reference is available at: https://www.jhipster.tech/common-application-properties/
 # ===================================================================
 
+# The database, read by orm.config.ts (TypeORM options): environment variables override each property, like
+# DATABASE_HOST or DATABASE_PASSWORD.
+database:
+<%_ if (databaseTypeSql) { _%>
+  type: better-sqlite3
+  name: ':memory:'
+<%_ } else { _%>
+  type: mongodb
+  # An in-memory MongoDB server (mongodb-memory-server), started for each run.
+  embedded: true
+<%_ } _%>
+  synchronize: true
+  logging: true
+
 jhipster:
   mail: # specific JHipster mail property, for standard properties see MailProperties
     from: <%= baseName %>@localhost

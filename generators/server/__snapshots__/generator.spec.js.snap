@@ -98,6 +98,9 @@ exports[`SubGenerator server of nodejs JHipster blueprint > run > should succeed
   "server/sonar-project.properties": {
     "stateCleared": "modified",
   },
+  "server/src/app.config.ts": {
+    "stateCleared": "modified",
+  },
   "server/src/app.module.ts": {
     "stateCleared": "modified",
   },
@@ -162,6 +165,9 @@ exports[`SubGenerator server of nodejs JHipster blueprint > run > should succeed
     "stateCleared": "modified",
   },
   "server/src/module/foo.module.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/module/health.module.ts": {
     "stateCleared": "modified",
   },
   "server/src/module/user.module.ts": {
@@ -239,6 +245,9 @@ exports[`SubGenerator server of nodejs JHipster blueprint > run > should succeed
   "server/src/web/rest/foo.controller.ts": {
     "stateCleared": "modified",
   },
+  "server/src/web/rest/health.controller.ts": {
+    "stateCleared": "modified",
+  },
   "server/src/web/rest/management.controller.ts": {
     "stateCleared": "modified",
   },
@@ -249,6 +258,9 @@ exports[`SubGenerator server of nodejs JHipster blueprint > run > should succeed
     "stateCleared": "modified",
   },
   "server/src/web/rest/user.jwt.controller.ts": {
+    "stateCleared": "modified",
+  },
+  "server/test/admin/health.controller.spec.ts": {
     "stateCleared": "modified",
   },
   "server/test/admin/management.controller.spec.ts": {
