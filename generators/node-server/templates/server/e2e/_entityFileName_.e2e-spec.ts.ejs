@@ -123,7 +123,7 @@ _%>
 
 
         const getEntity: <%= dtoClass %> = (await request(app.getHttpServer())
-            .get('/api/<%= entityApiUrl %>/' + entityMock.id)
+            .get(`/api/<%= entityApiUrl %>/${entityMock.id}`)
             .expect(200)).body;
 
         expect(getEntity).toEqual(entityMock);
@@ -133,7 +133,7 @@ _%>
 
     it('/GET <%= entityApiUrl %> by an unknown id', async () => {
         await request(app.getHttpServer())
-            .get('/api/<%= entityApiUrl %>/' + unknownId)
+            .get(`/api/<%= entityApiUrl %>/${unknownId}`)
             .expect(404);
     });
 <%_ if (numericId || primaryKey.typeUUID) { _%>
@@ -159,7 +159,7 @@ _%>
 
     it('/PUT update <%= entityApiUrl %> from id', async () => {
         const response = await request(app.getHttpServer())
-            .put('/api/<%= entityApiUrl %>/' + entityMock.id)
+            .put(`/api/<%= entityApiUrl %>/${entityMock.id}`)
             .send(entityMock)
             .expect(200);
 
@@ -171,7 +171,7 @@ _%>
 
     it('/PUT update <%= entityApiUrl %> from another id', async () => {
         const response = await request(app.getHttpServer())
-            .put('/api/<%= entityApiUrl %>/' + anotherId)
+            .put(`/api/<%= entityApiUrl %>/${anotherId}`)
             .send(entityMock)
             .expect(400);
 
@@ -180,7 +180,7 @@ _%>
 
     it('/PUT update <%= entityApiUrl %> without id', async () => {
         const response = await request(app.getHttpServer())
-            .put('/api/<%= entityApiUrl %>/' + entityMock.id)
+            .put(`/api/<%= entityApiUrl %>/${entityMock.id}`)
             .send({ ...entityMock, id: undefined })
             .expect(400);
 
@@ -189,7 +189,7 @@ _%>
 
     it('/PUT update an unknown <%= entityApiUrl %>', async () => {
         const response = await request(app.getHttpServer())
-            .put('/api/<%= entityApiUrl %>/' + unknownId)
+            .put(`/api/<%= entityApiUrl %>/${unknownId}`)
             .send({ ...entityMock, id: unknownId })
             .expect(400);
 
@@ -200,7 +200,7 @@ _%>
 
 
         const deletedEntity: <%= dtoClass %> = (await request(app.getHttpServer())
-            .delete('/api/<%= entityApiUrl %>/' + entityMock.id)
+            .delete(`/api/<%= entityApiUrl %>/${entityMock.id}`)
             .expect(204)).body;
 
             expect(deletedEntity).toEqual({});
