@@ -113,7 +113,12 @@ describe('SubGenerator node-server of nodejs JHipster blueprint', () => {
     });
 
     it('should write the profiles of JHipster Spring Boot', () => {
-      result.assertFile(['server/src/config/application-secret-samples.yml']);
+      result.assertFile([
+        'server/src/config/application-secret-samples.yml',
+        'server/src/config/application-tls.yml',
+        'server/src/config/application-tls-samples.yml',
+        'server/src/config/tls/keystore-samples.p12',
+      ]);
       result.assertFileContent('server/src/main.ts', "if (isProfileActive('api-docs')) {");
     });
 

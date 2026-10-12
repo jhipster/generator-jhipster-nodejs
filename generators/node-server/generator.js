@@ -10,7 +10,7 @@ import { SERVER_NODEJS_SRC_DIR } from '../generator-nodejs-constants.js';
 
 import { entityFiles } from './entity-files.js';
 import { serverFiles } from './files.js';
-import { getDatabasePort, getNodeDevDatabaseType, getNodeDevSqliteDatabase } from './support/index.js';
+import { createSampleKeyStore, getDatabasePort, getNodeDevDatabaseType, getNodeDevSqliteDatabase } from './support/index.js';
 
 const fieldTypes = {
   Boolean: 'boolean',
@@ -321,6 +321,23 @@ export default class extends BaseApplicationGenerator {
           sections: serverFiles,
           context: application,
         });
+      },
+      async writeSampleKeyStore({ application }) {
+        // The keystore of the tls-samples profile, written once like the one of JHipster Spring Boot.
+        const keyStoreFile = this.destinationPath(`${SERVER_NODEJS_SRC_DIR}/src/config/tls/keystore-samples.p12`);
+        if (this.options.fakeKeytool) {
+          this.writeDestination(keyStoreFile, 'fake key-tool');
+        } else if (this.fs.exists(keyStoreFile)) {
+          this.log.info(`KeyStore '${keyStoreFile}' already exists. Leaving unchanged.`);
+        } else {
+          const { contents, result } = await createSampleKeyStore(keyStoreFile, {
+            packageName: application.packageName ?? application.baseName,
+          });
+          if (contents) {
+            this.writeDestination(keyStoreFile, contents);
+          }
+          this.validateResult(result);
+        }
       },
     });
   }

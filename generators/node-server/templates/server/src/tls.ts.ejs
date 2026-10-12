@@ -1,0 +1,27 @@
+import * as fs from 'fs';
+import * as path from 'path';
+import { HttpsOptions } from '@nestjs/common/interfaces/external/https-options.interface';
+import { config } from './config.ts';
+
+/**
+ * The HTTPS options of the server.ssl properties, like Spring Boot: the tls profile enables them (server.ssl.enabled)
+ * and the tls-samples profile adds the self-signed sample keystore. The keystore is a PKCS#12 file, a path relative to
+ * the working directory, or classpath:config/... for a file of the config folder (copied to dist with the yml files).
+ */
+export function httpsOptions(): HttpsOptions | undefined {
+  if (!config.get('server.ssl.enabled')) {
+    return undefined;
+  }
+  const keyStoreType = config.get('server.ssl.key-store-type');
+  if (keyStoreType !== 'PKCS12') {
+    throw new Error(`The server.ssl.key-store-type '${keyStoreType}' is not supported, use a PKCS12 keystore`);
+  }
+  const keyStore = config.get('server.ssl.key-store');
+  if (!keyStore) {
+    throw new Error('TLS is enabled without a keystore: set server.ssl.key-store, or activate the tls-samples profile in development');
+  }
+  return {
+    pfx: fs.readFileSync(keyStore.startsWith('classpath:') ? path.join(__dirname, keyStore.substring('classpath:'.length)) : keyStore),
+    passphrase: config.get('server.ssl.key-store-password'),
+  };
+}

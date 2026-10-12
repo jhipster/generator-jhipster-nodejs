@@ -138,6 +138,8 @@ there is one, in the order of the list (the last one wins), and the profiles of 
 - `secret-samples`: samples of the secrets (<%= authenticationType === 'oauth2' ? 'the session secret and the OAuth2 client' : 'the JWT secret' %><%= databaseTypeSql ? ', the username and the password of the database' : '' %>) for development and CI, in
   [application-secret-samples.yml](src/config/application-secret-samples.yml). In production, set them with environment
   variables instead, like `<%= authenticationType === 'oauth2' ? 'JHIPSTER_SECURITY_OAUTH2_CLIENT_REGISTRATION_OIDC_CLIENTSECRET' : 'JHIPSTER_SECURITY_AUTHENTICATION_JWT_BASE64SECRET' %>`;
+- `tls`: HTTPS, with your PKCS#12 keystore (`SERVER_SSL_KEY_STORE` and `SERVER_SSL_KEY_STORE_PASSWORD`);
+- `tls-samples`: with `tls`, the self-signed sample keystore of [src/config/tls](src/config/tls), for development only.
 
 > You can define your custom profiles, with an application-{profile}.yml file in your [config folder](src/config); an
 > environment of its own needs the `database` section of that environment.
