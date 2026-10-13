@@ -513,9 +513,6 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > jwt microservic
   "server/tsconfig.json": {
     "stateCleared": "modified",
   },
-  "server/webpack.server.prod.config.js": {
-    "stateCleared": "modified",
-  },
   "sonar-project.properties": {
     "stateCleared": "modified",
   },
@@ -773,9 +770,6 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > run > should su
   "server/tsconfig.json": {
     "stateCleared": "modified",
   },
-  "server/webpack.server.prod.config.js": {
-    "stateCleared": "modified",
-  },
   "sonar-project.properties": {
     "stateCleared": "modified",
   },
@@ -1004,9 +998,6 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > with oauth2 > s
     "stateCleared": "modified",
   },
   "server/tsconfig.json": {
-    "stateCleared": "modified",
-  },
-  "server/webpack.server.prod.config.js": {
     "stateCleared": "modified",
   },
   "sonar-project.properties": {
@@ -1260,9 +1251,6 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > with oauth2 and
   "server/tsconfig.json": {
     "stateCleared": "modified",
   },
-  "server/webpack.server.prod.config.js": {
-    "stateCleared": "modified",
-  },
   "sonar-project.properties": {
     "stateCleared": "modified",
   },
@@ -1392,7 +1380,6 @@ For more information, refer to the [Code quality page][].
 - [Node.js](https://nodejs.org/)
 - [NPM](https://www.npmjs.com/)
 [Node.js]: https://nodejs.org/
-[Webpack]: https://webpack.github.io/
 [Jest]: https://facebook.github.io/jest/
 [NestJS]: https://nestjs.com/
 [NestJS CLI]: https://docs.nestjs.com/cli/usages
@@ -1508,12 +1495,6 @@ $ npm run start:prod
 
 # run javascript build with node
 $ node dist/main.js
-
-# build bundle with webpack
-$ npm run webpack:prod
-
-# run bundle with node (not require node_modules folder)
-$ node dist/bundle.js
 \`\`\`
 
 ### Using .env file and run in prod
@@ -1541,12 +1522,7 @@ $ set BACKEND_ENV=prod&& npm run start
 $ BACKEND_ENV=prod node dist/main.js
 # in windows
 $ set BACKEND_ENV=prod&& node dist/main.js
-
-# run bundle with node (not require node_modules folder)
-$ node dist/bundle.js
 \`\`\`
-
-> The webpack build bundle automatically is configured for prod env, and **can run without node_modules**.
 
 ## Lint
 
@@ -1856,9 +1832,6 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > without client 
     "stateCleared": "modified",
   },
   "server/tsconfig.json": {
-    "stateCleared": "modified",
-  },
-  "server/webpack.server.prod.config.js": {
     "stateCleared": "modified",
   },
   "sonar-project.properties": {
