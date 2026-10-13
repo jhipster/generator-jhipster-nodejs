@@ -21,7 +21,7 @@ services:
   app:
     build: ..
     environment:
-      - BACKEND_ENV=prod
+      - BACKEND_ENV=prod,api-docs,secret-samples
 <%_ if (authenticationType === 'oauth2') { _%>
       - NODE_CLIENT_PROVIDER_OIDC_ISSUER_URI=http://keycloak:9080/realms/jhipster
 <%_ } _%>

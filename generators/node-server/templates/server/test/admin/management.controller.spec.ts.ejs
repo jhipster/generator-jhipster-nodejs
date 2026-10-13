@@ -1,5 +1,7 @@
 import { beforeEach, describe, expect, it } from '@jest/globals';
+import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
+import { activeProfiles } from '../../src/config';
 import { ManagementController } from '../../src/web/rest/management.controller';
 
 describe('Management Controller', () => {
@@ -8,6 +10,7 @@ describe('Management Controller', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [ManagementController],
+      providers: [{ provide: ConfigService, useValue: new ConfigService({ info: { 'display-ribbon-on-profiles': 'dev,staging' } }) }],
     }).compile();
 
     controller = module.get<ManagementController>(ManagementController);
@@ -15,5 +18,9 @@ describe('Management Controller', () => {
 
   it('should be defined', () => {
     expect(controller).toBeDefined();
+  });
+
+  it('info gives the active profiles and the profiles of the ribbon', () => {
+    expect(controller.info()).toEqual({ activeProfiles, 'display-ribbon-on-profiles': 'dev,staging' });
   });
 });

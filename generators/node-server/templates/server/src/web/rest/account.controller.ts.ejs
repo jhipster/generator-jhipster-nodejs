@@ -5,6 +5,7 @@ import { AuthGuard, Roles, RoleType, RolesGuard } from '../../security';
 <%_ } _%>
 <%_ if (authenticationType === 'jwt' && generateUserManagement) { _%>
 import { PasswordChangeDTO } from '../../service/dto/password-change.dto';
+import { KeyAndPasswordDTO } from '../../service/dto/key-and-password.dto';
 <%_ } _%>
 import { <%- userLoginVmClass %> } from '../../service/dto/user.dto';
 import {<%_ if (authenticationType === 'jwt') { _%> ApiBearerAuth, <%_ } _%> ApiTags, ApiResponse, ApiOperation } from '@nestjs/swagger';
@@ -109,29 +110,31 @@ export class AccountController {
   }
 
   @Post('/account/reset-password/init')
-  @ApiBearerAuth()
-  @UseGuards(AuthGuard)
+  @HttpCode(200)
   @ApiOperation({ summary: 'Send an email to reset the password of the user' })
   @ApiResponse({
-    status: 201,
-    description: 'mail to reset password sent',
-    type: 'string',
+    status: 200,
+    description: 'Reset key given to the activated user of the mail, if any',
   })
-  requestPasswordReset(@Req() _req: { user: <%- userLoginVmClass %> }, @Body() _email: string, @Res() _res: Response): any {
-    throw new InternalServerErrorException();
+  async requestPasswordReset(@Body() mail: string): Promise<void> {
+    const user = await this.authService.requestPasswordReset(String(mail));
+    if (user) {
+      // Like JHipster Spring Boot, the reset key goes by mail: the server has no mail service yet.
+      this.logger.warn(`The mail to reset the password of ${user.login} is not sent: no mail service`);
+    } else {
+      this.logger.warn('Password reset requested for non existing mail');
+    }
   }
 
   @Post('/account/reset-password/finish')
-  @ApiBearerAuth()
-  @UseGuards(AuthGuard)
+  @HttpCode(200)
   @ApiOperation({ summary: 'Finish to reset the password of the user' })
   @ApiResponse({
-    status: 201,
+    status: 200,
     description: 'password reset',
-    type: 'string',
   })
-  finishPasswordReset(@Req() _req: { user: <%- userLoginVmClass %> }, @Body() _keyAndPassword: string, @Res() _res: Response): any {
-    throw new InternalServerErrorException();
+  async finishPasswordReset(@Body() keyAndPassword: KeyAndPasswordDTO): Promise<void> {
+    await this.authService.completePasswordReset(keyAndPassword.newPassword, keyAndPassword.key);
   }
 
   <%_ } else if (authenticationType === 'oauth2') { _%>

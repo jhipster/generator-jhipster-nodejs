@@ -1,4 +1,7 @@
 import { BadRequestException, INestApplication, ValidationPipe } from '@nestjs/common';
+<%_ if (authenticationTypeJwt && generateUserManagement) { _%>
+import { NestExpressApplication } from '@nestjs/platform-express';
+<%_ } _%>
 
 /**
  * Configures the application as it runs in production: main.ts and the e2e tests call it, so the e2e tests
@@ -14,6 +17,10 @@ export function configureApp(app: INestApplication): INestApplication {
       forbidUnknownValues: false,
     }),
   );
+<%_ if (authenticationTypeJwt && generateUserManagement) { _%>
+  // The mail of a password reset request is a text/plain body, as the JHipster clients send it.
+  (app as NestExpressApplication).useBodyParser('text');
+<%_ } _%>
   // Disable cache.
   app.getHttpAdapter().getInstance().set('etag', false);
   return app;
