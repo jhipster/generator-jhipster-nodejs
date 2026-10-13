@@ -127,7 +127,7 @@ export class <%= entityClass %>Controller {
 
   @Patch('/:id')
   @Roles(RoleType.USER)
-  @ApiOperation({ summary: 'Partially update <%= entityInstance %> with id, fields that are null or absent are ignored' })
+  @ApiOperation({ summary: 'Partially update <%= entityInstance %> with id, the absent fields are kept and the null ones cleared' })
   @ApiResponse({
     status: 200,
     description: 'The record has been successfully updated.',
@@ -136,18 +136,14 @@ export class <%= entityClass %>Controller {
   @ApiResponse({ status: 400, description: 'Invalid id or values, or the record does not exist.' })
   async patchId(@Req() req: Request, <%- idParam %>, @Body() <%= entityInstance %>DTO: Partial<<%= dtoClass %>>): Promise<<%= dtoClass %>>  {
     const existing = await this.validateIdForUpdate(req, id, <%= entityInstance %>DTO);
-    const changes = Object.fromEntries(
-      Object.entries(<%= entityInstance %>DTO ?? {}).filter(([, value]) => value !== null && value !== undefined),
-    );
-    // The global ValidationPipe requires every mandatory field, here only the given ones are validated
-    const errors = await validate(Object.assign(new <%= dtoClass %>(), changes), {
-      skipMissingProperties: true,
-      forbidUnknownValues: false,
-    });
+    // Like JHipster Spring Boot, a JSON merge patch: the given fields replace the ones of the record, a null clears
+    // one, and the record is validated as the global ValidationPipe validates a PUT.
+    const patched = Object.assign(new <%= dtoClass %>(), { ...existing, ...<%= entityInstance %>DTO });
+    const errors = await validate(patched, { forbidUnknownValues: false });
     if (errors.length > 0) {
       throw new BadRequestException('Validation error');
     }
-    const updated = await this.<%= entityInstance %>Service.update(Object.assign(existing, changes), req.user?.login);
+    const updated = await this.<%= entityInstance %>Service.update(patched, req.user?.login);
     HeaderUtil.addEntityUpdatedHeaders(req.res, ENTITY_NAME, id);
     return updated;
   }

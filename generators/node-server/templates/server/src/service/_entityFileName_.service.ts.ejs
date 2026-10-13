@@ -11,11 +11,34 @@ import { ObjectId } from 'mongodb';
 import { documentOrder } from '../common/sortable-properties.ts';
 <%_ } _%>
 <%_ } _%>
+<%_ if (relationships.some(relationship => relationship.ownerSide)) { _%>
+import { referenceById } from '../common/reference-by-id.ts';
+<%_ } _%>
 
 <%_
 const eagerLoadRelations = relationships.filter(rel => rel.ownerSide).map(rel => rel.propertyName);
 const pkType = primaryKey.tsType;
 _%>
+<%_ if (relationships.length > 0) { _%>
+/**
+ * The entity to store: like JHipster Spring Boot, the relationships do not cascade, the related records are
+ * referenced by their id and the inverse sides are not written.
+ */
+const toStored = (entity: <%= entityClass %>): <%= entityClass %> => {
+  <%_ for (const relationship of relationships) { _%>
+    <%_ const property = relationship.collection ? relationship.relationshipFieldNamePlural : relationship.relationshipFieldName; _%>
+    <%_ if (!relationship.ownerSide) { _%>
+  delete entity.<%= property %>;
+    <%_ } else if (relationship.collection) { _%>
+  entity.<%= property %> = entity.<%= property %>?.map(referenceById);
+    <%_ } else { _%>
+  entity.<%= property %> = referenceById(entity.<%= property %>);
+    <%_ } _%>
+  <%_ } _%>
+  return entity;
+};
+
+<%_ } _%>
 <%_ if (typeormRelationsSupport && eagerLoadRelations.length > 0) { _%>
 const relations = {
   <%_ for (const rel of eagerLoadRelations) { _%>
@@ -83,17 +106,22 @@ export class <%= entityClass %>Service {
 
 <%_ } _%>
       async save(<%= entityInstance %>DTO: <%= dtoClass %>, creator?: string): Promise<<%= dtoClass %>> {
-        const entity = <%= entityClass %>Mapper.fromDTOtoEntity(<%= entityInstance %>DTO);
+        const entity = <%- relationships.length > 0 ? 'toStored(' : '' %><%= entityClass %>Mapper.fromDTOtoEntity(<%= entityInstance %>DTO)<%- relationships.length > 0 ? ')' : '' %>;
         if (creator) {
             entity.createdBy = creator;
             entity.lastModifiedBy = creator;
         }
         const result = await this.<%= entityInstance %>Repository.save(entity);
+<%_ if (relationships.length > 0) { _%>
+        // The stored entity, with its related records, rather than their ids.
+        return (await this.findById(result.id!))!;
+<%_ } else { _%>
         return <%= entityClass %>Mapper.fromEntityToDTO(result);
+<%_ } _%>
       }
 
       async update(<%= entityInstance %>DTO: <%= dtoClass %>, updater?: string): Promise<<%= dtoClass %>> {
-        const entity = <%= entityClass %>Mapper.fromDTOtoEntity(<%= entityInstance %>DTO);
+        const entity = <%- relationships.length > 0 ? 'toStored(' : '' %><%= entityClass %>Mapper.fromDTOtoEntity(<%= entityInstance %>DTO)<%- relationships.length > 0 ? ')' : '' %>;
         if (updater) {
             entity.lastModifiedBy = updater;
         }

@@ -310,11 +310,23 @@ _%>
             .send({ id: entityMock.id, lastModifiedBy: '<%= patcher %>', createdBy: null })
             .expect(200);
 
-        expect(response.body).toEqual({ ...entityMock, lastModifiedBy: '<%= patcher %>' });
+        // The absent fields are kept, a null clears one.
+        expect(response.body).toEqual({ ...entityMock, lastModifiedBy: '<%= patcher %>', createdBy: null });
         expect(alertHeader(response.headers, '-alert')).toMatch(<%- enableTranslation ? `/\\.${entityClass}\\.updated$/` : `/^A ${entityClass} is updated with identifier /` %>);
         expect(alertHeader(response.headers, '-params')).toBe(String(entityMock.id));
     });
 
+<%_ if (requiredField) { _%>
+    it('/PATCH partial update <%= entityApiUrl %> clearing <%= requiredField.fieldName %> is a validation error', async () => {
+        const error = (await request(app.getHttpServer())
+            .patch(`/api/<%= entityApiUrl %>/${entityMock.id}`)
+            .send({ id: entityMock.id, <%= requiredField.fieldName %>: null })
+            .expect(400)).body;
+
+        expect(error.message).toEqual('Validation error');
+    });
+
+<%_ } _%>
     it('/PATCH partial update <%= entityApiUrl %> from another id', async () => {
         const response = await request(app.getHttpServer())
             .patch(`/api/<%= entityApiUrl %>/${anotherId}`)
