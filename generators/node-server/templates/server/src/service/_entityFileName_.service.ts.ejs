@@ -1,11 +1,11 @@
 import { Injectable, HttpException, HttpStatus, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { <% if (typeormOrderSupport) { %>EntityMetadata, <% } %>FindManyOptions, FindOneOptions, Repository } from 'typeorm';
-import { <%= entityClass %> } from '../domain/<%= entityFileName %>.entity';
-import { <%= dtoClass %> }  from '../service/dto/<%= entityFileName %>.dto';
-import { <%= entityClass %>Mapper }  from '../service/mapper/<%= entityFileName %>.mapper';
+import { <%= entityClass %> } from '../domain/<%= entityFileName %>.entity.ts';
+import { <%= dtoClass %> }  from '../service/dto/<%= entityFileName %>.dto.ts';
+import { <%= entityClass %>Mapper }  from '../service/mapper/<%= entityFileName %>.mapper.ts';
 <%_ if (databaseType === 'mongodb') { _%>
-import { updatableProperties } from '../common/updatable-properties';
+import { updatableProperties } from '../common/updatable-properties.ts';
 <%_ } _%>
 
 <%_

@@ -1,9 +1,9 @@
 // DataSource of the typeorm CLI (the typeorm npm scripts): the database of the application, of the profiles BACKEND_ENV activates.
 import 'dotenv/config';
 import { DataSource, DataSourceOptions } from 'typeorm';
-import { ormConfig } from './src/orm.config';
+import { ormConfig } from './src/orm.config.ts';
 <%_ if (databaseTypeMongodb) { _%>
-import { activeProfiles, config } from './src/config';
+import { activeProfiles, config } from './src/config.ts';
 <%_ } _%>
 
 <%_ if (databaseTypeMongodb) { _%>

@@ -5,7 +5,7 @@ import { IsNotEmpty, IsOptional, IsEnum, MinLength, MaxLength, Length, Min, Max,
 <%_ if (databaseTypeMongodb) { _%>
 import { Transform } from 'class-transformer';
 <%_ } _%>
-import { BaseDTO } from './base.dto';
+import { BaseDTO } from './base.dto.ts';
 
 <%_
 let isUserRelationship = false;
@@ -35,14 +35,14 @@ for (idx in relationships) {
 _%>
 
 <%_ Object.keys(uniqueEntities).forEach(function(entityDto) { _%>
-import { <%= entityDto %> } from './<%= uniqueEntities[entityDto] %>.dto';
+import { <%= entityDto %> } from './<%= uniqueEntities[entityDto] %>.dto.ts';
 <%_ }); _%>
 <%_ Object.keys(uniqueEnums).forEach(function(enumClass) { _%>
-import { <%= enumClass %> } from '../../domain/enumeration/<%= uniqueEnums[enumClass] %>';
+import { <%= enumClass %> } from '../../domain/enumeration/<%= uniqueEnums[enumClass] %>.ts';
 <%_ }); _%>
 
 <%_ if (isUserRelationship === true) { _%>
-import { <%= user.dtoClass%> } from './user.dto';
+import { <%= user.dtoClass%> } from './user.dto.ts';
 <%_ } _%>
 
 /**

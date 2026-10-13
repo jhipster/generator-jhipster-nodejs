@@ -1,5 +1,5 @@
 import { <%_ if (databaseType === 'mongodb') { _%> ObjectIdColumn <%_ } else { _%> PrimaryGeneratedColumn <%_ } _%>, Entity, Column <%_ if (databaseType !== 'mongodb') { _%>, JoinColumn, OneToOne, ManyToOne, OneToMany, ManyToMany, JoinTable <%_ } _%> } from 'typeorm';
-import { BaseEntity } from './base/base.entity';
+import { BaseEntity } from './base/base.entity.ts';
 
 <%_
 let isUserRelationship = false;
@@ -25,14 +25,14 @@ for (idx in relationships) {
 _%>
 
 <%_ Object.keys(uniqueEntities).forEach(function(entityClass) { _%>
-import { <%= entityClass %> } from './<%= uniqueEntities[entityClass] %>.entity';
+import { <%= entityClass %> } from './<%= uniqueEntities[entityClass] %>.entity.ts';
 <%_ }); _%>
 <%_ Object.keys(uniqueEnums).forEach(function(enumClass) { _%>
-import { <%= enumClass %> } from './enumeration/<%= uniqueEnums[enumClass] %>';
+import { <%= enumClass %> } from './enumeration/<%= uniqueEnums[enumClass] %>.ts';
 <%_ }); _%>
 
 <%_ if (isUserRelationship === true) { _%>
-import { <%= user.persistClass %> } from './user.entity';
+import { <%= user.persistClass %> } from './user.entity.ts';
 <%_ } _%>
 
 <%_ if (typeof javadoc == 'undefined') { _%>

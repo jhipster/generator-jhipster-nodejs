@@ -1,11 +1,11 @@
 import { Module } from '@nestjs/common';
-import { User } from '../domain/user.entity';
+import { User } from '../domain/user.entity.ts';
 <%_ if (generateUserManagement) { _%>
-import { UserController } from '../web/rest/user.controller';
+import { UserController } from '../web/rest/user.controller.ts';
 <%_ } _%>
-import { ManagementController } from '../web/rest/management.controller';
+import { ManagementController } from '../web/rest/management.controller.ts';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { UserService } from '../service/user.service';
+import { UserService } from '../service/user.service.ts';
 
 @Module({
   imports: [TypeOrmModule.forFeature([User])],

@@ -10,18 +10,18 @@ import { Repository } from 'typeorm';
 import { FindManyOptions } from 'typeorm';
 <%_ } _%>
 <%_ if (authenticationType === 'jwt' && generateBuiltInUserEntity) { _%>
-import { comparePassword } from '../security/password-util';
+import { comparePassword } from '../security/password-util.ts';
 import { JwtService } from '@nestjs/jwt';
-import { UserLoginDTO } from '../service/dto/user-login.dto';
-import { Payload } from '../security/payload.interface';
+import { UserLoginDTO } from '../service/dto/user-login.dto.ts';
+import { Payload } from '../security/payload.interface.ts';
 <%_ } _%>
 <%_ if (generateBuiltInAuthorityEntity) { _%>
-import { Authority } from '../domain/authority.entity';
+import { Authority } from '../domain/authority.entity.ts';
 <%_ } _%>
 <%_ if (generateBuiltInUserEntity) { _%>
-import { UserService } from '../service/user.service';
+import { UserService } from '../service/user.service.ts';
 <%_ } _%>
-import { <%= userLoginVmClass %> } from './dto/user.dto';
+import { <%= userLoginVmClass %> } from './dto/user.dto.ts';
 <%_ if (authenticationType === 'jwt' && generateBuiltInUserEntity) { _%>
 import { ConfigService } from '@nestjs/config';
 <%_ } _%>

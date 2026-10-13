@@ -3,8 +3,8 @@ import { ServiceUnavailableException } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { Test, TestingModule } from '@nestjs/testing';
 import { HealthCheckService, TypeOrmHealthIndicator } from '@nestjs/terminus';
-import { SKIP_LOGGING } from '../../src/common/interceptors/logging.interceptor';
-import { HealthController } from '../../src/web/rest/health.controller';
+import { SKIP_LOGGING } from '../../src/common/interceptors/logging.interceptor.ts';
+import { HealthController } from '../../src/web/rest/health.controller.ts';
 
 describe('Health Controller', () => {
   let controller: HealthController;

@@ -6,6 +6,9 @@
     "module": "nodenext",
     "moduleResolution": "nodenext",
     "esModuleInterop": true,
+    // Relative imports name the TypeScript file (./app.module.ts), emitted as the JavaScript one (./app.module.js), like
+    // the TypeScript files Node.js runs directly.
+    "rewriteRelativeImportExtensions": true,
     // The ambient types (TypeScript 6 includes none by default); the specs import the test API from vitest.
     "types": ["node"],
     "outDir": "dist",
@@ -15,6 +18,10 @@
     // Required by the NestJS decorators and dependency injection.
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true
+  },
+  // ts-node (npm start, the typeorm scripts) resolves the emitted ./x.js imports to the ./x.ts files.
+  "ts-node": {
+    "experimentalResolver": true
   },
   "include": ["src/**/*", "**/*spec.ts", "e2e/setup.test.js", "scripts/*.ts", "ormconfig.ts", "vitest.config*.ts"]
 }

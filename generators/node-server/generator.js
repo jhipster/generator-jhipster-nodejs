@@ -177,7 +177,7 @@ export default class extends BaseApplicationGenerator {
             `${SERVER_NODEJS_SRC_DIR}/src/orm.config.ts`,
             createNeedleCallback({
               needle: 'add-entity-to-ormconfig-imports',
-              contentToAdd: `import { ${persistClass} } from './domain/${entityFileName}.entity';`,
+              contentToAdd: `import { ${persistClass} } from './domain/${entityFileName}.entity.ts';`,
             }),
             createNeedleCallback({
               needle: 'add-entity-to-ormconfig-entities',
@@ -189,7 +189,7 @@ export default class extends BaseApplicationGenerator {
             `${SERVER_NODEJS_SRC_DIR}/src/app.module.ts`,
             createNeedleCallback({
               needle: 'jhipster-needle-add-entity-module-to-main-import',
-              contentToAdd: `import { ${entityClass}Module } from './module/${entityFileName}.module';`,
+              contentToAdd: `import { ${entityClass}Module } from './module/${entityFileName}.module.ts';`,
             }),
             createNeedleCallback({
               needle: 'jhipster-needle-add-entity-module-to-main',

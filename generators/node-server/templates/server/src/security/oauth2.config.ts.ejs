@@ -1,4 +1,4 @@
-import { config } from '../config';
+import { config } from '../config.ts';
 
 const issuerUri = config.get('jhipster.security.oauth2.client.provider.oidc.issuer-uri');
 const port = process.env.NODE_SERVER_PORT || config.get('server.port');

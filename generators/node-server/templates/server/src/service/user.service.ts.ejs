@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { <% if (typeormOrderSupport) { %>EntityMetadata, <% } %>FindManyOptions, FindOneOptions, Repository } from 'typeorm';
-import { <%= user.persistClass %> } from '../domain/user.entity';
-import { <%= user.dtoClass%> } from './dto/user.dto';
-import { UserMapper } from './mapper/user.mapper';
-import { User } from '../domain/user.entity';
+import { <%= user.persistClass %> } from '../domain/user.entity.ts';
+import { <%= user.dtoClass%> } from './dto/user.dto.ts';
+import { UserMapper } from './mapper/user.mapper.ts';
+import { User } from '../domain/user.entity.ts';
 <%_ if (authenticationType === 'jwt') { _%>
-import { transformPassword } from '../security';
+import { transformPassword } from '../security/index.ts';
 <%_ } _%>
 
 <%_ if (typeormRelationsSupport) { _%>

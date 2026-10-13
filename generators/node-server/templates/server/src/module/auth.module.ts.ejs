@@ -2,35 +2,35 @@
 import { HttpModule } from '@nestjs/axios';
 <%_ } _%>
 import { Module } from '@nestjs/common';
-import { AuthService } from '../service/auth.service';
+import { AuthService } from '../service/auth.service.ts';
 <%_ if (generateBuiltInUserEntity) { _%>
-import { UserModule } from '../module/user.module';
+import { UserModule } from '../module/user.module.ts';
 <%_ } _%>
 import { PassportModule } from '@nestjs/passport';
 <%_ if (authenticationType === 'jwt') { _%>
   <%_ if (generateBuiltInUserEntity) { _%>
 import { JwtModule } from '@nestjs/jwt';
-import { UserJWTController} from '../web/rest/user.jwt.controller';
+import { UserJWTController} from '../web/rest/user.jwt.controller.ts';
   <%_ } _%>
-import { JwtStrategy } from '../security/passport.jwt.strategy';
+import { JwtStrategy } from '../security/passport.jwt.strategy.ts';
 <%_ } else if (authenticationType === 'oauth2') { _%>
-import { Oauth2Strategy } from '../security/passport.oauth2.strategy';
-import { UserOauth2Controller } from '../web/rest/user.oauth2.controller';
+import { Oauth2Strategy } from '../security/passport.oauth2.strategy.ts';
+import { UserOauth2Controller } from '../web/rest/user.oauth2.controller.ts';
 <%_ } _%>
 <%_ if (authenticationType === 'jwt' && generateBuiltInUserEntity) { _%>
 import { ConfigService } from '@nestjs/config';
-import { JWT_ALGORITHM, jwtSecretKey } from '../security/jwt.config';
+import { JWT_ALGORITHM, jwtSecretKey } from '../security/jwt.config.ts';
 <%_ } _%>
 <%_ if (generateBuiltInAuthorityEntity) { _%>
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Authority } from '../domain/authority.entity';
+import { Authority } from '../domain/authority.entity.ts';
 <%_ } _%>
 <%_ if (generateBuiltInUserEntity) { _%>
-import { PublicUserController } from '../web/rest/public.user.controller';
+import { PublicUserController } from '../web/rest/public.user.controller.ts';
 <%_ } else { _%>
-import { ManagementController } from '../web/rest/management.controller';
+import { ManagementController } from '../web/rest/management.controller.ts';
 <%_ } _%>
-import { AccountController } from '../web/rest/account.controller';
+import { AccountController } from '../web/rest/account.controller.ts';
 
 @Module({
   imports: [

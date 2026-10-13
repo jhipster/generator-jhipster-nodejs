@@ -3,10 +3,10 @@ import { NestFactory } from '@nestjs/core';
 <%_ if (serviceDiscoveryEureka) { _%>
 import cloudConfigClient from 'cloud-config-client';
 <%_ } _%>
-import { AppModule } from './app.module';
-import { configureApp } from './app.config';
-import { setupSwagger } from './swagger';
-import { config, isProfileActive } from './config';
+import { AppModule } from './app.module.ts';
+import { configureApp } from './app.config.ts';
+import { setupSwagger } from './swagger.ts';
+import { config, isProfileActive } from './config.ts';
 import { Logger } from '@nestjs/common';
 <%_ if (!skipClient) { _%>
 import * as fs from 'fs';

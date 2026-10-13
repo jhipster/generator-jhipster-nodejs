@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { <%= entityClass %> } from '../domain/<%= entityFileName %>.entity';
-import { <%= entityClass %>Controller } from '../web/rest/<%= entityFileName %>.controller';
-import { <%= entityClass %>Service } from '../service/<%= entityFileName %>.service';
+import { <%= entityClass %> } from '../domain/<%= entityFileName %>.entity.ts';
+import { <%= entityClass %>Controller } from '../web/rest/<%= entityFileName %>.controller.ts';
+import { <%= entityClass %>Service } from '../service/<%= entityFileName %>.service.ts';
 
 
 @Module({

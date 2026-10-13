@@ -33,6 +33,11 @@ describe('SubGenerator node-server of nodejs JHipster blueprint', () => {
       result.assertJsonFileContent('server/package.json', { dependencies: { '@nestjs/config': /./ } });
     });
 
+    it('should import the TypeScript files', () => {
+      result.assertFileContent('server/tsconfig.json', '"rewriteRelativeImportExtensions": true');
+      result.assertFileContent('server/src/main.ts', "import { AppModule } from './app.module.ts';");
+    });
+
     it('should test the server with Vitest', () => {
       result.assertJsonFileContent('server/package.json', {
         scripts: { test: 'vitest run', 'test:e2e': 'vitest run --config ./vitest.config.e2e.ts --coverage --silent' },

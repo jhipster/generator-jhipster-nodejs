@@ -1,7 +1,7 @@
 <%_ if (typeormOrderSupport) { _%>
 import { BadRequestException } from '@nestjs/common';
 <%_ } _%>
-import { BaseEntity } from './base.entity';
+import { BaseEntity } from './base.entity.ts';
 import { Type, Expose as JsonProperty } from 'class-transformer';
 import { ParsedQs } from 'qs';
 

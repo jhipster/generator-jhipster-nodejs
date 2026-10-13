@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { CLAIMS_NAMESPACE, extractAuthoritiesFromClaims } from '../../src/security/oauth2.authorities';
+import { CLAIMS_NAMESPACE, extractAuthoritiesFromClaims } from '../../src/security/oauth2.authorities.ts';
 
 describe('OAuth2 authorities', () => {
   it('should read the groups claim', () => {
