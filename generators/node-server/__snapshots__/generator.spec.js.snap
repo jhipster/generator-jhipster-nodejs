@@ -725,6 +725,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > run > should su
   "server/src/service/dto/base.dto.ts": {
     "stateCleared": "modified",
   },
+  "server/src/service/dto/key-and-password.dto.ts": {
+    "stateCleared": "modified",
+  },
   "server/src/service/dto/password-change.dto.ts": {
     "stateCleared": "modified",
   },
@@ -1834,6 +1837,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > without client 
     "stateCleared": "modified",
   },
   "server/src/service/dto/base.dto.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/service/dto/key-and-password.dto.ts": {
     "stateCleared": "modified",
   },
   "server/src/service/dto/password-change.dto.ts": {

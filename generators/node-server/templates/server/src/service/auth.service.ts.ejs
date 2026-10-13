@@ -1,4 +1,7 @@
-import { Injectable, <%_ if (authenticationType === 'jwt' && generateBuiltInUserEntity) { _%> HttpException, HttpStatus,  <%_ } _%> Logger } from '@nestjs/common';
+import { Injectable, <%_ if (authenticationType === 'jwt' && generateBuiltInUserEntity) { _%> HttpException, HttpStatus, InternalServerErrorException, <%_ } _%> Logger } from '@nestjs/common';
+<%_ if (authenticationType === 'jwt' && generateBuiltInUserEntity) { _%>
+import { randomBytes } from 'crypto';
+<%_ } _%>
 <%_ if (generateBuiltInAuthorityEntity) { _%>
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -113,6 +116,32 @@ export class AuthService {
     userFind.password = newPassword;
     await this.userService.save(userFind, userLogin, true);
     return;
+  }
+
+  /**
+   * Like JHipster Spring Boot, gives a reset key, valid one day, to the activated user of the mail: the user returned
+   * is the one the mail with the key is for, undefined for another mail.
+   */
+  async requestPasswordReset(mail: string): Promise<<%= user.dtoClass %> | undefined> {
+    const userFind = await this.userService.findByFields({ where: { email: mail.trim().toLowerCase() } });
+    if (!userFind?.activated) {
+      return undefined;
+    }
+    userFind.resetKey = randomBytes(15).toString('base64url');
+    userFind.resetDate = new Date();
+    return this.userService.save(userFind, userFind.login);
+  }
+
+  /** Like JHipster Spring Boot, sets the new password of the user of a reset key given less than one day ago. */
+  async completePasswordReset(newPassword: string, key: string): Promise<void> {
+    const userFind = await this.userService.findByFields({ where: { resetKey: key } });
+    if (!userFind?.resetDate || new Date(userFind.resetDate).getTime() < Date.now() - 24 * 60 * 60 * 1000) {
+      throw new InternalServerErrorException('No user was found for this reset key');
+    }
+    userFind.password = newPassword;
+    // null clears the columns (TypeORM leaves the undefined properties unchanged).
+    Object.assign(userFind, { resetKey: null, resetDate: null });
+    await this.userService.save(userFind, userFind.login, true);
   }
 
   async registerNewUser (newUser: <%= user.dtoClass %>) : Promise<<%= user.dtoClass %>> {

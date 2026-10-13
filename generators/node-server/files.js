@@ -128,6 +128,7 @@ export const serverFiles = {
         'src/web/rest/user.jwt.controller.ts',
         'src/security/password-util.ts',
         'src/service/dto/password-change.dto.ts',
+        'src/service/dto/key-and-password.dto.ts',
         'src/service/dto/user-login.dto.ts',
       ],
     },
