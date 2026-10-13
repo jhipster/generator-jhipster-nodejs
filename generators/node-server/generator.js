@@ -283,6 +283,8 @@ export default class extends BaseApplicationGenerator {
               'server/src/client/header-util.ts',
               'server/src/client/request.ts',
               'server/src/client/interceptors/logging.interceptor.ts',
+              // The tests run with Vitest (vitest.config.e2e.ts) instead of Jest.
+              'server/e2e/jest.e2e.config.json',
               // The webpack bundle (webpack:prod) is removed: the server is built with tsc, like NestJS does by default.
               'server/webpack.server.prod.config.js',
             ],

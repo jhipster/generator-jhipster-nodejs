@@ -71,9 +71,6 @@ exports[`SubGenerator server of nodejs JHipster blueprint > run > should succeed
   "server/e2e/foo.e2e-spec.ts": {
     "stateCleared": "modified",
   },
-  "server/e2e/jest.e2e.config.json": {
-    "stateCleared": "modified",
-  },
   "server/e2e/setup.test.js": {
     "stateCleared": "modified",
   },
@@ -282,6 +279,12 @@ exports[`SubGenerator server of nodejs JHipster blueprint > run > should succeed
     "stateCleared": "modified",
   },
   "server/tsconfig.json": {
+    "stateCleared": "modified",
+  },
+  "server/vitest.config.e2e.ts": {
+    "stateCleared": "modified",
+  },
+  "server/vitest.config.ts": {
     "stateCleared": "modified",
   },
   "sonar-project.properties": {

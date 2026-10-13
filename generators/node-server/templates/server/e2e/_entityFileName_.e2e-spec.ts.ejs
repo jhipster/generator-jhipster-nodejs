@@ -11,7 +11,7 @@ const fakeFields = fields
 // An id the pipe of the path rejects: neither a number nor a UUID.
 const invalidId = faker.lorem.word({ length: { min: 5, max: 10 } });
 _%>
-import { afterEach, beforeEach, describe, expect, it } from '@jest/globals';
+import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { Test, TestingModule } from '@nestjs/testing';
 import request = require('supertest');
 import { AppModule } from '../src/app.module';

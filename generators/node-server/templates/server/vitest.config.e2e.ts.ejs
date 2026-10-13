@@ -1,0 +1,14 @@
+import { defineConfig } from 'vitest/config';
+
+// The end-to-end tests of the REST API (supertest), on the test profile. The lcov report is read by SonarQube.
+export default defineConfig({
+  test: {
+    include: ['e2e/**/*.e2e-spec.ts'],
+    setupFiles: ['./e2e/setup.test.js'],
+    testTimeout: 10000,
+    coverage: {
+      include: ['src/**/*.ts'],
+      reporter: ['text', 'lcov'],
+    },
+  },
+});

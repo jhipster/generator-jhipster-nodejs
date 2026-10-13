@@ -79,6 +79,8 @@ export const serverFiles = {
         'eslint.config.mjs',
         'package.json',
         'tsconfig.json',
+        'vitest.config.ts',
+        'vitest.config.e2e.ts',
         'README.md',
         'sonar-project.properties',
         'ormconfig.ts',
@@ -100,7 +102,7 @@ export const serverFiles = {
   e2e: [
     {
       path: SERVER_NODEJS_DIR,
-      templates: ['e2e/app.e2e-spec.ts', 'e2e/jest.e2e.config.json', 'e2e/setup.test.js'],
+      templates: ['e2e/app.e2e-spec.ts', 'e2e/setup.test.js'],
     },
     {
       path: SERVER_NODEJS_DIR,
