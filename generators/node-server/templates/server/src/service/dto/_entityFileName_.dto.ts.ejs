@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
-<%_ if (anyPropertyHasValidation) { _%>
-import { IsNotEmpty, IsOptional, MinLength, MaxLength, Length, Min, Max, Matches } from 'class-validator';
+<%_ if (anyPropertyHasValidation || fields.some(field => field.fieldIsEnum)) { _%>
+import { IsNotEmpty, IsOptional, IsEnum, MinLength, MaxLength, Length, Min, Max, Matches } from 'class-validator';
 <%_ } _%>
 <%_ if (databaseTypeMongodb) { _%>
 import { Transform } from 'class-transformer';
@@ -67,10 +67,10 @@ export class <%= dtoClass %> extends BaseDTO {
         const fieldName = field.fieldName;
         const fieldNameUnderscored = field.fieldNameUnderscored;
         const fieldNameAsDatabaseColumn = field.fieldNameAsDatabaseColumn;
-        if (fieldValidate === true) {
-            if (fieldValidateRules.includes('required')) {
-                required = true;
-            }
+        if (fieldValidate === true && fieldValidateRules.includes('required')) {
+            required = true;
+        }
+        if (fieldValidate === true || field.fieldIsEnum) {
             _%>
             <%- include('../../common/field_validators', { field }); -%>
         <%_ } _%>

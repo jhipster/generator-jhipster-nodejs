@@ -323,6 +323,8 @@ describe('SubGenerator node-server of nodejs JHipster blueprint', () => {
           fieldValidateRulesMin: 1,
           fieldValidateRulesMax: 5000,
         },
+        { fieldName: 'genre', fieldType: 'Genre', fieldValues: 'NOVEL,ESSAY' },
+        { fieldName: 'format', fieldType: 'BookFormat', fieldValues: 'PAPER,EBOOK', fieldValidateRules: ['required'] },
       ],
     };
 
@@ -338,6 +340,14 @@ describe('SubGenerator node-server of nodejs JHipster blueprint', () => {
     it('should anchor the pattern of a field, like Bean Validation @Pattern', () => {
       result.assertFileContent('server/src/service/dto/book.dto.ts', String.raw`@Matches("^(?:^\\d{3}-[0-9]{6}$)$")`);
       result.assertNoFileContent('server/src/service/dto/book.dto.ts', 'undefined');
+    });
+
+    it('should refuse a value out of an enum, like the JSON deserialization of Spring Boot', () => {
+      result.assertFileContent('server/src/service/dto/book.dto.ts', /@IsOptional\(\)\s+@IsEnum\(Genre\)/);
+      result.assertFileContent('server/src/service/dto/book.dto.ts', /@IsNotEmpty\(\)\s+@IsEnum\(BookFormat\)/);
+      result.assertFileContent('server/e2e/book.e2e-spec.ts', "genre: 'NOT_A_GENRE'");
+      result.assertFileContent('server/src/domain/book.entity.ts', 'enum: Genre, nullable: true})');
+      result.assertFileContent('server/src/domain/book.entity.ts', 'enum: BookFormat})');
     });
 
     it('should accept a missing value of an optional validated field', () => {
