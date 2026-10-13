@@ -215,6 +215,9 @@ exports[`SubGenerator server of nodejs JHipster blueprint > run > should succeed
   "server/src/service/dto/foo.dto.ts": {
     "stateCleared": "modified",
   },
+  "server/src/service/dto/key-and-password.dto.ts": {
+    "stateCleared": "modified",
+  },
   "server/src/service/dto/password-change.dto.ts": {
     "stateCleared": "modified",
   },

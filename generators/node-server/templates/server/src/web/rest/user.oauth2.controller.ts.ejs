@@ -58,11 +58,15 @@ export class UserOauth2Controller {
     description: 'Logout oauth2 oidc',
   })
   logoutAuthOidc(@Req() req: any): any {
-    let idTokenFromSession;
     if (req.session && req.session.user) {
-      idTokenFromSession = req.session.user.idToken;
+      const idToken = req.session.user.idToken;
       req.session.destroy();
-      return { idToken: idTokenFromSession, logoutUrl: oauth2Config.logoutUrl };
+      // Like JHipster Spring Boot, the logout URL of the provider logs out the session of the user there, and redirects
+      // back to the application (the client goes to it).
+      const logoutUrl = new URL(oauth2Config.logoutUrl);
+      logoutUrl.searchParams.set('id_token_hint', idToken);
+      logoutUrl.searchParams.set('post_logout_redirect_uri', req.headers.origin ?? `${req.protocol}://${req.get('host')}`);
+      return { idToken, logoutUrl: logoutUrl.toString() };
     }
     return;
   }
