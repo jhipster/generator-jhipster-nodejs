@@ -198,6 +198,29 @@ describe('SubGenerator node-server of nodejs JHipster blueprint', () => {
     });
   });
 
+  for (const [config, refused] of [
+    [{ searchEngine: 'elasticsearch' }, 'searchEngine elasticsearch'],
+    [{ cacheProvider: 'redis' }, 'cacheProvider redis'],
+    [{ websocket: 'spring-websocket' }, 'websocket spring-websocket'],
+    [{ messageBroker: 'kafka' }, 'messageBroker kafka'],
+    [{ authenticationType: 'session' }, 'authenticationType session'],
+    [{ reactive: true }, 'reactive'],
+  ]) {
+    describe(`with ${refused}`, () => {
+      it('should fail with an unsupported option error', async () => {
+        await expect(
+          helpers
+            .run(SUB_GENERATOR_NAMESPACE)
+            .withJHipsterConfig({ ...config, skipClient: true })
+            .withOptions({ ignoreNeedlesError: true })
+            .withJHipsterGenerators()
+            .withConfiguredBlueprint()
+            .withBlueprintConfig({}),
+        ).rejects.toThrow(`The JHipster NodeJS blueprint does not support ${refused}`);
+      });
+    });
+  }
+
   for (const databaseType of ['cassandra', 'couchbase', 'neo4j', 'no']) {
     describe(`with ${databaseType} database type`, () => {
       it('should fail with an unsupported database type error', async () => {

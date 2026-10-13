@@ -14,7 +14,6 @@ application {
     serverPort 8081,
     prodDatabaseType postgresql,
     buildTool gradle,
-    searchEngine elasticsearch,
     testFrameworks [cypress],
     enableTranslation true,
     nativeLanguage en,

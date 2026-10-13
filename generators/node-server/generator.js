@@ -117,6 +117,23 @@ export default class extends BaseApplicationGenerator {
           this.jhipsterConfig.prodDatabaseType = 'mongodb';
         }
       },
+      unsupportedOptions() {
+        // Options of JHipster the NodeJS server does not implement: refused like the database types, instead of
+        // generating an application without what they ask for. The configuration as given, as the defaults of
+        // JHipster's spring-boot generator (cacheProvider ehcache) apply to every application.
+        const config = this.jhipsterConfig;
+        const enabled = value => value !== undefined && value !== null && value !== false && value !== 'no';
+        const unsupported = [
+          ...['searchEngine', 'cacheProvider', 'websocket', 'messageBroker']
+            .filter(option => enabled(config[option]))
+            .map(option => `${option} ${config[option]}`),
+          ...(config.authenticationType === 'session' ? ['authenticationType session (use jwt or oauth2)'] : []),
+          ...(config.reactive ? ['reactive'] : []),
+        ];
+        if (unsupported.length > 0) {
+          throw new Error(`The JHipster NodeJS blueprint does not support ${unsupported.join(', ')}.`);
+        }
+      },
       jwtSecretKey() {
         // JHipster's spring-boot generator, which this blueprint replaces, creates the secret shared with JHipster's
         // Spring Boot applications.
