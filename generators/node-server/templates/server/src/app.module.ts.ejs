@@ -2,13 +2,13 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { AuthModule } from './module/auth.module';
-import { HealthModule } from './module/health.module';
-import { ormConfig } from './orm.config';
-import { configuration } from './config';
-import { LoggingInterceptor } from './common/interceptors/logging.interceptor';
+import { AuthModule } from './module/auth.module.ts';
+import { HealthModule } from './module/health.module.ts';
+import { ormConfig } from './orm.config.ts';
+import { configuration } from './config.ts';
+import { LoggingInterceptor } from './common/interceptors/logging.interceptor.ts';
 <%_ if (!skipClient) { _%>
-import { config } from './config';
+import { config } from './config.ts';
 import { ServeStaticModule } from '@nestjs/serve-static';
 <%_ } _%>
 // jhipster-needle-add-entity-module-to-main-import - JHipster will import entity modules here, do not remove

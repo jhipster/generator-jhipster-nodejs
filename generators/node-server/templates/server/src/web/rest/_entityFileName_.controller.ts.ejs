@@ -5,15 +5,15 @@ const idParam = `@Param('id'${idPipe ? `, ${idPipe}` : ''}) id: ${pkType}`;
 _%>
 import { BadRequestException, Body, ClassSerializerInterceptor, Controller, Delete, Get, Logger, NotFoundException, Param,<% if (idPipe) { %> <%= idPipe %>,<% } %> Post as PostMethod, Put, UseGuards, Req, UseInterceptors } from '@nestjs/common';
 import { <% if (authenticationType === 'jwt') { _%> ApiBearerAuth, <% } else if (authenticationType === 'oauth2') { _%> ApiSecurity, <% } _%> ApiTags, ApiResponse, ApiOperation } from '@nestjs/swagger';
-import { <%= dtoClass %> } from '../../service/dto/<%= entityFileName %>.dto';
-import { <%= entityClass %>Service } from '../../service/<%= entityFileName %>.service';
-import { PageRequest, Page } from '../../domain/base/pagination.entity';
-import { AuthGuard,  Roles, RolesGuard, RoleType } from '../../security';
-import { HeaderUtil } from '../../common/header-util';
+import { <%= dtoClass %> } from '../../service/dto/<%= entityFileName %>.dto.ts';
+import { <%= entityClass %>Service } from '../../service/<%= entityFileName %>.service.ts';
+import { PageRequest, Page } from '../../domain/base/pagination.entity.ts';
+import { AuthGuard,  Roles, RolesGuard, RoleType } from '../../security/index.ts';
+import { HeaderUtil } from '../../common/header-util.ts';
 <%_ if (typeormOrderSupport) { _%>
-import { isSortableProperty } from '../../common/sortable-properties';
+import { isSortableProperty } from '../../common/sortable-properties.ts';
 <%_ } _%>
-import { Request } from '../../common/request';
+import { Request } from '../../common/request.ts';
 
 const ENTITY_NAME = '<%= entityClass %>';
 <%_ if (typeormOrderSupport) { _%>

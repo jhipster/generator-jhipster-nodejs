@@ -1,8 +1,8 @@
 import { beforeEach, describe, expect, it } from 'vitest';
 import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
-import { activeProfiles } from '../../src/config';
-import { ManagementController } from '../../src/web/rest/management.controller';
+import { activeProfiles } from '../../src/config.ts';
+import { ManagementController } from '../../src/web/rest/management.controller.ts';
 
 describe('Management Controller', () => {
   let controller: ManagementController;

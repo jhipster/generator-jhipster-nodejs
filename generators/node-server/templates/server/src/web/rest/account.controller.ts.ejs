@@ -1,15 +1,15 @@
 import { <%_ if (authenticationType === 'jwt') { _%> Body, Param, Post, Res, UseGuards, <%_ } _%> Controller, Get, HttpCode, Logger, Req, UseInterceptors, ClassSerializerInterceptor, InternalServerErrorException } from '@nestjs/common';
 <%_ if (authenticationType === 'jwt') { _%>
 import { Response, Request } from 'express';
-import { AuthGuard, Roles, RoleType, RolesGuard } from '../../security';
+import { AuthGuard, Roles, RoleType, RolesGuard } from '../../security/index.ts';
 <%_ } _%>
 <%_ if (authenticationType === 'jwt' && generateUserManagement) { _%>
-import { PasswordChangeDTO } from '../../service/dto/password-change.dto';
-import { KeyAndPasswordDTO } from '../../service/dto/key-and-password.dto';
+import { PasswordChangeDTO } from '../../service/dto/password-change.dto.ts';
+import { KeyAndPasswordDTO } from '../../service/dto/key-and-password.dto.ts';
 <%_ } _%>
-import { <%- userLoginVmClass %> } from '../../service/dto/user.dto';
+import { <%- userLoginVmClass %> } from '../../service/dto/user.dto.ts';
 import {<%_ if (authenticationType === 'jwt') { _%> ApiBearerAuth, <%_ } _%> ApiTags, ApiResponse, ApiOperation } from '@nestjs/swagger';
-import { AuthService } from '../../service/auth.service';
+import { AuthService } from '../../service/auth.service.ts';
 
 @Controller('api')
 @UseInterceptors(ClassSerializerInterceptor)

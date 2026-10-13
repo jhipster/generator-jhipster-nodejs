@@ -1,8 +1,8 @@
 import { Controller, Get, Logger, Post, Res, UseGuards, Req } from '@nestjs/common';
-import { AuthService } from '../../service/auth.service';
+import { AuthService } from '../../service/auth.service.ts';
 import { ApiTags, ApiResponse, ApiOperation, ApiExcludeEndpoint } from '@nestjs/swagger';
-import { AuthGuard, RolesGuard } from '../../security';
-import { oauth2Config } from '../../security/oauth2.config';
+import { AuthGuard, RolesGuard } from '../../security/index.ts';
+import { oauth2Config } from '../../security/oauth2.config.ts';
 <%_ if (skipClient) { _%>
 import { ConfigService } from '@nestjs/config';
 <%_ } _%>

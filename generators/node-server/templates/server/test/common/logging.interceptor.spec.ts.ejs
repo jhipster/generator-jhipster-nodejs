@@ -3,7 +3,7 @@ import { CallHandler, Controller, ExecutionContext, Get, Logger } from '@nestjs/
 import { Reflector } from '@nestjs/core';
 import { EventEmitter } from 'events';
 import { of } from 'rxjs';
-import { LoggingInterceptor, SkipLogging } from '../../src/common/interceptors/logging.interceptor';
+import { LoggingInterceptor, SkipLogging } from '../../src/common/interceptors/logging.interceptor.ts';
 
 @Controller('test')
 class TestController {

@@ -1,11 +1,11 @@
 import { TypeOrmModuleOptions } from '@nestjs/typeorm';
 <%_ if (generateBuiltInAuthorityEntity) { _%>
-import { SeedUsersRoles1570200490072 } from './migrations/1570200490072-SeedUsersRoles';
+import { SeedUsersRoles1570200490072 } from './migrations/1570200490072-SeedUsersRoles.ts';
 <%_ } _%>
-import { CreateTables1570200270081 } from './migrations/1570200270081-CreateTables';
+import { CreateTables1570200270081 } from './migrations/1570200270081-CreateTables.ts';
 // jhipster-needle-add-entity-to-ormconfig-imports - JHipster will add code here, do not remove
 
-import { activeProfiles, config } from './config';
+import { activeProfiles, config } from './config.ts';
 
 /** Reads a property of the configuration: ConfigService in the application, config outside of it (the typeorm CLI). */
 export type ConfigReader = (key: string) => any;

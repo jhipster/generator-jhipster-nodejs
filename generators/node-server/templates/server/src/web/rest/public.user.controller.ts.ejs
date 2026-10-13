@@ -1,13 +1,13 @@
 import { Controller, ClassSerializerInterceptor, Get, Logger, Req, UseInterceptors } from '@nestjs/common';
-import { PageRequest, Page } from '../../domain/base/pagination.entity';
-import { <%= user.dtoClass%> } from '../../service/dto/user.dto';
-import { Request } from '../../common/request';
-import { HeaderUtil } from '../../common/header-util';
+import { PageRequest, Page } from '../../domain/base/pagination.entity.ts';
+import { <%= user.dtoClass%> } from '../../service/dto/user.dto.ts';
+import { Request } from '../../common/request.ts';
+import { HeaderUtil } from '../../common/header-util.ts';
 import { ApiTags, ApiResponse, ApiOperation } from '@nestjs/swagger';
-import { AuthService } from '../../service/auth.service';
+import { AuthService } from '../../service/auth.service.ts';
 <%_ if (typeormOrderSupport) { _%>
-import { UserService } from '../../service/user.service';
-import { isSortableProperty } from '../../common/sortable-properties';
+import { UserService } from '../../service/user.service.ts';
+import { isSortableProperty } from '../../common/sortable-properties.ts';
 <%_ } _%>
 
 <%_ if (typeormOrderSupport) { _%>

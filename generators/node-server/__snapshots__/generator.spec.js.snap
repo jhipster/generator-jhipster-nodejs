@@ -4,10 +4,10 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > entity column t
 {
   "server/src/domain/sample.entity.ts": {
     "contents": "import {PrimaryGeneratedColumn, Entity, Column, JoinColumn, OneToOne, ManyToOne, OneToMany, ManyToMany, JoinTable} from 'typeorm';
-import { BaseEntity } from './base/base.entity';
+import { BaseEntity } from './base/base.entity.ts';
 
 
-import { Level } from './enumeration/level';
+import { Level } from './enumeration/level.ts';
 
 
 /**
@@ -65,10 +65,10 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > entity column t
 {
   "server/src/domain/sample.entity.ts": {
     "contents": "import {PrimaryGeneratedColumn, Entity, Column, JoinColumn, OneToOne, ManyToOne, OneToMany, ManyToMany, JoinTable} from 'typeorm';
-import { BaseEntity } from './base/base.entity';
+import { BaseEntity } from './base/base.entity.ts';
 
 
-import { Level } from './enumeration/level';
+import { Level } from './enumeration/level.ts';
 
 
 /**
@@ -126,10 +126,10 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > entity column t
 {
   "server/src/domain/sample.entity.ts": {
     "contents": "import {PrimaryGeneratedColumn, Entity, Column, JoinColumn, OneToOne, ManyToOne, OneToMany, ManyToMany, JoinTable} from 'typeorm';
-import { BaseEntity } from './base/base.entity';
+import { BaseEntity } from './base/base.entity.ts';
 
 
-import { Level } from './enumeration/level';
+import { Level } from './enumeration/level.ts';
 
 
 /**
@@ -187,10 +187,10 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > entity column t
 {
   "server/src/domain/sample.entity.ts": {
     "contents": "import {PrimaryGeneratedColumn, Entity, Column, JoinColumn, OneToOne, ManyToOne, OneToMany, ManyToMany, JoinTable} from 'typeorm';
-import { BaseEntity } from './base/base.entity';
+import { BaseEntity } from './base/base.entity.ts';
 
 
-import { Level } from './enumeration/level';
+import { Level } from './enumeration/level.ts';
 
 
 /**
@@ -249,11 +249,11 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > entity validato
   "server/src/service/dto/book.dto.ts": {
     "contents": "import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty, IsOptional, IsEnum, MinLength, MaxLength, Length, Min, Max, Matches } from 'class-validator';
-import { BaseDTO } from './base.dto';
+import { BaseDTO } from './base.dto.ts';
 
 
-import { Genre } from '../../domain/enumeration/genre';
-import { BookFormat } from '../../domain/enumeration/book-format';
+import { Genre } from '../../domain/enumeration/genre.ts';
+import { BookFormat } from '../../domain/enumeration/book-format.ts';
 
 
 /**

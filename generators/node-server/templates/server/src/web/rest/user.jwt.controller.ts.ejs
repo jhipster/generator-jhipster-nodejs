@@ -1,7 +1,7 @@
 import { Body, Controller, Logger, Post, Res, Req, HttpCode } from '@nestjs/common';
 import { Response, Request } from 'express';
-import { UserLoginDTO } from '../../service/dto/user-login.dto';
-import { AuthService } from '../../service/auth.service';
+import { UserLoginDTO } from '../../service/dto/user-login.dto.ts';
+import { AuthService } from '../../service/auth.service.ts';
 import { ApiTags, ApiResponse, ApiOperation } from '@nestjs/swagger';
 
 @Controller('api')

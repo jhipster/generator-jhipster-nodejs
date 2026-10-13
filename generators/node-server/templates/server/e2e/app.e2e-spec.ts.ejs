@@ -1,17 +1,17 @@
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { Test, TestingModule } from '@nestjs/testing';
 import request = require('supertest');
-import { AppModule } from '../src/app.module';
-import { configureApp } from '../src/app.config';
+import { AppModule } from '../src/app.module.ts';
+import { configureApp } from '../src/app.config.ts';
 import { INestApplication } from '@nestjs/common';
 <%_ if (authenticationType === 'jwt') { _%>
 import { JwtService } from '@nestjs/jwt';
 <%_ } _%>
 <%_ if (authenticationType === 'jwt' && generateUserManagement) { _%>
-import { UserLoginDTO } from '../src/service/dto/user-login.dto';
+import { UserLoginDTO } from '../src/service/dto/user-login.dto.ts';
 <%_ } else if (authenticationType === 'jwt') { _%>
 import { ConfigService } from '@nestjs/config';
-import { JWT_ALGORITHM, jwtSecretKey } from '../src/security/jwt.config';
+import { JWT_ALGORITHM, jwtSecretKey } from '../src/security/jwt.config.ts';
 <%_ } _%>
 
 describe('App', () => {

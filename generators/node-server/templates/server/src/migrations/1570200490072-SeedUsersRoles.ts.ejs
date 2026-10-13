@@ -1,10 +1,10 @@
 <%_ const UserEntity = user.persistClass %>
 import { MigrationInterface, QueryRunner } from 'typeorm';
 <%_ if (authenticationType !== 'oauth2') { _%>
-import { <%= UserEntity %> } from '../domain/user.entity';
-import { transformPassword } from '../security';
+import { <%= UserEntity %> } from '../domain/user.entity.ts';
+import { transformPassword } from '../security/index.ts';
 <%_ } _%>
-import { Authority } from '../domain/authority.entity';
+import { Authority } from '../domain/authority.entity.ts';
 
 export class SeedUsersRoles1570200490072 implements MigrationInterface {
   role1: Authority = { name: 'ROLE_ADMIN' };

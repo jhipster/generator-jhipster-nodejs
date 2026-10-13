@@ -1,7 +1,7 @@
-import { config } from '../config';
+import { config } from '../config.ts';
 import { Response } from 'express';
-import { Page } from '../domain/base/pagination.entity';
-import { BaseEntity } from '../domain/base/base.entity';
+import { Page } from '../domain/base/pagination.entity.ts';
+import { BaseEntity } from '../domain/base/base.entity.ts';
 import { URL } from 'url';
 
 const applicationName = config.get('jhipster.clientApp.name');

@@ -1,7 +1,7 @@
 import { Entity, <%_ if (databaseType === 'mongodb') { _%> ObjectIdColumn, <%_ } _%><%_ if (databaseType === 'mongodb') { _%> Column <%_ } else { _%> PrimaryColumn <%_ } _%> } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
 <%_ if (databaseType === 'mongodb') { _%>
-import { BaseEntity } from './base/base.entity';
+import { BaseEntity } from './base/base.entity.ts';
 <%_ } _%>
 
 @Entity('<%- jhiTablePrefix %>_authority')

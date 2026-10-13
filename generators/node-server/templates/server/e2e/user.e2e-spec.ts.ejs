@@ -1,13 +1,13 @@
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { Test, TestingModule } from '@nestjs/testing';
 import request = require('supertest');
-import { AppModule } from '../src/app.module';
-import { configureApp } from '../src/app.config';
+import { AppModule } from '../src/app.module.ts';
+import { configureApp } from '../src/app.config.ts';
 import { INestApplication } from '@nestjs/common';
-import { AuthGuard } from '../src/security/guards/auth.guard';
-import { RolesGuard } from '../src/security/guards/roles.guard';
-import { <%= user.dtoClass%> } from '../src/service/dto/user.dto';
-import { UserService } from '../src/service/user.service';
+import { AuthGuard } from '../src/security/guards/auth.guard.ts';
+import { RolesGuard } from '../src/security/guards/roles.guard.ts';
+import { <%= user.dtoClass%> } from '../src/service/dto/user.dto.ts';
+import { UserService } from '../src/service/user.service.ts';
 
 describe('User', () => {
     let app: INestApplication;

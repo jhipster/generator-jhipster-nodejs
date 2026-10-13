@@ -1,13 +1,13 @@
 import { Body, Controller, NotFoundException, Delete, Get, Logger, Param, Post, Put, UseGuards, Req, UseInterceptors, ClassSerializerInterceptor } from '@nestjs/common';
-import { AuthGuard,  Roles, RolesGuard, RoleType } from '../../security';
-import { PageRequest, Page } from '../../domain/base/pagination.entity';
-import { <%= user.dtoClass%> } from '../../service/dto/user.dto';
-import { HeaderUtil } from '../../common/header-util';
-import { Request } from '../../common/request';
+import { AuthGuard,  Roles, RolesGuard, RoleType } from '../../security/index.ts';
+import { PageRequest, Page } from '../../domain/base/pagination.entity.ts';
+import { <%= user.dtoClass%> } from '../../service/dto/user.dto.ts';
+import { HeaderUtil } from '../../common/header-util.ts';
+import { Request } from '../../common/request.ts';
 import {<%_ if (authenticationType === 'jwt') { _%> ApiBearerAuth, <%_ } else if (authenticationType === 'oauth2') { _%> ApiSecurity, <%_ } _%> ApiTags, ApiResponse, ApiOperation } from '@nestjs/swagger';
-import { UserService } from '../../service/user.service';
+import { UserService } from '../../service/user.service.ts';
 <%_ if (typeormOrderSupport) { _%>
-import { isSortableProperty } from '../../common/sortable-properties';
+import { isSortableProperty } from '../../common/sortable-properties.ts';
 <%_ } _%>
 
 <%_ if (typeormOrderSupport) { _%>
