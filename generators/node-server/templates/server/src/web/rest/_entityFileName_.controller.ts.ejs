@@ -92,10 +92,17 @@ export class <%= entityClass %>Controller {
     description: 'The record has been successfully created.',
     type: <%= dtoClass %>,
   })
+  @ApiResponse({ status: 400, description: 'The record already has an id.' })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
   async post(@Req() req: Request, @Body() <%= entityInstance %>DTO: <%= dtoClass %>): Promise<<%= dtoClass %>>  {
+    if (<%= entityInstance %>DTO.id !== undefined && <%= entityInstance %>DTO.id !== null) {
+      // Like JHipster Spring Boot, a new record cannot have an id: it would update an existing one.
+      HeaderUtil.addFailureAlertHeaders(req.res, ENTITY_NAME, 'idexists');
+      throw new BadRequestException('A new <%= entityInstance %> cannot already have an ID');
+    }
     const created = await this.<%= entityInstance %>Service.save(<%= entityInstance %>DTO, req.user?.login);
     HeaderUtil.addEntityCreatedHeaders(req.res, ENTITY_NAME, created.id);
+    req.res.location(`/api/<%= entityApiUrl %>/${created.id}`);
     return created;
   }
 
