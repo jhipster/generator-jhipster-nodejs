@@ -20,10 +20,10 @@
 <%
 
 let result = '';
+const validators = [];
 
 if (field.fieldValidate === true) {
     const rules = field.fieldValidateRules;
-    const validators = [];
     const MAX_VALUE = 2147483647;
     const isBlob = field.fieldType === 'byte[]';
 
@@ -62,7 +62,15 @@ if (field.fieldValidate === true) {
         // Like Bean Validation @Pattern, the whole value matches the pattern.
         validators.push('@Matches(' + JSON.stringify('^(?:' + field.fieldValidateRulesPattern + ')$') + ')');
     }
-    result =  validators.join('\n    ');
+} else if (field.fieldIsEnum) {
+    validators.push('@IsOptional()');
+}
+if (field.fieldIsEnum) {
+    // Like the JSON deserialization of JHipster Spring Boot, a value out of the enum is a bad request (400), not a database error.
+    validators.push('@IsEnum(' + field.fieldType + ')');
+}
+if (validators.length > 0) {
+    result = validators.join('\n    ');
     result += '\n';
 } -%>
 <%- result -%>

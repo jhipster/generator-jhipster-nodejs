@@ -52,6 +52,7 @@ const validValues = Object.fromEntries(
         .filter(([, value]) => value !== undefined && value !== null),
 );
 const requiredField = validatedFields.find(field => field.fieldValidateRules.includes('required'));
+const enumField = fields.find(field => !field.id && field.fieldIsEnum);
 _%>
     const validEntity: any = {
         ...entityMock,
@@ -213,6 +214,17 @@ _%>
         const error = (await request(app.getHttpServer())
             .post('/api/<%= entityApiUrl %>')
             .send(invalidEntity)
+            .expect(400)).body;
+
+        expect(error.message).toEqual('Validation error');
+    });
+
+<%_ } _%>
+<%_ if (enumField) { _%>
+    it('/POST create <%= entityApiUrl %> with a <%= enumField.fieldName %> out of its enum is a validation error', async () => {
+        const error = (await request(app.getHttpServer())
+            .post('/api/<%= entityApiUrl %>')
+            .send({ ...validEntity, <%= enumField.fieldName %>: 'NOT_A_<%= enumField.fieldType.toUpperCase() %>' })
             .expect(400)).body;
 
         expect(error.message).toEqual('Validation error');

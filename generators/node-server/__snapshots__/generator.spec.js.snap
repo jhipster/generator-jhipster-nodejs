@@ -40,7 +40,7 @@ export class Sample extends BaseEntity  {
     @Column({name: "active", nullable: true})
     active?: boolean;
 
-    @Column({type: 'simple-enum', name: 'level', enum: Level})
+    @Column({type: 'simple-enum', name: 'level', enum: Level, nullable: true})
     level?: Level;
 
     @Column({type: 'text' ,name: "photo", nullable: true})
@@ -101,7 +101,7 @@ export class Sample extends BaseEntity  {
     @Column({type: 'boolean' ,name: "active", nullable: true})
     active?: boolean;
 
-    @Column({type: 'simple-enum', name: 'level', enum: Level})
+    @Column({type: 'simple-enum', name: 'level', enum: Level, nullable: true})
     level?: Level;
 
     @Column({type: 'blob' ,name: "photo", nullable: true})
@@ -162,7 +162,7 @@ export class Sample extends BaseEntity  {
     @Column({name: "active", nullable: true})
     active?: boolean;
 
-    @Column({type: 'varchar', name: 'jhi_level', enum: Level})
+    @Column({type: 'varchar', name: 'jhi_level', enum: Level, nullable: true})
     level?: Level;
 
     @Column({type: 'blob' ,name: "photo", nullable: true})
@@ -223,7 +223,7 @@ export class Sample extends BaseEntity  {
     @Column({type: 'boolean' ,name: "active", nullable: true})
     active?: boolean;
 
-    @Column({type: 'varchar', name: 'level', enum: Level})
+    @Column({type: 'varchar', name: 'level', enum: Level, nullable: true})
     level?: Level;
 
     @Column({type: 'text' ,name: "photo", nullable: true})
@@ -248,10 +248,12 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > entity validato
 {
   "server/src/service/dto/book.dto.ts": {
     "contents": "import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsOptional, MinLength, MaxLength, Length, Min, Max, Matches } from 'class-validator';
+import { IsNotEmpty, IsOptional, IsEnum, MinLength, MaxLength, Length, Min, Max, Matches } from 'class-validator';
 import { BaseDTO } from './base.dto';
 
 
+import { Genre } from '../../domain/enumeration/genre';
+import { BookFormat } from '../../domain/enumeration/book-format';
 
 
 /**
@@ -275,6 +277,16 @@ export class BookDTO extends BaseDTO {
     @Max(5000)
             @ApiProperty({description: 'pages field', required: false})
         pages?: number;
+
+            @IsOptional()
+    @IsEnum(Genre)
+            @ApiProperty({ enum: Genre,description: 'genre enum field', required: false})
+        genre?: Genre;
+
+            @IsNotEmpty()
+    @IsEnum(BookFormat)
+            @ApiProperty({ enum: BookFormat,description: 'format enum field'})
+        format!: BookFormat;
 
 
 
