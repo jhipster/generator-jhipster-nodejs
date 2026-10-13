@@ -138,6 +138,36 @@ _%>
     });
 <%_ } _%>
 
+    it('/GET all <%= entityApiUrl %> with the links of the pages', async () => {
+        const { findAndCount } = serviceMock;
+        // 45 records, 3 pages of 20.
+        serviceMock.findAndCount = (): any => [[entityMock], 45];
+        try {
+            const response = await request(app.getHttpServer())
+                .get('/api/<%= entityApiUrl %>?page=1&size=20')
+                .expect(200);
+
+            expect(response.headers['x-total-count']).toBe('45');
+            expect(response.headers.link.split(',')).toEqual([
+                '</api/<%= entityApiUrl %>?page=2&size=20>; rel="next"',
+                '</api/<%= entityApiUrl %>?page=0&size=20>; rel="prev"',
+                '</api/<%= entityApiUrl %>?page=2&size=20>; rel="last"',
+                '</api/<%= entityApiUrl %>?page=0&size=20>; rel="first"',
+            ]);
+        } finally {
+            serviceMock.findAndCount = findAndCount;
+        }
+    });
+
+    it('/GET all <%= entityApiUrl %> without records links the first page as the last one', async () => {
+        const response = await request(app.getHttpServer())
+            .get('/api/<%= entityApiUrl %>')
+            .expect(200);
+
+        expect(response.headers.link).toContain('page=0&size=20>; rel="last"');
+        expect(response.headers.link).not.toContain('rel="next"');
+    });
+
     it('/GET <%= entityApiUrl %> by id', async () => {
 
 

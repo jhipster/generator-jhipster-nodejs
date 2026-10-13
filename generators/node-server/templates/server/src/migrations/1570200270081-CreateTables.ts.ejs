@@ -1,9 +1,10 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
+import { isProfileActive } from '../config';
 
 export class CreateTables1570200270081 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<any> {
 
-    if (process.env.BACKEND_ENV === 'prod' || process.env.BACKEND_ENV === 'dev') {
+    if (isProfileActive('prod', 'dev')) {
       if (queryRunner.isTransactionActive) {
         await queryRunner.commitTransaction();
       }
