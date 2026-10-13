@@ -103,6 +103,7 @@ export const serverFiles = {
         'src/common/errors/error-constants.ts',
         'src/common/errors/problem.exception.ts',
         'src/common/errors/problem-details.filter.ts',
+        'src/common/reference-by-id.ts',
         'src/auth/auth.service.ts',
         'src/common/dto/base.dto.ts',
         'src/main.ts',
