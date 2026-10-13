@@ -80,7 +80,6 @@ export const serverFiles = {
         'package.json',
         'tsconfig.json',
         'README.md',
-        'webpack.server.prod.config.js',
         'sonar-project.properties',
         'ormconfig.ts',
       ],
