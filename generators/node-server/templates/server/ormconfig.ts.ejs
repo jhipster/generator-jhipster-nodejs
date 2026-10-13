@@ -1,15 +1,15 @@
-// DataSource of the typeorm CLI (the typeorm npm scripts): the database of the application, as BACKEND_ENV selects it.
+// DataSource of the typeorm CLI (the typeorm npm scripts): the database of the application, of the profiles BACKEND_ENV activates.
 import 'dotenv/config';
 import { DataSource, DataSourceOptions } from 'typeorm';
 import { ormConfig } from './src/orm.config';
 <%_ if (databaseTypeMongodb) { _%>
-import { config } from './src/config';
+import { activeProfiles, config } from './src/config';
 <%_ } _%>
 
 <%_ if (databaseTypeMongodb) { _%>
 // An embedded database (the in-memory MongoDB server of the test profile) is a new and empty database for each command.
 if (config.get('database.embedded')) {
-  throw new Error(`The typeorm scripts need a MongoDB database, not the embedded one of the ${process.env.BACKEND_ENV} profile.`);
+  throw new Error(`The typeorm scripts need a MongoDB database, not the embedded one of the ${activeProfiles.join(',')} profiles.`);
 }
 
 // The configuration of MongoDB is asynchronous, the typeorm CLI awaits the exported DataSource.
