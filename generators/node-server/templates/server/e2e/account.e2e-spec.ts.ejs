@@ -148,16 +148,49 @@ describe('Account', () => {
         expect(successFullyLoggedInWithNewPassword).toEqual(true);
     });
 
-    it('/POST reset password init', async () => {
+    it('/POST reset password init and finish', async () => {
+        // The mail is a text/plain body, as the JHipster clients send it.
         await request(app.getHttpServer())
             .post('/api/account/reset-password/init')
+            .set('Content-Type', 'text/plain')
+            .send(testUserAuthenticated.email)
+            .expect(200);
+
+        const { resetKey } = (await service.findByFields({ where: { login: testUserAuthenticated.login } }))!;
+        expect(resetKey).toBeTruthy();
+
+        await request(app.getHttpServer())
+            .post('/api/account/reset-password/finish')
+            .send({ key: resetKey, newPassword: 'resetPassword' })
+            .expect(200);
+
+        expect((await service.findByFields({ where: { login: testUserAuthenticated.login } }))?.resetKey).toBeFalsy();
+        const loggedInWithNewPassword = await authService
+            .login({ username: testUserAuthenticated.login, password: 'resetPassword' })
+            .then(() => true, () => false);
+        expect(loggedInWithNewPassword).toEqual(true);
+    });
+
+    it('/POST reset password init of an unknown mail answers 200 too', async () => {
+        await request(app.getHttpServer())
+            .post('/api/account/reset-password/init')
+            .set('Content-Type', 'text/plain')
+            .send('unknown@localhost.it')
+            .expect(200);
+    });
+
+    it('/POST reset password finish with an unknown key', async () => {
+        await request(app.getHttpServer())
+            .post('/api/account/reset-password/finish')
+            .send({ key: 'unknownKey', newPassword: 'resetPassword' })
             .expect(500);
     });
 
-    it('/POST reset password finish', async () => {
+    it('/POST reset password finish with a too short password is a validation error', async () => {
         await request(app.getHttpServer())
             .post('/api/account/reset-password/finish')
-            .expect(500);
+            .send({ key: 'unknownKey', newPassword: 'a' })
+            .expect(400);
     });
 
     afterEach(async () => {

@@ -17,8 +17,9 @@ import { JWT_ALGORITHM, jwtSecretKey } from '../src/security/jwt.config';
 describe('App', () => {
     let app: INestApplication;
 
+    // The test profile and the profiles of its group (application.yml).
     const infoService = {
-         activeProfiles : 'dev',
+        activeProfiles: ['test', 'secret-samples'],
         'display-ribbon-on-profiles': 'dev',
     };
 <%_  if (authenticationType === 'jwt' && generateUserManagement) { _%>

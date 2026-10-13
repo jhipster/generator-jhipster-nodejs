@@ -55,8 +55,10 @@ database:
   host: <%= databaseTypeSql ? prodDatabaseType : 'mongodb' %>
   port: <%= nodeDatabasePort %>
 <%_ if (databaseTypeSql) { _%>
-  username: <%- prodDatabaseUsername %>
-  password: '<%- prodDatabasePassword %>'
+  # Samples of the username and the password are in the secret-samples profile: set them in production, with the
+  # DATABASE_USERNAME and DATABASE_PASSWORD environment variables for example.
+  username: ''
+  password: ''
   name: <%- prodDatabaseName %>
 <%_ } else { _%>
   name: <%= baseName %>

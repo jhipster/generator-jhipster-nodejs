@@ -414,6 +414,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > jwt microservic
   "server/src/config/application-prod.yml": {
     "stateCleared": "modified",
   },
+  "server/src/config/application-secret-samples.yml": {
+    "stateCleared": "modified",
+  },
   "server/src/config/application-test.yml": {
     "stateCleared": "modified",
   },
@@ -641,6 +644,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > run > should su
   "server/src/config/application-prod.yml": {
     "stateCleared": "modified",
   },
+  "server/src/config/application-secret-samples.yml": {
+    "stateCleared": "modified",
+  },
   "server/src/config/application-test.yml": {
     "stateCleared": "modified",
   },
@@ -717,6 +723,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > run > should su
     "stateCleared": "modified",
   },
   "server/src/service/dto/base.dto.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/service/dto/key-and-password.dto.ts": {
     "stateCleared": "modified",
   },
   "server/src/service/dto/password-change.dto.ts": {
@@ -905,6 +914,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > with oauth2 > s
     "stateCleared": "modified",
   },
   "server/src/config/application-prod.yml": {
+    "stateCleared": "modified",
+  },
+  "server/src/config/application-secret-samples.yml": {
     "stateCleared": "modified",
   },
   "server/src/config/application-test.yml": {
@@ -1141,6 +1153,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > with oauth2 and
     "stateCleared": "modified",
   },
   "server/src/config/application-prod.yml": {
+    "stateCleared": "modified",
+  },
+  "server/src/config/application-secret-samples.yml": {
     "stateCleared": "modified",
   },
   "server/src/config/application-test.yml": {
@@ -1534,19 +1549,36 @@ The app uses a **BACKEND_ENV** variable with **dev** default value in the [.env]
 If you change the value to **prod**, you will use the **prod database at runtime**, the \`database\` section of [src/config/application-prod.yml](src/config/application-prod.yml).
 You can also define all the variables that you want in that file. See https://www.npmjs.com/package/dotenv for the usage.
 
-> The standard values used from BACKEND_ENV are: dev, prod or test.
-> You can define your custom value for BACKEND_ENV, but remember to add an application-{BACKEND_ENV}.yml file in your [config folder](src/config), with the \`database\` section of that environment.
+### Profiles
+
+Like \`spring.profiles.active\` in a Spring Boot application, **BACKEND_ENV** is a comma separated list of profiles, for
+example \`prod,api-docs\`. Each profile loads its \`application-{profile}.yml\` file of the [config folder](src/config), when
+there is one, in the order of the list (the last one wins), and the profiles of its group (\`profiles.group\` of
+[application.yml](src/config/application.yml)): \`dev\` activates \`secret-samples\` and \`api-docs\`, \`test\` activates
+\`secret-samples\`. The standard profiles are:
+
+- \`dev\`, \`prod\` and \`test\`: the database and the settings of each environment;
+- \`api-docs\`: the Swagger API documentation, at the \`jhipster.swagger.path\` path;
+- \`secret-samples\`: samples of the secrets (the JWT secret, the username and the password of the database) for development and CI, in
+  [application-secret-samples.yml](src/config/application-secret-samples.yml). In production, set them with environment
+  variables instead, like \`JHIPSTER_SECURITY_AUTHENTICATION_JWT_BASE64SECRET\`;
+
+> You can define your custom profiles, with an application-{profile}.yml file in your [config folder](src/config); an
+> environment of its own needs the \`database\` section of that environment.
+
+The \`/management/info\` endpoint gives the active profiles to the client, which shows its ribbon on the
+\`info.display-ribbon-on-profiles\` ones.
 
 If you don't want to set a value in the .env file, you can specify its in the runtime process.
 For example:
 
 \`\`\`bash
 
-# development in prod environment
+# development in prod environment, with the API documentation and the sample secrets
 # in linux
-$ BACKEND_ENV=prod npm run start
+$ BACKEND_ENV=prod,api-docs,secret-samples npm run start
 # in windows
-$ set BACKEND_ENV=prod&& npm run start
+$ set BACKEND_ENV=prod,api-docs,secret-samples&& npm run start
 
 # run javascript build with node in prod environment
 # in linux
@@ -1558,7 +1590,7 @@ $ set BACKEND_ENV=prod&& node dist/main.js
 $ node dist/bundle.js
 \`\`\`
 
-> The webpack build bundle automatically is configured for prod env, and **can run without node_modules**.
+> The webpack build bundle automatically is configured for the prod profile, and **can run without node_modules**: set the secrets with environment variables.
 
 ## Lint
 
@@ -1735,6 +1767,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > without client 
   "server/src/config/application-prod.yml": {
     "stateCleared": "modified",
   },
+  "server/src/config/application-secret-samples.yml": {
+    "stateCleared": "modified",
+  },
   "server/src/config/application-test.yml": {
     "stateCleared": "modified",
   },
@@ -1811,6 +1846,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > without client 
     "stateCleared": "modified",
   },
   "server/src/service/dto/base.dto.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/service/dto/key-and-password.dto.ts": {
     "stateCleared": "modified",
   },
   "server/src/service/dto/password-change.dto.ts": {
