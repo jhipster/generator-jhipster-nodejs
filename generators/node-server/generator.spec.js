@@ -62,7 +62,18 @@ describe('SubGenerator node-server of nodejs JHipster blueprint', () => {
     it('should create the JWT secret', () => {
       const { jwtSecretKey } = result.fs.readJSON(join(result.cwd, '.yo-rc.json'))['generator-jhipster'];
       expect(jwtSecretKey).toBeTruthy();
-      result.assertFileContent('server/src/config/application.yml', `base64-secret: ${jwtSecretKey}`);
+      result.assertFileContent('server/src/config/application-secret-samples.yml', `base64-secret: ${jwtSecretKey}`);
+      result.assertNoFileContent('server/src/config/application.yml', 'base64-secret:');
+    });
+
+    it('should write the profiles of JHipster Spring Boot', () => {
+      result.assertFile(['server/src/config/application-secret-samples.yml']);
+      result.assertFileContent('server/src/main.ts', "if (isProfileActive('api-docs')) {");
+    });
+
+    it('should keep the credentials of the prod database in the secret-samples profile', () => {
+      result.assertFileContent('server/src/config/application-prod.yml', "  username: ''\n  password: ''\n");
+      result.assertFileContent('server/src/config/application-secret-samples.yml', /^database:\n {2}username: \S+/m);
     });
   });
   describe('with translations', () => {

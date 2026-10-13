@@ -6,7 +6,7 @@ import cloudConfigClient from 'cloud-config-client';
 import { AppModule } from './app.module';
 import { configureApp } from './app.config';
 import { setupSwagger } from './swagger';
-import { config } from './config';
+import { config, isProfileActive } from './config';
 import { Logger } from '@nestjs/common';
 <%_ if (!skipClient) { _%>
 import * as fs from 'fs';
@@ -66,7 +66,10 @@ async function bootstrap(): Promise<void> {
   <%_ } else { _%>
     logger.log(`The client is not been generated`);
   <%_ } _%>
-  setupSwagger(app);
+  // The API documentation of the api-docs profile, like JHipster Spring Boot.
+  if (isProfileActive('api-docs')) {
+    setupSwagger(app);
+  }
 
   await app.listen(port);
   logger.log(`Application listening on port ${port}`);

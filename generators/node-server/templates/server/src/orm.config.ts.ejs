@@ -5,7 +5,7 @@ import { SeedUsersRoles1570200490072 } from './migrations/1570200490072-SeedUser
 import { CreateTables1570200270081 } from './migrations/1570200270081-CreateTables';
 // jhipster-needle-add-entity-to-ormconfig-imports - JHipster will add code here, do not remove
 
-import { config } from './config';
+import { activeProfiles, config } from './config';
 
 /** Reads a property of the configuration: ConfigService in the application, config outside of it (the typeorm CLI). */
 export type ConfigReader = (key: string) => any;
@@ -21,8 +21,8 @@ const drivers: Record<string, () => unknown> = {
 };
 
 /**
- * The TypeORM options of the database of the active profile: the database section of application-${BACKEND_ENV}.yml,
- * which environment variables override (DATABASE_HOST, DATABASE_PASSWORD, ...).
+ * The TypeORM options of the database of the active profiles: the database section of their application-{profile}.yml
+ * files, which environment variables override (DATABASE_HOST, DATABASE_PASSWORD, ...).
  */
 <%_ if (databaseTypeMongodb) { _%>
 async function ormConfig(read: ConfigReader = key => config.get(key)): Promise<TypeOrmModuleOptions> {
@@ -32,7 +32,7 @@ function ormConfig(read: ConfigReader = key => config.get(key)): TypeOrmModuleOp
   const type = read('database.type');
   const driver = drivers[type];
   if (!driver) {
-    throw new Error(`The database.type '${type}' of the ${process.env.BACKEND_ENV} profile is not supported`);
+    throw new Error(`The database.type '${type}' of the ${activeProfiles.join(',')} profiles is not supported`);
   }
   <%= databaseTypeMongodb ? 'let' : 'const' %> host = read('database.host');
   <%= databaseTypeMongodb ? 'let' : 'const' %> port = read('database.port');

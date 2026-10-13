@@ -8,5 +8,13 @@ import { ConfigService } from '@nestjs/config';
 export const JWT_ALGORITHM = 'HS512';
 
 export function jwtSecretKey(configService: ConfigService): Buffer {
-  return Buffer.from(configService.getOrThrow<string>('jhipster.security.authentication.jwt.base64-secret'), 'base64');
+  const secret = configService.getOrThrow<string>('jhipster.security.authentication.jwt.base64-secret');
+  if (!secret) {
+    // Like JHipster Spring Boot, the application does not start without a secret: the secret-samples profile has a
+    // sample for development, production sets its own.
+    throw new Error(
+      'jhipster.security.authentication.jwt.base64-secret is not set: set the JHIPSTER_SECURITY_AUTHENTICATION_JWT_BASE64SECRET environment variable, or activate the secret-samples profile',
+    );
+  }
+  return Buffer.from(secret, 'base64');
 }

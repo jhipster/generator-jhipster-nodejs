@@ -19,7 +19,7 @@ import { ServeStaticModule } from '@nestjs/serve-static';
   imports: [
     // The configuration of the application*.yml files, read with ConfigService. main.ts loads the .env file.
     ConfigModule.forRoot({ isGlobal: true, ignoreEnvFile: true, cache: true, load: [configuration] }),
-  // The database of the active profile, from the configuration (application-${BACKEND_ENV}.yml and the environment).
+  // The database of the active profiles, from the configuration (their application-{profile}.yml files and the environment).
   TypeOrmModule.forRootAsync({
     inject: [ConfigService],
     useFactory: (configService: ConfigService) => ormConfig(key => configService.get(key)),
