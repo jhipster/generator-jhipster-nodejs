@@ -4,18 +4,17 @@
   "description": "",
   "author": "",
   "license": "MIT",
-  "type": "commonjs",
+  "type": "module",
   "scripts": {
     "clean": "rimraf dist ../target/db/",
     "build": "npm run clean && tsc -p tsconfig.build.json && npm run copy-resources",
-    "copy-resources": "ts-node scripts/copy-resources.ts",
+    "copy-resources": "node scripts/copy-resources.ts",
     "format": "prettier --write \"src/**/*.ts\"",
     "sonar:scanner": "sonar-scanner",
-    "start:node": "npm run copy-resources && ts-node -r tsconfig-paths/register src/main.ts",
     "start:dev": "npm run copy-resources && tsc-watch -p tsconfig.build.json --onSuccess \"node dist/main.js\"",
     "start:debug": "npm run copy-resources && tsc-watch -p tsconfig.build.json --onSuccess \"node --inspect-brk dist/main.js\"",
     "start:prod": "npm run copy-resources && node dist/main.js",
-    "start": "npm run clean && npm run copy-resources && nodemon --watch src -e ts,tsx --exec ts-node src/main.ts",
+    "start": "npm run clean && npm run copy-resources && tsc-watch -p tsconfig.build.json --onSuccess \"node dist/main.js\"",
     "lint": "eslint .",
     "lint:fix": "npm run lint -- --fix",
     "pretest": "npm run lint && npm run typecheck",
@@ -25,8 +24,8 @@
     "test:debug": "vitest --inspect-brk --no-file-parallelism",
     "test:e2e": "vitest run --config ./vitest.config.e2e.ts --coverage --silent",
     "typecheck": "tsc --noEmit",
-    "typeorm": "typeorm-ts-node-commonjs -d ormconfig.ts",
-    "typeorm:migration:create": "typeorm-ts-node-commonjs migration:create src/migrations/migration",
+    "typeorm": "tsc -p tsconfig.build.json && npm run copy-resources && typeorm -d ormconfig.ts",
+    "typeorm:migration:create": "typeorm migration:create src/migrations/migration",
 <%_ if (databaseTypeSql) { _%>
     "typeorm:migration:generate": "npm run typeorm -- migration:generate src/migrations/schema",
 <%_ } _%>
@@ -115,13 +114,10 @@
 <%_ if (databaseType === 'mongodb') { _%>
     "mongodb-memory-server": "<%- nodeServerDependencies['mongodb-memory-server'] %>",
 <%_ } _%>
-    "nodemon": "<%- nodeServerDependencies['nodemon'] %>",
     "rimraf": "<%- nodeServerDependencies['rimraf'] %>",
     "sonarqube-scanner": "<%- nodeServerDependencies['sonarqube-scanner'] %>",
     "supertest": "<%- nodeServerDependencies['supertest'] %>",
-    "ts-node": "<%- nodeServerDependencies['ts-node'] %>",
     "tsc-watch": "<%- nodeServerDependencies['tsc-watch'] %>",
-    "tsconfig-paths": "<%- nodeServerDependencies['tsconfig-paths'] %>",
     "typescript": "<%- nodeServerDependencies['typescript'] %>",
     "vite": "<%- nodeServerDependencies['vite'] %>",
     "vitest": "<%- nodeServerDependencies['vitest'] %>"

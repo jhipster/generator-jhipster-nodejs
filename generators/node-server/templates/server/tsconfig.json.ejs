@@ -2,7 +2,7 @@
   "compilerOptions": {
     "target": "ES2022",
     "lib": ["ES2022"],
-    // CommonJS output ("type": "commonjs"), resolving packages like Node.js does; allows require() of the ESM-only NestJS packages.
+    // ES modules ("type": "module"), resolved like Node.js does.
     "module": "nodenext",
     "moduleResolution": "nodenext",
     "esModuleInterop": true,
@@ -18,10 +18,6 @@
     // Required by the NestJS decorators and dependency injection.
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true
-  },
-  // ts-node (npm start, the typeorm scripts) resolves the emitted ./x.js imports to the ./x.ts files.
-  "ts-node": {
-    "experimentalResolver": true
   },
   "include": ["src/**/*", "**/*spec.ts", "e2e/setup.test.js", "scripts/*.ts", "ormconfig.ts", "vitest.config*.ts"]
 }

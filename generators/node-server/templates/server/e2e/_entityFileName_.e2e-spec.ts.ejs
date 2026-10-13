@@ -13,7 +13,7 @@ const invalidId = faker.lorem.word({ length: { min: 5, max: 10 } });
 _%>
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { Test, TestingModule } from '@nestjs/testing';
-import request = require('supertest');
+import request from 'supertest';
 import { AppModule } from '../src/app.module.ts';
 import { configureApp } from '../src/app.config.ts';
 import { INestApplication } from '@nestjs/common';

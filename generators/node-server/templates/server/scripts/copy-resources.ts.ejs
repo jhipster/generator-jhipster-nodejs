@@ -1,15 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 
-const out = path.join(__dirname, '..', 'dist');
-createFolderIfNotExist(out);
-
-createFolderIfNotExist(path.join(out, 'config'));
-
-fs.cpSync('src/config/', 'dist/config/', { recursive: true });
-
-function createFolderIfNotExist(outDir: string): void {
-  if (!fs.existsSync(outDir)) {
-    fs.mkdirSync(outDir);
-  }
-}
+// The configuration files next to the build (dist/config), read by src/config.ts.
+const out = path.join(import.meta.dirname, '..', 'dist');
+fs.mkdirSync(path.join(out, 'config'), { recursive: true });
+fs.cpSync(path.join(import.meta.dirname, '..', 'src', 'config'), path.join(out, 'config'), { recursive: true });

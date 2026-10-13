@@ -3,7 +3,7 @@
 exports[`SubGenerator node-server of nodejs JHipster blueprint > entity column types > with mssql > should generate column types valid on the prod database and on SQLite 1`] = `
 {
   "server/src/domain/sample.entity.ts": {
-    "contents": "import {PrimaryGeneratedColumn, Entity, Column, JoinColumn, OneToOne, ManyToOne, OneToMany, ManyToMany, JoinTable} from 'typeorm';
+    "contents": "import {PrimaryGeneratedColumn, Entity, Column, JoinColumn, OneToOne, ManyToOne, OneToMany, ManyToMany, JoinTable, type Relation} from 'typeorm';
 import { BaseEntity } from './base/base.entity.ts';
 
 
@@ -64,7 +64,7 @@ export class Sample extends BaseEntity  {
 exports[`SubGenerator node-server of nodejs JHipster blueprint > entity column types > with mysql > should generate column types valid on the prod database and on SQLite 1`] = `
 {
   "server/src/domain/sample.entity.ts": {
-    "contents": "import {PrimaryGeneratedColumn, Entity, Column, JoinColumn, OneToOne, ManyToOne, OneToMany, ManyToMany, JoinTable} from 'typeorm';
+    "contents": "import {PrimaryGeneratedColumn, Entity, Column, JoinColumn, OneToOne, ManyToOne, OneToMany, ManyToMany, JoinTable, type Relation} from 'typeorm';
 import { BaseEntity } from './base/base.entity.ts';
 
 
@@ -125,7 +125,7 @@ export class Sample extends BaseEntity  {
 exports[`SubGenerator node-server of nodejs JHipster blueprint > entity column types > with oracle > should generate column types valid on the prod database and on SQLite 1`] = `
 {
   "server/src/domain/sample.entity.ts": {
-    "contents": "import {PrimaryGeneratedColumn, Entity, Column, JoinColumn, OneToOne, ManyToOne, OneToMany, ManyToMany, JoinTable} from 'typeorm';
+    "contents": "import {PrimaryGeneratedColumn, Entity, Column, JoinColumn, OneToOne, ManyToOne, OneToMany, ManyToMany, JoinTable, type Relation} from 'typeorm';
 import { BaseEntity } from './base/base.entity.ts';
 
 
@@ -186,7 +186,7 @@ export class Sample extends BaseEntity  {
 exports[`SubGenerator node-server of nodejs JHipster blueprint > entity column types > with postgresql > should generate column types valid on the prod database and on SQLite 1`] = `
 {
   "server/src/domain/sample.entity.ts": {
-    "contents": "import {PrimaryGeneratedColumn, Entity, Column, JoinColumn, OneToOne, ManyToOne, OneToMany, ManyToMany, JoinTable} from 'typeorm';
+    "contents": "import {PrimaryGeneratedColumn, Entity, Column, JoinColumn, OneToOne, ManyToOne, OneToMany, ManyToMany, JoinTable, type Relation} from 'typeorm';
 import { BaseEntity } from './base/base.entity.ts';
 
 
@@ -1502,7 +1502,8 @@ According [typeORM migration guide](https://github.com/typeorm/typeorm/blob/mast
 there are under [src/migrations/](src/migrations/) the scripts to create the database schema and after to insert data seed.
 The scripts are automatically run in the first start up, and after anymore.
 
-The \`typeorm\` npm scripts run the typeorm CLI on the database \`BACKEND_ENV\` selects (see [ormconfig.ts](ormconfig.ts)):
+The \`typeorm\` npm scripts build the server and run the typeorm CLI on the database \`BACKEND_ENV\` selects (see
+[ormconfig.ts](ormconfig.ts)):
 
 \`\`\`bash
 # generate a migration from the changes of the entities

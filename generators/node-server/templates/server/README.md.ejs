@@ -74,7 +74,8 @@ According [typeORM migration guide](https://github.com/typeorm/typeorm/blob/mast
 there are under [src/migrations/](src/migrations/) the scripts to create the database schema and after to insert data seed.
 The scripts are automatically run in the first start up, and after anymore.
 
-The `typeorm` npm scripts run the typeorm CLI on the database `BACKEND_ENV` selects (see [ormconfig.ts](ormconfig.ts)):
+The `typeorm` npm scripts build the server and run the typeorm CLI on the database `BACKEND_ENV` selects (see
+[ormconfig.ts](ormconfig.ts)):
 
 ```bash
 <%_ if (databaseTypeSql) { _%>
