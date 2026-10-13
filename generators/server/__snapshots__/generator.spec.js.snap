@@ -287,9 +287,6 @@ exports[`SubGenerator server of nodejs JHipster blueprint > run > should succeed
   "server/vitest.config.ts": {
     "stateCleared": "modified",
   },
-  "server/webpack.server.prod.config.js": {
-    "stateCleared": "modified",
-  },
   "sonar-project.properties": {
     "stateCleared": "modified",
   },

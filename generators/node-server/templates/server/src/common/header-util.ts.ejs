@@ -43,6 +43,14 @@ export class HeaderUtil {
   }
 
   /**
+   * Like the failure alert of JHipster Spring Boot (BadRequestAlertException), the status comes from the thrown exception.
+   */
+  static addFailureAlertHeaders(res: Response, entityName: string, errorKey: string): any {
+    res.set(`X-${applicationName}-error`, `error.${errorKey}`);
+    res.set(`X-${applicationName}-params`, entityName);
+  }
+
+  /**
    * The pagination headers, like the PaginationUtil of JHipster Spring Boot: the total count of the elements, and the
    * links of the next, previous, last and first pages.
    */

@@ -70,6 +70,12 @@ describe('SubGenerator node-server of nodejs JHipster blueprint', () => {
       });
     });
 
+    it('should build the server with tsc, without a webpack bundle', () => {
+      const { scripts, devDependencies } = result.fs.readJSON(join(result.cwd, 'server/package.json'));
+      expect(Object.entries({ ...scripts, ...devDependencies }).filter(entry => entry.join(' ').includes('webpack'))).toEqual([]);
+      result.assertNoFile('server/webpack.server.prod.config.js');
+    });
+
     it('should create the JWT secret', () => {
       const { jwtSecretKey } = result.fs.readJSON(join(result.cwd, '.yo-rc.json'))['generator-jhipster'];
       expect(jwtSecretKey).toBeTruthy();

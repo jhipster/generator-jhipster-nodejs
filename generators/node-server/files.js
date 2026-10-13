@@ -82,7 +82,6 @@ export const serverFiles = {
         'vitest.config.ts',
         'vitest.config.e2e.ts',
         'README.md',
-        'webpack.server.prod.config.js',
         'sonar-project.properties',
         'ormconfig.ts',
       ],

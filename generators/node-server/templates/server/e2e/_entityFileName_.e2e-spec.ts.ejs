@@ -1,3 +1,16 @@
+<%_
+const numericId = primaryKey.tsType === 'number';
+// The fake data of the fields, reproducible (the faker of the entity is seeded), as TypeScript literals: distinct ids of
+// the type of the primary key, and a value for each field of the entity.
+const idField = primaryKey.fields[0];
+const [entityId, unknownId, anotherId] = [idField.generateFakeData('ts'), idField.generateFakeData('ts'), idField.generateFakeData('ts')];
+const fakeFields = fields
+  .filter(field => !field.id && !field.transient && !field.collection)
+  .map(field => [field.propertyName, field.generateFakeData('ts')])
+  .filter(([, value]) => value !== undefined && value !== null);
+// An id the pipe of the path rejects: neither a number nor a UUID.
+const invalidId = faker.lorem.word({ length: { min: 5, max: 10 } });
+_%>
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { Test, TestingModule } from '@nestjs/testing';
 import request = require('supertest');
@@ -13,14 +26,22 @@ import { DataSource, EntityMetadata } from 'typeorm';
 import { <%= entityClass %> } from '../src/domain/<%= entityFileName %>.entity';
 <%_ } _%>
 
+const alertHeader = (headers: Record<string, unknown>, suffix: string): unknown =>
+    Object.entries(headers).find(([name]) => name.endsWith(suffix))?.[1];
+
 describe('<%= entityClass %> Controller', () => {
     let app: INestApplication;
 
     const authGuardMock = { canActivate: (): any => true };
     const rolesGuardMock = { canActivate: (): any => true };
     const entityMock: any = {
-        id: 'entityId'
+        id: <%- entityId %>,
+<%_ for (const [propertyName, value] of fakeFields) { _%>
+        <%- propertyName %>: <%- value %>,
+<%_ } _%>
     }
+    const unknownId = <%- unknownId %>;
+    const anotherId = <%- anotherId %>;
 <%_
 // The global ValidationPipe of configureApp validates the requests: a body with valid values of the validated fields.
 resetFakerSeed('nodejs-e2e');
@@ -40,10 +61,10 @@ _%>
     };
 
     const serviceMock<% if (typeormOrderSupport) { %>: { metadata?: EntityMetadata, [method: string]: unknown }<% } %> = {
-        findById: (id: any): any => (id === entityMock.id ? entityMock : undefined),
+        findById: (id: any): any => (id === entityMock.id ? { ...entityMock } : undefined),
         findAndCount: (): any => [entityMock, 0],
         save: (): any => entityMock,
-        update: (): any => entityMock,
+        update: (dto: any): any => dto,
         deleteById: (): any => entityMock
     };
 
@@ -151,7 +172,7 @@ _%>
 
 
         const getEntity: <%= dtoClass %> = (await request(app.getHttpServer())
-            .get('/api/<%= entityApiUrl %>/' + entityMock.id)
+            .get(`/api/<%= entityApiUrl %>/${entityMock.id}`)
             .expect(200)).body;
 
         expect(getEntity).toEqual(entityMock);
@@ -161,9 +182,17 @@ _%>
 
     it('/GET <%= entityApiUrl %> by an unknown id', async () => {
         await request(app.getHttpServer())
-            .get('/api/<%= entityApiUrl %>/unknownId')
+            .get(`/api/<%= entityApiUrl %>/${unknownId}`)
             .expect(404);
     });
+<%_ if (numericId || primaryKey.typeUUID) { _%>
+
+    it('/GET <%= entityApiUrl %> by an invalid id', async () => {
+        await request(app.getHttpServer())
+            .get('/api/<%= entityApiUrl %>/<%= invalidId %>')
+            .expect(400);
+    });
+<%_ } _%>
 
     it('/POST create <%= entityApiUrl %>', async () => {
 
@@ -190,46 +219,50 @@ _%>
     });
 
 <%_ } _%>
-    it('/PUT update <%= entityApiUrl %>', async () => {
-
-
-        const updatedEntity: <%= dtoClass %> = (await request(app.getHttpServer())
-            .put('/api/<%= entityApiUrl %>')
-            .send(validEntity)
-            .expect(201)).body;
-
-
-        expect(updatedEntity).toEqual(entityMock);
-
-    }
-    );
-
     it('/PUT update <%= entityApiUrl %> from id', async () => {
-
-
-        const updatedEntity: <%= dtoClass %> = (await request(app.getHttpServer())
-            .put('/api/<%= entityApiUrl %>/' + entityMock.id)
+        const response = await request(app.getHttpServer())
+            .put(`/api/<%= entityApiUrl %>/${entityMock.id}`)
             .send(validEntity)
-            .expect(201)).body;
+            .expect(200);
 
-
-        expect(updatedEntity).toEqual(entityMock);
-
+        expect(response.body).toEqual(validEntity);
+        expect(alertHeader(response.headers, '-alert')).toMatch(<%- enableTranslation ? `/\\.${entityClass}\\.updated$/` : `/^A ${entityClass} is updated with identifier /` %>);
+        expect(alertHeader(response.headers, '-params')).toBe(String(entityMock.id));
     }
     );
 
     it('/PUT update <%= entityApiUrl %> from another id', async () => {
-        await request(app.getHttpServer())
-            .put('/api/<%= entityApiUrl %>/anotherId')
+        const response = await request(app.getHttpServer())
+            .put(`/api/<%= entityApiUrl %>/${anotherId}`)
             .send(validEntity)
             .expect(400);
+
+        expect(alertHeader(response.headers, '-error')).toBe('error.idinvalid');
+    });
+
+    it('/PUT update <%= entityApiUrl %> without id', async () => {
+        const response = await request(app.getHttpServer())
+            .put(`/api/<%= entityApiUrl %>/${entityMock.id}`)
+            .send({ ...validEntity, id: undefined })
+            .expect(400);
+
+        expect(alertHeader(response.headers, '-error')).toBe('error.idnull');
+    });
+
+    it('/PUT update an unknown <%= entityApiUrl %>', async () => {
+        const response = await request(app.getHttpServer())
+            .put(`/api/<%= entityApiUrl %>/${unknownId}`)
+            .send({ ...validEntity, id: unknownId })
+            .expect(400);
+
+        expect(alertHeader(response.headers, '-error')).toBe('error.idnotfound');
     });
 
     it('/DELETE <%= entityApiUrl %>', async () => {
 
 
         const deletedEntity: <%= dtoClass %> = (await request(app.getHttpServer())
-            .delete('/api/<%= entityApiUrl %>/' + entityMock.id)
+            .delete(`/api/<%= entityApiUrl %>/${entityMock.id}`)
             .expect(204)).body;
 
             expect(deletedEntity).toEqual({});
@@ -240,4 +273,3 @@ _%>
         await app?.close();
     });
 });
-

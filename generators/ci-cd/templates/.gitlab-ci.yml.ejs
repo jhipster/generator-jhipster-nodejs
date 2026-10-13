@@ -57,7 +57,7 @@ server-test:
 frontend-test:
     stage: test
     script:
-        - <%= clientPackageManager %> run webpack:test
+        - <%= clientPackageManager %> run test:client
     artifacts:
         reports:
             junit: build/test-results/TESTS-results-jest.xml
@@ -106,30 +106,30 @@ stages:
     - build
     - test
     - packaging
-webpack-build:
+client-build:
     stage: build
     script:
         - <%= clientPackageManager %> install
-        - <%= clientPackageManager %> run webpack:build
+        - <%= clientPackageManager %> run webapp:build
     artifacts:
         paths:
             - build/
-webpack-test:
+client-test:
     stage: test
     dependencies:
-        - webpack-build
+        - client-build
     script:
-        - <%= clientPackageManager %> run webpack:test
+        - <%= clientPackageManager %> run test
     artifacts:
         reports:
             junit: build/test-results/TESTS-results-jest.xml
         paths:
             - build/test-results
         expire_in: 1 day
-webpack-prod:
+client-prod:
     stage: packaging
     script:
-        - <%= clientPackageManager %> run webpack:prod
+        - <%= clientPackageManager %> run webapp:prod
         # - add cmd to zip the app folder build/resources/main/static
     artifacts:
         paths:

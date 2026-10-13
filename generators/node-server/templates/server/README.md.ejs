@@ -116,12 +116,6 @@ $ npm run start:prod
 
 # run javascript build with node
 $ node dist/main.js
-
-# build bundle with webpack
-$ npm run webpack:prod
-
-# run bundle with node (not require node_modules folder)
-$ node dist/bundle.js
 ```
 
 ### Using .env file and run in prod
@@ -166,12 +160,7 @@ $ set BACKEND_ENV=prod,api-docs,secret-samples&& npm run start
 $ BACKEND_ENV=prod node dist/main.js
 # in windows
 $ set BACKEND_ENV=prod&& node dist/main.js
-
-# run bundle with node (not require node_modules folder)
-$ node dist/bundle.js
 ```
-
-> The webpack build bundle automatically is configured for the prod profile, and **can run without node_modules**: set the secrets with environment variables.
 
 ## Lint
 
