@@ -21,7 +21,7 @@ export function httpsOptions(): HttpsOptions | undefined {
     throw new Error('TLS is enabled without a keystore: set server.ssl.key-store, or activate the tls-samples profile in development');
   }
   return {
-    pfx: fs.readFileSync(keyStore.startsWith('classpath:') ? path.join(__dirname, keyStore.substring('classpath:'.length)) : keyStore),
+    pfx: fs.readFileSync(keyStore.startsWith('classpath:') ? path.join(import.meta.dirname, keyStore.substring('classpath:'.length)) : keyStore),
     passphrase: config.get('server.ssl.key-store-password'),
   };
 }
