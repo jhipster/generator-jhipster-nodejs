@@ -38,6 +38,18 @@ describe('SubGenerator node-server of nodejs JHipster blueprint', () => {
       result.assertFileContent('server/src/main.ts', "import { AppModule } from './app.module.ts';");
     });
 
+    it('should generate the server as ES modules', () => {
+      result.assertJsonFileContent('server/package.json', {
+        type: 'module',
+        // Node.js runs the TypeScript scripts as they are (type stripping)
+        scripts: { 'copy-resources': 'node scripts/copy-resources.ts', typeorm: /typeorm -d ormconfig\.ts$/ },
+      });
+      const { devDependencies } = result.fs.readJSON(join(result.cwd, 'server/package.json'));
+      expect(devDependencies).not.toHaveProperty('ts-node');
+      result.assertFileContent('server/tsconfig.json', '"scripts/*.ts", "ormconfig.ts"');
+      result.assertFileContent('server/src/main.ts', "import { AppModule } from './app.module.ts';");
+    });
+
     it('should test the server with Vitest', () => {
       result.assertJsonFileContent('server/package.json', {
         scripts: { test: 'vitest run', 'test:e2e': 'vitest run --config ./vitest.config.e2e.ts --coverage --silent' },

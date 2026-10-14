@@ -1,6 +1,7 @@
 import * as yaml from 'js-yaml';
 import * as fs from 'fs';
 import { randomBytes } from 'crypto';
+import { networkInterfaces } from 'os';
 import * as path from 'path';
 import { Logger } from '@nestjs/common';
 
@@ -62,7 +63,7 @@ export class Config {
 
   <%_ if (!skipClient) { _%>
   public getClientPath(): string {
-    return path.join(__dirname, '../dist/static');
+    return path.join(import.meta.dirname, '../dist/static');
   }
   <%_ } _%>
   public addAll(properties: Record<string, any>): any {
@@ -113,7 +114,7 @@ export class Config {
   }
 }
 
-const configFolder = path.join(__dirname, 'config');
+const configFolder = path.join(import.meta.dirname, 'config');
 const yamlConfig: any = yaml.load(fs.readFileSync(path.join(configFolder, 'application.yml'), 'utf8'));
 
 /**
@@ -189,18 +190,13 @@ function objectToArray(source: any, currentKey?: string, target?: Record<string,
   return target;
 }
 
-function ipAddress(): any {
-  const interfaces = require('os').networkInterfaces();
-  for (const dev in interfaces) {
-    if (interfaces.hasOwnProperty(dev)) {
-      const iface = interfaces[dev];
-      for (const alias of iface) {
-        if (alias.family === 'IPv4' && alias.address !== '127.0.0.1' && !alias.internal) {
-          return alias.address;
-        }
+function ipAddress(): string | null {
+  for (const aliases of Object.values(networkInterfaces())) {
+    for (const alias of aliases ?? []) {
+      if (alias.family === 'IPv4' && alias.address !== '127.0.0.1' && !alias.internal) {
+        return alias.address;
       }
     }
   }
-
   return null;
 }

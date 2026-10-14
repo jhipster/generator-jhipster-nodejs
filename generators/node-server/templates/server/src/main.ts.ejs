@@ -1,4 +1,8 @@
-require('dotenv').config({ path: '.env' });
+// The .env file, loaded before the configuration (an import runs before the code of this module).
+import 'dotenv/config';
+<%_ if (serviceDiscoveryEureka) { _%>
+import { createRequire } from 'module';
+<%_ } _%>
 import { NestFactory } from '@nestjs/core';
 <%_ if (serviceDiscoveryEureka) { _%>
 import cloudConfigClient from 'cloud-config-client';
@@ -12,8 +16,8 @@ import { Logger } from '@nestjs/common';
 import * as fs from 'fs';
 <%_ } _%>
 <%_ if (authenticationType === 'oauth2') { _%>
-import passport = require('passport');
-import session = require('express-session');
+import passport from 'passport';
+import session from 'express-session';
 <%_ } _%>
 const logger: Logger = new Logger('Main');
 const port = process.env.NODE_SERVER_PORT || config.get('server.port');
@@ -98,8 +102,9 @@ async function loadCloudConfig(): Promise<void> {
 function registerAsEurekaService(): void {
   if (useJHipsterRegistry) {
     logger.log(`Registering with eureka ${config.get('cloud.config.uri')}`);
-    const Eureka = require('eureka-js-client').Eureka;
-    const eurekaUrl = require('url').parse(config.get('cloud.config.uri'));
+    // eureka-js-client has no types: required, like a CommonJS module.
+    const { Eureka } = createRequire(import.meta.url)('eureka-js-client');
+    const eurekaUrl = new URL(config.get('cloud.config.uri'));
     const appName = config.get('eureka.instance.appname');
     const host = config.get('ipAddress') || 'localhost';
     const client = new Eureka({

@@ -10,3 +10,10 @@ export class BaseDTO  {
 
   lastModifiedDate?: Date;
 }
+
+/**
+ * The type of a relationship of a DTO, like the Relation of the TypeORM entities: two related DTOs import each other, and
+ * ES modules evaluate such a cycle one module at a time, so the decorator metadata of the property must not reference
+ * the other class (with this type it is Object), or the first module fails with "Cannot access ... before initialization".
+ */
+export type RelatedDTO<T> = T;

@@ -1,3 +1,4 @@
+import { createRequire } from 'module';
 import { TypeOrmModuleOptions } from '@nestjs/typeorm';
 <%_ if (generateBuiltInAuthorityEntity) { _%>
 import { SeedUsersRoles1570200490072 } from './migrations/1570200490072-SeedUsersRoles.ts';
@@ -10,7 +11,9 @@ import { activeProfiles, config } from './config.ts';
 /** Reads a property of the configuration: ConfigService in the application, config outside of it (the typeorm CLI). */
 export type ConfigReader = (key: string) => any;
 
-// typeorm fails to auto load the drivers due to workspaces resolution: the driver of each database type.
+// typeorm fails to auto load the drivers due to workspaces resolution: the driver of each database type, required when
+// its database is used.
+const require = createRequire(import.meta.url);
 const drivers: Record<string, () => unknown> = {
 <%_ if (databaseTypeSql) { _%>
   '<%= nodeProdDatabaseType %>': () => require('<%= nodeProdDatabaseDriver %>'),
