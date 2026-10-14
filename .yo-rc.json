@@ -84,6 +84,18 @@
         "sbs": null,
         "written": true
       },
+      "client:bootstrap": {
+        "command": false,
+        "priorities": ["loading", "preparing"],
+        "sbs": true,
+        "written": true
+      },
+      "common:bootstrap": {
+        "command": false,
+        "priorities": ["loading"],
+        "sbs": true,
+        "written": true
+      },
       "node-server:bootstrap": {
         "command": false,
         "priorities": [],
