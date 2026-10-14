@@ -13,7 +13,6 @@ application {
     packageName com.okta.developer,
     serverPort 8081,
     prodDatabaseType postgresql,
-    buildTool gradle,
     testFrameworks [cypress],
     enableTranslation true,
     nativeLanguage en,
