@@ -78,7 +78,7 @@ describe('App', () => {
         .post('/api/authenticate')
         .send({})
         .expect(400)
-        .expect(response => expect(response.body.message).toEqual('Validation error')));
+        .expect(response => expect(response.body).toMatchObject({ message: 'error.validation', fieldErrors: expect.arrayContaining([expect.objectContaining({ field: 'username' })]) })));
 
     it('/GET account with an expired jwt is unauthorized', () => {
         const expiredToken = app.get(JwtService).sign({ sub: 'system', auth: '' }, { expiresIn: -10 });

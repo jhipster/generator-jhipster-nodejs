@@ -25,7 +25,9 @@ describe('Health Controller', () => {
 
   it('is UP when the database is up', async () => {
     check.mockResolvedValue({ status: 'ok', info: { db: { status: 'up' } }, error: {}, details: { db: { status: 'up' } } });
-    await expect(controller.health()).resolves.toEqual({ status: 'UP', components: { db: { status: 'UP' } } });
+    const response = { status: vi.fn() };
+    await expect(controller.health(response as any)).resolves.toEqual({ status: 'UP', components: { db: { status: 'UP' } } });
+    expect(response.status).not.toHaveBeenCalled();
   });
 
   it('is DOWN with the status 503 when the database is down', async () => {
@@ -37,9 +39,10 @@ describe('Health Controller', () => {
         details: { db: { status: 'down', message: 'connection refused' } },
       }),
     );
-    const error = await controller.health().catch((e: ServiceUnavailableException) => e);
-    expect(error).toBeInstanceOf(ServiceUnavailableException);
-    expect((error as ServiceUnavailableException).getResponse()).toEqual({ status: 'DOWN', components: { db: { status: 'DOWN' } } });
+    const response = { status: vi.fn() };
+    // The health of Spring Boot Actuator, not a problem detail: the health checks read it.
+    await expect(controller.health(response as any)).resolves.toEqual({ status: 'DOWN', components: { db: { status: 'DOWN' } } });
+    expect(response.status).toHaveBeenCalledWith(503);
   });
 
   it('the health checks are not logged', () => {

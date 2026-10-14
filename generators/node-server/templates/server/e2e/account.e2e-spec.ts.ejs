@@ -82,6 +82,29 @@ describe('Account', () => {
         await service.delete(createdUser);
     });
 
+    it('/POST register with the login of another user is a login already used problem', async () => {
+        const problem = (
+            await request(app.getHttpServer())
+                .post('/api/register')
+                .send({ ...testUserDTO, login: testUserAuthenticated.login })
+                .expect(400)
+        ).body;
+
+        // The type the registration page of the JHipster clients reads.
+        expect(problem).toMatchObject({ type: 'https://www.jhipster.tech/problem/login-already-used', message: 'error.userexists' });
+    });
+
+    it('/POST register with the email of another user is an email already used problem', async () => {
+        const problem = (
+            await request(app.getHttpServer())
+                .post('/api/register')
+                .send({ ...testUserDTO, email: testUserAuthenticated.email })
+                .expect(400)
+        ).body;
+
+        expect(problem).toMatchObject({ type: 'https://www.jhipster.tech/problem/email-already-used', message: 'error.emailexists' });
+    });
+
     it('/GET activate account', async () => {
         await request(app.getHttpServer())
             .get('/api/activate')
@@ -146,6 +169,17 @@ describe('Account', () => {
             }).then(() => true, () => false);
 
         expect(successFullyLoggedInWithNewPassword).toEqual(true);
+    });
+
+    it<%- databaseTypeMongodb ? '.skip' : ''%>('/POST change password with a wrong current password is an invalid password problem', async () => {
+        const problem = (
+            await request(app.getHttpServer())
+                .post('/api/account/change-password')
+                .send({ ...testPasswordChange, currentPassword: 'wrongPassword' })
+                .expect(400)
+        ).body;
+
+        expect(problem).toMatchObject({ type: 'https://www.jhipster.tech/problem/invalid-password', title: 'Incorrect password' });
     });
 
     it('/POST reset password init and finish', async () => {

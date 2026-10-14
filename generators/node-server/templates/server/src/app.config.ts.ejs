@@ -1,7 +1,10 @@
-import { BadRequestException, INestApplication, ValidationPipe } from '@nestjs/common';
+import { INestApplication, ValidationPipe } from '@nestjs/common';
 <%_ if (authenticationTypeJwt && generateUserManagement) { _%>
 import { NestExpressApplication } from '@nestjs/platform-express';
 <%_ } _%>
+
+import { ProblemDetailsFilter } from './web/rest/errors/problem-details.filter.ts';
+import { ValidationException } from './web/rest/errors/problem.exception.ts';
 
 /**
  * Configures the application as it runs in production: main.ts and the e2e tests call it, so the e2e tests
@@ -12,11 +15,14 @@ export function configureApp(app: INestApplication): INestApplication {
   app.enableCors();
   app.useGlobalPipes(
     new ValidationPipe({
-      exceptionFactory: (): BadRequestException => new BadRequestException('Validation error'),
+      // The errors of the fields, like JHipster Spring Boot.
+      exceptionFactory: errors => new ValidationException(errors),
       // https://github.com/nestjs/nest/issues/10683#issuecomment-1349614194
       forbidUnknownValues: false,
     }),
   );
+  // The errors as the problem details of JHipster Spring Boot.
+  app.useGlobalFilters(new ProblemDetailsFilter());
 <%_ if (authenticationTypeJwt && generateUserManagement) { _%>
   // The mail of a password reset request is a text/plain body, as the JHipster clients send it.
   (app as NestExpressApplication).useBodyParser('text');
