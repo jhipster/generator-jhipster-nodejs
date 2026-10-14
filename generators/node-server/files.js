@@ -65,7 +65,6 @@ export const serverFiles = {
         'src/app.module.ts',
         'src/migrations/1570200270081-CreateTables.ts',
         'src/orm.config.ts',
-        'scripts/copy-resources.ts',
         'tsconfig.build.json',
         'test/admin/management.controller.spec.ts',
         'test/admin/health.controller.spec.ts',

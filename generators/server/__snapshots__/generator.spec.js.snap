@@ -89,9 +89,6 @@ exports[`SubGenerator server of nodejs JHipster blueprint > run > should succeed
   "server/package.json": {
     "stateCleared": "modified",
   },
-  "server/scripts/copy-resources.ts": {
-    "stateCleared": "modified",
-  },
   "server/sonar-project.properties": {
     "stateCleared": "modified",
   },

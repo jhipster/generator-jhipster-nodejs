@@ -304,6 +304,8 @@ export default class extends BaseApplicationGenerator {
               'server/e2e/jest.e2e.config.json',
               // The webpack bundle (webpack:prod) is removed: the server is built with tsc, like NestJS does by default.
               'server/webpack.server.prod.config.js',
+              // The Nest CLI builds and starts the server, and copies the configuration files (assets of nest-cli.json).
+              'server/scripts/copy-resources.ts',
             ],
           });
         }

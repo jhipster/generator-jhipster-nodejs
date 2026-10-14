@@ -7,14 +7,13 @@
   "type": "module",
   "scripts": {
     "clean": "rimraf dist ../target/db/",
-    "build": "npm run clean && tsc -p tsconfig.build.json && npm run copy-resources",
-    "copy-resources": "node scripts/copy-resources.ts",
+    "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\"",
     "sonar:scanner": "sonar-scanner",
-    "start:dev": "npm run copy-resources && tsc-watch -p tsconfig.build.json --onSuccess \"node dist/main.js\"",
-    "start:debug": "npm run copy-resources && tsc-watch -p tsconfig.build.json --onSuccess \"node --inspect-brk dist/main.js\"",
-    "start:prod": "npm run copy-resources && node dist/main.js",
-    "start": "npm run clean && npm run copy-resources && tsc-watch -p tsconfig.build.json --onSuccess \"node dist/main.js\"",
+    "start:dev": "nest start --watch",
+    "start:debug": "nest start --debug --watch",
+    "start:prod": "node dist/main.js",
+    "start": "npm run clean && nest start --watch",
     "lint": "eslint .",
     "lint:fix": "npm run lint -- --fix",
     "pretest": "npm run lint && npm run typecheck",
@@ -24,7 +23,7 @@
     "test:debug": "vitest --inspect-brk --no-file-parallelism",
     "test:e2e": "vitest run --config ./vitest.config.e2e.ts --coverage --silent",
     "typecheck": "tsc --noEmit",
-    "typeorm": "tsc -p tsconfig.build.json && npm run copy-resources && typeorm -d ormconfig.ts",
+    "typeorm": "nest build && typeorm -d ormconfig.ts",
     "typeorm:migration:create": "typeorm migration:create src/migrations/migration",
 <%_ if (databaseTypeSql) { _%>
     "typeorm:migration:generate": "npm run typeorm -- migration:generate src/migrations/schema",
@@ -85,6 +84,8 @@
     "typeorm": "<%- nodeServerDependencies['typeorm'] %>"
   },
   "devDependencies": {
+    "@nestjs/cli": "<%- nodeServerDependencies['@nestjs/cli'] %>",
+    "@nestjs/schematics": "<%- nodeServerDependencies['@nestjs/schematics'] %>",
     "@nestjs/testing": "<%- nodeServerDependencies['@nestjs/testing'] %>",
     "@types/bcrypt": "<%- nodeServerDependencies['@types/bcrypt'] %>",
     "@types/express": "<%- nodeServerDependencies['@types/express'] %>",
@@ -117,7 +118,6 @@
     "rimraf": "<%- nodeServerDependencies['rimraf'] %>",
     "sonarqube-scanner": "<%- nodeServerDependencies['sonarqube-scanner'] %>",
     "supertest": "<%- nodeServerDependencies['supertest'] %>",
-    "tsc-watch": "<%- nodeServerDependencies['tsc-watch'] %>",
     "typescript": "<%- nodeServerDependencies['typescript'] %>",
     "vite": "<%- nodeServerDependencies['vite'] %>",
     "vitest": "<%- nodeServerDependencies['vitest'] %>"
