@@ -42,11 +42,23 @@ describe('SubGenerator node-server of nodejs JHipster blueprint', () => {
       result.assertJsonFileContent('server/package.json', {
         type: 'module',
         // Node.js runs the TypeScript scripts as they are (type stripping)
-        scripts: { 'copy-resources': 'node scripts/copy-resources.ts', typeorm: /typeorm -d ormconfig\.ts$/ },
+        scripts: { typeorm: /typeorm -d ormconfig\.ts$/ },
       });
       const { devDependencies } = result.fs.readJSON(join(result.cwd, 'server/package.json'));
       expect(devDependencies).not.toHaveProperty('ts-node');
-      result.assertFileContent('server/tsconfig.json', '"scripts/*.ts", "ormconfig.ts"');
+      result.assertFileContent('server/tsconfig.json', '"ormconfig.ts"');
+    });
+
+    it('should build and start the server with the Nest CLI', () => {
+      expect(result.fs.readJSON(join(result.cwd, 'server/package.json'))).toMatchObject({
+        scripts: { build: 'nest build', 'start:dev': 'nest start --watch', 'start:prod': 'node dist/main.js' },
+        devDependencies: { '@nestjs/cli': expect.any(String) },
+      });
+      // The Nest CLI copies the configuration files next to the build.
+      result.assertJsonFileContent('server/nest-cli.json', {
+        compilerOptions: { assets: [{ include: 'config/**/*', outDir: 'dist' }], watchAssets: true },
+      });
+      result.assertNoFile('server/scripts/copy-resources.ts');
       result.assertFileContent('server/src/main.ts', "import { AppModule } from './app.module.ts';");
     });
 
