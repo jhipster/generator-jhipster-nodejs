@@ -1,57 +1,56 @@
 import { readFileSync } from 'node:fs';
 import { readdir } from 'node:fs/promises';
 import { extname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
-import { getGithubSamplesGroup } from 'generator-jhipster/ci';
+import { extractSampleFiles } from 'generator-jhipster/ci';
 import BaseCoreGenerator from 'generator-jhipster/generators/base-core';
 
+// The describe-samples module awaits its descriptions at its top level: imported when used, not with this generator,
+// which yeoman-environment requires (a required module cannot have a top-level await).
+const describeSamples = () => import('../describe-samples/index.mjs');
+const root = fileURLToPath(new URL('../../', import.meta.url));
+
+/**
+ * Generates a sample of the CI by its name, as `.blueprint/describe-samples` describes it, like the generate-sample of
+ * generator-jhipster: writes the files of its project (extractSampleFiles), then generates them with its options, by the
+ * jdl generator when it has jdl files, else by its command (the defaultCommand of its .yo-rc.json).
+ */
 export default class extends BaseCoreGenerator {
   /** @type {string | undefined} */
-  samplesFolder;
-  /** @type {string} */
   samplesGroup;
   /** @type {string} */
   sampleName;
   /** @type {boolean} */
   all;
-  /** @type {string} */
-  sampleType;
-  /** @type {string} */
-  sampleFile;
-  /** @type {any} */
-  generatorOptions;
+  /** @type {import('../describe-samples/index.mjs').SampleSummary | undefined} */
+  sample;
+  /**
+   * The files of the project of the sample, its inline jdl as files.
+   * @type {import('generator-jhipster/ci').SampleFile[]}
+   */
+  sampleFiles = [];
 
   get [BaseCoreGenerator.WRITING]() {
     return this.asAnyTaskGroup({
       async copySample() {
-        const { samplesFolder, samplesGroup, all, sampleName } = this;
-        const samplesPath = samplesFolder ? join(samplesFolder, samplesGroup) : samplesGroup;
-        if (all) {
-          this.copyTemplate(`${samplesPath}/*.jdl`, '');
-          this.sampleType = 'jdl';
-        } else if (extname(sampleName) === '.jdl') {
-          this.copyTemplate(join(samplesPath, sampleName), sampleName, { noGlob: true });
-          this.sampleType = 'jdl';
-        } else {
-          const { samples } = await getGithubSamplesGroup(this.templatePath(), samplesPath);
-          const {
-            'sample-type': sampleType,
-            'sample-file': sampleFile = sampleName,
-            'sample-folder': sampleFolder = samplesPath,
-            generatorOptions,
-          } = samples[sampleName];
-
-          this.generatorOptions = generatorOptions;
-          this.sampleType = sampleType;
-
-          if (sampleType === 'jdl') {
-            const jdlFile = `${sampleFile}.jdl`;
-            this.copyTemplate(join(sampleFolder, jdlFile), jdlFile, { noGlob: true });
-          } else if (sampleType === 'yo-rc') {
-            this.copyTemplate('**', '', {
-              fromBasePath: this.templatePath(sampleFolder, sampleFile),
-              globOptions: { dot: true },
-            });
+        const { describeSample, samplesGroupFolder } = await describeSamples();
+        if (this.all) {
+          // Every jdl of the samples folder, generated together in a workspace (the npm cache of the CI).
+          this.copyTemplate('*.jdl', '', { fromBasePath: join(samplesGroupFolder, 'samples') });
+          return;
+        }
+        const sample = describeSample(this.sampleName);
+        if (this.samplesGroup && sample.workflow !== this.samplesGroup) {
+          throw new Error(`Sample ${this.sampleName} belongs to the ${sample.workflow} samples group, not to ${this.samplesGroup}`);
+        }
+        this.sample = sample;
+        this.sampleFiles = extractSampleFiles(sample, { root });
+        for (const file of this.sampleFiles) {
+          if ('source' in file) {
+            this.copyTemplate(file.source, file.destination, { noGlob: true });
+          } else {
+            this.writeDestination(file.destination, file.contents);
           }
         }
       },
@@ -60,26 +59,24 @@ export default class extends BaseCoreGenerator {
 
   get [BaseCoreGenerator.END]() {
     return this.asAnyTaskGroup({
-      async generateYoRcSample() {
-        if (this.sampleType !== 'yo-rc') return;
-
+      async generateSample() {
         const generatorOptions = this.getDefaultComposeOptions();
-        await this.composeWithJHipster('app', { generatorOptions });
-      },
-      async generateJdlSample() {
-        if (this.sampleType !== 'jdl') return;
-
-        const generatorOptions = this.getDefaultComposeOptions();
-        const folderContent = await readdir(this.destinationPath());
-        const jdlFiles = folderContent.filter(file => file.endsWith('.jdl'));
-
-        await this.composeWithJHipster('jdl', {
-          generatorArgs: jdlFiles,
-          generatorOptions: {
-            ...generatorOptions,
-            ...(this.all ? { workspaces: true, monorepository: true } : { skipInstall: true }),
-          },
-        });
+        if (this.all) {
+          const jdlFiles = (await readdir(this.destinationPath())).filter(file => file.endsWith('.jdl'));
+          await this.composeWithJHipster('jdl', {
+            generatorArgs: jdlFiles,
+            generatorOptions: { ...generatorOptions, workspaces: true, monorepository: true },
+          });
+          return;
+        }
+        // The jdl files of the project, the inline ones included, which the jdl generator concatenates.
+        const jdlFiles = this.sampleFiles.map(file => file.destination).filter(destination => extname(destination) === '.jdl');
+        const sampleOptions = { ...generatorOptions, ...this.sample.generatorOptions };
+        if (jdlFiles.length > 0) {
+          await this.composeWithJHipster('jdl', { generatorArgs: jdlFiles, generatorOptions: { ...sampleOptions, skipInstall: true } });
+        } else {
+          await this.composeWithJHipster(this.sample.defaultCommand, { generatorOptions: sampleOptions });
+        }
       },
       async jhipsterInfo() {
         await this.composeWithJHipster('info');
@@ -88,12 +85,10 @@ export default class extends BaseCoreGenerator {
   }
 
   getDefaultComposeOptions() {
-    const packageJson = JSON.parse(readFileSync(new URL('../../package.json', import.meta.url), { encoding: 'utf-8' }));
-    const projectVersion = `${packageJson.version}-git`;
+    const packageJson = JSON.parse(readFileSync(join(root, 'package.json'), { encoding: 'utf-8' }));
     return {
       skipJhipsterDependencies: true,
-      projectVersion,
-      ...this.generatorOptions,
+      projectVersion: `${packageJson.version}-git`,
     };
   }
 }

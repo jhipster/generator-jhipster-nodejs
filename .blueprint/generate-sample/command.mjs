@@ -16,41 +16,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { getGithubSamplesGroup, getGithubSamplesGroups } from 'generator-jhipster/ci';
-
-const DEFAULT_SAMPLES_GROUP = 'samples';
-
 /**
  * @type {import('generator-jhipster').JHipsterCommandDefinition}
  */
 const command = {
   arguments: {
     sampleName: {
+      description: 'The sample to generate, by its name: unique across the samples groups',
       type: String,
     },
   },
   configs: {
-    samplesFolder: {
-      description: 'Path to the samples folder',
-      cli: {
-        type: String,
-      },
-      scope: 'generator',
-    },
     samplesGroup: {
-      description: 'Samples group to lookup',
+      description: 'The samples group of the sample, checked when given (the CI gives it)',
       cli: {
         type: String,
-      },
-      prompt: gen => ({
-        when: !gen.all && !gen.sampleName,
-        type: 'select',
-        message: 'which sample group do you want to lookup?',
-        choices: async () => getGithubSamplesGroups(gen.templatePath(gen.samplesFolder ?? '')),
-        default: DEFAULT_SAMPLES_GROUP,
-      }),
-      configure: gen => {
-        gen.samplesGroup ??= DEFAULT_SAMPLES_GROUP;
       },
       scope: 'generator',
     },
@@ -59,15 +39,16 @@ const command = {
         when: !gen.all,
         type: 'select',
         message: 'which sample do you want to generate?',
-        choices: async answers => {
-          const samples = await getGithubSamplesGroup(gen.templatePath(), answers.samplesGroup ?? gen.samplesGroup);
-          return Object.keys(samples.samples);
+        // The describe-samples module awaits its descriptions at its top level, imported when the choices are asked.
+        choices: async () => {
+          const { describeSampleGroups } = await import('../describe-samples/index.mjs');
+          return Object.values(describeSampleGroups()).flatMap(group => group.samples);
         },
       }),
       scope: 'generator',
     },
     all: {
-      description: 'Generate every sample in a workspace',
+      description: 'Generate every jdl of the samples folder in a workspace',
       cli: {
         type: Boolean,
       },

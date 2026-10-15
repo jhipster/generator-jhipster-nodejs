@@ -1,0 +1,30 @@
+{
+  "monolith-vue-jwt-i18n-jdl": {
+    "sample-file": "monolith-client-auth-i18n-template-jdl",
+    "sample-folder": "samples/",
+    "sample-type": "jdl",
+    "generatorOptions": {
+      "clientFramework": "vue",
+      "authenticationType": "jwt"
+    }
+  },
+  "monolith-vue-oauth2-i18n-jdl": {
+    "sample-file": "monolith-client-auth-i18n-template-jdl",
+    "sample-folder": "samples/",
+    "sample-type": "jdl",
+    "generatorOptions": {
+      "clientFramework": "vue",
+      "authenticationType": "oauth2"
+    }
+  },
+  "monolith-vue-mongodb-prod-jdl": {
+    "sample-file": "monolith-client-database-prod-template-jdl",
+    "sample-folder": "samples/",
+    "sample-type": "jdl",
+    "generatorOptions": {
+      "clientFramework": "vue",
+      "prodDatabaseType": "mongodb"
+    },
+    "e2e": "false"
+  }
+}

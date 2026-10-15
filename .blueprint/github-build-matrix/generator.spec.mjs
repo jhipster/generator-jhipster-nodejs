@@ -1,14 +1,14 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 import { basename, join } from 'path';
 
-import { getGithubSamplesGroups } from 'generator-jhipster/ci';
 import { defaultHelpers as helpers, runResult } from 'generator-jhipster/testing';
+
+import { groups } from '../describe-samples/index.mjs';
 
 const generator = basename(import.meta.dirname);
 
 describe(`generator - ${generator}`, async () => {
-  const groups = await getGithubSamplesGroups(join(import.meta.dirname, '../generate-sample/templates/'));
-  for (const workflow of groups.map(sample => sample.split('.')[0])) {
+  for (const workflow of groups) {
     describe(`with ${workflow}`, () => {
       beforeAll(async () => {
         await helpers.runJHipster(join(import.meta.dirname, 'index.mjs'), { prepareEnvironment: true }).withArguments(workflow);

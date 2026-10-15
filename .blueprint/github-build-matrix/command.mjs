@@ -3,19 +3,11 @@
  */
 const command = {
   configs: {
-    samplesFolder: {
-      description: 'Samples folder',
-      cli: {
-        type: String,
-      },
-      scope: 'generator',
-    },
     samplesGroup: {
-      description: 'Samples Group',
+      description: 'The samples group, the workflow, to build the matrix of',
       argument: {
         type: String,
       },
-      default: 'samples',
       scope: 'generator',
     },
   },
