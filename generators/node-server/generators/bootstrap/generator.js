@@ -19,13 +19,6 @@ export default class extends BaseApplicationGenerator {
     return this.asLoadingTaskGroup({
       async loadingTemplateTask({ applicationDefaults }) {
         applicationDefaults({
-          backendType: 'NodeJS',
-          backendTypeJavaAny: false,
-          withAdminUi: false,
-          clientRootDir: 'client/',
-          clientSrcDir: 'client/src/',
-          clientTestDir: 'client/test/',
-          clientDistDir: 'server/dist/static/',
           temporaryDir: 'tmp/',
           dockerServicesDir: 'docker/',
           nodeServerRootDir: `${SERVER_NODEJS_SRC_DIR}/`,
@@ -44,9 +37,6 @@ export default class extends BaseApplicationGenerator {
 
   get [BaseApplicationGenerator.PREPARING]() {
     return this.asPreparingTaskGroup({
-      workarounds({ application }) {
-        application.withAdminUi = false;
-      },
       prettierFolders({ application }) {
         // The prettier:check and prettier:format scripts of the root package.json cover the server and the client
         // workspaces (JHipster only adds the client sources, and the build plugins of Angular at the root).
