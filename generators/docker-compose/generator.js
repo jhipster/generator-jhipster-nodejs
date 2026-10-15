@@ -36,6 +36,17 @@ export default class extends BaseWorkspacesGenerator {
           }),
         );
       },
+      dockerServicesDir({ applications }) {
+        // JHipster's docker-compose generator reads the Docker Compose files of each application from its
+        // dockerServicesDir. The deployment bootstraps every application with its blueprints, so a Spring Boot
+        // application would get the docker/ folder of the NodeJS ones: every application is read from src/main/docker,
+        // where the NodeJS ones get the copies below.
+        // TODO read the docker/ folder of the NodeJS applications without the copies, once the blueprints of an
+        // application of the deployment are the ones of its .yo-rc.json.
+        for (const application of applications) {
+          application.dockerServicesDir = `${JHIPSTER_DOCKER_DIR}/`;
+        }
+      },
       async nodejsDockerFiles({ applications }) {
         const copies = new Map();
         for (const application of applications) {
