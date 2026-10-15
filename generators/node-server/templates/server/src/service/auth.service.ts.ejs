@@ -157,7 +157,8 @@ export class AuthService {
 
   /**
    * Like JHipster Spring Boot, registers a user not activated, with the fields of the registration only, its login and
-   * mail in lower case: the not activated user of the same login or mail, if any, is removed first.
+   * mail in lower case, and an activation key (sent by mail): the not activated user of the same login or mail, if any,
+   * is removed first.
    */
   async registerNewUser(newUser: <%= user.dtoClass %>): Promise<<%= user.dtoClass %>> {
     if (isPasswordLengthInvalid(newUser.password)) {
@@ -183,9 +184,23 @@ export class AuthService {
       langKey: newUser.langKey,
       // new user is not active
       activated: false,
+      // new user gets registration key
+      activationKey: randomBytes(15).toString('base64url'),
       authorities: ['ROLE_USER'],
     };
     return await this.userService.save(user, login, true);
+  }
+
+  /** Like JHipster Spring Boot, activates the user of an activation key, undefined for an unknown key. */
+  async activateRegistration(key: string): Promise<<%= user.dtoClass %> | undefined> {
+    const userFind = key ? await this.userService.findByFields({ where: { activationKey: key } }) : undefined;
+    if (!userFind) {
+      return undefined;
+    }
+    userFind.activated = true;
+    // null clears the column (TypeORM leaves the undefined properties unchanged).
+    Object.assign(userFind, { activationKey: null });
+    return await this.userService.save(userFind, userFind.login);
   }
 
   private async removeNonActivatedUser(existingUser: <%= user.dtoClass %>): Promise<boolean> {

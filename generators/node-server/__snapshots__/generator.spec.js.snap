@@ -740,6 +740,12 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > run > should su
   "server/src/domain/user.entity.ts": {
     "stateCleared": "modified",
   },
+  "server/src/i18n/messages.properties": {
+    "stateCleared": "modified",
+  },
+  "server/src/i18n/messages_en.properties": {
+    "stateCleared": "modified",
+  },
   "server/src/main.ts": {
     "stateCleared": "modified",
   },
@@ -753,6 +759,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > run > should su
     "stateCleared": "modified",
   },
   "server/src/module/health.module.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/module/mail.module.ts": {
     "stateCleared": "modified",
   },
   "server/src/module/management.module.ts": {
@@ -812,6 +821,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > run > should su
   "server/src/service/dto/user.dto.ts": {
     "stateCleared": "modified",
   },
+  "server/src/service/mail.service.ts": {
+    "stateCleared": "modified",
+  },
   "server/src/service/mapper/user.mapper.ts": {
     "stateCleared": "modified",
   },
@@ -819,6 +831,15 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > run > should su
     "stateCleared": "modified",
   },
   "server/src/swagger.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/templates/mail/activationEmail.hbs": {
+    "stateCleared": "modified",
+  },
+  "server/src/templates/mail/creationEmail.hbs": {
+    "stateCleared": "modified",
+  },
+  "server/src/templates/mail/passwordResetEmail.hbs": {
     "stateCleared": "modified",
   },
   "server/src/tls.ts": {
@@ -876,6 +897,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > run > should su
     "stateCleared": "modified",
   },
   "server/test/config.spec.ts": {
+    "stateCleared": "modified",
+  },
+  "server/test/mail.service.spec.ts": {
     "stateCleared": "modified",
   },
   "server/tsconfig.build.json": {
@@ -1527,6 +1551,12 @@ You can use the default secret created from the app, or change it.
 So to get a token, you have to pass a POST request on the _api/authenticate_ url with **UserLoginDTO** as body.
 For this you can use **swagger ui** on **/api/v2/api-docs** path, or the client login page (if you have generated it).
 
+### Account mails
+
+Like JHipster Spring Boot, the server sends the account mails with [@nestjs-modules/mailer][] (Nodemailer): the activation mail of a registered user (who signs in once activated, with the link of the mail), the creation mail of a user created by an administrator and the password reset mail. Their HTML is the [Handlebars][] templates of \`server/src/templates/mail/\` (like the Thymeleaf templates of \`templates/mail\`; they interpolate values, escaped, and call the \`message\` helper of the server, they run no code), their texts the messages of \`server/src/i18n/messages*.properties\` in the language of the user, and their links open the client at \`jhipster.mail.base-url\`.
+
+The SMTP server is set by the \`mail\` settings of \`server/src/config/application-dev.yml\` and \`application-prod.yml\` (\`localhost:25\` by default), or by environment variables like \`MAIL_HOST\`, \`MAIL_PORT\`, \`MAIL_USERNAME\` and \`MAIL_PASSWORD\`. A mail that cannot be sent is logged as a warning, without failing the request.
+
 ### Using NestJS CLI
 
 You can also use [NestJS CLI][] to generate some custom server code.
@@ -1605,6 +1635,8 @@ For more information, refer to the [Code quality page][].
 [Vitest]: https://vitest.dev/
 [NestJS]: https://nestjs.com/
 [NestJS CLI]: https://docs.nestjs.com/cli/usages
+[@nestjs-modules/mailer]: https://nest-modules.github.io/mailer/
+[Handlebars]: https://handlebarsjs.com/
 ",
     "stateCleared": "modified",
   },
@@ -1980,6 +2012,12 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > without client 
   "server/src/domain/user.entity.ts": {
     "stateCleared": "modified",
   },
+  "server/src/i18n/messages.properties": {
+    "stateCleared": "modified",
+  },
+  "server/src/i18n/messages_en.properties": {
+    "stateCleared": "modified",
+  },
   "server/src/main.ts": {
     "stateCleared": "modified",
   },
@@ -1993,6 +2031,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > without client 
     "stateCleared": "modified",
   },
   "server/src/module/health.module.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/module/mail.module.ts": {
     "stateCleared": "modified",
   },
   "server/src/module/management.module.ts": {
@@ -2052,6 +2093,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > without client 
   "server/src/service/dto/user.dto.ts": {
     "stateCleared": "modified",
   },
+  "server/src/service/mail.service.ts": {
+    "stateCleared": "modified",
+  },
   "server/src/service/mapper/user.mapper.ts": {
     "stateCleared": "modified",
   },
@@ -2059,6 +2103,15 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > without client 
     "stateCleared": "modified",
   },
   "server/src/swagger.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/templates/mail/activationEmail.hbs": {
+    "stateCleared": "modified",
+  },
+  "server/src/templates/mail/creationEmail.hbs": {
+    "stateCleared": "modified",
+  },
+  "server/src/templates/mail/passwordResetEmail.hbs": {
     "stateCleared": "modified",
   },
   "server/src/tls.ts": {
@@ -2116,6 +2169,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > without client 
     "stateCleared": "modified",
   },
   "server/test/config.spec.ts": {
+    "stateCleared": "modified",
+  },
+  "server/test/mail.service.spec.ts": {
     "stateCleared": "modified",
   },
   "server/tsconfig.build.json": {

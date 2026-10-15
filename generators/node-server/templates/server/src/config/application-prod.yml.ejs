@@ -64,6 +64,17 @@ database:
 <%_ } _%>
   logging: false
 
+<%_ if (generateUserManagement) { _%>
+# The SMTP server of the account mails (activation, creation, password reset), read by the mail module
+# (@nestjs-modules/mailer), like spring.mail of JHipster Spring Boot: environment variables override each property, like MAIL_HOST
+# or MAIL_PASSWORD.
+mail:
+  host: localhost
+  port: 25
+  username:
+  password:
+
+<%_ } _%>
 jhipster:
   mail: # specific JHipster mail property, for standard properties see MailProperties
     from: <%= baseName %>@localhost

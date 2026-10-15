@@ -33,6 +33,12 @@ export class Config {
   'management.endpoint.configprops.show-values' = 'never';
   'jhipster.mail.base-url' = 'http://127.0.0.1:${server.port}';
   'jhipster.mail.from' = '<%= baseName %>@localhost';
+<%_ if (generateUserManagement) { _%>
+  'mail.host' = 'localhost';
+  'mail.port' = 25;
+  'mail.username' = '';
+  'mail.password' = '';
+<%_ } _%>
   'jhipster.swagger.default-include-pattern' = '/api/.*';
   'jhipster.swagger.title' = '<%= baseName %> API';
   'jhipster.swagger.description' = '<%= baseName %> API documentation';

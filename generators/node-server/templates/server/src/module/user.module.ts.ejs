@@ -6,11 +6,14 @@ import { UserController } from '../web/rest/user.controller.ts';
 import { ManagementController } from '../web/rest/management.controller.ts';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserService } from '../service/user.service.ts';
+<%_ if (generateUserManagement) { _%>
+import { MailModule } from './mail.module.ts';
+<%_ } _%>
 
 @Module({
-  imports: [TypeOrmModule.forFeature([User])],
+  imports: [TypeOrmModule.forFeature([User])<% if (generateUserManagement) { %>, MailModule<% } %>],
   controllers: [<% if (generateUserManagement) { %>UserController, <% } %>ManagementController],
   providers: [UserService],
-  exports: [UserService],
+  exports: [UserService<% if (generateUserManagement) { %>, MailModule<% } %>],
 })
 export class UserModule {}

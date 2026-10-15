@@ -6,6 +6,8 @@ import { HeaderUtil } from '../../common/header-util.ts';
 import { Request } from '../../common/request.ts';
 import {<%_ if (authenticationType === 'jwt') { _%> ApiBearerAuth, <%_ } else if (authenticationType === 'oauth2') { _%> ApiSecurity, <%_ } _%> ApiTags, ApiResponse, ApiOperation } from '@nestjs/swagger';
 import { UserService } from '../../service/user.service.ts';
+import { MailService } from '../../service/mail.service.ts';
+import { randomBytes } from 'crypto';
 import { EmailAlreadyUsedException, LoginAlreadyUsedException } from './errors/problem.exception.ts';
 <%_ if (typeormOrderSupport) { _%>
 import { isSortableProperty } from '../../common/sortable-properties.ts';
@@ -28,7 +30,10 @@ const UNSORTABLE_PROPERTIES = ['password', 'activationKey', 'resetKey', 'resetDa
 export class UserController {
   logger = new Logger('UserController');
 
-  constructor(private readonly userService: UserService) {}
+  constructor(
+    private readonly userService: UserService,
+    private readonly mailService: MailService,
+  ) {}
 
   @Get('/')
   @Roles(RoleType.ADMIN)
@@ -78,8 +83,20 @@ export class UserController {
       if (await this.userService.findByFields({ where: { email: userDTO.email } })) {
           throw new EmailAlreadyUsedException();
       }
-      userDTO.password = userDTO.login;
-      const created = await this.userService.save(userDTO, req.user?.login);
+      // Like JHipster Spring Boot, the created user is activated with a random password and a reset key: the creation mail
+      // links to the page that sets the password.
+      const created = await this.userService.save(
+        {
+          ...userDTO,
+          password: randomBytes(15).toString('base64url'),
+          resetKey: randomBytes(15).toString('base64url'),
+          resetDate: new Date(),
+          activated: true,
+        },
+        req.user?.login,
+        true,
+      );
+      void this.mailService.sendCreationEmail(created);
       HeaderUtil.addEntityCreatedHeaders(req.res, 'User', created.id);
       return created;
   }

@@ -1,0 +1,49 @@
+import * as path from 'path';
+
+import { Module } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { HelperOptions } from 'handlebars';
+import { MailerModule, MailerOptions } from '@nestjs-modules/mailer';
+import { HandlebarsAdapter } from '@nestjs-modules/mailer/adapters/handlebars.adapter';
+
+import { MailService } from '../service/mail.service.ts';
+
+/** The templates of the account mails, like the templates/mail of JHipster Spring Boot. */
+export const mailTemplatesFolder = path.join(import.meta.dirname, '../templates/mail');
+
+/**
+ * The helpers of the templates: message, the message of a key in the language of the mail, its {0}, {1}... replaced by
+ * the parameters, like the #{key(...)} of Thymeleaf. The messages are the ones of the context of the mail.
+ */
+export const mailTemplateHelpers = {
+  message(key: string, ...parameters: unknown[]): string {
+    const { data } = parameters.pop() as HelperOptions;
+    const messages = (data?.root?.messages ?? {}) as Record<string, string>;
+    const values = parameters.map(value => (typeof value === 'string' || typeof value === 'number' ? `${value}` : ''));
+    return (messages[key] ?? key).replace(/\{(\d+)\}/g, (_, index: string) => values[Number(index)] ?? '');
+  },
+};
+
+/**
+ * The SMTP server of the mail properties, like spring.mail, and the Handlebars templates of the mails: they only
+ * interpolate values, escaped, and call the helpers of the server, they run no code.
+ */
+export function mailerOptions(configService: ConfigService): MailerOptions {
+  const username = configService.get<string>('mail.username');
+  return {
+    transport: {
+      host: configService.get<string>('mail.host'),
+      port: Number(configService.get('mail.port')),
+      auth: username ? { user: username, pass: configService.get<string>('mail.password') } : undefined,
+    },
+    defaults: { from: configService.get<string>('jhipster.mail.from') },
+    template: { dir: mailTemplatesFolder, adapter: new HandlebarsAdapter(mailTemplateHelpers), options: { strict: true } },
+  };
+}
+
+@Module({
+  imports: [MailerModule.forRootAsync({ inject: [ConfigService], useFactory: mailerOptions })],
+  providers: [MailService],
+  exports: [MailService],
+})
+export class MailModule {}
