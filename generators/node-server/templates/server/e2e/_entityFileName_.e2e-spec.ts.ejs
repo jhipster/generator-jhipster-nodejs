@@ -135,7 +135,7 @@ _%>
             .get('/api/<%= entityApiUrl %>?sort=unknownProperty,asc')
             .expect(400);
 
-        expect(response.body.message).toBe('Invalid sort property: unknownProperty');
+        expect(response.body.detail).toBe('Invalid sort property: unknownProperty');
     });
 <%_ } _%>
 
@@ -226,7 +226,11 @@ _%>
             .send(invalidEntity)
             .expect(400)).body;
 
-        expect(error.message).toEqual('Validation error');
+        expect(error).toMatchObject({
+            type: 'https://www.jhipster.tech/problem/constraint-violation',
+            message: 'error.validation',
+            fieldErrors: [{ objectName: '<%= entityInstance %>', field: '<%= requiredField.fieldName %>', message: expect.any(String) }],
+        });
     });
 
 <%_ } _%>
@@ -237,7 +241,7 @@ _%>
             .send({ ...validEntity, <%= enumField.fieldName %>: 'NOT_A_<%= enumField.fieldType.toUpperCase() %>' })
             .expect(400)).body;
 
-        expect(error.message).toEqual('Validation error');
+        expect(error).toMatchObject({ message: 'error.validation', fieldErrors: [expect.objectContaining({ field: '<%= enumField.fieldName %>' })] });
     });
 
 <%_ } _%>

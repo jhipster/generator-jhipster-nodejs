@@ -20,6 +20,9 @@ import { Authority } from '../domain/authority.entity.ts';
 <%_ } _%>
 <%_ if (generateBuiltInUserEntity) { _%>
 import { UserService } from '../service/user.service.ts';
+<%_ if (authenticationType === 'jwt' && generateBuiltInUserEntity) { _%>
+import { EmailAlreadyUsedException, InvalidPasswordException, LoginAlreadyUsedException } from '../web/rest/errors/problem.exception.ts';
+<%_ } _%>
 <%_ } _%>
 import { <%= userLoginVmClass %> } from './dto/user.dto.ts';
 <%_ if (authenticationType === 'jwt' && generateBuiltInUserEntity) { _%>
@@ -111,7 +114,7 @@ export class AuthService {
     }
 
     if (!comparePassword(currentClearTextPassword, userFind.password)) {
-      throw new HttpException('Invalid password!', HttpStatus.BAD_REQUEST);
+      throw new InvalidPasswordException();
     }
     userFind.password = newPassword;
     await this.userService.save(userFind, userLogin, true);
@@ -147,11 +150,11 @@ export class AuthService {
   async registerNewUser (newUser: <%= user.dtoClass %>) : Promise<<%= user.dtoClass %>> {
     let userFind = await this.userService.findByFields({ where: { login: newUser.login} });
     if (userFind) {
-      throw new HttpException('Login name already used!', HttpStatus.BAD_REQUEST);
+      throw new LoginAlreadyUsedException();
     }
     userFind = await this.userService.findByFields({ where: { email: newUser.email } });
     if (userFind) {
-      throw new HttpException('Email is already in use!', HttpStatus.BAD_REQUEST);
+      throw new EmailAlreadyUsedException();
     }
     newUser.authorities = ['ROLE_USER'];
     const user = await this.userService.save(newUser, newUser.login, true);
@@ -165,7 +168,7 @@ export class AuthService {
     }
     const userFindEmail = await this.userService.findByFields({ where: { email: newUserInfo.email } });
     if (userFindEmail && newUserInfo.email !== userFind.email) {
-      throw new HttpException('Email is already in use!', HttpStatus.BAD_REQUEST);
+      throw new EmailAlreadyUsedException();
     }
 
     userFind.firstName = newUserInfo.firstName;

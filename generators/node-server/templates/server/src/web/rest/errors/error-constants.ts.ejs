@@ -1,0 +1,10 @@
+/** The problem types and the translation keys of the errors, like the ErrorConstants of JHipster Spring Boot. */
+export const ERR_VALIDATION = 'error.validation';
+export const PROBLEM_BASE_URL = 'https://www.jhipster.tech/problem';
+export const DEFAULT_TYPE = `${PROBLEM_BASE_URL}/problem-with-message`;
+export const CONSTRAINT_VIOLATION_TYPE = `${PROBLEM_BASE_URL}/constraint-violation`;
+<%_ if (generateUserManagement) { _%>
+export const INVALID_PASSWORD_TYPE = `${PROBLEM_BASE_URL}/invalid-password`;
+export const EMAIL_ALREADY_USED_TYPE = `${PROBLEM_BASE_URL}/email-already-used`;
+export const LOGIN_ALREADY_USED_TYPE = `${PROBLEM_BASE_URL}/login-already-used`;
+<%_ } _%>

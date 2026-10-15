@@ -60,14 +60,20 @@ describe('User', () => {
     });
 
     it('/POST create user with an invalid email is a validation error', async () => {
-        const error = (
-            await request(app.getHttpServer())
-                .post('/api/admin/users')
-                .send({ ...testUserRequestObject, email: 'not an email' })
-                .expect(400)
-        ).body;
+        const response = await request(app.getHttpServer())
+            .post('/api/admin/users')
+            .send({ ...testUserRequestObject, email: 'not an email' })
+            .expect(400)
+            .expect('Content-Type', /application\/problem\+json/);
 
-        expect(error.message).toEqual('Validation error');
+        // The problem detail of JHipster Spring Boot, with the errors of the fields.
+        expect(response.body).toMatchObject({
+            type: 'https://www.jhipster.tech/problem/constraint-violation',
+            status: 400,
+            message: 'error.validation',
+            path: '/api/admin/users',
+            fieldErrors: [{ objectName: 'user', field: 'email', message: expect.any(String) }],
+        });
     });
 
     it('/GET all users', () => {
@@ -161,7 +167,7 @@ describe('User', () => {
     it('/GET users sorted on the password or a key of the user', async () => {
         for (const property of ['password', 'activationKey', 'resetKey']) {
             const response = await request(app.getHttpServer()).get(`/api/admin/users?sort=${property},asc`).expect(400);
-            expect(response.body.message).toBe(`Invalid sort property: ${property}`);
+            expect(response.body.detail).toBe(`Invalid sort property: ${property}`);
         }
     });
 

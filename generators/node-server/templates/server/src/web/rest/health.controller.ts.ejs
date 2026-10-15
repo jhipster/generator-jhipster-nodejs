@@ -1,6 +1,7 @@
-import { Controller, Get, ServiceUnavailableException } from '@nestjs/common';
+import { Controller, Get, HttpStatus, Res, ServiceUnavailableException } from '@nestjs/common';
 import { ApiExcludeEndpoint } from '@nestjs/swagger';
 import { HealthCheckResult, HealthCheckService, TypeOrmHealthIndicator } from '@nestjs/terminus';
+import { Response } from 'express';
 
 import { SkipLogging } from '../../common/interceptors/logging.interceptor.ts';
 
@@ -26,12 +27,14 @@ export class HealthController {
   @ApiExcludeEndpoint()
   @Get('/health')
   @SkipLogging()
-  async health(): Promise<Health> {
+  async health(@Res({ passthrough: true }) response: Response): Promise<Health> {
     try {
       return toHealth(await this.healthCheckService.check([() => this.typeOrmHealthIndicator.pingCheck('db')]));
     } catch (error) {
       if (error instanceof ServiceUnavailableException) {
-        throw new ServiceUnavailableException(toHealth(error.getResponse() as HealthCheckResult));
+        // The health of Spring Boot Actuator with the status 503, not a problem detail: the health checks read it.
+        response.status(HttpStatus.SERVICE_UNAVAILABLE);
+        return toHealth(error.getResponse() as HealthCheckResult);
       }
       throw error;
     }

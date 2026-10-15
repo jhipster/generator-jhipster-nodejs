@@ -1,0 +1,92 @@
+import { HttpException, HttpStatus, ValidationError } from '@nestjs/common';
+
+import { CONSTRAINT_VIOLATION_TYPE, DEFAULT_TYPE, ERR_VALIDATION<% if (generateUserManagement) { %>, EMAIL_ALREADY_USED_TYPE, INVALID_PASSWORD_TYPE, LOGIN_ALREADY_USED_TYPE<% } %> } from './error-constants.ts';
+
+/** An error of a field, like the FieldErrorVM of JHipster Spring Boot. */
+export interface FieldErrorVM {
+  objectName: string;
+  field: string;
+  message: string;
+}
+
+/** The properties of a problem detail the exception gives, the others are completed by the ProblemDetailsFilter. */
+export interface ProblemProperties {
+  type?: string;
+  title?: string;
+  detail?: string;
+  /** The translation key of the error. */
+  message?: string;
+  /** The parameter of the translation, the entity name. */
+  params?: string;
+  fieldErrors?: FieldErrorVM[];
+}
+
+/** An exception answered as the problem detail it gives. */
+export class ProblemException extends HttpException {
+  constructor(
+    status: number,
+    readonly problem: ProblemProperties,
+  ) {
+    super(problem, status);
+  }
+}
+
+/**
+ * The errors of the validation of a request body, like the field errors of JHipster Spring Boot: the object (the class
+ * of the body without its <%= dtoSuffix %> suffix), the field and the message of the first constraint it fails.
+ */
+export const toFieldErrors = (errors: ValidationError[], parentPath = ''): FieldErrorVM[] =>
+  errors.flatMap(error => {
+    const field = `${parentPath}${error.property}`;
+    const objectName = (error.target?.constructor.name ?? '').replace(/^./, first => first.toLowerCase()).replace(/<%= dtoSuffix %>$/, '');
+    return [
+      ...Object.values(error.constraints ?? {})
+        .slice(0, 1)
+        .map(message => ({ objectName, field, message })),
+      ...toFieldErrors(error.children ?? [], `${field}.`),
+    ];
+  });
+
+/** The validation of a request body failed, like the MethodArgumentNotValidException of Spring. */
+export class ValidationException extends ProblemException {
+  constructor(errors: ValidationError[]) {
+    super(HttpStatus.BAD_REQUEST, {
+      type: CONSTRAINT_VIOLATION_TYPE,
+      title: 'Method argument not valid',
+      message: ERR_VALIDATION,
+      fieldErrors: toFieldErrors(errors),
+    });
+  }
+}
+
+/** A bad request of an entity, like the BadRequestAlertException of JHipster Spring Boot. */
+export class BadRequestAlertException extends ProblemException {
+  constructor(
+    defaultMessage: string,
+    readonly entityName: string,
+    readonly errorKey: string,
+    type = DEFAULT_TYPE,
+  ) {
+    super(HttpStatus.BAD_REQUEST, { type, title: defaultMessage, message: `error.${errorKey}`, params: entityName });
+  }
+}
+<%_ if (generateUserManagement) { _%>
+
+export class LoginAlreadyUsedException extends BadRequestAlertException {
+  constructor() {
+    super('Login name already used!', 'userManagement', 'userexists', LOGIN_ALREADY_USED_TYPE);
+  }
+}
+
+export class EmailAlreadyUsedException extends BadRequestAlertException {
+  constructor() {
+    super('Email is already in use!', 'userManagement', 'emailexists', EMAIL_ALREADY_USED_TYPE);
+  }
+}
+
+export class InvalidPasswordException extends ProblemException {
+  constructor() {
+    super(HttpStatus.BAD_REQUEST, { type: INVALID_PASSWORD_TYPE, title: 'Incorrect password' });
+  }
+}
+<%_ } _%>
