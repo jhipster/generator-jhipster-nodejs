@@ -5,5 +5,11 @@ exports[`SubGenerator languages of nodejs JHipster blueprint > run > should succ
   ".yo-rc.json": {
     "stateCleared": "modified",
   },
+  "server/src/i18n/messages.properties": {
+    "stateCleared": "modified",
+  },
+  "server/src/i18n/messages_en.properties": {
+    "stateCleared": "modified",
+  },
 }
 `;

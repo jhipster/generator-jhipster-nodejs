@@ -105,6 +105,21 @@ describe('SubGenerator node-server of nodejs JHipster blueprint', () => {
       result.assertNoFile('server/webpack.server.prod.config.js');
     });
 
+    it('should convert the mail templates of JHipster Spring Boot to Handlebars', () => {
+      result.assertFileContent(
+        'server/src/templates/mail/activationEmail.hbs',
+        "<p>{{message 'email.activation.greeting' user.login}}</p>",
+      );
+      result.assertFileContent(
+        'server/src/templates/mail/creationEmail.hbs',
+        '<a href="{{baseUrl}}/account/reset/finish?key={{user.resetKey}}">{{baseUrl}}/account/reset/finish?key={{user.resetKey}}</a>',
+      );
+      result.assertFileContent('server/src/templates/mail/passwordResetEmail.hbs', "<title>{{message 'email.reset.title'}}</title>");
+      for (const template of ['activationEmail', 'creationEmail', 'passwordResetEmail']) {
+        result.assertNoFileContent(`server/src/templates/mail/${template}.hbs`, 'th:');
+      }
+    });
+
     it('should create the JWT secret', () => {
       const { jwtSecretKey } = result.fs.readJSON(join(result.cwd, '.yo-rc.json'))['generator-jhipster'];
       expect(jwtSecretKey).toBeTruthy();

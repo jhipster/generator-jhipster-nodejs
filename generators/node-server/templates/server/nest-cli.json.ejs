@@ -5,7 +5,7 @@
   "sourceRoot": "src",
   "compilerOptions": {
     "deleteOutDir": true,
-    "assets": [{ "include": "config/**/*", "outDir": "dist" }],
+    "assets": [{ "include": "config/**/*", "outDir": "dist" }<% if (generateUserManagement) { %>, { "include": "i18n/**/*", "outDir": "dist" }, { "include": "templates/**/*", "outDir": "dist" }<% } %>],
     "watchAssets": true
   }
 }

@@ -37,6 +37,9 @@
 <%_ } _%>
   },
   "dependencies": {
+<%_ if (generateUserManagement) { _%>
+    "@nestjs-modules/mailer": "<%- nodeServerDependencies['@nestjs-modules/mailer'] %>",
+<%_ } _%>
     "<%- nodeProdDatabaseDriver %>": "<%- nodeServerDependencies[nodeProdDatabaseDriver] %>",
 <%_ if (authenticationType === 'oauth2') { _%>
     "@nestjs/axios": "<%- nodeServerDependencies['@nestjs/axios'] %>",
@@ -73,6 +76,9 @@
     "dotenv": "<%- nodeServerDependencies['dotenv'] %>",
 <%_ if (serviceDiscoveryEureka) { _%>
     "@rocketsoftware/eureka-js-client": "<%- nodeServerDependencies['@rocketsoftware/eureka-js-client'] %>",
+<%_ } _%>
+<%_ if (generateUserManagement) { _%>
+    "handlebars": "<%- nodeServerDependencies['handlebars'] %>",
 <%_ } _%>
     "js-yaml": "<%- nodeServerDependencies['js-yaml'] %>",
 <%_ if (authenticationType === 'oauth2') { _%>
