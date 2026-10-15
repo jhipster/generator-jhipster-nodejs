@@ -20,6 +20,13 @@ eureka:
       defaultZone: http://admin:${jhipster.registry.password}@localhost:8761/eureka/
 
 <%_ } _%>
+<%_ if (serviceDiscoveryConsul) { _%>
+cloud:
+  consul:
+    discovery:
+      prefer-ip-address: true
+
+<%_ } _%>
 # ===================================================================
 # To enable TLS in production, generate a certificate using:
 # keytool -genkey -alias <%= baseName %> -storetype PKCS12 -keyalg RSA -keysize 2048 -keystore keystore.p12 -validity 3650

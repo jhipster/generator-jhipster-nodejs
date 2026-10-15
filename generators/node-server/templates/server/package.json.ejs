@@ -67,6 +67,9 @@
 <%_ if (serviceDiscoveryEureka) { _%>
     "cloud-config-client": "<%- nodeServerDependencies['cloud-config-client'] %>",
 <%_ } _%>
+<%_ if (serviceDiscoveryConsul) { _%>
+    "consul": "<%- nodeServerDependencies['consul'] %>",
+<%_ } _%>
     "dotenv": "<%- nodeServerDependencies['dotenv'] %>",
 <%_ if (serviceDiscoveryEureka) { _%>
     "@rocketsoftware/eureka-js-client": "<%- nodeServerDependencies['@rocketsoftware/eureka-js-client'] %>",

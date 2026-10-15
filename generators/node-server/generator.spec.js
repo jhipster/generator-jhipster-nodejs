@@ -324,6 +324,34 @@ describe('SubGenerator node-server of nodejs JHipster blueprint', () => {
     });
   });
 
+  describe('microservice with consul', () => {
+    beforeAll(async function () {
+      await helpers
+        .run(SUB_GENERATOR_NAMESPACE)
+        .withJHipsterConfig({
+          applicationType: 'microservice',
+          authenticationType: 'jwt',
+          serviceDiscoveryType: 'consul',
+          skipClient: true,
+        })
+        .withOptions({
+          ignoreNeedlesError: true,
+        })
+        .withJHipsterGenerators()
+        .withConfiguredBlueprint()
+        .withBlueprintConfig({});
+    });
+
+    it('should register in Consul with the health check of the application once it listens', () => {
+      result.assertFileContent('server/src/service/consul.service.ts', "config.get('cloud.consul.discovery.health-check-path')");
+      result.assertFileContent('server/src/service/consul.service.ts', 'beforeApplicationShutdown');
+      result.assertFileContent('server/src/app.module.ts', 'ConsulService,');
+      result.assertFileContent('server/src/main.ts', /await app\.listen\(port\);[\s\S]*app\.get\(ConsulService\)\.register/);
+      expect(result.fs.readJSON(join(result.cwd, 'server/package.json')).dependencies).toHaveProperty('consul');
+      result.assertNoFile('server/src/service/eureka.service.ts');
+    });
+  });
+
   describe('jwt microservice', () => {
     beforeAll(async function () {
       await helpers
