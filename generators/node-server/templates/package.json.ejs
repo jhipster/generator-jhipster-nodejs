@@ -27,9 +27,7 @@
   ],
   "devDependencies": {
     "@eslint/js": "<%- nodeServerDependencies['@eslint/js'] %>",
-<%_ if (clientFrameworkAny) { _%>
     "concurrently": "<%= nodeDependencies['concurrently'] %>",
-<%_ } _%>
     "eslint": "<%- nodeServerDependencies['eslint'] %>",
     "eslint-config-prettier": "<%- nodeServerDependencies['eslint-config-prettier'] %>",
     "globals": "<%- nodeServerDependencies['globals'] %>",
@@ -50,9 +48,9 @@
       "server"
   ],
   "scripts": {
+    "backend:start": "<%= clientPackageManager %> run start:server",
 <%_ if (clientFrameworkAny) { _%>
     "app:start": "<%= clientPackageManager %> run build && <%= clientPackageManager %> run start:prod -w server",
-    "backend:start": "<%= clientPackageManager %> run start:server",
     "ci:e2e:package": "<%= clientPackageManager %> run build",
     "ci:e2e:server:start": "BACKEND_ENV=test <%= clientPackageManager %> run start:prod -w server",
     "ci:server:await": "echo \"Waiting for server at port $npm_package_config_backend_port to start\" && wait-on -t 180000 http-get://127.0.0.1:$npm_package_config_backend_port/management/health && echo \"Server at port $npm_package_config_backend_port started\"",

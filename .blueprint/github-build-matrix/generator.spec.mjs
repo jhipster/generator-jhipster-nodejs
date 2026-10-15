@@ -15,7 +15,12 @@ describe(`generator - ${generator}`, async () => {
       });
 
       it('should match matrix value', () => {
-        expect(runResult.generator.matrix).toMatchSnapshot();
+        const { matrix } = runResult.generator;
+        // The node and npm versions are the ones generator-jhipster recommends, they change with generator-jhipster.
+        expect({
+          ...matrix,
+          include: matrix.include.map(job => ({ ...job, 'node-version': expect.any(String), 'npm-version': expect.any(String) })),
+        }).toMatchSnapshot();
       });
     });
   }
