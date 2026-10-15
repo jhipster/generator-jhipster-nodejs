@@ -192,10 +192,13 @@ describe('SubGenerator node-server of nodejs JHipster blueprint', () => {
           'lint:fix': 'npm run lint:fix --workspaces',
           start: 'npm run start:server',
           test: 'npm test --workspaces',
+          // The watch scripts of JHipster run the server alone without a client.
+          'backend:start': 'npm run start:server',
+          watch: 'concurrently npm:backend:start',
         },
       });
+      expect(result.fs.readJSON(join(result.cwd, 'package.json')).devDependencies).toHaveProperty('concurrently');
       result.assertNoFileContent('package.json', 'no client');
-      result.assertNoFileContent('package.json', 'concurrently');
       result.assertNoFileContent('package.json', 'wait-on');
     });
   });
