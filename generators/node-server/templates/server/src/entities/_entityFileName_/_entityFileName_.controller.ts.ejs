@@ -18,7 +18,7 @@ import { HeaderUtil } from '../../common/header-util.ts';
 import { isSortableProperty } from '../../common/sortable-properties.ts';
 import { Request } from '../../common/request.ts';
 
-import { BadRequestAlertException } from '../../common/errors/problem.exception.ts';
+import { BadRequestAlertException, ValidationException } from '../../common/errors/problem.exception.ts';
 
 const ENTITY_NAME = '<%= entityAlertName %>';
 <%_
@@ -161,7 +161,8 @@ export class <%= entityClass %>Controller {
     const patched = Object.assign(new <%= dtoClass %>(), { ...existing, ...<%= entityInstance %>DTO });
     const errors = await validate(patched, { forbidUnknownValues: false });
     if (errors.length > 0) {
-      throw new BadRequestException('Validation error');
+      // The errors of the fields, like the ValidationPipe of a PUT.
+      throw new ValidationException(errors);
     }
     const updated = await this.<%= entityInstance %>Service.update(patched, req.user?.login);
     HeaderUtil.addEntityUpdatedHeaders(req.res, ENTITY_NAME, id);
