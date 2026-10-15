@@ -323,7 +323,11 @@ _%>
             .send({ id: entityMock.id, <%= requiredField.fieldName %>: null })
             .expect(400)).body;
 
-        expect(error.message).toEqual('Validation error');
+        expect(error).toMatchObject({
+            type: 'https://www.jhipster.tech/problem/constraint-violation',
+            message: 'error.validation',
+            fieldErrors: [expect.objectContaining({ objectName: '<%= entityInstance %>', field: '<%= requiredField.fieldName %>' })],
+        });
     });
 
 <%_ } _%>
