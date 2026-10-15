@@ -4,6 +4,7 @@ import { extname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { extractSampleFiles } from 'generator-jhipster/ci';
+import { EnvironmentBuilder } from 'generator-jhipster/cli';
 import BaseCoreGenerator from 'generator-jhipster/generators/base-core';
 
 // The describe-samples module awaits its descriptions at its top level: imported when used, not with this generator,
@@ -65,7 +66,22 @@ export default class extends BaseCoreGenerator {
           const jdlFiles = (await readdir(this.destinationPath())).filter(file => file.endsWith('.jdl'));
           await this.composeWithJHipster('jdl', {
             generatorArgs: jdlFiles,
-            generatorOptions: { ...generatorOptions, workspaces: true, monorepository: true },
+            generatorOptions: {
+              ...generatorOptions,
+              workspaces: true,
+              monorepository: true,
+              // The applications of the workspace are projects of their own: the blueprint is given to them too.
+              globalBlueprints: this.blueprintPackage().name,
+              // The jdl generates the workspace in an environment of its own: built with this blueprint, like the cli of
+              // the blueprint builds its environment (the cli passes it to the jdl command only, not to generate-sample).
+              createEnvBuilder: (options, prepareOptions) =>
+                EnvironmentBuilder.create(options).prepare({
+                  blueprints: { [this.blueprintPackage().name]: this.blueprintPackage().version },
+                  lookups: [{ packagePaths: [root] }],
+                  devBlueprintPath: join(root, '.blueprint'),
+                  ...prepareOptions,
+                }),
+            },
           });
           return;
         }
@@ -84,11 +100,15 @@ export default class extends BaseCoreGenerator {
     });
   }
 
+  /** The package.json of the blueprint. */
+  blueprintPackage() {
+    return JSON.parse(readFileSync(join(root, 'package.json'), { encoding: 'utf-8' }));
+  }
+
   getDefaultComposeOptions() {
-    const packageJson = JSON.parse(readFileSync(join(root, 'package.json'), { encoding: 'utf-8' }));
     return {
       skipJhipsterDependencies: true,
-      projectVersion: `${packageJson.version}-git`,
+      projectVersion: `${this.blueprintPackage().version}-git`,
     };
   }
 }
