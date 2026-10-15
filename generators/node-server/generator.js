@@ -4,13 +4,14 @@ import { TEMPLATES_WEBAPP_SOURCES_DIR } from 'generator-jhipster';
 import BaseApplicationGenerator from 'generator-jhipster/generators/base-application';
 import { getEnumInfo } from 'generator-jhipster/generators/base-application/support';
 import { createNeedleCallback } from 'generator-jhipster/generators/base-core/support';
+import { createKeyStore } from 'generator-jhipster/generators/java/support';
 import { createBase64Secret, createReproducibleBase64Secret, mutateData } from 'generator-jhipster/utils';
 
 import { SERVER_NODEJS_SRC_DIR } from '../generator-nodejs-constants.js';
 
 import { entityFiles } from './entity-files.js';
 import { serverFiles } from './files.js';
-import { createSampleKeyStore, getDatabasePort, getNodeDevDatabaseType, getNodeDevSqliteDatabase } from './support/index.js';
+import { getDatabasePort, getNodeDevDatabaseType, getNodeDevSqliteDatabase } from './support/index.js';
 
 const fieldTypes = {
   Boolean: 'boolean',
@@ -322,21 +323,21 @@ export default class extends BaseApplicationGenerator {
           context: application,
         });
       },
-      async writeSampleKeyStore({ application }) {
+      writeSampleKeyStore({ application }) {
         // The keystore of the tls-samples profile, written once like the one of JHipster Spring Boot.
         const keyStoreFile = this.destinationPath(`${SERVER_NODEJS_SRC_DIR}/src/config/tls/keystore-samples.p12`);
         if (this.options.fakeKeytool) {
           this.writeDestination(keyStoreFile, 'fake key-tool');
         } else if (this.fs.exists(keyStoreFile)) {
+          // A write once file, written back as it is: the KeyStore is told apart from the files no generator writes.
+          this.writeDestination(keyStoreFile, this.fs.read(keyStoreFile, { raw: true }), { metadata: { writeOnce: true } });
           this.log.info(`KeyStore '${keyStoreFile}' already exists. Leaving unchanged.`);
         } else {
-          const { contents, result } = await createSampleKeyStore(keyStoreFile, {
-            packageName: application.packageName ?? application.baseName,
+          // Created with node:crypto, without the keytool of a JDK, like JHipster Spring Boot.
+          this.writeDestination(keyStoreFile, createKeyStore({ packageName: application.packageName ?? application.baseName }), {
+            metadata: { writeOnce: true },
           });
-          if (contents) {
-            this.writeDestination(keyStoreFile, contents);
-          }
-          this.validateResult(result);
+          this.log.info(`KeyStore '${keyStoreFile}' generated successfully.`);
         }
       },
     });
