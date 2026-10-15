@@ -3,8 +3,10 @@ import { STATUS_CODES } from 'http';
 import { ArgumentsHost, Catch, ExceptionFilter, HttpException, HttpStatus, Logger } from '@nestjs/common';
 import { Request, Response } from 'express';
 
+import { HeaderUtil } from '../../../common/header-util.ts';
+
 import { DEFAULT_TYPE } from './error-constants.ts';
-import { ProblemException } from './problem.exception.ts';
+import { BadRequestAlertException, ProblemException } from './problem.exception.ts';
 
 /**
  * Answers the errors as the problem details (RFC 9457, application/problem+json) of JHipster Spring Boot, which the
@@ -25,6 +27,10 @@ export class ProblemDetailsFilter implements ExceptionFilter {
     }
     if (response.headersSent) {
       return;
+    }
+    if (exception instanceof BadRequestAlertException) {
+      // Like the ExceptionTranslator of JHipster Spring Boot, the alert headers the JHipster clients read first.
+      HeaderUtil.addFailureAlertHeaders(response, exception.entityName, exception.errorKey);
     }
     response
       .status(status)

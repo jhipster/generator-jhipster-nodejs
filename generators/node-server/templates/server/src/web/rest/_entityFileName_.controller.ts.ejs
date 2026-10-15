@@ -3,7 +3,7 @@ const pkType = primaryKey.tsType;
 const idPipe = pkType === 'number' ? 'ParseIntPipe' : primaryKey.typeUUID ? 'ParseUUIDPipe' : undefined;
 const idParam = `@Param('id'${idPipe ? `, ${idPipe}` : ''}) id: ${pkType}`;
 _%>
-import { BadRequestException, Body, ClassSerializerInterceptor, Controller, Delete, Get, Logger, NotFoundException, Param,<% if (idPipe) { %> <%= idPipe %>,<% } %> Post as PostMethod, Put, UseGuards, Req, UseInterceptors } from '@nestjs/common';
+import { Body, ClassSerializerInterceptor, Controller, Delete, Get, Logger, NotFoundException, Param,<% if (idPipe) { %> <%= idPipe %>,<% } %> Post as PostMethod, Put, UseGuards, Req, UseInterceptors } from '@nestjs/common';
 import { <% if (authenticationType === 'jwt') { _%> ApiBearerAuth, <% } else if (authenticationType === 'oauth2') { _%> ApiSecurity, <% } _%> ApiTags, ApiResponse, ApiOperation } from '@nestjs/swagger';
 import { <%= dtoClass %> } from '../../service/dto/<%= entityFileName %>.dto.ts';
 import { <%= entityClass %>Service } from '../../service/<%= entityFileName %>.service.ts';
@@ -14,6 +14,8 @@ import { HeaderUtil } from '../../common/header-util.ts';
 import { isSortableProperty } from '../../common/sortable-properties.ts';
 <%_ } _%>
 import { Request } from '../../common/request.ts';
+
+import { BadRequestAlertException } from './errors/problem.exception.ts';
 
 const ENTITY_NAME = '<%= entityClass %>';
 <%_ if (typeormOrderSupport) { _%>
@@ -97,8 +99,7 @@ export class <%= entityClass %>Controller {
   async post(@Req() req: Request, @Body() <%= entityInstance %>DTO: <%= dtoClass %>): Promise<<%= dtoClass %>>  {
     if (<%= entityInstance %>DTO.id !== undefined && <%= entityInstance %>DTO.id !== null) {
       // Like JHipster Spring Boot, a new record cannot have an id: it would update an existing one.
-      HeaderUtil.addFailureAlertHeaders(req.res, ENTITY_NAME, 'idexists');
-      throw new BadRequestException('A new <%= entityInstance %> cannot already have an ID');
+      throw new BadRequestAlertException('A new <%= entityInstance %> cannot already have an ID', ENTITY_NAME, 'idexists');
     }
     const created = await this.<%= entityInstance %>Service.save(<%= entityInstance %>DTO, req.user?.login);
     HeaderUtil.addEntityCreatedHeaders(req.res, ENTITY_NAME, created.id);
@@ -140,17 +141,14 @@ export class <%= entityClass %>Controller {
    */
   private async validateIdForUpdate(req: Request, id: <%= pkType %>, <%= entityInstance %>DTO: Partial<<%= dtoClass %>> | undefined): Promise<<%= dtoClass %>> {
     if (<%= entityInstance %>DTO?.id === undefined || <%= entityInstance %>DTO.id === null) {
-      HeaderUtil.addFailureAlertHeaders(req.res, ENTITY_NAME, 'idnull');
-      throw new BadRequestException('Invalid id');
+      throw new BadRequestAlertException('Invalid id', ENTITY_NAME, 'idnull');
     }
     if (String(<%= entityInstance %>DTO.id) !== String(id)) {
-      HeaderUtil.addFailureAlertHeaders(req.res, ENTITY_NAME, 'idinvalid');
-      throw new BadRequestException('Invalid ID');
+      throw new BadRequestAlertException('Invalid ID', ENTITY_NAME, 'idinvalid');
     }
     const existing = await this.<%= entityInstance %>Service.findById(id);
     if (!existing) {
-      HeaderUtil.addFailureAlertHeaders(req.res, ENTITY_NAME, 'idnotfound');
-      throw new BadRequestException('Entity not found');
+      throw new BadRequestAlertException('Entity not found', ENTITY_NAME, 'idnotfound');
     }
     return existing;
   }
