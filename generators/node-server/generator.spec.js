@@ -297,6 +297,33 @@ describe('SubGenerator node-server of nodejs JHipster blueprint', () => {
       result.assertFileContent('server/src/module/auth.module.ts', 'ManagementController');
     });
   });
+  describe('microservice with eureka', () => {
+    beforeAll(async function () {
+      await helpers
+        .run(SUB_GENERATOR_NAMESPACE)
+        .withJHipsterConfig({
+          applicationType: 'microservice',
+          authenticationType: 'jwt',
+          serviceDiscoveryType: 'eureka',
+          skipClient: true,
+        })
+        .withOptions({
+          ignoreNeedlesError: true,
+        })
+        .withJHipsterGenerators()
+        .withConfiguredBlueprint()
+        .withBlueprintConfig({});
+    });
+
+    it('should register in the Eureka server of the defaultZone once the application listens', () => {
+      result.assertFileContent('server/src/service/eureka.service.ts', "config.get('eureka.client.service-url.defaultZone')");
+      result.assertFileContent('server/src/service/eureka.service.ts', 'beforeApplicationShutdown');
+      result.assertFileContent('server/src/app.module.ts', 'EurekaService,');
+      result.assertFileContent('server/src/main.ts', /await app\.listen\(port\);[\s\S]*app\.get\(EurekaService\)\.register/);
+      result.assertNoFileContent('server/src/main.ts', 'registerAsEurekaService');
+    });
+  });
+
   describe('jwt microservice', () => {
     beforeAll(async function () {
       await helpers

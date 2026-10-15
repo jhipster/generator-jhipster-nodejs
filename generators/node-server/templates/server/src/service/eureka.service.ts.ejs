@@ -1,0 +1,101 @@
+import { createRequire } from 'module';
+import { hostname } from 'os';
+
+import { BeforeApplicationShutdown, Injectable, Logger } from '@nestjs/common';
+
+import { config, isProfileActive } from '../config.ts';
+
+/** The client of eureka-js-client, which has no types. */
+interface EurekaClient {
+  start(callback: (error?: Error) => void): void;
+  stop(callback: (error?: Error) => void): void;
+  logger: { level(level: string): void };
+}
+
+/**
+ * The registration of the application in the Eureka server (the JHipster Registry), like Spring Cloud Netflix: at the
+ * eureka.client.service-url.defaultZone, once the application listens, with the intervals of the configuration, and
+ * cancelled when the application stops, so a gateway no longer routes to it.
+ */
+@Injectable()
+export class EurekaService implements BeforeApplicationShutdown {
+  private readonly logger = new Logger('EurekaService');
+  private client?: EurekaClient;
+
+  /** Registers the application listening on the port, when eureka.client.enabled. */
+  register(port: number): void {
+    if (!config.get('eureka.client.enabled')) {
+      return;
+    }
+    const serviceUrl = new URL(config.get('eureka.client.service-url.defaultZone'));
+    const appName = config.get('eureka.instance.appname');
+    const ipAddress = config.get('ipAddress') || '127.0.0.1';
+    const hostName = config.get('eureka.instance.prefer-ip-address') ? ipAddress : hostname();
+    const baseUrl = `http://${hostName}:${port}`;
+    const leaseRenewalInterval = Number(config.get('eureka.instance.lease-renewal-interval-in-seconds'));
+    const user = decodeURIComponent(serviceUrl.username) || config.get('jhipster.registry.username') || 'admin';
+    const password = decodeURIComponent(serviceUrl.password) || config.get('jhipster.registry.password') || 'admin';
+    const { Eureka } = createRequire(import.meta.url)('eureka-js-client');
+    const client: EurekaClient = new Eureka({
+      instance: {
+        app: appName,
+        instanceId: config.get('eureka.instance.instanceId'),
+        hostName,
+        ipAddr: ipAddress,
+        status: 'UP',
+        port: { $: port, '@enabled': 'true' },
+        // The service id Spring Cloud looks the instances up by (the routes of a JHipster gateway), like its spring.application.name.
+        vipAddress: appName,
+        homePageUrl: `${baseUrl}/`,
+        statusPageUrl: `${baseUrl}/management/info`,
+        healthCheckUrl: `${baseUrl}/management/health`,
+        leaseInfo: {
+          renewalIntervalInSecs: leaseRenewalInterval,
+          durationInSecs: Number(config.get('eureka.instance.lease-expiration-duration-in-seconds')),
+        },
+        dataCenterInfo: {
+          '@class': 'com.netflix.appinfo.InstanceInfo$DefaultDataCenterInfo',
+          name: 'MyOwn',
+        },
+      },
+      eureka: {
+        host: serviceUrl.hostname,
+        port: Number(serviceUrl.port) || (serviceUrl.protocol === 'https:' ? 443 : 80),
+        ssl: serviceUrl.protocol === 'https:',
+        servicePath: `${serviceUrl.pathname.replace(/\/$/, '')}/apps/`,
+        heartbeatInterval: leaseRenewalInterval * 1000,
+        registryFetchInterval: Number(config.get('eureka.client.registry-fetch-interval-seconds')) * 1000,
+        fetchRegistry: config.get('eureka.client.fetch-registry'),
+        registerWithEureka: config.get('eureka.client.register-with-eureka'),
+      },
+      requestMiddleware: (requestOpts: any, done: (requestOpts: any) => void): void => {
+        requestOpts.auth = { user, password };
+        done(requestOpts);
+      },
+    });
+    // The requests to the Eureka server are logged in development only.
+    client.logger.level(isProfileActive('dev') ? 'debug' : 'warn');
+    this.logger.log(`Registering ${appName} with Eureka at ${serviceUrl.host}`);
+    client.start(error => (error ? this.logger.error(`Eureka registration failed: ${error.message}`) : this.logger.log('Eureka registration complete')));
+    this.client = client;
+  }
+
+  /** Cancels the registration before the server stops, so a gateway no longer routes to the application. */
+  beforeApplicationShutdown(): Promise<void> {
+    const { client } = this;
+    if (!client) {
+      return Promise.resolve();
+    }
+    this.client = undefined;
+    return new Promise(resolve => {
+      client.stop(error => {
+        if (error) {
+          this.logger.warn(`Eureka deregistration failed: ${error.message}`);
+        } else {
+          this.logger.log('Eureka deregistration complete');
+        }
+        resolve();
+      });
+    });
+  }
+}

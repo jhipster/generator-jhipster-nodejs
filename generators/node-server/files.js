@@ -90,6 +90,11 @@ export const serverFiles = {
     },
     {
       path: SERVER_NODEJS_DIR,
+      condition: ctx => ctx.serviceDiscoveryEureka,
+      templates: ['src/service/eureka.service.ts'],
+    },
+    {
+      path: SERVER_NODEJS_DIR,
       // Helper of the MongoDB updates: the MongoDB driver of TypeORM ignores the update: false option.
       condition: ctx => ctx.databaseTypeMongodb,
       templates: ['src/common/updatable-properties.ts'],
