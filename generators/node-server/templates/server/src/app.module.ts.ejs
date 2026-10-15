@@ -2,6 +2,9 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { TypeOrmModule } from '@nestjs/typeorm';
+<%_ if (generateUserManagement) { _%>
+import { ScheduleModule } from '@nestjs/schedule';
+<%_ } _%>
 import { AuthModule } from './module/auth.module.ts';
 import { HealthModule } from './module/health.module.ts';
 import { ormConfig } from './orm.config.ts';
@@ -32,6 +35,10 @@ import { ServeStaticModule } from '@nestjs/serve-static';
         rootPath: config.getClientPath(),
       }),
     <%_ } _%>
+<%_ if (generateUserManagement) { _%>
+    // The scheduled tasks, like the removal of the users not activated (@Cron of UserService).
+    ScheduleModule.forRoot(),
+<%_ } _%>
     AuthModule,
     HealthModule,
   // jhipster-needle-add-entity-module-to-main - JHipster will add entity modules here, do not remove

@@ -6,6 +6,7 @@ import { HeaderUtil } from '../../common/header-util.ts';
 import { Request } from '../../common/request.ts';
 import {<%_ if (authenticationType === 'jwt') { _%> ApiBearerAuth, <%_ } else if (authenticationType === 'oauth2') { _%> ApiSecurity, <%_ } _%> ApiTags, ApiResponse, ApiOperation } from '@nestjs/swagger';
 import { UserService } from '../../service/user.service.ts';
+import { EmailAlreadyUsedException, LoginAlreadyUsedException } from './errors/problem.exception.ts';
 <%_ if (typeormOrderSupport) { _%>
 import { isSortableProperty } from '../../common/sortable-properties.ts';
 <%_ } _%>
@@ -68,6 +69,15 @@ export class UserController {
   })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
   async createUser(@Req() req: Request, @Body() userDTO: <%= user.dtoClass%>): Promise<<%= user.dtoClass%>> {
+      // Like JHipster Spring Boot, the login and the mail in lower case, each one of a single user.
+      userDTO.login = userDTO.login.toLowerCase();
+      userDTO.email = userDTO.email.toLowerCase();
+      if (await this.userService.findByFields({ where: { login: userDTO.login } })) {
+          throw new LoginAlreadyUsedException();
+      }
+      if (await this.userService.findByFields({ where: { email: userDTO.email } })) {
+          throw new EmailAlreadyUsedException();
+      }
       userDTO.password = userDTO.login;
       const created = await this.userService.save(userDTO, req.user?.login);
       HeaderUtil.addEntityCreatedHeaders(req.res, 'User', created.id);

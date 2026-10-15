@@ -74,12 +74,38 @@ describe('Account', () => {
         const createdUser: <%= user.dtoClass%> = (
             await request(app.getHttpServer())
                 .post('/api/register')
-                .send(testUserDTO)
+                .send({ ...testUserDTO, activated: true })
                 .expect(201)
         ).body;
 
-        expect(createdUser.login).toEqual(testUserDTO.login);
-        await service.delete(createdUser);
+        // Like JHipster Spring Boot, the login in lower case, and a user not activated whatever the request.
+        expect(createdUser.login).toEqual(testUserDTO.login.toLowerCase());
+        const registeredUser = (await service.findByFields({ where: { login: testUserDTO.login.toLowerCase() } }))!;
+        expect(registeredUser.activated).toBe(false);
+        await service.delete(registeredUser);
+    });
+
+    it('/POST register with the login of a not activated user replaces it', async () => {
+        await request(app.getHttpServer()).post('/api/register').send(testUserDTO).expect(201);
+        await request(app.getHttpServer())
+            .post('/api/register')
+            .send({ ...testUserDTO, email: 'usertest2@localhost.it' })
+            .expect(201);
+
+        const registeredUser = (await service.findByFields({ where: { login: testUserDTO.login.toLowerCase() } }))!;
+        expect(registeredUser.email).toEqual('usertest2@localhost.it');
+        await service.delete(registeredUser);
+    });
+
+    it('/POST register with a too short password is an invalid password problem', async () => {
+        const problem = (
+            await request(app.getHttpServer())
+                .post('/api/register')
+                .send({ ...testUserDTO, password: 'abc' })
+                .expect(400)
+        ).body;
+
+        expect(problem).toMatchObject({ type: 'https://www.jhipster.tech/problem/invalid-password' });
     });
 
     it('/POST register with the login of another user is a login already used problem', async () => {
@@ -169,6 +195,13 @@ describe('Account', () => {
             }).then(() => true, () => false);
 
         expect(successFullyLoggedInWithNewPassword).toEqual(true);
+    });
+
+    it<%- databaseTypeMongodb ? '.skip' : ''%>('logs in with the login in another case', async () => {
+        const loggedIn = await authService
+            .login({ username: testUserAuthenticated.login.toUpperCase(), password: testUserAuthenticated.password })
+            .then(() => true, () => false);
+        expect(loggedIn).toEqual(true);
     });
 
     it<%- databaseTypeMongodb ? '.skip' : ''%>('/POST change password with a wrong current password is an invalid password problem', async () => {

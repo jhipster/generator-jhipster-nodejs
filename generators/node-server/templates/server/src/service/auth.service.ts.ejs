@@ -32,6 +32,16 @@ import { ConfigService } from '@nestjs/config';
 <%_
 const userIdType = user?.primaryKey.tsType;
 _%>
+<%_ if (authenticationType === 'jwt' && generateBuiltInUserEntity) { _%>
+
+/** The length of a password, like the one of the ManagedUserVM of JHipster Spring Boot. */
+const PASSWORD_MIN_LENGTH = 4;
+const PASSWORD_MAX_LENGTH = 100;
+
+function isPasswordLengthInvalid(password?: string): boolean {
+  return !password || password.length < PASSWORD_MIN_LENGTH || password.length > PASSWORD_MAX_LENGTH;
+}
+<%_ } _%>
 
 
 @Injectable()
@@ -58,7 +68,8 @@ export class AuthService {
       throw new HttpException('Username and password are required!', HttpStatus.BAD_REQUEST);
     }
 
-    const userFind = await this.userService.findByFields({ where: { login: loginUserName } });
+    // The logins are in lower case, like the ones of JHipster Spring Boot.
+    const userFind = await this.userService.findByFields({ where: { login: loginUserName.toLowerCase() } });
     const validPassword = !!userFind && comparePassword(loginPassword, userFind.password);
     if (!userFind || !validPassword) {
       throw new HttpException('Invalid login name or password!', HttpStatus.UNAUTHORIZED);
@@ -147,18 +158,45 @@ export class AuthService {
     await this.userService.save(userFind, userFind.login, true);
   }
 
-  async registerNewUser (newUser: <%= user.dtoClass %>) : Promise<<%= user.dtoClass %>> {
-    let userFind = await this.userService.findByFields({ where: { login: newUser.login} });
-    if (userFind) {
+  /**
+   * Like JHipster Spring Boot, registers a user not activated, with the fields of the registration only, its login and
+   * mail in lower case: the not activated user of the same login or mail, if any, is removed first.
+   */
+  async registerNewUser(newUser: <%= user.dtoClass %>): Promise<<%= user.dtoClass %>> {
+    if (isPasswordLengthInvalid(newUser.password)) {
+      throw new InvalidPasswordException();
+    }
+    const login = newUser.login.toLowerCase();
+    const email = newUser.email.toLowerCase();
+    const userOfLogin = await this.userService.findByFields({ where: { login } });
+    if (userOfLogin && !(await this.removeNonActivatedUser(userOfLogin))) {
       throw new LoginAlreadyUsedException();
     }
-    userFind = await this.userService.findByFields({ where: { email: newUser.email } });
-    if (userFind) {
+    const userOfEmail = await this.userService.findByFields({ where: { email } });
+    if (userOfEmail && !(await this.removeNonActivatedUser(userOfEmail))) {
       throw new EmailAlreadyUsedException();
     }
-    newUser.authorities = ['ROLE_USER'];
-    const user = await this.userService.save(newUser, newUser.login, true);
-    return user;
+    const user: <%= user.dtoClass %> = {
+      login,
+      password: newUser.password,
+      firstName: newUser.firstName,
+      lastName: newUser.lastName,
+      email,
+      imageUrl: newUser.imageUrl,
+      langKey: newUser.langKey,
+      // new user is not active
+      activated: false,
+      authorities: ['ROLE_USER'],
+    };
+    return await this.userService.save(user, login, true);
+  }
+
+  private async removeNonActivatedUser(existingUser: <%= user.dtoClass %>): Promise<boolean> {
+    if (existingUser.activated) {
+      return false;
+    }
+    await this.userService.delete(existingUser);
+    return true;
   }
 
   async updateUserSettings(userLogin: string, newUserInfo: <%= user.dtoClass %>) : Promise<<%= user.dtoClass %>> {

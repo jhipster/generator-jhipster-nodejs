@@ -8,10 +8,18 @@ import { AuthGuard } from '../src/security/guards/auth.guard.ts';
 import { RolesGuard } from '../src/security/guards/roles.guard.ts';
 import { <%= user.dtoClass%> } from '../src/service/dto/user.dto.ts';
 import { UserService } from '../src/service/user.service.ts';
+<%_ if (databaseTypeMongodb) { _%>
+import { getRepositoryToken } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { User } from '../src/domain/user.entity.ts';
+<%_ } _%>
 
 describe('User', () => {
     let app: INestApplication;
     let service: UserService;
+<%_ if (databaseTypeMongodb) { _%>
+    let userRepository: Repository<User>;
+<%_ } _%>
 
     const authGuardMock = { canActivate: (): any => true };
     const rolesGuardMock = { canActivate: (): any => true };
@@ -31,6 +39,11 @@ describe('User', () => {
         password: 'userTestLogin'
     };
 
+<%_ if (databaseType !== 'mongodb') { _%>
+    // The user as the API gives it: without the keys the mails send.
+    const withoutKeys = ({ activationKey: _activationKey, resetKey: _resetKey, resetDate: _resetDate, ...user }: Partial<<%= user.dtoClass%>>): Partial<<%= user.dtoClass%>> => user;
+
+<%_ } _%>
     beforeEach(async () => {
         const moduleFixture: TestingModule = await Test.createTestingModule({
             imports: [AppModule],
@@ -45,6 +58,9 @@ describe('User', () => {
         configureApp(app);
         await app.init();
         service = moduleFixture.get<UserService>(UserService);
+<%_ if (databaseTypeMongodb) { _%>
+        userRepository = moduleFixture.get<Repository<User>>(getRepositoryToken(User));
+<%_ } _%>
     });
 
     it('/POST create user', async () => {
@@ -55,8 +71,39 @@ describe('User', () => {
                 .expect(201)
         ).body;
 
-        expect(createdUser.login).toEqual(testUserRequestObject.login);
+        // Like JHipster Spring Boot, the login in lower case.
+        expect(createdUser.login).toEqual(testUserRequestObject.login.toLowerCase());
         await service.delete(createdUser);
+    });
+
+    it('/POST create user with the login of another user is a login already used problem', async () => {
+        const savedUser = await service.save({ ...testUserDTO, login: 'usedlogin', email: 'usedlogin@localhost.it' });
+
+        const problem = (
+            await request(app.getHttpServer())
+                .post('/api/admin/users')
+                .send({ ...testUserRequestObject, login: 'UsedLogin' })
+                .expect(400)
+        ).body;
+
+        expect(problem).toMatchObject({ type: 'https://www.jhipster.tech/problem/login-already-used' });
+        await service.delete(savedUser);
+    });
+
+    it('removes the users not activated 3 days after their registration', async () => {
+        const registeredDate = new Date(Date.now() - 4 * 24 * 60 * 60 * 1000);
+        const notActivatedUser = await service.save({ ...testUserDTO, login: 'notactivated', email: 'notactivated@localhost.it', activated: false, activationKey: 'notActivatedKey', createdDate: registeredDate });
+        const recentUser = await service.save({ ...testUserDTO, login: 'recentuser', email: 'recentuser@localhost.it', activated: false, activationKey: 'recentKey' });
+
+<%_ if (databaseTypeMongodb) { _%>
+        // MongoDB gives the date of the creation whatever the saved user has.
+        await userRepository.update(notActivatedUser.id!, { createdDate: registeredDate });
+<%_ } _%>
+        await service.removeNotActivatedUsers();
+
+        expect(await service.findByFields({ where: { login: notActivatedUser.login } })).toBeFalsy();
+        expect(await service.findByFields({ where: { login: recentUser.login } })).toBeTruthy();
+        await service.delete(recentUser);
     });
 
     it('/POST create user with an invalid email is a validation error', async () => {
@@ -95,7 +142,7 @@ describe('User', () => {
         ).body;
 
         <%_ if (databaseType !== 'mongodb') { _%>
-        expect(updatedUser).toEqual(JSON.parse(JSON.stringify(savedUser)));
+        expect(updatedUser).toEqual(JSON.parse(JSON.stringify(withoutKeys(savedUser))));
         <%_ } else { _%>
         expect(updatedUser.firstName).toEqual(savedUser.firstName);
         <%_ } _%>
@@ -116,7 +163,7 @@ describe('User', () => {
         ).body;
 
         <%_ if (databaseType !== 'mongodb') { _%>
-        expect(updatedUser).toEqual(JSON.parse(JSON.stringify(savedUser)));
+        expect(updatedUser).toEqual(JSON.parse(JSON.stringify(withoutKeys(savedUser))));
         <%_ } else { _%>
         expect(updatedUser.firstName).toEqual(savedUser.firstName);
         <%_ } _%>
@@ -138,7 +185,7 @@ describe('User', () => {
         ).body;
 
         <%_ if (databaseType !== 'mongodb') { _%>
-        expect(getUser).toEqual(JSON.parse(JSON.stringify(savedUserWithoutPassword)));
+        expect(getUser).toEqual(JSON.parse(JSON.stringify(withoutKeys(savedUserWithoutPassword))));
         <%_ } else { _%>
         expect(getUser.login).toEqual(savedUser.login);
         <%_ } _%>
