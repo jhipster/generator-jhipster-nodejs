@@ -5,7 +5,7 @@ import { BeforeApplicationShutdown, Injectable, Logger } from '@nestjs/common';
 
 import { config, isProfileActive } from '../config.ts';
 
-/** The client of eureka-js-client, which has no types. */
+/** The client of eureka-js-client (the maintained fork of Rocket Software), which has no types. */
 interface EurekaClient {
   start(callback: (error?: Error) => void): void;
   stop(callback: (error?: Error) => void): void;
@@ -35,7 +35,7 @@ export class EurekaService implements BeforeApplicationShutdown {
     const leaseRenewalInterval = Number(config.get('eureka.instance.lease-renewal-interval-in-seconds'));
     const user = decodeURIComponent(serviceUrl.username) || config.get('jhipster.registry.username') || 'admin';
     const password = decodeURIComponent(serviceUrl.password) || config.get('jhipster.registry.password') || 'admin';
-    const { Eureka } = createRequire(import.meta.url)('eureka-js-client');
+    const { Eureka } = createRequire(import.meta.url)('@rocketsoftware/eureka-js-client');
     const client: EurekaClient = new Eureka({
       instance: {
         app: appName,
