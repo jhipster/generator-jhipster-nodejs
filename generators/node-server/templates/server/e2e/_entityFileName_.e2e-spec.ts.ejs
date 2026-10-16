@@ -214,6 +214,7 @@ _%>
             .expect(400);
 
         expect(alertHeader(response.headers, '-error')).toBe('error.idexists');
+        expect(response.body).toMatchObject({ message: 'error.idexists', params: '<%= entityClass %>' });
         expect(alertHeader(response.headers, '-params')).toBe('<%= entityClass %>');
     });
 
@@ -264,6 +265,7 @@ _%>
             .expect(400);
 
         expect(alertHeader(response.headers, '-error')).toBe('error.idinvalid');
+        expect(response.body).toMatchObject({ message: 'error.idinvalid', params: '<%= entityClass %>' });
     });
 
     it('/PUT update <%= entityApiUrl %> without id', async () => {
@@ -273,6 +275,7 @@ _%>
             .expect(400);
 
         expect(alertHeader(response.headers, '-error')).toBe('error.idnull');
+        expect(response.body).toMatchObject({ message: 'error.idnull', params: '<%= entityClass %>' });
     });
 
     it('/PUT update an unknown <%= entityApiUrl %>', async () => {
@@ -282,6 +285,7 @@ _%>
             .expect(400);
 
         expect(alertHeader(response.headers, '-error')).toBe('error.idnotfound');
+        expect(response.body).toMatchObject({ message: 'error.idnotfound', params: '<%= entityClass %>' });
     });
 
     it('/DELETE <%= entityApiUrl %>', async () => {
