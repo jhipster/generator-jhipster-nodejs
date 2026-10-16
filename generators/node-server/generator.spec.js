@@ -229,9 +229,10 @@ describe('SubGenerator node-server of nodejs JHipster blueprint', () => {
           watch: 'concurrently npm:backend:start',
         },
       });
+      // generator-jhipster adds concurrently and wait-on to every application.
       expect(result.fs.readJSON(join(result.cwd, 'package.json')).devDependencies).toHaveProperty('concurrently');
+      expect(result.fs.readJSON(join(result.cwd, 'package.json')).devDependencies).toHaveProperty('wait-on');
       result.assertNoFileContent('package.json', 'no client');
-      result.assertNoFileContent('package.json', 'wait-on');
     });
   });
   describe('with mariadb', () => {
