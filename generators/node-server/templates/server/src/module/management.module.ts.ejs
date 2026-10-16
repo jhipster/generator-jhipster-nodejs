@@ -1,0 +1,9 @@
+import { Module } from '@nestjs/common';
+
+import { LoggersController } from '../web/rest/loggers.controller.ts';
+
+/** The management endpoints of Spring Boot Actuator the admin pages of the JHipster clients use. */
+@Module({
+  controllers: [LoggersController],
+})
+export class ManagementModule {}

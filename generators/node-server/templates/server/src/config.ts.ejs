@@ -10,7 +10,8 @@ const logger = new Logger('Config');
 export class Config {
   [key: string]: any;
 
-  debugLogging = 'debug';
+  // The level of the loggers without a level of their own, like Spring Boot.
+  'logging.level.ROOT' = 'INFO';
   'server.port' = '<%= serverPort %>';
   'jhipster.clientApp.name' = '<%= baseName %>';
 <%_ if (serviceDiscoveryEureka) { _%>

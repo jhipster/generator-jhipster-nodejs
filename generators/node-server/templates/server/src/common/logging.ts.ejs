@@ -1,0 +1,118 @@
+import { ConsoleLogger, LogLevel } from '@nestjs/common';
+
+/** The levels of Spring Boot, from the most to the least restrictive, as the loggers endpoint gives them. */
+export const LEVELS = ['OFF', 'ERROR', 'WARN', 'INFO', 'DEBUG', 'TRACE'] as const;
+
+export type Level = (typeof LEVELS)[number];
+
+/** The root logger, the level of the loggers without a level of their own, like the ROOT of Spring Boot. */
+export const ROOT = 'ROOT';
+
+/** The level of Spring Boot a log level of Nest needs to be printed. */
+const NEST_LEVELS: Record<LogLevel, Level> = {
+  fatal: 'ERROR',
+  error: 'ERROR',
+  warn: 'WARN',
+  log: 'INFO',
+  debug: 'DEBUG',
+  verbose: 'TRACE',
+};
+
+export interface LoggerLevel {
+  configuredLevel: Level | null;
+  effectiveLevel: Level;
+}
+
+export function isLevel(level: unknown): level is Level {
+  return typeof level === 'string' && (LEVELS as readonly string[]).includes(level.toUpperCase());
+}
+
+/**
+ * The levels of the loggers, like the logging system of Spring Boot: a logger is the context of a Nest logger, like
+ * `AuthService`, with the level of its own (`logging.level.AuthService`), else the one of its parent (`a.b` for
+ * `a.b.c`), else the one of the ROOT logger. The loggers endpoint reads and changes them while the application runs.
+ */
+export class LoggerLevels {
+  private readonly configured = new Map<string, Level>([[ROOT, 'INFO']]);
+
+  /** The loggers that printed something, listed by the loggers endpoint with the configured ones. */
+  private readonly known = new Set<string>([ROOT]);
+
+  /** Sets the levels of the `logging.level.<logger>` properties of the configuration. */
+  configure(properties: Record<string, unknown>): void {
+    for (const [key, value] of Object.entries(properties)) {
+      if (key.startsWith('logging.level.') && isLevel(value)) {
+        this.setLevel(key.substring('logging.level.'.length), value.toUpperCase() as Level);
+      }
+    }
+  }
+
+  /** Sets the level of a logger, or removes it with null (the ROOT logger keeps a level). */
+  setLevel(name: string, level: Level | null): void {
+    this.known.add(name);
+    if (level) {
+      this.configured.set(name, level);
+    } else if (name !== ROOT) {
+      this.configured.delete(name);
+    }
+  }
+
+  getLevel(name: string): LoggerLevel {
+    return { configuredLevel: this.configured.get(name) ?? null, effectiveLevel: this.effectiveLevel(name) };
+  }
+
+  /** Every known logger by name, the ROOT logger first then by name, like the loggers endpoint of Spring Boot. */
+  getLevels(): Record<string, LoggerLevel> {
+    const names = [...new Set([...this.known, ...this.configured.keys()])].sort((a, b) =>
+      a === ROOT ? -1 : b === ROOT ? 1 : a.localeCompare(b),
+    );
+    return Object.fromEntries(names.map(name => [name, this.getLevel(name)]));
+  }
+
+  isEnabled(name: string | undefined, logLevel: LogLevel): boolean {
+    const logger = name || ROOT;
+    this.known.add(logger);
+    return LEVELS.indexOf(NEST_LEVELS[logLevel]) <= LEVELS.indexOf(this.effectiveLevel(logger));
+  }
+
+  private effectiveLevel(name: string): Level {
+    for (let logger: string | undefined = name; logger; logger = parentOf(logger)) {
+      const level = this.configured.get(logger);
+      if (level) {
+        return level;
+      }
+    }
+    return this.configured.get(ROOT)!;
+  }
+}
+
+function parentOf(name: string): string | undefined {
+  const index = name.lastIndexOf('.');
+  return index > 0 ? name.substring(0, index) : undefined;
+}
+
+/** The levels of the loggers of the application. */
+export const loggerLevels = new LoggerLevels();
+
+/**
+ * The logger of the application: prints a message when the level of its logger allows it (loggerLevels), instead of the
+ * levels Nest applies to every logger.
+ */
+export class LevelsConsoleLogger extends ConsoleLogger {
+  constructor(private readonly levels: LoggerLevels = loggerLevels) {
+    super({ logLevels: ['verbose', 'debug', 'log', 'warn', 'error', 'fatal'] });
+  }
+
+  protected printMessages(
+    messages: unknown[],
+    context?: string,
+    logLevel: LogLevel = 'log',
+    writeStreamType?: 'stdout' | 'stderr',
+    errorStack?: unknown,
+    params?: Record<string, any>,
+  ): void {
+    if (this.levels.isEnabled(context, logLevel)) {
+      super.printMessages(messages, context, logLevel, writeStreamType, errorStack, params);
+    }
+  }
+}

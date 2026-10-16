@@ -38,6 +38,10 @@ export const serverFiles = {
         'src/web/rest/management.controller.ts',
         'src/web/rest/health.controller.ts',
         'src/module/health.module.ts',
+        'src/module/management.module.ts',
+        'src/web/rest/loggers.controller.ts',
+        'src/common/logging.ts',
+        'test/common/logging.spec.ts',
         'src/security/decorators/auth-user.decorator.ts',
         'src/module/auth.module.ts',
         'src/config/application-dev.yml',
@@ -109,7 +113,7 @@ export const serverFiles = {
   e2e: [
     {
       path: SERVER_NODEJS_DIR,
-      templates: ['e2e/app.e2e-spec.ts', 'e2e/setup.test.js'],
+      templates: ['e2e/app.e2e-spec.ts', 'e2e/management.e2e-spec.ts', 'e2e/setup.test.js'],
     },
     {
       path: SERVER_NODEJS_DIR,
