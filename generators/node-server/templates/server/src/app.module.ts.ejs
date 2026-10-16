@@ -7,6 +7,9 @@ import { HealthModule } from './module/health.module.ts';
 import { ormConfig } from './orm.config.ts';
 import { configuration } from './config.ts';
 import { LoggingInterceptor } from './common/interceptors/logging.interceptor.ts';
+<%_ if (serviceDiscoveryEureka) { _%>
+import { EurekaService } from './service/eureka.service.ts';
+<%_ } _%>
 <%_ if (!skipClient) { _%>
 import { config } from './config.ts';
 import { ServeStaticModule } from '@nestjs/serve-static';
@@ -39,6 +42,10 @@ import { ServeStaticModule } from '@nestjs/serve-static';
   providers: [
     // Logs the requests of every controller, opt out with @SkipLogging().
     { provide: APP_INTERCEPTOR, useClass: LoggingInterceptor },
+<%_ if (serviceDiscoveryEureka) { _%>
+    // The registration in the Eureka server, started by main.ts once the application listens.
+    EurekaService,
+<%_ } _%>
   // jhipster-needle-add-service-module-to-main - JHipster will add service modules here, do not remove
   ],
 })
