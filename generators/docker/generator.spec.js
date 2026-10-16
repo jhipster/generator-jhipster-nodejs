@@ -22,5 +22,9 @@ describe('SubGenerator docker of nodejs JHipster blueprint', () => {
     it('should succeed', () => {
       expect(result.getStateSnapshot()).toMatchSnapshot();
     });
+
+    it('should publish the application on the loopback interface of the host, like JHipster Spring Boot', () => {
+      result.assertFileContent('docker/app.yml', '- 127.0.0.1:8080:8080');
+    });
   });
 });
