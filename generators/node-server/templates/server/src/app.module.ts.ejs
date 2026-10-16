@@ -7,6 +7,7 @@ import { ScheduleModule } from '@nestjs/schedule';
 <%_ } _%>
 import { AuthModule } from './module/auth.module.ts';
 import { HealthModule } from './module/health.module.ts';
+import { ManagementModule } from './module/management.module.ts';
 import { ormConfig } from './orm.config.ts';
 import { configuration } from './config.ts';
 import { LoggingInterceptor } from './common/interceptors/logging.interceptor.ts';
@@ -41,6 +42,7 @@ import { ServeStaticModule } from '@nestjs/serve-static';
 <%_ } _%>
     AuthModule,
     HealthModule,
+    ManagementModule,
   // jhipster-needle-add-entity-module-to-main - JHipster will add entity modules here, do not remove
   ],
   controllers: [

@@ -12,6 +12,7 @@ import { <% if (serviceDiscoveryEureka) { %>activeProfiles, <% } %>config, isPro
 import { EurekaService } from './service/eureka.service.ts';
 <%_ } _%>
 import { Logger } from '@nestjs/common';
+import { LevelsConsoleLogger, loggerLevels } from './common/logging.ts';
 <%_ if (!skipClient) { _%>
 import * as fs from 'fs';
 <%_ } _%>
@@ -19,6 +20,10 @@ import * as fs from 'fs';
 import passport from 'passport';
 import session from 'express-session';
 <%_ } _%>
+// The levels of the loggers (logging.level.* of the configuration), like Spring Boot, the loggers endpoint changes them.
+loggerLevels.configure(config);
+const appLogger = new LevelsConsoleLogger();
+Logger.overrideLogger(appLogger);
 const logger: Logger = new Logger('Main');
 const port = process.env.NODE_SERVER_PORT || config.get('server.port');
 <%_ if (serviceDiscoveryEureka) { _%>
@@ -28,11 +33,12 @@ const useJHipsterRegistry = config.get('eureka.client.enabled');
 async function bootstrap(): Promise<void> {
 <%_ if (serviceDiscoveryEureka) { _%>
   await loadCloudConfig();
+  loggerLevels.configure(config);
 <%_ } _%>
 
   // abortOnError: false: an error of the initialization (the database still unreachable after the retries) rejects
   // to the catch of bootstrap() below, instead of Nest stopping the process by itself.
-  const app = await NestFactory.create(AppModule, { abortOnError: false });
+  const app = await NestFactory.create(AppModule, { abortOnError: false, logger: appLogger });
   // Close the application (HTTP server, database connections) on SIGTERM, the signal docker stop sends.
   app.enableShutdownHooks();
   // CORS, global validation and HTTP settings, shared with the e2e tests.

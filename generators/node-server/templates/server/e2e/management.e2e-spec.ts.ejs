@@ -1,0 +1,73 @@
+import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+import { Test, TestingModule } from '@nestjs/testing';
+import request from 'supertest';
+import { INestApplication } from '@nestjs/common';
+import { AppModule } from '../src/app.module.ts';
+import { configureApp } from '../src/app.config.ts';
+import { loggerLevels } from '../src/common/logging.ts';
+import { AuthGuard } from '../src/security/guards/auth.guard.ts';
+import { RolesGuard } from '../src/security/guards/roles.guard.ts';
+
+describe('Management', () => {
+    let app: INestApplication;
+
+    const createApp = async (guards: boolean): Promise<INestApplication> => {
+        let builder = Test.createTestingModule({ imports: [AppModule] });
+        if (!guards) {
+            // An administrator.
+            builder = builder.overrideGuard(AuthGuard).useValue({ canActivate: () => true }).overrideGuard(RolesGuard).useValue({ canActivate: () => true });
+        }
+        const moduleFixture: TestingModule = await builder.compile();
+        const nestApp = moduleFixture.createNestApplication();
+        configureApp(nestApp);
+        await nestApp.init();
+        return nestApp;
+    };
+
+    afterEach(async () => {
+        loggerLevels.setLevel('ManagementTest', null);
+        await app?.close();
+    });
+
+    describe('as an administrator', () => {
+        beforeEach(async () => {
+            app = await createApp(false);
+        });
+
+        it('/GET loggers gives the levels and the ROOT logger', async () => {
+            const { body } = await request(app.getHttpServer()).get('/management/loggers').expect(200);
+
+            expect(body.levels).toEqual(['OFF', 'ERROR', 'WARN', 'INFO', 'DEBUG', 'TRACE']);
+            expect(Object.keys(body.loggers)[0]).toBe('ROOT');
+            expect(body.loggers.ROOT.configuredLevel).toEqual(expect.any(String));
+        });
+
+        it('/POST loggers changes the level of a logger, and null gives it the ROOT level again', async () => {
+            await request(app.getHttpServer()).post('/management/loggers/ManagementTest').send({ configuredLevel: 'TRACE' }).expect(204);
+            await request(app.getHttpServer())
+                .get('/management/loggers/ManagementTest')
+                .expect(200)
+                .expect({ configuredLevel: 'TRACE', effectiveLevel: 'TRACE' });
+
+            await request(app.getHttpServer()).post('/management/loggers/ManagementTest').send({ configuredLevel: null }).expect(204);
+            const { body } = await request(app.getHttpServer()).get('/management/loggers/ManagementTest').expect(200);
+            expect(body).toEqual({ configuredLevel: null, effectiveLevel: loggerLevels.getLevel('ROOT').effectiveLevel });
+        });
+
+        it('/POST loggers with an unknown level is a bad request', () =>
+            request(app.getHttpServer()).post('/management/loggers/ManagementTest').send({ configuredLevel: 'LOUD' }).expect(400));
+    });
+
+<%_ if (authenticationTypeJwt) { _%>
+    describe('without authentication', () => {
+        beforeEach(async () => {
+            app = await createApp(true);
+        });
+
+        it('/GET loggers is refused', async () => {
+            const { status } = await request(app.getHttpServer()).get('/management/loggers');
+            expect([401, 403]).toContain(status);
+        });
+    });
+<%_ } _%>
+});

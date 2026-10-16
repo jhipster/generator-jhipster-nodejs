@@ -20,6 +20,12 @@ eureka:
       defaultZone: http://admin:${jhipster.registry.password}@localhost:8761/eureka/
 
 <%_ } _%>
+# The level of the loggers, like Spring Boot: ROOT for the loggers without a level of their own, a logger by the
+# context of its Nest logger (like AuthService: DEBUG). The logs page of the client changes them while it runs.
+logging:
+  level:
+    ROOT: DEBUG
+
 server:
   port: <%= serverPort %>
 

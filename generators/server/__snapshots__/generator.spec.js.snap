@@ -71,6 +71,9 @@ exports[`SubGenerator server of nodejs JHipster blueprint > run > should succeed
   "server/e2e/foo.e2e-spec.ts": {
     "stateCleared": "modified",
   },
+  "server/e2e/management.e2e-spec.ts": {
+    "stateCleared": "modified",
+  },
   "server/e2e/setup.test.js": {
     "stateCleared": "modified",
   },
@@ -102,6 +105,9 @@ exports[`SubGenerator server of nodejs JHipster blueprint > run > should succeed
     "stateCleared": "modified",
   },
   "server/src/common/interceptors/logging.interceptor.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/common/logging.ts": {
     "stateCleared": "modified",
   },
   "server/src/common/request.ts": {
@@ -165,6 +171,9 @@ exports[`SubGenerator server of nodejs JHipster blueprint > run > should succeed
     "stateCleared": "modified",
   },
   "server/src/module/health.module.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/module/management.module.ts": {
     "stateCleared": "modified",
   },
   "server/src/module/user.module.ts": {
@@ -257,6 +266,9 @@ exports[`SubGenerator server of nodejs JHipster blueprint > run > should succeed
   "server/src/web/rest/health.controller.ts": {
     "stateCleared": "modified",
   },
+  "server/src/web/rest/loggers.controller.ts": {
+    "stateCleared": "modified",
+  },
   "server/src/web/rest/management.controller.ts": {
     "stateCleared": "modified",
   },
@@ -276,6 +288,9 @@ exports[`SubGenerator server of nodejs JHipster blueprint > run > should succeed
     "stateCleared": "modified",
   },
   "server/test/common/logging.interceptor.spec.ts": {
+    "stateCleared": "modified",
+  },
+  "server/test/common/logging.spec.ts": {
     "stateCleared": "modified",
   },
   "server/test/config.spec.ts": {
