@@ -1,0 +1,198 @@
+import { CallHandler, ExecutionContext, Injectable, NestInterceptor } from '@nestjs/common';
+import { Request, Response } from 'express';
+import { availableParallelism, cpus, loadavg } from 'os';
+import { Gauge, Registry, Summary, collectDefaultMetrics } from 'prom-client';
+import { Observable } from 'rxjs';
+import { getHeapSpaceStatistics, getHeapStatistics } from 'v8';
+
+/** The max, mean and count of requests, in milliseconds, like the timers of the jhimetrics endpoint. */
+export interface MaxMeanCount {
+  max: number;
+  mean: number;
+  count: number;
+}
+
+export interface MemoryMetrics {
+  committed: number;
+  max: number;
+  used: number;
+}
+
+/**
+ * The metrics of the jhimetrics endpoint of JHipster Spring Boot the metrics page of the JHipster clients reads, for a
+ * Node.js process: the memory of its V8 heap and of each of its spaces instead of the JVM memory pools, its processor
+ * use, and the HTTP requests by status and by endpoint. Without the sections Node.js has no equivalent of (garbage
+ * collector, caches, connection pool), which the page shows only when present.
+ */
+export interface JHipsterMetrics {
+  jvm: Record<string, MemoryMetrics>;
+  'http.server.requests': { all: { count: number }; percode: Record<string, MaxMeanCount> };
+  services: Record<string, Record<string, MaxMeanCount>>;
+  processMetrics: {
+    'system.cpu.usage': number;
+    'system.cpu.count': number;
+    'system.load.average.1m': number;
+    'process.cpu.usage': number;
+    'process.start.time': number;
+    'process.uptime': number;
+  };
+}
+
+class Timer {
+  count = 0;
+  total = 0;
+  max = 0;
+
+  record(milliseconds: number): void {
+    this.count += 1;
+    this.total += milliseconds;
+    this.max = Math.max(this.max, milliseconds);
+  }
+
+  get maxMeanCount(): MaxMeanCount {
+    return { max: this.max, mean: this.count ? this.total / this.count : 0, count: this.count };
+  }
+}
+
+const timerOf = <K>(timers: Map<K, Timer>, key: K): Timer => {
+  let timer = timers.get(key);
+  if (!timer) {
+    timer = new Timer();
+    timers.set(key, timer);
+  }
+  return timer;
+};
+
+/**
+ * The metrics of the application: the default metrics of prom-client (process, Node.js) and the HTTP requests like
+ * the http.server.requests timer of Micrometer, given in the format of Prometheus by the prometheus endpoint and in the
+ * one of the jhimetrics endpoint.
+ */
+@Injectable()
+export class MetricsService {
+  readonly registry = new Registry();
+
+  private readonly requests: Summary<'method' | 'uri' | 'status' | 'outcome'>;
+
+  private readonly requestsMax: Gauge<'method' | 'uri' | 'status' | 'outcome'>;
+
+  private readonly byStatus = new Map<number, Timer>();
+
+  private readonly byService = new Map<string, Map<string, Timer>>();
+
+  private readonly maxByLabels = new Map<string, number>();
+
+  private lastCpu = { time: process.hrtime.bigint(), usage: process.cpuUsage(), system: cpuTimes() };
+
+  constructor() {
+    collectDefaultMetrics({ register: this.registry });
+    this.requests = new Summary({
+      name: 'http_server_requests_seconds',
+      help: 'Duration of the HTTP server requests',
+      labelNames: ['method', 'uri', 'status', 'outcome'],
+      percentiles: [],
+      registers: [this.registry],
+    });
+    this.requestsMax = new Gauge({
+      name: 'http_server_requests_seconds_max',
+      help: 'Maximum duration of the HTTP server requests',
+      labelNames: ['method', 'uri', 'status', 'outcome'],
+      registers: [this.registry],
+    });
+  }
+
+  /** Records a request by the path of its route, like `/api/regions/:id`, not by its URL. */
+  recordRequest(method: string, uri: string, status: number, milliseconds: number): void {
+    const labels = { method, uri, status: String(status), outcome: outcomeOf(status) };
+    this.requests.observe(labels, milliseconds / 1000);
+    const labelsKey = `${method} ${uri} ${status}`;
+    const max = Math.max(this.maxByLabels.get(labelsKey) ?? 0, milliseconds);
+    this.maxByLabels.set(labelsKey, max);
+    this.requestsMax.set(labels, max / 1000);
+    timerOf(this.byStatus, status).record(milliseconds);
+    const serviceTimers = this.byService.get(uri) ?? new Map<string, Timer>();
+    this.byService.set(uri, serviceTimers);
+    timerOf(serviceTimers, method).record(milliseconds);
+  }
+
+  async prometheus(): Promise<string> {
+    return this.registry.metrics();
+  }
+
+  jhipsterMetrics(): JHipsterMetrics {
+    const heap = getHeapStatistics();
+    const jvm: Record<string, MemoryMetrics> = {
+      heap: { used: heap.used_heap_size, committed: heap.total_heap_size, max: heap.heap_size_limit },
+    };
+    // The spaces of the heap, without the ones V8 does not use (nothing reserved and nothing available).
+    for (const space of getHeapSpaceStatistics().filter(space => space.space_size > 0 || space.space_available_size > 0)) {
+      jvm[space.space_name] = {
+        used: space.space_used_size,
+        committed: space.space_size,
+        max: space.space_size + space.space_available_size,
+      };
+    }
+    const percode = Object.fromEntries([...this.byStatus].map(([status, timer]) => [String(status), timer.maxMeanCount]));
+    const services = Object.fromEntries(
+      [...this.byService].map(([uri, timers]) => [uri, Object.fromEntries([...timers].map(([method, timer]) => [method, timer.maxMeanCount]))]),
+    );
+    return {
+      jvm,
+      'http.server.requests': { all: { count: [...this.byStatus.values()].reduce((count, timer) => count + timer.count, 0) }, percode },
+      services,
+      processMetrics: { ...this.cpuUsage(), 'process.start.time': Date.now() - process.uptime() * 1000, 'process.uptime': process.uptime() * 1000 },
+    };
+  }
+
+  /** The processor use of the process and of the system since the previous call, between 0 and 1. */
+  private cpuUsage(): Pick<JHipsterMetrics['processMetrics'], 'system.cpu.usage' | 'system.cpu.count' | 'system.load.average.1m' | 'process.cpu.usage'> {
+    const now = { time: process.hrtime.bigint(), usage: process.cpuUsage(), system: cpuTimes() };
+    const count = availableParallelism();
+    const elapsedMicroseconds = Number(now.time - this.lastCpu.time) / 1000;
+    const processMicroseconds = now.usage.user - this.lastCpu.usage.user + now.usage.system - this.lastCpu.usage.system;
+    const systemTotal = now.system.total - this.lastCpu.system.total;
+    const systemIdle = now.system.idle - this.lastCpu.system.idle;
+    this.lastCpu = now;
+    return {
+      'system.cpu.usage': systemTotal > 0 ? (systemTotal - systemIdle) / systemTotal : 0,
+      'system.cpu.count': count,
+      'system.load.average.1m': loadavg()[0],
+      'process.cpu.usage': elapsedMicroseconds > 0 ? Math.min(1, processMicroseconds / elapsedMicroseconds / count) : 0,
+    };
+  }
+}
+
+function cpuTimes(): { total: number; idle: number } {
+  return cpus().reduce(
+    (times, { times: { user, nice, sys, idle, irq } }) => ({ total: times.total + user + nice + sys + idle + irq, idle: times.idle + idle }),
+    { total: 0, idle: 0 },
+  );
+}
+
+function outcomeOf(status: number): string {
+  if (status < 200) return 'INFORMATIONAL';
+  if (status < 300) return 'SUCCESS';
+  if (status < 400) return 'REDIRECTION';
+  return status < 500 ? 'CLIENT_ERROR' : 'SERVER_ERROR';
+}
+
+/** Records every request handled by a controller in the MetricsService, once its response is sent. */
+@Injectable()
+export class MetricsInterceptor implements NestInterceptor {
+  constructor(private readonly metricsService: MetricsService) {}
+
+  intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
+    if (context.getType() !== 'http') {
+      return next.handle();
+    }
+    const request = context.switchToHttp().getRequest<Request>();
+    const response = context.switchToHttp().getResponse<Response>();
+    const start = process.hrtime.bigint();
+    // Recorded once the response is sent, with the status the exception filters set.
+    response.once('finish', () => {
+      const uri: string = request.route?.path ?? 'UNKNOWN';
+      this.metricsService.recordRequest(request.method, uri, response.statusCode, Number(process.hrtime.bigint() - start) / 1e6);
+    });
+    return next.handle();
+  }
+}

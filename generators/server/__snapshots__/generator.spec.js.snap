@@ -110,6 +110,9 @@ exports[`SubGenerator server of nodejs JHipster blueprint > run > should succeed
   "server/src/common/logging.ts": {
     "stateCleared": "modified",
   },
+  "server/src/common/metrics.ts": {
+    "stateCleared": "modified",
+  },
   "server/src/common/request.ts": {
     "stateCleared": "modified",
   },
@@ -272,6 +275,9 @@ exports[`SubGenerator server of nodejs JHipster blueprint > run > should succeed
   "server/src/web/rest/management.controller.ts": {
     "stateCleared": "modified",
   },
+  "server/src/web/rest/metrics.controller.ts": {
+    "stateCleared": "modified",
+  },
   "server/src/web/rest/public.user.controller.ts": {
     "stateCleared": "modified",
   },
@@ -291,6 +297,9 @@ exports[`SubGenerator server of nodejs JHipster blueprint > run > should succeed
     "stateCleared": "modified",
   },
   "server/test/common/logging.spec.ts": {
+    "stateCleared": "modified",
+  },
+  "server/test/common/metrics.spec.ts": {
     "stateCleared": "modified",
   },
   "server/test/config.spec.ts": {
