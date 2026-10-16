@@ -28,6 +28,9 @@ export class Config {
   'jhipster.security.oauth2.client.registration.oidc.client-id' = '';
   'jhipster.security.oauth2.client.registration.oidc.client-secret' = '';
 <%_ } _%>
+  // The values of the env and configprops endpoints: never (shown as ******) like Spring Boot, or always.
+  'management.endpoint.env.show-values' = 'never';
+  'management.endpoint.configprops.show-values' = 'never';
   'jhipster.mail.base-url' = 'http://127.0.0.1:${server.port}';
   'jhipster.mail.from' = '<%= baseName %>@localhost';
   'jhipster.swagger.default-include-pattern' = '/api/.*';
@@ -160,10 +163,19 @@ logger.log(`The following ${activeProfiles.length} profiles are active: ${active
 
 // The application-{profile}.yml file of each active profile, when there is one, in the order of the profiles: the last
 // one wins, like in Spring Boot.
-const profileConfigs = activeProfiles
-  .map(profile => path.join(configFolder, `application-${profile}.yml`))
-  .filter(profileConfigPath => fs.existsSync(profileConfigPath))
-  .map(profileConfigPath => objectToArray(yaml.load(fs.readFileSync(profileConfigPath, 'utf8'))));
+const profileFiles = activeProfiles
+  .map(profile => `application-${profile}.yml`)
+  .filter(fileName => fs.existsSync(path.join(configFolder, fileName)));
+const profileConfigs = profileFiles.map(fileName => objectToArray(yaml.load(fs.readFileSync(path.join(configFolder, fileName), 'utf8'))));
+
+/**
+ * The files of the configuration with their properties, like the property sources of Spring Boot the env endpoint
+ * gives: the highest precedence first (the file of the last active profile), application.yml last.
+ */
+export const configFiles: { name: string; properties: Record<string, any> }[] = [
+  ...profileFiles.map((fileName, index) => ({ name: `Config resource 'config/${fileName}'`, properties: profileConfigs[index] })).reverse(),
+  { name: "Config resource 'config/application.yml'", properties: objectToArray(yamlConfig) },
+];
 
 const config = new Config(Object.assign(objectToArray(yamlConfig), ...profileConfigs, { ipAddress: ipAddress() }));
 

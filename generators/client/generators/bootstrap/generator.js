@@ -25,13 +25,4 @@ export default class extends BaseApplicationGenerator {
       },
     });
   }
-
-  get [BaseApplicationGenerator.PREPARING]() {
-    return this.asPreparingTaskGroup({
-      withoutAdminUi({ application }) {
-        // The NodeJS server has no endpoints of the administration pages of JHipster (configuration, logs, metrics).
-        application.withAdminUi = false;
-      },
-    });
-  }
 }

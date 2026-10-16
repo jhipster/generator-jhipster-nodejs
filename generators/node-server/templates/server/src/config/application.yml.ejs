@@ -55,6 +55,15 @@ cloud:
       prefer-ip-address: false
 <%_ } _%>
 
+# The management endpoints, like Spring Boot Actuator: the values of the env and configprops endpoints (the
+# configuration page of the client) are shown as ****** unless show-values is always.
+management:
+  endpoint:
+    env:
+      show-values: never
+    configprops:
+      show-values: never
+
 # ===================================================================
 # JHipster specific properties
 #
