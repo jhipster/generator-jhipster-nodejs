@@ -1,0 +1,79 @@
+import { afterEach, beforeEach, describe, it } from 'vitest';
+import { Test, TestingModule } from '@nestjs/testing';
+import request from 'supertest';
+import { INestApplication } from '@nestjs/common';
+import { AppModule } from '../src/app.module.ts';
+import { configureApp } from '../src/app.config.ts';
+import { config } from '../src/config.ts';
+
+describe('CORS', () => {
+    let app: INestApplication;
+
+    const createApp = async (properties: Record<string, any>): Promise<void> => {
+        config.addAll(properties);
+        const moduleFixture: TestingModule = await Test.createTestingModule({
+            imports: [AppModule],
+        }).compile();
+
+        app = moduleFixture.createNestApplication();
+        configureApp(app);
+        await app.init();
+    };
+
+    afterEach(async () => {
+        config.addAll({ 'jhipster.cors.allowed-origins': '', 'jhipster.cors.allowed-origin-patterns': '' });
+        await app?.close();
+    });
+
+    describe('without allowed origins, like the test and prod profiles', () => {
+        beforeEach(() => createApp({}));
+
+        it('does not allow other origins', async () => {
+            const response = await request(app.getHttpServer()).get('/management/health').set('Origin', 'http://localhost:9000').expect(200);
+            if (response.headers['access-control-allow-origin'] !== undefined) {
+                throw new Error(`Unexpected Access-Control-Allow-Origin: ${response.headers['access-control-allow-origin']}`);
+            }
+        });
+    });
+
+    describe('with the properties of the dev profile', () => {
+        beforeEach(() =>
+            createApp({
+                'jhipster.cors.allowed-origins': 'http://localhost:9000',
+                'jhipster.cors.allowed-origin-patterns': 'https://*.githubpreview.dev',
+                'jhipster.cors.allowed-methods': '*',
+                'jhipster.cors.allowed-headers': '*',
+                'jhipster.cors.exposed-headers': 'Authorization,Link,X-Total-Count',
+                'jhipster.cors.allow-credentials': true,
+                'jhipster.cors.max-age': 1800,
+            }),
+        );
+
+        it('allows an allowed origin on /management', () =>
+            request(app.getHttpServer())
+                .get('/management/health')
+                .set('Origin', 'http://localhost:9000')
+                .expect(200)
+                .expect('Access-Control-Allow-Origin', 'http://localhost:9000')
+                .expect('Access-Control-Allow-Credentials', 'true')
+                .expect('Access-Control-Expose-Headers', 'Authorization,Link,X-Total-Count'));
+
+        it('allows an origin of a pattern on a preflight request of /api', () =>
+            request(app.getHttpServer())
+                .options('/api/account')
+                .set('Origin', 'https://my-codespace.githubpreview.dev')
+                .set('Access-Control-Request-Method', 'POST')
+                .set('Access-Control-Request-Headers', 'authorization,content-type')
+                .expect(204)
+                .expect('Access-Control-Allow-Origin', 'https://my-codespace.githubpreview.dev')
+                .expect('Access-Control-Allow-Headers', 'authorization,content-type')
+                .expect('Access-Control-Max-Age', '1800'));
+
+        it('does not allow another origin', async () => {
+            const response = await request(app.getHttpServer()).get('/management/health').set('Origin', 'http://other.example.com').expect(200);
+            if (response.headers['access-control-allow-origin'] !== undefined) {
+                throw new Error(`Unexpected Access-Control-Allow-Origin: ${response.headers['access-control-allow-origin']}`);
+            }
+        });
+    });
+});

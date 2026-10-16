@@ -68,6 +68,9 @@ exports[`SubGenerator server of nodejs JHipster blueprint > run > should succeed
   "server/e2e/app.e2e-spec.ts": {
     "stateCleared": "modified",
   },
+  "server/e2e/cors.e2e-spec.ts": {
+    "stateCleared": "modified",
+  },
   "server/e2e/foo.e2e-spec.ts": {
     "stateCleared": "modified",
   },

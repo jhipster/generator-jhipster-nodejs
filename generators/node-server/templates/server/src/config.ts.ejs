@@ -31,6 +31,14 @@ export class Config {
   // The values of the env and configprops endpoints: never (shown as ******) like Spring Boot, or always.
   'management.endpoint.env.show-values' = 'never';
   'management.endpoint.configprops.show-values' = 'never';
+  // CORS is disabled without allowed-origins nor allowed-origin-patterns, like JHipster Spring Boot (application-dev.yml).
+  'jhipster.cors.allowed-origins' = '';
+  'jhipster.cors.allowed-origin-patterns' = '';
+  'jhipster.cors.allowed-methods' = '';
+  'jhipster.cors.allowed-headers' = '';
+  'jhipster.cors.exposed-headers' = '';
+  'jhipster.cors.allow-credentials' = false;
+  'jhipster.cors.max-age' = 1800;
   'jhipster.mail.base-url' = 'http://127.0.0.1:${server.port}';
   'jhipster.mail.from' = '<%= baseName %>@localhost';
   'jhipster.swagger.default-include-pattern' = '/api/.*';

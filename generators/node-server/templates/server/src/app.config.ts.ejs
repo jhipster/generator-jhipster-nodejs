@@ -1,10 +1,51 @@
 import { INestApplication, ValidationPipe } from '@nestjs/common';
+import { CorsOptions } from '@nestjs/common/interfaces/external/cors-options.interface';
+import { Request } from 'express';
 <%_ if (authenticationTypeJwt && generateUserManagement) { _%>
 import { NestExpressApplication } from '@nestjs/platform-express';
 <%_ } _%>
 
 import { ProblemDetailsFilter } from './web/rest/errors/problem-details.filter.ts';
 import { ValidationException } from './web/rest/errors/problem.exception.ts';
+import { config } from './config.ts';
+
+// The paths CORS applies to, like the WebConfigurer of JHipster Spring Boot.
+const CORS_PATHS = [/^\/api\//, /^\/management\//, /^\/v3\/api-docs(\?|$)/];
+const REGEXP_SPECIAL_CHARACTERS = /[.+?^${}()|[\]\\]/g;
+
+function propertyList(key: string): string[] {
+  return String(config.get(key) ?? '')
+    .split(',')
+    .map(value => value.trim())
+    .filter(Boolean);
+}
+
+/**
+ * The CORS options of the jhipster.cors properties, like the CorsConfiguration of JHipster Spring Boot: undefined when
+ * neither allowed-origins nor allowed-origin-patterns is set (CORS disabled, the default but in the dev profile).
+ * A pattern matches any value where it has a *, like https://*.githubpreview.dev; * as methods or headers allows them all.
+ */
+export function corsOptions(): CorsOptions | undefined {
+  const allowedOrigins = propertyList('jhipster.cors.allowed-origins');
+  const allowedOriginPatterns = propertyList('jhipster.cors.allowed-origin-patterns').map(
+    pattern => new RegExp(`^${pattern.replace(REGEXP_SPECIAL_CHARACTERS, '\\$&').replaceAll('*', '.*')}$`),
+  );
+  if (allowedOrigins.length === 0 && allowedOriginPatterns.length === 0) {
+    return undefined;
+  }
+  const allowedMethods = propertyList('jhipster.cors.allowed-methods');
+  const allowedHeaders = propertyList('jhipster.cors.allowed-headers');
+  const maxAge = Number(config.get('jhipster.cors.max-age'));
+  return {
+    origin: [...allowedOrigins, ...allowedOriginPatterns],
+    // Left out for *: the default methods of cors (all of them), the request headers echoed.
+    ...(allowedMethods.includes('*') ? {} : { methods: allowedMethods }),
+    ...(allowedHeaders.includes('*') ? {} : { allowedHeaders }),
+    exposedHeaders: propertyList('jhipster.cors.exposed-headers'),
+    credentials: String(config.get('jhipster.cors.allow-credentials')) === 'true',
+    ...(maxAge > 0 ? { maxAge } : {}),
+  };
+}
 
 /**
  * Configures the application as it runs in production: main.ts and the e2e tests call it, so the e2e tests
@@ -12,7 +53,12 @@ import { ValidationException } from './web/rest/errors/problem.exception.ts';
  * It has no side effect at import (main.ts starts the application when imported), and does not listen.
  */
 export function configureApp(app: INestApplication): INestApplication {
-  app.enableCors();
+  const cors = corsOptions();
+  if (cors) {
+    app.enableCors((req: Request, callback: (error: Error | null, options: CorsOptions) => void) =>
+      callback(null, CORS_PATHS.some(path => path.test(req.url)) ? cors : { origin: false }),
+    );
+  }
   app.useGlobalPipes(
     new ValidationPipe({
       // The errors of the fields, like JHipster Spring Boot.
