@@ -8,6 +8,7 @@ import { AppModule } from './app.module.ts';
 import { configureApp } from './app.config.ts';
 import { setupSwagger } from './swagger.ts';
 import { <% if (serviceDiscoveryEureka) { %>activeProfiles, <% } %>config, isProfileActive } from './config.ts';
+import { httpsOptions } from './tls.ts';
 <%_ if (serviceDiscoveryEureka) { _%>
 import { EurekaService } from './service/eureka.service.ts';
 <%_ } _%>
@@ -38,7 +39,8 @@ async function bootstrap(): Promise<void> {
 
   // abortOnError: false: an error of the initialization (the database still unreachable after the retries) rejects
   // to the catch of bootstrap() below, instead of Nest stopping the process by itself.
-  const app = await NestFactory.create(AppModule, { abortOnError: false, logger: appLogger });
+  const tlsOptions = httpsOptions();
+  const app = await NestFactory.create(AppModule, { abortOnError: false, logger: appLogger, httpsOptions: tlsOptions });
   // Close the application (HTTP server, database connections) on SIGTERM, the signal docker stop sends.
   app.enableShutdownHooks();
   // CORS, global validation and HTTP settings, shared with the e2e tests.
@@ -81,7 +83,7 @@ async function bootstrap(): Promise<void> {
   }
 
   await app.listen(port);
-  logger.log(`Application listening on port ${port}`);
+  logger.log(`Application listening on ${tlsOptions ? 'https' : 'http'} port ${port}`);
 <%_ if (serviceDiscoveryEureka) { _%>
   // Registered once it listens, so a gateway routes to the application once it answers.
   app.get(EurekaService).register(Number(port));

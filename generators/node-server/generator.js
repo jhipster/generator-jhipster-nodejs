@@ -4,6 +4,7 @@ import { TEMPLATES_WEBAPP_SOURCES_DIR } from 'generator-jhipster';
 import BaseApplicationGenerator from 'generator-jhipster/generators/base-application';
 import { getEnumInfo } from 'generator-jhipster/generators/base-application/support';
 import { createNeedleCallback } from 'generator-jhipster/generators/base-core/support';
+import { createKeyStore } from 'generator-jhipster/generators/java/support';
 import { createBase64Secret, createReproducibleBase64Secret, mutateData } from 'generator-jhipster/utils';
 
 import { SERVER_NODEJS_SRC_DIR } from '../generator-nodejs-constants.js';
@@ -321,6 +322,24 @@ export default class extends BaseApplicationGenerator {
           sections: serverFiles,
           context: application,
         });
+      },
+      writeSampleKeyStore({ application }) {
+        // The keystore of the tls-samples profile, written once like the one of JHipster Spring Boot.
+        const keyStoreFile = this.destinationPath(`${SERVER_NODEJS_SRC_DIR}/src/config/tls/keystore-samples.p12`);
+        if (this.fs.exists(keyStoreFile)) {
+          // A write once file, written back as it is: the KeyStore is told apart from the files no generator writes.
+          this.writeDestination(keyStoreFile, this.fs.read(keyStoreFile, { raw: true }), { metadata: { writeOnce: true } });
+          this.log.info(`KeyStore '${keyStoreFile}' already exists. Leaving unchanged.`);
+        } else {
+          // Created with node:crypto, without the keytool of a JDK, like JHipster Spring Boot: with --reproducible-secrets,
+          // derived from the creation timestamp, the same application gives the same file.
+          const creationTimestamp = this.options.reproducibleSecrets ? this.jhipsterConfig.creationTimestamp : undefined;
+          const packageName = application.packageName ?? application.baseName;
+          this.writeDestination(keyStoreFile, createKeyStore({ packageName, creationTimestamp }), {
+            metadata: { writeOnce: true },
+          });
+          this.log.info(`KeyStore '${keyStoreFile}' generated successfully.`);
+        }
       },
     });
   }

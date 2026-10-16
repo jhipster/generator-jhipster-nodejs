@@ -438,7 +438,16 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > jwt microservic
   "server/src/config/application-test.yml": {
     "stateCleared": "modified",
   },
+  "server/src/config/application-tls-samples.yml": {
+    "stateCleared": "modified",
+  },
+  "server/src/config/application-tls.yml": {
+    "stateCleared": "modified",
+  },
   "server/src/config/application.yml": {
+    "stateCleared": "modified",
+  },
+  "server/src/config/tls/keystore-samples.p12": {
     "stateCleared": "modified",
   },
   "server/src/domain/base/base.entity.ts": {
@@ -505,6 +514,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > jwt microservic
     "stateCleared": "modified",
   },
   "server/src/swagger.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/tls.ts": {
     "stateCleared": "modified",
   },
   "server/src/web/rest/account.controller.ts": {
@@ -695,7 +707,16 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > run > should su
   "server/src/config/application-test.yml": {
     "stateCleared": "modified",
   },
+  "server/src/config/application-tls-samples.yml": {
+    "stateCleared": "modified",
+  },
+  "server/src/config/application-tls.yml": {
+    "stateCleared": "modified",
+  },
   "server/src/config/application.yml": {
+    "stateCleared": "modified",
+  },
+  "server/src/config/tls/keystore-samples.p12": {
     "stateCleared": "modified",
   },
   "server/src/domain/authority.entity.ts": {
@@ -792,6 +813,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > run > should su
     "stateCleared": "modified",
   },
   "server/src/swagger.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/tls.ts": {
     "stateCleared": "modified",
   },
   "server/src/web/rest/account.controller.ts": {
@@ -994,7 +1018,16 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > with oauth2 > s
   "server/src/config/application-test.yml": {
     "stateCleared": "modified",
   },
+  "server/src/config/application-tls-samples.yml": {
+    "stateCleared": "modified",
+  },
+  "server/src/config/application-tls.yml": {
+    "stateCleared": "modified",
+  },
   "server/src/config/application.yml": {
+    "stateCleared": "modified",
+  },
+  "server/src/config/tls/keystore-samples.p12": {
     "stateCleared": "modified",
   },
   "server/src/domain/base/base.entity.ts": {
@@ -1061,6 +1094,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > with oauth2 > s
     "stateCleared": "modified",
   },
   "server/src/swagger.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/tls.ts": {
     "stateCleared": "modified",
   },
   "server/src/web/rest/account.controller.ts": {
@@ -1260,7 +1296,16 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > with oauth2 and
   "server/src/config/application-test.yml": {
     "stateCleared": "modified",
   },
+  "server/src/config/application-tls-samples.yml": {
+    "stateCleared": "modified",
+  },
+  "server/src/config/application-tls.yml": {
+    "stateCleared": "modified",
+  },
   "server/src/config/application.yml": {
+    "stateCleared": "modified",
+  },
+  "server/src/config/tls/keystore-samples.p12": {
     "stateCleared": "modified",
   },
   "server/src/domain/authority.entity.ts": {
@@ -1345,6 +1390,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > with oauth2 and
     "stateCleared": "modified",
   },
   "server/src/swagger.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/tls.ts": {
     "stateCleared": "modified",
   },
   "server/src/web/rest/account.controller.ts": {
@@ -1676,6 +1724,8 @@ there is one, in the order of the list (the last one wins), and the profiles of 
 - \`secret-samples\`: samples of the secrets (the JWT secret, the username and the password of the database) for development and CI, in
   [application-secret-samples.yml](src/config/application-secret-samples.yml). In production, set them with environment
   variables instead, like \`JHIPSTER_SECURITY_AUTHENTICATION_JWT_BASE64SECRET\`;
+- \`tls\`: HTTPS, with your PKCS#12 keystore (\`SERVER_SSL_KEY_STORE\` and \`SERVER_SSL_KEY_STORE_PASSWORD\`);
+- \`tls-samples\`: with \`tls\`, the self-signed sample keystore of [src/config/tls](src/config/tls), for development only.
 
 > You can define your custom profiles, with an application-{profile}.yml file in your [config folder](src/config); an
 > environment of its own needs the \`database\` section of that environment.
@@ -1888,7 +1938,16 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > without client 
   "server/src/config/application-test.yml": {
     "stateCleared": "modified",
   },
+  "server/src/config/application-tls-samples.yml": {
+    "stateCleared": "modified",
+  },
+  "server/src/config/application-tls.yml": {
+    "stateCleared": "modified",
+  },
   "server/src/config/application.yml": {
+    "stateCleared": "modified",
+  },
+  "server/src/config/tls/keystore-samples.p12": {
     "stateCleared": "modified",
   },
   "server/src/domain/authority.entity.ts": {
@@ -1985,6 +2044,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > without client 
     "stateCleared": "modified",
   },
   "server/src/swagger.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/tls.ts": {
     "stateCleared": "modified",
   },
   "server/src/web/rest/account.controller.ts": {
