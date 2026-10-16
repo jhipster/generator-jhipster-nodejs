@@ -1,6 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable<% if (generateUserManagement) { %>, Logger<% } %> } from '@nestjs/common';
+<%_ if (generateUserManagement) { _%>
+import { Cron } from '@nestjs/schedule';
+<%_ } _%>
 import { InjectRepository } from '@nestjs/typeorm';
-import { <% if (typeormOrderSupport) { %>EntityMetadata, <% } %>FindManyOptions, FindOneOptions, Repository } from 'typeorm';
+import { <% if (typeormOrderSupport) { %>EntityMetadata, <% } %>FindManyOptions, FindOneOptions, <% if (generateUserManagement && typeormRelationsSupport) { %>IsNull, LessThan, Not, <% } %>Repository } from 'typeorm';
 import { <%= user.persistClass %> } from '../domain/user.entity.ts';
 import { <%= user.dtoClass%> } from './dto/user.dto.ts';
 import { UserMapper } from './mapper/user.mapper.ts';
@@ -15,6 +18,10 @@ const relations = { authorities: true } as const;
 <%_ } _%>
 @Injectable()
 export class UserService {
+<%_ if (generateUserManagement) { _%>
+    logger = new Logger('UserService');
+
+<%_ } _%>
     constructor(@InjectRepository(User) private userRepository: Repository<User>) {}
 <%_ if (typeormOrderSupport) { _%>
 
@@ -88,6 +95,29 @@ export class UserService {
         return UserMapper.fromEntityToDTO(result);
     }
 
+<%_ if (generateUserManagement) { _%>
+    /**
+     * Like JHipster Spring Boot, removes every day, at 01:00, the users registered more than 3 days ago and still not
+     * activated: their login and mail are free again.
+     */
+    @Cron('0 0 1 * * *')
+    async removeNotActivatedUsers(): Promise<void> {
+        const registeredBefore = new Date(Date.now() - 3 * 24 * 60 * 60 * 1000);
+        const users = await this.userRepository.find({
+<%_ if (typeormRelationsSupport) { _%>
+            where: { activated: false, activationKey: Not(IsNull()), createdDate: LessThan(registeredBefore) },
+<%_ } else { _%>
+            // The operators of MongoDB: TypeORM does not translate its find operators (LessThan) for it.
+            where: { activated: false, activationKey: { $ne: null }, createdDate: { $lt: registeredBefore } } as any,
+<%_ } _%>
+        });
+        for (const user of users) {
+            this.logger.debug(`Deleting not activated user ${user.login}`);
+            await this.userRepository.remove(user);
+        }
+    }
+
+<%_ } _%>
     private flatAuthorities<T extends <%= user.persistClass %> | null>(user: T): T {
         if (user && user.authorities) {
             const authorities: string[] = [];

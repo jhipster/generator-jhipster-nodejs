@@ -54,9 +54,13 @@ export class <%= userLoginVmClass %> extends BaseDTO {
   @ApiProperty({ example: 'http://my-image-url', description: 'Image url', required: false })
   imageUrl?: string;
 
+  // The keys the mails send to the user, never in the responses, like the DTOs of JHipster Spring Boot.
+  @Exclude()
   activationKey?: string;
 
+  @Exclude()
   resetKey?: string;
 
+  @Exclude()
   resetDate?: Date;
 }

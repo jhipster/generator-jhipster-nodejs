@@ -50,6 +50,9 @@
 <%_ } _%>
     "@nestjs/passport": "<%- nodeServerDependencies['@nestjs/passport'] %>",
     "@nestjs/platform-express": "<%- nodeServerDependencies['@nestjs/platform-express'] %>",
+<%_ if (generateUserManagement) { _%>
+    "@nestjs/schedule": "<%- nodeServerDependencies['@nestjs/schedule'] %>",
+<%_ } _%>
 <%_ if (!skipClient) { _%>
     "@nestjs/serve-static": "<%- nodeServerDependencies['@nestjs/serve-static'] %>",
 <%_ } _%>
