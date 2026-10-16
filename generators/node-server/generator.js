@@ -326,15 +326,16 @@ export default class extends BaseApplicationGenerator {
       writeSampleKeyStore({ application }) {
         // The keystore of the tls-samples profile, written once like the one of JHipster Spring Boot.
         const keyStoreFile = this.destinationPath(`${SERVER_NODEJS_SRC_DIR}/src/config/tls/keystore-samples.p12`);
-        if (this.options.fakeKeytool) {
-          this.writeDestination(keyStoreFile, 'fake key-tool');
-        } else if (this.fs.exists(keyStoreFile)) {
+        if (this.fs.exists(keyStoreFile)) {
           // A write once file, written back as it is: the KeyStore is told apart from the files no generator writes.
           this.writeDestination(keyStoreFile, this.fs.read(keyStoreFile, { raw: true }), { metadata: { writeOnce: true } });
           this.log.info(`KeyStore '${keyStoreFile}' already exists. Leaving unchanged.`);
         } else {
-          // Created with node:crypto, without the keytool of a JDK, like JHipster Spring Boot.
-          this.writeDestination(keyStoreFile, createKeyStore({ packageName: application.packageName ?? application.baseName }), {
+          // Created with node:crypto, without the keytool of a JDK, like JHipster Spring Boot: with --reproducible-secrets,
+          // derived from the creation timestamp, the same application gives the same file.
+          const creationTimestamp = this.options.reproducibleSecrets ? this.jhipsterConfig.creationTimestamp : undefined;
+          const packageName = application.packageName ?? application.baseName;
+          this.writeDestination(keyStoreFile, createKeyStore({ packageName, creationTimestamp }), {
             metadata: { writeOnce: true },
           });
           this.log.info(`KeyStore '${keyStoreFile}' generated successfully.`);

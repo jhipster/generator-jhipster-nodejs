@@ -128,7 +128,7 @@ describe('SubGenerator node-server of nodejs JHipster blueprint', () => {
     });
   });
   describe('with reproducible secrets', () => {
-    // The JWT secret of a generation, with or without --reproducible-secrets.
+    // The JWT secret and the keystore of a generation, with or without --reproducible-secrets.
     const generate = async options => {
       await helpers
         .run(SUB_GENERATOR_NAMESPACE)
@@ -137,17 +137,23 @@ describe('SubGenerator node-server of nodejs JHipster blueprint', () => {
         .withJHipsterGenerators()
         .withConfiguredBlueprint()
         .withBlueprintConfig({});
-      return result.fs.readJSON(join(result.cwd, '.yo-rc.json'))['generator-jhipster'].jwtSecretKey;
+      return {
+        jwtSecretKey: result.fs.readJSON(join(result.cwd, '.yo-rc.json'))['generator-jhipster'].jwtSecretKey,
+        keyStore: result.fs.read(join(result.cwd, 'server/src/config/tls/keystore-samples.p12'), { raw: true }),
+      };
     };
 
-    it('should derive the JWT secret from the creation timestamp, like JHipster Spring Boot', async () => {
+    it('should derive the JWT secret and the keystore from the creation timestamp, like JHipster Spring Boot', async () => {
       const first = await generate({ reproducibleSecrets: true });
+      const second = await generate({ reproducibleSecrets: true });
+      const random = await generate({});
 
-      expect(await generate({ reproducibleSecrets: true })).toBe(first);
-      expect(await generate({})).not.toBe(first);
+      expect(second.jwtSecretKey).toBe(first.jwtSecretKey);
+      expect(second.keyStore.equals(first.keyStore)).toBe(true);
+      expect(random.jwtSecretKey).not.toBe(first.jwtSecretKey);
+      expect(random.keyStore.equals(first.keyStore)).toBe(false);
     });
   });
-
   describe('with translations', () => {
     beforeAll(async function () {
       await helpers
