@@ -106,6 +106,24 @@ describe('User', () => {
         await service.delete(recentUser);
     });
 
+    it('/GET public users gives the activated users by their id and login only, like JHipster Spring Boot', async () => {
+        const activated = await service.save({ ...testUserDTO, login: 'publicactive', email: 'publicactive@localhost.it', activated: true });
+        const inactive = await service.save({ ...testUserDTO, login: 'publicinactive', email: 'publicinactive@localhost.it', activated: false });
+
+        const users: Record<string, unknown>[] = (await request(app.getHttpServer()).get('/api/users?size=2000').expect(200)).body;
+
+        expect(users.find(user => user.login === 'publicactive')).toEqual({ id: expect.anything(), login: 'publicactive' });
+        expect(users.map(user => user.login)).not.toContain('publicinactive');
+        expect(users.every(user => Object.keys(user).sort().join() === 'id,login')).toBe(true);
+        await service.delete(activated);
+        await service.delete(inactive);
+    });
+<%_ if (typeormOrderSupport) { _%>
+
+    it('/GET public users sorted on a property out of the allowed ones is a bad request', () =>
+        request(app.getHttpServer()).get('/api/users?sort=password,asc').expect(400));
+<%_ } _%>
+
     it('/POST create user with an invalid email is a validation error', async () => {
         const response = await request(app.getHttpServer())
             .post('/api/admin/users')

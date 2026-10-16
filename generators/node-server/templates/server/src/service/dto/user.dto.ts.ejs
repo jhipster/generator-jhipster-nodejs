@@ -64,3 +64,14 @@ export class <%= userLoginVmClass %> extends BaseDTO {
   @Exclude()
   resetDate?: Date;
 }
+<%_ if (user) { _%>
+
+/** A user of the public user list, like the UserDTO of JHipster Spring Boot: its id and login only. */
+export class PublicUserDTO {
+  @ApiProperty({ description: 'User id' })
+  id!: <%= user.primaryKey.tsType %>;
+
+  @ApiProperty({ example: 'myuser', description: 'User login' })
+  login!: string;
+}
+<%_ } _%>

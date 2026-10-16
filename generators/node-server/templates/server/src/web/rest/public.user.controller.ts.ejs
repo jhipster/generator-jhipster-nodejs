@@ -1,18 +1,15 @@
-import { Controller, ClassSerializerInterceptor, Get, Logger, Req, UseInterceptors } from '@nestjs/common';
+import { Controller, ClassSerializerInterceptor, Get, Logger, Req, UseGuards, UseInterceptors } from '@nestjs/common';
 import { PageRequest, Page } from '../../domain/base/pagination.entity.ts';
-import { <%= user.dtoClass%> } from '../../service/dto/user.dto.ts';
+import { PublicUserDTO } from '../../service/dto/user.dto.ts';
+import { AuthGuard } from '../../security/index.ts';
 import { Request } from '../../common/request.ts';
 import { HeaderUtil } from '../../common/header-util.ts';
 import { ApiTags, ApiResponse, ApiOperation } from '@nestjs/swagger';
-import { AuthService } from '../../service/auth.service.ts';
-<%_ if (typeormOrderSupport) { _%>
 import { UserService } from '../../service/user.service.ts';
-import { isSortableProperty } from '../../common/sortable-properties.ts';
-<%_ } _%>
 
 <%_ if (typeormOrderSupport) { _%>
-// The columns of a user no list can be sorted on: its password, its activation and reset keys and the date of its reset.
-const UNSORTABLE_PROPERTIES = ['password', 'activationKey', 'resetKey', 'resetDate'];
+// The properties the public user list can be sorted on, like the PublicUserResource of JHipster Spring Boot.
+const ALLOWED_ORDERED_PROPERTIES = ['<%- user.primaryKey.name %>', 'login', 'firstName', 'lastName', 'email', 'activated', 'langKey'];
 <%_ } _%>
 
 @Controller('api')
@@ -22,26 +19,28 @@ export class PublicUserController {
 
   logger = new Logger('PublicUserController');
 
-  constructor(private readonly authService: AuthService<% if (typeormOrderSupport) { %>, private readonly userService: UserService<% } %>) { }
+  constructor(private readonly userService: UserService) { }
 
+  /** Like the PublicUserResource of JHipster Spring Boot: the activated users, by their id and login, for authenticated users. */
   @Get('/users')
-  @ApiOperation({ summary: 'Get the list of users' })
+  @UseGuards(AuthGuard)
+  @ApiOperation({ summary: 'Get the list of the activated users, by their id and login' })
   @ApiResponse({
       status: 200,
-      description: 'List all users records',
-      type: <%= user.dtoClass%>,
+      description: 'List the activated users',
+      type: PublicUserDTO,
       isArray: true,
   })
-  async getAllPublicUsers(@Req() req: Request): Promise<<%= user.dtoClass%>[]> {
+  async getAllPublicUsers(@Req() req: Request): Promise<PublicUserDTO[]> {
       const pageRequest: PageRequest = new PageRequest(
         req.query.page,
         req.query.size,
 <%_ if (typeormOrderSupport) { _%>
         req.query.sort ?? '<%- user.primaryKey.name %>,ASC',
-        property => isSortableProperty(this.userService.metadata, property, { unsortable: UNSORTABLE_PROPERTIES }),
+        property => ALLOWED_ORDERED_PROPERTIES.includes(property),
 <%_ } _%>
       );
-      const [results, count] = await this.authService.getAllUsers({
+      const [results, count] = await this.userService.findPublicUsers({
           skip: +pageRequest.page * pageRequest.size,
           take: +pageRequest.size,
 <%_ if (typeormOrderSupport) { _%>
