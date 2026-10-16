@@ -4,7 +4,7 @@ import { TEMPLATES_WEBAPP_SOURCES_DIR } from 'generator-jhipster';
 import BaseApplicationGenerator from 'generator-jhipster/generators/base-application';
 import { getEnumInfo } from 'generator-jhipster/generators/base-application/support';
 import { createNeedleCallback } from 'generator-jhipster/generators/base-core/support';
-import { createBase64Secret, mutateData } from 'generator-jhipster/utils';
+import { createBase64Secret, createReproducibleBase64Secret, mutateData } from 'generator-jhipster/utils';
 
 import { SERVER_NODEJS_SRC_DIR } from '../generator-nodejs-constants.js';
 
@@ -138,7 +138,13 @@ export default class extends BaseApplicationGenerator {
         // JHipster's spring-boot generator, which this blueprint replaces, creates the secret shared with JHipster's
         // Spring Boot applications.
         if (this.jhipsterConfigWithDefaults.authenticationType === 'jwt' && this.jhipsterConfig.jwtSecretKey === undefined) {
-          this.jhipsterConfig.jwtSecretKey = createBase64Secret(64, this.options.reproducibleTests);
+          const { creationTimestamp } = this.jhipsterConfig;
+          // With --reproducible-secrets, derived from the creation timestamp like JHipster Spring Boot: the same
+          // application gives the same secret.
+          this.jhipsterConfig.jwtSecretKey =
+            this.options.reproducibleSecrets && creationTimestamp
+              ? createReproducibleBase64Secret(creationTimestamp, 'jwtSecretKey', 64)
+              : createBase64Secret(64, this.options.reproducibleTests);
         }
       },
       keepSyncUserWithIdp() {

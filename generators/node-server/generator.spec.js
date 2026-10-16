@@ -122,6 +122,27 @@ describe('SubGenerator node-server of nodejs JHipster blueprint', () => {
       result.assertFileContent('server/src/config/application-secret-samples.yml', /^database:\n {2}username: \S+/m);
     });
   });
+  describe('with reproducible secrets', () => {
+    // The JWT secret of a generation, with or without --reproducible-secrets.
+    const generate = async options => {
+      await helpers
+        .run(SUB_GENERATOR_NAMESPACE)
+        .withJHipsterConfig({ skipClient: true, creationTimestamp: 1700000000000 })
+        .withOptions({ ignoreNeedlesError: true, ...options })
+        .withJHipsterGenerators()
+        .withConfiguredBlueprint()
+        .withBlueprintConfig({});
+      return result.fs.readJSON(join(result.cwd, '.yo-rc.json'))['generator-jhipster'].jwtSecretKey;
+    };
+
+    it('should derive the JWT secret from the creation timestamp, like JHipster Spring Boot', async () => {
+      const first = await generate({ reproducibleSecrets: true });
+
+      expect(await generate({ reproducibleSecrets: true })).toBe(first);
+      expect(await generate({})).not.toBe(first);
+    });
+  });
+
   describe('with translations', () => {
     beforeAll(async function () {
       await helpers
