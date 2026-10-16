@@ -14,6 +14,9 @@ import { LoggingInterceptor } from './common/interceptors/logging.interceptor.ts
 <%_ if (serviceDiscoveryEureka) { _%>
 import { EurekaService } from './service/eureka.service.ts';
 <%_ } _%>
+<%_ if (serviceDiscoveryConsul) { _%>
+import { ConsulService } from './service/consul.service.ts';
+<%_ } _%>
 <%_ if (!skipClient) { _%>
 import { config } from './config.ts';
 import { ServeStaticModule } from '@nestjs/serve-static';
@@ -54,6 +57,10 @@ import { ServeStaticModule } from '@nestjs/serve-static';
 <%_ if (serviceDiscoveryEureka) { _%>
     // The registration in the Eureka server, started by main.ts once the application listens.
     EurekaService,
+<%_ } _%>
+<%_ if (serviceDiscoveryConsul) { _%>
+    // The registration in Consul, started by main.ts once the application listens.
+    ConsulService,
 <%_ } _%>
   // jhipster-needle-add-service-module-to-main - JHipster will add service modules here, do not remove
   ],

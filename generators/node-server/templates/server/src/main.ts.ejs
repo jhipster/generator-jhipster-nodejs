@@ -12,6 +12,9 @@ import { httpsOptions } from './tls.ts';
 <%_ if (serviceDiscoveryEureka) { _%>
 import { EurekaService } from './service/eureka.service.ts';
 <%_ } _%>
+<%_ if (serviceDiscoveryConsul) { _%>
+import { ConsulService } from './service/consul.service.ts';
+<%_ } _%>
 import { Logger } from '@nestjs/common';
 import { LevelsConsoleLogger, loggerLevels } from './common/logging.ts';
 <%_ if (!skipClient) { _%>
@@ -87,6 +90,10 @@ async function bootstrap(): Promise<void> {
 <%_ if (serviceDiscoveryEureka) { _%>
   // Registered once it listens, so a gateway routes to the application once it answers.
   app.get(EurekaService).register(Number(port));
+<%_ } _%>
+<%_ if (serviceDiscoveryConsul) { _%>
+  // Registered once it listens, so a gateway routes to the application once it answers.
+  await app.get(ConsulService).register(Number(port));
 <%_ } _%>
 }
 

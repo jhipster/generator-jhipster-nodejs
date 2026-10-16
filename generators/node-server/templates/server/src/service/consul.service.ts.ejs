@@ -1,0 +1,65 @@
+import { hostname } from 'os';
+
+import { BeforeApplicationShutdown, Injectable, Logger } from '@nestjs/common';
+import Consul from 'consul';
+
+import { activeProfiles, config } from '../config.ts';
+
+/**
+ * The registration of the application in Consul, like Spring Cloud Consul: the service of cloud.consul.discovery with
+ * the HTTP health check of the application, registered once it listens and deregistered when it stops, so a gateway
+ * routes to it while it answers only.
+ */
+@Injectable()
+export class ConsulService implements BeforeApplicationShutdown {
+  private readonly logger = new Logger('ConsulService');
+  private consul?: Consul;
+  private serviceId?: string;
+
+  /** Registers the application listening on the port, when cloud.consul.enabled. */
+  async register(port: number): Promise<void> {
+    if (!config.get('cloud.consul.enabled')) {
+      return;
+    }
+    const consul = new Consul({ host: config.get('cloud.consul.host'), port: Number(config.get('cloud.consul.port')) });
+    const name = config.get('cloud.consul.discovery.service-name');
+    const id = config.get('cloud.consul.discovery.instance-id');
+    const address = config.get('cloud.consul.discovery.prefer-ip-address') ? config.get('ipAddress') || '127.0.0.1' : hostname();
+    this.logger.log(`Registering ${name} with Consul at ${config.get('cloud.consul.host')}:${config.get('cloud.consul.port')}`);
+    try {
+      await consul.agent.service.register({
+        name,
+        id,
+        address,
+        port,
+        tags: [`profile=${activeProfiles.join(',')}`],
+        check: {
+          name: `Service '${name}' check`,
+          http: `http://${address}:${port}${config.get('cloud.consul.discovery.health-check-path')}`,
+          interval: config.get('cloud.consul.discovery.health-check-interval'),
+          timeout: config.get('cloud.consul.discovery.health-check-timeout'),
+        },
+      });
+      this.consul = consul;
+      this.serviceId = id;
+      this.logger.log('Consul registration complete');
+    } catch (error) {
+      this.logger.error(`Consul registration failed: ${error instanceof Error ? error.message : String(error)}`);
+    }
+  }
+
+  /** Deregisters the application before the server stops, so a gateway no longer routes to it. */
+  async beforeApplicationShutdown(): Promise<void> {
+    const { consul, serviceId } = this;
+    if (!consul || !serviceId) {
+      return;
+    }
+    this.consul = undefined;
+    try {
+      await consul.agent.service.deregister(serviceId);
+      this.logger.log('Consul deregistration complete');
+    } catch (error) {
+      this.logger.warn(`Consul deregistration failed: ${error instanceof Error ? error.message : String(error)}`);
+    }
+  }
+}

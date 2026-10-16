@@ -507,6 +507,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > jwt microservic
   "server/src/service/auth.service.ts": {
     "stateCleared": "modified",
   },
+  "server/src/service/consul.service.ts": {
+    "stateCleared": "modified",
+  },
   "server/src/service/dto/base.dto.ts": {
     "stateCleared": "modified",
   },

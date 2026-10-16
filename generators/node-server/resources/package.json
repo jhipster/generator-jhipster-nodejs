@@ -18,6 +18,7 @@
     "class-transformer": "0.5.1",
     "class-validator": "0.15.1",
     "cloud-config-client": "1.6.2",
+    "consul": "2.0.1",
     "dotenv": "18.0.7",
     "express-session": "1.19.0",
     "js-yaml": "5.4.3",

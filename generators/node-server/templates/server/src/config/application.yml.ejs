@@ -38,6 +38,22 @@ eureka:
     lease-renewal-interval-in-seconds: 5
     lease-expiration-duration-in-seconds: 10
 <%_ } _%>
+<%_ if (serviceDiscoveryConsul) { _%>
+# The registration in Consul, like the spring.cloud.consul properties of JHipster Spring Boot: enabled with
+# CLOUD_CONSUL_ENABLED=true, at CLOUD_CONSUL_HOST and CLOUD_CONSUL_PORT.
+cloud:
+  consul:
+    enabled: false
+    host: localhost
+    port: 8500
+    discovery:
+      service-name: <%= baseName.toLowerCase() %>
+      instance-id: <%= baseName.toLowerCase() %>:${random.value}
+      health-check-path: /management/health
+      health-check-interval: 10s
+      health-check-timeout: 5s
+      prefer-ip-address: false
+<%_ } _%>
 
 # ===================================================================
 # JHipster specific properties

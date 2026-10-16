@@ -57,6 +57,17 @@ export class Config {
   'cloud.config.profile' = 'prod';
   'cloud.config.label' = 'master';
 <%_ } _%>
+<%_ if (serviceDiscoveryConsul) { _%>
+  'cloud.consul.enabled' = false;
+  'cloud.consul.host' = 'localhost';
+  'cloud.consul.port' = 8500;
+  'cloud.consul.discovery.service-name' = '<%= baseName.toLowerCase() %>';
+  'cloud.consul.discovery.instance-id' = '<%= baseName.toLowerCase() %>:${random.value}';
+  'cloud.consul.discovery.health-check-path' = '/management/health';
+  'cloud.consul.discovery.health-check-interval' = '10s';
+  'cloud.consul.discovery.health-check-timeout' = '5s';
+  'cloud.consul.discovery.prefer-ip-address' = false;
+<%_ } _%>
 
   constructor(properties: Record<string, any>) {
     this.addAll(properties);
