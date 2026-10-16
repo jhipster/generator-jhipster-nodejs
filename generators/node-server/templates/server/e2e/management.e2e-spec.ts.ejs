@@ -56,6 +56,36 @@ describe('Management', () => {
 
         it('/POST loggers with an unknown level is a bad request', () =>
             request(app.getHttpServer()).post('/management/loggers/ManagementTest').send({ configuredLevel: 'LOUD' }).expect(400));
+
+        it('/GET jhimetrics gives the memory, the processor and the requests by endpoint', async () => {
+            await request(app.getHttpServer()).get('/management/info').expect(200);
+            const { body } = await request(app.getHttpServer()).get('/management/jhimetrics').expect(200);
+
+            expect(body.jvm.heap).toEqual({ used: expect.any(Number), committed: expect.any(Number), max: expect.any(Number) });
+            expect(body.processMetrics['system.cpu.count']).toBeGreaterThan(0);
+            expect(body['http.server.requests'].percode['200'].count).toBeGreaterThan(0);
+            expect(body.services['/management/info'].GET.count).toBe(1);
+        });
+
+        it('/GET threaddump gives the thread of the event loop', async () => {
+            const { body } = await request(app.getHttpServer()).get('/management/threaddump').expect(200);
+
+            expect(body.threads).toEqual([expect.objectContaining({ threadName: 'main', threadState: 'RUNNABLE' })]);
+        });
+    });
+
+    describe('Prometheus', () => {
+        beforeEach(async () => {
+            app = await createApp(true);
+        });
+
+        it('/GET prometheus gives the metrics without authentication', async () => {
+            await request(app.getHttpServer()).get('/management/info').expect(200);
+            const response = await request(app.getHttpServer()).get('/management/prometheus').expect(200).expect('Content-Type', /text\/plain/);
+
+            expect(response.text).toContain('http_server_requests_seconds_count{method="GET",uri="/management/info",status="200",outcome="SUCCESS"} 1');
+            expect(response.text).toContain('nodejs_heap_size_used_bytes');
+        });
     });
 
 <%_ if (authenticationTypeJwt) { _%>

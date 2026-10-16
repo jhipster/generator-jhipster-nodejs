@@ -414,6 +414,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > jwt microservic
   "server/src/common/logging.ts": {
     "stateCleared": "modified",
   },
+  "server/src/common/metrics.ts": {
+    "stateCleared": "modified",
+  },
   "server/src/common/request.ts": {
     "stateCleared": "modified",
   },
@@ -525,6 +528,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > jwt microservic
   "server/src/web/rest/management.controller.ts": {
     "stateCleared": "modified",
   },
+  "server/src/web/rest/metrics.controller.ts": {
+    "stateCleared": "modified",
+  },
   "server/test/admin/health.controller.spec.ts": {
     "stateCleared": "modified",
   },
@@ -535,6 +541,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > jwt microservic
     "stateCleared": "modified",
   },
   "server/test/common/logging.spec.ts": {
+    "stateCleared": "modified",
+  },
+  "server/test/common/metrics.spec.ts": {
     "stateCleared": "modified",
   },
   "server/test/config.spec.ts": {
@@ -660,6 +669,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > run > should su
     "stateCleared": "modified",
   },
   "server/src/common/logging.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/common/metrics.ts": {
     "stateCleared": "modified",
   },
   "server/src/common/request.ts": {
@@ -803,6 +815,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > run > should su
   "server/src/web/rest/management.controller.ts": {
     "stateCleared": "modified",
   },
+  "server/src/web/rest/metrics.controller.ts": {
+    "stateCleared": "modified",
+  },
   "server/src/web/rest/public.user.controller.ts": {
     "stateCleared": "modified",
   },
@@ -822,6 +837,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > run > should su
     "stateCleared": "modified",
   },
   "server/test/common/logging.spec.ts": {
+    "stateCleared": "modified",
+  },
+  "server/test/common/metrics.spec.ts": {
     "stateCleared": "modified",
   },
   "server/test/config.spec.ts": {
@@ -952,6 +970,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > with oauth2 > s
   "server/src/common/logging.ts": {
     "stateCleared": "modified",
   },
+  "server/src/common/metrics.ts": {
+    "stateCleared": "modified",
+  },
   "server/src/common/request.ts": {
     "stateCleared": "modified",
   },
@@ -1063,6 +1084,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > with oauth2 > s
   "server/src/web/rest/management.controller.ts": {
     "stateCleared": "modified",
   },
+  "server/src/web/rest/metrics.controller.ts": {
+    "stateCleared": "modified",
+  },
   "server/src/web/rest/user.oauth2.controller.ts": {
     "stateCleared": "modified",
   },
@@ -1076,6 +1100,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > with oauth2 > s
     "stateCleared": "modified",
   },
   "server/test/common/logging.spec.ts": {
+    "stateCleared": "modified",
+  },
+  "server/test/common/metrics.spec.ts": {
     "stateCleared": "modified",
   },
   "server/test/config.spec.ts": {
@@ -1209,6 +1236,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > with oauth2 and
   "server/src/common/logging.ts": {
     "stateCleared": "modified",
   },
+  "server/src/common/metrics.ts": {
+    "stateCleared": "modified",
+  },
   "server/src/common/request.ts": {
     "stateCleared": "modified",
   },
@@ -1338,6 +1368,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > with oauth2 and
   "server/src/web/rest/management.controller.ts": {
     "stateCleared": "modified",
   },
+  "server/src/web/rest/metrics.controller.ts": {
+    "stateCleared": "modified",
+  },
   "server/src/web/rest/public.user.controller.ts": {
     "stateCleared": "modified",
   },
@@ -1354,6 +1387,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > with oauth2 and
     "stateCleared": "modified",
   },
   "server/test/common/logging.spec.ts": {
+    "stateCleared": "modified",
+  },
+  "server/test/common/metrics.spec.ts": {
     "stateCleared": "modified",
   },
   "server/test/config.spec.ts": {
@@ -1828,6 +1864,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > without client 
   "server/src/common/logging.ts": {
     "stateCleared": "modified",
   },
+  "server/src/common/metrics.ts": {
+    "stateCleared": "modified",
+  },
   "server/src/common/request.ts": {
     "stateCleared": "modified",
   },
@@ -1969,6 +2008,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > without client 
   "server/src/web/rest/management.controller.ts": {
     "stateCleared": "modified",
   },
+  "server/src/web/rest/metrics.controller.ts": {
+    "stateCleared": "modified",
+  },
   "server/src/web/rest/public.user.controller.ts": {
     "stateCleared": "modified",
   },
@@ -1988,6 +2030,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > without client 
     "stateCleared": "modified",
   },
   "server/test/common/logging.spec.ts": {
+    "stateCleared": "modified",
+  },
+  "server/test/common/metrics.spec.ts": {
     "stateCleared": "modified",
   },
   "server/test/config.spec.ts": {
