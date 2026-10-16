@@ -51,7 +51,8 @@ describe('SubGenerator node-server of nodejs JHipster blueprint', () => {
 
     it('should build and start the server with the Nest CLI', () => {
       expect(result.fs.readJSON(join(result.cwd, 'server/package.json'))).toMatchObject({
-        scripts: { build: 'nest build', 'start:dev': 'nest start --watch', 'start:prod': 'node dist/main.js' },
+        // The development scripts run with the profile of .env.dev, the built application with the BACKEND_ENV of its environment.
+        scripts: { build: 'nest build', 'start:dev': 'nest start --watch --env-file .env.dev', 'start:prod': 'node dist/main.js' },
         devDependencies: { '@nestjs/cli': expect.any(String) },
       });
       // The Nest CLI copies the configuration files next to the build.
@@ -59,6 +60,9 @@ describe('SubGenerator node-server of nodejs JHipster blueprint', () => {
         compilerOptions: { assets: [{ include: 'config/**/*', outDir: 'dist' }], watchAssets: true },
       });
       result.assertNoFile('server/scripts/copy-resources.ts');
+      result.assertFileContent('server/.env.dev', 'BACKEND_ENV=dev');
+      result.assertNoFile('server/.env');
+      result.assertFileContent('.gitignore', /^server\/\.env$/m);
       result.assertFileContent('server/src/main.ts', "import { AppModule } from './app.module.ts';");
     });
 

@@ -1,12 +1,16 @@
 // DataSource of the typeorm CLI (the typeorm npm scripts): the database of the application, of the profiles BACKEND_ENV
 // activates. Node.js runs this file as it is (type stripping) and imports the build in dist: the entities and the
 // migrations of src have decorators, which Node.js does not run.
-import 'dotenv/config';
+import { config as loadEnv } from 'dotenv';
 import { DataSource, type DataSourceOptions } from 'typeorm';
 import type * as OrmConfigModule from './src/orm.config.ts';
 <%_ if (databaseTypeMongodb) { _%>
 import type * as ConfigModule from './src/config.ts';
 <%_ } _%>
+
+// The local settings of .env, then the development profile of .env.dev, like the development scripts: a variable set in
+// the environment wins, like BACKEND_ENV=prod.
+loadEnv({ path: ['.env', '.env.dev'], quiet: true });
 
 const build = './dist';
 const { ormConfig } = (await import(`${build}/orm.config.js`)) as typeof OrmConfigModule;

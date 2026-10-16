@@ -86,8 +86,9 @@ export const serverFiles = {
         'test/config.spec.ts',
         'nest-cli.json',
         {
+          // The profile of the development scripts (nest start --env-file .env.dev), not of the built application.
           file: 'env',
-          renameTo: () => '.env',
+          renameTo: () => '.env.dev',
         },
         'eslint.config.mjs',
         'package.json',
