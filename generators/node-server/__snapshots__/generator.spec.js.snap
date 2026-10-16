@@ -1446,7 +1446,7 @@ Allows to use a specific action when conflicts are found skipping prompts for fi
 
 Congratulations! You've selected an excellent way to secure your NHipster application. If you're not sure what JSON Web Token (JWT) is, please see [What the Heck is JWT?](https://jwt.io/introduction/)
 
-Your app uses, to get and use the token, the \`server//src/config/application.yml\` settings:
+Your app uses, to get and use the token, the \`server/src/config/application.yml\` settings:
 
 \`\`\`yaml
   ...
@@ -1474,7 +1474,7 @@ For example, the following command:
 
 will generate the file:
 
-    create server//src/my-component/my-component.module.ts
+    create server/src/my-component/my-component.module.ts
 
 
 ### Building and running
@@ -1491,9 +1491,9 @@ npm run start:app
 npm run build:app
 \`\`\`
 
-The build folder with all compiled sources will be **server//dist**.
+The build folder with all compiled sources will be **server/dist**.
 
-> For more explanation about full stack server/client build refer to [server//README.md](server//README.md)
+> For more explanation about full stack server/client build refer to [server/README.md](server/README.md)
 
 
 ## Building for production

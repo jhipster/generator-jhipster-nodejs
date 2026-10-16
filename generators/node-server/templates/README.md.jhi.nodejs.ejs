@@ -77,7 +77,7 @@ If you'd like to configure things manually through the Okta developer console, s
 
 First, you'll need to create a free developer account at <https://developer.okta.com/signup/>. After doing so, you'll get your own Okta domain, that has a name like `https://dev-123456.okta.com`.
 
-Modify `<%= nodeServerRootDir %>/src/config/application.yml` to use your Okta settings.
+Modify `<%= nodeServerRootDir %>src/config/application.yml` to use your Okta settings.
 
 ```yaml
   ...
@@ -107,7 +107,7 @@ After making these changes, you should be good to go! If you have any issues, pl
 
 Congratulations! You've selected an excellent way to secure your NHipster application. If you're not sure what JSON Web Token (JWT) is, please see [What the Heck is JWT?](https://jwt.io/introduction/)
 
-Your app uses, to get and use the token, the `<%= nodeServerRootDir %>/src/config/application.yml` settings:
+Your app uses, to get and use the token, the `<%= nodeServerRootDir %>src/config/application.yml` settings:
 
 ```yaml
   ...
@@ -140,7 +140,7 @@ For example, the following command:
 
 will generate the file:
 
-    create <%= nodeServerRootDir %>/src/my-component/my-component.module.ts
+    create <%= nodeServerRootDir %>src/my-component/my-component.module.ts
 
 
 ### Building and running
@@ -157,9 +157,9 @@ will generate the file:
 <%= nodePackageManager %> run build:app
 ```
 
-The build folder with all compiled sources will be **<%= nodeServerRootDir %>/dist**.
+The build folder with all compiled sources will be **<%= nodeServerRootDir %>dist**.
 
-> For more explanation about full stack server/client build refer to [<%= nodeServerRootDir %>/README.md](<%= nodeServerRootDir %>/README.md)
+> For more explanation about full stack server/client build refer to [<%= nodeServerRootDir %>README.md](<%= nodeServerRootDir %>README.md)
 
 <&_ } -&>
 
