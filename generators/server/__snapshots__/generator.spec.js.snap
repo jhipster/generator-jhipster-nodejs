@@ -254,6 +254,9 @@ exports[`SubGenerator server of nodejs JHipster blueprint > run > should succeed
   "server/src/web/rest/account.controller.ts": {
     "stateCleared": "modified",
   },
+  "server/src/web/rest/configuration.controller.ts": {
+    "stateCleared": "modified",
+  },
   "server/src/web/rest/errors/error-constants.ts": {
     "stateCleared": "modified",
   },

@@ -2,12 +2,13 @@ import { Module } from '@nestjs/common';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 
 import { MetricsInterceptor, MetricsService } from '../common/metrics.ts';
+import { ConfigurationController } from '../web/rest/configuration.controller.ts';
 import { LoggersController } from '../web/rest/loggers.controller.ts';
 import { MetricsController } from '../web/rest/metrics.controller.ts';
 
 /** The management endpoints of Spring Boot Actuator the admin pages of the JHipster clients use. */
 @Module({
-  controllers: [LoggersController, MetricsController],
+  controllers: [ConfigurationController, LoggersController, MetricsController],
   providers: [
     MetricsService,
     // Records the requests of every controller in the metrics.

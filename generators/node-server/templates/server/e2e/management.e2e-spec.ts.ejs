@@ -67,6 +67,28 @@ describe('Management', () => {
             expect(body.services['/management/info'].GET.count).toBe(1);
         });
 
+        it('/GET env gives the sources of the configuration, their values hidden like Spring Boot', async () => {
+            const { body } = await request(app.getHttpServer()).get('/management/env').expect(200);
+
+            expect(body.activeProfiles).toContain('test');
+            expect(body.propertySources.map((source: { name: string }) => source.name)).toEqual([
+                'systemEnvironment',
+                "Config resource 'config/application-secret-samples.yml'",
+                "Config resource 'config/application-test.yml'",
+                "Config resource 'config/application.yml'",
+            ]);
+            const applicationYml = body.propertySources[3];
+            expect(applicationYml.properties['management.endpoint.env.show-values']).toEqual({ value: '******' });
+        });
+
+        it('/GET configprops gives the properties of the application by prefix, their values hidden like Spring Boot', async () => {
+            const { body } = await request(app.getHttpServer()).get('/management/configprops').expect(200);
+
+            const [context] = Object.values<{ beans: Record<string, { prefix: string; properties: any }> }>(body.contexts);
+            expect(context.beans.jhipster.prefix).toBe('jhipster');
+            expect(context.beans.jhipster.properties.mail.from).toBe('******');
+        });
+
         it('/GET threaddump gives the thread of the event loop', async () => {
             const { body } = await request(app.getHttpServer()).get('/management/threaddump').expect(200);
 

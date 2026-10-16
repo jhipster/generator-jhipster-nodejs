@@ -510,6 +510,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > jwt microservic
   "server/src/web/rest/account.controller.ts": {
     "stateCleared": "modified",
   },
+  "server/src/web/rest/configuration.controller.ts": {
+    "stateCleared": "modified",
+  },
   "server/src/web/rest/errors/error-constants.ts": {
     "stateCleared": "modified",
   },
@@ -797,6 +800,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > run > should su
   "server/src/web/rest/account.controller.ts": {
     "stateCleared": "modified",
   },
+  "server/src/web/rest/configuration.controller.ts": {
+    "stateCleared": "modified",
+  },
   "server/src/web/rest/errors/error-constants.ts": {
     "stateCleared": "modified",
   },
@@ -1064,6 +1070,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > with oauth2 > s
     "stateCleared": "modified",
   },
   "server/src/web/rest/account.controller.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/web/rest/configuration.controller.ts": {
     "stateCleared": "modified",
   },
   "server/src/web/rest/errors/error-constants.ts": {
@@ -1348,6 +1357,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > with oauth2 and
     "stateCleared": "modified",
   },
   "server/src/web/rest/account.controller.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/web/rest/configuration.controller.ts": {
     "stateCleared": "modified",
   },
   "server/src/web/rest/errors/error-constants.ts": {
@@ -1988,6 +2000,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > without client 
     "stateCleared": "modified",
   },
   "server/src/web/rest/account.controller.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/web/rest/configuration.controller.ts": {
     "stateCleared": "modified",
   },
   "server/src/web/rest/errors/error-constants.ts": {

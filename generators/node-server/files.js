@@ -41,6 +41,7 @@ export const serverFiles = {
         'src/module/management.module.ts',
         'src/web/rest/loggers.controller.ts',
         'src/web/rest/metrics.controller.ts',
+        'src/web/rest/configuration.controller.ts',
         'src/common/metrics.ts',
         'test/common/metrics.spec.ts',
         'src/common/logging.ts',
