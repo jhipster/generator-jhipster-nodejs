@@ -11,8 +11,15 @@ export const serverFiles = {
       path: SERVER_NODEJS_DIR,
       // The users administration API, not generated with OAuth2 (users come from the identity provider).
       condition: ctx => ctx.generateUserManagement,
-      templates: ['src/web/rest/user.controller.ts', 'e2e/user.e2e-spec.ts'],
+      templates: [
+        'src/web/rest/user.controller.ts',
+        'e2e/user.e2e-spec.ts',
+        'src/service/mail.service.ts',
+        'src/module/mail.module.ts',
+        'test/mail.service.spec.ts',
+      ],
     },
+
     {
       path: SERVER_NODEJS_DIR,
       // The users of the application, synchronized from the identity provider with OAuth2 and syncUserWithIdp.

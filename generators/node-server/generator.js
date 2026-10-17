@@ -11,7 +11,7 @@ import { SERVER_NODEJS_SRC_DIR } from '../generator-nodejs-constants.js';
 
 import { entityFiles } from './entity-files.js';
 import { serverFiles } from './files.js';
-import { getDatabasePort, getNodeDevDatabaseType, getNodeDevSqliteDatabase } from './support/index.js';
+import { getDatabasePort, getNodeDevDatabaseType, getNodeDevSqliteDatabase, thymeleafMailToHandlebars } from './support/index.js';
 
 const fieldTypes = {
   Boolean: 'boolean',
@@ -168,6 +168,19 @@ export default class extends BaseApplicationGenerator {
     return this.asComposingTaskGroup({
       async composingTemplateTask() {
         await this.composeWithJHipster('docker');
+      },
+      async composeLanguages() {
+        // Like the spring-boot generator: the languages of the application to generate (languagesToGenerate), the server
+        // messages of server:i18n among them, without a client composing it.
+        if (this.jhipsterConfigWithDefaults.enableTranslation) {
+          await this.composeWithJHipster('languages');
+        }
+      },
+      async composingServerI18n() {
+        // The messages of the account mails, written to the serverI18nDir of the application (common:bootstrap), the
+        // default ones without translation too. The languages generator composes it for the languages command.
+        if (this.jhipsterConfigWithDefaults.skipUserManagement) return;
+        await this.composeWithJHipster('jhipster:server:i18n');
       },
     });
   }
@@ -339,6 +352,19 @@ export default class extends BaseApplicationGenerator {
             metadata: { writeOnce: true },
           });
           this.log.info(`KeyStore '${keyStoreFile}' generated successfully.`);
+        }
+      },
+      async writingMailTemplates({ application }) {
+        if (!application.generateUserManagement) return;
+        // The mail templates of JHipster Spring Boot (Thymeleaf) converted to the Handlebars templates of the mail module.
+        for (const template of ['activationEmail', 'creationEmail', 'passwordResetEmail']) {
+          const destination = `${SERVER_NODEJS_SRC_DIR}/src/templates/mail/${template}.hbs`;
+          await this.writeFile(
+            this.fetchFromInstalledJHipster(`spring-boot/templates/src/main/resources/templates/mail/${template}.html.ejs`),
+            destination,
+            application,
+          );
+          this.editFile(destination, thymeleafMailToHandlebars);
         }
       },
     });
