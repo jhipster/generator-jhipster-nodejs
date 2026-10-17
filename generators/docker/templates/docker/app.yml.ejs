@@ -19,9 +19,15 @@
 name: <%= baseName.toLowerCase() %>
 services:
   app:
+    image: <%= baseName.toLowerCase() %>
     build: ..
     environment:
       - BACKEND_ENV=prod,api-docs,secret-samples
+      - DATABASE_HOST=<%= databaseTypeSql ? prodDatabaseType : databaseType %>
+<%_ if (serviceDiscoveryEureka) { _%>
+      - EUREKA_CLIENT_ENABLED=true
+      - CLOUD_CONFIG_URI=http://admin:$${jhipster.registry.password}@jhipster-registry:8761/config
+<%_ } _%>
 <%_ if (authenticationType === 'oauth2') { _%>
       - NODE_CLIENT_PROVIDER_OIDC_ISSUER_URI=http://keycloak:9080/realms/jhipster
 <%_ } _%>
