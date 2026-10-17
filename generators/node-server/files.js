@@ -125,7 +125,7 @@ export const serverFiles = {
   e2e: [
     {
       path: SERVER_NODEJS_DIR,
-      templates: ['e2e/app.e2e-spec.ts', 'e2e/management.e2e-spec.ts', 'e2e/setup.test.js'],
+      templates: ['e2e/app.e2e-spec.ts', 'e2e/cors.e2e-spec.ts', 'e2e/management.e2e-spec.ts', 'e2e/setup.test.js'],
     },
     {
       path: SERVER_NODEJS_DIR,

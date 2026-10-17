@@ -378,6 +378,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > jwt microservic
   "server/e2e/app.e2e-spec.ts": {
     "stateCleared": "modified",
   },
+  "server/e2e/cors.e2e-spec.ts": {
+    "stateCleared": "modified",
+  },
   "server/e2e/management.e2e-spec.ts": {
     "stateCleared": "modified",
   },
@@ -648,6 +651,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > run > should su
     "stateCleared": "modified",
   },
   "server/e2e/app.e2e-spec.ts": {
+    "stateCleared": "modified",
+  },
+  "server/e2e/cors.e2e-spec.ts": {
     "stateCleared": "modified",
   },
   "server/e2e/management.e2e-spec.ts": {
@@ -967,6 +973,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > with oauth2 > s
   "server/e2e/app.e2e-spec.ts": {
     "stateCleared": "modified",
   },
+  "server/e2e/cors.e2e-spec.ts": {
+    "stateCleared": "modified",
+  },
   "server/e2e/management.e2e-spec.ts": {
     "stateCleared": "modified",
   },
@@ -1246,6 +1255,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > with oauth2 and
     "stateCleared": "modified",
   },
   "server/e2e/app.e2e-spec.ts": {
+    "stateCleared": "modified",
+  },
+  "server/e2e/cors.e2e-spec.ts": {
     "stateCleared": "modified",
   },
   "server/e2e/management.e2e-spec.ts": {
@@ -1888,6 +1900,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > without client 
     "stateCleared": "modified",
   },
   "server/e2e/app.e2e-spec.ts": {
+    "stateCleared": "modified",
+  },
+  "server/e2e/cors.e2e-spec.ts": {
     "stateCleared": "modified",
   },
   "server/e2e/management.e2e-spec.ts": {
