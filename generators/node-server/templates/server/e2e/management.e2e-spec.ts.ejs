@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { Test, TestingModule } from '@nestjs/testing';
 import request from 'supertest';
-import { INestApplication } from '@nestjs/common';
+import { ExecutionContext, INestApplication } from '@nestjs/common';
 import { AppModule } from '../src/app.module.ts';
 import { configureApp } from '../src/app.config.ts';
 import { loggerLevels } from '../src/common/logging.ts';
@@ -11,11 +11,20 @@ import { RolesGuard } from '../src/security/guards/roles.guard.ts';
 describe('Management', () => {
     let app: INestApplication;
 
-    const createApp = async (guards: boolean): Promise<INestApplication> => {
+    /** The application with its guards, without them (an administrator), or with an authenticated user of some roles. */
+    const createApp = async (guards: boolean | string[]): Promise<INestApplication> => {
         let builder = Test.createTestingModule({ imports: [AppModule] });
-        if (!guards) {
+        if (guards === false) {
             // An administrator.
             builder = builder.overrideGuard(AuthGuard).useValue({ canActivate: () => true }).overrideGuard(RolesGuard).useValue({ canActivate: () => true });
+        } else if (Array.isArray(guards)) {
+            // A user of these roles, checked by the RolesGuard of the application.
+            builder = builder.overrideGuard(AuthGuard).useValue({
+                canActivate: (context: ExecutionContext) => {
+                    context.switchToHttp().getRequest().user = { login: 'managementtest', authorities: guards };
+                    return true;
+                },
+            });
         }
         const moduleFixture: TestingModule = await builder.compile();
         const nestApp = moduleFixture.createNestApplication();
@@ -94,6 +103,28 @@ describe('Management', () => {
 
             expect(body.threads).toEqual([expect.objectContaining({ threadName: 'main', threadState: 'RUNNABLE' })]);
         });
+    });
+
+    describe('as a user without the administrator role', () => {
+        beforeEach(async () => {
+            app = await createApp(['ROLE_USER']);
+        });
+
+        it('/GET and /POST loggers are forbidden, the role of the controller class applies to its routes', async () => {
+            await request(app.getHttpServer()).get('/management/loggers').expect(403);
+            await request(app.getHttpServer()).post('/management/loggers/ManagementTest').send({ configuredLevel: 'OFF' }).expect(403);
+            expect(loggerLevels.getLevel('ManagementTest').configuredLevel).toBeNull();
+        });
+
+        it('/GET jhimetrics is forbidden', () => request(app.getHttpServer()).get('/management/jhimetrics').expect(403));
+    });
+
+    describe('as a user with the administrator role', () => {
+        beforeEach(async () => {
+            app = await createApp(['ROLE_ADMIN']);
+        });
+
+        it('/GET loggers is allowed', () => request(app.getHttpServer()).get('/management/loggers').expect(200));
     });
 
     describe('Prometheus', () => {
