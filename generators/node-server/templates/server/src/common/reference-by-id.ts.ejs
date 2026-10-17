@@ -1,0 +1,6 @@
+/**
+ * The related record referenced by its id alone: like JHipster Spring Boot, storing an entity does not write its
+ * related records.
+ */
+export const referenceById = <T extends { id?: unknown } | null | undefined>(related: T): T =>
+  related ? ({ id: related.id } as T) : related;
