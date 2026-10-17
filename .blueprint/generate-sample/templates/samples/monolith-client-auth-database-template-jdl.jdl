@@ -17,7 +17,7 @@ application {
         testFrameworks [cypress]
         // jhipster-needle-jdl-application-config
     }
-    entities *
+    entities Transaction, Car, License
 }
 
 // JDL definition entity for application

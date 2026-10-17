@@ -1,0 +1,62 @@
+{
+  "monolith-react-jwt-jdl": {
+    "sample-file": "monolith-client-auth-template-jdl",
+    "sample-folder": "samples/",
+    "sample-type": "jdl",
+    "generatorOptions": {
+      "clientFramework": "react",
+      "authenticationType": "jwt"
+    }
+  },
+  "monolith-react-jwt-i18n-jdl": {
+    "sample-file": "monolith-client-auth-i18n-template-jdl",
+    "sample-folder": "samples/",
+    "sample-type": "jdl",
+    "generatorOptions": {
+      "clientFramework": "react",
+      "authenticationType": "jwt"
+    }
+  },
+  "monolith-react-oauth2-jdl": {
+    "sample-file": "monolith-client-auth-template-jdl",
+    "sample-folder": "samples/",
+    "sample-type": "jdl",
+    "generatorOptions": {
+      "clientFramework": "react",
+      "authenticationType": "oauth2"
+    }
+  },
+  "monolith-react-oauth2-i18n-jdl": {
+    "sample-file": "monolith-client-auth-i18n-template-jdl",
+    "sample-folder": "samples/",
+    "sample-type": "jdl",
+    "generatorOptions": {
+      "clientFramework": "react",
+      "authenticationType": "oauth2"
+    }
+  },
+  "monolith-react-mysql-prod-jdl": {
+    "sample-file": "monolith-client-database-prod-template-jdl",
+    "sample-folder": "samples/",
+    "sample-type": "jdl",
+    "generatorOptions": {
+      "clientFramework": "react",
+      "prodDatabaseType": "mysql"
+    }
+  },
+  "monolith-react-mongodb-prod-jdl": {
+    "sample-file": "monolith-client-database-prod-template-jdl",
+    "sample-folder": "samples/",
+    "sample-type": "jdl",
+    "generatorOptions": {
+      "clientFramework": "react",
+      "prodDatabaseType": "mongodb"
+    },
+    "e2e": "false"
+  },
+  "monolith-react-oauth2-dev": {
+    "sample-file": "monolith-react-oauth2-dev",
+    "sample-folder": "samples/",
+    "sample-type": "yo-rc"
+  }
+}

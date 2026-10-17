@@ -16,7 +16,7 @@ application {
         testFrameworks [cypress]
         // jhipster-needle-jdl-application-config
     }
-    entities *
+    entities SpaceEvent, Mission
 }
 
 // JDL definition entity for application

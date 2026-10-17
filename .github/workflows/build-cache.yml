@@ -25,17 +25,13 @@ jobs:
         if: always()
       - run: cli.cjs generate-sample --all
         continue-on-error: true
-      - run: npm run backend:build-cache --workspaces
+      - run: npm run backend:build-cache --workspaces --if-present
         continue-on-error: true
       - uses: jhipster/actions/save-cache@v2
         if: always()
         with:
           key: ${{ github.run_id }}
           npm: true
-          maven: true
-          gradle: true
       - uses: jhipster/actions/restore-cache@v2
         with:
           npm: true
-          maven: true
-          gradle: true

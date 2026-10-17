@@ -1,0 +1,74 @@
+{
+  "monolith-angular-jwt-jdl": {
+    "sample-file": "monolith-client-auth-template-jdl",
+    "sample-folder": "samples/",
+    "sample-type": "jdl",
+    "generatorOptions": {
+      "clientFramework": "angular",
+      "authenticationType": "jwt"
+    }
+  },
+  "monolith-angular-jwt-i18n-jdl": {
+    "sample-file": "monolith-client-auth-i18n-template-jdl",
+    "sample-folder": "samples/",
+    "sample-type": "jdl",
+    "generatorOptions": {
+      "clientFramework": "angular",
+      "authenticationType": "jwt"
+    }
+  },
+  "monolith-angular-oauth2-jdl": {
+    "sample-file": "monolith-client-auth-template-jdl",
+    "sample-folder": "samples/",
+    "sample-type": "jdl",
+    "generatorOptions": {
+      "clientFramework": "angular",
+      "authenticationType": "oauth2"
+    }
+  },
+  "monolith-angular-oauth2-mongodb-jdl": {
+    "sample-file": "monolith-client-auth-database-template-jdl",
+    "sample-folder": "samples/",
+    "sample-type": "jdl",
+    "generatorOptions": {
+      "clientFramework": "angular",
+      "authenticationType": "oauth2",
+      "prodDatabaseType": "mongodb"
+    },
+    "e2e": "false"
+  },
+  "monolith-angular-oauth2-i18n-jdl": {
+    "sample-file": "monolith-client-auth-i18n-template-jdl",
+    "sample-folder": "samples/",
+    "sample-type": "jdl",
+    "generatorOptions": {
+      "clientFramework": "angular",
+      "authenticationType": "oauth2"
+    }
+  },
+  "monolith-angular-jwt-i18n-dev": {
+    "sample-file": "monolith-angular-jwt-i18n-dev",
+    "sample-folder": "samples/",
+    "sample-type": "yo-rc"
+  },
+  "monolith-angular-jwt-mongodb-jdl": {
+    "sample-file": "monolith-client-auth-database-template-jdl",
+    "sample-folder": "samples/",
+    "sample-type": "jdl",
+    "generatorOptions": {
+      "clientFramework": "angular",
+      "authenticationType": "jwt",
+      "prodDatabaseType": "mongodb"
+    },
+    "e2e": "false"
+  },
+  "monolith-angular-postgresql-prod-jdl": {
+    "sample-file": "monolith-client-database-prod-template-jdl",
+    "sample-folder": "samples/",
+    "sample-type": "jdl",
+    "generatorOptions": {
+      "clientFramework": "angular",
+      "prodDatabaseType": "postgresql"
+    }
+  }
+}
