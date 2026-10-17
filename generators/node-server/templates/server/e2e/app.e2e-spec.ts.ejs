@@ -63,9 +63,12 @@ describe('App', () => {
         .get('/api/authorities')
         .expect(200));
 
-    it('/GET public users OK', () => request(app.getHttpServer())
+<%_ } _%>
+<%_ if (generateBuiltInUserEntity && authenticationTypeJwt) { _%>
+
+    it('/GET public users without authentication is unauthorized, like JHipster Spring Boot', () => request(app.getHttpServer())
         .get('/api/users')
-        .expect(200));
+        .expect(401));
 <%_ } _%>
 
     <%_ if (authenticationType === 'jwt' && generateUserManagement) { _%>

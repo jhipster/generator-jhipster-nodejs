@@ -6,9 +6,6 @@ import { randomBytes } from 'crypto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 <%_ } _%>
-<%_ if (generateBuiltInUserEntity) { _%>
-import { FindManyOptions } from 'typeorm';
-<%_ } _%>
 <%_ if (authenticationType === 'jwt' && generateBuiltInUserEntity) { _%>
 import { comparePassword } from '../security/password-util.ts';
 import { JwtService } from '@nestjs/jwt';
@@ -228,7 +225,8 @@ export class AuthService {
         if (!userFound) {
           const authoritiesName: { name: string }[] = [];
           loginUser.authorities?.forEach(authority => authoritiesName.push({ name: authority }));
-          await this.userService.save({ ...loginUser, authorities: authoritiesName }, loginUser.login);
+          // Activated, like the users of JHipster Spring Boot synchronized from the identity provider.
+          await this.userService.save({ ...loginUser, activated: true, authorities: authoritiesName }, loginUser.login);
         }
         return loginUser;
       }
@@ -243,9 +241,4 @@ export class AuthService {
 
   <%_ } _%>
 
-  <%_ if (generateBuiltInUserEntity) { _%>
-  async getAllUsers(options: FindManyOptions<<%= user.dtoClass %>>): Promise<[<%= user.dtoClass %>[], number]> {
-    return await this.userService.findAndCount(options);
-  }
-  <%_ } _%>
 }

@@ -1,7 +1,6 @@
 <%_ if (typeormOrderSupport) { _%>
 import { BadRequestException } from '@nestjs/common';
 <%_ } _%>
-import { BaseEntity } from './base.entity.ts';
 import { Type, Expose as JsonProperty } from 'class-transformer';
 import { ParsedQs } from 'qs';
 
@@ -115,6 +114,7 @@ export class PageRequest {
   }
 }
 
-export class Page<T extends BaseEntity> {
+/** A page of a list: its records (entities, or the users of the public user list), the total and the page request. */
+export class Page<T> {
   constructor(public content: T[], public total: number, public pageable: PageRequest) {}
 }

@@ -5,7 +5,7 @@ import { Cron } from '@nestjs/schedule';
 import { InjectRepository } from '@nestjs/typeorm';
 import { <% if (typeormOrderSupport) { %>EntityMetadata, <% } %>FindManyOptions, FindOneOptions, <% if (generateUserManagement && typeormRelationsSupport) { %>IsNull, LessThan, Not, <% } %>Repository } from 'typeorm';
 import { <%= user.persistClass %> } from '../domain/user.entity.ts';
-import { <%= user.dtoClass%> } from './dto/user.dto.ts';
+import { PublicUserDTO, <%= user.dtoClass%> } from './dto/user.dto.ts';
 import { UserMapper } from './mapper/user.mapper.ts';
 import { User } from '../domain/user.entity.ts';
 <%_ if (authenticationType === 'jwt') { _%>
@@ -66,6 +66,12 @@ export class UserService {
             resultList[0] = usersDTO;
         }
         return resultList;
+    }
+
+    /** The users of the public user list, like JHipster Spring Boot: the activated ones, by their id and login only. */
+    async findPublicUsers(options: FindManyOptions<<%= user.persistClass %>>): Promise<[PublicUserDTO[], number]> {
+        const [users, count] = await this.userRepository.findAndCount({ ...options, where: { activated: true } });
+        return [users.map(user => ({ id: user.<%- user.primaryKey.name %>!, login: user.login })), count];
     }
 
     async save(userDTO: <%= user.dtoClass%>, creator?: string<% if (authenticationType === 'jwt') { %>, updatePassword = false<% } %>): Promise<<%= user.dtoClass%>> {
