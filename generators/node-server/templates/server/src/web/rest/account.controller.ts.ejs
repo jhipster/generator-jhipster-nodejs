@@ -1,11 +1,11 @@
-import { <%_ if (authenticationType === 'jwt') { _%> Body, Param, Post, Res, UseGuards, <%_ } _%> Controller, Get, HttpCode, Logger, Req, UseInterceptors, ClassSerializerInterceptor, InternalServerErrorException } from '@nestjs/common';
+import { <%_ if (authenticationType === 'jwt') { _%> Body, Post, Query, UseGuards, <%_ } _%> Controller, Get, HttpCode, Logger, Req, UseInterceptors, ClassSerializerInterceptor, InternalServerErrorException } from '@nestjs/common';
 <%_ if (authenticationType === 'jwt') { _%>
-import { Response, Request } from 'express';
-import { AuthGuard, Roles, RoleType, RolesGuard } from '../../security/index.ts';
+import { AuthGuard } from '../../security/index.ts';
 <%_ } _%>
 <%_ if (authenticationType === 'jwt' && generateUserManagement) { _%>
 import { PasswordChangeDTO } from '../../service/dto/password-change.dto.ts';
 import { KeyAndPasswordDTO } from '../../service/dto/key-and-password.dto.ts';
+import { MailService } from '../../service/mail.service.ts';
 <%_ } _%>
 import { <%- userLoginVmClass %> } from '../../service/dto/user.dto.ts';
 import {<%_ if (authenticationType === 'jwt') { _%> ApiBearerAuth, <%_ } _%> ApiTags, ApiResponse, ApiOperation } from '@nestjs/swagger';
@@ -17,7 +17,12 @@ import { AuthService } from '../../service/auth.service.ts';
 export class AccountController {
   logger = new Logger('AccountController');
 
-  constructor(private readonly authService: AuthService) { }
+  constructor(
+    private readonly authService: AuthService,
+<%_ if (authenticationType === 'jwt' && generateUserManagement) { _%>
+    private readonly mailService: MailService,
+<%_ } _%>
+  ) { }
   <%_ if (authenticationType === 'jwt' && generateUserManagement) { _%>
 
   @Post('/register')
@@ -28,20 +33,23 @@ export class AccountController {
     type: <%- user.dtoClass %>,
   })
   async registerAccount(@Req() req: { user: <%- userLoginVmClass %> }, @Body() userDTO: <%- user.dtoClass %> & { password: string }): Promise <any> {
-    return await this.authService.registerNewUser(userDTO);
+    const user = await this.authService.registerNewUser(userDTO);
+    void this.mailService.sendActivationEmail(user);
+    return user;
   }
 
   @Get('/activate')
-  @ApiBearerAuth()
-  @UseGuards(AuthGuard, RolesGuard)
-  @Roles(RoleType.ADMIN)
-  @ApiOperation({ summary: 'Activate an account' })
+  @ApiOperation({ summary: 'Activate the registered user' })
   @ApiResponse({
     status: 200,
     description: 'activated',
   })
-  activateAccount(@Param() _key: string, @Res() _res: Response): any {
-    throw new InternalServerErrorException();
+  @ApiResponse({ status: 500, description: 'No user was found for this activation key' })
+  async activateAccount(@Query('key') key: string): Promise<void> {
+    const user = await this.authService.activateRegistration(key);
+    if (!user) {
+      throw new InternalServerErrorException('No user was found for this activation key');
+    }
   }
 
   @Get('/authenticate')
@@ -119,8 +127,7 @@ export class AccountController {
   async requestPasswordReset(@Body() mail: string): Promise<void> {
     const user = await this.authService.requestPasswordReset(String(mail));
     if (user) {
-      // Like JHipster Spring Boot, the reset key goes by mail: the server has no mail service yet.
-      this.logger.warn(`The mail to reset the password of ${user.login} is not sent: no mail service`);
+      void this.mailService.sendPasswordResetMail(user);
     } else {
       this.logger.warn('Password reset requested for non existing mail');
     }

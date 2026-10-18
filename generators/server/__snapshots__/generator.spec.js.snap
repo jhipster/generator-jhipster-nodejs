@@ -167,6 +167,12 @@ exports[`SubGenerator server of nodejs JHipster blueprint > run > should succeed
   "server/src/domain/user.entity.ts": {
     "stateCleared": "modified",
   },
+  "server/src/i18n/messages.properties": {
+    "stateCleared": "modified",
+  },
+  "server/src/i18n/messages_en.properties": {
+    "stateCleared": "modified",
+  },
   "server/src/main.ts": {
     "stateCleared": "modified",
   },
@@ -183,6 +189,9 @@ exports[`SubGenerator server of nodejs JHipster blueprint > run > should succeed
     "stateCleared": "modified",
   },
   "server/src/module/health.module.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/module/mail.module.ts": {
     "stateCleared": "modified",
   },
   "server/src/module/management.module.ts": {
@@ -248,6 +257,9 @@ exports[`SubGenerator server of nodejs JHipster blueprint > run > should succeed
   "server/src/service/foo.service.ts": {
     "stateCleared": "modified",
   },
+  "server/src/service/mail.service.ts": {
+    "stateCleared": "modified",
+  },
   "server/src/service/mapper/foo.mapper.ts": {
     "stateCleared": "modified",
   },
@@ -258,6 +270,15 @@ exports[`SubGenerator server of nodejs JHipster blueprint > run > should succeed
     "stateCleared": "modified",
   },
   "server/src/swagger.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/templates/mail/activationEmail.hbs": {
+    "stateCleared": "modified",
+  },
+  "server/src/templates/mail/creationEmail.hbs": {
+    "stateCleared": "modified",
+  },
+  "server/src/templates/mail/passwordResetEmail.hbs": {
     "stateCleared": "modified",
   },
   "server/src/tls.ts": {
@@ -318,6 +339,9 @@ exports[`SubGenerator server of nodejs JHipster blueprint > run > should succeed
     "stateCleared": "modified",
   },
   "server/test/config.spec.ts": {
+    "stateCleared": "modified",
+  },
+  "server/test/mail.service.spec.ts": {
     "stateCleared": "modified",
   },
   "server/tsconfig.build.json": {

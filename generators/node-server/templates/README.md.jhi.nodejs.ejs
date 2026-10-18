@@ -134,6 +134,14 @@ For this you can use **swagger ui** on **/api/v2/api-docs** path, or the client 
 This application has no users of its own: it validates the tokens issued by the application sharing this secret (like the gateway), and the user of a request is the one of its token.
 <%_ } _%>
 <%_ } _%>
+<%_ if (generateUserManagement) { _%>
+
+### Account mails
+
+Like JHipster Spring Boot, the server sends the account mails with [@nestjs-modules/mailer][] (Nodemailer): the activation mail of a registered user (who signs in once activated, with the link of the mail), the creation mail of a user created by an administrator and the password reset mail. Their HTML is the [Handlebars][] templates of `<%= nodeServerRootDir %>src/templates/mail/` (like the Thymeleaf templates of `templates/mail`; they interpolate values, escaped, and call the `message` helper of the server, they run no code), their texts the messages of `<%= nodeServerRootDir %>src/i18n/messages*.properties` in the language of the user, and their links open the client at `jhipster.mail.base-url`.
+
+The SMTP server is set by the `mail` settings of `<%= nodeServerRootDir %>src/config/application-dev.yml` and `application-prod.yml` (`localhost:25` by default), or by environment variables like `MAIL_HOST`, `MAIL_PORT`, `MAIL_USERNAME` and `MAIL_PASSWORD`. A mail that cannot be sent is logged as a warning, without failing the request.
+<%_ } _%>
 
 ### Using NestJS CLI
 
@@ -196,4 +204,6 @@ For more information, refer to the [Code quality page][].
 [Vitest]: https://vitest.dev/
 [NestJS]: https://nestjs.com/
 [NestJS CLI]: https://docs.nestjs.com/cli/usages
+[@nestjs-modules/mailer]: https://nest-modules.github.io/mailer/
+[Handlebars]: https://handlebarsjs.com/
 <&_ } -&>

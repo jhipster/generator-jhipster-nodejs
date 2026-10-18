@@ -1,4 +1,4 @@
-import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, type MockInstance, vi } from 'vitest';
 import { Test, TestingModule } from '@nestjs/testing';
 import request from 'supertest';
 import { AppModule } from '../src/app.module.ts';
@@ -10,11 +10,14 @@ import { <%= user.dtoClass%> } from '../src/service/dto/user.dto.ts';
 import { UserService } from '../src/service/user.service.ts';
 import { PasswordChangeDTO } from '../src/service/dto/password-change.dto.ts';
 import { AuthService } from '../src/service/auth.service.ts';
+import { MailService } from '../src/service/mail.service.ts';
 
 describe('Account', () => {
     let app: INestApplication;
     let service: UserService;
     let authService: AuthService;
+    let sendActivationEmail: MockInstance<MailService['sendActivationEmail']>;
+    let sendPasswordResetMail: MockInstance<MailService['sendPasswordResetMail']>;
 
     const testUserDTO: <%= user.dtoClass%> = {
         login: 'userTestLogin',
@@ -67,6 +70,10 @@ describe('Account', () => {
         await app.init();
         service = moduleFixture.get<UserService>(UserService);
         authService = moduleFixture.get<AuthService>(AuthService);
+        // The mails are not sent, the tests check the users they are for.
+        const mailService = moduleFixture.get<MailService>(MailService);
+        sendActivationEmail = vi.spyOn(mailService, 'sendActivationEmail').mockResolvedValue();
+        sendPasswordResetMail = vi.spyOn(mailService, 'sendPasswordResetMail').mockResolvedValue();
         userAuthenticated = await service.save(testUserAuthenticated, testUserAuthenticated.login, true);
     });
 
@@ -80,8 +87,12 @@ describe('Account', () => {
 
         // Like JHipster Spring Boot, the login in lower case, and a user not activated whatever the request.
         expect(createdUser.login).toEqual(testUserDTO.login.toLowerCase());
+        // The activation key goes by mail only.
+        expect(createdUser.activationKey).toBeUndefined();
         const registeredUser = (await service.findByFields({ where: { login: testUserDTO.login.toLowerCase() } }))!;
         expect(registeredUser.activated).toBe(false);
+        expect(registeredUser.activationKey).toBeTruthy();
+        expect(sendActivationEmail).toHaveBeenCalledWith(expect.objectContaining({ login: registeredUser.login, activationKey: registeredUser.activationKey }));
         await service.delete(registeredUser);
     });
 
@@ -132,6 +143,28 @@ describe('Account', () => {
     });
 
     it('/GET activate account', async () => {
+        await request(app.getHttpServer()).post('/api/register').send(testUserDTO).expect(201);
+        const { activationKey } = (await service.findByFields({ where: { login: testUserDTO.login.toLowerCase() } }))!;
+
+        await request(app.getHttpServer())
+            .get('/api/activate')
+            .query({ key: activationKey })
+            .expect(200);
+
+        const activatedUser = (await service.findByFields({ where: { login: testUserDTO.login.toLowerCase() } }))!;
+        expect(activatedUser.activated).toBe(true);
+        expect(activatedUser.activationKey).toBeFalsy();
+        await service.delete(activatedUser);
+    });
+
+    it('/GET activate account with an unknown key', async () => {
+        await request(app.getHttpServer())
+            .get('/api/activate')
+            .query({ key: 'unknownKey' })
+            .expect(500);
+    });
+
+    it('/GET activate account without key', async () => {
         await request(app.getHttpServer())
             .get('/api/activate')
             .expect(500);
@@ -225,6 +258,7 @@ describe('Account', () => {
 
         const { resetKey } = (await service.findByFields({ where: { login: testUserAuthenticated.login } }))!;
         expect(resetKey).toBeTruthy();
+        expect(sendPasswordResetMail).toHaveBeenCalledWith(expect.objectContaining({ login: testUserAuthenticated.login, resetKey }));
 
         await request(app.getHttpServer())
             .post('/api/account/reset-password/finish')
@@ -244,6 +278,7 @@ describe('Account', () => {
             .set('Content-Type', 'text/plain')
             .send('unknown@localhost.it')
             .expect(200);
+        expect(sendPasswordResetMail).not.toHaveBeenCalled();
     });
 
     it('/POST reset password finish with an unknown key', async () => {

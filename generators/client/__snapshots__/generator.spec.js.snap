@@ -974,6 +974,12 @@ exports[`SubGenerator client of nodejs JHipster blueprint > run > should succeed
   "package.json": {
     "stateCleared": "modified",
   },
+  "server/src/i18n/messages.properties": {
+    "stateCleared": "modified",
+  },
+  "server/src/i18n/messages_en.properties": {
+    "stateCleared": "modified",
+  },
   "sonar-project.properties": {
     "stateCleared": "modified",
   },

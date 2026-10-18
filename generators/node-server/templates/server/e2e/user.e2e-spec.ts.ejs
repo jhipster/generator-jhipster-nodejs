@@ -1,4 +1,4 @@
-import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, type MockInstance, vi } from 'vitest';
 import { Test, TestingModule } from '@nestjs/testing';
 import request from 'supertest';
 import { AppModule } from '../src/app.module.ts';
@@ -8,6 +8,8 @@ import { AuthGuard } from '../src/security/guards/auth.guard.ts';
 import { RolesGuard } from '../src/security/guards/roles.guard.ts';
 import { <%= user.dtoClass%> } from '../src/service/dto/user.dto.ts';
 import { UserService } from '../src/service/user.service.ts';
+import { MailService } from '../src/service/mail.service.ts';
+import { comparePassword } from '../src/security/password-util.ts';
 <%_ if (databaseTypeMongodb) { _%>
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -17,6 +19,7 @@ import { User } from '../src/domain/user.entity.ts';
 describe('User', () => {
     let app: INestApplication;
     let service: UserService;
+    let sendCreationEmail: MockInstance<MailService['sendCreationEmail']>;
 <%_ if (databaseTypeMongodb) { _%>
     let userRepository: Repository<User>;
 <%_ } _%>
@@ -58,6 +61,8 @@ describe('User', () => {
         configureApp(app);
         await app.init();
         service = moduleFixture.get<UserService>(UserService);
+        // The mails are not sent, the tests check the users they are for.
+        sendCreationEmail = vi.spyOn(moduleFixture.get<MailService>(MailService), 'sendCreationEmail').mockResolvedValue();
 <%_ if (databaseTypeMongodb) { _%>
         userRepository = moduleFixture.get<Repository<User>>(getRepositoryToken(User));
 <%_ } _%>
@@ -73,6 +78,12 @@ describe('User', () => {
 
         // Like JHipster Spring Boot, the login in lower case.
         expect(createdUser.login).toEqual(testUserRequestObject.login.toLowerCase());
+        // Like JHipster Spring Boot, an activated user with a random password, and a reset key sent by mail.
+        const savedUser = (await service.findByFields({ where: { login: createdUser.login } }))!;
+        expect(savedUser.activated).toBe(true);
+        expect(savedUser.resetKey).toBeTruthy();
+        expect(comparePassword(testUserRequestObject.login, savedUser.password)).toBe(false);
+        expect(sendCreationEmail).toHaveBeenCalledWith(expect.objectContaining({ login: createdUser.login, resetKey: savedUser.resetKey }));
         await service.delete(createdUser);
     });
 
