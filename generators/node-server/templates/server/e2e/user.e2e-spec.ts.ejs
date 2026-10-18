@@ -82,7 +82,7 @@ describe('User', () => {
         const savedUser = (await service.findByFields({ where: { login: createdUser.login } }))!;
         expect(savedUser.activated).toBe(true);
         expect(savedUser.resetKey).toBeTruthy();
-        expect(comparePassword(testUserRequestObject.login, savedUser.password)).toBe(false);
+        expect(await comparePassword(testUserRequestObject.login, savedUser.password)).toBe(false);
         expect(sendCreationEmail).toHaveBeenCalledWith(expect.objectContaining({ login: createdUser.login, resetKey: savedUser.resetKey }));
         await service.delete(createdUser);
     });

@@ -6,6 +6,8 @@ import { ConfigService } from '@nestjs/config';
  * sharing that secret (a Spring Boot gateway and NodeJS microservices, or the reverse) accept each other's tokens.
  */
 export const JWT_ALGORITHM = 'HS512';
+/** The minimum length of the key of HS512, 512 bits. */
+export const JWT_MIN_KEY_BYTES = 64;
 
 export function jwtSecretKey(configService: ConfigService): Buffer {
   const secret = configService.getOrThrow<string>('jhipster.security.authentication.jwt.base64-secret');
@@ -16,5 +18,12 @@ export function jwtSecretKey(configService: ConfigService): Buffer {
       'jhipster.security.authentication.jwt.base64-secret is not set: set the JHIPSTER_SECURITY_AUTHENTICATION_JWT_BASE64SECRET environment variable, or activate the secret-samples profile',
     );
   }
-  return Buffer.from(secret, 'base64');
+  const key = Buffer.from(secret, 'base64');
+  if (key.length < JWT_MIN_KEY_BYTES) {
+    // Like the HS512 key of JHipster Spring Boot (its JWT encoder refuses a shorter one).
+    throw new Error(
+      `jhipster.security.authentication.jwt.base64-secret is too short: ${key.length * 8} bits, HS512 needs at least ${JWT_MIN_KEY_BYTES * 8} bits (a base64 secret of ${JWT_MIN_KEY_BYTES} bytes or more)`,
+    );
+  }
+  return key;
 }

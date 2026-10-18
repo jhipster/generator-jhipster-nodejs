@@ -150,7 +150,12 @@ export const serverFiles = {
     {
       path: SERVER_NODEJS_DIR,
       condition: ctx => ctx.authenticationTypeJwt,
-      templates: ['src/security/passport.jwt.strategy.ts', 'src/security/payload.interface.ts', 'src/security/jwt.config.ts'],
+      templates: [
+        'src/security/passport.jwt.strategy.ts',
+        'src/security/payload.interface.ts',
+        'src/security/jwt.config.ts',
+        'test/security/jwt.config.spec.ts',
+      ],
     },
     {
       path: SERVER_NODEJS_DIR,

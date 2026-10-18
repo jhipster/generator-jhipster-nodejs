@@ -347,6 +347,9 @@ exports[`SubGenerator server of nodejs JHipster blueprint > run > should succeed
   "server/test/mail.service.spec.ts": {
     "stateCleared": "modified",
   },
+  "server/test/security/jwt.config.spec.ts": {
+    "stateCleared": "modified",
+  },
   "server/tsconfig.build.json": {
     "stateCleared": "modified",
   },

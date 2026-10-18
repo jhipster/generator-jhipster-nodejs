@@ -67,7 +67,7 @@ export class AuthService {
 
     // The logins are in lower case, like the ones of JHipster Spring Boot.
     const userFind = await this.userService.findByFields({ where: { login: loginUserName.toLowerCase() } });
-    const validPassword = !!userFind && comparePassword(loginPassword, userFind.password);
+    const validPassword = !!userFind && (await comparePassword(loginPassword, userFind.password));
     if (!userFind || !validPassword) {
       throw new HttpException('Invalid login name or password!', HttpStatus.UNAUTHORIZED);
     }
@@ -116,12 +116,16 @@ export class AuthService {
   }
 
   async changePassword(userLogin: string, currentClearTextPassword: string, newPassword: string): Promise<void> {
+    // Like the AccountResource of JHipster Spring Boot, the length of the new password.
+    if (isPasswordLengthInvalid(newPassword)) {
+      throw new InvalidPasswordException();
+    }
     const userFind = await this.userService.findByFields({ where: { login: userLogin } });
     if (!userFind) {
       throw new HttpException('Invalid login name!', HttpStatus.BAD_REQUEST);
     }
 
-    if (!comparePassword(currentClearTextPassword, userFind.password)) {
+    if (!(await comparePassword(currentClearTextPassword, userFind.password))) {
       throw new InvalidPasswordException();
     }
     userFind.password = newPassword;
@@ -216,14 +220,16 @@ export class AuthService {
     if (!userFind) {
       throw new HttpException('Invalid login name!', HttpStatus.BAD_REQUEST);
     }
-    const userFindEmail = await this.userService.findByFields({ where: { email: newUserInfo.email } });
-    if (userFindEmail && newUserInfo.email !== userFind.email) {
+    // Like JHipster Spring Boot, the mail in lower case, of no other user.
+    const email = newUserInfo.email.toLowerCase();
+    const userFindEmail = await this.userService.findByFields({ where: { email } });
+    if (userFindEmail && userFindEmail.login !== userFind.login) {
       throw new EmailAlreadyUsedException();
     }
 
     userFind.firstName = newUserInfo.firstName;
     userFind.lastName = newUserInfo.lastName;
-    userFind.email = newUserInfo.email;
+    userFind.email = email;
     userFind.langKey = newUserInfo.langKey;
     await this.userService.save(userFind, userLogin);
     return userFind;
