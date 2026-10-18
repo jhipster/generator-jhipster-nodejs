@@ -77,6 +77,29 @@ mail:
 
 <%_ } _%>
 jhipster:
+<%_ if (applicationTypeMicroservice) { _%>
+  # CORS is disabled by default on microservices, as you should access them through a gateway.
+  # If you want to enable it, please uncomment the configuration below.
+  # cors:
+  #   allowed-origins: "http://localhost:9000,https://localhost:9000"
+  #   allowed-methods: "*"
+  #   allowed-headers: "*"
+  #   exposed-headers: "Authorization,Link,X-Total-Count,X-${jhipster.clientApp.name}-alert,X-${jhipster.clientApp.name}-error,X-${jhipster.clientApp.name}-params"
+  #   allow-credentials: true
+  #   max-age: 1800
+<%_ } else { _%>
+  # CORS is only enabled by default with the "dev" profile, like JHipster Spring Boot.
+  cors:
+    # Allow Ionic for JHipster by default
+    allowed-origins: "http://localhost:8100,https://localhost:8100<% if (devServerPortProxy) { %>,http://localhost:<%- devServerPortProxy %>,https://localhost:<%- devServerPortProxy %><% } %><% if (!skipClient) { %>,http://localhost:<%- devServerPort %>,https://localhost:<%- devServerPort %><% } %>"
+    # Enable CORS when running in GitHub Codespaces
+    allowed-origin-patterns: 'https://*.githubpreview.dev'
+    allowed-methods: "*"
+    allowed-headers: "*"
+    exposed-headers: "Authorization,Link,X-Total-Count,X-${jhipster.clientApp.name}-alert,X-${jhipster.clientApp.name}-error,X-${jhipster.clientApp.name}-params"
+    allow-credentials: true
+    max-age: 1800
+<%_ } _%>
   mail: # specific JHipster mail property, for standard properties see MailProperties
     from: <%= baseName %>@localhost
     base-url: http://127.0.0.1:8082
