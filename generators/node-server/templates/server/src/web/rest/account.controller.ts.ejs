@@ -7,7 +7,7 @@ import { PasswordChangeDTO } from '../../service/dto/password-change.dto.ts';
 import { KeyAndPasswordDTO } from '../../service/dto/key-and-password.dto.ts';
 import { MailService } from '../../service/mail.service.ts';
 <%_ } _%>
-import { <%- userLoginVmClass %> } from '../../service/dto/user.dto.ts';
+import { <% if (authenticationType === 'jwt' && generateUserManagement) { %>Managed<%- userLoginVmClass %>, <% } %><%- userLoginVmClass %> } from '../../service/dto/user.dto.ts';
 import {<%_ if (authenticationType === 'jwt') { _%> ApiBearerAuth, <%_ } _%> ApiTags, ApiResponse, ApiOperation } from '@nestjs/swagger';
 import { AuthService } from '../../service/auth.service.ts';
 
@@ -32,7 +32,7 @@ export class AccountController {
     description: 'Registered user',
     type: <%- user.dtoClass %>,
   })
-  async registerAccount(@Req() req: { user: <%- userLoginVmClass %> }, @Body() userDTO: <%- user.dtoClass %> & { password: string }): Promise <any> {
+  async registerAccount(@Req() req: { user: <%- userLoginVmClass %> }, @Body() userDTO: Managed<%- user.dtoClass %>): Promise <any> {
     const user = await this.authService.registerNewUser(userDTO);
     void this.mailService.sendActivationEmail(user);
     return user;
