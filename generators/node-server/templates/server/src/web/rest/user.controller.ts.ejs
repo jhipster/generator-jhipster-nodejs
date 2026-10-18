@@ -8,7 +8,7 @@ import {<%_ if (authenticationType === 'jwt') { _%> ApiBearerAuth, <%_ } else if
 import { UserService } from '../../service/user.service.ts';
 import { MailService } from '../../service/mail.service.ts';
 import { randomBytes } from 'crypto';
-import { EmailAlreadyUsedException, LoginAlreadyUsedException } from './errors/problem.exception.ts';
+import { BadRequestAlertException, EmailAlreadyUsedException, LoginAlreadyUsedException } from './errors/problem.exception.ts';
 <%_ if (typeormOrderSupport) { _%>
 import { isSortableProperty } from '../../common/sortable-properties.ts';
 <%_ } _%>
@@ -73,31 +73,45 @@ export class UserController {
       type: <%= user.dtoClass%>,
   })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
+  @ApiResponse({ status: 400, description: 'The user already has an id, or its login or mail is already used.' })
   async createUser(@Req() req: Request, @Body() userDTO: <%= user.dtoClass%>): Promise<<%= user.dtoClass%>> {
+      if (userDTO.<%= user.primaryKey.name %> !== undefined && userDTO.<%= user.primaryKey.name %> !== null) {
+          // Like JHipster Spring Boot, a new user cannot have an id: it would update an existing one.
+          throw new BadRequestAlertException('A new user cannot already have an ID', 'userManagement', 'idexists');
+      }
       // Like JHipster Spring Boot, the login and the mail in lower case, each one of a single user.
-      userDTO.login = userDTO.login.toLowerCase();
-      userDTO.email = userDTO.email.toLowerCase();
-      if (await this.userService.findByFields({ where: { login: userDTO.login } })) {
+      const login = userDTO.login.toLowerCase();
+      const email = userDTO.email.toLowerCase();
+      if (await this.userService.findByFields({ where: { login } })) {
           throw new LoginAlreadyUsedException();
       }
-      if (await this.userService.findByFields({ where: { email: userDTO.email } })) {
+      if (await this.userService.findByFields({ where: { email } })) {
           throw new EmailAlreadyUsedException();
       }
-      // Like JHipster Spring Boot, the created user is activated with a random password and a reset key: the creation mail
-      // links to the page that sets the password.
+      // The fields of the UserService.createUser of JHipster Spring Boot only (not the password, the keys or the audit of
+      // the body): the user is activated, with a random password and a reset key, the creation mail linking to the page that
+      // sets the password.
       const created = await this.userService.save(
         {
-          ...userDTO,
+          login,
+          firstName: userDTO.firstName,
+          lastName: userDTO.lastName,
+          email,
+          imageUrl: userDTO.imageUrl,
+          langKey: userDTO.langKey ?? '<%= nativeLanguage %>',
+          authorities: userDTO.authorities,
+          activated: true,
           password: randomBytes(15).toString('base64url'),
           resetKey: randomBytes(15).toString('base64url'),
           resetDate: new Date(),
-          activated: true,
         },
         req.user?.login,
+<%_ if (authenticationType === 'jwt') { _%>
         true,
+<%_ } _%>
       );
       void this.mailService.sendCreationEmail(created);
-      HeaderUtil.addEntityCreatedHeaders(req.res, 'User', created.id);
+      HeaderUtil.addEntityCreatedHeaders(req.res, 'User', created.login);
       return created;
   }
 
@@ -109,22 +123,41 @@ export class UserController {
       description: 'The record has been successfully updated.',
       type: <%= user.dtoClass%>,
   })
+  @ApiResponse({ status: 400, description: 'The login or the mail is used by another user.' })
+  @ApiResponse({ status: 404, description: 'No user of this id.' })
   async updateUser(@Req() req: Request, @Body() userDTO: <%= user.dtoClass%>): Promise<<%= user.dtoClass%>> {
-    const userOnDb = await this.userService.find({ where: { login: userDTO.login } });
-    let updated = false;
-    if (userOnDb && userOnDb.id) {
-      userDTO.id = userOnDb.id;
-      updated = true;
-    } else {
-      userDTO.password = userDTO.login;
+    // Like JHipster Spring Boot, the user of the id of the body, whose login and mail are not the ones of another user.
+    const id = userDTO.<%= user.primaryKey.name %>;
+    const isAnotherUser = (other?: <%= user.dtoClass%>): boolean => other !== undefined && other !== null && String(other.<%= user.primaryKey.name %>) !== String(id);
+    const login = userDTO.login.toLowerCase();
+    const email = userDTO.email.toLowerCase();
+    if (isAnotherUser(await this.userService.findByFields({ where: { email } }))) {
+      throw new EmailAlreadyUsedException();
     }
-    const createdOrUpdated = await this.userService.update(userDTO, req.user?.login);
-    if (updated) {
-      HeaderUtil.addEntityUpdatedHeaders(req.res, 'User', createdOrUpdated.id);
-    } else {
-      HeaderUtil.addEntityCreatedHeaders(req.res, 'User', createdOrUpdated.id);
+    if (isAnotherUser(await this.userService.findByFields({ where: { login } }))) {
+      throw new LoginAlreadyUsedException();
     }
-    return createdOrUpdated;
+    const existing = id === undefined || id === null ? undefined : await this.userService.findByFields({ where: { <%= user.primaryKey.name %>: id } });
+    if (!existing) {
+      throw new NotFoundException();
+    }
+    // The fields of the UserService.updateUser of JHipster Spring Boot only: the password, the keys and the audit stay.
+    const updated = await this.userService.update(
+      {
+        ...existing,
+        login,
+        firstName: userDTO.firstName,
+        lastName: userDTO.lastName,
+        email,
+        imageUrl: userDTO.imageUrl,
+        activated: userDTO.activated,
+        langKey: userDTO.langKey,
+        authorities: userDTO.authorities,
+      },
+      req.user?.login,
+    );
+    HeaderUtil.addEntityUpdatedHeaders(req.res, 'User', updated.login);
+    return updated;
   }
 
   @Get('/:login')
@@ -136,7 +169,8 @@ export class UserController {
       type: <%= user.dtoClass%>,
   })
   async getUser(@Param('login') loginValue: string): Promise<<%= user.dtoClass%>> {
-      const user = await this.userService.find({ where: { login: loginValue } });
+      // With its authorities, which the edition page of the client shows and sends back.
+      const user = await this.userService.findByFields({ where: { login: loginValue } });
       if (!user) {
         throw new NotFoundException();
       }

@@ -87,6 +87,36 @@ describe('User', () => {
         await service.delete(createdUser);
     });
 
+    it('/POST create user with an id is a bad request, like JHipster Spring Boot', async () => {
+        const problem = (
+            await request(app.getHttpServer())
+                .post('/api/admin/users')
+                .send({ ...testUserRequestObject, id: <%- databaseTypeMongodb ? "'000000000000000000000042'" : '42' %> })
+                .expect(400)
+        ).body;
+
+        expect(problem).toMatchObject({ message: 'error.idexists', params: 'userManagement' });
+        expect(await service.findByFields({ where: { login: testUserRequestObject.login.toLowerCase() } })).toBeFalsy();
+    });
+
+    it('/POST create user keeps the fields of the user only: activated, its own keys and audit', async () => {
+        const createdUser: <%= user.dtoClass%> = (
+            await request(app.getHttpServer())
+                .post('/api/admin/users')
+                .send({ ...testUserRequestObject, activated: false, password: 'chosenPassword', activationKey: 'chosenKey', resetKey: 'chosenKey', createdBy: 'someone' })
+                .expect(201)
+        ).body;
+
+        const savedUser = (await service.findByFields({ where: { login: testUserRequestObject.login.toLowerCase() } }))!;
+        expect(savedUser.activated).toBe(true);
+        expect(savedUser.password).not.toEqual('chosenPassword');
+        expect(savedUser.activationKey).toBeFalsy();
+        expect(savedUser.resetKey).toEqual(expect.any(String));
+        expect(savedUser.resetKey).not.toEqual('chosenKey');
+        expect(savedUser.createdBy).not.toEqual('someone');
+        await service.delete(createdUser);
+    });
+
     it('/POST create user with the login of another user is a login already used problem', async () => {
         const savedUser = await service.save({ ...testUserDTO, login: 'usedlogin', email: 'usedlogin@localhost.it' });
 
@@ -171,7 +201,8 @@ describe('User', () => {
         ).body;
 
         <%_ if (databaseType !== 'mongodb') { _%>
-        expect(updatedUser).toEqual(JSON.parse(JSON.stringify(withoutKeys(savedUser))));
+        // Like JHipster Spring Boot, the login in lower case.
+        expect(updatedUser).toEqual(JSON.parse(JSON.stringify(withoutKeys({ ...savedUser, login: savedUser.login.toLowerCase() }))));
         <%_ } else { _%>
         expect(updatedUser.firstName).toEqual(savedUser.firstName);
         <%_ } _%>
@@ -192,12 +223,45 @@ describe('User', () => {
         ).body;
 
         <%_ if (databaseType !== 'mongodb') { _%>
-        expect(updatedUser).toEqual(JSON.parse(JSON.stringify(withoutKeys(savedUser))));
+        // Like JHipster Spring Boot, the login in lower case.
+        expect(updatedUser).toEqual(JSON.parse(JSON.stringify(withoutKeys({ ...savedUser, login: savedUser.login.toLowerCase() }))));
         <%_ } else { _%>
         expect(updatedUser.firstName).toEqual(savedUser.firstName);
         <%_ } _%>
 
         await service.delete(savedUser as <%= user.dtoClass%>);
+    });
+
+    it('/PUT update user keeps the password and the keys of the user', async () => {
+        testUserDTO.login = 'testuserkeep';
+        const savedUser = await service.save({ ...testUserDTO, resetKey: 'savedKey' });
+
+        await request(app.getHttpServer())
+            .put('/api/admin/users')
+            .send({ ...savedUser, firstName: 'Updated Name', password: 'chosenPassword', resetKey: 'chosenKey' })
+            .expect(200);
+
+        const updatedUser = (await service.findByFields({ where: { login: 'testuserkeep' } }))!;
+        expect(updatedUser.firstName).toEqual('Updated Name');
+        expect(updatedUser.password).toEqual(savedUser.password);
+        expect(updatedUser.resetKey).toEqual('savedKey');
+        await service.delete(updatedUser);
+    });
+
+    it('/PUT update an unknown user is not found, like JHipster Spring Boot', () =>
+        request(app.getHttpServer())
+            .put('/api/admin/users')
+            .send({ ...testUserRequestObject, login: 'unknownuser', email: 'unknownuser@localhost.it', id: <%- databaseTypeMongodb ? "'000000000000000000000042'" : '42' %> })
+            .expect(404));
+
+    it('/GET user with a login name gives its authorities', async () => {
+        testUserDTO.login = 'testusergetauthorities';
+        const savedUser = await service.save({ ...testUserDTO, authorities: ['ROLE_USER'] });
+
+        const getUser: <%= user.dtoClass%> = (await request(app.getHttpServer()).get('/api/admin/users/testusergetauthorities').expect(200)).body;
+
+        expect(getUser.authorities).toEqual(['ROLE_USER']);
+        await service.delete(savedUser);
     });
 
     it('/GET user with a login name', async () => {
@@ -214,7 +278,7 @@ describe('User', () => {
         ).body;
 
         <%_ if (databaseType !== 'mongodb') { _%>
-        expect(getUser).toEqual(JSON.parse(JSON.stringify(withoutKeys(savedUserWithoutPassword))));
+        expect(getUser).toEqual(JSON.parse(JSON.stringify({ ...withoutKeys(savedUserWithoutPassword), authorities: [] })));
         <%_ } else { _%>
         expect(getUser.login).toEqual(savedUser.login);
         <%_ } _%>
