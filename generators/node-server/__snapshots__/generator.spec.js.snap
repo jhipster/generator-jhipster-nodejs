@@ -369,7 +369,7 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > jwt microservic
   "package.json": {
     "stateCleared": "modified",
   },
-  "server/.env": {
+  "server/.env.dev": {
     "stateCleared": "modified",
   },
   "server/README.md": {
@@ -638,7 +638,7 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > run > should su
   "package.json": {
     "stateCleared": "modified",
   },
-  "server/.env": {
+  "server/.env.dev": {
     "stateCleared": "modified",
   },
   "server/README.md": {
@@ -982,7 +982,7 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > with oauth2 > s
   "package.json": {
     "stateCleared": "modified",
   },
-  "server/.env": {
+  "server/.env.dev": {
     "stateCleared": "modified",
   },
   "server/README.md": {
@@ -1263,7 +1263,7 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > with oauth2 and
   "package.json": {
     "stateCleared": "modified",
   },
-  "server/.env": {
+  "server/.env.dev": {
     "stateCleared": "modified",
   },
   "server/README.md": {
@@ -1752,11 +1752,15 @@ $ npm run start:prod
 $ node dist/main.js
 \`\`\`
 
-### Using .env file and run in prod
+### Development profile and .env file
 
-The app uses a **BACKEND_ENV** variable with **dev** default value in the [.env](.env) file.
-If you change the value to **prod**, you will use the **prod database at runtime**, the \`database\` section of [src/config/application-prod.yml](src/config/application-prod.yml).
-You can also define all the variables that you want in that file. See https://www.npmjs.com/package/dotenv for the usage.
+The development scripts (\`npm start\`, \`npm run start:dev\`, \`npm run start:debug\`) run with the **BACKEND_ENV** of the
+[.env.dev](.env.dev) file, **dev**: the dev database and settings, the sample secrets and the API documentation. The
+built application (\`npm run start:prod\`, \`node dist/main.js\`, the Docker image) does not read it, like a Spring Boot jar
+built with the prod profile: set **BACKEND_ENV** where it runs, like \`prod\`.
+
+An optional \`.env\` file, ignored by git, holds local settings, like secrets: the application loads it with
+[dotenv](https://www.npmjs.com/package/dotenv) when it exists. A variable set in the environment wins over both files.
 
 ### Profiles
 
@@ -1780,7 +1784,7 @@ there is one, in the order of the list (the last one wins), and the profiles of 
 The \`/management/info\` endpoint gives the active profiles to the client, which shows its ribbon on the
 \`info.display-ribbon-on-profiles\` ones.
 
-If you don't want to set a value in the .env file, you can specify its in the runtime process.
+**BACKEND_ENV** can also be set in the environment of the process.
 For example:
 
 \`\`\`bash
@@ -1910,7 +1914,7 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > without client 
   "package.json": {
     "stateCleared": "modified",
   },
-  "server/.env": {
+  "server/.env.dev": {
     "stateCleared": "modified",
   },
   "server/README.md": {

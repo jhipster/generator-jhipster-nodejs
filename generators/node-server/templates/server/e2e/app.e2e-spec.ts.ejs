@@ -24,8 +24,8 @@ describe('App', () => {
     };
 <%_  if (authenticationType === 'jwt' && generateUserManagement) { _%>
     const testUserLogin: UserLoginDTO = {
-        username: 'system',
-        password: 'system',
+        username: 'admin',
+        password: 'admin',
         rememberMe: true
     };
 <%_ } else if (authenticationType === 'oauth2') { _%>
@@ -84,7 +84,7 @@ describe('App', () => {
         .expect(response => expect(response.body).toMatchObject({ message: 'error.validation', fieldErrors: expect.arrayContaining([expect.objectContaining({ field: 'username' })]) })));
 
     it('/GET account with an expired jwt is unauthorized', () => {
-        const expiredToken = app.get(JwtService).sign({ sub: 'system', auth: '' }, { expiresIn: -10 });
+        const expiredToken = app.get(JwtService).sign({ sub: 'admin', auth: '' }, { expiresIn: -10 });
         return request(app.getHttpServer())
             .get('/api/account')
             .set('Authorization', `Bearer ${expiredToken}`)

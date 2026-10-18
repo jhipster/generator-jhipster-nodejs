@@ -56,7 +56,7 @@ exports[`SubGenerator server of nodejs JHipster blueprint > run > should succeed
   "package.json": {
     "stateCleared": "modified",
   },
-  "server/.env": {
+  "server/.env.dev": {
     "stateCleared": "modified",
   },
   "server/README.md": {
