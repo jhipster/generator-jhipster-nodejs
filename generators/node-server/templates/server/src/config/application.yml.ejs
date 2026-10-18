@@ -86,6 +86,10 @@ jhipster:
     password: admin
 <%_ } _%>
   security:
+<%_ if (!skipClient) { _%>
+    # The Content-Security-Policy header of the responses, like JHipster Spring Boot.
+    content-security-policy: "default-src 'self'; frame-src 'self' data:; script-src 'self' 'unsafe-inline' 'unsafe-eval'<%- locals.microfrontend && locals.clientFrameworkAngular ? ' blob:' : '' %> https://storage.googleapis.com; style-src 'self'<%- locals.clientThemeAny ? ' https://fonts.googleapis.com' : '' %> 'unsafe-inline'; img-src 'self' data:; font-src 'self'<%- locals.clientThemeAny ? ' https://fonts.gstatic.com' : '' %> data:"
+<%_ } _%>
 <%_ if (authenticationType === 'jwt') { _%>
     authentication:
       jwt:
