@@ -5,6 +5,7 @@ import { ExecutionContext, INestApplication } from '@nestjs/common';
 import { AppModule } from '../src/app.module.ts';
 import { configureApp } from '../src/app.config.ts';
 import { loggerLevels } from '../src/common/logging.ts';
+import { setupSwagger } from '../src/swagger.ts';
 import { AuthGuard } from '../src/security/guards/auth.guard.ts';
 import { RolesGuard } from '../src/security/guards/roles.guard.ts';
 
@@ -117,6 +118,11 @@ describe('Management', () => {
         });
 
         it('/GET jhimetrics is forbidden', () => request(app.getHttpServer()).get('/management/jhimetrics').expect(403));
+
+        it('/GET v3/api-docs is forbidden, like JHipster Spring Boot', async () => {
+            setupSwagger(app);
+            await request(app.getHttpServer()).get('/v3/api-docs').expect(403);
+        });
     });
 
     describe('as a user with the administrator role', () => {
@@ -125,6 +131,19 @@ describe('Management', () => {
         });
 
         it('/GET loggers is allowed', () => request(app.getHttpServer()).get('/management/loggers').expect(200));
+
+        it('/GET v3/api-docs is not found without the api-docs profile', () => request(app.getHttpServer()).get('/v3/api-docs').expect(404));
+
+        it('/GET v3/api-docs gives the OpenAPI document of the api-docs profile', async () => {
+            setupSwagger(app);
+            const { body } = await request(app.getHttpServer()).get('/v3/api-docs').expect(200);
+
+            expect(body.openapi).toEqual(expect.any(String));
+            expect(body.info.title).toBe('<%= baseName %> API');
+            expect(Object.keys(body.paths)).toContainEqual(expect.stringMatching(/^\/api\//));
+            // The controller of the document itself is left out.
+            expect(Object.keys(body.paths)).not.toContain('/v3/api-docs');
+        });
     });
 
     describe('Prometheus', () => {
@@ -150,6 +169,11 @@ describe('Management', () => {
         it('/GET loggers is refused', async () => {
             const { status } = await request(app.getHttpServer()).get('/management/loggers');
             expect([401, 403]).toContain(status);
+        });
+
+        it('/GET v3/api-docs is refused', async () => {
+            setupSwagger(app);
+            await request(app.getHttpServer()).get('/v3/api-docs').expect(401);
         });
     });
 <%_ } _%>

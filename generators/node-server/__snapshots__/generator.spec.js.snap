@@ -507,6 +507,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > jwt microservic
   "server/src/security/role-type.ts": {
     "stateCleared": "modified",
   },
+  "server/src/service/api-docs.service.ts": {
+    "stateCleared": "modified",
+  },
   "server/src/service/auth.service.ts": {
     "stateCleared": "modified",
   },
@@ -526,6 +529,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > jwt microservic
     "stateCleared": "modified",
   },
   "server/src/web/rest/account.controller.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/web/rest/api-docs.controller.ts": {
     "stateCleared": "modified",
   },
   "server/src/web/rest/configuration.controller.ts": {
@@ -809,6 +815,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > run > should su
   "server/src/security/role-type.ts": {
     "stateCleared": "modified",
   },
+  "server/src/service/api-docs.service.ts": {
+    "stateCleared": "modified",
+  },
   "server/src/service/auth.service.ts": {
     "stateCleared": "modified",
   },
@@ -852,6 +861,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > run > should su
     "stateCleared": "modified",
   },
   "server/src/web/rest/account.controller.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/web/rest/api-docs.controller.ts": {
     "stateCleared": "modified",
   },
   "server/src/web/rest/configuration.controller.ts": {
@@ -1126,6 +1138,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > with oauth2 > s
   "server/src/security/role-type.ts": {
     "stateCleared": "modified",
   },
+  "server/src/service/api-docs.service.ts": {
+    "stateCleared": "modified",
+  },
   "server/src/service/auth.service.ts": {
     "stateCleared": "modified",
   },
@@ -1142,6 +1157,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > with oauth2 > s
     "stateCleared": "modified",
   },
   "server/src/web/rest/account.controller.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/web/rest/api-docs.controller.ts": {
     "stateCleared": "modified",
   },
   "server/src/web/rest/configuration.controller.ts": {
@@ -1422,6 +1440,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > with oauth2 and
   "server/src/security/role-type.ts": {
     "stateCleared": "modified",
   },
+  "server/src/service/api-docs.service.ts": {
+    "stateCleared": "modified",
+  },
   "server/src/service/auth.service.ts": {
     "stateCleared": "modified",
   },
@@ -1444,6 +1465,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > with oauth2 and
     "stateCleared": "modified",
   },
   "server/src/web/rest/account.controller.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/web/rest/api-docs.controller.ts": {
     "stateCleared": "modified",
   },
   "server/src/web/rest/configuration.controller.ts": {
@@ -1561,7 +1585,7 @@ Your app uses, to get and use the token, the \`server/src/config/application.yml
 
 You can use the default secret created from the app, or change it.
 So to get a token, you have to pass a POST request on the _api/authenticate_ url with **UserLoginDTO** as body.
-For this you can use **swagger ui** on **/api/v2/api-docs** path, or the client login page (if you have generated it).
+For this you can use the client login page (if you have generated it), or a client like curl.
 
 ### Account mails
 
@@ -1783,7 +1807,7 @@ there is one, in the order of the list (the last one wins), and the profiles of 
 \`secret-samples\`. The standard profiles are:
 
 - \`dev\`, \`prod\` and \`test\`: the database and the settings of each environment;
-- \`api-docs\`: the Swagger API documentation, at the \`jhipster.swagger.path\` path;
+- \`api-docs\`: the OpenAPI document of the API at \`/v3/api-docs\`, for the administrators like JHipster Spring Boot;
 - \`secret-samples\`: samples of the secrets (the JWT secret, the username and the password of the database) for development and CI, in
   [application-secret-samples.yml](src/config/application-secret-samples.yml). In production, set them with environment
   variables instead, like \`JHIPSTER_SECURITY_AUTHENTICATION_JWT_BASE64SECRET\`;
@@ -2094,6 +2118,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > without client 
   "server/src/security/role-type.ts": {
     "stateCleared": "modified",
   },
+  "server/src/service/api-docs.service.ts": {
+    "stateCleared": "modified",
+  },
   "server/src/service/auth.service.ts": {
     "stateCleared": "modified",
   },
@@ -2137,6 +2164,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > without client 
     "stateCleared": "modified",
   },
   "server/src/web/rest/account.controller.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/web/rest/api-docs.controller.ts": {
     "stateCleared": "modified",
   },
   "server/src/web/rest/configuration.controller.ts": {
