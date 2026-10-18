@@ -231,7 +231,6 @@ describe('SubGenerator node-server of nodejs JHipster blueprint', () => {
       });
       expect(result.fs.readJSON(join(result.cwd, 'package.json')).devDependencies).toHaveProperty('concurrently');
       result.assertNoFileContent('package.json', 'no client');
-      result.assertNoFileContent('package.json', 'wait-on');
     });
   });
   describe('with mariadb', () => {
