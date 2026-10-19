@@ -576,6 +576,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > jwt microservic
   "server/test/config.spec.ts": {
     "stateCleared": "modified",
   },
+  "server/test/security/jwt.config.spec.ts": {
+    "stateCleared": "modified",
+  },
   "server/tsconfig.build.json": {
     "stateCleared": "modified",
   },
@@ -918,6 +921,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > run > should su
     "stateCleared": "modified",
   },
   "server/test/mail.service.spec.ts": {
+    "stateCleared": "modified",
+  },
+  "server/test/security/jwt.config.spec.ts": {
     "stateCleared": "modified",
   },
   "server/tsconfig.build.json": {
@@ -2221,6 +2227,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > without client 
     "stateCleared": "modified",
   },
   "server/test/mail.service.spec.ts": {
+    "stateCleared": "modified",
+  },
+  "server/test/security/jwt.config.spec.ts": {
     "stateCleared": "modified",
   },
   "server/tsconfig.build.json": {

@@ -241,6 +241,40 @@ describe('Account', () => {
 
     });
 
+    it('/POST account update settings keeps the mail in lower case, like JHipster Spring Boot', async () => {
+        await request(app.getHttpServer())
+            .post('/api/account')
+            .send({ ...testUserAuthenticated, email: 'UserLogged@LocalHost.it' })
+            .expect(200);
+
+        const updatedUserSettings = await service.findByFields({ where: { login: testUserAuthenticated.login } });
+        expect(updatedUserSettings?.email).toEqual('userlogged@localhost.it');
+    });
+
+    it('/POST account update settings with the mail of another user in another case is an email already used problem', async () => {
+        const otherUser = await service.save({ login: 'otheruser', email: 'otheruser@localhost.it', password: 'otherPassword' });
+        const problem = (
+            await request(app.getHttpServer())
+                .post('/api/account')
+                .send({ ...testUserAuthenticated, email: 'OtherUser@localhost.it' })
+                .expect(400)
+        ).body;
+
+        expect(problem).toMatchObject({ type: 'https://www.jhipster.tech/problem/email-already-used' });
+        await service.delete(otherUser);
+    });
+
+    it('/POST change password with a too short new password is an invalid password problem, like JHipster Spring Boot', async () => {
+        const problem = (
+            await request(app.getHttpServer())
+                .post('/api/account/change-password')
+                .send({ currentPassword: testUserAuthenticated.password, newPassword: 'abc' })
+                .expect(400)
+        ).body;
+
+        expect(problem).toMatchObject({ type: 'https://www.jhipster.tech/problem/invalid-password' });
+    });
+
     it<%- databaseTypeMongodb ? '.skip' : ''%>('/POST change password', async () => {
         await request(app.getHttpServer())
             .post('/api/account/change-password')
