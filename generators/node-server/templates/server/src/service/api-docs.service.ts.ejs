@@ -1,0 +1,8 @@
+import { Injectable } from '@nestjs/common';
+import { OpenAPIObject } from '@nestjs/swagger';
+
+/** The OpenAPI document of the application, created by setupSwagger with the api-docs profile. */
+@Injectable()
+export class ApiDocsService {
+  document?: OpenAPIObject;
+}

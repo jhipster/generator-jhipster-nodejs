@@ -4,7 +4,6 @@ import { ApiTags, ApiResponse, ApiOperation, ApiExcludeEndpoint } from '@nestjs/
 import { AuthGuard, RolesGuard } from '../../security/index.ts';
 import { oauth2Config } from '../../security/oauth2.config.ts';
 <%_ if (skipClient) { _%>
-import { ConfigService } from '@nestjs/config';
 <%_ } _%>
 
 @Controller()
@@ -12,7 +11,7 @@ import { ConfigService } from '@nestjs/config';
 export class UserOauth2Controller {
   logger = new Logger('UserOauth2Controller');
 
-  constructor(private readonly authService: AuthService<% if (skipClient) { %>, private readonly configService: ConfigService<% } %>) { }
+  constructor(private readonly authService: AuthService) { }
 
   @ApiExcludeEndpoint()
   @UseGuards(AuthGuard, RolesGuard)
@@ -27,13 +26,14 @@ export class UserOauth2Controller {
     res.session.user = req.user;
     res.session.idToken = req.idToken;
     <%_ if (skipClient) { _%>
-    let url = this.configService.getOrThrow<string>('jhipster.swagger.path');
+    // The request the login started from, saved by the AuthGuard, like the saved request of Spring Security.
+    const url = req.session.url;
     <%_ } else { _%>
     let url = '/';
-    <%_ } _%>
     if (oauth2Config.isOktaProvider) {
         url = req.session.url;
     }
+    <%_ } _%>
     return res.redirect(url || '/');
 
   }

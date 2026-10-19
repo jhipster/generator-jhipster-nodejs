@@ -2,11 +2,12 @@ import { Logger, INestApplication } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 
+import { ApiDocsService } from './service/api-docs.service.ts';
+
 export function setupSwagger(app: INestApplication): any {
 
   const logger: Logger = new Logger('Swagger');
   const configService = app.get(ConfigService);
-  const swaggerEndpoint = configService.getOrThrow<string>('jhipster.swagger.path');
 
   const options = new DocumentBuilder()
     .setTitle(configService.getOrThrow<string>('jhipster.swagger.title'))
@@ -16,9 +17,8 @@ export function setupSwagger(app: INestApplication): any {
     .addBearerAuth()
     <%_ } _%>
     .build();
-  const document = SwaggerModule.createDocument(app, options);
-  // The OpenAPI document at the path of springdoc, which the API page of the JHipster clients reads.
-  SwaggerModule.setup(swaggerEndpoint, app, document, { jsonDocumentUrl: 'v3/api-docs' });
-  logger.log(`Added swagger on endpoint ${swaggerEndpoint}`);
+  // Served by ApiDocsController at /v3/api-docs, the path of springdoc, for the administrators.
+  app.get(ApiDocsService).document = SwaggerModule.createDocument(app, options);
+  logger.log('Added the API documentation on /v3/api-docs');
 
 }

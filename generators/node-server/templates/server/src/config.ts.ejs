@@ -54,7 +54,6 @@ export class Config {
   'jhipster.swagger.title' = '<%= baseName %> API';
   'jhipster.swagger.description' = '<%= baseName %> API documentation';
   'jhipster.swagger.version' = '0.0.1';
-  'jhipster.swagger.path' = '/api/v2/api-docs';
   'info.display-ribbon-on-profiles' = 'dev';
   'server.ssl.enabled' = false;
   'server.ssl.key-store' = '';
@@ -200,7 +199,7 @@ export { config };
 
 /**
  * The configuration of the ConfigModule of @nestjs/config: the properties of config (the application*.yml files, the
- * environment variables and the cloud config), nested by their dotted names, so ConfigService.get('jhipster.swagger.path')
+ * environment variables and the cloud config), nested by their dotted names, so ConfigService.get('jhipster.swagger.title')
  * finds them. ConfigModule calls it when the application is created, after the cloud config is loaded by main.ts.
  * Providers and controllers read the configuration with ConfigService; config stays for the code running before the
  * application or outside of it (main.ts, the migrations, static helpers).

@@ -236,6 +236,9 @@ exports[`SubGenerator server of nodejs JHipster blueprint > run > should succeed
   "server/src/security/role-type.ts": {
     "stateCleared": "modified",
   },
+  "server/src/service/api-docs.service.ts": {
+    "stateCleared": "modified",
+  },
   "server/src/service/auth.service.ts": {
     "stateCleared": "modified",
   },
@@ -288,6 +291,9 @@ exports[`SubGenerator server of nodejs JHipster blueprint > run > should succeed
     "stateCleared": "modified",
   },
   "server/src/web/rest/account.controller.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/web/rest/api-docs.controller.ts": {
     "stateCleared": "modified",
   },
   "server/src/web/rest/configuration.controller.ts": {
