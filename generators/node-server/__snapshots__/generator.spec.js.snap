@@ -476,7 +476,7 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > jwt microservic
   "server/src/main.ts": {
     "stateCleared": "modified",
   },
-  "server/src/migrations/1570200270081-CreateTables.ts": {
+  "server/src/migrations/support/schema.ts": {
     "stateCleared": "modified",
   },
   "server/src/module/auth.module.ts": {
@@ -791,6 +791,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > run > should su
     "stateCleared": "modified",
   },
   "server/src/migrations/1570200490072-SeedUsersRoles.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/migrations/support/schema.ts": {
     "stateCleared": "modified",
   },
   "server/src/module/auth.module.ts": {
@@ -1140,7 +1143,7 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > with oauth2 > s
   "server/src/main.ts": {
     "stateCleared": "modified",
   },
-  "server/src/migrations/1570200270081-CreateTables.ts": {
+  "server/src/migrations/support/schema.ts": {
     "stateCleared": "modified",
   },
   "server/src/module/auth.module.ts": {
@@ -1452,6 +1455,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > with oauth2 and
     "stateCleared": "modified",
   },
   "server/src/migrations/1570200490072-SeedUsersRoles.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/migrations/support/schema.ts": {
     "stateCleared": "modified",
   },
   "server/src/module/auth.module.ts": {
@@ -1813,7 +1819,14 @@ be kept out of the configuration files this way in production.
 
 According [typeORM migration guide](https://github.com/typeorm/typeorm/blob/master/docs/migrations.md),
 there are under [src/migrations/](src/migrations/) the scripts to create the database schema and after to insert data seed.
-The scripts are automatically run in the first start up, and after anymore.
+The application runs the ones not run yet at start up, in the order of the timestamp of their name.
+
+Like the Liquibase changelogs of JHipster Spring Boot, JHipster generates the migrations of the schema: \`CreateTables\`
+creates the tables of the users and of the authorities, then each entity has the migration adding its table
+(\`<timestamp>-AddedEntity<Entity>.ts\`, the timestamp of its \`changelogDate\`) and, when it has relationships, the one adding
+its foreign keys and its join tables (\`<timestamp>-AddedEntityConstraints<Entity>.ts\`), run after the tables they
+reference. A database the application ran them on already is not changed by a regeneration of a migration: when an entity
+changes, add the migration of the change (\`npm run typeorm:migration:generate\`) or recreate the development database.
 
 The \`typeorm\` npm scripts build the server and run the typeorm CLI on the database \`BACKEND_ENV\` selects (see
 [ormconfig.ts](ormconfig.ts)):
@@ -2136,6 +2149,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > without client 
     "stateCleared": "modified",
   },
   "server/src/migrations/1570200490072-SeedUsersRoles.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/migrations/support/schema.ts": {
     "stateCleared": "modified",
   },
   "server/src/module/auth.module.ts": {

@@ -1,3 +1,4 @@
+<%_ if (databaseTypeMongodb) { _%>
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
 export class CreateTables1570200270081 implements MigrationInterface {
@@ -11,3 +12,53 @@ export class CreateTables1570200270081 implements MigrationInterface {
 
   public async down(_queryRunner: QueryRunner): Promise<any> { }
 }
+<%_ } else { _%>
+import type { MigrationInterface, QueryRunner } from 'typeorm';
+
+import { <% if (generateBuiltInUserEntity) { %>auditColumns, createJoinTable, <% } %>createTable } from './support/schema.ts';
+
+/**
+ * The tables of the built-in users and authorities, like the initial schema of JHipster Spring Boot. A database created by
+ * a former version of the application ran this migration already, its schema synchronized from the entities.
+ */
+export class CreateTables1570200270081 implements MigrationInterface {
+  public async up(queryRunner: QueryRunner): Promise<void> {
+<%_ if (generateBuiltInAuthorityEntity) { _%>
+    await createTable(queryRunner, '<%= authority.entityTableName %>', [{ name: 'name', type: String, primary: true }]);
+<%_ } _%>
+<%_ if (generateBuiltInUserEntity) { _%>
+    await createTable(queryRunner, '<%= user.entityTableName %>', [
+      ...auditColumns(queryRunner),
+      { name: '<%= nodejsUserPrimaryKeyColumn.name %>', type: <%- nodejsUserPrimaryKeyColumn.type %>, primary: true, generated: '<%= nodejsUserPrimaryKeyColumn.generated %>' },
+      { name: 'login', type: String, unique: true },
+      { name: 'firstName', type: String, nullable: true },
+      { name: 'lastName', type: String, nullable: true },
+      { name: 'email', type: String },
+      { name: 'activated', type: Boolean, default: false },
+      { name: 'langKey', type: String, default: 'en' },
+      { name: 'password', type: 'varchar' },
+      { name: 'imageUrl', type: String, nullable: true },
+      { name: 'activationKey', type: String, nullable: true },
+      { name: 'resetKey', type: String, nullable: true },
+      { name: 'resetDate', type: Date, nullable: true },
+    ]);
+    await createJoinTable(
+      queryRunner,
+      '<%= nodejsUserAuthorityJoinTable.name %>',
+      { name: '<%= nodejsUserAuthorityJoinTable.joinColumn.name %>', type: <%- nodejsUserAuthorityJoinTable.joinColumn.type %>, referencedTableName: '<%= nodejsUserAuthorityJoinTable.joinColumn.referencedTableName %>', referencedColumnName: '<%= nodejsUserAuthorityJoinTable.joinColumn.referencedColumnName %>' },
+      { name: '<%= nodejsUserAuthorityJoinTable.inverseJoinColumn.name %>', type: <%- nodejsUserAuthorityJoinTable.inverseJoinColumn.type %>, referencedTableName: '<%= nodejsUserAuthorityJoinTable.inverseJoinColumn.referencedTableName %>', referencedColumnName: '<%= nodejsUserAuthorityJoinTable.inverseJoinColumn.referencedColumnName %>' },
+    );
+<%_ } _%>
+  }
+
+  public async down(queryRunner: QueryRunner): Promise<void> {
+<%_ if (generateBuiltInUserEntity) { _%>
+    await queryRunner.dropTable('<%= nodejsUserAuthorityJoinTable.name %>', true);
+    await queryRunner.dropTable('<%= user.entityTableName %>', true);
+<%_ } _%>
+<%_ if (generateBuiltInAuthorityEntity) { _%>
+    await queryRunner.dropTable('<%= authority.entityTableName %>', true);
+<%_ } _%>
+  }
+}
+<%_ } _%>

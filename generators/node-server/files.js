@@ -40,6 +40,17 @@ export const serverFiles = {
     },
     {
       path: SERVER_NODEJS_DIR,
+      // The tables of the built-in users (SQL), the schema synchronized from the entities (MongoDB, its indices).
+      condition: ctx => ctx.databaseTypeMongodb || ctx.generateBuiltInUserEntity || ctx.generateBuiltInAuthorityEntity,
+      templates: ['src/migrations/1570200270081-CreateTables.ts'],
+    },
+    {
+      path: SERVER_NODEJS_DIR,
+      condition: ctx => ctx.databaseTypeSql,
+      templates: ['src/migrations/support/schema.ts'],
+    },
+    {
+      path: SERVER_NODEJS_DIR,
       condition: ctx => ctx.generateBuiltInAuthorityEntity,
       templates: ['src/domain/authority.entity.ts', 'src/migrations/1570200490072-SeedUsersRoles.ts'],
     },
@@ -94,7 +105,6 @@ export const serverFiles = {
         'src/swagger.ts',
         'src/tls.ts',
         'src/app.module.ts',
-        'src/migrations/1570200270081-CreateTables.ts',
         'src/orm.config.ts',
         'tsconfig.build.json',
         'test/admin/management.controller.spec.ts',

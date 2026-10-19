@@ -14,12 +14,16 @@ import { serverFiles } from './files.js';
 import {
   apiFakeEntity,
   columnTransformer,
+  constraintsMigration,
   contentTypeColumnOptions,
+  entityMigration,
   fieldColumnOptions,
   getDatabasePort,
   getNodeDevDatabaseType,
   getNodeDevSqliteDatabase,
+  primaryKeyColumn,
   thymeleafMailToHandlebars,
+  userAuthorityJoinTable,
 } from './support/index.js';
 
 const fieldTypes = {
@@ -238,6 +242,18 @@ export default class extends BaseApplicationGenerator {
               contentToAdd: `${persistClass},`,
             }),
           );
+        source.addMigrationToNodeConfig = ({ className, fileName }) =>
+          this.editFile(
+            `${SERVER_NODEJS_SRC_DIR}/src/orm.config.ts`,
+            createNeedleCallback({
+              needle: 'add-entity-to-ormconfig-imports',
+              contentToAdd: `import { ${className} } from './migrations/${fileName}.ts';`,
+            }),
+            createNeedleCallback({
+              needle: 'add-migration-to-ormconfig-migrations',
+              contentToAdd: `${className},`,
+            }),
+          );
         source.addEntityToAppModule = ({ entityClass, entityFileName }) =>
           this.editFile(
             `${SERVER_NODEJS_SRC_DIR}/src/app.module.ts`,
@@ -313,6 +329,18 @@ export default class extends BaseApplicationGenerator {
         // The class of the logged user's data: the DTO of the built-in User entity, prepared with the entities, else
         // UserDTO (OAuth2 without syncUserWithIdp has no built-in User).
         application.userLoginVmClass = application.user?.dtoClass ?? 'UserDTO';
+      },
+      prepareMigrations({ application, entities }) {
+        if (!application.databaseTypeSql) return;
+        // The migrations of the SQL databases, like the Liquibase changelogs of JHipster Spring Boot (see support/migrations.js).
+        if (application.generateBuiltInUserEntity) {
+          application.nodejsUserPrimaryKeyColumn = primaryKeyColumn(application.user);
+          application.nodejsUserAuthorityJoinTable = userAuthorityJoinTable(application);
+        }
+        for (const entity of entities.filter(entity => !entity.skipServer && !entity.builtIn)) {
+          entity.nodejsMigration = entityMigration(entity);
+          entity.nodejsConstraintsMigration = constraintsMigration(entity);
+        }
       },
     });
   }
@@ -496,6 +524,9 @@ export default class extends BaseApplicationGenerator {
           }
           if (!entity.builtIn) {
             source.addEntityToAppModule({ entityFileName, entityClass });
+          }
+          for (const migration of [entity.nodejsMigration, entity.nodejsConstraintsMigration].filter(Boolean)) {
+            source.addMigrationToNodeConfig(migration);
           }
         }
       },
