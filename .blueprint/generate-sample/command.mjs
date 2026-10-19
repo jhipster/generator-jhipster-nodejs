@@ -49,9 +49,6 @@ const command = {
         choices: async () => getGithubSamplesGroups(gen.templatePath(gen.samplesFolder ?? '')),
         default: DEFAULT_SAMPLES_GROUP,
       }),
-      configure: gen => {
-        gen.samplesGroup ??= DEFAULT_SAMPLES_GROUP;
-      },
       scope: 'generator',
     },
     sampleName: {

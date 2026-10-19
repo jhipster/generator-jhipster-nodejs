@@ -5,6 +5,8 @@ import { extname, join } from 'node:path';
 import { getGithubSamplesGroup } from 'generator-jhipster/ci';
 import BaseCoreGenerator from 'generator-jhipster/generators/base-core';
 
+const DEFAULT_SAMPLES_GROUP = 'samples';
+
 export default class extends BaseCoreGenerator {
   /** @type {string | undefined} */
   samplesFolder;
@@ -24,7 +26,13 @@ export default class extends BaseCoreGenerator {
   get [BaseCoreGenerator.WRITING]() {
     return this.asAnyTaskGroup({
       async copySample() {
-        const { samplesFolder, samplesGroup, all, sampleName } = this;
+        const { samplesFolder, all, sampleName } = this;
+        // A sample given by its name alone is generated from its samples group, the one describe-samples describes it in.
+        const samplesGroup =
+          this.samplesGroup ??
+          (all || extname(sampleName) === '.jdl'
+            ? DEFAULT_SAMPLES_GROUP
+            : (await import('../describe-samples/index.mjs')).describeSample(sampleName).workflow);
         const samplesPath = samplesFolder ? join(samplesFolder, samplesGroup) : samplesGroup;
         if (all) {
           this.copyTemplate(`${samplesPath}/*.jdl`, '');
