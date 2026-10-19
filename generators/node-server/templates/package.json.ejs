@@ -62,6 +62,8 @@
     "build": "<%= clientPackageManager %> run build -w server",
 <%_ } _%>
     "build:app": "<%= clientPackageManager %> run build -w server",
+    "ci:docker:build": "<%= clientPackageManager %> run docker:build",
+    "docker:build": "docker build -t <%= baseName.toLowerCase() %> .",
     "lint": "<%= clientPackageManager %> run lint --workspaces",
     "lint:fix": "<%= clientPackageManager %> run lint:fix --workspaces",
     "prettier:check": "prettier --check \"{,src/**/}*.{<%= prettierExtensions %>}\"",

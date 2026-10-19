@@ -21,6 +21,7 @@ import { extname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { extractSampleFiles } from 'generator-jhipster/ci';
+import { EnvironmentBuilder } from 'generator-jhipster/cli';
 import BaseCoreGenerator from 'generator-jhipster/generators/base-core';
 
 import { findSamples } from '../describe-samples/support/describe-samples.mjs';
@@ -92,6 +93,12 @@ export default class extends BaseCoreGenerator {
           skipJhipsterDependencies: true,
         };
         const { sample, jdlFiles } = this;
+        // The jdl generator generates the applications of a workspace in environments of their own: they find this
+        // blueprint, which the JDL gives to the applications that use it, in this checkout.
+        const workspaceOptions = {
+          createEnvBuilder: (options, prepareOptions) =>
+            EnvironmentBuilder.create(options).prepare({ lookups: [{ packagePaths: [packageRoot] }], ...prepareOptions }),
+        };
         if (!sample) {
           await this.composeWithJHipster(GENERATOR_JDL, { generatorArgs: jdlFiles, generatorOptions });
           return;
@@ -103,6 +110,7 @@ export default class extends BaseCoreGenerator {
             ...generatorOptions,
             ...(sample.environment ? { defaultEnvironment: sample.environment } : {}),
             ...sample.generatorOptions,
+            ...(sample.generatorOptions?.workspaces ? workspaceOptions : {}),
           },
         });
       },

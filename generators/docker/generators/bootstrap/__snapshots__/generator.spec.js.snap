@@ -1,0 +1,55 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`SubGenerator docker:bootstrap of nodejs JHipster blueprint > deployed with a NodeJS microservice > should match the docker-compose.yml 1`] = `
+"services:
+  gateway:
+    image: gateway
+    environment:
+      - _JAVA_OPTIONS=-Xmx512m -Xms256m
+      - SPRING_PROFILES_ACTIVE=prod,api-docs,secret-samples
+      - MANAGEMENT_PROMETHEUS_METRICS_EXPORT_ENABLED=true
+      - SPRING_SECURITY_USER_NAME=admin
+      - SPRING_SECURITY_USER_PASSWORD=admin
+      - SPRING_SECURITY_USER_ROLES=ADMIN,USER
+    ports:
+      - 8080:8080
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - "bash -c 'exec 3<>/dev/tcp/127.0.0.1/8080; printf \\"GET /management/health HTTP/1.0\\\\r\\\\nHost: localhost\\\\r\\\\n\\\\r\\\\n\\" >&3; grep -q \\"\\\\\\"status\\\\\\":\\\\\\"UP\\\\\\"\\" <&3'"
+      interval: 5s
+      timeout: 5s
+      retries: 40
+  
+  notes:
+    image: notes
+    environment:
+      - BACKEND_ENV=prod,api-docs,secret-samples
+      - DATABASE_HOST=notes-postgresql
+    healthcheck:
+      test:
+        - CMD
+        - node
+        - -e
+        - "fetch('http://localhost:8081/management/health').then(r => process.exit(r.ok ? 0 : 1), () => process.exit(1))"
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    depends_on:
+      notes-postgresql:
+        condition: service_healthy
+  notes-postgresql:
+    image: postgresql-placeholder
+    environment:
+      - POSTGRES_HOST_AUTH_METHOD=trust
+      - POSTGRES_USER=notes
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - pg_isready -U $\${POSTGRES_USER}
+      interval: 5s
+      timeout: 5s
+      retries: 10
+  
+"
+`;

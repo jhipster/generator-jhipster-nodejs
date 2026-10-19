@@ -16,30 +16,10 @@
  See the License for the specific language governing permissions and
  limitations under the License.
 -%>
-name: <%= baseName.toLowerCase() %>
+# The image, its environment, its ports, its healthcheck and the services it depends on are the data of the docker
+# compose file of the application (generators/docker/generators/bootstrap), merged into this file and into the deployments.
+name: <%= lowercaseBaseName %>
 services:
   app:
+    image: <%= lowercaseBaseName %>
     build: ..
-    environment:
-      - BACKEND_ENV=prod,api-docs,secret-samples
-<%_ if (databaseTypeSql || databaseTypeMongodb) { _%>
-      # The database of its service, like the datasource of the app.yml of JHipster Spring Boot.
-      - DATABASE_HOST=<%= databaseTypeSql ? prodDatabaseType : 'mongodb' %>
-<%_ } _%>
-<%_ if (authenticationType === 'oauth2') { _%>
-      - NODE_CLIENT_PROVIDER_OIDC_ISSUER_URI=http://keycloak:9080/realms/jhipster
-<%_ } _%>
-<%_ if (applicationType === 'monolith' || applicationType === 'gateway') { _%>
-    # Published on the loopback interface of the host only, like the app.yml of JHipster Spring Boot.
-    ports:
-      - 127.0.0.1:<%= serverPort %>:<%= serverPort %>
-<%_ } _%>
-    healthcheck:
-      test:
-        - CMD
-        - node
-        - -e
-        - "fetch('http://localhost:<%= serverPort %>/management/health').then(r => process.exit(r.ok ? 0 : 1), () => process.exit(1))"
-      interval: 5s
-      timeout: 5s
-      retries: 10
