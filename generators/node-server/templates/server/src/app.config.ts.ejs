@@ -1,6 +1,6 @@
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { CorsOptions } from '@nestjs/common/interfaces/external/cors-options.interface';
-import { Request } from 'express';
+import { NextFunction, Request, Response } from 'express';
 <%_ if (authenticationTypeJwt && generateUserManagement) { _%>
 import { NestExpressApplication } from '@nestjs/platform-express';
 <%_ } _%>
@@ -48,11 +48,46 @@ export function corsOptions(): CorsOptions | undefined {
 }
 
 /**
+ * A middleware writing the headers of every response, like the default headers of Spring Security and the headers of
+ * the SecurityConfiguration of JHipster Spring Boot<% if (!skipClient) { %> (jhipster.security.content-security-policy)<% } %>.
+ */
+function responseHeaders(): (req: Request, res: Response, next: NextFunction) => void {
+<%_ if (!skipClient) { _%>
+  const contentSecurityPolicy = String(config.get('jhipster.security.content-security-policy') ?? '');
+<%_ } _%>
+  return (req, res, next) => {
+    res.setHeader('X-Content-Type-Options', 'nosniff');
+    res.setHeader('X-XSS-Protection', '0');
+<%_ if (skipClient) { _%>
+    res.setHeader('X-Frame-Options', 'DENY');
+<%_ } else { _%>
+    if (contentSecurityPolicy) {
+      res.setHeader('Content-Security-Policy', contentSecurityPolicy);
+    }
+    res.setHeader('X-Frame-Options', 'SAMEORIGIN');
+    res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
+    res.setHeader(
+      'Permissions-Policy',
+      'camera=(), fullscreen=(self), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), midi=(), payment=(), sync-xhr=()',
+    );
+<%_ } _%>
+    if (req.secure) {
+      // Like Spring Security, on the HTTPS requests only (the tls profile).
+      res.setHeader('Strict-Transport-Security', 'max-age=31536000 ; includeSubDomains');
+    }
+    next();
+  };
+}
+
+/**
  * Configures the application as it runs in production: main.ts and the e2e tests call it, so the e2e tests
  * exercise the same validation and HTTP behaviour as the started application.
  * It has no side effect at import (main.ts starts the application when imported), and does not listen.
  */
 export function configureApp(app: INestApplication): INestApplication {
+  // Without the X-Powered-By: Express header, like the responses of JHipster Spring Boot.
+  app.getHttpAdapter().getInstance().disable('x-powered-by');
+  app.use(responseHeaders());
   const cors = corsOptions();
   if (cors) {
     app.enableCors((req: Request, callback: (error: Error | null, options: CorsOptions) => void) =>

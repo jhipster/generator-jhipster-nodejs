@@ -48,6 +48,25 @@ describe('App', () => {
         .expect(200)
         .expect(infoService));
 
+    it('/GET the headers of the responses, like JHipster Spring Boot', async () => {
+        const response = await request(app.getHttpServer())
+            .get('/management/info')
+            .expect(200)
+            .expect('X-Content-Type-Options', 'nosniff')
+            .expect('X-XSS-Protection', '0')
+<%_ if (skipClient) { _%>
+            .expect('X-Frame-Options', 'DENY');
+<%_ } else { _%>
+            .expect('X-Frame-Options', 'SAMEORIGIN')
+            .expect('Referrer-Policy', 'strict-origin-when-cross-origin')
+            .expect('Content-Security-Policy', /^default-src 'self';/)
+            .expect('Permissions-Policy', /camera=\(\)/);
+<%_ } _%>
+        expect(response.headers['x-powered-by']).toBeUndefined();
+        // Only on HTTPS requests.
+        expect(response.headers['strict-transport-security']).toBeUndefined();
+    });
+
     it('/GET health is UP without authentication', () => request(app.getHttpServer())
         .get('/management/health')
         .expect(200)
