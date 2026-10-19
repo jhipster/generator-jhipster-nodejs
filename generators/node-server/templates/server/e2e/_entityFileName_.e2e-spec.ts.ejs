@@ -11,7 +11,7 @@ const fakeFields = fields
 // An id the pipe of the path rejects: neither a number nor a UUID.
 const invalidId = faker.lorem.word({ length: { min: 5, max: 10 } });
 _%>
-import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { Test, TestingModule } from '@nestjs/testing';
 import request from 'supertest';
 import { AppModule } from '../src/app.module.ts';
@@ -205,6 +205,24 @@ _%>
         expect(response.body).toEqual(entityMock);
         expect(response.headers.location).toBe(`/api/<%= entityApiUrl %>/${entityMock.id}`);
         expect(alertHeader(response.headers, '-alert')).toMatch(<%- enableTranslation ? `/\\.${entityClass}\\.created$/` : `/^A new ${entityClass} is created with identifier /` %>);
+    });
+
+    it('/POST create <%= entityApiUrl %> ignores the properties its DTO does not declare', async () => {
+        // Like JHipster Spring Boot, which ignores the unknown properties of a request: the service gets the declared ones.
+        const { id: _id, ...newEntity } = validEntity;
+        const save = vi.spyOn(serviceMock as any, 'save');
+        try {
+            await request(app.getHttpServer())
+                .post('/api/<%= entityApiUrl %>')
+                .send({ ...newEntity, unknownProperty: 'unknown' })
+                .expect(201);
+
+            const [dto] = save.mock.calls[0];
+            expect(dto).not.toHaveProperty('unknownProperty');
+            expect(Object.keys(dto as object)).toEqual(expect.arrayContaining(Object.keys(JSON.parse(JSON.stringify(newEntity)))));
+        } finally {
+            save.mockRestore();
+        }
     });
 
     it('/POST create <%= entityApiUrl %> with an id', async () => {

@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsBoolean, IsEmail, IsNotEmpty, IsOptional, IsString, Length, Matches, MaxLength } from 'class-validator';
+import { Allow, IsBoolean, IsEmail, IsNotEmpty, IsOptional, IsString, Length, Matches, MaxLength } from 'class-validator';
 <%_ if (databaseTypeMongodb) { _%>
 import { Transform } from 'class-transformer';
 <%_ } _%>
@@ -19,8 +19,10 @@ export class <%= userLoginVmClass %> extends BaseDTO {
 <%_ if (databaseTypeMongodb) { _%>
   @Transform(({ value }) => value?.toHexString ? value?.toHexString() : value, {toPlainOnly: true})
 <%_ } _%>
+  @Allow()
   <%= user.primaryKey.name %>?: <%= user.primaryKey.tsType %>;
 <%_ } else { _%>
+  @Allow()
   id?: string;
 <%_ } _%>
 
@@ -66,11 +68,13 @@ export class <%= userLoginVmClass %> extends BaseDTO {
     description: 'Array of permissions',
     required: false
   })
+  @Allow()
   authorities?: any[];
 
   // Never in the responses.
   @Exclude({ toPlainOnly: true })
   @ApiProperty({ example: 'myuser', description: 'User password' })
+  @Allow()
   password!: string;
 
   @ApiProperty({ example: 'http://my-image-url', description: 'Image url', required: false })

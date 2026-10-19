@@ -1,7 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-<%_ if (anyPropertyHasValidation || fields.some(field => field.fieldIsEnum)) { _%>
-import { IsNotEmpty, IsOptional, IsEnum, MinLength, MaxLength, Length, Min, Max, Matches } from 'class-validator';
-<%_ } _%>
+import { Allow<% if (anyPropertyHasValidation || fields.some(field => field.fieldIsEnum)) { %>, IsNotEmpty, IsOptional, IsEnum, MinLength, MaxLength, Length, Min, Max, Matches<% } %> } from 'class-validator';
 <%_ if (databaseTypeMongodb) { _%>
 import { Transform } from 'class-transformer';
 <%_ } _%>
@@ -52,6 +50,7 @@ export class <%= dtoClass %> extends BaseDTO {
 <%_ if (databaseTypeMongodb) { _%>
   @Transform(({ value }) => value?.toHexString ? value?.toHexString() : value, {toPlainOnly: true})
 <%_ } _%>
+  @Allow()
   <%= primaryKey.name %>?: <%= primaryKey.tsType %>;
 
     <%_ for (idx in fieldsWithoutId) {
@@ -73,6 +72,8 @@ export class <%= dtoClass %> extends BaseDTO {
         if (fieldValidate === true || field.fieldIsEnum) {
             _%>
             <%- include('../../common/field_validators', { field }); -%>
+        <%_ } else { _%>
+            @Allow()
         <%_ } _%>
             <%_ if (field.fieldIsEnum) { _%>
             @ApiProperty({ enum: <%= fieldType %>, <%_ if (typeof field.javadoc != 'undefined') { _%> description: '<%- formatAsApiDescription(field.javadoc) %>' <%_ } else { _%> description: '<%= fieldName %> enum field' <%_ } if (!required) { _%>, required: false <%_ } _%>})
@@ -83,6 +84,7 @@ export class <%= dtoClass %> extends BaseDTO {
 
         <%_ if ((fieldType === 'byte[]' || fieldType === 'ByteBuffer') && fieldTypeBlobContent !== 'text') { _%>
 
+        @Allow()
         <%= fieldName %>ContentType<%- field.fieldValidationRequired ? '!' : '?' %>: string;
         <%_ }
         } _%>
@@ -92,6 +94,7 @@ export class <%= dtoClass %> extends BaseDTO {
         if (typeof relationship.javadoc != 'undefined') { _%>
   <%- formatAsFieldJavadoc(relationship.javadoc) %>
         <%_ } _%>
+  @Allow()
   @ApiProperty({ type: () => <%= relationship.otherEntity.dtoClass %><%- relationship.collection ? ', isArray: true' : '' %>, <%_ if (typeof relationship.javadoc != 'undefined') { _%>  description: '<%- formatAsApiDescription(relationship.javadoc) %>' <%_ } else { _%> description: '<%= relationship.propertyName %> relationship' <%_ } _%> })
   <%= relationship.propertyName %><%- relationship.relationshipRequired ? '!' : '?' %>: RelatedDTO<<%= relationship.otherEntity.dtoClass %><%- relationship.collection ? '[]' : '' %>>;
   <%_ } _%>
