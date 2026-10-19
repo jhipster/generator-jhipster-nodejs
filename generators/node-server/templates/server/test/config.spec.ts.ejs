@@ -1,6 +1,7 @@
 import { afterEach, describe, expect, it } from 'vitest';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { Test } from '@nestjs/testing';
+import { validateConfiguration } from '../src/application-config.ts';
 import { Config, config, configuration } from '../src/config.ts';
 
 describe('Config', () => {
@@ -61,5 +62,20 @@ describe('ConfigService', () => {
     config.addAll({ sample: { 'added-later': 'from the cloud config' } });
     const configService = await createConfigService();
     expect(configService.get('sample.added-later')).toBe('from the cloud config');
+  });
+});
+
+describe('validateConfiguration', () => {
+  it('should accept the configuration of the application', () => {
+    expect(() => configuration()).not.toThrow();
+  });
+
+  it('should refuse an invalid property, telling the property and what it expects', () => {
+    const invalid = configuration() as any;
+    invalid.server.port = 'not a port';
+    invalid.jhipster.cors['max-age'] = -1;
+    expect(() => validateConfiguration(invalid)).toThrow(
+      /server\.port is "not a port", expected a port\n.*jhipster\.cors\.max-age is -1, expected a number of seconds/,
+    );
   });
 });

@@ -17,6 +17,8 @@ import { BadRequestAlertException, ProblemException } from './problem.exception.
 export class ProblemDetailsFilter implements ExceptionFilter {
   private readonly logger = new Logger('ProblemDetailsFilter');
 
+  constructor(private readonly headerUtil: HeaderUtil) {}
+
   catch(exception: unknown, host: ArgumentsHost): void {
     const http = host.switchToHttp();
     const request = http.getRequest<Request>();
@@ -30,7 +32,7 @@ export class ProblemDetailsFilter implements ExceptionFilter {
     }
     if (exception instanceof BadRequestAlertException) {
       // Like the ExceptionTranslator of JHipster Spring Boot, the alert headers the JHipster clients read first.
-      HeaderUtil.addFailureAlertHeaders(response, exception.entityName, exception.errorKey);
+      this.headerUtil.addFailureAlertHeaders(response, exception.entityName, exception.errorKey);
     }
     response
       .status(status)

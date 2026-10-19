@@ -1,59 +1,71 @@
-import { config } from '../config.ts';
+import { Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { Response } from 'express';
-import { Page } from '../domain/base/pagination.entity.ts';
 import { URL } from 'url';
 
-const applicationName = config.get('jhipster.clientApp.name');
+import type { ApplicationConfig } from '../application-config.ts';
+import { Page } from '../domain/base/pagination.entity.ts';
 
+/**
+ * The headers of the responses the JHipster clients read, like the HeaderUtil and the PaginationUtil of JHipster Spring
+ * Boot: the alerts, named after the application (jhipster.clientApp.name), and the pagination.
+ */
+@Injectable()
 export class HeaderUtil {
-  static createAlert(res: Response, message: string, param: string): any {
-    res.set('X-' + applicationName + '-alert', message);
-    res.set('X-' + applicationName + '-params', param);
+  private readonly applicationName: string;
+
+  constructor(configService: ConfigService<ApplicationConfig, true>) {
+    this.applicationName = configService.get('jhipster.clientApp.name', { infer: true });
   }
 
-  static addEntityCreatedHeaders(res: Response, entityName: string, param: string | number | undefined): any {
+  createAlert(res: Response, message: string, param: string): any {
+    res.set(`X-${this.applicationName}-alert`, message);
+    res.set(`X-${this.applicationName}-params`, param);
+  }
+
+  addEntityCreatedHeaders(res: Response, entityName: string, param: string | number | undefined): any {
     res.status(201);
 <%_ if (enableTranslation) { _%>
     // The translation key of the alert, translated by the client.
-    this.createAlert(res, applicationName + '.' + entityName + '.created', String(param));
+    this.createAlert(res, `${this.applicationName}.${entityName}.created`, String(param));
 <%_ } else { _%>
-    this.createAlert(res, 'A new ' + entityName + ' is created with identifier ' + param, String(param));
+    this.createAlert(res, `A new ${entityName} is created with identifier ${param}`, String(param));
 <%_ } _%>
   }
 
-  static addEntityUpdatedHeaders(res: Response, entityName: string, param: string | number | undefined): any {
+  addEntityUpdatedHeaders(res: Response, entityName: string, param: string | number | undefined): any {
     res.status(200);
 <%_ if (enableTranslation) { _%>
     // The translation key of the alert, translated by the client.
-    this.createAlert(res, applicationName + '.' + entityName + '.updated', String(param));
+    this.createAlert(res, `${this.applicationName}.${entityName}.updated`, String(param));
 <%_ } else { _%>
-    this.createAlert(res, 'A ' + entityName + ' is updated with identifier ' + param, String(param));
+    this.createAlert(res, `A ${entityName} is updated with identifier ${param}`, String(param));
 <%_ } _%>
   }
 
-  static addEntityDeletedHeaders(res: Response, entityName: string, param: string | number | undefined): any {
+  addEntityDeletedHeaders(res: Response, entityName: string, param: string | number | undefined): any {
     res.status(204);
 <%_ if (enableTranslation) { _%>
     // The translation key of the alert, translated by the client.
-    this.createAlert(res, applicationName + '.' + entityName + '.deleted', String(param));
+    this.createAlert(res, `${this.applicationName}.${entityName}.deleted`, String(param));
 <%_ } else { _%>
-    this.createAlert(res, 'A ' + entityName + ' is deleted with identifier ' + param, String(param));
+    this.createAlert(res, `A ${entityName} is deleted with identifier ${param}`, String(param));
 <%_ } _%>
   }
 
   /**
    * Like the failure alert of JHipster Spring Boot (BadRequestAlertException), the status comes from the thrown exception.
    */
-  static addFailureAlertHeaders(res: Response, entityName: string, errorKey: string): any {
-    res.set(`X-${applicationName}-error`, `error.${errorKey}`);
-    res.set(`X-${applicationName}-params`, entityName);
+  addFailureAlertHeaders(res: Response, entityName: string, errorKey: string): any {
+    res.set(`X-${this.applicationName}-error`, `error.${errorKey}`);
+    res.set(`X-${this.applicationName}-params`, entityName);
   }
 
   /**
    * The pagination headers, like the PaginationUtil of JHipster Spring Boot: the total count of the elements, and the
    * links of the next, previous, last and first pages.
    */
-  static addPaginationHeaders<T>(res: Response, page: Page<T>): any {
+  addPaginationHeaders<T>(res: Response, page: Page<T>): any {
     const url = res.req.url;
     res.set('X-Total-Count', page.total.toString());
     const pageNumber = page.pageable.page;
@@ -71,8 +83,8 @@ export class HeaderUtil {
     res.set('Link', links.join(','));
   }
 
-  private static prepareLink(url: string, pageNumber: number, pageSize: number, relType: string): string {
-    const link = new URL('http://localhost' + url);
+  private prepareLink(url: string, pageNumber: number, pageSize: number, relType: string): string {
+    const link = new URL(`http://localhost${url}`);
     link.searchParams.set('page', String(pageNumber));
     link.searchParams.set('size', String(pageSize));
     return `<${link.toString().replace('http://localhost', '')}>; rel="${relType}"`;

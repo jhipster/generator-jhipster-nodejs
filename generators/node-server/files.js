@@ -83,6 +83,8 @@ export const serverFiles = {
         'src/service/dto/base.dto.ts',
         'src/main.ts',
         'src/app.config.ts',
+        'src/application-config.ts',
+        'src/module/common.module.ts',
         'src/swagger.ts',
         'src/tls.ts',
         'src/app.module.ts',
@@ -166,6 +168,7 @@ export const serverFiles = {
       templates: [
         'src/web/rest/user.jwt.controller.ts',
         'src/security/password-util.ts',
+        'src/security/password.service.ts',
         'src/service/dto/password-change.dto.ts',
         'src/service/dto/key-and-password.dto.ts',
         'src/service/dto/user-login.dto.ts',

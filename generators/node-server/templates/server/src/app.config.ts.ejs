@@ -1,20 +1,24 @@
 import { INestApplication, ValidationPipe } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { CorsOptions } from '@nestjs/common/interfaces/external/cors-options.interface';
 import { NextFunction, Request, Response } from 'express';
 <%_ if (authenticationTypeJwt && generateUserManagement) { _%>
 import { NestExpressApplication } from '@nestjs/platform-express';
 <%_ } _%>
 
+import type { ApplicationConfig } from './application-config.ts';
+import { HeaderUtil } from './common/header-util.ts';
 import { ProblemDetailsFilter } from './web/rest/errors/problem-details.filter.ts';
 import { ValidationException } from './web/rest/errors/problem.exception.ts';
-import { config } from './config.ts';
+
+type AppConfigService = ConfigService<ApplicationConfig, true>;
 
 // The paths CORS applies to, like the WebConfigurer of JHipster Spring Boot.
 const CORS_PATHS = [/^\/api\//, /^\/management\//, /^\/v3\/api-docs(\?|$)/];
 const REGEXP_SPECIAL_CHARACTERS = /[.+?^${}()|[\]\\]/g;
 
-function propertyList(key: string): string[] {
-  return String(config.get(key) ?? '')
+function propertyList(value: string | undefined): string[] {
+  return String(value ?? '')
     .split(',')
     .map(value => value.trim())
     .filter(Boolean);
@@ -25,24 +29,25 @@ function propertyList(key: string): string[] {
  * neither allowed-origins nor allowed-origin-patterns is set (CORS disabled, the default but in the dev profile).
  * A pattern matches any value where it has a *, like https://*.githubpreview.dev; * as methods or headers allows them all.
  */
-export function corsOptions(): CorsOptions | undefined {
-  const allowedOrigins = propertyList('jhipster.cors.allowed-origins');
-  const allowedOriginPatterns = propertyList('jhipster.cors.allowed-origin-patterns').map(
+export function corsOptions(configService: AppConfigService): CorsOptions | undefined {
+  const cors = configService.get('jhipster.cors', { infer: true });
+  const allowedOrigins = propertyList(cors['allowed-origins']);
+  const allowedOriginPatterns = propertyList(cors['allowed-origin-patterns']).map(
     pattern => new RegExp(`^${pattern.replace(REGEXP_SPECIAL_CHARACTERS, '\\$&').replaceAll('*', '.*')}$`),
   );
   if (allowedOrigins.length === 0 && allowedOriginPatterns.length === 0) {
     return undefined;
   }
-  const allowedMethods = propertyList('jhipster.cors.allowed-methods');
-  const allowedHeaders = propertyList('jhipster.cors.allowed-headers');
-  const maxAge = Number(config.get('jhipster.cors.max-age'));
+  const allowedMethods = propertyList(cors['allowed-methods']);
+  const allowedHeaders = propertyList(cors['allowed-headers']);
+  const maxAge = Number(cors['max-age']);
   return {
     origin: [...allowedOrigins, ...allowedOriginPatterns],
     // Left out for *: the default methods of cors (all of them), the request headers echoed.
     ...(allowedMethods.includes('*') ? {} : { methods: allowedMethods }),
     ...(allowedHeaders.includes('*') ? {} : { allowedHeaders }),
-    exposedHeaders: propertyList('jhipster.cors.exposed-headers'),
-    credentials: String(config.get('jhipster.cors.allow-credentials')) === 'true',
+    exposedHeaders: propertyList(cors['exposed-headers']),
+    credentials: String(cors['allow-credentials']) === 'true',
     ...(maxAge > 0 ? { maxAge } : {}),
   };
 }
@@ -51,9 +56,9 @@ export function corsOptions(): CorsOptions | undefined {
  * A middleware writing the headers of every response, like the default headers of Spring Security and the headers of
  * the SecurityConfiguration of JHipster Spring Boot<% if (!skipClient) { %> (jhipster.security.content-security-policy)<% } %>.
  */
-function responseHeaders(): (req: Request, res: Response, next: NextFunction) => void {
+function responseHeaders(<% if (!skipClient) { %>configService: AppConfigService<% } %>): (req: Request, res: Response, next: NextFunction) => void {
 <%_ if (!skipClient) { _%>
-  const contentSecurityPolicy = String(config.get('jhipster.security.content-security-policy') ?? '');
+  const contentSecurityPolicy = String(configService.get('jhipster.security.content-security-policy', { infer: true }) ?? '');
 <%_ } _%>
   return (req, res, next) => {
     res.setHeader('X-Content-Type-Options', 'nosniff');
@@ -87,8 +92,9 @@ function responseHeaders(): (req: Request, res: Response, next: NextFunction) =>
 export function configureApp(app: INestApplication): INestApplication {
   // Without the X-Powered-By: Express header, like the responses of JHipster Spring Boot.
   app.getHttpAdapter().getInstance().disable('x-powered-by');
-  app.use(responseHeaders());
-  const cors = corsOptions();
+  const configService = app.get<AppConfigService>(ConfigService);
+  app.use(responseHeaders(<% if (!skipClient) { %>configService<% } %>));
+  const cors = corsOptions(configService);
   if (cors) {
     app.enableCors((req: Request, callback: (error: Error | null, options: CorsOptions) => void) =>
       callback(null, CORS_PATHS.some(path => path.test(req.url)) ? cors : { origin: false }),
@@ -103,7 +109,7 @@ export function configureApp(app: INestApplication): INestApplication {
     }),
   );
   // The errors as the problem details of JHipster Spring Boot.
-  app.useGlobalFilters(new ProblemDetailsFilter());
+  app.useGlobalFilters(new ProblemDetailsFilter(app.get(HeaderUtil)));
 <%_ if (authenticationTypeJwt && generateUserManagement) { _%>
   // The mail of a password reset request is a text/plain body, as the JHipster clients send it.
   (app as NestExpressApplication).useBodyParser('text');

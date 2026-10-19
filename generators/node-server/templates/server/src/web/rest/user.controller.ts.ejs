@@ -33,6 +33,7 @@ export class UserController {
   constructor(
     private readonly userService: UserService,
     private readonly mailService: MailService,
+    private readonly headerUtil: HeaderUtil,
   ) {}
 
   @Get('/')
@@ -60,7 +61,7 @@ export class UserController {
           order: pageRequest.asOrder(),
 <%_ } _%>
       });
-      HeaderUtil.addPaginationHeaders(req.res, new Page(results, count, pageRequest));
+      this.headerUtil.addPaginationHeaders(req.res, new Page(results, count, pageRequest));
       return results;
   }
 
@@ -111,7 +112,7 @@ export class UserController {
 <%_ } _%>
       );
       void this.mailService.sendCreationEmail(created);
-      HeaderUtil.addEntityCreatedHeaders(req.res, 'User', created.login);
+      this.headerUtil.addEntityCreatedHeaders(req.res, 'User', created.login);
       return created;
   }
 
@@ -156,7 +157,7 @@ export class UserController {
       },
       req.user?.login,
     );
-    HeaderUtil.addEntityUpdatedHeaders(req.res, 'User', updated.login);
+    this.headerUtil.addEntityUpdatedHeaders(req.res, 'User', updated.login);
     return updated;
   }
 
@@ -190,7 +191,7 @@ export class UserController {
       if (!userToDelete) {
         throw new NotFoundException();
       }
-      HeaderUtil.addEntityDeletedHeaders(req.res, 'User', loginValue);
+      this.headerUtil.addEntityDeletedHeaders(req.res, 'User', loginValue);
       return await this.userService.delete(userToDelete);
   }
 }

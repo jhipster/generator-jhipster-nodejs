@@ -6,6 +6,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ScheduleModule } from '@nestjs/schedule';
 <%_ } _%>
 import { AuthModule } from './module/auth.module.ts';
+import { CommonModule } from './module/common.module.ts';
 import { HealthModule } from './module/health.module.ts';
 import { ManagementModule } from './module/management.module.ts';
 import { ormConfig } from './orm.config.ts';
@@ -29,6 +30,7 @@ import { ServeStaticModule } from '@nestjs/serve-static';
   imports: [
     // The configuration of the application*.yml files, read with ConfigService. main.ts loads the .env file.
     ConfigModule.forRoot({ isGlobal: true, ignoreEnvFile: true, cache: true, load: [configuration] }),
+    CommonModule,
   // The database of the active profiles, from the configuration (their application-{profile}.yml files and the environment).
   TypeOrmModule.forRootAsync({
     inject: [ConfigService],

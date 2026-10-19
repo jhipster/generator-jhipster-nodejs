@@ -7,7 +7,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 <%_ } _%>
 <%_ if (authenticationType === 'jwt' && generateBuiltInUserEntity) { _%>
-import { comparePassword } from '../security/password-util.ts';
+import { PasswordService } from '../security/password.service.ts';
 import { JwtService } from '@nestjs/jwt';
 import { UserLoginDTO } from '../service/dto/user-login.dto.ts';
 import { Payload } from '../security/payload.interface.ts';
@@ -48,6 +48,7 @@ export class AuthService {
     <%_ if (authenticationType === 'jwt' && generateBuiltInUserEntity) { _%>
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
+    private readonly passwordService: PasswordService,
     <%_ } _%>
     <%_ if (generateBuiltInAuthorityEntity) { _%>
     @InjectRepository(Authority) private authorityRepository: Repository<Authority>,
@@ -67,7 +68,7 @@ export class AuthService {
 
     // The logins are in lower case, like the ones of JHipster Spring Boot.
     const userFind = await this.userService.findByFields({ where: { login: loginUserName.toLowerCase() } });
-    const validPassword = !!userFind && (await comparePassword(loginPassword, userFind.password));
+    const validPassword = !!userFind && (await this.passwordService.matches(loginPassword, userFind.password));
     if (!userFind || !validPassword) {
       throw new HttpException('Invalid login name or password!', HttpStatus.UNAUTHORIZED);
     }
@@ -125,7 +126,7 @@ export class AuthService {
       throw new HttpException('Invalid login name!', HttpStatus.BAD_REQUEST);
     }
 
-    if (!(await comparePassword(currentClearTextPassword, userFind.password))) {
+    if (!(await this.passwordService.matches(currentClearTextPassword, userFind.password))) {
       throw new InvalidPasswordException();
     }
     userFind.password = newPassword;

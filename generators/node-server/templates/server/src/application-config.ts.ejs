@@ -1,0 +1,136 @@
+import { isInt, isNotEmpty, isPort<% if (authenticationTypeOauth2 || serviceDiscoveryEureka) { %>, isURL<% } %> } from 'class-validator';
+
+/**
+ * The properties of the application the providers read with ConfigService<ApplicationConfig, true>, nested by the dotted
+ * names of the application*.yml files, like the JHipsterProperties of JHipster Spring Boot: ConfigService infers the type
+ * of a property from its path (configService.get('jhipster.cors.max-age', { infer: true }) is a number).
+ */
+export interface ApplicationConfig {
+  server: {
+    port: string | number;
+    ssl: { enabled: boolean; 'key-store': string; 'key-store-password': string; 'key-store-type': string };
+  };
+  jhipster: {
+    clientApp: { name: string };
+    security: {
+      'content-security-policy': string;
+<%_ if (authenticationTypeJwt) { _%>
+      authentication: {
+        jwt: {
+          'base64-secret': string;
+          'token-validity-in-seconds': number;
+          'token-validity-in-seconds-for-remember-me': number;
+          'hash-salt-or-rounds': number;
+        };
+      };
+<%_ } _%>
+<%_ if (authenticationTypeOauth2) { _%>
+      oauth2: {
+        client: {
+          provider: { oidc: { 'issuer-uri': string } };
+          registration: { oidc: { 'client-id': string; 'client-secret': string } };
+        };
+      };
+<%_ } _%>
+    };
+    cors: {
+      'allowed-origins': string;
+      'allowed-origin-patterns': string;
+      'allowed-methods': string;
+      'allowed-headers': string;
+      'exposed-headers': string;
+      'allow-credentials': boolean;
+      'max-age': number;
+    };
+    mail: { from: string; 'base-url': string };
+    registry: { username?: string; password?: string };
+  };
+<%_ if (generateUserManagement) { _%>
+  mail: { host: string; port: number; username: string; password: string };
+<%_ } _%>
+<%_ if (serviceDiscoveryEureka) { _%>
+  eureka: {
+    client: {
+      enabled: boolean;
+      'service-url': { defaultZone: string };
+      'register-with-eureka': boolean;
+      'fetch-registry': boolean;
+      'registry-fetch-interval-seconds': number;
+    };
+    instance: {
+      appname: string;
+      instanceId: string;
+      'prefer-ip-address': boolean;
+      'lease-renewal-interval-in-seconds': number;
+      'lease-expiration-duration-in-seconds': number;
+    };
+  };
+<%_ } _%>
+<%_ if (serviceDiscoveryConsul) { _%>
+  cloud: {
+    consul: {
+      enabled: boolean;
+      host: string;
+      port: number;
+      discovery: {
+        'service-name': string;
+        'instance-id': string;
+        'prefer-ip-address': boolean;
+        'health-check-path': string;
+        'health-check-interval': string;
+        'health-check-timeout': string;
+      };
+    };
+  };
+<%_ } _%>
+  ipAddress: string | null;
+}
+
+/** A rule of a property: its path, the check of its value and the value it expects. */
+type Rule = [path: string, check: (value: any) => boolean, expected: string];
+
+<%_ if (authenticationTypeJwt) { _%>
+const positiveInt = (value: any): boolean => isInt(Number(value)) && Number(value) > 0;
+<%_ } _%>
+
+/**
+ * The rules of the properties, like the validation of the configuration properties of Spring Boot: the application does
+ * not start with an invalid value, the error tells the property and what it expects. The JWT secret is checked when the
+ * JWT key is created (jwt.config.ts).
+ */
+const rules: Rule[] = [
+  ['server.port', value => isPort(String(value)), 'a port'],
+  ['jhipster.clientApp.name', isNotEmpty, 'the name of the application'],
+<%_ if (authenticationTypeJwt) { _%>
+  ['jhipster.security.authentication.jwt.token-validity-in-seconds', positiveInt, 'a positive number of seconds'],
+  ['jhipster.security.authentication.jwt.token-validity-in-seconds-for-remember-me', positiveInt, 'a positive number of seconds'],
+  ['jhipster.security.authentication.jwt.hash-salt-or-rounds', value => isInt(Number(value)) && value >= 4 && value <= 31, 'bcrypt rounds, from 4 to 31'],
+<%_ } _%>
+  ['jhipster.cors.max-age', value => isInt(Number(value)) && value >= 0, 'a number of seconds'],
+<%_ if (generateUserManagement) { _%>
+  ['mail.port', value => isPort(String(value)), 'a port'],
+<%_ } _%>
+<%_ if (authenticationTypeOauth2) { _%>
+  ['jhipster.security.oauth2.client.provider.oidc.issuer-uri', value => isURL(String(value), { require_tld: false }), 'the URL of the OpenID Connect issuer'],
+<%_ } _%>
+<%_ if (serviceDiscoveryEureka) { _%>
+  ['eureka.client.service-url.defaultZone', value => isURL(String(value), { require_tld: false }), 'the URL of the Eureka server'],
+<%_ } _%>
+<%_ if (serviceDiscoveryConsul) { _%>
+  ['cloud.consul.port', value => isPort(String(value)), 'a port'],
+<%_ } _%>
+];
+
+const valueOf = (configuration: Record<string, any>, path: string): unknown =>
+  path.split('.').reduce<any>((value, name) => value?.[name], configuration);
+
+/** Validates the configuration, nested by the dotted names of the properties: throws an error telling the invalid ones. */
+export function validateConfiguration<T extends Record<string, any>>(configuration: T): T {
+  const errors = rules
+    .filter(([path, check]) => !check(valueOf(configuration, path)))
+    .map(([path, , expected]) => `${path} is ${JSON.stringify(valueOf(configuration, path))}, expected ${expected}`);
+  if (errors.length > 0) {
+    throw new Error(`Invalid configuration:\n  ${errors.join('\n  ')}`);
+  }
+  return configuration;
+}

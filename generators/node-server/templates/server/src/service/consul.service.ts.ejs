@@ -1,9 +1,11 @@
 import { hostname } from 'os';
 
 import { BeforeApplicationShutdown, Injectable, Logger } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import Consul from 'consul';
 
-import { activeProfiles, config } from '../config.ts';
+import type { ApplicationConfig } from '../application-config.ts';
+import { activeProfiles } from '../config.ts';
 
 /**
  * The registration of the application in Consul, like Spring Cloud Consul: the service of cloud.consul.discovery with
@@ -13,19 +15,22 @@ import { activeProfiles, config } from '../config.ts';
 @Injectable()
 export class ConsulService implements BeforeApplicationShutdown {
   private readonly logger = new Logger('ConsulService');
+
+  constructor(private readonly configService: ConfigService<ApplicationConfig, true>) {}
   private consul?: Consul;
   private serviceId?: string;
 
   /** Registers the application listening on the port, when cloud.consul.enabled. */
   async register(port: number): Promise<void> {
-    if (!config.get('cloud.consul.enabled')) {
+    const { enabled, host, port: consulPort, discovery } = this.configService.get('cloud.consul', { infer: true });
+    if (!enabled) {
       return;
     }
-    const consul = new Consul({ host: config.get('cloud.consul.host'), port: Number(config.get('cloud.consul.port')) });
-    const name = config.get('cloud.consul.discovery.service-name');
-    const id = config.get('cloud.consul.discovery.instance-id');
-    const address = config.get('cloud.consul.discovery.prefer-ip-address') ? config.get('ipAddress') || '127.0.0.1' : hostname();
-    this.logger.log(`Registering ${name} with Consul at ${config.get('cloud.consul.host')}:${config.get('cloud.consul.port')}`);
+    const consul = new Consul({ host, port: Number(consulPort) });
+    const name = discovery['service-name'];
+    const id = discovery['instance-id'];
+    const address = discovery['prefer-ip-address'] ? this.configService.get('ipAddress', { infer: true }) || '127.0.0.1' : hostname();
+    this.logger.log(`Registering ${name} with Consul at ${host}:${consulPort}`);
     try {
       await consul.agent.service.register({
         name,
@@ -35,9 +40,9 @@ export class ConsulService implements BeforeApplicationShutdown {
         tags: [`profile=${activeProfiles.join(',')}`],
         check: {
           name: `Service '${name}' check`,
-          http: `http://${address}:${port}${config.get('cloud.consul.discovery.health-check-path')}`,
-          interval: config.get('cloud.consul.discovery.health-check-interval'),
-          timeout: config.get('cloud.consul.discovery.health-check-timeout'),
+          http: `http://${address}:${port}${discovery['health-check-path']}`,
+          interval: discovery['health-check-interval'],
+          timeout: discovery['health-check-timeout'],
         },
       });
       this.consul = consul;

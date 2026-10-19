@@ -408,6 +408,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > jwt microservic
   "server/src/app.module.ts": {
     "stateCleared": "modified",
   },
+  "server/src/application-config.ts": {
+    "stateCleared": "modified",
+  },
   "server/src/common/header-util.ts": {
     "stateCleared": "modified",
   },
@@ -469,6 +472,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > jwt microservic
     "stateCleared": "modified",
   },
   "server/src/module/auth.module.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/module/common.module.ts": {
     "stateCleared": "modified",
   },
   "server/src/module/health.module.ts": {
@@ -695,6 +701,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > run > should su
   "server/src/app.module.ts": {
     "stateCleared": "modified",
   },
+  "server/src/application-config.ts": {
+    "stateCleared": "modified",
+  },
   "server/src/common/header-util.ts": {
     "stateCleared": "modified",
   },
@@ -773,6 +782,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > run > should su
   "server/src/module/auth.module.ts": {
     "stateCleared": "modified",
   },
+  "server/src/module/common.module.ts": {
+    "stateCleared": "modified",
+  },
   "server/src/module/health.module.ts": {
     "stateCleared": "modified",
   },
@@ -810,6 +822,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > run > should su
     "stateCleared": "modified",
   },
   "server/src/security/password-util.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/security/password.service.ts": {
     "stateCleared": "modified",
   },
   "server/src/security/payload.interface.ts": {
@@ -1045,6 +1060,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > with oauth2 > s
   "server/src/app.module.ts": {
     "stateCleared": "modified",
   },
+  "server/src/application-config.ts": {
+    "stateCleared": "modified",
+  },
   "server/src/common/header-util.ts": {
     "stateCleared": "modified",
   },
@@ -1106,6 +1124,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > with oauth2 > s
     "stateCleared": "modified",
   },
   "server/src/module/auth.module.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/module/common.module.ts": {
     "stateCleared": "modified",
   },
   "server/src/module/health.module.ts": {
@@ -1335,6 +1356,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > with oauth2 and
   "server/src/app.module.ts": {
     "stateCleared": "modified",
   },
+  "server/src/application-config.ts": {
+    "stateCleared": "modified",
+  },
   "server/src/common/header-util.ts": {
     "stateCleared": "modified",
   },
@@ -1405,6 +1429,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > with oauth2 and
     "stateCleared": "modified",
   },
   "server/src/module/auth.module.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/module/common.module.ts": {
     "stateCleared": "modified",
   },
   "server/src/module/health.module.ts": {
@@ -2001,6 +2028,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > without client 
   "server/src/app.module.ts": {
     "stateCleared": "modified",
   },
+  "server/src/application-config.ts": {
+    "stateCleared": "modified",
+  },
   "server/src/common/header-util.ts": {
     "stateCleared": "modified",
   },
@@ -2079,6 +2109,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > without client 
   "server/src/module/auth.module.ts": {
     "stateCleared": "modified",
   },
+  "server/src/module/common.module.ts": {
+    "stateCleared": "modified",
+  },
   "server/src/module/health.module.ts": {
     "stateCleared": "modified",
   },
@@ -2116,6 +2149,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > without client 
     "stateCleared": "modified",
   },
   "server/src/security/password-util.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/security/password.service.ts": {
     "stateCleared": "modified",
   },
   "server/src/security/payload.interface.ts": {

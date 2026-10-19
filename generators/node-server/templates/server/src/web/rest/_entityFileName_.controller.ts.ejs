@@ -40,7 +40,10 @@ const SORT_LABELS: Record<string, string> = { <%- sortLabels.join(', ') %> };
 export class <%= entityClass %>Controller {
   logger = new Logger('<%= entityClass %>Controller');
 
-  constructor(private readonly <%= entityInstance %>Service: <%= entityClass %>Service) {}
+  constructor(
+    private readonly <%= entityInstance %>Service: <%= entityClass %>Service,
+    private readonly headerUtil: HeaderUtil,
+  ) {}
 
 
   @Get('/')
@@ -67,7 +70,7 @@ export class <%= entityClass %>Controller {
       order: pageRequest.asOrder(),
 <%_ } _%>
     });
-    HeaderUtil.addPaginationHeaders(req.res, new Page(results, count, pageRequest));
+    this.headerUtil.addPaginationHeaders(req.res, new Page(results, count, pageRequest));
     return results;
   }
 
@@ -102,7 +105,7 @@ export class <%= entityClass %>Controller {
       throw new BadRequestAlertException('A new <%= entityInstance %> cannot already have an ID', ENTITY_NAME, 'idexists');
     }
     const created = await this.<%= entityInstance %>Service.save(<%= entityInstance %>DTO, req.user?.login);
-    HeaderUtil.addEntityCreatedHeaders(req.res, ENTITY_NAME, created.id);
+    this.headerUtil.addEntityCreatedHeaders(req.res, ENTITY_NAME, created.id);
     req.res.location(`/api/<%= entityApiUrl %>/${created.id}`);
     return created;
   }
@@ -119,7 +122,7 @@ export class <%= entityClass %>Controller {
   async putId(@Req() req: Request, <%- idParam %>, @Body() <%= entityInstance %>DTO: <%= dtoClass %>): Promise<<%= dtoClass %>>  {
     await this.validateIdForUpdate(req, id, <%= entityInstance %>DTO);
     const updated = await this.<%= entityInstance %>Service.update(<%= entityInstance %>DTO, req.user?.login);
-    HeaderUtil.addEntityUpdatedHeaders(req.res, ENTITY_NAME, id);
+    this.headerUtil.addEntityUpdatedHeaders(req.res, ENTITY_NAME, id);
     return updated;
   }
 
@@ -131,7 +134,7 @@ export class <%= entityClass %>Controller {
     description: 'The record has been successfully deleted.',
   })
   async deleteById(@Req() req: Request, <%- idParam %>): Promise<void>  {
-    HeaderUtil.addEntityDeletedHeaders(req.res, ENTITY_NAME, id);
+    this.headerUtil.addEntityDeletedHeaders(req.res, ENTITY_NAME, id);
     return await this.<%= entityInstance %>Service.deleteById(id);
   }
 
