@@ -54,7 +54,7 @@
   },
   "dependencies": {
     "chalk": "^5.3.0",
-    "generator-jhipster": "github:jhipster/generator-jhipster#main"
+    "generator-jhipster": "github:jhipster/generator-jhipster#db31cd9c5290942a77586e03e3b658c66ea0bd97"
   },
   "devDependencies": {
     "ejs-lint": "2.0.1",
@@ -74,6 +74,6 @@
     "node": "^22.18.0 || >=24.11.0"
   },
   "allowScripts": {
-    "github:jhipster/generator-jhipster#main": true
+    "github:jhipster/generator-jhipster#db31cd9c5290942a77586e03e3b658c66ea0bd97": true
   }
 }
