@@ -72,7 +72,7 @@ be kept out of the configuration files this way in production.
 
 According [typeORM migration guide](https://github.com/typeorm/typeorm/blob/master/docs/migrations.md),
 there are under [src/migrations/](src/migrations/) the scripts to create the database schema and after to insert data seed.
-The application runs the ones not run yet at start up, in the order of the timestamp of their name.
+The application runs the ones not run yet at startup, in the order of the timestamp of their name.
 <%_ if (databaseTypeSql) { _%>
 
 Like the Liquibase changelogs of JHipster Spring Boot, JHipster generates the migrations of the schema: `CreateTables`
@@ -87,7 +87,7 @@ table): restore the migrations a database ran already (`git restore src/migratio
 generating the migration of the change, so an empty database runs them all.
 
 The application runs the migrations [src/orm.config.ts](src/orm.config.ts) lists: import the class of a migration of
-your own and add it to `migrations`, so the application runs it at start up, like the ones JHipster adds. The
+your own and add it to `migrations`, so the application runs it at startup, like the ones JHipster adds. The
 `typeorm:migration:run` script runs every migration of the `src/migrations` folder (built in `dist/migrations`).
 
 TypeORM runs the migrations in the order of the timestamp ending their class name. The `typeorm:migration:create` and
