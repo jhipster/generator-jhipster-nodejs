@@ -1,5 +1,8 @@
 import { <%_ if (databaseType === 'mongodb') { _%> ObjectIdColumn <%_ } else { _%> PrimaryGeneratedColumn <%_ } _%>, Entity, Column <%_ if (databaseType !== 'mongodb') { _%>, JoinColumn, OneToOne, ManyToOne, OneToMany, ManyToMany, JoinTable, type Relation <%_ } _%> } from 'typeorm';
 import { BaseEntity } from './base/base.entity.ts';
+<%_ if (nodejsColumnTransformers.length > 0) { _%>
+import { <%- nodejsColumnTransformers.map(name => `${name}Transformer`).join(', ') %> } from './base/column-transformers.ts';
+<%_ } _%>
 
 <%_
 let isUserRelationship = false;
@@ -56,38 +59,12 @@ export class <%= persistClass %> extends BaseEntity  {
     if (typeof field.javadoc !== 'undefined') { _%>
 <%- formatAsFieldJavadoc(field.javadoc) %>
     <%_ }
-    let required = false;
-    let unique = false;
-    const fieldValidate = field.fieldValidate;
-    const fieldValidateRules = field.fieldValidateRules;
-    const fieldValidateRulesMaxlength = field.fieldValidateRulesMaxlength;
-    const fieldType = field.fieldType;
-    const fieldTypeBlobContent = field.fieldTypeBlobContent;
-    const fieldName = field.fieldName;
-    const fieldNameUnderscored = field.fieldNameUnderscored;
-    const fieldNameAsDatabaseColumn = field.fieldNameAsDatabaseColumn;
-    if (fieldValidate === true) {
-        if (fieldValidateRules.includes('required')) {
-            required = true;
-        }
-        if (fieldValidateRules.includes('unique')) {
-            unique = true;
-        } _%>
-
-    <%_ } _%>
-        <%_ if (field.fieldIsEnum) { _%>
-    @Column({type: '<%- field.nodejsColumnType %>', name: '<%-fieldNameAsDatabaseColumn %>', enum: <%= fieldType %><% if (!required) { %>, nullable: true<% } %><% if (unique) { %>, unique: true<% } %>})
-        <%_ } else if (['Instant', 'ZonedDateTime', 'LocalDate'].includes(fieldType)) { _%>
-    @Column({<%_ if(field.nodejsColumnType) { _%> type: '<%-field.nodejsColumnType%>' ,<%_ }_%> name: "<%-fieldNameAsDatabaseColumn %>"<% if (!required) { %>, nullable: true<% } %><% if (unique) { %>, unique: true<% } %>})
-        <%_ } else if (fieldType === 'BigDecimal') { _%>
-    @Column({<%_ if(field.nodejsColumnType) { _%> type: '<%-field.nodejsColumnType%>' ,<%_ }_%> name: "<%-fieldNameAsDatabaseColumn %>", precision : 10, scale : 2<% if (!required) { %>, nullable: true<% } %><% if (unique) { %>, unique: true<% } %>})
-        <%_ } else { _%>
-    @Column({<%_ if(field.nodejsColumnType) { _%> type: '<%-field.nodejsColumnType%>' ,<%_ }_%>  name: "<%-fieldNameAsDatabaseColumn %>"<% if (fieldValidate === true) { %><% if (fieldValidateRules.includes('maxlength')) { %>, length: <%= fieldValidateRulesMaxlength %><% } %> <% } %><% if (!required) { %>, nullable: true<% } %><% if (unique) { %>, unique: true<% }%>})
-        <%_ } _%>
+    const { fieldType, fieldTypeBlobContent, fieldName } = field; _%>
+    @Column({ <%- field.nodejsColumnOptions.join(', ') %> })
     <%= fieldName %><%- field.fieldValidationRequired ? '!' : '?' %>: <%= field.nodejsFieldType %>;
 
     <%_ if ((fieldType === 'byte[]' || fieldType === 'ByteBuffer') && fieldTypeBlobContent !== 'text') { _%>
-    @Column({name: '<%-fieldNameAsDatabaseColumn %>_content_type'<% if (!required) { %>, nullable: true<% } %>})
+    @Column({ <%- field.nodejsContentTypeColumnOptions.join(', ') %> })
     <%= fieldName %>ContentType<%- field.fieldValidationRequired ? '!' : '?' %>: string;
     <%_ }
     } _%>

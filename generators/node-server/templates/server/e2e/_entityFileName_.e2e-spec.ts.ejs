@@ -1,4 +1,6 @@
 <%_
+// The fake data of this test, whatever the templates rendered before: the faker of the entity is seeded for it.
+resetFakerSeed('nodejs-e2e-mock');
 const numericId = primaryKey.tsType === 'number';
 // The fake data of the fields, reproducible (the faker of the entity is seeded), as TypeScript literals: distinct ids of
 // the type of the primary key, and a value for each field of the entity.

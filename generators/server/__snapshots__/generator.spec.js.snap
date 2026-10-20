@@ -71,6 +71,9 @@ exports[`SubGenerator server of nodejs JHipster blueprint > run > should succeed
   "server/e2e/cors.e2e-spec.ts": {
     "stateCleared": "modified",
   },
+  "server/e2e/foo.database.e2e-spec.ts": {
+    "stateCleared": "modified",
+  },
   "server/e2e/foo.e2e-spec.ts": {
     "stateCleared": "modified",
   },
@@ -156,6 +159,9 @@ exports[`SubGenerator server of nodejs JHipster blueprint > run > should succeed
     "stateCleared": "modified",
   },
   "server/src/domain/base/base.entity.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/domain/base/column-transformers.ts": {
     "stateCleared": "modified",
   },
   "server/src/domain/base/pagination.entity.spec.ts": {
@@ -357,6 +363,9 @@ exports[`SubGenerator server of nodejs JHipster blueprint > run > should succeed
     "stateCleared": "modified",
   },
   "server/test/config.spec.ts": {
+    "stateCleared": "modified",
+  },
+  "server/test/domain/column-transformers.spec.ts": {
     "stateCleared": "modified",
   },
   "server/test/mail.service.spec.ts": {

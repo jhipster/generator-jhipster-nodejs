@@ -1,0 +1,149 @@
+<%_
+// The values of the fields as the API exchanges them, reproducible: the faker of the entity is seeded for this test.
+resetFakerSeed('nodejs-database-e2e');
+const created = nodejsApiFakeEntity();
+const updated = nodejsApiFakeEntity();
+const approximateFields = created.approximateFields;
+// The relationships of the entity with a join column or a join table: stored by the id of the related record.
+const storedRelationships = databaseTypeSql
+  ? relationships.filter(
+      relationship =>
+        relationship.relationshipType === 'many-to-one' ||
+        (relationship.relationshipType === 'one-to-one' && relationship.ownerSide) ||
+        (relationship.relationshipType === 'many-to-many' && relationship.ownerSide),
+    )
+  : [];
+const anyUserRelationship = storedRelationships.some(relationship => relationship.otherEntity.builtInUser);
+const literal = value => JSON.stringify(value);
+_%>
+import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { INestApplication } from '@nestjs/common';
+import { Test, TestingModule } from '@nestjs/testing';
+import request from 'supertest';
+<%_ if (anyUserRelationship) { _%>
+import { DataSource } from 'typeorm';
+<%_ } _%>
+
+import { AppModule } from '../src/app.module.ts';
+import { configureApp } from '../src/app.config.ts';
+<%_ if (anyUserRelationship) { _%>
+import { <%= user.persistClass %> } from '../src/domain/user.entity.ts';
+<%_ } _%>
+import { AuthGuard } from '../src/security/guards/auth.guard.ts';
+import { RolesGuard } from '../src/security/guards/roles.guard.ts';
+
+/**
+ * <%= entityClass %> stored in the database and read back through the REST API, like the resource tests of JHipster
+ * Spring Boot: the values of every field as the API exchanges them<% if (storedRelationships.length > 0) { %>, and the relationships stored by the id of the related
+ * record, without changing it<% } %>.
+ */
+describe('<%= entityClass %> on the database', () => {
+  let app: INestApplication;
+
+  // The values of the fields, of a creation then of an update.
+  const createdValues: Record<string, any> = {
+<%_ for (const [name, value] of Object.entries(created.values)) { _%>
+    <%= name %>: <%- literal(value) %>,
+<%_ } _%>
+  };
+  const updatedValues: Record<string, any> = {
+<%_ for (const [name, value] of Object.entries(updated.values)) { _%>
+    <%= name %>: <%- literal(value) %>,
+<%_ } _%>
+  };
+
+  /** The values read back: a Float is approximate on the databases keeping it in single precision. */
+  const expected = (values: Record<string, any>): Record<string, any> => ({
+    ...values,
+<%_ for (const name of approximateFields) { _%>
+    <%= name %>: expect.closeTo(values.<%= name %>, 1),
+<%_ } _%>
+  });
+
+  beforeAll(async () => {
+    const moduleFixture: TestingModule = await Test.createTestingModule({
+      imports: [AppModule],
+    })
+      .overrideGuard(AuthGuard)
+      .useValue({ canActivate: () => true })
+      .overrideGuard(RolesGuard)
+      .useValue({ canActivate: () => true })
+      .compile();
+
+    app = moduleFixture.createNestApplication();
+    configureApp(app);
+    await app.init();
+  });
+
+  afterAll(async () => {
+    await app?.close();
+  });
+
+  it('should store every field and read it back, then update and delete it', async () => {
+    const server = app.getHttpServer();
+    const { body: stored } = await request(server).post('/api/<%= entityApiUrl %>').send(createdValues).expect(201);
+    const { body: read } = await request(server).get(`/api/<%= entityApiUrl %>/${stored.<%= primaryKey.name %>}`).expect(200);
+    expect(read).toMatchObject(expected(createdValues));
+
+    await request(server)
+      .put(`/api/<%= entityApiUrl %>/${stored.<%= primaryKey.name %>}`)
+      .send({ ...updatedValues, <%= primaryKey.name %>: stored.<%= primaryKey.name %> })
+      .expect(200);
+    const { body: readUpdated } = await request(server).get(`/api/<%= entityApiUrl %>/${stored.<%= primaryKey.name %>}`).expect(200);
+    expect(readUpdated).toMatchObject(expected(updatedValues));
+
+    await request(server).delete(`/api/<%= entityApiUrl %>/${stored.<%= primaryKey.name %>}`).expect(204);
+    await request(server).get(`/api/<%= entityApiUrl %>/${stored.<%= primaryKey.name %>}`).expect(404);
+  });
+<%_ for (const relationship of storedRelationships) {
+    const otherEntity = relationship.otherEntity;
+    const otherId = otherEntity.primaryKey.name;
+    const collection = relationship.relationshipType === 'many-to-many';
+    const property = relationship.propertyName;
+    const otherValues = otherEntity.builtIn ? undefined : (otherEntity.resetFakerSeed('nodejs-database-e2e'), otherEntity.nodejsApiFakeEntity().values);
+    // A text field of the related record, sent changed with its id: the relationship does not store it (no cascade).
+    const otherTextField = otherValues && otherEntity.fields.find(field => !field.id && field.fieldType === 'String' && field.fieldName in otherValues);
+_%>
+
+  it('should store the <%= property %> relationship by the id of the related record, without changing it', async () => {
+    const server = app.getHttpServer();
+<%_ if (otherEntity.builtInUser) { _%>
+    // A user of this test: the applications without seed users (OAuth2) have none.
+    const users = app.get(DataSource).getRepository(<%= user.persistClass %>);
+    const related = await users.save(
+      users.create({ login: '<%= entityInstance.toLowerCase() %>-<%= property.toLowerCase() %>-e2e', email: '<%= entityInstance.toLowerCase() %>-<%= property.toLowerCase() %>-e2e@localhost', password: '' }),
+    );
+<%_ } else { _%>
+    const relatedValues: Record<string, any> = <%- literal(otherValues) %>;
+    const { body: related } = await request(server).post('/api/<%= otherEntity.entityApiUrl %>').send(relatedValues).expect(201);
+<%_ } _%>
+<%_ if (otherTextField) { _%>
+    const reference = { <%= otherId %>: related.<%= otherId %>, <%= otherTextField.fieldName %>: 'not stored through the relationship' };
+<%_ } else { _%>
+    const reference = { <%= otherId %>: related.<%= otherId %> };
+<%_ } _%>
+    const { body: stored } = await request(server)
+      .post('/api/<%= entityApiUrl %>')
+      .send({ ...createdValues, <%= property %>: <%- collection ? '[reference]' : 'reference' %> })
+      .expect(201);
+
+    const { body: read } = await request(server).get(`/api/<%= entityApiUrl %>/${stored.<%= primaryKey.name %>}`).expect(200);
+<%_ if (collection) { _%>
+    expect(read.<%= property %>).toEqual([expect.objectContaining({ <%= otherId %>: related.<%= otherId %> })]);
+<%_ } else { _%>
+    expect(read.<%= property %>).toMatchObject({ <%= otherId %>: related.<%= otherId %> });
+<%_ } _%>
+<%_ if (otherTextField) { _%>
+    const { body: relatedRead } = await request(server).get(`/api/<%= otherEntity.entityApiUrl %>/${related.<%= otherId %>}`).expect(200);
+    expect(relatedRead.<%= otherTextField.fieldName %>).toBe(relatedValues.<%= otherTextField.fieldName %>);
+<%_ } _%>
+
+    await request(server).delete(`/api/<%= entityApiUrl %>/${stored.<%= primaryKey.name %>}`).expect(204);
+<%_ if (otherEntity.builtInUser) { _%>
+    await users.remove(related);
+<%_ } else if (!otherEntity.builtIn) { _%>
+    await request(server).delete(`/api/<%= otherEntity.entityApiUrl %>/${related.<%= otherId %>}`).expect(204);
+<%_ } _%>
+  });
+<%_ } _%>
+});

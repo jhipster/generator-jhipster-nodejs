@@ -11,7 +11,16 @@ import { SERVER_NODEJS_SRC_DIR } from '../generator-nodejs-constants.js';
 
 import { entityFiles } from './entity-files.js';
 import { serverFiles } from './files.js';
-import { getDatabasePort, getNodeDevDatabaseType, getNodeDevSqliteDatabase, thymeleafMailToHandlebars } from './support/index.js';
+import {
+  apiFakeEntity,
+  columnTransformer,
+  contentTypeColumnOptions,
+  fieldColumnOptions,
+  getDatabasePort,
+  getNodeDevDatabaseType,
+  getNodeDevSqliteDatabase,
+  thymeleafMailToHandlebars,
+} from './support/index.js';
 
 const fieldTypes = {
   Boolean: 'boolean',
@@ -25,6 +34,11 @@ const fieldTypes = {
   // Without a column type, TypeORM gives a Date the date-time type of the database in use.
   Instant: 'Date',
   ZonedDateTime: 'Date',
+  // The values of the JSON of JHipster Spring Boot: yyyy-MM-dd, HH:mm:ss, ISO-8601 (PT1H30M), base64 or text.
+  LocalDate: 'string',
+  LocalTime: 'string',
+  Duration: 'string',
+  'byte[]': 'string',
 };
 
 const dbTypes = {
@@ -35,6 +49,9 @@ const dbTypes = {
   Double: 'double precision',
   BigDecimal: 'decimal',
   LocalDate: 'date',
+  LocalTime: 'time',
+  // The nanoseconds of the duration, like the bigint column of JHipster Spring Boot (the duration transformer).
+  Duration: 'bigint',
   AnyBlob: 'blob',
   ImageBlob: 'blob',
   Blob: 'blob',
@@ -53,8 +70,8 @@ const prodDatabaseColumnTypes = {
   postgresql: { 'byte[]': 'text', TextBlob: 'text' },
   // SQL Server has no boolean type, and neither bit nor its binary types are SQLite ones.
   mssql: { Boolean: undefined, 'byte[]': 'text', TextBlob: 'text' },
-  // Oracle has neither boolean nor bigint (integer is NUMBER(38)).
-  oracle: { Boolean: undefined, Long: 'integer', TextBlob: 'clob' },
+  // Oracle has neither boolean nor bigint (integer is NUMBER(38)), nor a time type.
+  oracle: { Boolean: undefined, Long: 'integer', Duration: 'integer', LocalTime: 'varchar', TextBlob: 'clob' },
 };
 
 /** Enum column types by prodDatabaseType, simple-enum otherwise: Oracle has no simple-enum. */
@@ -265,18 +282,33 @@ export default class extends BaseApplicationGenerator {
           });
         } else {
           const columnTypes = { ...dbTypes, ...prodDatabaseColumnTypes[application.prodDatabaseType] };
+          const nodejsColumnType = columnTypes[field.fieldTypeBlobContent === 'text' ? 'TextBlob' : fieldType];
           mutateData(field, {
             __override__: true,
             nodejsFieldType: fieldTypes[fieldType] ?? 'any',
-            nodejsColumnType: columnTypes[field.fieldTypeBlobContent === 'text' ? 'TextBlob' : fieldType],
+            nodejsColumnType,
+            nodejsColumnTransformer: application.databaseTypeSql ? columnTransformer({ fieldType, nodejsColumnType }) : undefined,
           });
         }
+        mutateData(field, {
+          __override__: true,
+          nodejsColumnOptions: fieldColumnOptions(field, application),
+          nodejsContentTypeColumnOptions: contentTypeColumnOptions(field, application),
+        });
       },
     });
   }
 
   get [BaseApplicationGenerator.DEFAULT]() {
     return this.asDefaultTaskGroup({
+      prepareColumnTransformers({ entities }) {
+        // The transformers the columns of an entity use, imported by its entity.
+        for (const entity of entities.filter(entity => !entity.skipServer)) {
+          entity.nodejsColumnTransformers = [...new Set(entity.fields.map(field => field.nodejsColumnTransformer).filter(Boolean))];
+          // The fake values of the fields as the API exchanges them, generated when a template calls it (after its faker seed).
+          entity.nodejsApiFakeEntity = () => apiFakeEntity(entity);
+        }
+      },
       prepareUserLoginVm({ application }) {
         // The class of the logged user's data: the DTO of the built-in User entity, prepared with the entities, else
         // UserDTO (OAuth2 without syncUserWithIdp has no built-in User).
