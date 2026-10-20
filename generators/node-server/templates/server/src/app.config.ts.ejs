@@ -98,6 +98,11 @@ export function configureApp(app: INestApplication): INestApplication {
     new ValidationPipe({
       // The errors of the fields, like JHipster Spring Boot.
       exceptionFactory: errors => new ValidationException(errors),
+      // The body is an instance of its DTO without the properties the DTO does not declare, like JHipster Spring Boot
+      // binds a request to its DTO and ignores the unknown properties: the declared properties without validation are
+      // @Allow(). The instance keeps the properties excluded from the responses only (the password of a registration).
+      whitelist: true,
+      transform: true,
       // https://github.com/nestjs/nest/issues/10683#issuecomment-1349614194
       forbidUnknownValues: false,
     }),
