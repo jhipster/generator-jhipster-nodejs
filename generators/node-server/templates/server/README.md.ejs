@@ -78,8 +78,8 @@ The application runs the ones not run yet at start up, in the order of the times
 Like the Liquibase changelogs of JHipster Spring Boot, JHipster generates the migrations of the schema: `CreateTables`
 creates the tables of the users and of the authorities, then each entity has the migration adding its table
 (`<timestamp>-AddedEntity<Entity>.ts`, the timestamp of its `changelogDate`) and, when it has relationships, the one adding
-its foreign keys and its join tables (`<timestamp>-AddedEntityConstraints<Entity>.ts`), run after the tables they
-reference. A database the application ran them on already is not changed by a regeneration of a migration: when an entity
+its foreign keys and its join tables (`<timestamp>-AddedEntityConstraints<Entity>.ts`, its timestamp plus 5000000000000),
+run after the tables of every entity, like the constraints changelogs of Liquibase. A database the application ran them on already is not changed by a regeneration of a migration: when an entity
 changes, add the migration of the change (`npm run typeorm:migration:generate`) or recreate the development database.
 <%_ } _%>
 

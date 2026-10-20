@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import {
-  CREATE_TABLES_TIMESTAMP,
+  CONSTRAINTS_TIMESTAMP_OFFSET,
   changelogDateToTimestamp,
   constraintsMigration,
   entityMigration,
@@ -154,7 +154,7 @@ describe('constraintsMigration', () => {
         },
       ],
     };
-    const timestamp = changelogDateToTimestamp(gadget.changelogDate) + 1;
+    const timestamp = changelogDateToTimestamp(country.changelogDate) + CONSTRAINTS_TIMESTAMP_OFFSET;
     expect(constraintsMigration(country)).toEqual({
       timestamp,
       className: `AddedEntityConstraintsCountry${timestamp}`,
@@ -174,10 +174,20 @@ describe('constraintsMigration', () => {
     });
   });
 
-  it('should run after its own table when it references the built-in users only', () => {
-    const country = { ...region, relationships: [{ relationshipType: 'many-to-one', relationshipFieldName: 'owner', otherEntity: user }] };
-    expect(constraintsMigration(country).timestamp).toBe(changelogDateToTimestamp(region.changelogDate) + 1);
-    expect(CREATE_TABLES_TIMESTAMP).toBeLessThan(changelogDateToTimestamp(region.changelogDate));
+  it('should keep the timestamp of the entity, whatever the entities it references, after the tables of every entity', () => {
+    const owner = { relationshipType: 'many-to-one', relationshipFieldName: 'owner', otherEntity: user };
+    const later = { ...gadget, changelogDate: '21001231235959' };
+    const country = { ...region, relationships: [owner] };
+    const { timestamp } = constraintsMigration(country);
+    expect(
+      constraintsMigration({
+        ...country,
+        relationships: [owner, { relationshipType: 'many-to-one', relationshipFieldName: 'later', otherEntity: later }],
+      }).timestamp,
+    ).toBe(timestamp);
+    expect(timestamp).toBeGreaterThan(changelogDateToTimestamp(later.changelogDate));
+    // TypeORM reads the timestamp of the last 13 digits of the class name.
+    expect(String(timestamp)).toHaveLength(13);
   });
 });
 

@@ -7,13 +7,21 @@ import { columnRules } from './columns.js';
  * The migrations of the SQL databases, like the Liquibase changelogs of JHipster Spring Boot: the tables of the built-in
  * users (CreateTables), then for each entity the migration adding its table and the one adding its constraints (its
  * foreign keys and its join tables). TypeORM runs the migrations in the order of the JavaScript timestamp ending their
- * class name, given by the changelogDate of the entity. The tables and the columns are the ones TypeORM maps the entities
+ * class name, given by the changelogDate of the entity: the sections of the master.xml of Liquibase (the changelogs of
+ * the tables, then the ones of the constraints) are ranges of timestamps, the constraints of an entity at its timestamp
+ * after CONSTRAINTS_TIMESTAMP_OFFSET. The tables and the columns are the ones TypeORM maps the entities
  * to, with their names, so a database created by a former version of the application (its schema synchronized from the
  * entities) keeps its schema.
  */
 
-/** The timestamp of the migration creating the tables of the built-in users, the former migration synchronizing the schema. */
-export const CREATE_TABLES_TIMESTAMP = 1570200270081;
+/**
+ * The offset of the timestamps of the constraints migrations, after the ones of every table: the timestamp of the
+ * constraints of an entity is the one of its table plus 5000000000000 (6702121677000 for 1702121677000), so its name, like
+ * the constraints changelog of Liquibase named by the changelogDate of the entity, never changes, whatever the entities it
+ * references. TypeORM reads the last 13 digits of the class name: the tables (before 2128) stay under the offset, the
+ * constraints between it and the largest timestamp of 13 digits.
+ */
+export const CONSTRAINTS_TIMESTAMP_OFFSET = 5 * 10 ** 12;
 
 /** The JavaScript timestamp (milliseconds, UTC) of a changelogDate of JHipster (yyyyMMddHHmmss). */
 export const changelogDateToTimestamp = changelogDate => {
@@ -109,20 +117,15 @@ export const entityMigration = entity => {
   };
 };
 
-/** The timestamp of the migration of an entity, the migration creating the built-in users for a built-in entity. */
-const timestampOf = entity => (entity.builtIn ? CREATE_TABLES_TIMESTAMP : changelogDateToTimestamp(entity.changelogDate));
-
 /**
  * The migration adding the constraints of an entity, its foreign keys and its join tables, when it has some: run after the
- * migrations of the entity and of the entities it references (its timestamp follows the latest of theirs), like the
- * constraints changelogs of JHipster run after every table.
+ * migrations of every table, like the constraints changelogs of JHipster run after every table.
  */
 export const constraintsMigration = entity => {
   const joinColumns = joinColumnRelationships(entity);
   const joinTables = joinTableRelationships(entity);
   if (joinColumns.length === 0 && joinTables.length === 0) return undefined;
-  const timestamp =
-    Math.max(timestampOf(entity), ...[...joinColumns, ...joinTables].map(({ otherEntity }) => timestampOf(otherEntity))) + 1;
+  const timestamp = changelogDateToTimestamp(entity.changelogDate) + CONSTRAINTS_TIMESTAMP_OFFSET;
   return {
     timestamp,
     className: `AddedEntityConstraints${entity.entityClass}${timestamp}`,
