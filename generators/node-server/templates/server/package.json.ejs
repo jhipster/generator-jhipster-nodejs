@@ -24,9 +24,11 @@
     "test:e2e": "vitest run --config ./vitest.config.e2e.ts --coverage --silent",
     "typecheck": "tsc --noEmit",
     "typeorm": "nest build && typeorm -d ormconfig.ts",
-    "typeorm:migration:create": "typeorm migration:create src/migrations/migration",
 <%_ if (databaseTypeSql) { _%>
-    "typeorm:migration:generate": "npm run typeorm -- migration:generate src/migrations/schema",
+    "typeorm:migration:create": "node typeorm-migration.ts migration:create src/migrations/migration",
+    "typeorm:migration:generate": "nest build && node typeorm-migration.ts migration:generate src/migrations/schema -d ormconfig.ts",
+<%_ } else { _%>
+    "typeorm:migration:create": "typeorm migration:create src/migrations/migration",
 <%_ } _%>
     "typeorm:migration:run": "npm run typeorm -- migration:run",
     "typeorm:migration:revert": "npm run typeorm -- migration:revert",

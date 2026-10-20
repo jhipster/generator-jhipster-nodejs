@@ -6,22 +6,31 @@ import { columnRules } from './columns.js';
 /**
  * The migrations of the SQL databases, like the Liquibase changelogs of JHipster Spring Boot: the tables of the built-in
  * users (CreateTables), then for each entity the migration adding its table and the one adding its constraints (its
- * foreign keys and its join tables). TypeORM runs the migrations in the order of the JavaScript timestamp ending their
- * class name, given by the changelogDate of the entity: the sections of the master.xml of Liquibase (the changelogs of
- * the tables, then the ones of the constraints) are ranges of timestamps, the constraints of an entity at its timestamp
- * after CONSTRAINTS_TIMESTAMP_OFFSET. The tables and the columns are the ones TypeORM maps the entities
- * to, with their names, so a database created by a former version of the application (its schema synchronized from the
- * entities) keeps its schema.
+ * foreign keys and its join tables). The tables and the columns are the ones TypeORM maps the entities to, with their
+ * names, so a database created by a former version of the application (its schema synchronized from the entities) keeps
+ * its schema.
+ *
+ * TypeORM runs the migrations in the order of the timestamp of the last 13 digits of their class name: the sections of
+ * the master.xml of Liquibase are ranges of timestamps. The changelogs of the tables are the migrations of the tables at
+ * the timestamp of the changelogDate of their entity, the changelogs of the constraints the ones of the constraints at
+ * that timestamp plus CONSTRAINTS_TIMESTAMP_OFFSET, and the changelogs of the developers, at the end of master.xml, the
+ * migrations the typeorm:migration scripts create at their time plus MIGRATION_TIMESTAMP_OFFSET.
  */
 
 /**
  * The offset of the timestamps of the constraints migrations, after the ones of every table: the timestamp of the
- * constraints of an entity is the one of its table plus 5000000000000 (6702121677000 for 1702121677000), so its name, like
+ * constraints of an entity is the one of its table plus 3000000000000 (4702121677000 for 1702121677000), so its name, like
  * the constraints changelog of Liquibase named by the changelogDate of the entity, never changes, whatever the entities it
- * references. TypeORM reads the last 13 digits of the class name: the tables (before 2128) stay under the offset, the
- * constraints between it and the largest timestamp of 13 digits.
+ * references. The tables of the entities created up to 95 years after the first one stay before every constraints migration.
  */
-export const CONSTRAINTS_TIMESTAMP_OFFSET = 5 * 10 ** 12;
+export const CONSTRAINTS_TIMESTAMP_OFFSET = 3 * 10 ** 12;
+
+/**
+ * The offset of the timestamps of the migrations of the developers, created by the typeorm:migration scripts: their time
+ * plus 6000000000000, after the constraints migrations of every entity created before, like the changelogs added at the
+ * end of the master.xml of Liquibase; within 13 digits until 2096.
+ */
+export const MIGRATION_TIMESTAMP_OFFSET = 6 * 10 ** 12;
 
 /** The JavaScript timestamp (milliseconds, UTC) of a changelogDate of JHipster (yyyyMMddHHmmss). */
 export const changelogDateToTimestamp = changelogDate => {

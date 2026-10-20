@@ -129,6 +129,12 @@ export const serverFiles = {
     },
     {
       path: SERVER_NODEJS_DIR,
+      // The migrations of the developers, created after the constraints migrations of the entities (SQL).
+      condition: ctx => ctx.databaseTypeSql,
+      templates: ['typeorm-migration.ts'],
+    },
+    {
+      path: SERVER_NODEJS_DIR,
       condition: ctx => ctx.serviceDiscoveryEureka,
       templates: ['src/service/eureka.service.ts'],
     },

@@ -386,6 +386,9 @@ exports[`SubGenerator server of nodejs JHipster blueprint > run > should succeed
   "server/tsconfig.json": {
     "stateCleared": "modified",
   },
+  "server/typeorm-migration.ts": {
+    "stateCleared": "modified",
+  },
   "server/vitest.config.e2e.ts": {
     "stateCleared": "modified",
   },

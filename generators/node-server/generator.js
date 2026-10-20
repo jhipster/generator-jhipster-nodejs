@@ -12,6 +12,7 @@ import { SERVER_NODEJS_SRC_DIR } from '../generator-nodejs-constants.js';
 import { entityFiles } from './entity-files.js';
 import { serverFiles } from './files.js';
 import {
+  MIGRATION_TIMESTAMP_OFFSET,
   apiFakeEntity,
   columnTransformer,
   constraintsMigration,
@@ -217,6 +218,13 @@ export default class extends BaseApplicationGenerator {
 
   get [BaseApplicationGenerator.PREPARING]() {
     return this.asPreparingTaskGroup({
+      migrations({ applicationDefaults }) {
+        applicationDefaults({
+          __override__: false,
+          // The offset of the timestamps of the migrations of the developers (see support/migrations.js).
+          nodejsMigrationTimestampOffset: MIGRATION_TIMESTAMP_OFFSET,
+        });
+      },
       drivers({ applicationDefaults }) {
         applicationDefaults({
           __override__: false,

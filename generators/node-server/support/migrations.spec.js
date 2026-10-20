@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import {
   CONSTRAINTS_TIMESTAMP_OFFSET,
+  MIGRATION_TIMESTAMP_OFFSET,
   changelogDateToTimestamp,
   constraintsMigration,
   entityMigration,
@@ -204,6 +205,8 @@ describe('constraintsMigration', () => {
     expect(timestamp).toBeGreaterThan(changelogDateToTimestamp(later.changelogDate));
     // TypeORM reads the timestamp of the last 13 digits of the class name.
     expect(String(timestamp)).toHaveLength(13);
+    // Before the migrations of the developers, created after the entity.
+    expect(timestamp).toBeLessThan(changelogDateToTimestamp(region.changelogDate) + MIGRATION_TIMESTAMP_OFFSET);
   });
 });
 
