@@ -34,6 +34,12 @@ export const serverFiles = {
     },
     {
       path: SERVER_NODEJS_DIR,
+      // The transformers of the columns whose values the SQL drivers do not give as the API exchanges them.
+      condition: ctx => ctx.databaseTypeSql,
+      templates: ['src/domain/base/column-transformers.ts', 'test/domain/column-transformers.spec.ts'],
+    },
+    {
+      path: SERVER_NODEJS_DIR,
       condition: ctx => ctx.generateBuiltInAuthorityEntity,
       templates: ['src/domain/authority.entity.ts', 'src/migrations/1570200490072-SeedUsersRoles.ts'],
     },

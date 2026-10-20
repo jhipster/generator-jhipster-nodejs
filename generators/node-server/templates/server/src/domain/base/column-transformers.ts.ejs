@@ -1,0 +1,69 @@
+import type { ValueTransformer } from 'typeorm';
+
+/**
+ * The transformers of the columns whose values the database drivers do not give as the API exchanges them, the values
+ * of the JSON of JHipster Spring Boot.
+ */
+
+/** A bigint or a decimal, which the PostgreSQL and MySQL drivers give as a string: a number, like the clients read it. */
+export const numberTransformer: ValueTransformer = {
+  to: (value: number | null | undefined) => value,
+  from: (value: string | number | null) => (value === null || value === undefined ? value : Number(value)),
+};
+
+/** A blob, which the drivers give as a Buffer: the base64 or text string the API received. */
+export const blobTransformer: ValueTransformer = {
+  to: (value: string | null | undefined) => value,
+  from: (value: Buffer | string | null) => (Buffer.isBuffer(value) ? value.toString() : value),
+};
+
+const NANOS_PER_SECOND = 1_000_000_000n;
+const ISO_DURATION =
+  /^([-+]?)P(?:([-+]?\d+)D)?(?:T(?:([-+]?\d+)H)?(?:([-+]?\d+)M)?(?:([-+]?)(\d+)(?:[.,](\d{0,9}))?S)?)?$/i;
+
+/** The nanoseconds of an ISO-8601 duration, like Duration.parse of Java: PT1H30M, P2DT3H, PT-0.5S. */
+export function parseDuration(text: string): bigint {
+  const match = ISO_DURATION.exec(text);
+  if (!match || /T$/i.test(text) || text.toUpperCase() === 'P') {
+    throw new Error(`${text} is not an ISO-8601 duration, like PT1H30M`);
+  }
+  const [, sign, days = '0', hours = '0', minutes = '0', secondsSign = '', seconds = '0', fraction = ''] = match;
+  const secondsNanos = BigInt(seconds) * NANOS_PER_SECOND + BigInt(fraction.padEnd(9, '0'));
+  const total =
+    ((BigInt(days) * 24n + BigInt(hours)) * 60n + BigInt(minutes)) * 60n * NANOS_PER_SECOND +
+    (secondsSign === '-' ? -secondsNanos : secondsNanos);
+  return sign === '-' ? -total : total;
+}
+
+/** The ISO-8601 duration of nanoseconds, like Duration.toString of Java: PT1H30M, PT0.5S, PT-1H. */
+export function formatDuration(nanos: bigint): string {
+  if (nanos === 0n) return 'PT0S';
+  // Like Java, the seconds rounded down and the positive nanoseconds of the second.
+  let seconds = nanos / NANOS_PER_SECOND;
+  let nanosOfSecond = nanos % NANOS_PER_SECOND;
+  if (nanosOfSecond < 0n) {
+    seconds -= 1n;
+    nanosOfSecond += NANOS_PER_SECOND;
+  }
+  const effectiveSeconds = seconds < 0n && nanosOfSecond > 0n ? seconds + 1n : seconds;
+  const hours = effectiveSeconds / 3600n;
+  const minutes = (effectiveSeconds % 3600n) / 60n;
+  const secs = effectiveSeconds % 60n;
+  let text = 'PT';
+  if (hours !== 0n) text += `${hours}H`;
+  if (minutes !== 0n) text += `${minutes}M`;
+  if (secs === 0n && nanosOfSecond === 0n && text.length > 2) return text;
+  text += seconds < 0n && nanosOfSecond > 0n && secs === 0n ? '-0' : `${secs}`;
+  if (nanosOfSecond > 0n) {
+    const digits = `${seconds < 0n ? 2n * NANOS_PER_SECOND - nanosOfSecond : nanosOfSecond + NANOS_PER_SECOND}`;
+    text += `.${digits.slice(1).replace(/0+$/, '')}`;
+  }
+  return `${text}S`;
+}
+
+/** A duration, an ISO-8601 text in the API and its nanoseconds in a bigint column, like JHipster Spring Boot. */
+export const durationTransformer: ValueTransformer = {
+  to: (value: string | null | undefined) => (value === null || value === undefined ? value : parseDuration(value).toString()),
+  from: (value: string | number | bigint | null) =>
+    value === null || value === undefined ? value : formatDuration(BigInt(value)),
+};

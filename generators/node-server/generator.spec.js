@@ -509,8 +509,8 @@ describe('SubGenerator node-server of nodejs JHipster blueprint', () => {
       result.assertFileContent('server/src/service/dto/book.dto.ts', /@IsOptional\(\)\s+@IsEnum\(Genre\)/);
       result.assertFileContent('server/src/service/dto/book.dto.ts', /@IsNotEmpty\(\)\s+@IsEnum\(BookFormat\)/);
       result.assertFileContent('server/e2e/book.e2e-spec.ts', "genre: 'NOT_A_GENRE'");
-      result.assertFileContent('server/src/domain/book.entity.ts', 'enum: Genre, nullable: true})');
-      result.assertFileContent('server/src/domain/book.entity.ts', 'enum: BookFormat})');
+      result.assertFileContent('server/src/domain/book.entity.ts', 'enum: Genre, nullable: true })');
+      result.assertFileContent('server/src/domain/book.entity.ts', 'enum: BookFormat })');
     });
 
     it('should accept a missing value of an optional validated field', () => {

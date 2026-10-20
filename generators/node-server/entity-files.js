@@ -19,6 +19,7 @@ export const entityFiles = {
         'src/service/mapper/_entityFileName_.mapper.ts',
         'src/web/rest/_entityFileName_.controller.ts',
         'e2e/_entityFileName_.e2e-spec.ts',
+        'e2e/_entityFileName_.database.e2e-spec.ts',
       ],
     },
   ],
