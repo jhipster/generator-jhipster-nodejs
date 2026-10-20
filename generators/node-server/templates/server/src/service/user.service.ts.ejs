@@ -9,7 +9,7 @@ import { PublicUserDTO, <%= user.dtoClass%> } from './dto/user.dto.ts';
 import { UserMapper } from './mapper/user.mapper.ts';
 import { User } from '../domain/user.entity.ts';
 <%_ if (authenticationType === 'jwt') { _%>
-import { transformPassword } from '../security/index.ts';
+import { PasswordService } from '../security/password.service.ts';
 <%_ } _%>
 
 <%_ if (typeormRelationsSupport) { _%>
@@ -22,7 +22,12 @@ export class UserService {
     logger = new Logger('UserService');
 
 <%_ } _%>
-    constructor(@InjectRepository(User) private userRepository: Repository<User>) {}
+    constructor(
+        @InjectRepository(User) private userRepository: Repository<User>,
+<%_ if (authenticationType === 'jwt') { _%>
+        private readonly passwordService: PasswordService,
+<%_ } _%>
+    ) {}
 <%_ if (typeormOrderSupport) { _%>
 
     /** The TypeORM metadata of the user, the sort of the user lists is validated with. */
@@ -78,7 +83,7 @@ export class UserService {
         const user = this.convertInAuthorities(UserMapper.fromDTOtoEntity(userDTO));
 <%_ if (authenticationType === 'jwt') { _%>
         if (updatePassword) {
-            await transformPassword(user);
+            await this.passwordService.transform(user);
         }
 <%_ } _%>
         if (creator) {

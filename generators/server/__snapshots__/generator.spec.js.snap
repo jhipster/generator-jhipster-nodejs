@@ -104,6 +104,9 @@ exports[`SubGenerator server of nodejs JHipster blueprint > run > should succeed
   "server/src/app.module.ts": {
     "stateCleared": "modified",
   },
+  "server/src/application-config.ts": {
+    "stateCleared": "modified",
+  },
   "server/src/common/header-util.ts": {
     "stateCleared": "modified",
   },
@@ -188,6 +191,9 @@ exports[`SubGenerator server of nodejs JHipster blueprint > run > should succeed
   "server/src/module/auth.module.ts": {
     "stateCleared": "modified",
   },
+  "server/src/module/common.module.ts": {
+    "stateCleared": "modified",
+  },
   "server/src/module/foo.module.ts": {
     "stateCleared": "modified",
   },
@@ -228,6 +234,9 @@ exports[`SubGenerator server of nodejs JHipster blueprint > run > should succeed
     "stateCleared": "modified",
   },
   "server/src/security/password-util.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/security/password.service.ts": {
     "stateCleared": "modified",
   },
   "server/src/security/payload.interface.ts": {

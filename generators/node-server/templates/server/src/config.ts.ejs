@@ -1,4 +1,6 @@
 import * as yaml from 'js-yaml';
+
+import { type ApplicationConfig, validateConfiguration } from './application-config.ts';
 import * as fs from 'fs';
 import { randomBytes } from 'crypto';
 import { networkInterfaces } from 'os';
@@ -202,9 +204,10 @@ export { config };
  * environment variables and the cloud config), nested by their dotted names, so ConfigService.get('jhipster.swagger.title')
  * finds them. ConfigModule calls it when the application is created, after the cloud config is loaded by main.ts.
  * Providers and controllers read the configuration with ConfigService; config stays for the code running before the
- * application or outside of it (main.ts, the migrations, static helpers).
+ * application or outside of it (main.ts, tls.ts, the migrations). Validated like the configuration properties of Spring
+ * Boot (application-config.ts): the application does not start with an invalid property.
  */
-export function configuration(): Record<string, any> {
+export function configuration(): ApplicationConfig {
   const nested: Record<string, any> = {};
   for (const [key, value] of Object.entries(config)) {
     const names = key.split('.');
@@ -214,7 +217,7 @@ export function configuration(): Record<string, any> {
     }
     target[names[names.length - 1]] = value;
   }
-  return nested;
+  return validateConfiguration(nested) as unknown as ApplicationConfig;
 }
 
 function objectToArray(source: any, currentKey?: string, target?: Record<string, any>): Record<string, any> {

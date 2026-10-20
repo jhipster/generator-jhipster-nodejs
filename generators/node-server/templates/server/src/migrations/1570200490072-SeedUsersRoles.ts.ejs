@@ -2,7 +2,8 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 <%_ if (authenticationType !== 'oauth2') { _%>
 import { <%= UserEntity %> } from '../domain/user.entity.ts';
-import { transformPassword } from '../security/index.ts';
+import { config } from '../config.ts';
+import { encodePassword } from '../security/password-util.ts';
 <%_ } _%>
 import { Authority } from '../domain/authority.entity.ts';
 
@@ -58,7 +59,11 @@ export class SeedUsersRoles1570200490072 implements MigrationInterface {
     this.user1.authorities= [adminRole, userRole];
     this.user2.authorities= [userRole];
 
-    const users = await Promise.all([this.user1, this.user2].map(u => transformPassword({ ...u })));
+    // The migrations run outside of the dependency injection: the rounds of the configuration, like the PasswordService.
+    const rounds = Number(config.get('jhipster.security.authentication.jwt.hash-salt-or-rounds'));
+    const users = await Promise.all(
+      [this.user1, this.user2].map(async user => ({ ...user, password: await encodePassword(user.password, rounds) })),
+    );
 
     await userRepository.save(users);
     <%_ } _%>

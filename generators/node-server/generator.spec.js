@@ -187,7 +187,7 @@ describe('SubGenerator node-server of nodejs JHipster blueprint', () => {
     });
 
     it('alert headers should be translation keys', () => {
-      result.assertFileContent('server/src/common/header-util.ts', "applicationName + '.' + entityName + '.created'");
+      result.assertFileContent('server/src/common/header-util.ts', '`${this.applicationName}.${entityName}.created`');
       result.assertNoFileContent('server/src/common/header-util.ts', 'is created with identifier');
     });
   });
@@ -206,8 +206,8 @@ describe('SubGenerator node-server of nodejs JHipster blueprint', () => {
     });
 
     it('alert headers should be messages, without the translation keys', () => {
-      result.assertFileContent('server/src/common/header-util.ts', "'A new ' + entityName + ' is created with identifier ' + param");
-      result.assertNoFileContent('server/src/common/header-util.ts', "'.created'");
+      result.assertFileContent('server/src/common/header-util.ts', '`A new ${entityName} is created with identifier ${param}`');
+      result.assertNoFileContent('server/src/common/header-util.ts', '.created`');
       result.assertNoFileContent('server/src/common/header-util.ts', 'enableTranslation');
     });
   });
@@ -366,7 +366,10 @@ describe('SubGenerator node-server of nodejs JHipster blueprint', () => {
     });
 
     it('should register in the Eureka server of the defaultZone once the application listens', () => {
-      result.assertFileContent('server/src/service/eureka.service.ts', "config.get('eureka.client.service-url.defaultZone')");
+      result.assertFileContent(
+        'server/src/service/eureka.service.ts',
+        "this.configService.get('eureka.client.service-url.defaultZone', { infer: true })",
+      );
       result.assertFileContent('server/src/service/eureka.service.ts', 'beforeApplicationShutdown');
       result.assertFileContent('server/src/app.module.ts', 'EurekaService,');
       result.assertFileContent('server/src/main.ts', /await app\.listen\(port\);[\s\S]*app\.get\(EurekaService\)\.register/);
@@ -393,7 +396,7 @@ describe('SubGenerator node-server of nodejs JHipster blueprint', () => {
     });
 
     it('should register in Consul with the health check of the application once it listens', () => {
-      result.assertFileContent('server/src/service/consul.service.ts', "config.get('cloud.consul.discovery.health-check-path')");
+      result.assertFileContent('server/src/service/consul.service.ts', "discovery['health-check-path']");
       result.assertFileContent('server/src/service/consul.service.ts', 'beforeApplicationShutdown');
       result.assertFileContent('server/src/app.module.ts', 'ConsulService,');
       result.assertFileContent('server/src/main.ts', /await app\.listen\(port\);[\s\S]*app\.get\(ConsulService\)\.register/);

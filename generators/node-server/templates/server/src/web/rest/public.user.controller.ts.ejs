@@ -19,7 +19,10 @@ export class PublicUserController {
 
   logger = new Logger('PublicUserController');
 
-  constructor(private readonly userService: UserService) { }
+  constructor(
+    private readonly userService: UserService,
+    private readonly headerUtil: HeaderUtil,
+  ) {}
 
   /** Like the PublicUserResource of JHipster Spring Boot: the activated users, by their id and login, for authenticated users. */
   @Get('/users')
@@ -47,7 +50,7 @@ export class PublicUserController {
           order: pageRequest.asOrder(),
 <%_ } _%>
       });
-      HeaderUtil.addPaginationHeaders(req.res, new Page(results, count, pageRequest));
+      this.headerUtil.addPaginationHeaders(req.res, new Page(results, count, pageRequest));
       return results;
   }
 
