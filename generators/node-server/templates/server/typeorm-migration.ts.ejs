@@ -4,12 +4,15 @@
 // the master.xml of Liquibase. TypeORM runs the migrations in the order of their timestamp.
 import { spawnSync } from 'node:child_process';
 import process from 'node:process';
+import { fileURLToPath } from 'node:url';
 
 const MIGRATION_TIMESTAMP_OFFSET = <%= nodejsMigrationTimestampOffset %>;
 
-const [command, ...args] = process.argv.slice(2);
-const { status } = spawnSync('typeorm', [command, ...args, '--timestamp', `${Date.now() + MIGRATION_TIMESTAMP_OFFSET}`], {
-  stdio: 'inherit',
-  shell: true,
-});
+// The CLI run by Node.js without a shell, which would split the arguments again (a path with a space).
+const typeormCli = fileURLToPath(import.meta.resolve('typeorm/cli.js'));
+const { status } = spawnSync(
+  process.execPath,
+  [typeormCli, ...process.argv.slice(2), '--timestamp', `${Date.now() + MIGRATION_TIMESTAMP_OFFSET}`],
+  { stdio: 'inherit' },
+);
 process.exit(status ?? 1);
