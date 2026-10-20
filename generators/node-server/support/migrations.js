@@ -90,6 +90,15 @@ const joinColumnRelationships = entity =>
       relationship.relationshipType === 'many-to-one' || (relationship.relationshipType === 'one-to-one' && relationship.ownerSide),
   );
 
+/**
+ * The names of the columns of a join table, like TypeORM names the ones of a @JoinTable: the same names, like the ones of a
+ * many-to-many relationship of an entity with itself named like its table, suffixed by _1 and _2.
+ */
+const junctionColumnNames = (joinColumnName, inverseJoinColumnName) =>
+  joinColumnName === inverseJoinColumnName
+    ? [`${joinColumnName}_1`, `${inverseJoinColumnName}_2`]
+    : [joinColumnName, inverseJoinColumnName];
+
 /** The relationships of an entity with a join table: the many-to-many ones on their owner side. */
 const joinTableRelationships = entity =>
   entity.relationships.filter(relationship => relationship.relationshipType === 'many-to-many' && relationship.ownerSide);
@@ -136,19 +145,22 @@ export const constraintsMigration = entity => {
       referencedTableName: relationship.otherEntity.entityTableName,
       referencedColumnName: relationship.otherEntity.primaryKey.name,
     })),
-    joinTables: joinTables.map(relationship => ({
-      name: relationship.joinTable.name,
-      joinColumn: {
-        ...referenceColumn(`${entity.entityTableName}_id`, entity),
-        referencedTableName: entity.entityTableName,
-        referencedColumnName: entity.primaryKey.name,
-      },
-      inverseJoinColumn: {
-        ...referenceColumn(`${relationship.columnName}_id`, relationship.otherEntity),
-        referencedTableName: relationship.otherEntity.entityTableName,
-        referencedColumnName: relationship.otherEntity.primaryKey.name,
-      },
-    })),
+    joinTables: joinTables.map(relationship => {
+      const [joinColumnName, inverseJoinColumnName] = junctionColumnNames(`${entity.entityTableName}_id`, `${relationship.columnName}_id`);
+      return {
+        name: relationship.joinTable.name,
+        joinColumn: {
+          ...referenceColumn(joinColumnName, entity),
+          referencedTableName: entity.entityTableName,
+          referencedColumnName: entity.primaryKey.name,
+        },
+        inverseJoinColumn: {
+          ...referenceColumn(inverseJoinColumnName, relationship.otherEntity),
+          referencedTableName: relationship.otherEntity.entityTableName,
+          referencedColumnName: relationship.otherEntity.primaryKey.name,
+        },
+      };
+    }),
   };
 };
 

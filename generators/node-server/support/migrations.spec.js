@@ -134,6 +134,22 @@ describe('constraintsMigration', () => {
     expect(constraintsMigration(region)).toBeUndefined();
   });
 
+  it('should suffix the columns of a join table named the same, like TypeORM', () => {
+    const person = { ...region, entityClass: 'Person', entityTableName: 'person' };
+    person.relationships = [
+      {
+        relationshipType: 'many-to-many',
+        ownerSide: true,
+        relationshipFieldName: 'person',
+        columnName: 'person',
+        joinTable: { name: 'rel_person__person' },
+        otherEntity: person,
+      },
+    ];
+    const [joinTable] = constraintsMigration(person).joinTables;
+    expect([joinTable.joinColumn.name, joinTable.inverseJoinColumn.name]).toEqual(['person_id_1', 'person_id_2']);
+  });
+
   it('should run after the migrations of the tables it references, the latest one', () => {
     const country = {
       entityClass: 'Country',
