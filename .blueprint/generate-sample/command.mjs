@@ -16,55 +16,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { getGithubSamplesGroup, getGithubSamplesGroups } from 'generator-jhipster/ci';
-
-const DEFAULT_SAMPLES_GROUP = 'samples';
 
 /**
  * @type {import('generator-jhipster').JHipsterCommandDefinition}
  */
 const command = {
-  arguments: {
-    sampleName: {
-      type: String,
-    },
-  },
   configs: {
-    samplesFolder: {
-      description: 'Path to the samples folder',
-      cli: {
-        type: String,
-      },
-      scope: 'generator',
-    },
-    samplesGroup: {
-      description: 'Samples group to lookup',
-      cli: {
-        type: String,
-      },
-      prompt: gen => ({
-        when: !gen.all && !gen.sampleName,
-        type: 'select',
-        message: 'which sample group do you want to lookup?',
-        choices: async () => getGithubSamplesGroups(gen.templatePath(gen.samplesFolder ?? '')),
-        default: DEFAULT_SAMPLES_GROUP,
-      }),
-      scope: 'generator',
-    },
     sampleName: {
-      prompt: gen => ({
-        when: !gen.all,
-        type: 'select',
-        message: 'which sample do you want to generate?',
-        choices: async answers => {
-          const samples = await getGithubSamplesGroup(gen.templatePath(), answers.samplesGroup ?? gen.samplesGroup);
-          return Object.keys(samples.samples);
-        },
-      }),
+      argument: {
+        type: String,
+      },
       scope: 'generator',
     },
     all: {
-      description: 'Generate every sample in a workspace',
+      description: 'Generate every jdl sample in a workspace',
       cli: {
         type: Boolean,
       },
