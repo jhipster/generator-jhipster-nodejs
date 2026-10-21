@@ -293,6 +293,13 @@ export class BookDTO extends BaseDTO {
             @ApiProperty({ enum: BookFormat,description: 'format enum field'})
         format!: BookFormat;
 
+            @IsNotEmpty()
+            @ApiProperty({description: 'cover field'})
+        cover!: string;
+
+
+        @Allow()
+        coverContentType!: string;
 
 
   // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
