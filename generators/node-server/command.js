@@ -23,7 +23,6 @@ const jdlOptions = Object.fromEntries(
     databaseType: serverCommand.configs.databaseType,
     devDatabaseType: serverCommand.configs.devDatabaseType,
     serviceDiscoveryType: springBootCommand.configs.serviceDiscoveryType,
-    jwtSecretKey: springBootCommand.configs.jwtSecretKey,
     syncUserWithIdp: springBootCommand.configs.syncUserWithIdp,
     packageName: javaSimpleApplicationCommand.configs.packageName,
   })
@@ -38,6 +37,9 @@ if (jdlOptions.devDatabaseType) {
 export default asCommand({
   configs: {
     ...jdlOptions,
+    // The secret shared with JHipster's Spring Boot applications, given by the JDL or, like for them, by the hidden
+    // --jwt-secret-key option (the one of the samples of a gateway and its microservices).
+    jwtSecretKey: springBootCommand.configs.jwtSecretKey,
     applicationType,
     serverPort: {
       ...jdlOf(commonCommand.configs.serverPort),
