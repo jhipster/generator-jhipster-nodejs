@@ -68,6 +68,9 @@ exports[`SubGenerator server of nodejs JHipster blueprint > run > should succeed
   "server/e2e/app.e2e-spec.ts": {
     "stateCleared": "modified",
   },
+  "server/e2e/authority.e2e-spec.ts": {
+    "stateCleared": "modified",
+  },
   "server/e2e/cors.e2e-spec.ts": {
     "stateCleared": "modified",
   },
@@ -266,6 +269,9 @@ exports[`SubGenerator server of nodejs JHipster blueprint > run > should succeed
   "server/src/service/auth.service.ts": {
     "stateCleared": "modified",
   },
+  "server/src/service/dto/authority.dto.ts": {
+    "stateCleared": "modified",
+  },
   "server/src/service/dto/base.dto.ts": {
     "stateCleared": "modified",
   },
@@ -318,6 +324,9 @@ exports[`SubGenerator server of nodejs JHipster blueprint > run > should succeed
     "stateCleared": "modified",
   },
   "server/src/web/rest/api-docs.controller.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/web/rest/authority.controller.ts": {
     "stateCleared": "modified",
   },
   "server/src/web/rest/configuration.controller.ts": {

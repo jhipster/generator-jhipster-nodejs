@@ -342,6 +342,11 @@ export default class extends BaseApplicationGenerator {
           entity.nodejsApiFakeEntity = () => apiFakeEntity(entity);
         }
       },
+      prepareAuthorityAlertName({ application, entities }) {
+        // The name of the built-in Authority in its alerts (adminAuthority), the key of its translations in the client.
+        const authority = entities.find(entity => entity.builtInAuthority);
+        application.nodejsAuthorityAlertName = authority?.entityAlertName ?? 'authority';
+      },
       prepareUserLoginVm({ application }) {
         // The class of the logged user's data: the DTO of the built-in User entity, prepared with the entities, else
         // UserDTO (OAuth2 without syncUserWithIdp has no built-in User).

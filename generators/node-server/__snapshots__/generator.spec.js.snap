@@ -696,6 +696,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > run > should su
   "server/e2e/app.e2e-spec.ts": {
     "stateCleared": "modified",
   },
+  "server/e2e/authority.e2e-spec.ts": {
+    "stateCleared": "modified",
+  },
   "server/e2e/cors.e2e-spec.ts": {
     "stateCleared": "modified",
   },
@@ -876,6 +879,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > run > should su
   "server/src/service/auth.service.ts": {
     "stateCleared": "modified",
   },
+  "server/src/service/dto/authority.dto.ts": {
+    "stateCleared": "modified",
+  },
   "server/src/service/dto/base.dto.ts": {
     "stateCleared": "modified",
   },
@@ -919,6 +925,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > run > should su
     "stateCleared": "modified",
   },
   "server/src/web/rest/api-docs.controller.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/web/rest/authority.controller.ts": {
     "stateCleared": "modified",
   },
   "server/src/web/rest/configuration.controller.ts": {
@@ -1387,6 +1396,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > with oauth2 and
   "server/e2e/app.e2e-spec.ts": {
     "stateCleared": "modified",
   },
+  "server/e2e/authority.e2e-spec.ts": {
+    "stateCleared": "modified",
+  },
   "server/e2e/cors.e2e-spec.ts": {
     "stateCleared": "modified",
   },
@@ -1549,6 +1561,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > with oauth2 and
   "server/src/service/auth.service.ts": {
     "stateCleared": "modified",
   },
+  "server/src/service/dto/authority.dto.ts": {
+    "stateCleared": "modified",
+  },
   "server/src/service/dto/base.dto.ts": {
     "stateCleared": "modified",
   },
@@ -1571,6 +1586,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > with oauth2 and
     "stateCleared": "modified",
   },
   "server/src/web/rest/api-docs.controller.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/web/rest/authority.controller.ts": {
     "stateCleared": "modified",
   },
   "server/src/web/rest/configuration.controller.ts": {
@@ -2094,6 +2112,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > without client 
   "server/e2e/app.e2e-spec.ts": {
     "stateCleared": "modified",
   },
+  "server/e2e/authority.e2e-spec.ts": {
+    "stateCleared": "modified",
+  },
   "server/e2e/cors.e2e-spec.ts": {
     "stateCleared": "modified",
   },
@@ -2274,6 +2295,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > without client 
   "server/src/service/auth.service.ts": {
     "stateCleared": "modified",
   },
+  "server/src/service/dto/authority.dto.ts": {
+    "stateCleared": "modified",
+  },
   "server/src/service/dto/base.dto.ts": {
     "stateCleared": "modified",
   },
@@ -2317,6 +2341,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > without client 
     "stateCleared": "modified",
   },
   "server/src/web/rest/api-docs.controller.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/web/rest/authority.controller.ts": {
     "stateCleared": "modified",
   },
   "server/src/web/rest/configuration.controller.ts": {

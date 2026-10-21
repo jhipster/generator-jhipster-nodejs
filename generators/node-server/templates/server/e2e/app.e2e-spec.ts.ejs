@@ -77,13 +77,10 @@ describe('App', () => {
         await request(app.getHttpServer()).get('/management/health/readiness').expect(200).expect({ status: 'UP' });
     });
 
-<%_ if (generateBuiltInUserEntity) { _%>
-    it('/GET public roles OK', () => request(app.getHttpServer())
-        .get('/api/authorities')
-        .expect(200));
-
-<%_ } _%>
 <%_ if (generateBuiltInUserEntity && authenticationTypeJwt) { _%>
+    it('/GET the authorities without authentication is unauthorized, like JHipster Spring Boot', () => request(app.getHttpServer())
+        .get('/api/authorities')
+        .expect(401));
 
     it('/GET public users without authentication is unauthorized, like JHipster Spring Boot', () => request(app.getHttpServer())
         .get('/api/users')

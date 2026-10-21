@@ -54,21 +54,4 @@ export class PublicUserController {
       return results;
   }
 
-
-  @Get('/authorities')
-  @ApiOperation({ summary: 'Get the list of user roles' })
-  @ApiResponse({
-    status: 200,
-    description: 'List all user roles',
-    type: 'string',
-    isArray: true,
-  })
-  getAuthorities(@Req() req: any): any {
-    const user: any = req.user;
-    if (!user) {
-        return [];
-     }
-    return user.authorities;
-  }
-
 }
