@@ -56,7 +56,7 @@
     "e2e": "<%= clientPackageManager %> run e2e -w client",
 <%_ } _%>
     "ci:e2e:server:start": "BACKEND_ENV=test <%= clientPackageManager %> run start:prod -w server",
-    "ci:server:await": "echo \"Waiting for server at port $npm_package_config_backend_port to start\" && wait-on -t 180000 http-get://127.0.0.1:$npm_package_config_backend_port/management/health && echo \"Server at port $npm_package_config_backend_port started\"",
+    "ci:server:await": "echo \"Waiting for server at port $npm_package_config_backend_port to start\" && wait-on -t 180000 <%- nodejsServerAwaitEndpoint %> && echo \"Server at port $npm_package_config_backend_port started\"",
     "build": "<%= clientPackageManager %> run build -w server && <%= clientPackageManager %> run build -w client",
 <%_ } else { _%>
     "build": "<%= clientPackageManager %> run build -w server",

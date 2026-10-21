@@ -26,6 +26,7 @@ import {
   getNodeDevSqliteDatabase,
   hasRuntimeColumnTypes,
   primaryKeyColumn,
+  serverAwaitEndpoint,
   serverEnumInfo,
   thymeleafMailToHandlebars,
   userAuthorityJoinTable,
@@ -230,6 +231,12 @@ export default class extends BaseApplicationGenerator {
           __override__: false,
           // The offset of the timestamps of the migrations of the developers (see support/migrations.js).
           nodejsMigrationTimestampOffset: MIGRATION_TIMESTAMP_OFFSET,
+        });
+      },
+      e2e({ applicationDefaults }) {
+        applicationDefaults({
+          __override__: false,
+          nodejsServerAwaitEndpoint: serverAwaitEndpoint,
         });
       },
       drivers({ applicationDefaults }) {

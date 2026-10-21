@@ -5,3 +5,4 @@ export * from './api-fake-data.js';
 export * from './migrations.js';
 export * from './enums.js';
 export * from './validators.js';
+export * from './e2e.js';
