@@ -111,7 +111,13 @@ _%>
     // A user of this test: the applications without seed users (OAuth2) have none.
     const users = app.get(DataSource).getRepository(<%= user.persistClass %>);
     const related = await users.save(
-      users.create({ login: '<%= entityInstance.toLowerCase() %>-<%= property.toLowerCase() %>-e2e', email: '<%= entityInstance.toLowerCase() %>-<%= property.toLowerCase() %>-e2e@localhost', password: '' }),
+      users.create({
+        login: '<%= entityInstance.toLowerCase() %>-<%= property.toLowerCase() %>-e2e',
+        email: '<%= entityInstance.toLowerCase() %>-<%= property.toLowerCase() %>-e2e@localhost',
+        password: '',
+        activationKey: 'e2e-activation-key',
+        resetKey: 'e2e-reset-key',
+      }),
     );
 <%_ } else { _%>
     const relatedValues: Record<string, any> = <%- literal(otherValues) %>;
@@ -132,6 +138,10 @@ _%>
     expect(read.<%= property %>).toEqual([expect.objectContaining({ <%= otherId %>: related.<%= otherId %> })]);
 <%_ } else { _%>
     expect(read.<%= property %>).toMatchObject({ <%= otherId %>: related.<%= otherId %> });
+<%_ } _%>
+<%_ if (otherEntity.builtInUser) { _%>
+    // The keys of the user never in a response, like the @JsonIgnore keys of JHipster Spring Boot.
+    expect(JSON.stringify(read.<%= property %>)).not.toMatch(/e2e-(activation|reset)-key/);
 <%_ } _%>
 <%_ if (otherTextField) { _%>
     const { body: relatedRead } = await request(server).get(`/api/<%= otherEntity.entityApiUrl %>/${related.<%= otherId %>}`).expect(200);

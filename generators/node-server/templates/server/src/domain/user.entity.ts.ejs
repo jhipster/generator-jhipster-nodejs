@@ -42,9 +42,13 @@ export class <%= user.persistClass %> extends BaseEntity {
   password!: string;
   @Column({ nullable: true })
   imageUrl?: string;
+  // Never in a response, like the @JsonIgnore keys of JHipster Spring Boot: a user related to an entity is serialized
+  // with this class (the password-reset key would let anyone set its password).
   @Column({ nullable: true })
+  @Exclude()
   activationKey?: string;
   @Column({ nullable: true })
+  @Exclude()
   resetKey?: string;
   @Column({ nullable: true })
   resetDate?: Date;
