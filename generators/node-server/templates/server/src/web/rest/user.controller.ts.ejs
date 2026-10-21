@@ -112,7 +112,7 @@ export class UserController {
 <%_ } _%>
       );
       void this.mailService.sendCreationEmail(created);
-      this.headerUtil.addEntityCreatedHeaders(req.res, 'User', created.login);
+      this.headerUtil.addUserManagementHeaders(req.res, 'created', created.login);
       return created;
   }
 
@@ -157,7 +157,7 @@ export class UserController {
       },
       req.user?.login,
     );
-    this.headerUtil.addEntityUpdatedHeaders(req.res, 'User', updated.login);
+    this.headerUtil.addUserManagementHeaders(req.res, 'updated', updated.login);
     return updated;
   }
 
@@ -191,7 +191,7 @@ export class UserController {
       if (!userToDelete) {
         throw new NotFoundException();
       }
-      this.headerUtil.addEntityDeletedHeaders(req.res, 'User', loginValue);
+      this.headerUtil.addUserManagementHeaders(req.res, 'deleted', loginValue);
       return await this.userService.delete(userToDelete);
   }
 }
