@@ -73,7 +73,7 @@ describe('fieldColumns', () => {
     ]);
   });
 
-  it('should give an enum its values', () => {
+  it('should give an enum the names of its values, like the column of a Java enum', () => {
     const [column] = fieldColumns(
       field({
         fieldName: 'kind',
@@ -84,7 +84,7 @@ describe('fieldColumns', () => {
         fieldValues: "BIG,SMALL (it's small)",
       }),
     );
-    expect(column.enum).toBe("['BIG', 'it\\'s small']");
+    expect(column.enum).toBe("['BIG', 'SMALL']");
   });
 
   it('should add the content type column of a binary blob', () => {
