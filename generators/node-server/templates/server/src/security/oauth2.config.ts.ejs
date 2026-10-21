@@ -19,10 +19,11 @@ export class OAuth2Config {
 
   constructor(configService: ConfigService<ApplicationConfig, true>) {
     const issuerUri = configService.get('jhipster.security.oauth2.client.provider.oidc.issuer-uri', { infer: true });
-    const port = process.env.NODE_SERVER_PORT || configService.get('server.port', { infer: true });
     // The issuer the application reaches from a container (docker compose), the browser keeps the configured one.
     const dockerIssuerUri = process.env.NODE_CLIENT_PROVIDER_OIDC_ISSUER_URI || issuerUri;
-    this.callbackURL = `http://localhost:${port}/login/oauth2/code/oidc`;
+    // Relative, like the {baseUrl}/login/oauth2/code/oidc of JHipster Spring Boot: the strategy resolves it against the
+    // URL of the request (the X-Forwarded-Proto of a proxy included), the URL the browser reaches the application at.
+    this.callbackURL = '/login/oauth2/code/oidc';
     this.isOktaProvider = issuerUri.includes('okta');
     if (this.isOktaProvider) {
       this.authorizationURL = `${issuerUri}/v1/authorize`;
