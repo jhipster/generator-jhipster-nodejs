@@ -3,7 +3,9 @@ import { TypeOrmModuleOptions } from '@nestjs/typeorm';
 <%_ if (generateBuiltInAuthorityEntity) { _%>
 import { SeedUsersRoles1570200490072 } from './migrations/1570200490072-SeedUsersRoles.ts';
 <%_ } _%>
+<%_ if (databaseTypeMongodb || generateBuiltInUserEntity || generateBuiltInAuthorityEntity) { _%>
 import { CreateTables1570200270081 } from './migrations/1570200270081-CreateTables.ts';
+<%_ } _%>
 // jhipster-needle-add-entity-to-ormconfig-imports - JHipster will add code here, do not remove
 
 import { activeProfiles, config } from './config.ts';
@@ -62,13 +64,19 @@ function ormConfig(read: ConfigReader = key => config.get(key)): TypeOrmModuleOp
     logging: read('database.logging') ?? false,
     synchronize: read('database.synchronize') ?? false,
     migrationsRun: true,
+<%_ if (databaseTypeMongodb) { _%>
     // each migration runs in its own transaction, unless it sets transaction = false (CreateTables)
+<%_ } else { _%>
+    // each migration runs in its own transaction
+<%_ } _%>
     migrationsTransactionMode: 'each',
     entities: [
       // jhipster-needle-add-entity-to-ormconfig-entities - JHipster will add code here, do not remove
     ],
     migrations: [
+<%_ if (databaseTypeMongodb || generateBuiltInUserEntity || generateBuiltInAuthorityEntity) { _%>
       CreateTables1570200270081,
+<%_ } _%>
 <%_ if (generateBuiltInAuthorityEntity) { _%>
       SeedUsersRoles1570200490072,
 <%_ } _%>

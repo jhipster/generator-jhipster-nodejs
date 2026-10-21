@@ -1,0 +1,40 @@
+import type { MigrationInterface, QueryRunner } from 'typeorm';
+
+import { <%= [nodejsConstraintsMigration.foreignKeys.length > 0 && 'createForeignKeys', nodejsConstraintsMigration.joinTables.length > 0 && 'createJoinTable'].filter(Boolean).join(', ') %> } from './support/schema.ts';
+
+/**
+ * Added the constraints of the entity <%= entityClass %>: its foreign keys and its join tables, after the tables they
+ * reference.
+ */
+export class <%= nodejsConstraintsMigration.className %> implements MigrationInterface {
+  public async up(queryRunner: QueryRunner): Promise<void> {
+<%_ if (nodejsConstraintsMigration.foreignKeys.length > 0) { _%>
+    await createForeignKeys(queryRunner, '<%= nodejsConstraintsMigration.tableName %>', [
+<%_ for (const foreignKey of nodejsConstraintsMigration.foreignKeys) { _%>
+      { columnName: '<%= foreignKey.columnName %>', referencedTableName: '<%= foreignKey.referencedTableName %>', referencedColumnName: '<%= foreignKey.referencedColumnName %>' },
+<%_ } _%>
+    ]);
+<%_ } _%>
+<%_ for (const joinTable of nodejsConstraintsMigration.joinTables) { _%>
+    await createJoinTable(
+      queryRunner,
+      '<%= joinTable.name %>',
+<%_ for (const column of [joinTable.joinColumn, joinTable.inverseJoinColumn]) { _%>
+      { name: '<%= column.name %>', type: <%- column.type %>, referencedTableName: '<%= column.referencedTableName %>', referencedColumnName: '<%= column.referencedColumnName %>' },
+<%_ } _%>
+    );
+<%_ } _%>
+  }
+
+  public async down(queryRunner: QueryRunner): Promise<void> {
+<%_ for (const joinTable of nodejsConstraintsMigration.joinTables) { _%>
+    await queryRunner.dropTable('<%= joinTable.name %>', true);
+<%_ } _%>
+<%_ if (nodejsConstraintsMigration.foreignKeys.length > 0) { _%>
+    const table = await queryRunner.getTable('<%= nodejsConstraintsMigration.tableName %>');
+    if (table) {
+      await queryRunner.dropForeignKeys(table, table.foreignKeys);
+    }
+<%_ } _%>
+  }
+}

@@ -1,0 +1,193 @@
+import { type ColumnType, type QueryRunner, Table, type TableColumnOptions, TableForeignKey } from 'typeorm';
+import type { ColumnMetadata } from 'typeorm/metadata/ColumnMetadata.js';
+
+/**
+ * A column of a migration, with the options of the @Column decorator of its entity: the driver of the database gives its
+ * type, its length and its default like it does for the entity, so the table is the one the entity maps.
+ */
+export interface MigrationColumn {
+  name: string;
+  /** String, Number, Boolean, Date or a type of the database, like the type of the @Column decorator. */
+  type: ColumnType;
+  length?: number;
+  precision?: number;
+  scale?: number;
+  nullable?: boolean;
+  unique?: boolean;
+  default?: unknown;
+  onUpdate?: string;
+  primary?: boolean;
+  generated?: 'increment' | 'uuid';
+  enum?: string[];
+}
+
+/** A foreign key of a migration: the column of the table referencing the primary key of another table. */
+export interface MigrationForeignKey {
+  columnName: string;
+  referencedTableName: string;
+  referencedColumnName: string;
+  onDelete?: string;
+  onUpdate?: string;
+}
+
+const tableColumn = (queryRunner: QueryRunner, column: MigrationColumn): TableColumnOptions => {
+  const { driver } = queryRunner.connection;
+  // The properties of the column metadata the driver reads.
+  const metadata = {
+    ...column,
+    databaseName: column.name,
+    isArray: false,
+    isNullable: column.nullable ?? false,
+    isPrimary: column.primary ?? false,
+    isGenerated: !!column.generated,
+    generationStrategy: column.generated,
+  } as unknown as ColumnMetadata;
+  const type = driver.normalizeType(metadata);
+  // A uuid is a varchar(36) of MySQL, the column referencing one too, like TypeORM gives it to a join column.
+  const uuidLength = ['mysql', 'mariadb', 'aurora-mysql'].includes(driver.options.type) && column.type === 'uuid' && type !== 'uuid';
+  return {
+    name: column.name,
+    type,
+    length: uuidLength && !column.length ? '36' : driver.getColumnLength(metadata),
+    precision: column.precision,
+    scale: column.scale,
+    default: driver.normalizeDefault(metadata),
+    onUpdate: column.onUpdate,
+    isNullable: metadata.isNullable,
+    isPrimary: metadata.isPrimary,
+    isUnique: column.unique ?? false,
+    isGenerated: metadata.isGenerated,
+    generationStrategy: column.generated,
+    enum: column.enum,
+  };
+};
+
+/** The audit columns of the entities extending BaseEntity: createdBy, createdDate, lastModifiedBy, lastModifiedDate. */
+export const auditColumns = (queryRunner: QueryRunner): MigrationColumn[] => {
+  const { mappedDataTypes } = queryRunner.connection.driver;
+  return [
+    { name: 'createdBy', type: String, nullable: true },
+    {
+      name: 'createdDate',
+      type: mappedDataTypes.createDate,
+      precision: mappedDataTypes.createDatePrecision,
+      default: () => mappedDataTypes.createDateDefault,
+      nullable: true,
+    },
+    { name: 'lastModifiedBy', type: String, nullable: true },
+    {
+      name: 'lastModifiedDate',
+      type: mappedDataTypes.updateDate,
+      precision: mappedDataTypes.updateDatePrecision,
+      default: () => mappedDataTypes.updateDateDefault,
+      onUpdate: mappedDataTypes.updateDateDefault,
+      nullable: true,
+    },
+  ];
+};
+
+/**
+ * The databases storing the unique constraints as unique indices, like TypeORM does: the unique columns and the one-to-one
+ * join columns of MySQL and MariaDB, the one-to-one join columns of SQL Server (a filtered index, allowing several nulls).
+ */
+const uniqueIndexDatabases = ['mysql', 'mariadb', 'aurora-mysql', 'sap', 'spanner'];
+
+/**
+ * Creates a table, unless it exists: a database created by a former version of the application (its schema synchronized
+ * from the entities) has it already.
+ */
+export const createTable = async (
+  queryRunner: QueryRunner,
+  name: string,
+  columns: MigrationColumn[],
+  options: { relationUniques?: string[] } = {},
+): Promise<void> => {
+  const { driver, namingStrategy } = queryRunner.connection;
+  const uniqueIndices = uniqueIndexDatabases.includes(driver.options.type);
+  const relationUniqueIndices = uniqueIndices || driver.options.type === 'mssql';
+  // The unique constraint of the join column of a one-to-one relationship, named like TypeORM names it.
+  const relationUniques = (options.relationUniques ?? []).map(columnName => ({
+    name: namingStrategy.relationConstraintName(name, [columnName]),
+    columnNames: [columnName],
+  }));
+  await queryRunner.createTable(
+    new Table({
+      name,
+      columns: columns.map(column => tableColumn(queryRunner, { ...column, unique: column.unique && !uniqueIndices })),
+      uniques: relationUniqueIndices ? [] : relationUniques,
+      indices: [
+        ...(uniqueIndices ? columns.filter(column => column.unique).map(column => ({ columnNames: [column.name], isUnique: true })) : []),
+        ...(relationUniqueIndices
+          ? relationUniques.map(unique => ({
+              ...unique,
+              isUnique: true,
+              where: driver.options.type === 'mssql' ? `${driver.escape(unique.columnNames[0])} IS NOT NULL` : undefined,
+            }))
+          : []),
+      ],
+    }),
+    true,
+  );
+};
+
+/**
+ * Creates the foreign keys of a table missing in the database: a database created by a former version of the application
+ * has them already.
+ */
+export const createForeignKeys = async (queryRunner: QueryRunner, tableName: string, foreignKeys: MigrationForeignKey[]): Promise<void> => {
+  const table = await queryRunner.getTable(tableName);
+  if (!table) {
+    throw new Error(`The table ${tableName} does not exist`);
+  }
+  const missing = foreignKeys.filter(
+    foreignKey =>
+      !table.foreignKeys.some(existing => existing.columnNames.length === 1 && existing.columnNames[0] === foreignKey.columnName),
+  );
+  if (missing.length > 0) {
+    await queryRunner.createForeignKeys(
+      table,
+      missing.map(
+        ({ columnName, referencedTableName, referencedColumnName, onDelete, onUpdate }) =>
+          new TableForeignKey({
+            columnNames: [columnName],
+            referencedTableName,
+            referencedColumnNames: [referencedColumnName],
+            // The actions of the foreign keys of TypeORM, declared: the default of some databases differs (RESTRICT).
+            onDelete: onDelete ?? 'NO ACTION',
+            onUpdate: onUpdate ?? 'NO ACTION',
+          }),
+      ),
+    );
+  }
+};
+
+/**
+ * Creates the join table of a many-to-many relationship, with its indices and its foreign keys, unless it exists, like
+ * TypeORM creates the junction table of a @JoinTable.
+ */
+export const createJoinTable = async (
+  queryRunner: QueryRunner,
+  name: string,
+  joinColumn: MigrationColumn & { referencedTableName: string; referencedColumnName: string },
+  inverseJoinColumn: MigrationColumn & { referencedTableName: string; referencedColumnName: string },
+): Promise<void> => {
+  const exists = await queryRunner.hasTable(name);
+  if (exists) return;
+  const columns = [joinColumn, inverseJoinColumn];
+  await queryRunner.createTable(
+    new Table({
+      name,
+      columns: columns.map(({ referencedTableName: _table, referencedColumnName: _column, ...column }) =>
+        tableColumn(queryRunner, { ...column, primary: true }),
+      ),
+      indices: columns.map(column => ({ columnNames: [column.name] })),
+      foreignKeys: columns.map(column => ({
+        columnNames: [column.name],
+        referencedTableName: column.referencedTableName,
+        referencedColumnNames: [column.referencedColumnName],
+        onDelete: 'CASCADE',
+        onUpdate: 'CASCADE',
+      })),
+    }),
+  );
+};

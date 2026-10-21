@@ -13,7 +13,7 @@ export const columnTransformer = ({ fieldType, nodejsColumnType }) => {
 };
 
 /** The validation rules of a field the column of its entity follows: required (not nullable) and unique. */
-const columnRules = field => {
+export const columnRules = field => {
   const rules = field.fieldValidate ? field.fieldValidateRules : [];
   return { required: rules.includes('required'), unique: rules.includes('unique'), maxlength: rules.includes('maxlength') };
 };

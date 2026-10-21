@@ -41,12 +41,14 @@ database:
 <%_ if (databaseTypeSql) { _%>
   type: better-sqlite3
   name: ':memory:'
+  # The schema of the migrations, like the Liquibase changelogs of the tests of JHipster Spring Boot.
+  synchronize: false
 <%_ } else { _%>
   type: mongodb
   # An in-memory MongoDB server (mongodb-memory-server), started for each run.
   embedded: true
-<%_ } _%>
   synchronize: true
+<%_ } _%>
   logging: true
 
 jhipster:

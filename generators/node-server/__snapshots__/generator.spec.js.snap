@@ -476,7 +476,7 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > jwt microservic
   "server/src/main.ts": {
     "stateCleared": "modified",
   },
-  "server/src/migrations/1570200270081-CreateTables.ts": {
+  "server/src/migrations/support/schema.ts": {
     "stateCleared": "modified",
   },
   "server/src/module/auth.module.ts": {
@@ -600,6 +600,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > jwt microservic
     "stateCleared": "modified",
   },
   "server/tsconfig.json": {
+    "stateCleared": "modified",
+  },
+  "server/typeorm-migration.ts": {
     "stateCleared": "modified",
   },
   "server/vitest.config.e2e.ts": {
@@ -793,6 +796,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > run > should su
   "server/src/migrations/1570200490072-SeedUsersRoles.ts": {
     "stateCleared": "modified",
   },
+  "server/src/migrations/support/schema.ts": {
+    "stateCleared": "modified",
+  },
   "server/src/module/auth.module.ts": {
     "stateCleared": "modified",
   },
@@ -962,6 +968,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > run > should su
     "stateCleared": "modified",
   },
   "server/tsconfig.json": {
+    "stateCleared": "modified",
+  },
+  "server/typeorm-migration.ts": {
     "stateCleared": "modified",
   },
   "server/vitest.config.e2e.ts": {
@@ -1140,7 +1149,7 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > with oauth2 > s
   "server/src/main.ts": {
     "stateCleared": "modified",
   },
-  "server/src/migrations/1570200270081-CreateTables.ts": {
+  "server/src/migrations/support/schema.ts": {
     "stateCleared": "modified",
   },
   "server/src/module/auth.module.ts": {
@@ -1264,6 +1273,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > with oauth2 > s
     "stateCleared": "modified",
   },
   "server/tsconfig.json": {
+    "stateCleared": "modified",
+  },
+  "server/typeorm-migration.ts": {
     "stateCleared": "modified",
   },
   "server/vitest.config.e2e.ts": {
@@ -1454,6 +1466,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > with oauth2 and
   "server/src/migrations/1570200490072-SeedUsersRoles.ts": {
     "stateCleared": "modified",
   },
+  "server/src/migrations/support/schema.ts": {
+    "stateCleared": "modified",
+  },
   "server/src/module/auth.module.ts": {
     "stateCleared": "modified",
   },
@@ -1587,6 +1602,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > with oauth2 and
     "stateCleared": "modified",
   },
   "server/tsconfig.json": {
+    "stateCleared": "modified",
+  },
+  "server/typeorm-migration.ts": {
     "stateCleared": "modified",
   },
   "server/vitest.config.e2e.ts": {
@@ -1813,7 +1831,27 @@ be kept out of the configuration files this way in production.
 
 According [typeORM migration guide](https://github.com/typeorm/typeorm/blob/master/docs/migrations.md),
 there are under [src/migrations/](src/migrations/) the scripts to create the database schema and after to insert data seed.
-The scripts are automatically run in the first start up, and after anymore.
+The application runs the ones not run yet at startup, in the order of the timestamp of their name.
+
+Like the Liquibase changelogs of JHipster Spring Boot, JHipster generates the migrations of the schema: \`CreateTables\`
+creates the tables of the users and of the authorities, then each entity has the migration adding its table
+(\`<timestamp>-AddedEntity<Entity>.ts\`, the timestamp of its \`changelogDate\`) and, when it has relationships, the one adding
+its foreign keys and its join tables (\`<timestamp>-AddedEntityConstraints<Entity>.ts\`, its timestamp plus 3000000000000),
+run after the tables of every entity, like the constraints changelogs of Liquibase. A database the application ran them
+on already is not changed by a regeneration of a migration: when an entity changes, add the migration of the change
+(\`npm run typeorm:migration:generate\`) or recreate the development database. Like the Liquibase changelogs without
+incremental changelogs, a regeneration rewrites the migrations of the entity changed (a new column in the migration of its
+table): restore the migrations a database ran already (\`git restore src/migrations\`), keeping the entities, before
+generating the migration of the change, so an empty database runs them all.
+
+The application runs the migrations [src/orm.config.ts](src/orm.config.ts) lists: import the class of a migration of
+your own and add it to \`migrations\`, so the application runs it at startup, like the ones JHipster adds. The
+\`typeorm:migration:run\` script runs every migration of the \`src/migrations\` folder (built in \`dist/migrations\`).
+
+TypeORM runs the migrations in the order of the timestamp ending their class name. The \`typeorm:migration:create\` and
+\`typeorm:migration:generate\` scripts give a migration of your own its time plus 6000000000000
+(see [typeorm-migration.ts](typeorm-migration.ts)), so it runs after the migrations JHipster generates for the entities,
+on an empty database too, like the changelogs added at the end of the \`master.xml\` of Liquibase.
 
 The \`typeorm\` npm scripts build the server and run the typeorm CLI on the database \`BACKEND_ENV\` selects (see
 [ormconfig.ts](ormconfig.ts)):
@@ -2138,6 +2176,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > without client 
   "server/src/migrations/1570200490072-SeedUsersRoles.ts": {
     "stateCleared": "modified",
   },
+  "server/src/migrations/support/schema.ts": {
+    "stateCleared": "modified",
+  },
   "server/src/module/auth.module.ts": {
     "stateCleared": "modified",
   },
@@ -2307,6 +2348,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > without client 
     "stateCleared": "modified",
   },
   "server/tsconfig.json": {
+    "stateCleared": "modified",
+  },
+  "server/typeorm-migration.ts": {
     "stateCleared": "modified",
   },
   "server/vitest.config.e2e.ts": {

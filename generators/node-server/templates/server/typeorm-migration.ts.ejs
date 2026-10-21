@@ -1,0 +1,18 @@
+// Runs a command of the typeorm CLI creating a migration (migration:create, migration:generate) with the timestamp of the
+// migrations of the developers: its time plus <%= nodejsMigrationTimestampOffset %>, after the constraints migrations
+// JHipster generates for the entities (their changelogDate plus a smaller offset), like the changelogs added at the end of
+// the master.xml of Liquibase. TypeORM runs the migrations in the order of their timestamp.
+import { spawnSync } from 'node:child_process';
+import process from 'node:process';
+import { fileURLToPath } from 'node:url';
+
+const MIGRATION_TIMESTAMP_OFFSET = <%= nodejsMigrationTimestampOffset %>;
+
+// The CLI run by Node.js without a shell, which would split the arguments again (a path with a space).
+const typeormCli = fileURLToPath(import.meta.resolve('typeorm/cli.js'));
+const { status } = spawnSync(
+  process.execPath,
+  [typeormCli, ...process.argv.slice(2), '--timestamp', `${Date.now() + MIGRATION_TIMESTAMP_OFFSET}`],
+  { stdio: 'inherit' },
+);
+process.exit(status ?? 1);
