@@ -22,22 +22,26 @@ export default class extends BaseApplicationGenerator {
         // deployment) and writes (app.yml) like the one of a Spring Boot application.
         if (!application.dockerServices.includes('app')) application.dockerServices.push('app');
       },
+    });
+  }
+
+  get [BaseApplicationGenerator.POST_PREPARING]() {
+    return this.asPostPreparingTaskGroup({
       environment({ application }) {
         const database = databaseServiceOf(application);
         // The variables of the application, the hosts named like the services of its docker compose files, like JHipster
-        // Spring Boot; a deployment names them with its prefix (notes-postgresql).
+        // Spring Boot; a deployment names them with its prefix (notes-postgresql). At POST_PREPARING, like Spring Boot: the
+        // derived properties (serviceDiscoveryEureka) are prepared by the other bootstraps during PREPARING.
         mutateData(application.dockerApplicationEnvironment, {
           BACKEND_ENV: 'prod,api-docs,secret-samples',
           ...(database ? { DATABASE_HOST: database } : {}),
-          ...(application.serviceDiscoveryType === 'eureka'
+          ...(application.serviceDiscoveryEureka
             ? {
                 EUREKA_CLIENT_ENABLED: 'true',
                 CLOUD_CONFIG_URI: 'http://admin:$${jhipster.registry.password}@jhipster-registry:8761/config',
               }
             : {}),
-          ...(application.authenticationType === 'oauth2'
-            ? { NODE_CLIENT_PROVIDER_OIDC_ISSUER_URI: 'http://keycloak:9080/realms/jhipster' }
-            : {}),
+          ...(application.authenticationTypeOauth2 ? { NODE_CLIENT_PROVIDER_OIDC_ISSUER_URI: 'http://keycloak:9080/realms/jhipster' } : {}),
         });
         if (database) {
           mutateData(application.dockerDeploymentEnvironment, {
