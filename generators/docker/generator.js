@@ -8,7 +8,8 @@ export default class extends BaseApplicationGenerator {
   get [BaseApplicationGenerator.PREPARING]() {
     return this.asPreparingTaskGroup({
       async preparingTemplateTask({ application }) {
-        application.dockerServices.push('app');
+        // The app service, which docker:bootstrap adds too: the bootstrap alone runs for a deployment.
+        if (!application.dockerServices.includes('app')) application.dockerServices.push('app');
       },
     });
   }
