@@ -23,6 +23,8 @@ import { fileURLToPath } from 'node:url';
 import { extractSampleFiles } from 'generator-jhipster/ci';
 import BaseCoreGenerator from 'generator-jhipster/generators/base-core';
 
+import { findSamples } from '../describe-samples/support/describe-samples.mjs';
+
 const GENERATOR_JDL = 'jdl';
 
 const packageRoot = fileURLToPath(new URL('../../', import.meta.url));
@@ -53,8 +55,6 @@ export default class extends BaseCoreGenerator {
             this.copyTemplate(`samples/${file}`, file, { noGlob: true });
           }
         } else {
-          // Imported here: describe-samples describes the samples with a top-level await, the generator being required.
-          const { findSamples } = await import('../describe-samples/support/describe-samples.mjs');
           const [sample] = findSamples({ sampleName: this.sampleName });
           this.sample = sample;
           this.sampleFiles = extractSampleFiles(sample, { root: packageRoot });

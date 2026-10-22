@@ -16,12 +16,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import { describeSampleGroups } from '../describe-samples/support.mjs';
 
 /** The choice of the samples of every workflow. */
 const ALL_WORKFLOWS = '*';
-
-/** The samples groups, the workflows, with the names of their samples; describe-samples has a top-level await. */
-const describeSampleGroups = async () => (await import('../describe-samples/support.mjs')).describeSampleGroups();
 
 /**
  * @type {import('generator-jhipster').JHipsterCommandDefinition}
@@ -37,7 +35,7 @@ const command = {
         when: !gen.all && !gen.sampleName && !gen.workflow,
         type: 'select',
         message: 'Which workflow is the sample of?',
-        choices: async () => [{ name: 'All workflows', value: ALL_WORKFLOWS }, ...Object.keys(await describeSampleGroups())],
+        choices: () => [{ name: 'All workflows', value: ALL_WORKFLOWS }, ...Object.keys(describeSampleGroups())],
         default: ALL_WORKFLOWS,
       }),
       scope: 'generator',
@@ -51,7 +49,7 @@ const command = {
         type: 'select',
         message: 'Which sample do you want to generate?',
         choices: async answers => {
-          const groups = await describeSampleGroups();
+          const groups = describeSampleGroups();
           const workflow = answers.workflow ?? gen.workflow ?? ALL_WORKFLOWS;
           return workflow === ALL_WORKFLOWS ? Object.values(groups).flatMap(group => group.samples) : groups[workflow].samples;
         },
