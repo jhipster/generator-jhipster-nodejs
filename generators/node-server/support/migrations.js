@@ -1,4 +1,4 @@
-import { columnRules } from './columns.js';
+import { bigDecimalPrecision, columnRules } from './columns.js';
 import { serverEnumInfo } from './enums.js';
 
 /**
@@ -76,7 +76,7 @@ export const fieldColumns = field => {
       .enumValues.map(({ value }) => literal(value))
       .join(', ')}]`;
   } else if (field.fieldType === 'BigDecimal') {
-    Object.assign(column, { precision: 21, scale: 2 });
+    Object.assign(column, bigDecimalPrecision);
   } else if (!['Instant', 'ZonedDateTime', 'LocalDate'].includes(field.fieldType) && maxlength) {
     column.length = field.fieldValidateRulesMaxlength;
   }
