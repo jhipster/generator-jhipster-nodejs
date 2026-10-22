@@ -1,3 +1,6 @@
+/** The precision and the scale of a BigDecimal column of JHipster Spring Boot (decimal(21,2)). */
+export const bigDecimalPrecision = { precision: 21, scale: 2 };
+
 /**
  * The transformer of the column of a field (src/domain/base/column-transformers.ts), so the API gives the values of the
  * JSON of JHipster Spring Boot whatever the SQL database: undefined when the driver gives them already.
@@ -30,7 +33,7 @@ export const fieldColumnOptions = (field, { databaseTypeSql }) => {
   if (field.fieldIsEnum) {
     options.push(`enum: ${field.fieldType}`);
   } else if (field.fieldType === 'BigDecimal') {
-    options.push('precision: 10', 'scale: 2');
+    options.push(`precision: ${bigDecimalPrecision.precision}`, `scale: ${bigDecimalPrecision.scale}`);
   } else if (!['Instant', 'ZonedDateTime', 'LocalDate'].includes(field.fieldType) && maxlength) {
     options.push(`length: ${field.fieldValidateRulesMaxlength}`);
   }

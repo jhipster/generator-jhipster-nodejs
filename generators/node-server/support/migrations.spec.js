@@ -7,6 +7,7 @@ import {
   constraintsMigration,
   entityMigration,
   fieldColumns,
+  typeormCamelCase,
   userAuthorityJoinTable,
 } from './migrations.js';
 
@@ -69,7 +70,7 @@ describe('fieldColumns', () => {
 
   it('should give a BigDecimal the precision and the scale of its @Column', () => {
     expect(fieldColumns(field({ fieldNameAsDatabaseColumn: 'area', nodejsColumnType: 'decimal', fieldType: 'BigDecimal' }))).toEqual([
-      { name: 'area', type: "'decimal'", precision: 10, scale: 2, nullable: true, unique: false },
+      { name: 'area', type: "'decimal'", precision: 21, scale: 2, nullable: true, unique: false },
     ]);
   });
 
@@ -217,5 +218,14 @@ describe('userAuthorityJoinTable', () => {
       joinColumn: { name: 'jhiUserId', type: 'Number', referencedTableName: 'jhi_user', referencedColumnName: 'id' },
       inverseJoinColumn: { name: 'jhiAuthorityName', type: 'String', referencedTableName: 'jhi_authority', referencedColumnName: 'name' },
     });
+  });
+});
+
+describe('typeormCamelCase', () => {
+  it('should name like the default naming strategy of TypeORM, keeping the case of the letters it does not join', () => {
+    expect(typeormCamelCase('mainURL_id')).toBe('mainURLId');
+    expect(typeormCamelCase('x2y_id')).toBe('x2yId');
+    expect(typeormCamelCase('region_id')).toBe('regionId');
+    expect(typeormCamelCase('jhi_user_id')).toBe('jhiUserId');
   });
 });

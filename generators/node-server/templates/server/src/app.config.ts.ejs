@@ -2,9 +2,7 @@ import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { CorsOptions } from '@nestjs/common/interfaces/external/cors-options.interface';
 import { NextFunction, Request, Response } from 'express';
-<%_ if (authenticationTypeJwt && generateUserManagement) { _%>
 import { NestExpressApplication } from '@nestjs/platform-express';
-<%_ } _%>
 
 import type { ApplicationConfig } from './application-config.ts';
 import { HeaderUtil } from './common/header-util.ts';
@@ -119,6 +117,9 @@ export function configureApp(app: INestApplication): INestApplication {
   // The mail of a password reset request is a text/plain body, as the JHipster clients send it.
   (app as NestExpressApplication).useBodyParser('text');
 <%_ } _%>
+  // The JSON bodies up to 10 MB, the blobs of the entities as base64 included (the 100 KB default of Express refused an
+  // image of about 75 KB with 413).
+  (app as NestExpressApplication).useBodyParser('json', { limit: '10mb' });
   // Disable cache.
   app.getHttpAdapter().getInstance().set('etag', false);
   return app;
