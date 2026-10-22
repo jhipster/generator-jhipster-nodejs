@@ -110,8 +110,12 @@ export class <%= persistClass %> extends BaseEntity  {
     <%= relationshipFieldNamePlural %><%- relationship.relationshipRequired ? '!' : '?' %>: Relation<<%= otherEntityClass %>[]>;
 
     <%_ } else { _%>
+    <%_ if (ownerSide === true) { _%>
     @OneToOne(() => <%= otherEntityClass %>)
-    <%_ if (ownerSide === true) { _%>@JoinColumn()<%_ } _%>
+    @JoinColumn()
+    <%_ } else { _%>
+    @OneToOne(() => <%= otherEntityClass %>, other => other.<%= otherEntityRelationshipName %>)
+    <%_ } _%>
     <%= relationshipFieldName %><%- relationship.relationshipRequired ? '!' : '?' %>: Relation<<%= otherEntityClass %>>;
 
     <%_ }

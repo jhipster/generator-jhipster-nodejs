@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Allow<% if (anyPropertyHasValidation || fields.some(field => field.fieldIsEnum)) { %>, IsNotEmpty, IsOptional, IsEnum, MinLength, MaxLength, Length, Min, Max, Matches<% } %> } from 'class-validator';
+import { Allow<% if (anyPropertyHasValidation || fields.some(field => field.fieldIsEnum || field.nodejsTypeValidators.length > 0)) { %>, IsNotEmpty, IsOptional, IsEnum, MinLength, MaxLength, Length, Min, Max, Matches, IsInt, IsNumber, IsBoolean, IsUUID, IsISO8601<% } %> } from 'class-validator';
 <%_ if (databaseTypeMongodb) { _%>
 import { Transform } from 'class-transformer';
 <%_ } _%>
@@ -69,7 +69,7 @@ export class <%= dtoClass %> extends BaseDTO {
         if (fieldValidate === true && fieldValidateRules.includes('required')) {
             required = true;
         }
-        if (fieldValidate === true || field.fieldIsEnum) {
+        if (fieldValidate === true || field.fieldIsEnum || field.nodejsTypeValidators.length > 0) {
             _%>
             <%- include('../../common/field_validators', { field }); -%>
         <%_ } else { _%>

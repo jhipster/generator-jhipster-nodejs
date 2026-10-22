@@ -253,7 +253,7 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > entity validato
 {
   "server/src/service/dto/book.dto.ts": {
     "contents": "import { ApiProperty } from '@nestjs/swagger';
-import { Allow, IsNotEmpty, IsOptional, IsEnum, MinLength, MaxLength, Length, Min, Max, Matches } from 'class-validator';
+import { Allow, IsNotEmpty, IsOptional, IsEnum, MinLength, MaxLength, Length, Min, Max, Matches, IsInt, IsNumber, IsBoolean, IsUUID, IsISO8601 } from 'class-validator';
 import { BaseDTO } from './base.dto.ts';
 
 
@@ -281,6 +281,7 @@ export class BookDTO extends BaseDTO {
             @IsOptional()
     @Min(1)
     @Max(5000)
+    @IsInt()
             @ApiProperty({description: 'pages field', required: false})
         pages?: number;
 

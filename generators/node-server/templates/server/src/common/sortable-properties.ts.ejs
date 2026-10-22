@@ -1,4 +1,4 @@
-import { EntityMetadata } from 'typeorm';
+import { EntityMetadata<% if (databaseTypeMongodb) { %>, FindOptionsOrder<% } %> } from 'typeorm';
 
 export interface SortableOptions {
   /** Columns of the entity no list can be sorted on, like the password of a user. */
@@ -26,3 +26,18 @@ export function isSortableProperty(metadata: EntityMetadata, property: string, {
   const isId = otherMetadata.primaryColumns.some(column => column.propertyName === otherProperty);
   return (isId || labels[name] === otherProperty) && otherMetadata.findColumnWithPropertyPath(otherProperty) !== undefined;
 }
+<%_ if (databaseTypeMongodb) { _%>
+
+/**
+ * The order of a MongoDB query by the names of the fields of the documents: TypeORM sorts a MongoDB query by the keys of
+ * the order as given, the names of the properties, and the id of a document is its _id.
+ */
+export function documentOrder<T>(metadata: EntityMetadata, order?: FindOptionsOrder<T>): FindOptionsOrder<T> | undefined {
+  return (
+    order &&
+    (Object.fromEntries(
+      Object.entries(order).map(([property, direction]) => [metadata.findColumnWithPropertyPath(property)?.databaseName ?? property, direction]),
+    ) as FindOptionsOrder<T>)
+  );
+}
+<%_ } _%>

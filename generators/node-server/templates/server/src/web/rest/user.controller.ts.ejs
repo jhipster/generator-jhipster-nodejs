@@ -9,14 +9,10 @@ import { UserService } from '../../service/user.service.ts';
 import { MailService } from '../../service/mail.service.ts';
 import { randomBytes } from 'crypto';
 import { BadRequestAlertException, EmailAlreadyUsedException, LoginAlreadyUsedException } from './errors/problem.exception.ts';
-<%_ if (typeormOrderSupport) { _%>
 import { isSortableProperty } from '../../common/sortable-properties.ts';
-<%_ } _%>
 
-<%_ if (typeormOrderSupport) { _%>
 // The columns of a user no list can be sorted on: its password, its activation and reset keys and the date of its reset.
 const UNSORTABLE_PROPERTIES = ['password', 'activationKey', 'resetKey', 'resetDate'];
-<%_ } _%>
 
 @Controller('api/admin/users')
 @UseGuards(AuthGuard, RolesGuard)
@@ -49,17 +45,13 @@ export class UserController {
       const pageRequest: PageRequest = new PageRequest(
         req.query.page,
         req.query.size,
-<%_ if (typeormOrderSupport) { _%>
         req.query.sort ?? '<%- user.primaryKey.name %>,ASC',
         property => isSortableProperty(this.userService.metadata, property, { unsortable: UNSORTABLE_PROPERTIES }),
-<%_ } _%>
       );
       const [results, count] = await this.userService.findAndCount({
           skip: +pageRequest.page * pageRequest.size,
           take: +pageRequest.size,
-<%_ if (typeormOrderSupport) { _%>
           order: pageRequest.asOrder(),
-<%_ } _%>
       });
       this.headerUtil.addPaginationHeaders(req.res, new Page(results, count, pageRequest));
       return results;
