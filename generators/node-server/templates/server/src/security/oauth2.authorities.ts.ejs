@@ -1,3 +1,5 @@
+import { <%= userLoginVmClass %> } from '../service/dto/user.dto.ts';
+
 // Claim with the roles when the provider namespaces it, like Auth0.
 export const CLAIMS_NAMESPACE = 'https://www.jhipster.tech/';
 
@@ -15,9 +17,10 @@ export function extractAuthoritiesFromClaims(claims: Record<string, unknown>): s
  * request), like the OIDC user of JHipster Spring Boot: the login of preferred_username (else sub) and the mail in lower
  * case, the names, the language and the authorities.
  */
-export function oidcUserOfClaims(claims: Record<string, any>): Record<string, any> {
+export function oidcUserOfClaims(claims: Record<string, any>): <%= userLoginVmClass %> {
   const login = String(claims.preferred_username ?? claims.sub).toLowerCase();
-  return {
+  // Without a password, nor a mail when the token has none (the login of the user saved has its fallback).
+  return Object.assign(new <%= userLoginVmClass %>(), {
     login,
     firstName: claims.given_name,
     lastName: claims.family_name,
@@ -26,5 +29,5 @@ export function oidcUserOfClaims(claims: Record<string, any>): Record<string, an
     activated: true,
     langKey: typeof claims.locale === 'string' ? claims.locale.split(/[-_]/)[0] : 'en',
     authorities: extractAuthoritiesFromClaims(claims),
-  };
+  });
 }

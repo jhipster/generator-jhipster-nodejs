@@ -4,6 +4,7 @@ import { PassportStrategy } from '@nestjs/passport';
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { AuthService } from '../service/auth.service.ts';
+import { <%= userLoginVmClass %> } from '../service/dto/user.dto.ts';
 import { OAuth2Config } from './oauth2.config.ts';
 import { oidcUserOfClaims } from './oauth2.authorities.ts';
 
@@ -31,12 +32,12 @@ export class Oauth2Strategy extends PassportStrategy(Strategy, undefined, true) 
      * The user of the login, like the OIDC user of JHipster Spring Boot: the claims of the ID token over the ones of the
      * access token (the access token of some providers, like Okta, has no login nor mail).
      */
-    <%- generateBuiltInUserEntity ? 'async ' : '' %>validate(accessToken: string, refreshToken: string, params: any): <%- generateBuiltInUserEntity ? 'Promise<any>' : 'any' %> {
-        const user: any = oidcUserOfClaims({ ...jwtDecode(accessToken), ...(params.id_token ? jwtDecode(params.id_token) : {}) });
+    <%- generateBuiltInUserEntity ? 'async ' : '' %>validate(accessToken: string, refreshToken: string, params: any): <%- generateBuiltInUserEntity ? `Promise<${userLoginVmClass} & { idToken?: string }>` : `${userLoginVmClass} & { idToken?: string }` %> {
+        const user = oidcUserOfClaims({ ...jwtDecode(accessToken), ...(params.id_token ? jwtDecode(params.id_token) : {}) });
 <%_ if (generateBuiltInUserEntity) { _%>
         await this.authService.findUserOrSave(user);
 <%_ } _%>
-        user.idToken = params.id_token;
-        return user;
+        // The ID token of the session, for the logout.
+        return Object.assign(user, { idToken: params.id_token });
     }
 }
