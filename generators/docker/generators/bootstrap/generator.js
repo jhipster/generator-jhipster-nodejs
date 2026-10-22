@@ -43,36 +43,12 @@ export default class extends BaseApplicationGenerator {
             : {}),
           ...(application.authenticationTypeOauth2 ? { NODE_CLIENT_PROVIDER_OIDC_ISSUER_URI: 'http://keycloak:9080/realms/jhipster' } : {}),
         });
+        // The healthcheck of the app service in its docker compose file and in a deployment: the NodeJS image has no bash.
+        application.dockerApplicationHealthcheckCommand = `node -e "fetch('http://localhost:${application.serverPort}/management/health').then(r => process.exit(r.ok ? 0 : 1), () => process.exit(1))"`;
         if (database) {
           mutateData(application.dockerDeploymentEnvironment, {
             DATABASE_HOST: `${application.dockerDeploymentServicePrefix}${database}`,
           });
-        }
-      },
-    });
-  }
-
-  get [BaseApplicationGenerator.DEFAULT]() {
-    return this.asDefaultTaskGroup({
-      healthcheck({ application }) {
-        const { dockerComposeFiles, lowercaseBaseName, serverPort } = application;
-        // The healthcheck of the NodeJS image, which has no bash, in the app service JHipster prepared from the variables
-        // above, and in its service of a deployment.
-        const healthcheck = {
-          test: [
-            'CMD',
-            'node',
-            '-e',
-            `fetch('http://localhost:${serverPort}/management/health').then(r => process.exit(r.ok ? 0 : 1), () => process.exit(1))`,
-          ],
-          interval: '5s',
-          timeout: '5s',
-          retries: 10,
-        };
-        const { data, deploymentServices } = dockerComposeFiles.app;
-        data.services.app.healthcheck = healthcheck;
-        if (deploymentServices?.[lowercaseBaseName]) {
-          deploymentServices[lowercaseBaseName].healthcheck = healthcheck;
         }
       },
     });

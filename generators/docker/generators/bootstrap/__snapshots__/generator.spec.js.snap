@@ -28,13 +28,11 @@ exports[`SubGenerator docker:bootstrap of nodejs JHipster blueprint > deployed w
       - DATABASE_HOST=notes-postgresql
     healthcheck:
       test:
-        - CMD
-        - node
-        - -e
-        - "fetch('http://localhost:8081/management/health').then(r => process.exit(r.ok ? 0 : 1), () => process.exit(1))"
+        - CMD-SHELL
+        - "node -e \\"fetch('http://localhost:8081/management/health').then(r => process.exit(r.ok ? 0 : 1), () => process.exit(1))\\""
       interval: 5s
       timeout: 5s
-      retries: 10
+      retries: 40
     depends_on:
       notes-postgresql:
         condition: service_healthy
