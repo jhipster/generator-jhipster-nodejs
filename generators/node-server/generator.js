@@ -18,9 +18,11 @@ import {
   contentTypeColumnOptions,
   entityMigration,
   fieldColumnOptions,
+  fieldColumnTypeImports,
   getDatabasePort,
   getNodeDevDatabaseType,
   getNodeDevSqliteDatabase,
+  hasRuntimeColumnTypes,
   primaryKeyColumn,
   serverEnumInfo,
   thymeleafMailToHandlebars,
@@ -77,6 +79,9 @@ const prodDatabaseColumnTypes = {
   mssql: { Boolean: undefined, 'byte[]': 'text', TextBlob: 'text' },
   // Oracle has neither boolean nor bigint (integer is NUMBER(38)), nor a time type.
   oracle: { Boolean: undefined, Long: 'integer', Duration: 'integer', LocalTime: 'varchar', TextBlob: 'clob' },
+  // A text, a longtext on MySQL and MariaDB at runtime like the blobs a longblob (src/domain/base/column-types.ts).
+  mysql: { TextBlob: 'text' },
+  mariadb: { TextBlob: 'text' },
 };
 
 /** Enum column types by prodDatabaseType, simple-enum otherwise: Oracle has no simple-enum. */
@@ -235,6 +240,7 @@ export default class extends BaseApplicationGenerator {
           nodeDevDatabaseType: getNodeDevDatabaseType,
           nodeDevSqliteDatabase: getNodeDevSqliteDatabase,
           nodeDatabasePort: getDatabasePort,
+          nodejsRuntimeColumnTypes: hasRuntimeColumnTypes,
         });
       },
       async source({ source }) {
@@ -317,6 +323,7 @@ export default class extends BaseApplicationGenerator {
         mutateData(field, {
           __override__: true,
           nodejsColumnOptions: fieldColumnOptions(field, application),
+          nodejsColumnTypeImports: fieldColumnTypeImports(field, application),
           nodejsContentTypeColumnOptions: contentTypeColumnOptions(field, application),
         });
       },
@@ -329,6 +336,8 @@ export default class extends BaseApplicationGenerator {
         // The transformers the columns of an entity use, imported by its entity.
         for (const entity of entities.filter(entity => !entity.skipServer)) {
           entity.nodejsColumnTransformers = [...new Set(entity.fields.map(field => field.nodejsColumnTransformer).filter(Boolean))];
+          // The helpers of the column types chosen at runtime the columns of an entity use.
+          entity.nodejsColumnTypeImports = [...new Set(entity.fields.flatMap(field => field.nodejsColumnTypeImports ?? []))];
           // The fake values of the fields as the API exchanges them, generated when a template calls it (after its faker seed).
           entity.nodejsApiFakeEntity = () => apiFakeEntity(entity);
         }

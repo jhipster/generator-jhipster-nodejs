@@ -22,13 +22,40 @@ export const columnRules = field => {
 };
 
 /**
+ * The databases with column types of JHipster Spring Boot better-sqlite3 (dev and test) has not, chosen at runtime by
+ * src/domain/base/column-types.ts: the long blobs and texts and the microseconds of MySQL and MariaDB.
+ */
+const runtimeColumnTypeDatabases = ['mysql', 'mariadb'];
+
+/** Whether the columns of an application get their types at runtime (see runtimeColumnTypeDatabases). */
+export const hasRuntimeColumnTypes = ({ databaseTypeSql, prodDatabaseType }) =>
+  Boolean(databaseTypeSql) && runtimeColumnTypeDatabases.includes(prodDatabaseType);
+
+/** Whether the column of a field has a type chosen at runtime: a blob, a text, or the precision of an instant. */
+const runtimeColumnType = field => ['blob', 'text'].includes(field.nodejsColumnType);
+const runtimeDatetimePrecision = field => ['Instant', 'ZonedDateTime'].includes(field.fieldType);
+
+/** The helpers of src/domain/base/column-types.ts the @Column decorator of a field uses. */
+export const fieldColumnTypeImports = (field, application) => {
+  if (!hasRuntimeColumnTypes(application)) return [];
+  return [runtimeColumnType(field) && 'columnType', runtimeDatetimePrecision(field) && 'datetimePrecision'].filter(Boolean);
+};
+
+/**
  * The options of the @Column decorator of a field. A MongoDB column has no name: TypeORM writes the documents by the names
  * of the properties and reads them by the names of the columns, so a document would be read without its fields.
  */
-export const fieldColumnOptions = (field, { databaseTypeSql }) => {
+export const fieldColumnOptions = (field, application) => {
+  const { databaseTypeSql } = application;
   const { required, unique, maxlength } = columnRules(field);
+  const runtime = hasRuntimeColumnTypes(application);
   const options = [];
-  if (field.nodejsColumnType) options.push(`type: '${field.nodejsColumnType}'`);
+  if (field.nodejsColumnType) {
+    options.push(
+      runtime && runtimeColumnType(field) ? `type: columnType('${field.nodejsColumnType}')` : `type: '${field.nodejsColumnType}'`,
+    );
+  }
+  if (runtime && runtimeDatetimePrecision(field)) options.push('precision: datetimePrecision()');
   if (databaseTypeSql) options.push(`name: '${field.fieldNameAsDatabaseColumn}'`);
   if (field.fieldIsEnum) {
     options.push(`enum: ${field.fieldType}`);

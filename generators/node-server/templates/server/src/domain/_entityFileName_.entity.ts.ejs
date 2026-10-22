@@ -3,6 +3,9 @@ import { BaseEntity } from './base/base.entity.ts';
 <%_ if (nodejsColumnTransformers.length > 0) { _%>
 import { <%- nodejsColumnTransformers.map(name => `${name}Transformer`).join(', ') %> } from './base/column-transformers.ts';
 <%_ } _%>
+<%_ if (nodejsColumnTypeImports.length > 0) { _%>
+import { <%- nodejsColumnTypeImports.join(', ') %> } from './base/column-types.ts';
+<%_ } _%>
 
 <%_
 let isUserRelationship = false;

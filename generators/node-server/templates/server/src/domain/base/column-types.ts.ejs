@@ -1,0 +1,29 @@
+import type { ColumnType } from 'typeorm';
+
+import { config } from '../../config.ts';
+
+/**
+ * The databases with the column types of JHipster Spring Boot better-sqlite3 (dev and test) has not: the blobs and the
+ * texts up to 4 GB (longblob, longtext; blob and text keep 64 KB) and the microseconds of the instants (datetime(6)) of
+ * MySQL and MariaDB, like the blobType, clobType and datetimeType properties of its Liquibase changelogs.
+ */
+const LONG_TYPES_DATABASES = ['mysql', 'mariadb', 'aurora-mysql'];
+
+const LONG_TYPES: Partial<Record<string, ColumnType>> = { blob: 'longblob', text: 'longtext' };
+
+/** The type of a column on a database: a long blob or text on MySQL and MariaDB, the type itself on the others. */
+export const databaseColumnType = (databaseType: string, type: ColumnType): ColumnType =>
+  (LONG_TYPES_DATABASES.includes(databaseType) && typeof type === 'string' && LONG_TYPES[type]) || type;
+
+/** The precision of an instant column on a database: the microseconds on MySQL and MariaDB, the default on the others. */
+export const databaseDatetimePrecision = (databaseType: string): number | undefined =>
+  LONG_TYPES_DATABASES.includes(databaseType) ? 6 : undefined;
+
+/**
+ * The type of a column on the database of the active profiles, for the @Column decorators: the migrations give the same
+ * one with the driver of their connection (migrations/support/schema.ts), so the tables are the ones the entities map.
+ */
+export const columnType = (type: ColumnType): ColumnType => databaseColumnType(config.get('database.type'), type);
+
+/** The precision of an instant column on the database of the active profiles, for the @Column decorators. */
+export const datetimePrecision = (): number | undefined => databaseDatetimePrecision(config.get('database.type'));
