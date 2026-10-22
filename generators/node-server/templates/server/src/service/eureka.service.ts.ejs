@@ -35,7 +35,10 @@ export class EurekaService implements BeforeApplicationShutdown {
     const appName = this.configService.get('eureka.instance.appname', { infer: true });
     const ipAddress = this.configService.get('ipAddress', { infer: true }) || '127.0.0.1';
     const hostName = this.configService.get('eureka.instance.prefer-ip-address', { infer: true }) ? ipAddress : hostname();
-    const baseUrl = `http://${hostName}:${port}`;
+    // The tls profile serves HTTPS (server.ssl.enabled): like the eureka.instance.secure-port-enabled of Spring Cloud,
+    // the instance then registers the secure port, so a gateway routes to it over HTTPS, and the plain port is disabled.
+    const tls = this.configService.get('server.ssl.enabled', { infer: true }) === true;
+    const baseUrl = `${tls ? 'https' : 'http'}://${hostName}:${port}`;
     const leaseRenewalInterval = Number(this.configService.get('eureka.instance.lease-renewal-interval-in-seconds', { infer: true }));
     const user = decodeURIComponent(serviceUrl.username) || this.configService.get('jhipster.registry.username', { infer: true }) || 'admin';
     const password = decodeURIComponent(serviceUrl.password) || this.configService.get('jhipster.registry.password', { infer: true }) || 'admin';
@@ -47,7 +50,8 @@ export class EurekaService implements BeforeApplicationShutdown {
         hostName,
         ipAddr: ipAddress,
         status: 'UP',
-        port: { $: port, '@enabled': 'true' },
+        port: { $: port, '@enabled': tls ? 'false' : 'true' },
+        securePort: { $: port, '@enabled': tls ? 'true' : 'false' },
         // The service id Spring Cloud looks the instances up by (the routes of a JHipster gateway), like its spring.application.name.
         vipAddress: appName,
         homePageUrl: `${baseUrl}/`,
