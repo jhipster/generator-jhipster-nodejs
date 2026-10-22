@@ -30,9 +30,10 @@ export class Oauth2Strategy extends PassportStrategy(Strategy, undefined, true) 
 
     /**
      * The user of the login, like the OIDC user of JHipster Spring Boot: the claims of the ID token over the ones of the
-     * access token (the access token of some providers, like Okta, has no login nor mail).
+     * access token (the access token of some providers, like Okta, has no login nor mail). With its 4 parameters, passport-oauth2
+     * gives it the params of the token response (the ID token): with 3, it gives the profile instead, undefined here.
      */
-    <%- generateBuiltInUserEntity ? 'async ' : '' %>validate(accessToken: string, refreshToken: string, params: any): <%- generateBuiltInUserEntity ? `Promise<${userLoginVmClass} & { idToken?: string }>` : `${userLoginVmClass} & { idToken?: string }` %> {
+    <%- generateBuiltInUserEntity ? 'async ' : '' %>validate(accessToken: string, refreshToken: string, params: any, _profile: unknown): <%- generateBuiltInUserEntity ? `Promise<${userLoginVmClass} & { idToken?: string }>` : `${userLoginVmClass} & { idToken?: string }` %> {
         const user = oidcUserOfClaims({ ...jwtDecode(accessToken), ...(params.id_token ? jwtDecode(params.id_token) : {}) });
 <%_ if (generateBuiltInUserEntity) { _%>
         await this.authService.findUserOrSave(user);
