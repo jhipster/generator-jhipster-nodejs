@@ -18,10 +18,10 @@
  */
 export { default } from './generator.mjs';
 export { default as command } from './command.mjs';
-export { describeSample, describeSampleGroup, describeSampleGroups } from './support/describe-samples.mjs';
+export * from './support.mjs';
 
-/** @typedef {import('./support/describe-samples.mjs').SampleDescription} SampleDescription */
-/** @typedef {import('./support/describe-samples.mjs').SampleGroupDescription} SampleGroupDescription */
-/** @typedef {import('./support/describe-samples.mjs').SampleGroupSummary} SampleGroupSummary */
-/** @typedef {import('./support/describe-samples.mjs').SampleJDL} SampleJDL */
-/** @typedef {import('./support/describe-samples.mjs').SampleSummary} SampleSummary */
+/** @typedef {import('./support.mjs').SampleDescription} SampleDescription */
+/** @typedef {import('./support.mjs').SampleGroupDescription} SampleGroupDescription */
+/** @typedef {import('./support.mjs').SampleGroupSummary} SampleGroupSummary */
+/** @typedef {import('./support.mjs').SampleJDL} SampleJDL */
+/** @typedef {import('./support.mjs').SampleSummary} SampleSummary */

@@ -18,7 +18,7 @@
  */
 import { fileURLToPath } from 'node:url';
 
-import { describeGithubSamples, getGithubSamplesGroups } from 'generator-jhipster/ci';
+import { convertToGitHubMatrix, describeGithubSamples, getGithubSamplesGroup, getGithubSamplesGroups } from 'generator-jhipster/ci';
 
 export { formatSample, formatSamplesList } from 'generator-jhipster/ci';
 
@@ -123,3 +123,24 @@ export const describeSampleGroups = () =>
  * @returns {SampleSummary}
  */
 export const describeSample = name => summaryOf(findSamples({ sampleName: name })[0]);
+
+/**
+ * The samples the CI runs for changed files, by samples group (workflow), like the describeChangedSamples of
+ * generator-jhipster: the CI of the blueprint runs every sample of its matrix on any pull request, whatever the files, so
+ * it is the matrix of each workflow (github-build-matrix), the groups without samples left out.
+ * @param {string[]} _files the changed files, relative to the repository root
+ * @returns {Promise<Record<string, string[]>>}
+ */
+export const describeChangedSamples = async _files => {
+  const selected = {};
+  for (const group of WORKFLOWS) {
+    const { samples } = await getGithubSamplesGroup(samplesGroupFolder, group);
+    // The sample of a job of the matrix is the sample name.
+    const { include = [] } = convertToGitHubMatrix(samples);
+    const names = include.map(job => job.sample);
+    if (names.length > 0) {
+      selected[group] = names;
+    }
+  }
+  return selected;
+};

@@ -21,7 +21,7 @@
 const ALL_WORKFLOWS = '*';
 
 /** The samples groups, the workflows, with the names of their samples; describe-samples has a top-level await. */
-const describeSampleGroups = async () => (await import('../describe-samples/index.mjs')).describeSampleGroups();
+const describeSampleGroups = async () => (await import('../describe-samples/support.mjs')).describeSampleGroups();
 
 /**
  * @type {import('generator-jhipster').JHipsterCommandDefinition}
