@@ -1663,7 +1663,7 @@ Your app uses, to get and use the token, the \`server/src/config/application.yml
   security:
     authentication:
         jwt:
-            # This token must be encoded using Base64 and be at least 256 bits long (you can type \`openssl rand -base64 64\` on your command line to generate a 512 bits one)
+            # This token must be encoded using Base64 and be at least 512 bits long, like the HS512 key of JHipster Spring Boot (you can type \`openssl rand -base64 64\` on your command line to generate one)
             base64-secret: {yourSecret}
             # Token is valid 24 hours
             token-validity-in-seconds: 86400
@@ -1698,7 +1698,7 @@ will generate the file:
 #### Running
 
 \`\`\`bash
-npm run start:app
+npm run app:start
 \`\`\`
 
 #### Building
@@ -1726,10 +1726,10 @@ The build folder with all compiled sources will be **server/dist**.
 Sonar is used to analyse code quality. You can start a local Sonar server (accessible on http://localhost:9001) with:
 
 \`\`\`
-docker compose -f src/main/docker/sonar.yml up -d
+docker compose -f docker/sonar.yml up -d
 \`\`\`
 
-Note: we have turned off forced authentication redirect for UI in [src/main/docker/sonar.yml](src/main/docker/sonar.yml) for out of the box experience while trying out SonarQube, for real use cases turn it back on.
+Note: we have turned off forced authentication redirect for UI in [docker/sonar.yml](docker/sonar.yml) for out of the box experience while trying out SonarQube, for real use cases turn it back on.
 
 You can run a Sonar analysis with using the [sonar-scanner](https://docs.sonarqube.org/display/SCAN/Analyzing+with+SonarQube+Scanner).
 Then, run a Sonar analysis in the server/ folder:

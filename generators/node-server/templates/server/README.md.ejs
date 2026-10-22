@@ -117,7 +117,7 @@ $ npm run typeorm:schema:log
 ```
 <%_ if (databaseTypeMongodb) { _%>
 
-With MongoDB, run them with `BACKEND_ENV=prod` (the dev and test profiles use an in-memory server). MongoDB has no
+With MongoDB, they run on the MongoDB of the dev profile (`npm run docker:db:up`), the test profile using an in-memory server. MongoDB has no
 schema to compare, so migrations are written by hand with the MongoDB API (`queryRunner.query()` does not support
 MongoDB): use `queryRunner.dataSource.mongoManager`.
 <%_ } _%>

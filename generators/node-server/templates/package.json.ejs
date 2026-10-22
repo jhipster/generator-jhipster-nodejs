@@ -50,8 +50,11 @@
   "scripts": {
     "backend:start": "<%= clientPackageManager %> run start:server",
 <%_ if (clientFrameworkAny) { _%>
-    "app:start": "<%= clientPackageManager %> run build && <%= clientPackageManager %> run start:prod -w server",
+    "app:start": "<%= clientPackageManager %> run build && BACKEND_ENV=dev <%= clientPackageManager %> run start:prod -w server",
     "ci:e2e:package": "<%= clientPackageManager %> run build",
+<%_ if ((testFrameworks ?? []).some(testFramework => ['cypress', 'playwright'].includes(testFramework))) { _%>
+    "e2e": "<%= clientPackageManager %> run e2e -w client",
+<%_ } _%>
     "ci:e2e:server:start": "BACKEND_ENV=test <%= clientPackageManager %> run start:prod -w server",
     "ci:server:await": "echo \"Waiting for server at port $npm_package_config_backend_port to start\" && wait-on -t 180000 http-get://127.0.0.1:$npm_package_config_backend_port/management/health && echo \"Server at port $npm_package_config_backend_port started\"",
     "build": "<%= clientPackageManager %> run build -w server && <%= clientPackageManager %> run build -w client",
@@ -74,13 +77,7 @@
     "test:client": "<%= clientPackageManager %> test -w client",
 <%_ } _%>
     "test:server": "<%= clientPackageManager %> test -w server",
-<%_ if (!databaseTypeSql) { _%>
-    "pretest:server:e2e": "npm run docker:db:up",
-<%_ } _%>
     "test:server:e2e": "<%= clientPackageManager %> run test:e2e -w server",
-<%_ if (!databaseTypeSql) { _%>
-    "posttest:server:e2e": "npm run docker:db:down",
-<%_ } _%>
     "test": "<%= clientPackageManager %> test --workspaces"
   }
 }
