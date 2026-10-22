@@ -25,13 +25,8 @@ describe('Account', () => {
         password: 'testPassword',
     };
 
+    // Saved before each test, with the id the database gives it: the authenticated user of the requests.
     const testUserAuthenticated: any = {
-<%_ if (databaseType === 'mongodb') { _%>
-        // the mongodb driver rejects an id that is not a valid ObjectId
-        id: '000000000000000000000042',
-<%_ } else { _%>
-        id: 42,
-<%_ } _%>
         login: 'userlogged',
         email: 'userlogged@localhost.it',
         password: 'userloggedPassword',
@@ -47,7 +42,7 @@ describe('Account', () => {
 
     const authGuardMock = { canActivate: (context: ExecutionContext): any => {
         const req = context.switchToHttp().getRequest();
-        req.user = testUserAuthenticated;
+        req.user = userAuthenticated;
         return true;
     },
     };
@@ -207,19 +202,13 @@ describe('Account', () => {
 
     it('/GET account', async () => {
 
-        <%_ if (databaseType !== 'mongodb') { _%>
         const loggedUser: any = JSON.parse(( await request(app.getHttpServer())
             .get('/api/account')
             .expect(200)).text);
 
-        expect(loggedUser.id).toEqual(userAuthenticated.id);
+        expect(String(loggedUser.id)).toEqual(String(userAuthenticated.id));
         expect(loggedUser.login).toEqual(userAuthenticated.login);
         expect(loggedUser.email).toEqual(userAuthenticated.email);
-        <%_ } else { _%>
-        await request(app.getHttpServer())
-              .get('/api/account')
-              .expect(200);
-        <%_ } _%>
 
     });
 
