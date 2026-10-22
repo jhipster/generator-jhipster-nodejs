@@ -61,7 +61,7 @@ Congratulations! You've selected an excellent way to secure your NHipster applic
 To log in to your app, you'll need to have [Keycloak](https://keycloak.org) up and running. The JHipster Team has created a Docker container for you that has the default users and roles. Start Keycloak using the following command.
 
 ```
-docker compose -f src/main/docker/keycloak.yml up
+docker compose -f docker/keycloak.yml up
 ```
 
 ### Okta
@@ -74,7 +74,7 @@ okta register
 
 Then, in your JHipster app's directory, run `okta apps create` and select **JHipster**. This will set up an Okta app for you, create `ROLE_ADMIN` and `ROLE_USER` groups, create a `.okta.env` file with your Okta settings, and configure a `groups` claim in your ID token.
 
-Run `source .okta.env` and start your app with Maven or Gradle. You should be able to sign in with the credentials you registered with.
+Run `source .okta.env` and start your app with `npm start`. You should be able to sign in with the credentials you registered with.
 
 If you're on Windows, you should install [WSL](https://docs.microsoft.com/en-us/windows/wsl/install-win10) so the `source` command will work.
 
@@ -119,7 +119,7 @@ Your app uses, to get and use the token, the `<%= nodeServerRootDir %>src/config
   security:
     authentication:
         jwt:
-            # This token must be encoded using Base64 and be at least 256 bits long (you can type `openssl rand -base64 64` on your command line to generate a 512 bits one)
+            # This token must be encoded using Base64 and be at least 512 bits long, like the HS512 key of JHipster Spring Boot (you can type `openssl rand -base64 64` on your command line to generate one)
             base64-secret: {yourSecret}
             # Token is valid 24 hours
             token-validity-in-seconds: 86400
@@ -161,7 +161,7 @@ will generate the file:
 #### Running
 
 ```bash
-<%= nodePackageManager %> run start:app
+<%= nodePackageManager %> run app:start
 ```
 
 #### Building
@@ -183,10 +183,10 @@ The build folder with all compiled sources will be **<%= nodeServerRootDir %>dis
 Sonar is used to analyse code quality. You can start a local Sonar server (accessible on http://localhost:9001) with:
 
 ```
-docker compose -f src/main/docker/sonar.yml up -d
+docker compose -f docker/sonar.yml up -d
 ```
 
-Note: we have turned off forced authentication redirect for UI in [src/main/docker/sonar.yml](src/main/docker/sonar.yml) for out of the box experience while trying out SonarQube, for real use cases turn it back on.
+Note: we have turned off forced authentication redirect for UI in [docker/sonar.yml](docker/sonar.yml) for out of the box experience while trying out SonarQube, for real use cases turn it back on.
 
 You can run a Sonar analysis with using the [sonar-scanner](https://docs.sonarqube.org/display/SCAN/Analyzing+with+SonarQube+Scanner).
 Then, run a Sonar analysis in the <%= nodeServerRootDir %> folder:

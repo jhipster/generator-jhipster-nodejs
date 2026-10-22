@@ -22,6 +22,10 @@ services:
     build: ..
     environment:
       - BACKEND_ENV=prod,api-docs,secret-samples
+<%_ if (databaseTypeSql || databaseTypeMongodb) { _%>
+      # The database of its service, like the datasource of the app.yml of JHipster Spring Boot.
+      - DATABASE_HOST=<%= databaseTypeSql ? prodDatabaseType : 'mongodb' %>
+<%_ } _%>
 <%_ if (authenticationType === 'oauth2') { _%>
       - NODE_CLIENT_PROVIDER_OIDC_ISSUER_URI=http://keycloak:9080/realms/jhipster
 <%_ } _%>
