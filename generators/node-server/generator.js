@@ -2,7 +2,6 @@ import { readFile } from 'node:fs/promises';
 
 import { TEMPLATES_WEBAPP_SOURCES_DIR } from 'generator-jhipster';
 import BaseApplicationGenerator from 'generator-jhipster/generators/base-application';
-import { getEnumInfo } from 'generator-jhipster/generators/base-application/support';
 import { createNeedleCallback } from 'generator-jhipster/generators/base-core/support';
 import { createKeyStore } from 'generator-jhipster/generators/java/support';
 import { createBase64Secret, createReproducibleBase64Secret, mutateData } from 'generator-jhipster/utils';
@@ -23,6 +22,7 @@ import {
   getNodeDevDatabaseType,
   getNodeDevSqliteDatabase,
   primaryKeyColumn,
+  serverEnumInfo,
   thymeleafMailToHandlebars,
   userAuthorityJoinTable,
 } from './support/index.js';
@@ -460,7 +460,7 @@ export default class extends BaseApplicationGenerator {
 
           const webappEnumerationsDir = `${SERVER_NODEJS_SRC_DIR}/src/domain/enumeration/`;
           for (const field of entity.fields.filter(field => field.fieldIsEnum)) {
-            const enumInfo = getEnumInfo(field, entity.clientRootFolder);
+            const enumInfo = serverEnumInfo(field, entity.clientRootFolder);
             await this.writeFile(
               this.fetchFromInstalledJHipster(
                 `client/templates/${TEMPLATES_WEBAPP_SOURCES_DIR}app/entities/enumerations/enum.model.ts.ejs`,

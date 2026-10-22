@@ -1,7 +1,7 @@
-import { getEnumInfo } from 'generator-jhipster/generators/base-application/support';
 import { camelCase } from 'lodash-es';
 
 import { columnRules } from './columns.js';
+import { serverEnumInfo } from './enums.js';
 
 /**
  * The migrations of the SQL databases, like the Liquibase changelogs of JHipster Spring Boot: the tables of the built-in
@@ -74,7 +74,7 @@ export const fieldColumns = field => {
   const column = { name: field.fieldNameAsDatabaseColumn, type, nullable, unique };
   if (field.fieldIsEnum) {
     // The values of the TypeScript enum of the field, the ones of the enum column of the databases having one (MySQL).
-    column.enum = `[${getEnumInfo(field)
+    column.enum = `[${serverEnumInfo(field)
       .enumValues.map(({ value }) => literal(value))
       .join(', ')}]`;
   } else if (field.fieldType === 'BigDecimal') {
