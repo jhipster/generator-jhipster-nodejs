@@ -76,4 +76,15 @@ describe('CORS', () => {
             }
         });
     });
+
+    describe('with * as allowed origins', () => {
+        beforeEach(() => createApp({ 'jhipster.cors.allowed-origins': '*' }));
+
+        it('allows any origin, like the CorsConfiguration of Spring', () =>
+            request(app.getHttpServer())
+                .get('/management/health')
+                .set('Origin', 'http://any.example.com')
+                .expect(200)
+                .expect('Access-Control-Allow-Origin', '*'));
+    });
 });

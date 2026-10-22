@@ -63,4 +63,21 @@ describe('LevelsConsoleLogger', () => {
       write.mockRestore();
     }
   });
+
+  it('should print the stack trace of an error with its message only, not for a logger OFF', () => {
+    const levels = new LoggerLevels();
+    levels.setLevel('Silent', 'OFF');
+    const write = vi.spyOn(process.stderr, 'write').mockReturnValue(true);
+    try {
+      const logger = new LevelsConsoleLogger(levels);
+      logger.error('silenced', 'Error: silenced\n    at silencedStack', 'Silent');
+      logger.error('failed', 'Error: failed\n    at printedStack', 'Printed');
+      const printed = write.mock.calls.map(([chunk]) => String(chunk)).join('');
+      expect(printed).not.toContain('silenced');
+      expect(printed).toContain('failed');
+      expect(printed).toContain('printedStack');
+    } finally {
+      write.mockRestore();
+    }
+  });
 });

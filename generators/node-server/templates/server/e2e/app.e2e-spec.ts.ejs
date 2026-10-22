@@ -52,6 +52,9 @@ describe('App', () => {
         const response = await request(app.getHttpServer())
             .get('/management/info')
             .expect(200)
+            .expect('Cache-Control', 'no-cache, no-store, max-age=0, must-revalidate')
+            .expect('Pragma', 'no-cache')
+            .expect('Expires', '0')
             .expect('X-Content-Type-Options', 'nosniff')
             .expect('X-XSS-Protection', '0')
 <%_ if (skipClient) { _%>
@@ -66,6 +69,10 @@ describe('App', () => {
         // Only on HTTPS requests.
         expect(response.headers['strict-transport-security']).toBeUndefined();
     });
+
+    it('/GET an unknown path of the API is not found, not the client', () => request(app.getHttpServer())
+        .get('/api/unknown-resource')
+        .expect(404));
 
     it('/GET health is UP without authentication', () => request(app.getHttpServer())
         .get('/management/health')

@@ -52,8 +52,28 @@ describe('Health Controller', () => {
     }
   });
 
+<%_ if (databaseTypeSql) { _%>
+  it('answers the liveness probe', () => {
+    expect(controller.liveness()).toEqual({ status: 'UP' });
+  });
+
+  it('is ready when the database is up, like the readiness group of JHipster Spring Boot', async () => {
+    check.mockResolvedValue({ status: 'ok', info: { db: { status: 'up' } }, error: {}, details: { db: { status: 'up' } } });
+    await expect(controller.readiness({ status: vi.fn() } as any)).resolves.toEqual({ status: 'UP' });
+  });
+
+  it('is not ready, with the status 503, when the database is down', async () => {
+    check.mockRejectedValue(
+      new ServiceUnavailableException({ status: 'error', info: {}, error: { db: { status: 'down' } }, details: { db: { status: 'down' } } }),
+    );
+    const response = { status: vi.fn() };
+    await expect(controller.readiness(response as any)).resolves.toEqual({ status: 'DOWN' });
+    expect(response.status).toHaveBeenCalledWith(503);
+  });
+<%_ } else { _%>
   it('answers the liveness and readiness probes', () => {
     expect(controller.liveness()).toEqual({ status: 'UP' });
     expect(controller.readiness()).toEqual({ status: 'UP' });
   });
+<%_ } _%>
 });

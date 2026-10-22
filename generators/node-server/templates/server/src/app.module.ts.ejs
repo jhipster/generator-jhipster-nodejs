@@ -37,8 +37,16 @@ import { ServeStaticModule } from '@nestjs/serve-static';
     useFactory: (configService: ConfigService) => ormConfig(key => configService.get(key)),
   }),
     <%_ if (!skipClient) { _%>
+<%_
+const spaExcludedPrefixes = ['api', 'management', 'v3/api-docs'];
+if (authenticationTypeOauth2 && (applicationTypeGateway || applicationTypeMonolith)) spaExcludedPrefixes.push('login', 'oauth2');
+if (applicationTypeGateway) spaExcludedPrefixes.push('services');
+_%>
     ServeStaticModule.forRoot({
         rootPath: config.getClientPath(),
+        // The index.html of the client for the paths of its routes only, like the SpaWebFilter of JHipster Spring Boot: an
+        // unknown path of the API, or a missing file (a path with a period), is not found.
+        exclude: /^\/(?:<%- spaExcludedPrefixes.map(prefix => prefix.replace('/', '\\/')).join('|') %>)|\./,
       }),
     <%_ } _%>
 <%_ if (generateUserManagement) { _%>
