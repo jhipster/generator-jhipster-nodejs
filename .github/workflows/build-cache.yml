@@ -23,9 +23,10 @@ jobs:
         with:
           generator-path: generator-jhipster-nodejs
         if: always()
-      - run: cli.cjs generate-sample --all
+      # Every sample, each one in a folder of its name, then the dependencies of each one in the npm cache.
+      - run: cli.cjs generate-sample --all --skip-install
         continue-on-error: true
-      - run: npm run backend:build-cache --workspaces
+      - run: for sample in */; do (cd "$sample" && npm install) || true; done
         continue-on-error: true
       - uses: jhipster/actions/save-cache@v2
         if: always()
