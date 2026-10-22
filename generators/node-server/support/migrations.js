@@ -1,5 +1,3 @@
-import { camelCase } from 'lodash-es';
-
 import { columnRules } from './columns.js';
 import { serverEnumInfo } from './enums.js';
 
@@ -78,7 +76,7 @@ export const fieldColumns = field => {
       .enumValues.map(({ value }) => literal(value))
       .join(', ')}]`;
   } else if (field.fieldType === 'BigDecimal') {
-    Object.assign(column, { precision: 10, scale: 2 });
+    Object.assign(column, { precision: 21, scale: 2 });
   } else if (!['Instant', 'ZonedDateTime', 'LocalDate'].includes(field.fieldType) && maxlength) {
     column.length = field.fieldValidateRulesMaxlength;
   }
@@ -89,8 +87,16 @@ export const fieldColumns = field => {
   return columns;
 };
 
+/**
+ * The camelCase of the default naming strategy of TypeORM, the names it gives the join columns and the columns of the join
+ * tables: unlike the one of lodash, it keeps the case of the letters it does not join (mainURL_id is mainURLId).
+ */
+export const typeormCamelCase = text =>
+  text.replaceAll(/^([A-Z])|[\s\-_](\w)/g, (_match, first, next) => (next ? next.toUpperCase() : first.toLowerCase()));
+
 /** The join column of a relationship, named like TypeORM names it (the relationship and the primary key of the other entity). */
-const joinColumnName = relationship => camelCase(`${relationship.relationshipFieldName}_${relationship.otherEntity.primaryKey.name}`);
+const joinColumnName = relationship =>
+  typeormCamelCase(`${relationship.relationshipFieldName}_${relationship.otherEntity.primaryKey.name}`);
 
 /** The relationships of an entity with a join column: the many-to-one ones, and the one-to-one ones on their owner side. */
 const joinColumnRelationships = entity =>
@@ -180,12 +186,12 @@ export const constraintsMigration = entity => {
 export const userAuthorityJoinTable = ({ user, authority }) => ({
   name: `${user.entityTableName}_authorities_${authority.entityTableName}`,
   joinColumn: {
-    ...referenceColumn(camelCase(`${user.entityTableName}_${user.primaryKey.name}`), user),
+    ...referenceColumn(typeormCamelCase(`${user.entityTableName}_${user.primaryKey.name}`), user),
     referencedTableName: user.entityTableName,
     referencedColumnName: user.primaryKey.name,
   },
   inverseJoinColumn: {
-    name: camelCase(`${authority.entityTableName}_name`),
+    name: typeormCamelCase(`${authority.entityTableName}_name`),
     type: 'String',
     referencedTableName: authority.entityTableName,
     referencedColumnName: 'name',

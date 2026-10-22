@@ -30,7 +30,8 @@ export const fieldColumnOptions = (field, { databaseTypeSql }) => {
   if (field.fieldIsEnum) {
     options.push(`enum: ${field.fieldType}`);
   } else if (field.fieldType === 'BigDecimal') {
-    options.push('precision: 10', 'scale: 2');
+    // The precision and the scale of a BigDecimal column of JHipster Spring Boot (decimal(21,2)).
+    options.push('precision: 21', 'scale: 2');
   } else if (!['Instant', 'ZonedDateTime', 'LocalDate'].includes(field.fieldType) && maxlength) {
     options.push(`length: ${field.fieldValidateRulesMaxlength}`);
   }
