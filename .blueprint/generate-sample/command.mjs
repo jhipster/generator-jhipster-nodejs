@@ -57,7 +57,7 @@ const command = {
       scope: 'generator',
     },
     all: {
-      description: 'Generate every jdl sample in a workspace',
+      description: 'Generate every sample (of --workflow, when given), each one in a folder of its name',
       cli: {
         type: Boolean,
       },
