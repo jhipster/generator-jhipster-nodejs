@@ -13,16 +13,16 @@ export class SeedUsersRoles1570200490072 implements MigrationInterface {
   role2: Authority = { name: 'ROLE_USER' };
 
   <%_ if (authenticationType !== 'oauth2') { _%>
-  // The users of JHipster Spring Boot: an administrator and a user.
+  // The users of JHipster Spring Boot: an administrator and a user, in the native language of the application.
   user1: <%= UserEntity %> = {
     login: 'admin',
     password: 'admin',
     firstName: 'Administrator',
     lastName: 'Administrator',
-    email: 'admin@localhost.it',
+    email: 'admin@localhost',
     imageUrl: '',
     activated: true,
-    langKey: 'en',
+    langKey: '<%= nativeLanguage %>',
     createdBy: 'system',
     lastModifiedBy: 'system'
   };
@@ -32,10 +32,10 @@ export class SeedUsersRoles1570200490072 implements MigrationInterface {
     password: 'user',
     firstName: 'User',
     lastName: 'User',
-    email: 'user@localhost.it',
+    email: 'user@localhost',
     imageUrl: '',
     activated: true,
-    langKey: 'en',
+    langKey: '<%= nativeLanguage %>',
     createdBy: 'system',
     lastModifiedBy: 'system'
   };

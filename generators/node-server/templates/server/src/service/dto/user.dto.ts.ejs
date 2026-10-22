@@ -45,7 +45,7 @@ export class <%= userLoginVmClass %> extends BaseDTO {
   @MaxLength(50)
   lastName?: string;
 
-  @ApiProperty({ example: 'myuser@localhost.it', description: 'User email' })
+  @ApiProperty({ example: 'myuser@localhost', description: 'User email' })
   // A domain without a top level domain too, like user@localhost, as the @Email of JHipster Spring Boot.
   @IsEmail({ require_tld: false })
   @Length(5, 254)
