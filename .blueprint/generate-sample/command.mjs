@@ -48,7 +48,7 @@ const command = {
         when: !gen.all && !gen.sampleName,
         type: 'select',
         message: 'Which sample do you want to generate?',
-        choices: async answers => {
+        choices: answers => {
           const groups = describeSampleGroups();
           const workflow = answers.workflow ?? gen.workflow ?? ALL_WORKFLOWS;
           return workflow === ALL_WORKFLOWS ? Object.values(groups).flatMap(group => group.samples) : groups[workflow].samples;
