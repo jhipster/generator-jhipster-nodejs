@@ -16,12 +16,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { readdirSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { convertToGitHubMatrix } from 'generator-jhipster/ci';
+
+import angular from '../../generate-sample/templates/angular.js';
+import microservice from '../../generate-sample/templates/microservice.js';
+import react from '../../generate-sample/templates/react.js';
+import vue from '../../generate-sample/templates/vue.js';
 
 export { formatSample, formatSamplesList } from 'generator-jhipster/ci';
 
@@ -41,17 +45,25 @@ const { githubSamplesGroupOf } = require(join(ciFolder, 'github-group.js'));
 /** The folder of the samples groups (`<group>.js`) and of their samples (`samples/`). */
 export const samplesGroupFolder = fileURLToPath(new URL('../../generate-sample/templates/', import.meta.url));
 
-/** Every described workflow: the samples groups of the blueprint, the `<group>.js` modules. */
-export const WORKFLOWS = readdirSync(samplesGroupFolder)
-  .filter(file => file.endsWith('.js'))
-  .map(file => file.replace(/\.js$/, ''));
+/**
+ * The samples groups of the blueprint (the `<group>.js` modules), imported statically so they are read synchronously, each
+ * sample tagged with its group like getGithubSamplesGroup does, like the samples-groups of generator-jhipster. A spec checks
+ * it lists every group of the folder.
+ * @type {Record<string, object>}
+ */
+export const samplesGroups = Object.fromEntries(
+  Object.entries({ angular, microservice, react, vue }).map(([group, samples]) => [group, githubSamplesGroupOf(group, samples)]),
+);
+
+/** Every described workflow: the samples groups of the blueprint. */
+export const WORKFLOWS = Object.keys(samplesGroups);
 
 /**
- * The samples of a samples group, by name, as getGithubSamplesGroup gives them.
+ * The samples of a samples group, by name.
  * @param {string} group
  * @returns {object}
  */
-const samplesOfGroup = group => githubSamplesGroupOf(group, require(join(samplesGroupFolder, `${group}.js`)).default);
+const samplesOfGroup = group => samplesGroups[group];
 
 /** @type {SampleDescription[] | undefined} */
 let descriptions;
