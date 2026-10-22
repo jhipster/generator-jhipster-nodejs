@@ -488,6 +488,7 @@ describe('SubGenerator node-server of nodejs JHipster blueprint', () => {
         },
         { fieldName: 'genre', fieldType: 'Genre', fieldValues: 'NOVEL,ESSAY' },
         { fieldName: 'format', fieldType: 'BookFormat', fieldValues: 'PAPER,EBOOK', fieldValidateRules: ['required'] },
+        { fieldName: 'cover', fieldType: 'byte[]', fieldTypeBlobContent: 'image', fieldValidateRules: ['required'] },
       ],
     };
 
@@ -503,6 +504,10 @@ describe('SubGenerator node-server of nodejs JHipster blueprint', () => {
     it('should anchor the pattern of a field, like Bean Validation @Pattern', () => {
       result.assertFileContent('server/src/service/dto/book.dto.ts', String.raw`@Matches("^(?:^\\d{3}-[0-9]{6}$)$")`);
       result.assertNoFileContent('server/src/service/dto/book.dto.ts', 'undefined');
+    });
+
+    it('should validate a required blob, so the whitelist of the ValidationPipe keeps it', () => {
+      result.assertFileContent('server/src/service/dto/book.dto.ts', /@IsNotEmpty\(\)\s+@ApiProperty\([^)]*\)\s+cover!/);
     });
 
     it('should refuse a value out of an enum, like the JSON deserialization of Spring Boot', () => {

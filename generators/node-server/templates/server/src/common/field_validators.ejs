@@ -25,9 +25,8 @@ const validators = [];
 if (field.fieldValidate === true) {
     const rules = field.fieldValidateRules;
     const MAX_VALUE = 2147483647;
-    const isBlob = field.fieldType === 'byte[]';
-
-    if (rules.includes('required') && !isBlob) {
+    // A required blob too: without a validator, the whitelist of the ValidationPipe strips it from the request.
+    if (rules.includes('required')) {
         validators.push('@IsNotEmpty()');
     } else if (!rules.includes('required')) {
         // Like Bean Validation, the other rules accept a missing (null or undefined) value.
