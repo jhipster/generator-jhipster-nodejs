@@ -1199,6 +1199,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > with oauth2 > s
   "server/src/security/guards/auth.guard.ts": {
     "stateCleared": "modified",
   },
+  "server/src/security/guards/oauth2-login.guard.ts": {
+    "stateCleared": "modified",
+  },
   "server/src/security/guards/roles.guard.ts": {
     "stateCleared": "modified",
   },
@@ -1209,6 +1212,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > with oauth2 > s
     "stateCleared": "modified",
   },
   "server/src/security/oauth2.config.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/security/passport.oauth2-bearer.strategy.ts": {
     "stateCleared": "modified",
   },
   "server/src/security/passport.oauth2.strategy.ts": {
@@ -1525,6 +1531,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > with oauth2 and
   "server/src/security/guards/auth.guard.ts": {
     "stateCleared": "modified",
   },
+  "server/src/security/guards/oauth2-login.guard.ts": {
+    "stateCleared": "modified",
+  },
   "server/src/security/guards/roles.guard.ts": {
     "stateCleared": "modified",
   },
@@ -1535,6 +1544,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > with oauth2 and
     "stateCleared": "modified",
   },
   "server/src/security/oauth2.config.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/security/passport.oauth2-bearer.strategy.ts": {
     "stateCleared": "modified",
   },
   "server/src/security/passport.oauth2.strategy.ts": {

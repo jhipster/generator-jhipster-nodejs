@@ -15,6 +15,7 @@ import { UserJWTController} from '../web/rest/user.jwt.controller.ts';
 import { JwtStrategy } from '../security/passport.jwt.strategy.ts';
 <%_ } else if (authenticationType === 'oauth2') { _%>
 import { Oauth2Strategy } from '../security/passport.oauth2.strategy.ts';
+import { Oauth2BearerStrategy } from '../security/passport.oauth2-bearer.strategy.ts';
 import { UserOauth2Controller } from '../web/rest/user.oauth2.controller.ts';
 <%_ } _%>
 <%_ if (authenticationType === 'jwt' && generateBuiltInUserEntity) { _%>
@@ -67,7 +68,8 @@ import { AccountController } from '../web/rest/account.controller.ts';
   <%_ if (authenticationType === 'jwt') { _%>
   JwtStrategy
   <%_ } else if (authenticationType === 'oauth2') { _%>
-  Oauth2Strategy
+  Oauth2Strategy,
+  Oauth2BearerStrategy
   <%_ } _%>
   ],
   exports: [AuthService],

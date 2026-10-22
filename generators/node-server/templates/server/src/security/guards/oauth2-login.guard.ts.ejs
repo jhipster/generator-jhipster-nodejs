@@ -1,0 +1,6 @@
+import { Injectable } from '@nestjs/common';
+import { AuthGuard as NestAuthGuard } from '@nestjs/passport';
+
+/** The login with the identity provider (authorization code with PKCE), on the login routes only. */
+@Injectable()
+export class OAuth2LoginGuard extends NestAuthGuard('oauth2') {}

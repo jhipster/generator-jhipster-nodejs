@@ -238,28 +238,36 @@ export class AuthService {
 
   <%_ } else if (authenticationType === 'oauth2') { _%>
     <%_ if (generateBuiltInUserEntity) { _%>
+    /**
+     * The user of the identity provider in the database, like the user synchronization of JHipster Spring Boot: the
+     * authorities the database misses saved first, then the user created, or updated with the names, the mail, the
+     * language and the authorities of the identity provider.
+     */
     async findUserOrSave(loginUser: <%= userLoginVmClass %>): Promise<<%= userLoginVmClass %> | undefined> {
-        if (loginUser.login && loginUser.password && !loginUser.email) {
-            loginUser.email = loginUser.login + '@localhost.it';
+        const authorities = loginUser.authorities ?? [];
+<%_ if (generateBuiltInAuthorityEntity) { _%>
+        for (const name of authorities) {
+          if (!(await this.authorityRepository.findOne({ where: { name } }))) {
+            await this.authorityRepository.save(this.authorityRepository.create({ name }));
+          }
         }
+<%_ } _%>
         const userFound = await this.userService.findByFields({ where: { login: loginUser.login } });
-
-        if (!userFound) {
-          const authoritiesName: { name: string }[] = [];
-          loginUser.authorities?.forEach(authority => authoritiesName.push({ name: authority }));
-          // Activated, like the users of JHipster Spring Boot synchronized from the identity provider.
-          await this.userService.save({ ...loginUser, activated: true, authorities: authoritiesName }, loginUser.login);
-        }
+        const email = loginUser.email ?? userFound?.email ?? `${loginUser.login}@localhost`;
+        // Activated, like the users of JHipster Spring Boot synchronized from the identity provider.
+        await this.userService.save({ ...userFound, ...loginUser, email, activated: true, authorities } as <%= userLoginVmClass %>, loginUser.login);
         return loginUser;
       }
     <%_ } _%>
 
-   getAccount(userDTO: <%= userLoginVmClass %>): any {
+  getAccount(userDTO: <%= userLoginVmClass %>): any {
     if (!userDTO) {
-       return;
+      return;
     }
-    return userDTO;
-   }
+    // Without the ID token of the session, kept for the logout only.
+    const { idToken: _idToken, ...account } = userDTO as any;
+    return account;
+  }
 
   <%_ } _%>
 

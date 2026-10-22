@@ -15,6 +15,8 @@ export class OAuth2Config {
   readonly tokenURL: string;
   readonly logoutUrl: string;
   readonly callbackURL: string;
+  /** The keys of the issuer (JWKS), the bearer tokens are verified with. */
+  readonly jwksUri: string;
   readonly isOktaProvider: boolean;
 
   constructor(configService: ConfigService<ApplicationConfig, true>) {
@@ -29,10 +31,12 @@ export class OAuth2Config {
       this.authorizationURL = `${issuerUri}/v1/authorize`;
       this.tokenURL = `${issuerUri}/v1/token`;
       this.logoutUrl = `${issuerUri}/v1/logout`;
+      this.jwksUri = `${dockerIssuerUri}/v1/keys`;
     } else {
       this.authorizationURL = `${issuerUri}/${openIdProtocol}/auth`;
       this.tokenURL = `${dockerIssuerUri}/${openIdProtocol}/token`;
       this.logoutUrl = `${issuerUri}/${openIdProtocol}/logout`;
+      this.jwksUri = `${dockerIssuerUri}/${openIdProtocol}/certs`;
     }
   }
 }

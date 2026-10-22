@@ -9,3 +9,22 @@ export function extractAuthoritiesFromClaims(claims: Record<string, unknown>): s
   const roles = claims.groups ?? claims.roles ?? claims[`${CLAIMS_NAMESPACE}roles`] ?? [];
   return Array.isArray(roles) ? roles.filter((role): role is string => typeof role === 'string' && role.startsWith('ROLE_')) : [];
 }
+
+/**
+ * The user of the claims of an OIDC token (the ID token over the access token at the login, the access token of a bearer
+ * request), like the OIDC user of JHipster Spring Boot: the login of preferred_username (else sub) and the mail in lower
+ * case, the names, the language and the authorities.
+ */
+export function oidcUserOfClaims(claims: Record<string, any>): Record<string, any> {
+  const login = String(claims.preferred_username ?? claims.sub).toLowerCase();
+  return {
+    login,
+    firstName: claims.given_name,
+    lastName: claims.family_name,
+    email: claims.email ? String(claims.email).toLowerCase() : undefined,
+    imageUrl: claims.picture ?? '',
+    activated: true,
+    langKey: typeof claims.locale === 'string' ? claims.locale.split(/[-_]/)[0] : 'en',
+    authorities: extractAuthoritiesFromClaims(claims),
+  };
+}

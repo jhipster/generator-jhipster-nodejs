@@ -112,6 +112,7 @@ const rules: Rule[] = [
 <%_ } _%>
 <%_ if (authenticationTypeOauth2) { _%>
   ['jhipster.security.oauth2.client.provider.oidc.issuer-uri', value => isURL(String(value), { require_tld: false }), 'the URL of the OpenID Connect issuer'],
+  ['jhipster.security.session.secret', isNotEmpty, 'the secret of the sessions'],
 <%_ } _%>
 <%_ if (serviceDiscoveryEureka) { _%>
   ['eureka.client.service-url.defaultZone', value => isURL(String(value), { require_tld: false }), 'the URL of the Eureka server'],

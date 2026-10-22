@@ -54,8 +54,10 @@ async function bootstrap(): Promise<void> {
     session({
       secret: config.get('jhipster.security.session.secret'),
       resave: false,
-      saveUninitialized: true,
-      cookie: { secure: false, maxAge: 240000 }, // 4 minutes and session expires
+      saveUninitialized: false,
+      // Like the session of JHipster Spring Boot, it expires after 30 minutes without requests.
+      rolling: true,
+      cookie: { httpOnly: true, sameSite: 'lax', secure: 'auto', maxAge: 30 * 60 * 1000 },
     }),
   );
 

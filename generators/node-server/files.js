@@ -207,6 +207,8 @@ export const serverFiles = {
         'src/security/passport.oauth2.strategy.ts',
         'src/security/oauth2.config.ts',
         'src/security/oauth2.authorities.ts',
+        'src/security/passport.oauth2-bearer.strategy.ts',
+        'src/security/guards/oauth2-login.guard.ts',
         'test/security/oauth2.authorities.spec.ts',
       ],
     },

@@ -1,14 +1,12 @@
-import { <%_ if (authenticationType === 'jwt') { _%> Body, Post, Query, UseGuards, <%_ } _%> Controller, Get, HttpCode, Logger, Req, UseInterceptors, ClassSerializerInterceptor, InternalServerErrorException } from '@nestjs/common';
-<%_ if (authenticationType === 'jwt') { _%>
+import { <%_ if (authenticationType === 'jwt') { _%> Body, Post, Query, <%_ } _%>UseGuards, Controller, Get, HttpCode, Logger, Req, UseInterceptors, ClassSerializerInterceptor, InternalServerErrorException } from '@nestjs/common';
 import { AuthGuard } from '../../security/index.ts';
-<%_ } _%>
 <%_ if (authenticationType === 'jwt' && generateUserManagement) { _%>
 import { PasswordChangeDTO } from '../../service/dto/password-change.dto.ts';
 import { KeyAndPasswordDTO } from '../../service/dto/key-and-password.dto.ts';
 import { MailService } from '../../service/mail.service.ts';
 <%_ } _%>
 import { <% if (authenticationType === 'jwt' && generateUserManagement) { %>Managed<%- userLoginVmClass %>, <% } %><%- userLoginVmClass %> } from '../../service/dto/user.dto.ts';
-import {<%_ if (authenticationType === 'jwt') { _%> ApiBearerAuth, <%_ } _%> ApiTags, ApiResponse, ApiOperation } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags, ApiResponse, ApiOperation } from '@nestjs/swagger';
 import { AuthService } from '../../service/auth.service.ts';
 
 @Controller('api')
@@ -147,18 +145,16 @@ export class AccountController {
   <%_ } else if (authenticationType === 'oauth2') { _%>
 
   @Get('/account')
-  @ApiOperation({ summary: 'Get the current user if logged' })
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard)
+  @ApiOperation({ summary: 'Get the current user, of the session or of the bearer token, else 401' })
   @ApiResponse({
     status: 200,
     description: 'User retrieved',
     type: <%- userLoginVmClass %>,
   })
-  getAccount(@Req() req: any): any {
-    if(!req.session) {
-       return;
-    }
-    const userDTO: <%- userLoginVmClass %> = req.session.user;
-    return this.authService.getAccount(userDTO);
+  getAccount(@Req() req: { user: <%- userLoginVmClass %> }): any {
+    return this.authService.getAccount(req.user);
   }
 
   <%_ } else {_%>

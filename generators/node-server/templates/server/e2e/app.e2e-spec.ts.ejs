@@ -154,8 +154,8 @@ describe('App', () => {
 
     it('/GET account not logged', () => request(app.getHttpServer())
         .get('/api/account')
-        .expect(200)
-        .expect({}));
+        // Like JHipster Spring Boot, the clients take a 401 for not logged.
+        .expect(401));
     <%_ } _%>
 
     afterEach(async () => {
