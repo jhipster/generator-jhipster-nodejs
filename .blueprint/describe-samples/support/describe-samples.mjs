@@ -34,36 +34,32 @@ export { formatSample, formatSamplesList } from 'generator-jhipster/ci';
 
 // Synchronous, without top-level await, like the describe-samples of generator-jhipster: tools load this module with
 // require (requireSibling('support') of yeoman-environment), which refuses a module with a top-level await.
-const require = createRequire(import.meta.url);
-const ciFolder = join(dirname(require.resolve('generator-jhipster/package.json')), 'dist/lib/ci');
-// Not exported by generator-jhipster/ci: the synchronous parts of describeGithubSamples and getGithubSamplesGroup.
+// The synchronous part of describeGithubSamples, not exported by generator-jhipster/ci yet.
 /** @type {{ describeGithubSamplesGroup: (options: { samplesGroupFolder: string, group: string, samples: object, root: string }) => SampleDescription[] }} */
-const { describeGithubSamplesGroup } = require(join(ciFolder, 'describe-samples.js'));
-/** @type {{ githubSamplesGroupOf: (group: string, samples?: object) => object }} */
-const { githubSamplesGroupOf } = require(join(ciFolder, 'github-group.js'));
+const { describeGithubSamplesGroup } = createRequire(import.meta.url)(
+  join(dirname(createRequire(import.meta.url).resolve('generator-jhipster/package.json')), 'dist/lib/ci/describe-samples.js'),
+);
+
+const root = fileURLToPath(new URL('../../../', import.meta.url));
 
 /** The folder of the samples groups (`<group>.js`) and of their samples (`samples/`). */
 export const samplesGroupFolder = fileURLToPath(new URL('../../generate-sample/templates/', import.meta.url));
 
 /**
- * The samples groups of the blueprint (the `<group>.js` modules), imported statically so they are read synchronously, each
- * sample tagged with its group like getGithubSamplesGroup does, like the samples-groups of generator-jhipster. A spec checks
+ * The samples groups of the blueprint (the `<group>.js` modules), imported statically so they are read synchronously, like
+ * the samples-groups of generator-jhipster, each sample tagged with its group like getGithubSamplesGroup does. A spec checks
  * it lists every group of the folder.
- * @type {Record<string, object>}
+ * @type {Record<string, Record<string, object>>}
  */
 export const samplesGroups = Object.fromEntries(
-  Object.entries({ angular, microservice, react, vue }).map(([group, samples]) => [group, githubSamplesGroupOf(group, samples)]),
+  Object.entries({ angular, microservice, react, vue }).map(([group, samples]) => [
+    group,
+    Object.fromEntries(Object.entries(samples).map(([name, sample]) => [name, { ...sample, 'samples-group': group }])),
+  ]),
 );
 
 /** Every described workflow: the samples groups of the blueprint. */
 export const WORKFLOWS = Object.keys(samplesGroups);
-
-/**
- * The samples of a samples group, by name.
- * @param {string} group
- * @returns {object}
- */
-const samplesOfGroup = group => samplesGroups[group];
 
 /** @type {SampleDescription[] | undefined} */
 let descriptions;
@@ -76,12 +72,7 @@ let descriptions;
  */
 const describeAllSamples = () => {
   descriptions ??= WORKFLOWS.flatMap(group =>
-    describeGithubSamplesGroup({
-      samplesGroupFolder,
-      group,
-      samples: samplesOfGroup(group),
-      root: fileURLToPath(new URL('../../../', import.meta.url)),
-    }),
+    describeGithubSamplesGroup({ samplesGroupFolder, group, samples: samplesGroups[group], root }),
   );
   return descriptions;
 };
@@ -172,15 +163,9 @@ export const describeSample = name => summaryOf(findSamples({ sampleName: name }
  * @param {string[]} _files the changed files, relative to the repository root
  * @returns {Promise<Record<string, string[]>>}
  */
-export const describeChangedSamples = async _files => {
-  const selected = {};
-  for (const group of WORKFLOWS) {
-    // The sample of a job of the matrix is the sample name.
-    const { include = [] } = convertToGitHubMatrix(samplesOfGroup(group));
-    const names = include.map(job => job.sample);
-    if (names.length > 0) {
-      selected[group] = names;
-    }
-  }
-  return selected;
-};
+export const describeChangedSamples = async _files =>
+  Object.fromEntries(
+    WORKFLOWS.map(group => [group, convertToGitHubMatrix(samplesGroups[group]).include.map(job => job.sample)]).filter(
+      ([, samples]) => samples.length > 0,
+    ),
+  );

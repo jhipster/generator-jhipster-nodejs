@@ -19,9 +19,3 @@
 export { default } from './generator.mjs';
 export { default as command } from './command.mjs';
 export * from './support.mjs';
-
-/** @typedef {import('./support.mjs').SampleDescription} SampleDescription */
-/** @typedef {import('./support.mjs').SampleGroupDescription} SampleGroupDescription */
-/** @typedef {import('./support.mjs').SampleGroupSummary} SampleGroupSummary */
-/** @typedef {import('./support.mjs').SampleJDL} SampleJDL */
-/** @typedef {import('./support.mjs').SampleSummary} SampleSummary */
