@@ -255,7 +255,7 @@ export class AuthService {
         const userFound = await this.userService.findByFields({ where: { login: loginUser.login } });
         const email = loginUser.email ?? userFound?.email ?? `${loginUser.login}@localhost`;
         // Activated, like the users of JHipster Spring Boot synchronized from the identity provider.
-        await this.userService.save({ ...userFound, ...loginUser, email, activated: true, authorities } as <%= userLoginVmClass %>, loginUser.login);
+        await this.userService.save({ ...userFound, ...loginUser, email, activated: true, authorities }, loginUser.login);
         return loginUser;
       }
     <%_ } _%>
