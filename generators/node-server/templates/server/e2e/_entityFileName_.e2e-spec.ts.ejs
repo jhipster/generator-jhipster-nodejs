@@ -135,6 +135,28 @@ _%>
         expect(response.body.detail).toBe('Invalid sort property: unknownProperty');
     });
 
+<%_ if (pagination === 'no') { _%>
+    it('/GET all <%= entityApiUrl %> without pagination, like JHipster Spring Boot', async () => {
+        const { findAndCount } = serviceMock;
+        const options: any[] = [];
+        (serviceMock as any).findAndCount = (findOptions: any): any => {
+            options.push(findOptions);
+            return [[entityMock], 45];
+        };
+        try {
+            const response = await request(app.getHttpServer())
+                .get('/api/<%= entityApiUrl %>')
+                .expect(200);
+
+            expect(options[0].take).toBeUndefined();
+            expect(response.headers['x-total-count']).toBeUndefined();
+            expect(response.headers.link).toBeUndefined();
+        } finally {
+            serviceMock.findAndCount = findAndCount;
+        }
+    });
+
+<%_ } else { _%>
     it('/GET all <%= entityApiUrl %> with the links of the pages', async () => {
         const { findAndCount } = serviceMock;
         // 45 records, 3 pages of 20.
@@ -165,6 +187,7 @@ _%>
         expect(response.headers.link).not.toContain('rel="next"');
     });
 
+<%_ } _%>
     it('/GET <%= entityApiUrl %> by id', async () => {
 
 

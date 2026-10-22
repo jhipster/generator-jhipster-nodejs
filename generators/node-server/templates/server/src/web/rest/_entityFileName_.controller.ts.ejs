@@ -7,8 +7,12 @@ import { Body, ClassSerializerInterceptor, Controller, Delete, Get, Logger, NotF
 import { <% if (authenticationType === 'jwt') { _%> ApiBearerAuth, <% } else if (authenticationType === 'oauth2') { _%> ApiSecurity, <% } _%> ApiTags, ApiResponse, ApiOperation } from '@nestjs/swagger';
 import { <%= dtoClass %> } from '../../service/dto/<%= entityFileName %>.dto.ts';
 import { <%= entityClass %>Service } from '../../service/<%= entityFileName %>.service.ts';
+<%_ if (pagination !== 'no') { _%>
 import { PageRequest, Page } from '../../domain/base/pagination.entity.ts';
-import { AuthGuard,  Roles, RolesGuard, RoleType } from '../../security/index.ts';
+<%_ } else { _%>
+import { PageRequest } from '../../domain/base/pagination.entity.ts';
+<%_ } _%>
+import { AuthGuard, RolesGuard } from '../../security/index.ts';
 import { HeaderUtil } from '../../common/header-util.ts';
 import { isSortableProperty } from '../../common/sortable-properties.ts';
 import { Request } from '../../common/request.ts';
@@ -43,7 +47,6 @@ export class <%= entityClass %>Controller {
 
 
   @Get('/')
-  @Roles(RoleType.USER)
   @ApiResponse({
     status: 200,
     description: 'List all records',
@@ -63,6 +66,13 @@ export class <%= entityClass %>Controller {
       req.query.sort ?? '<%- primaryKey.name %>,ASC',
       property => isSortableProperty(this.<%= entityInstance %>Service.metadata, property, { labels: SORT_LABELS }),
     );
+<%_ if (pagination === 'no') { _%>
+    // Like JHipster Spring Boot, an entity without pagination lists all its records, without the pagination headers.
+    const [results] = await this.<%= entityInstance %>Service.findAndCount({
+      order: pageRequest.asOrder(),
+    });
+    return results;
+<%_ } else { _%>
     const [results, count] = await this.<%= entityInstance %>Service.findAndCount({
       skip: +pageRequest.page * pageRequest.size,
       take: +pageRequest.size,
@@ -70,10 +80,10 @@ export class <%= entityClass %>Controller {
     });
     this.headerUtil.addPaginationHeaders(req.res, new Page(results, count, pageRequest));
     return results;
+<%_ } _%>
   }
 
   @Get('/:id')
-  @Roles(RoleType.USER)
   @ApiResponse({
     status: 200,
     description: 'The found record',
@@ -88,7 +98,6 @@ export class <%= entityClass %>Controller {
   }
 
   @PostMethod('/')
-  @Roles(RoleType.USER)
   @ApiOperation({ summary: 'Create <%= entityInstance %>' })
   @ApiResponse({
     status: 201,
@@ -109,7 +118,6 @@ export class <%= entityClass %>Controller {
   }
 
   @Put('/:id')
-  @Roles(RoleType.USER)
   @ApiOperation({ summary: 'Update <%= entityInstance %> with id' })
   @ApiResponse({
     status: 200,
@@ -125,7 +133,6 @@ export class <%= entityClass %>Controller {
   }
 
   @Delete('/:id')
-  @Roles(RoleType.USER)
   @ApiOperation({ summary: 'Delete <%= entityInstance %>' })
   @ApiResponse({
     status: 204,
