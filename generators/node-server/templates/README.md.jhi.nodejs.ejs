@@ -61,7 +61,7 @@ Congratulations! You've selected an excellent way to secure your NHipster applic
 To log in to your app, you'll need to have [Keycloak](https://keycloak.org) up and running. The JHipster Team has created a Docker container for you that has the default users and roles. Start Keycloak using the following command.
 
 ```
-docker compose -f docker/keycloak.yml up
+docker compose -f <%- dockerServicesDir %>keycloak.yml up
 ```
 
 ### Okta
@@ -183,10 +183,10 @@ The build folder with all compiled sources will be **<%= nodeServerRootDir %>dis
 Sonar is used to analyse code quality. You can start a local Sonar server (accessible on http://localhost:9001) with:
 
 ```
-docker compose -f docker/sonar.yml up -d
+docker compose -f <%- dockerServicesDir %>sonar.yml up -d
 ```
 
-Note: we have turned off forced authentication redirect for UI in [docker/sonar.yml](docker/sonar.yml) for out of the box experience while trying out SonarQube, for real use cases turn it back on.
+Note: we have turned off forced authentication redirect for UI in [<%- dockerServicesDir %>sonar.yml](<%- dockerServicesDir %>sonar.yml) for out of the box experience while trying out SonarQube, for real use cases turn it back on.
 
 You can run a Sonar analysis with using the [sonar-scanner](https://docs.sonarqube.org/display/SCAN/Analyzing+with+SonarQube+Scanner).
 Then, run a Sonar analysis in the <%= nodeServerRootDir %> folder:

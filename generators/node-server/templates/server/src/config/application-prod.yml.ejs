@@ -51,7 +51,7 @@ server:
 # DATABASE_HOST or DATABASE_PASSWORD.
 database:
   type: <%= nodeProdDatabaseType %>
-  # The database of the host, like the datasource of JHipster Spring Boot: docker/app.yml sets the host of its service.
+  # The database of the host, like the datasource of JHipster Spring Boot: <%- dockerServicesDir %>app.yml sets the host of its service.
   host: localhost
   port: <%= nodeDatabasePort %>
 <%_ if (databaseTypeSql) { _%>
