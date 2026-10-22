@@ -18,6 +18,7 @@ export class Oauth2Strategy extends PassportStrategy(Strategy, undefined, true) 
             clientID: `${configService.get('jhipster.security.oauth2.client.registration.oidc.client-id')}`,
             clientSecret: `${configService.get('jhipster.security.oauth2.client.registration.oidc.client-secret')}`,
             callbackURL: oauth2Config.callbackURL,
+            proxy: true,
             scope: 'openid profile',
             state: true,
             pkce: true,
