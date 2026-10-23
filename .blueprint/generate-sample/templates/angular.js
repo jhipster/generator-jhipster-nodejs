@@ -4,6 +4,7 @@ const samples = [
   'monolith-angular-jwt-jdl',
   'monolith-angular-jwt-i18n-jdl',
   'monolith-angular-oauth2-jdl',
+  'monolith-angular-session-jdl',
   ['monolith-angular-oauth2-mongodb-jdl', { e2e: 'false' }],
   'monolith-angular-oauth2-i18n-jdl',
   'monolith-angular-jwt-i18n-dev',

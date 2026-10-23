@@ -1,25 +1,30 @@
-<%_ if (authenticationType === 'oauth2') { _%>
+<%_ if (authenticationTypeOauth2) { _%>
 import { HttpModule } from '@nestjs/axios';
 <%_ } _%>
-import { <% if (authenticationType === 'oauth2') { %>MiddlewareConsumer, NestModule, <% } %>Module } from '@nestjs/common';
+import { <% if (authenticationTypeSession || authenticationTypeOauth2) { %>MiddlewareConsumer, NestModule, <% } %>Module } from '@nestjs/common';
 import { AuthService } from '../service/auth.service.ts';
 <%_ if (generateBuiltInUserEntity) { _%>
 import { UserModule } from '../module/user.module.ts';
 <%_ } _%>
 import { PassportModule } from '@nestjs/passport';
-<%_ if (authenticationType === 'jwt') { _%>
+<%_ if (authenticationTypeJwt) { _%>
   <%_ if (generateBuiltInUserEntity) { _%>
 import { JwtModule } from '@nestjs/jwt';
 import { UserJWTController} from '../web/rest/user.jwt.controller.ts';
   <%_ } _%>
 import { JwtStrategy } from '../security/passport.jwt.strategy.ts';
-<%_ } else if (authenticationType === 'oauth2') { _%>
+<%_ } else if (authenticationTypeOauth2) { _%>
 import { Oauth2Strategy } from '../security/passport.oauth2.strategy.ts';
 import { Oauth2BearerStrategy } from '../security/passport.oauth2-bearer.strategy.ts';
-import { CsrfMiddleware } from '../security/csrf.middleware.ts';
 import { UserOauth2Controller } from '../web/rest/user.oauth2.controller.ts';
+<%_ } else if (authenticationTypeSession) { _%>
+import { UserSessionController } from '../web/rest/user.session.controller.ts';
+import { SessionUserMiddleware } from '../security/session-user.middleware.ts';
 <%_ } _%>
-<%_ if (authenticationType === 'jwt' && generateBuiltInUserEntity) { _%>
+<%_ if (authenticationTypeSession || authenticationTypeOauth2) { _%>
+import { CsrfMiddleware } from '../security/csrf.middleware.ts';
+<%_ } _%>
+<%_ if (authenticationTypeJwt && generateBuiltInUserEntity) { _%>
 import { ConfigService } from '@nestjs/config';
 import { JWT_ALGORITHM, jwtSecretKey } from '../security/jwt.config.ts';
 <%_ } _%>
@@ -44,7 +49,7 @@ import { AccountController } from '../web/rest/account.controller.ts';
   UserModule,
   <%_ } _%>
   PassportModule,
-  <%_ if (authenticationType === 'jwt' && generateBuiltInUserEntity) { _%>
+  <%_ if (authenticationTypeJwt && generateBuiltInUserEntity) { _%>
     JwtModule.registerAsync({
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => ({
@@ -55,34 +60,36 @@ import { AccountController } from '../web/rest/account.controller.ts';
         },
       }),
     }),
-  <%_ } else if (authenticationType === 'oauth2') { _%>
+  <%_ } else if (authenticationTypeOauth2) { _%>
   HttpModule,
   <%_ } _%>
   ],
   controllers: [
-  <%_ if (authenticationType === 'jwt' && generateBuiltInUserEntity) { _%>
+  <%_ if (authenticationTypeJwt && generateBuiltInUserEntity) { _%>
   UserJWTController,
-  <%_ } else if (authenticationType === 'oauth2') { _%>
+  <%_ } else if (authenticationTypeOauth2) { _%>
   UserOauth2Controller,
+  <%_ } else if (authenticationTypeSession) { _%>
+  UserSessionController,
   <%_ } _%>
   <%_ if (generateBuiltInAuthorityEntity) { _%>
   AuthorityController,
   <%_ } _%>
   <%- generateBuiltInUserEntity ? 'PublicUserController' : 'ManagementController' %>, AccountController ],
   providers: [AuthService,
-  <%_ if (authenticationType === 'jwt') { _%>
+  <%_ if (authenticationTypeJwt) { _%>
   JwtStrategy
-  <%_ } else if (authenticationType === 'oauth2') { _%>
+  <%_ } else if (authenticationTypeOauth2) { _%>
   Oauth2Strategy,
   Oauth2BearerStrategy
   <%_ } _%>
   ],
   exports: [AuthService],
 })
-<%_ if (authenticationType === 'oauth2') { _%>
+<%_ if (authenticationTypeSession || authenticationTypeOauth2) { _%>
 export class AuthModule implements NestModule {
   configure(consumer: MiddlewareConsumer): void {
-    consumer.apply(CsrfMiddleware).forRoutes('*');
+    consumer.apply(<% if (authenticationTypeSession) { %>SessionUserMiddleware, <% } %>CsrfMiddleware).forRoutes('*');
   }
 }
 <%_ } else { _%>

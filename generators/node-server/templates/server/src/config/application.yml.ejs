@@ -90,7 +90,7 @@ jhipster:
     # The Content-Security-Policy header of the responses, like JHipster Spring Boot.
     content-security-policy: "default-src 'self'; frame-src 'self' data:; script-src 'self' 'unsafe-inline' 'unsafe-eval'<%- locals.microfrontend && locals.clientFrameworkAngular ? ' blob:' : '' %> https://storage.googleapis.com; style-src 'self'<%- locals.clientThemeAny ? ' https://fonts.googleapis.com' : '' %> 'unsafe-inline'; img-src 'self' data:; font-src 'self'<%- locals.clientThemeAny ? ' https://fonts.gstatic.com' : '' %> data:"
 <%_ } _%>
-<%_ if (authenticationType === 'jwt') { _%>
+<%_ if (authenticationTypeJwt) { _%>
     authentication:
       jwt:
         # The secret of the tokens (base64-secret), a sample of the secret-samples profile: set it in production, with
@@ -98,7 +98,7 @@ jhipster:
         # Token is valid 24 hours
         token-validity-in-seconds: 86400
         token-validity-in-seconds-for-remember-me: 2592000
-<%_ } else if (authenticationType === 'oauth2') { _%>
+<%_ } else if (authenticationTypeOauth2) { _%>
     # The session secret and the OAuth2 client, samples of the secret-samples profile: set them in production, with
     # environment variables like JHIPSTER_SECURITY_OAUTH2_CLIENT_REGISTRATION_OIDC_CLIENTSECRET.
     oauth2:

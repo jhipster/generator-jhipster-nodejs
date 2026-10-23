@@ -1,0 +1,154 @@
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { Test, TestingModule } from '@nestjs/testing';
+import { INestApplication } from '@nestjs/common';
+import request from 'supertest';
+import { AppModule } from '../src/app.module.ts';
+import { configureApp } from '../src/app.config.ts';
+import { <%= user.dtoClass %> } from '../src/service/dto/user.dto.ts';
+import { UserService } from '../src/service/user.service.ts';
+import { PasswordService } from '../src/security/password.service.ts';
+
+/** A cookie of the Set-Cookie headers of a response, with its attributes. */
+const setCookie = (response: request.Response, name: string): string | undefined =>
+  ([] as string[]).concat(response.headers['set-cookie'] ?? []).find(value => value.startsWith(`${name}=`));
+
+/** The value of a cookie of the Set-Cookie headers of a response. */
+const cookieValue = (response: request.Response, name: string): string | undefined => {
+  const cookie = setCookie(response, name);
+  return cookie ? decodeURIComponent(cookie.split(';')[0].slice(name.length + 1)) : undefined;
+};
+
+/** The expiry of a cookie of the Set-Cookie headers of a response. */
+const cookieExpiry = (response: request.Response, name: string): number =>
+  Date.parse(/Expires=([^;]+)/.exec(setCookie(response, name) ?? '')?.[1] ?? '');
+
+describe('Session authentication', () => {
+  let app: INestApplication;
+  let agent: ReturnType<typeof request.agent>;
+  let service: UserService;
+  let users: <%= user.dtoClass %>[];
+
+  const password = 'sessionPassword';
+
+  beforeEach(async () => {
+    const moduleFixture: TestingModule = await Test.createTestingModule({
+      imports: [AppModule],
+    }).compile();
+
+    app = moduleFixture.createNestApplication();
+    configureApp(app);
+    await app.init();
+    service = moduleFixture.get<UserService>(UserService);
+    users = [
+      await service.save({ login: 'session-user', email: 'session-user@localhost', password, activated: true }, 'session-user', true),
+      await service.save({ login: 'session-inactive', email: 'session-inactive@localhost', password, activated: false }, 'session-inactive', true),
+    ];
+    // An agent keeps the cookies of the responses, like a browser: the session and the XSRF-TOKEN cookie.
+    agent = request.agent(app.getHttpServer());
+    csrfToken = undefined;
+  });
+
+  afterEach(async () => {
+    for (const user of users ?? []) {
+      await service.delete(user);
+    }
+    await app?.close();
+  });
+
+  /** The XSRF-TOKEN cookie a client without a session gets, the token of its login, kept by the agent. */
+  let csrfToken: string | undefined;
+  const anonymousToken = async (): Promise<string> => {
+    csrfToken = cookieValue(await agent.get('/api/account').expect(401), 'XSRF-TOKEN') ?? csrfToken;
+    return csrfToken!;
+  };
+
+  /** The login of the form the JHipster clients post, with the token of the XSRF-TOKEN cookie. */
+  const login = async (form: Record<string, string>): Promise<request.Response> => {
+    const token = await anonymousToken();
+    return agent.post('/api/authentication').set('X-XSRF-TOKEN', token).type('form').send(form);
+  };
+
+  it('answers 401 without a session, like JHipster Spring Boot, giving the client a CSRF token cookie', async () => {
+    const response = await agent.get('/api/account').expect(401);
+    expect(cookieValue(response, 'XSRF-TOKEN')).toEqual(expect.any(String));
+  });
+
+  it('refuses a login without the CSRF token of the cookie of the client, like Spring Security, whatever its path', async () => {
+    await anonymousToken();
+    // Express routes the paths whatever their case and a trailing slash.
+    for (const path of ['/api/authentication', '/API/Authentication', '/api/authentication/']) {
+      await agent.post(path).type('form').send({ username: 'session-user', password }).expect(403);
+    }
+    await agent.get('/api/account').expect(401);
+  });
+
+  it('refuses a form of other values than texts with 401', async () => {
+    const token = await anonymousToken();
+    await agent.post('/api/authentication').set('X-XSRF-TOKEN', token).send({ username: ['session-user'], password: { value: password } }).expect(401);
+  });
+
+  it('checks the password of an unknown login too, answering in the time of a known one', async () => {
+    const matches = vi.spyOn(app.get(PasswordService), 'matches');
+    await login({ username: 'unknown', password });
+    expect(matches).toHaveBeenCalledWith(password, expect.any(String));
+  });
+
+  it('logs out a user deactivated or removed at its next request, like JHipster Spring Boot reads the user again', async () => {
+    await login({ username: 'session-user', password, 'remember-me': 'true' });
+    await agent.get('/api/account').expect(200);
+    const user = (await service.findByFields({ where: { login: 'session-user' } }))!;
+    await service.save({ ...user, activated: false }, 'admin');
+    await agent.get('/api/account').expect(401);
+  });
+
+  it('applies the authorities given to the user of a session at once', async () => {
+    await login({ username: 'session-user', password });
+    await agent.get('/api/admin/users').expect(403);
+    const user = (await service.findByFields({ where: { login: 'session-user' } }))!;
+    await service.save({ ...user, authorities: ['ROLE_USER', 'ROLE_ADMIN'] }, 'admin');
+    await agent.get('/api/admin/users').expect(200);
+  });
+
+  it('refuses a wrong password, an unknown login, a missing password and a user not activated with 401', async () => {
+    await login({ username: 'session-user', password: 'wrong' }).then(response => expect(response.status).toBe(401));
+    await login({ username: 'unknown', password }).then(response => expect(response.status).toBe(401));
+    await login({ username: 'session-user' }).then(response => expect(response.status).toBe(401));
+    await login({ username: 'session-inactive', password }).then(response => expect(response.status).toBe(401));
+    await agent.get('/api/account').expect(401);
+  });
+
+  it('logs in the user of the login, in lower case, in a session of 30 minutes without requests', async () => {
+    const response = await login({ username: 'Session-User', password, 'remember-me': 'false' });
+    expect(response.status).toBe(200);
+    expect(cookieExpiry(response, 'connect.sid')).toBeLessThanOrEqual(Date.now() + 30 * 60 * 1000);
+    const { body } = await agent.get('/api/account').expect(200);
+    expect(body).toMatchObject({ login: 'session-user' });
+    expect(body.password).toBeUndefined();
+  });
+
+  it('keeps a remember-me login 31 days without requests, like the remember-me of JHipster Spring Boot', async () => {
+    const response = await login({ username: 'session-user', password, 'remember-me': 'true' });
+    expect(response.status).toBe(200);
+    expect(cookieExpiry(response, 'connect.sid')).toBeGreaterThan(Date.now() + 30 * 24 * 60 * 60 * 1000);
+    expect(cookieExpiry(response, 'XSRF-TOKEN')).toBeGreaterThan(Date.now() + 30 * 24 * 60 * 60 * 1000);
+  });
+
+  it('refuses the unsafe requests of a session without its CSRF token, the logout included', async () => {
+    const token = cookieValue(await login({ username: 'session-user', password }), 'XSRF-TOKEN')!;
+    await agent.post('/api/logout').expect(403);
+    await agent.post('/api/logout').set('X-XSRF-TOKEN', 'other').expect(403);
+    await agent.get('/api/account').expect(200);
+    await agent.post('/api/logout').set('X-XSRF-TOKEN', token).expect(200);
+  });
+
+  it('logs out, ending the session', async () => {
+    const token = cookieValue(await login({ username: 'session-user', password }), 'XSRF-TOKEN')!;
+    await agent.post('/api/logout').set('X-XSRF-TOKEN', token).expect(200);
+    await agent.get('/api/account').expect(401);
+  });
+
+  it('refuses the administration to a user without ROLE_ADMIN', async () => {
+    await login({ username: 'session-user', password });
+    await agent.get('/api/admin/users').expect(403);
+  });
+});

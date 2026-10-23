@@ -160,7 +160,13 @@ export default class extends BaseApplicationGenerator {
           ...['searchEngine', 'cacheProvider', 'websocket', 'messageBroker']
             .filter(option => enabled(config[option]))
             .map(option => `${option} ${config[option]}`),
-          ...(config.authenticationType === 'session' ? ['authenticationType session (use jwt or oauth2)'] : []),
+          // The sessions of the users of the application, like JHipster Spring Boot, in a monolith with its user management.
+          ...(config.authenticationType === 'session' && (config.applicationType ?? 'monolith') !== 'monolith'
+            ? [`authenticationType session of a ${config.applicationType} (use jwt or oauth2)`]
+            : []),
+          ...(config.authenticationType === 'session' && config.skipUserManagement
+            ? ['authenticationType session with skipUserManagement']
+            : []),
           ...(config.reactive ? ['reactive'] : []),
         ];
         if (unsupported.length > 0) {
@@ -233,6 +239,17 @@ export default class extends BaseApplicationGenerator {
           __override__: false,
           // The offset of the timestamps of the migrations of the developers (see support/migrations.js).
           nodejsMigrationTimestampOffset: MIGRATION_TIMESTAMP_OFFSET,
+        });
+      },
+      passwords({ applicationDefaults }) {
+        applicationDefaults({
+          __override__: false,
+          // The bcrypt rounds of the passwords of the users: the property of the JWT applications, kept, else the one of
+          // the session applications.
+          nodejsPasswordRoundsProperty: ({ authenticationTypeJwt }) =>
+            authenticationTypeJwt
+              ? 'jhipster.security.authentication.jwt.hash-salt-or-rounds'
+              : 'jhipster.security.authentication.hash-salt-or-rounds',
         });
       },
       drivers({ applicationDefaults }) {

@@ -280,7 +280,8 @@ describe('SubGenerator node-server of nodejs JHipster blueprint', () => {
     [{ cacheProvider: 'redis' }, 'cacheProvider redis'],
     [{ websocket: 'spring-websocket' }, 'websocket spring-websocket'],
     [{ messageBroker: 'kafka' }, 'messageBroker kafka'],
-    [{ authenticationType: 'session' }, 'authenticationType session'],
+    [{ authenticationType: 'session', applicationType: 'microservice' }, 'authenticationType session of a microservice'],
+    [{ authenticationType: 'session', skipUserManagement: true }, 'authenticationType session with skipUserManagement'],
     [{ reactive: true }, 'reactive'],
   ]) {
     describe(`with ${refused}`, () => {
@@ -345,6 +346,41 @@ describe('SubGenerator node-server of nodejs JHipster blueprint', () => {
         'server/src/migrations/1570200490072-SeedUsersRoles.ts',
       ]);
       result.assertFileContent('server/src/module/auth.module.ts', 'ManagementController');
+    });
+  });
+  describe('with session', () => {
+    beforeAll(async function () {
+      await helpers
+        .run(SUB_GENERATOR_NAMESPACE)
+        .withJHipsterConfig({
+          authenticationType: 'session',
+          skipClient: true,
+        })
+        .withOptions({
+          ignoreNeedlesError: true,
+        })
+        .withJHipsterGenerators()
+        .withConfiguredBlueprint()
+        .withBlueprintConfig({});
+    });
+
+    it('should generate the session login and the user management, without JWT nor OAuth2', () => {
+      result.assertFile([
+        'server/src/web/rest/user.session.controller.ts',
+        'server/src/security/csrf.middleware.ts',
+        'server/src/security/password.service.ts',
+        'server/src/web/rest/user.controller.ts',
+        'server/e2e/session.e2e-spec.ts',
+      ]);
+      result.assertNoFile([
+        'server/src/web/rest/user.jwt.controller.ts',
+        'server/src/security/passport.jwt.strategy.ts',
+        'server/src/web/rest/user.oauth2.controller.ts',
+      ]);
+      result.assertJsonFileContent('server/package.json', { dependencies: { 'express-session': /./, bcrypt: /./ } });
+      result.assertNoJsonFileContent('server/package.json', { dependencies: { '@nestjs/jwt': /./ } });
+      result.assertFileContent('server/src/security/password.service.ts', 'jhipster.security.authentication.hash-salt-or-rounds');
+      result.assertFileContent('server/src/config/application-secret-samples.yml', /session:\n\s+secret:/);
     });
   });
   describe('microservice with eureka', () => {

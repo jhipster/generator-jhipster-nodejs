@@ -4,7 +4,7 @@ import { PageRequest, Page } from '../../domain/base/pagination.entity.ts';
 import { <%= user.dtoClass%> } from '../../service/dto/user.dto.ts';
 import { HeaderUtil } from '../../common/header-util.ts';
 import { Request } from '../../common/request.ts';
-import {<%_ if (authenticationType === 'jwt') { _%> ApiBearerAuth, <%_ } else if (authenticationType === 'oauth2') { _%> ApiSecurity, <%_ } _%> ApiTags, ApiResponse, ApiOperation } from '@nestjs/swagger';
+import {<%_ if (authenticationTypeJwt) { _%> ApiBearerAuth, <%_ } else { _%> ApiSecurity, <%_ } _%> ApiTags, ApiResponse, ApiOperation } from '@nestjs/swagger';
 import { UserService } from '../../service/user.service.ts';
 import { MailService } from '../../service/mail.service.ts';
 import { randomBytes } from 'crypto';
@@ -17,9 +17,9 @@ const UNSORTABLE_PROPERTIES = ['password', 'activationKey', 'resetKey', 'resetDa
 @Controller('api/admin/users')
 @UseGuards(AuthGuard, RolesGuard)
 @UseInterceptors(ClassSerializerInterceptor)
-<%_ if (authenticationType === 'jwt') { _%>
+<%_ if (authenticationTypeJwt) { _%>
 @ApiBearerAuth()
-<%_ } else if (authenticationType === 'oauth2') { _%>
+<%_ } else { _%>
 @ApiSecurity({})
 <%_ } _%>
 @ApiTags('user-resource')
@@ -99,7 +99,7 @@ export class UserController {
           resetDate: new Date(),
         },
         req.user?.login,
-<%_ if (authenticationType === 'jwt') { _%>
+<%_ if (generateUserManagement) { _%>
         true,
 <%_ } _%>
       );

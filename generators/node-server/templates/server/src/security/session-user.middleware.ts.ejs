@@ -1,0 +1,33 @@
+import { Injectable, NestMiddleware } from '@nestjs/common';
+import { NextFunction, Request, Response } from 'express';
+import { <%= user.dtoClass %> } from '../service/dto/user.dto.ts';
+import { UserService } from '../service/user.service.ts';
+
+/** The user a session keeps: without its secrets, which stay in the database. */
+export function sessionUser(user: <%= user.dtoClass %>): Omit<<%= user.dtoClass %>, 'password' | 'activationKey' | 'resetKey'> {
+  const { password: _password, activationKey: _activationKey, resetKey: _resetKey, ...kept } = user;
+  return kept;
+}
+
+/**
+ * The user of a logged session, read again from the database at every request, like the user of a JWT token and the
+ * remember-me login of JHipster Spring Boot: a user removed or deactivated is logged out at its next request (its session
+ * lasting up to 31 days with remember-me), the authorities given or removed apply at once.
+ */
+@Injectable()
+export class SessionUserMiddleware implements NestMiddleware {
+  constructor(private readonly userService: UserService) {}
+
+  async use(req: Request, res: Response, next: NextFunction): Promise<void> {
+    const session = req.session as any;
+    if (session?.user) {
+      const user = await this.userService.findByFields({ where: { login: session.user.login } });
+      if (user?.activated) {
+        session.user = sessionUser(user);
+      } else {
+        await new Promise<void>(resolve => session.destroy(() => resolve()));
+      }
+    }
+    next();
+  }
+}

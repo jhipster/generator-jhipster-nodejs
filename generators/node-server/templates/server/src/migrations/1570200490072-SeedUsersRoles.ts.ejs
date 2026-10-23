@@ -1,6 +1,6 @@
 <%_ const UserEntity = user.persistClass %>
 import { MigrationInterface, QueryRunner } from 'typeorm';
-<%_ if (authenticationType !== 'oauth2') { _%>
+<%_ if (generateUserManagement) { _%>
 import { <%= UserEntity %> } from '../domain/user.entity.ts';
 import { config } from '../config.ts';
 import { encodePassword } from '../security/password-util.ts';
@@ -12,7 +12,7 @@ export class SeedUsersRoles1570200490072 implements MigrationInterface {
 
   role2: Authority = { name: 'ROLE_USER' };
 
-  <%_ if (authenticationType !== 'oauth2') { _%>
+  <%_ if (generateUserManagement) { _%>
   // The users of JHipster Spring Boot: an administrator and a user, in the native language of the application.
   user1: <%= UserEntity %> = {
     login: 'admin',
@@ -45,7 +45,7 @@ export class SeedUsersRoles1570200490072 implements MigrationInterface {
 
     const authorityRepository = queryRunner.manager.getRepository("<%- jhiTablePrefix %>_authority");
 
-   <%_ if (authenticationType === 'oauth2') { _%>
+   <%_ if (!generateUserManagement) { _%>
 
     await authorityRepository.save([this.role1, this.role2]);
 
@@ -60,7 +60,7 @@ export class SeedUsersRoles1570200490072 implements MigrationInterface {
     this.user2.authorities= [userRole];
 
     // The migrations run outside of the dependency injection: the rounds of the configuration, like the PasswordService.
-    const rounds = Number(config.get('jhipster.security.authentication.jwt.hash-salt-or-rounds'));
+    const rounds = Number(config.get('<%= nodejsPasswordRoundsProperty %>'));
     const users = await Promise.all(
       [this.user1, this.user2].map(async user => ({ ...user, password: await encodePassword(user.password, rounds) })),
     );

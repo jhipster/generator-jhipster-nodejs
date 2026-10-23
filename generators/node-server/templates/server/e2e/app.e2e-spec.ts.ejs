@@ -4,15 +4,15 @@ import request from 'supertest';
 import { AppModule } from '../src/app.module.ts';
 import { configureApp } from '../src/app.config.ts';
 import { INestApplication } from '@nestjs/common';
-<%_ if (authenticationType === 'jwt') { _%>
+<%_ if (authenticationTypeJwt) { _%>
 import { JwtService } from '@nestjs/jwt';
 <%_ } _%>
-<%_ if (authenticationType === 'jwt' && generateUserManagement) { _%>
+<%_ if (authenticationTypeJwt && generateUserManagement) { _%>
 import { UserLoginDTO } from '../src/service/dto/user-login.dto.ts';
-<%_ } else if (authenticationType === 'jwt') { _%>
+<%_ } else if (authenticationTypeJwt) { _%>
 import { ConfigService } from '@nestjs/config';
 import { JWT_ALGORITHM, jwtSecretKey } from '../src/security/jwt.config.ts';
-<%_ } else if (authenticationType === 'oauth2' && generateBuiltInUserEntity) { _%>
+<%_ } else if (authenticationTypeOauth2 && generateBuiltInUserEntity) { _%>
 import { oidcUserOfClaims } from '../src/security/oauth2.authorities.ts';
 import { AuthService } from '../src/service/auth.service.ts';
 import { UserService } from '../src/service/user.service.ts';
@@ -26,13 +26,13 @@ describe('App', () => {
         activeProfiles: ['test', 'secret-samples'],
         'display-ribbon-on-profiles': 'dev',
     };
-<%_  if (authenticationType === 'jwt' && generateUserManagement) { _%>
+<%_  if (authenticationTypeJwt && generateUserManagement) { _%>
     const testUserLogin: UserLoginDTO = {
         username: 'admin',
         password: 'admin',
         rememberMe: true
     };
-<%_ } else if (authenticationType === 'oauth2') { _%>
+<%_ } else if (authenticationTypeOauth2) { _%>
 
     const testRequest: any = {};
 <%_ }_%>
@@ -93,7 +93,7 @@ describe('App', () => {
         await request(app.getHttpServer()).get('/management/health/readiness').expect(200).expect({ status: 'UP' });
     });
 
-<%_ if (generateBuiltInUserEntity && authenticationTypeJwt) { _%>
+<%_ if (generateUserManagement) { _%>
     it('/GET the authorities without authentication is unauthorized, like JHipster Spring Boot', () => request(app.getHttpServer())
         .get('/api/authorities')
         .expect(401));
@@ -103,7 +103,7 @@ describe('App', () => {
         .expect(401));
 <%_ } _%>
 
-    <%_ if (authenticationType === 'jwt' && generateUserManagement) { _%>
+    <%_ if (authenticationTypeJwt && generateUserManagement) { _%>
     it<%- databaseTypeMongodb ? '.skip' : ''%>('/POST authenticate get jwt authenticate OK', () => request(app.getHttpServer())
         .post('/api/authenticate')
         .send(testUserLogin)
@@ -122,7 +122,7 @@ describe('App', () => {
             .set('Authorization', `Bearer ${expiredToken}`)
             .expect(401);
     });
-    <%_ } else if (authenticationType === 'jwt') { _%>
+    <%_ } else if (authenticationTypeJwt) { _%>
     describe('with a token of the gateway', () => {
         // Signed like a JHipster Spring Boot gateway: HS512 with the base64 decoded secret, login as subject, authorities in auth.
         const gatewayJwtService = (): JwtService =>
@@ -158,7 +158,7 @@ describe('App', () => {
                 .expect(401);
         });
     });
-    <%_ } else if (authenticationType === 'oauth2') { _%>
+    <%_ } else if (authenticationTypeOauth2) { _%>
     it('/POST security oauth2 does not perform logout', () => request(app.getHttpServer())
         .post('/api/logout')
         .send(testRequest)

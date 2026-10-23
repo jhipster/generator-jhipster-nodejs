@@ -17,12 +17,13 @@ Instead, `-jdl` suffix folders contain `.jdl` files which is the model to create
 - monolith-client-database-prod-template-jdl
 - microservice-oauth2-jdl
 
-Every `*template-jdl` app will be customized to generate **five applications** changing **client** (`react`, `vue` or `angular`) and **auth** (`jwt` or `oauth2`) :
+Every `*template-jdl` app will be customized to generate **five applications** changing **client** (`react`, `vue` or `angular`) and **auth** (`jwt`, `oauth2` or `session`) :
 
 - monolith-react-jwt-jdl
 - monolith-react-oauth2-jdl
 - monolith-angular-jwt-jdl
 - monolith-angular-oauth2-jdl
+- monolith-angular-session-jdl
 - monolith-angular-oauth2-mongodb-jdl
 - monolith-angular-jwt-mongodb-jdl
 - monolith-react-jwt-i18n-jdl
