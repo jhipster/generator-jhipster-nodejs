@@ -26,5 +26,9 @@ describe('SubGenerator docker of nodejs JHipster blueprint', () => {
     it('should publish the application on the loopback interface of the host, like JHipster Spring Boot', () => {
       result.assertFileContent('docker/app.yml', '- 127.0.0.1:8080:8080');
     });
+
+    it('should name the database host like the service of its docker compose files, a deployment prefixing it', () => {
+      result.assertFileContent('docker/app.yml', '- DATABASE_HOST=postgresql\n');
+    });
   });
 });

@@ -1,0 +1,55 @@
+/*
+ * A JHipster Spring Boot gateway and a NodeJS microservice (this blueprint) with an Angular microfrontend and the Eureka
+ * service discovery: the NodeJS microservice must accept the tokens of the Spring Boot gateway (generate-sample gives
+ * both the same jwt secret key) and expose its microfrontend to it.
+ * Deployed with JHipster's docker-compose generator, the Cypress end-to-end tests of the gateway run against the
+ * whole stack (the JHipster Registry, the gateway and the microservice from their Docker images).
+ */
+
+application {
+  config {
+    baseName gateway
+    applicationType gateway
+    testFrameworks [cypress]
+    serviceDiscoveryType eureka
+    clientFramework angular
+    microfrontends [notes]
+  }
+  entities Note, Category
+}
+
+application {
+  config {
+    baseName notes
+    applicationType microservice
+    testFrameworks [cypress]
+    serviceDiscoveryType eureka
+    clientFramework angular
+    microfrontend true
+    blueprints [generator-jhipster-nodejs]
+  }
+  entities Note, Category
+}
+
+entity Category {
+  name String required unique
+}
+
+entity Note {
+  title String required
+  content TextBlob
+}
+
+relationship ManyToOne {
+  Note{category(name)} to Category
+}
+
+microservice Note, Category with notes
+paginate Note with pagination
+
+deployment {
+  deploymentType docker-compose
+  appsFolders [gateway, notes]
+  serviceDiscoveryType eureka
+  monitoring no
+}

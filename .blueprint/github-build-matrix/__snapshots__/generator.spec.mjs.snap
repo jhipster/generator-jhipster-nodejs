@@ -171,6 +171,49 @@ exports[`generator - github-build-matrix > with microservice > should match matr
 }
 `;
 
+exports[`generator - github-build-matrix > with microservice-stack > should match matrix value 1`] = `
+{
+  "include": [
+    {
+      "default-environment": "prod",
+      "generatorOptions": {
+        "monorepository": true,
+        "workspaces": true,
+      },
+      "java-version": "21",
+      "job-name": "microservice-stack-cypress",
+      "jwt-secret-key": "ZjY4MTM4YjI5YzMwZjhjYjI2OTNkNTRjMWQ5Y2Q0Y2YwOWNmZTE2NzRmYzU3NTMwM2NjOTE3MTllOTM3MWRkMzcyYTljMjVmNmQ0Y2MxOTUzODc0MDhhMTlkMDIxMzI2YzQzZDM2ZDE3MmQ3NjVkODk3OTVmYzljYTQyZDNmMTQ=",
+      "node-version": Any<String>,
+      "npm-version": Any<String>,
+      "os": "ubuntu-latest",
+      "sample": "microservice-stack-cypress",
+      "sample-file": "microservice-stack-cypress",
+      "sample-folder": "samples/microservice-stack/",
+      "sample-type": "jdl",
+      "samples-group": "microservice-stack",
+    },
+    {
+      "default-environment": "prod",
+      "generatorOptions": {
+        "monorepository": true,
+        "workspaces": true,
+      },
+      "java-version": "21",
+      "job-name": "microservice-stack-playwright",
+      "jwt-secret-key": "ZjY4MTM4YjI5YzMwZjhjYjI2OTNkNTRjMWQ5Y2Q0Y2YwOWNmZTE2NzRmYzU3NTMwM2NjOTE3MTllOTM3MWRkMzcyYTljMjVmNmQ0Y2MxOTUzODc0MDhhMTlkMDIxMzI2YzQzZDM2ZDE3MmQ3NjVkODk3OTVmYzljYTQyZDNmMTQ=",
+      "node-version": Any<String>,
+      "npm-version": Any<String>,
+      "os": "ubuntu-latest",
+      "sample": "microservice-stack-playwright",
+      "sample-file": "microservice-stack-playwright",
+      "sample-folder": "samples/microservice-stack/",
+      "sample-type": "jdl",
+      "samples-group": "microservice-stack",
+    },
+  ],
+}
+`;
+
 exports[`generator - github-build-matrix > with react > should match matrix value 1`] = `
 {
   "include": [
@@ -314,6 +357,18 @@ exports[`generator - github-build-matrix > with samples > should match matrix va
       "os": "ubuntu-latest",
       "sample": "microservice-oauth2-jdl",
       "sample-type": "jdl",
+      "samples-group": "samples",
+    },
+    {
+      "default-environment": "prod",
+      "java-version": "21",
+      "job-name": "microservice-stack",
+      "jwt-secret-key": "ZjY4MTM4YjI5YzMwZjhjYjI2OTNkNTRjMWQ5Y2Q0Y2YwOWNmZTE2NzRmYzU3NTMwM2NjOTE3MTllOTM3MWRkMzcyYTljMjVmNmQ0Y2MxOTUzODc0MDhhMTlkMDIxMzI2YzQzZDM2ZDE3MmQ3NjVkODk3OTVmYzljYTQyZDNmMTQ=",
+      "node-version": Any<String>,
+      "npm-version": Any<String>,
+      "os": "ubuntu-latest",
+      "sample": "microservice-stack",
+      "sample-type": "yo-rc",
       "samples-group": "samples",
     },
     {

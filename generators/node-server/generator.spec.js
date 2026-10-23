@@ -440,6 +440,31 @@ describe('SubGenerator node-server of nodejs JHipster blueprint', () => {
     });
   });
 
+  describe('microservice with a microfrontend', () => {
+    beforeAll(async function () {
+      await helpers
+        .run(SUB_GENERATOR_NAMESPACE)
+        .withJHipsterConfig({
+          applicationType: 'microservice',
+          baseName: 'notes',
+          clientFramework: 'angular',
+          microfrontend: true,
+        })
+        .withOptions({
+          ignoreNeedlesError: true,
+        })
+        .withJHipsterGenerators()
+        .withConfiguredBlueprint()
+        .withBlueprintConfig({});
+    });
+
+    it('should wait for the microservice through its gateway, like JHipster Spring Boot', () => {
+      expect(result.fs.readJSON(join(result.cwd, 'package.json')).scripts['ci:server:await']).toContain(
+        'wait-on -t 180000 http-get://127.0.0.1:8080/services/notes/management/health/readiness ',
+      );
+    });
+  });
+
   describe('with oauth2 and syncUserWithIdp', () => {
     beforeAll(async function () {
       await helpers

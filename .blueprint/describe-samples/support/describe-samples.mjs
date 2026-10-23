@@ -28,6 +28,7 @@ import {
 } from 'generator-jhipster/ci';
 
 import angular from '../../generate-sample/templates/angular.js';
+import microserviceStack from '../../generate-sample/templates/microservice-stack.js';
 import microservice from '../../generate-sample/templates/microservice.js';
 import react from '../../generate-sample/templates/react.js';
 import vue from '../../generate-sample/templates/vue.js';
@@ -52,7 +53,10 @@ export const samplesGroupFolder = fileURLToPath(new URL('../../generate-sample/t
  * @type {Record<string, Record<string, object>>}
  */
 export const samplesGroups = Object.fromEntries(
-  Object.entries({ angular, microservice, react, vue }).map(([group, samples]) => [group, githubSamplesGroupOf(group, samples)]),
+  Object.entries({ angular, microservice, 'microservice-stack': microserviceStack, react, vue }).map(([group, samples]) => [
+    group,
+    githubSamplesGroupOf(group, samples),
+  ]),
 );
 
 /** Every described workflow: the samples groups of the blueprint. */

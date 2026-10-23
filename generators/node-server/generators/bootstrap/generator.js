@@ -30,6 +30,10 @@ export default class extends BaseApplicationGenerator {
           // anyEntityHasRelationshipWithUser is defined, before JHipster derives the built-in entities from it.
           syncUserWithIdp: ({ authenticationType, applicationType, anyEntityHasRelationshipWithUser }) =>
             authenticationType === 'oauth2' && (applicationType === 'gateway' || anyEntityHasRelationshipWithUser),
+          // The scripts of the client run from the root package.json with --prefix, not -w (the e2e default): an application
+          // of a JHipster workspace is itself a workspace, and npm resolves -w from the root of the outer one.
+          clientNpmRun: ({ clientRootDir }) => (clientRootDir ? `npm --prefix ${clientRootDir} run` : 'npm run'),
+          clientNgCommand: ({ clientRootDir }) => (clientRootDir ? `npm --prefix ${clientRootDir} exec -- ng` : 'ng'),
         });
       },
     });

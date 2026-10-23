@@ -20,12 +20,22 @@ import { readFileSync } from 'node:fs';
 import { extname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import { extractSampleFiles } from 'generator-jhipster/ci';
+import { defaultGithubEnvironment, extractSampleFiles } from 'generator-jhipster/ci';
+import { EnvironmentBuilder } from 'generator-jhipster/cli';
 import BaseCoreGenerator from 'generator-jhipster/generators/base-core';
 
 import { findSamples } from '../describe-samples/support/describe-samples.mjs';
 
 const GENERATOR_JDL = 'jdl';
+
+/**
+ * The secrets of a sample, the same at each generation, like the samples of generator-jhipster: derived from the creation
+ * timestamp, the jwt secret key of a jdl sample shared by its applications (a gateway and its microservices).
+ */
+const sampleSecrets = ({ jdl }) => ({
+  reproducibleSecrets: true,
+  ...(jdl ? { jwtSecretKey: defaultGithubEnvironment['jwt-secret-key'] } : {}),
+});
 
 const packageRoot = fileURLToPath(new URL('../../', import.meta.url));
 const packageJson = JSON.parse(readFileSync(new URL('../../package.json', import.meta.url), 'utf-8'));
@@ -92,8 +102,17 @@ export default class extends BaseCoreGenerator {
           skipJhipsterDependencies: true,
         };
         const { sample, jdlFiles } = this;
+        // The jdl generator generates the applications of a workspace in environments of their own: they find this
+        // blueprint, which the JDL gives to the applications that use it, in this checkout.
+        const workspaceOptions = {
+          createEnvBuilder: (options, prepareOptions) =>
+            EnvironmentBuilder.create(options).prepare({ lookups: [{ packagePaths: [packageRoot] }], ...prepareOptions }),
+        };
         if (!sample) {
-          await this.composeWithJHipster(GENERATOR_JDL, { generatorArgs: jdlFiles, generatorOptions });
+          await this.composeWithJHipster(GENERATOR_JDL, {
+            generatorArgs: jdlFiles,
+            generatorOptions: { ...generatorOptions, ...sampleSecrets({ jdl: true }) },
+          });
           return;
         }
 
@@ -101,8 +120,10 @@ export default class extends BaseCoreGenerator {
           generatorArgs: jdlFiles,
           generatorOptions: {
             ...generatorOptions,
+            ...sampleSecrets({ jdl: sample.defaultCommand === GENERATOR_JDL }),
             ...(sample.environment ? { defaultEnvironment: sample.environment } : {}),
             ...sample.generatorOptions,
+            ...(sample.generatorOptions?.workspaces ? workspaceOptions : {}),
           },
         });
       },

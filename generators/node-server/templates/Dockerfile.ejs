@@ -7,13 +7,15 @@ FROM node:<%- nodeVersion %>-alpine AS build
 
 WORKDIR /usr/src/app
 
-COPY package.json package-lock.json ./
+# The package-lock.json of the application, missing in a workspace of applications (its lock is the one of the workspace).
+COPY package*.json ./
 COPY <%- nodeServerRootDir %>package.json <%- nodeServerRootDir %>
 <%_ if (clientFrameworkAny) { _%>
 COPY <%- clientRootDir %>package.json <%- clientRootDir %>
 <%_ } _%>
-# The install scripts (native bindings of the development database, husky, Cypress) are not needed to build.
-RUN npm ci --ignore-scripts
+# The install scripts (native bindings of the development database, husky, Cypress) are not needed to build. npm install
+# installs the versions of the package-lock.json, or resolves them and writes one, the runtime stage installs from it.
+RUN npm install --ignore-scripts
 
 COPY . .
 RUN npm run build --workspace <%- serverDir %>
@@ -31,7 +33,8 @@ ENV NODE_ENV=production
 ENV BACKEND_ENV=prod
 ENV NODE_SERVER_PORT=<%- serverPort %>
 
-COPY package.json package-lock.json ./
+COPY package.json ./
+COPY --from=build /usr/src/app/package-lock.json ./
 COPY <%- nodeServerRootDir %>package.json <%- nodeServerRootDir %>
 <%_ if (clientFrameworkAny) { _%>
 COPY <%- clientRootDir %>package.json <%- clientRootDir %>

@@ -31,6 +31,9 @@ import {
   userAuthorityJoinTable,
 } from './support/index.js';
 
+/** The time the end-to-end tests wait for the server, like the WAIT_TIMEOUT of java:server, which JHipster does not export. */
+const WAIT_TIMEOUT = 3 * 60000;
+
 const fieldTypes = {
   Boolean: 'boolean',
   Integer: 'number',
@@ -522,6 +525,24 @@ export default class extends BaseApplicationGenerator {
             },
           });
         }
+      },
+      packageJsonE2eScripts({ application }) {
+        if (!application.clientFrameworkAny) return;
+        // Like the packageJsonE2eScripts of JHipster Spring Boot (java:server): the end-to-end tests wait for a microservice
+        // through its gateway, which their microfrontend runs against (its own port is not published by a docker-compose
+        // deployment), for the other applications on their own port; longer for a gateway and with OAuth2.
+        let waitTimeout = WAIT_TIMEOUT * (application.applicationTypeGateway ? 2 : 1);
+        waitTimeout = application.authenticationTypeOauth2 ? waitTimeout * 2 : waitTimeout;
+        // With e2eTls, ci:e2e:run sets E2E_SERVER_PROTOCOL to https, the packaged server started with its tls profile.
+        const protocol = application.e2eTls ? '${E2E_SERVER_PROTOCOL:-http}' : 'http';
+        const endpoint = application.applicationTypeMicroservice
+          ? `http-get://127.0.0.1:${application.gatewayServerPort}/${application.endpointPrefix}/management/health/readiness`
+          : `${protocol}-get://127.0.0.1:$npm_package_config_backend_port/management/health`;
+        this.packageJson.merge({
+          scripts: {
+            'ci:server:await': `echo "Waiting for server at port $npm_package_config_backend_port to start" && wait-on -t ${waitTimeout} ${endpoint} && echo "Server at port $npm_package_config_backend_port started"`,
+          },
+        });
       },
       ignoreClientIssues({ application }) {
         if (application.clientFrameworkNo) return;
