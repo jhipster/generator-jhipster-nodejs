@@ -16,12 +16,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs';
-import { createRequire } from 'node:module';
-import { dirname, extname, join } from 'node:path';
+import { existsSync, statSync } from 'node:fs';
+import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import { convertToGitHubMatrix } from 'generator-jhipster/ci';
+import {
+  convertToGitHubMatrix,
+  describeGithubSamplesGroup,
+  getGithubSamplesFolderGroup,
+  githubSamplesGroupOf,
+} from 'generator-jhipster/ci';
 
 import angular from '../../generate-sample/templates/angular.js';
 import microservice from '../../generate-sample/templates/microservice.js';
@@ -35,11 +39,6 @@ export { formatSample, formatSamplesList } from 'generator-jhipster/ci';
 
 // Synchronous, without top-level await, like the describe-samples of generator-jhipster: tools load this module with
 // require (requireSibling('support') of yeoman-environment), which refuses a module with a top-level await.
-// The synchronous part of describeGithubSamples, not exported by generator-jhipster/ci yet.
-/** @type {{ describeGithubSamplesGroup: (options: { samplesGroupFolder: string, group: string, samples: object, root: string }) => SampleDescription[] }} */
-const { describeGithubSamplesGroup } = createRequire(import.meta.url)(
-  join(dirname(createRequire(import.meta.url).resolve('generator-jhipster/package.json')), 'dist/lib/ci/describe-samples.js'),
-);
 
 const root = fileURLToPath(new URL('../../../', import.meta.url));
 
@@ -53,38 +52,11 @@ export const samplesGroupFolder = fileURLToPath(new URL('../../generate-sample/t
  * @type {Record<string, Record<string, object>>}
  */
 export const samplesGroups = Object.fromEntries(
-  Object.entries({ angular, microservice, react, vue }).map(([group, samples]) => [
-    group,
-    Object.fromEntries(Object.entries(samples).map(([name, sample]) => [name, { ...sample, 'samples-group': group }])),
-  ]),
+  Object.entries({ angular, microservice, react, vue }).map(([group, samples]) => [group, githubSamplesGroupOf(group, samples)]),
 );
 
 /** Every described workflow: the samples groups of the blueprint. */
 export const WORKFLOWS = Object.keys(samplesGroups);
-
-/**
- * A samples group defined by a folder, without code, like getGithubSamplesGroup reads it: a sample by jdl file (its name
- * without .jdl) or by folder (with its .yo-rc.json), with the options of its samples.json.
- * @param {string} group
- * @returns {Record<string, object>}
- */
-export const folderSamplesGroup = group => {
-  const entries = readdirSync(join(samplesGroupFolder, group));
-  const samples = Object.fromEntries(
-    entries
-      .filter(entry => ['', '.jdl'].includes(extname(entry)))
-      .map(entry => [entry.replace(/\.jdl$/, ''), { 'samples-group': group, 'sample-type': extname(entry) === '.jdl' ? 'jdl' : 'yo-rc' }]),
-  );
-  if (entries.includes('samples.json')) {
-    for (const [sample, value] of Object.entries(JSON.parse(readFileSync(join(samplesGroupFolder, group, 'samples.json'), 'utf-8')))) {
-      if (!samples[sample]) {
-        throw new Error(`Sample ${sample} not found in ${group}`);
-      }
-      Object.assign(samples[sample], value);
-    }
-  }
-  return samples;
-};
 
 /**
  * The samples of a samples group: a workflow (a `<group>.js` module), else a folder of samples, like the `samples` folder
@@ -95,7 +67,8 @@ export const folderSamplesGroup = group => {
 export const samplesGroupOf = group => {
   if (samplesGroups[group]) return samplesGroups[group];
   const folder = join(samplesGroupFolder, group);
-  return existsSync(folder) && statSync(folder).isDirectory() ? folderSamplesGroup(group) : undefined;
+  // A folder of samples, without code: a sample by jdl file or by .yo-rc.json folder, with the options of its samples.json.
+  return existsSync(folder) && statSync(folder).isDirectory() ? getGithubSamplesFolderGroup(samplesGroupFolder, group) : undefined;
 };
 
 /**
