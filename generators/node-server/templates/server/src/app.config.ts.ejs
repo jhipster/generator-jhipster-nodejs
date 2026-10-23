@@ -125,6 +125,9 @@ export function configureApp(app: INestApplication): INestApplication {
       transform: true,
       // https://github.com/nestjs/nest/issues/10683#issuecomment-1349614194
       forbidUnknownValues: false,
+      // The target of an error names the objectName of its field error (ValidationException), which is not sent: Nest
+      // 12.2 leaves it out by default.
+      validationError: { target: true },
     }),
   );
   // The errors as the problem details of JHipster Spring Boot.
