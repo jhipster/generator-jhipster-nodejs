@@ -8,6 +8,7 @@ import { isInt, isNotEmpty, isPort<% if (authenticationTypeOauth2 || serviceDisc
 export interface ApplicationConfig {
   server: {
     port: string | number;
+    'forward-headers-strategy': 'none' | 'native';
     ssl: { enabled: boolean; 'key-store': string; 'key-store-password': string; 'key-store-type': string };
   };
   jhipster: {
@@ -110,6 +111,7 @@ const positiveInt = (value: any): boolean => isInt(Number(value)) && Number(valu
  */
 const rules: Rule[] = [
   ['server.port', value => isPort(String(value)), 'a port'],
+  ['server.forward-headers-strategy', value => ['none', 'native'].includes(value), 'none or native'],
   ['jhipster.clientApp.name', isNotEmpty, 'the name of the application'],
 <%_ if (authenticationTypeJwt) { _%>
   ['jhipster.security.authentication.jwt.token-validity-in-seconds', positiveInt, 'a positive number of seconds'],

@@ -110,10 +110,21 @@ function responseHeaders(<% if (!skipClient) { %>configService: AppConfigService
  * exercise the same validation and HTTP behaviour as the started application.
  * It has no side effect at import (main.ts starts the application when imported), and does not listen.
  */
+/**
+ * The proxies whose X-Forwarded-* headers (the protocol, the host and the address of the client) the application trusts, the
+ * trust proxy setting of Express, like the server.forward-headers-strategy of Spring Boot: none, or native, the proxies of
+ * the local networks like the internal proxies of the RemoteIpValve of Tomcat.<% if (authenticationTypeSession || authenticationTypeOauth2) { %> Behind a proxy of HTTPS, the session cookie is then
+ * secure.<% } %>
+ */
+export function trustProxy(strategy: string | undefined): string | false {
+  return strategy === 'native' ? 'loopback, linklocal, uniquelocal' : false;
+}
+
 export function configureApp(app: INestApplication): INestApplication {
   // Without the X-Powered-By: Express header, like the responses of JHipster Spring Boot.
   app.getHttpAdapter().getInstance().disable('x-powered-by');
   const configService = app.get<AppConfigService>(ConfigService);
+  (app as NestExpressApplication).set('trust proxy', trustProxy(configService.get('server.forward-headers-strategy', { infer: true })));
   app.use(responseHeaders(<% if (!skipClient) { %>configService<% } %>));
   const cors = corsOptions(configService);
   if (cors) {
@@ -124,6 +135,8 @@ export function configureApp(app: INestApplication): INestApplication {
 <%_ if (authenticationTypeSession || authenticationTypeOauth2) { _%>
   app.use(
     session({
+      // The session cookie of JHipster Spring Boot.
+      name: 'JSESSIONID',
       secret: configService.get('jhipster.security.session.secret', { infer: true }),
       // The sessions in the database of the application, which outlive a restart and are shared by its instances.
       store: app.get(SessionStore),

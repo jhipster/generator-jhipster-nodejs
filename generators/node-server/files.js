@@ -118,6 +118,7 @@ export const serverFiles = {
         'test/admin/health.controller.spec.ts',
         'test/common/logging.interceptor.spec.ts',
         'test/config.spec.ts',
+        'test/app.config.spec.ts',
         'nest-cli.json',
         {
           // The profile of the development scripts (nest start --env-file .env.dev), not of the built application.
