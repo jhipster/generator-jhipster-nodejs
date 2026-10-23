@@ -43,7 +43,7 @@
   "devDependencies": {
     "@eslint/js": "10.0.1",
     "@nestjs/cli": "12.0.9",
-    "@nestjs/schematics": "12.0.7",
+    "@nestjs/schematics": "12.0.9",
     "@nestjs/testing": "12.1.3",
     "@types/bcrypt": "6.0.0",
     "@types/express": "5.0.6",
