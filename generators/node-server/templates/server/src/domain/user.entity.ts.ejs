@@ -19,7 +19,8 @@ export class <%= user.persistClass %> extends BaseEntity {
   firstName?: string;
   @Column({ nullable: true })
   lastName?: string;
-  @Column()
+  // Unique, like the ux_user_email constraint of JHipster Spring Boot.
+  @Column({ unique: true })
   email!: string;
   @Column({ default: false})
   activated?: boolean;

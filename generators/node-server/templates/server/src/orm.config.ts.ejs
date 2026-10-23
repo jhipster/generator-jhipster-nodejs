@@ -16,9 +16,26 @@ export type ConfigReader = (key: string) => any;
 // typeorm fails to auto load the drivers due to workspaces resolution: the driver of each database type, required when
 // its database is used.
 const require = createRequire(import.meta.url);
+<%_ if (prodDatabaseTypePostgresql) { _%>
+
+/**
+ * The pg driver keeping the instants in UTC, like the hibernate.jdbc.time_zone of JHipster Spring Boot: a timestamp
+ * (without time zone) is sent and read as UTC, not as the local time of the server.
+ */
+function pgDriver(): unknown {
+  const pg = require('pg');
+  pg.defaults.parseInputDatesAsUTC = true;
+  pg.types.setTypeParser(pg.types.builtins.TIMESTAMP, (value: string) => new Date(`${value.replace(' ', 'T')}Z`));
+  return pg;
+}
+<%_ } _%>
 const drivers: Record<string, () => unknown> = {
 <%_ if (databaseTypeSql) { _%>
+<%_ if (prodDatabaseTypePostgresql) { _%>
+  '<%= nodeProdDatabaseType %>': pgDriver,
+<%_ } else { _%>
   '<%= nodeProdDatabaseType %>': () => require('<%= nodeProdDatabaseDriver %>'),
+<%_ } _%>
   'better-sqlite3': () => require('better-sqlite3'),
 <%_ } else { _%>
   mongodb: () => require('mongodb'),
@@ -61,6 +78,10 @@ function ormConfig(read: ConfigReader = key => config.get(key)): TypeOrmModuleOp
     username: read('database.username'),
     password: read('database.password'),
     database,
+<%_ if (prodDatabaseTypeMysql || prodDatabaseTypeMariadb) { _%>
+    // The instants in UTC, like the hibernate.jdbc.time_zone of JHipster Spring Boot (better-sqlite3 ignores it).
+    timezone: 'Z',
+<%_ } _%>
     logging: read('database.logging') ?? false,
     synchronize: read('database.synchronize') ?? false,
     migrationsRun: true,
