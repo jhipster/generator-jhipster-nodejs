@@ -55,6 +55,8 @@ const validValues = Object.fromEntries(
 );
 const requiredField = validatedFields.find(field => field.fieldValidationRequired);
 const enumField = fields.find(field => !field.id && field.fieldIsEnum);
+// A field whose type the DTO validates, with a value of another type.
+const typedField = fields.find(field => !field.id && !field.transient && field.nodejsInvalidTypeValue !== undefined);
 _%>
     const validEntity: any = {
         ...entityMock,
@@ -270,6 +272,21 @@ _%>
             type: 'https://www.jhipster.tech/problem/constraint-violation',
             message: 'error.validation',
             fieldErrors: [{ objectName: '<%= entityInstance %>', field: '<%= requiredField.fieldName %>', message: expect.any(String) }],
+        });
+    });
+
+<%_ } _%>
+<%_ if (typedField) { _%>
+    it('/POST create <%= entityApiUrl %> with a <%= typedField.fieldName %> of another type is a validation error, like the JSON deserialization of JHipster Spring Boot', async () => {
+        const { id: _id, ...newEntity } = validEntity;
+        const error = (await request(app.getHttpServer())
+            .post('/api/<%= entityApiUrl %>')
+            .send({ ...newEntity, <%= typedField.fieldName %>: <%- JSON.stringify(typedField.nodejsInvalidTypeValue) %> })
+            .expect(400)).body;
+
+        expect(error).toMatchObject({
+            message: 'error.validation',
+            fieldErrors: expect.arrayContaining([expect.objectContaining({ objectName: '<%= entityInstance %>', field: '<%= typedField.fieldName %>' })]),
         });
     });
 
