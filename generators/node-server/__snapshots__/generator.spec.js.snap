@@ -1182,7 +1182,13 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > with oauth2 > s
   "server/src/domain/base/pagination.entity.ts": {
     "stateCleared": "modified",
   },
+  "server/src/domain/session.entity.ts": {
+    "stateCleared": "modified",
+  },
   "server/src/main.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/migrations/1570200270082-CreateSessions.ts": {
     "stateCleared": "modified",
   },
   "server/src/migrations/support/schema.ts": {
@@ -1237,6 +1243,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > with oauth2 > s
     "stateCleared": "modified",
   },
   "server/src/security/role-type.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/security/session.store.ts": {
     "stateCleared": "modified",
   },
   "server/src/service/api-docs.service.ts": {
@@ -1321,6 +1330,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > with oauth2 > s
     "stateCleared": "modified",
   },
   "server/test/security/passport.oauth2.strategy.spec.ts": {
+    "stateCleared": "modified",
+  },
+  "server/test/security/session.store.spec.ts": {
     "stateCleared": "modified",
   },
   "server/tsconfig.build.json": {
@@ -1517,6 +1529,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > with oauth2 and
   "server/src/domain/base/pagination.entity.ts": {
     "stateCleared": "modified",
   },
+  "server/src/domain/session.entity.ts": {
+    "stateCleared": "modified",
+  },
   "server/src/domain/user.entity.ts": {
     "stateCleared": "modified",
   },
@@ -1524,6 +1539,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > with oauth2 and
     "stateCleared": "modified",
   },
   "server/src/migrations/1570200270081-CreateTables.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/migrations/1570200270082-CreateSessions.ts": {
     "stateCleared": "modified",
   },
   "server/src/migrations/1570200490072-SeedUsersRoles.ts": {
@@ -1584,6 +1602,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > with oauth2 and
     "stateCleared": "modified",
   },
   "server/src/security/role-type.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/security/session.store.ts": {
     "stateCleared": "modified",
   },
   "server/src/service/api-docs.service.ts": {
@@ -1683,6 +1704,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > with oauth2 and
     "stateCleared": "modified",
   },
   "server/test/security/passport.oauth2.strategy.spec.ts": {
+    "stateCleared": "modified",
+  },
+  "server/test/security/session.store.spec.ts": {
     "stateCleared": "modified",
   },
   "server/tsconfig.build.json": {

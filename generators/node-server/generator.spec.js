@@ -371,6 +371,9 @@ describe('SubGenerator node-server of nodejs JHipster blueprint', () => {
         'server/src/security/password.service.ts',
         'server/src/web/rest/user.controller.ts',
         'server/e2e/session.e2e-spec.ts',
+        'server/src/domain/session.entity.ts',
+        'server/src/security/session.store.ts',
+        'server/src/migrations/1570200270082-CreateSessions.ts',
       ]);
       result.assertNoFile([
         'server/src/web/rest/user.jwt.controller.ts',

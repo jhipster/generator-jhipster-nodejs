@@ -7,6 +7,9 @@ import { configureApp } from '../src/app.config.ts';
 import { <%= user.dtoClass %> } from '../src/service/dto/user.dto.ts';
 import { UserService } from '../src/service/user.service.ts';
 import { PasswordService } from '../src/security/password.service.ts';
+import { getRepositoryToken } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { Session } from '../src/domain/session.entity.ts';
 
 /** A cookie of the Set-Cookie headers of a response, with its attributes. */
 const setCookie = (response: request.Response, name: string): string | undefined =>
@@ -124,6 +127,19 @@ describe('Session authentication', () => {
     const { body } = await agent.get('/api/account').expect(200);
     expect(body).toMatchObject({ login: 'session-user' });
     expect(body.password).toBeUndefined();
+  });
+
+  it('keeps the session in the database, which outlives a restart of the application, and removes it at the logout', async () => {
+    const sessions = app.get<Repository<Session>>(getRepositoryToken(Session));
+    const token = cookieValue(await login({ username: 'session-user', password }), 'XSRF-TOKEN')!;
+    const stored = await sessions.find({ where: { login: 'session-user' } });
+    expect(stored).toHaveLength(1);
+    expect(stored[0].expires.getTime()).toBeGreaterThan(Date.now());
+    expect(JSON.parse(stored[0].data)).toMatchObject({ user: { login: 'session-user' } });
+    expect(stored[0].data).not.toContain(password);
+
+    await agent.post('/api/logout').set('X-XSRF-TOKEN', token).expect(200);
+    expect(await sessions.find({ where: { login: 'session-user' } })).toHaveLength(0);
   });
 
   it('keeps a remember-me login 31 days without requests, like the remember-me of JHipster Spring Boot', async () => {

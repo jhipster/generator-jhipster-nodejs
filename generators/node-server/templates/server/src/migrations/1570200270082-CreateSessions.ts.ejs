@@ -1,0 +1,26 @@
+import { type MigrationInterface, type QueryRunner, TableIndex } from 'typeorm';
+
+import { createTable } from './support/schema.ts';
+
+const SESSION_TABLE = '<%- jhiTablePrefix %>_session';
+
+/** The table of the sessions of the server (the Session entity), with the indices of its login and of its expiry. */
+export class CreateSessions1570200270082 implements MigrationInterface {
+  public async up(queryRunner: QueryRunner): Promise<void> {
+    if (await queryRunner.hasTable(SESSION_TABLE)) return;
+    await createTable(queryRunner, SESSION_TABLE, [
+      { name: 'sid', type: String, primary: true },
+      { name: 'login', type: String, nullable: true },
+      { name: 'expires', type: Date },
+      { name: 'data', type: 'text' },
+    ]);
+    const { namingStrategy } = queryRunner.connection;
+    for (const column of ['login', 'expires']) {
+      await queryRunner.createIndex(SESSION_TABLE, new TableIndex({ name: namingStrategy.indexName(SESSION_TABLE, [column]), columnNames: [column] }));
+    }
+  }
+
+  public async down(queryRunner: QueryRunner): Promise<void> {
+    await queryRunner.dropTable(SESSION_TABLE, true);
+  }
+}

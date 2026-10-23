@@ -8,7 +8,7 @@ export const SESSION_MAX_AGE = 30 * 60 * 1000;
 
 /**
  * The idle lifetime of a session logged in with remember-me, like the validity of the remember-me tokens of JHipster
- * Spring Boot (31 days): the session is kept in the memory of the server, a restart logs its users out.
+ * Spring Boot (31 days): kept in the database (SessionStore), the session outlives a restart like those tokens.
  */
 export const REMEMBER_ME_MAX_AGE = 31 * 24 * 60 * 60 * 1000;
 <%_ } _%>

@@ -13,6 +13,7 @@ import { ProblemDetailsFilter } from './web/rest/errors/problem-details.filter.t
 import { ValidationException } from './web/rest/errors/problem.exception.ts';
 <%_ if (authenticationTypeSession || authenticationTypeOauth2) { _%>
 import { SESSION_MAX_AGE } from './security/csrf.middleware.ts';
+import { SessionStore } from './security/session.store.ts';
 <%_ } _%>
 
 type AppConfigService = ConfigService<ApplicationConfig, true>;
@@ -124,6 +125,8 @@ export function configureApp(app: INestApplication): INestApplication {
   app.use(
     session({
       secret: configService.get('jhipster.security.session.secret', { infer: true }),
+      // The sessions in the database of the application, which outlive a restart and are shared by its instances.
+      store: app.get(SessionStore),
       resave: false,
       saveUninitialized: false,
       // Like the session of JHipster Spring Boot, it expires after 30 minutes without requests.

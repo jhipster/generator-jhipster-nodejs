@@ -23,13 +23,17 @@ import { SessionUserMiddleware } from '../security/session-user.middleware.ts';
 <%_ } _%>
 <%_ if (authenticationTypeSession || authenticationTypeOauth2) { _%>
 import { CsrfMiddleware } from '../security/csrf.middleware.ts';
+import { Session } from '../domain/session.entity.ts';
+import { SessionStore } from '../security/session.store.ts';
 <%_ } _%>
 <%_ if (authenticationTypeJwt && generateBuiltInUserEntity) { _%>
 import { ConfigService } from '@nestjs/config';
 import { JWT_ALGORITHM, jwtSecretKey } from '../security/jwt.config.ts';
 <%_ } _%>
-<%_ if (generateBuiltInAuthorityEntity) { _%>
+<%_ if (generateBuiltInAuthorityEntity || authenticationTypeSession || authenticationTypeOauth2) { _%>
 import { TypeOrmModule } from '@nestjs/typeorm';
+<%_ } _%>
+<%_ if (generateBuiltInAuthorityEntity) { _%>
 import { Authority } from '../domain/authority.entity.ts';
 import { AuthorityController } from '../web/rest/authority.controller.ts';
 <%_ } _%>
@@ -42,8 +46,8 @@ import { AccountController } from '../web/rest/account.controller.ts';
 
 @Module({
   imports: [
-  <%_ if (generateBuiltInAuthorityEntity) { _%>
-  TypeOrmModule.forFeature([Authority]),
+  <%_ if (generateBuiltInAuthorityEntity || authenticationTypeSession || authenticationTypeOauth2) { _%>
+  TypeOrmModule.forFeature([<%- [generateBuiltInAuthorityEntity && 'Authority', (authenticationTypeSession || authenticationTypeOauth2) && 'Session'].filter(Boolean).join(', ') %>]),
   <%_ } _%>
   <%_ if (generateBuiltInUserEntity) { _%>
   UserModule,
@@ -77,6 +81,9 @@ import { AccountController } from '../web/rest/account.controller.ts';
   <%_ } _%>
   <%- generateBuiltInUserEntity ? 'PublicUserController' : 'ManagementController' %>, AccountController ],
   providers: [AuthService,
+  <%_ if (authenticationTypeSession || authenticationTypeOauth2) { _%>
+  SessionStore,
+  <%_ } _%>
   <%_ if (authenticationTypeJwt) { _%>
   JwtStrategy
   <%_ } else if (authenticationTypeOauth2) { _%>

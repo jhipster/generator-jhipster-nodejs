@@ -7,6 +7,7 @@ import { AuthService } from '../../service/auth.service.ts';
 import { checkLoginCsrfToken, REMEMBER_ME_MAX_AGE, setCsrfCookie } from '../../security/csrf.middleware.ts';
 import { sessionUser } from '../../security/session-user.middleware.ts';
 import { AuthGuard } from '../../security/guards/auth.guard.ts';
+import { SessionStore } from '../../security/session.store.ts';
 
 /** The form of the session login, the one the JHipster clients post, like the formLogin of JHipster Spring Boot. */
 interface LoginForm {
@@ -26,24 +27,15 @@ interface SessionDTO {
   userAgent?: string;
 }
 
-/** The sessions of the store, by their ids, the expired ones left out (store.all of express-session). */
-function allSessions(req: Request): Promise<Record<string, any>> {
-  return new Promise((resolve, reject) =>
-    req.sessionStore.all!((error: any, sessions: any) => (error ? reject(error as Error) : resolve(sessions ?? {}))),
-  );
-}
-
-/** The ids of the sessions of a user, with their data. */
-async function userSessions(req: Request, login: string): Promise<[string, any][]> {
-  return Object.entries(await allSessions(req)).filter(([, session]) => session?.user?.login === login && session.series);
-}
-
 @Controller('api')
 @ApiTags('user-session-controller')
 export class UserSessionController {
   logger = new Logger('UserSessionController');
 
-  constructor(private readonly authService: AuthService) {}
+  constructor(
+    private readonly authService: AuthService,
+    private readonly sessionStore: SessionStore,
+  ) {}
 
   @Post('/authentication')
   @HttpCode(200)
@@ -93,7 +85,9 @@ export class UserSessionController {
   @ApiResponse({ status: 200, description: 'The sessions of the user' })
   async getCurrentSessions(@Req() req: Request): Promise<SessionDTO[]> {
     const { login } = (req.session as any).user;
-    return (await userSessions(req, login)).map(([, { series, tokenDate, ipAddress, userAgent }]) => ({ series, tokenDate, ipAddress, userAgent }));
+    return (await this.sessionStore.sessionsOf(login))
+      .filter(({ data }) => data.series)
+      .map(({ data: { series, tokenDate, ipAddress, userAgent } }) => ({ series, tokenDate, ipAddress, userAgent }));
   }
 
   @Delete('/account/sessions/:series')
@@ -102,8 +96,8 @@ export class UserSessionController {
   @ApiResponse({ status: 200, description: 'The session of the series, if any, ended' })
   async invalidateSession(@Req() req: Request, @Param('series') series: string): Promise<void> {
     const { login } = (req.session as any).user;
-    for (const [id] of (await userSessions(req, login)).filter(([, session]) => session.series === series)) {
-      await new Promise<void>((resolve, reject) => req.sessionStore.destroy(id, error => (error ? reject(error as Error) : resolve())));
+    for (const { sid } of (await this.sessionStore.sessionsOf(login)).filter(({ data }) => data.series === series)) {
+      await new Promise<void>((resolve, reject) => this.sessionStore.destroy(sid, error => (error ? reject(error as Error) : resolve())));
     }
   }
 }
