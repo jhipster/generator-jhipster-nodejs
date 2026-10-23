@@ -70,6 +70,11 @@ describe('App', () => {
         expect(response.headers['strict-transport-security']).toBeUndefined();
     });
 
+    it('/GET the API is not cached whatever the case of its path, like Express routes it', () => request(app.getHttpServer())
+        .get('/MANAGEMENT/info')
+        .expect(200)
+        .expect('Cache-Control', 'no-cache, no-store, max-age=0, must-revalidate'));
+
     it('/GET an unknown path of the API is not found, not the client', () => request(app.getHttpServer())
         .get('/api/unknown-resource')
         .expect(404));

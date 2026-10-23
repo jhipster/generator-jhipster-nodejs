@@ -13,6 +13,8 @@ type AppConfigService = ConfigService<ApplicationConfig, true>;
 
 // The paths of the API, which CORS applies to like the WebConfigurer of JHipster Spring Boot.
 const CORS_PATHS = [/^\/api\//, /^\/management\//, /^\/v3\/api-docs(\?|$)/];
+// The paths of the API as Express routes them: case insensitive, with or without a trailing slash.
+const API_PATH = /^\/(?:api|management|v3\/api-docs)(?:\/|$)/i;
 const REGEXP_SPECIAL_CHARACTERS = /[.+?^${}()|[\]\\]/g;
 
 function propertyList(value: string | undefined): string[] {
@@ -67,7 +69,7 @@ function responseHeaders(<% if (!skipClient) { %>configService: AppConfigService
   const contentSecurityPolicy = String(configService.get('jhipster.security.content-security-policy', { infer: true }) ?? '');
 <%_ } _%>
   return (req, res, next) => {
-    if (CORS_PATHS.some(path => path.test(req.url))) {
+    if (API_PATH.test(req.path)) {
       // The cache control of Spring Security on the responses of the API: not cached (the static files of the client are).
       res.setHeader('Cache-Control', 'no-cache, no-store, max-age=0, must-revalidate');
       res.setHeader('Pragma', 'no-cache');
