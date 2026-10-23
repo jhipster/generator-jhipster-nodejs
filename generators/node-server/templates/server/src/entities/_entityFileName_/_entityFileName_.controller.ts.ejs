@@ -165,7 +165,7 @@ export class <%= entityClass %>Controller {
       throw new ValidationException(errors);
     }
     const updated = await this.<%= entityInstance %>Service.update(patched, req.user?.login);
-    HeaderUtil.addEntityUpdatedHeaders(req.res, ENTITY_NAME, id);
+    this.headerUtil.addEntityUpdatedHeaders(req.res, ENTITY_NAME, id);
     return updated;
   }
 
