@@ -182,10 +182,14 @@ describe('User', () => {
         });
     });
 
-    it('/GET all users', () => {
-        request(app.getHttpServer())
+    it('/GET all users', async () => {
+        const savedUser = await service.save({ ...testUserDTO, login: 'listeduser', email: 'listeduser@localhost.it' });
+        const response = await request(app.getHttpServer())
             .get('/api/admin/users')
             .expect(200);
+
+        expect(response.body.map((user: any) => user.login)).toContain(savedUser.login);
+        expect(Number(response.headers['x-total-count'])).toBeGreaterThanOrEqual(response.body.length);
     });
 
     it('/PUT update user', async () => {
