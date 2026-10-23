@@ -15,12 +15,6 @@ export const columnTransformer = ({ fieldType, nodejsColumnType }) => {
   return undefined;
 };
 
-/** The validation rules of a field the column of its entity follows: required (not nullable) and unique. */
-export const columnRules = field => {
-  const rules = field.fieldValidate ? field.fieldValidateRules : [];
-  return { required: rules.includes('required'), unique: rules.includes('unique'), maxlength: rules.includes('maxlength') };
-};
-
 /**
  * The databases with column types of JHipster Spring Boot better-sqlite3 (dev and test) has not, chosen at runtime by
  * src/domain/base/column-types.ts: the long blobs and texts and the microseconds of MySQL and MariaDB.
@@ -47,7 +41,7 @@ export const fieldColumnTypeImports = (field, application) => {
  */
 export const fieldColumnOptions = (field, application) => {
   const { databaseTypeSql } = application;
-  const { required, unique, maxlength } = columnRules(field);
+  const { fieldValidationRequired: required, fieldValidationUnique: unique, fieldValidationMaxlength: maxlength } = field;
   const runtime = hasRuntimeColumnTypes(application);
   const options = [];
   if (field.nodejsColumnType) {
@@ -72,6 +66,8 @@ export const fieldColumnOptions = (field, application) => {
 
 /** The options of the @Column decorator of the content type of a binary blob. */
 export const contentTypeColumnOptions = (field, { databaseTypeSql }) => {
-  const { required } = columnRules(field);
-  return [databaseTypeSql && `name: '${field.fieldNameAsDatabaseColumn}_content_type'`, !required && 'nullable: true'].filter(Boolean);
+  return [
+    databaseTypeSql && `name: '${field.fieldNameAsDatabaseColumn}_content_type'`,
+    !field.fieldValidationRequired && 'nullable: true',
+  ].filter(Boolean);
 };
