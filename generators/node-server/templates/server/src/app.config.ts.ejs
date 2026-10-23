@@ -39,6 +39,13 @@ export function corsOptions(configService: AppConfigService): CorsOptions | unde
   const allowedMethods = propertyList(cors['allowed-methods']);
   const allowedHeaders = propertyList(cors['allowed-headers']);
   const maxAge = Number(cors['max-age']);
+  const credentials = String(cors['allow-credentials']) === 'true';
+  if (credentials && allowedOrigins.includes('*')) {
+    // Like the CorsConfiguration of Spring: browsers refuse * as the allowed origin of a request with credentials.
+    throw new Error(
+      'When jhipster.cors.allow-credentials is true, jhipster.cors.allowed-origins cannot contain *: list the origins, or use jhipster.cors.allowed-origin-patterns',
+    );
+  }
   return {
     // * allows any origin, like the allowed origins of the CorsConfiguration of Spring (cors compares the origins as given).
     origin: allowedOrigins.includes('*') ? '*' : [...allowedOrigins, ...allowedOriginPatterns],
@@ -46,7 +53,7 @@ export function corsOptions(configService: AppConfigService): CorsOptions | unde
     ...(allowedMethods.includes('*') ? {} : { methods: allowedMethods }),
     ...(allowedHeaders.includes('*') ? {} : { allowedHeaders }),
     exposedHeaders: propertyList(cors['exposed-headers']),
-    credentials: String(cors['allow-credentials']) === 'true',
+    credentials,
     ...(maxAge > 0 ? { maxAge } : {}),
   };
 }
