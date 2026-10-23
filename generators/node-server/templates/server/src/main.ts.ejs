@@ -23,6 +23,7 @@ import * as fs from 'fs';
 <%_ if (authenticationType === 'oauth2') { _%>
 import passport from 'passport';
 import session from 'express-session';
+import { SESSION_MAX_AGE } from './security/csrf.middleware.ts';
 <%_ } _%>
 // The levels of the loggers (logging.level.* of the configuration), like Spring Boot, the loggers endpoint changes them.
 loggerLevels.configure(config);
@@ -57,7 +58,7 @@ async function bootstrap(): Promise<void> {
       saveUninitialized: false,
       // Like the session of JHipster Spring Boot, it expires after 30 minutes without requests.
       rolling: true,
-      cookie: { httpOnly: true, sameSite: 'lax', secure: 'auto', maxAge: 30 * 60 * 1000 },
+      cookie: { httpOnly: true, sameSite: 'lax', secure: 'auto', maxAge: SESSION_MAX_AGE },
     }),
   );
 

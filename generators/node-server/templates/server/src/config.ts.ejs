@@ -29,6 +29,7 @@ export class Config {
   'jhipster.security.authentication.jwt.hash-salt-or-rounds' = 10;
 <%_ } else if (authenticationType === 'oauth2') { _%>
   'jhipster.security.session.secret' = '';
+  'jhipster.security.oauth2.audience' = 'account,api://default';
   'jhipster.security.oauth2.client.provider.oidc.issuer-uri' = '';
   'jhipster.security.oauth2.client.registration.oidc.client-id' = '';
   'jhipster.security.oauth2.client.registration.oidc.client-secret' = '';

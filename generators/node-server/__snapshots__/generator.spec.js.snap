@@ -1082,6 +1082,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > with oauth2 > s
   "server/e2e/management.e2e-spec.ts": {
     "stateCleared": "modified",
   },
+  "server/e2e/oauth2-bearer.e2e-spec.ts": {
+    "stateCleared": "modified",
+  },
   "server/e2e/setup.test.js": {
     "stateCleared": "modified",
   },
@@ -1188,6 +1191,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > with oauth2 > s
     "stateCleared": "modified",
   },
   "server/src/orm.config.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/security/csrf.middleware.ts": {
     "stateCleared": "modified",
   },
   "server/src/security/decorators/auth-user.decorator.ts": {
@@ -1298,6 +1304,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > with oauth2 > s
   "server/test/domain/column-types.spec.ts": {
     "stateCleared": "modified",
   },
+  "server/test/security/csrf.middleware.spec.ts": {
+    "stateCleared": "modified",
+  },
   "server/test/security/oauth2.authorities.spec.ts": {
     "stateCleared": "modified",
   },
@@ -1400,6 +1409,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > with oauth2 and
     "stateCleared": "modified",
   },
   "server/e2e/management.e2e-spec.ts": {
+    "stateCleared": "modified",
+  },
+  "server/e2e/oauth2-bearer.e2e-spec.ts": {
     "stateCleared": "modified",
   },
   "server/e2e/setup.test.js": {
@@ -1525,6 +1537,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > with oauth2 and
   "server/src/orm.config.ts": {
     "stateCleared": "modified",
   },
+  "server/src/security/csrf.middleware.ts": {
+    "stateCleared": "modified",
+  },
   "server/src/security/decorators/auth-user.decorator.ts": {
     "stateCleared": "modified",
   },
@@ -1640,6 +1655,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > with oauth2 and
     "stateCleared": "modified",
   },
   "server/test/domain/column-types.spec.ts": {
+    "stateCleared": "modified",
+  },
+  "server/test/security/csrf.middleware.spec.ts": {
     "stateCleared": "modified",
   },
   "server/test/security/oauth2.authorities.spec.ts": {

@@ -257,10 +257,8 @@ export class AuthService {
         // The values the identity provider gives, over the ones of the user found: not the undefined properties of the user of
         // the claims (its id among them), which would make another user.
         const claims = Object.fromEntries(Object.entries(loginUser).filter(([, value]) => value !== undefined));
-        // The identity provider authenticates the user: no password of its own (the column is not null).
-        const password = userFound?.password ?? '';
-        // Activated, like the users of JHipster Spring Boot synchronized from the identity provider.
-        await this.userService.save({ ...userFound, ...claims, email, password, activated: true, authorities } as <%= userLoginVmClass %>, loginUser.login);
+        // Activated, like the users of JHipster Spring Boot synchronized from the identity provider, without a password.
+        await this.userService.save({ ...userFound, ...claims, email, activated: true, authorities } as <%= userLoginVmClass %>, loginUser.login);
         return loginUser;
       }
     <%_ } _%>

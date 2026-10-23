@@ -20,6 +20,9 @@ export class Oauth2BearerStrategy extends PassportStrategy(Strategy, 'oauth2-bea
       ignoreExpiration: false,
       secretOrKeyProvider: passportJwtSecret({ jwksUri: oauth2Config.jwksUri, cache: true, rateLimit: true }),
       algorithms: ['RS256'],
+      // Issued by the identity provider for this API, like the issuer and audience validators of JHipster Spring Boot.
+      issuer: oauth2Config.issuer,
+      audience: oauth2Config.audience,
     });
   }
 

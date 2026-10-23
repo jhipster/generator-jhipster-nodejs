@@ -36,7 +36,7 @@ export class CreateTables1570200270081 implements MigrationInterface {
       { name: 'email', type: String, unique: true },
       { name: 'activated', type: Boolean, default: false },
       { name: 'langKey', type: String, default: 'en' },
-      { name: 'password', type: 'varchar' },
+      { name: 'password', type: 'varchar'<% if (!generateUserManagement) { %>, nullable: true<% } %> },
       { name: 'imageUrl', type: String, nullable: true },
       { name: 'activationKey', type: String, nullable: true },
       { name: 'resetKey', type: String, nullable: true },

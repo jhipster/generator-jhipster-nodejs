@@ -26,6 +26,8 @@ export interface ApplicationConfig {
 <%_ } _%>
 <%_ if (authenticationTypeOauth2) { _%>
       oauth2: {
+        /** The audiences of the access tokens the API accepts, comma separated. */
+        audience: string;
         client: {
           provider: { oidc: { 'issuer-uri': string } };
           registration: { oidc: { 'client-id': string; 'client-secret': string } };

@@ -1,0 +1,71 @@
+import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { createServer, Server } from 'node:http';
+import { AddressInfo } from 'node:net';
+import { generateKeyPairSync, KeyObject, sign } from 'node:crypto';
+import { INestApplication } from '@nestjs/common';
+import { Test } from '@nestjs/testing';
+import request from 'supertest';
+
+// The identity provider: a JWKS server with a key, and the tokens it signs, like the access tokens of Keycloak.
+const { publicKey, privateKey } = generateKeyPairSync('rsa', { modulusLength: 2048 });
+const otherKey = generateKeyPairSync('rsa', { modulusLength: 2048 }).privateKey;
+const kid = 'test-key';
+const base64url = (value: object | Buffer): string => (Buffer.isBuffer(value) ? value : Buffer.from(JSON.stringify(value))).toString('base64url');
+
+describe('OAuth2 bearer tokens', () => {
+  let jwks: Server;
+  let app: INestApplication;
+  let issuer: string;
+
+  const token = (claims: object, key: KeyObject = privateKey): string => {
+    const payload = { iss: issuer, aud: 'account', exp: Math.floor(Date.now() / 1000) + 300, sub: 'abc', ...claims };
+    const unsigned = `${base64url({ alg: 'RS256', typ: 'JWT', kid })}.${base64url(payload)}`;
+    return `${unsigned}.${base64url(sign('RSA-SHA256', Buffer.from(unsigned), key))}`;
+  };
+  const account = (authorization?: string): request.Test => {
+    const test = request(app.getHttpServer()).get('/api/account');
+    return authorization ? test.set('Authorization', authorization) : test;
+  };
+
+  beforeAll(async () => {
+    jwks = createServer((_req, res) => {
+      res.setHeader('content-type', 'application/json');
+      res.end(JSON.stringify({ keys: [{ ...publicKey.export({ format: 'jwk' }), kid, use: 'sig', alg: 'RS256' }] }));
+    });
+    await new Promise<void>(resolve => jwks.listen(0, '127.0.0.1', resolve));
+    issuer = `http://127.0.0.1:${(jwks.address() as AddressInfo).port}/realms/test`;
+    // The issuer of the configuration, before the application reads it.
+    process.env.JHIPSTER_SECURITY_OAUTH2_CLIENT_PROVIDER_OIDC_ISSUERURI = issuer;
+    const { AppModule } = await import('../src/app.module.ts');
+    const { configureApp } = await import('../src/app.config.ts');
+    const moduleFixture = await Test.createTestingModule({ imports: [AppModule] }).compile();
+    app = moduleFixture.createNestApplication();
+    configureApp(app);
+    await app.init();
+  });
+
+  afterAll(async () => {
+    await app?.close();
+    jwks?.close();
+    delete process.env.JHIPSTER_SECURITY_OAUTH2_CLIENT_PROVIDER_OIDC_ISSUERURI;
+  });
+
+  it('answers 401 without a session nor a bearer token, like JHipster Spring Boot', () => account().expect(401));
+
+  it('accepts an access token of the identity provider, its user from its claims', async () => {
+    const { body } = await account(`Bearer ${token({ preferred_username: 'Bearer-User', email: 'Bearer@Example.com', groups: ['ROLE_USER'] })}`).expect(200);
+    expect(body).toMatchObject({ login: 'bearer-user', email: 'bearer@example.com', authorities: ['ROLE_USER'] });
+  });
+
+  it('reads the authentication scheme case insensitively', () => account(`bearer ${token({ preferred_username: 'user' })}`).expect(200));
+
+  it('refuses a token signed by another key', () => account(`Bearer ${token({}, otherKey)}`).expect(401));
+
+  it('refuses an expired token', () => account(`Bearer ${token({ exp: 1 })}`).expect(401));
+
+  it('refuses a token of another issuer, like the issuer validator of JHipster Spring Boot', () =>
+    account(`Bearer ${token({ iss: 'http://127.0.0.1:1/realms/other' })}`).expect(401));
+
+  it('refuses a token for another audience, like the audience validator of JHipster Spring Boot', () =>
+    account(`Bearer ${token({ aud: 'another-api' })}`).expect(401));
+});

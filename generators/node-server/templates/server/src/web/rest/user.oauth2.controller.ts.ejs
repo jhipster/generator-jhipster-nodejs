@@ -3,6 +3,7 @@ import { randomUUID } from 'node:crypto';
 import { Controller, Get, Logger, Post, Res, UseGuards, Req } from '@nestjs/common';
 import { AuthService } from '../../service/auth.service.ts';
 import { ApiTags, ApiResponse, ApiOperation, ApiExcludeEndpoint } from '@nestjs/swagger';
+import { setCsrfCookie } from '../../security/csrf.middleware.ts';
 import { OAuth2LoginGuard } from '../../security/guards/oauth2-login.guard.ts';
 import { OAuth2Config } from '../../security/oauth2.config.ts';
 
@@ -36,7 +37,7 @@ export class UserOauth2Controller {
       }
       req.session.user = user;
       req.session.csrfToken = randomUUID();
-      res.cookie('XSRF-TOKEN', req.session.csrfToken, { sameSite: 'lax', path: '/' });
+      setCsrfCookie(res, req.session.csrfToken);
       req.session.save(() => res.redirect('/'));
     });
   }

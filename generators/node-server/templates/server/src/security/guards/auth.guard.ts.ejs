@@ -1,14 +1,11 @@
 <%_ if (authenticationType === 'oauth2') { _%>
-import { ExecutionContext, ForbiddenException, Injectable, UnauthorizedException } from '@nestjs/common';
+import { ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common';
 import { AuthGuard as NestAuthGuard } from '@nestjs/passport';
-
-/** The methods that change nothing, which the CSRF token does not protect, like the ones of Spring Security. */
-const SAFE_METHODS = ['GET', 'HEAD', 'OPTIONS', 'TRACE'];
 
 /**
  * The authentication of the API, like JHipster Spring Boot with OAuth2: the session of the login (the clients of the
- * application, the unsafe requests checked by the XSRF-TOKEN cookie they send back as X-XSRF-TOKEN), else an access
- * token of the identity provider as bearer token (oauth2ResourceServer), else 401.
+ * application, their unsafe requests checked by the CsrfMiddleware), else an access token of the identity provider as
+ * bearer token (oauth2ResourceServer), else 401.
  */
 @Injectable()
 export class AuthGuard extends NestAuthGuard('oauth2-bearer') {
@@ -16,13 +13,11 @@ export class AuthGuard extends NestAuthGuard('oauth2-bearer') {
     const request = context.switchToHttp().getRequest();
 
     if (request.session?.user) {
-      if (!SAFE_METHODS.includes(request.method) && request.headers['x-xsrf-token'] !== request.session.csrfToken) {
-        throw new ForbiddenException('Invalid CSRF token');
-      }
       request.user = request.session.user;
       return true;
     }
-    if (!request.headers.authorization?.startsWith('Bearer ')) {
+    // The authentication scheme is case insensitive, like HTTP gives it.
+    if (!/^bearer\s+\S/i.test(request.headers.authorization ?? '')) {
       throw new UnauthorizedException();
     }
     return super.canActivate(context);

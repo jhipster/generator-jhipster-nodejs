@@ -75,7 +75,7 @@ export class <%= userLoginVmClass %> extends BaseDTO {
   @Exclude({ toPlainOnly: true })
   @ApiProperty({ example: 'myuser', description: 'User password' })
   @Allow()
-  password!: string;
+  password<%- generateUserManagement ? '!' : '?' %>: string;
 
   @ApiProperty({ example: 'http://my-image-url', description: 'Image url', required: false })
   @IsOptional()
