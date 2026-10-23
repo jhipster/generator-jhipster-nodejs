@@ -312,7 +312,7 @@ _%>
 
         // The absent fields are kept, a null clears one.
         expect(response.body).toEqual({ ...entityMock, lastModifiedBy: '<%= patcher %>', createdBy: null });
-        expect(alertHeader(response.headers, '-alert')).toMatch(<%- enableTranslation ? `/\\.${entityClass}\\.updated$/` : `/^A ${entityClass} is updated with identifier /` %>);
+        expect(alertHeader(response.headers, '-alert')).toMatch(<%- enableTranslation ? `/^${frontendAppName}\\.${entityAlertName}\\.updated$/` : `/^A ${entityAlertName} is updated with identifier /` %>);
         expect(alertHeader(response.headers, '-params')).toBe(String(entityMock.id));
     });
 
