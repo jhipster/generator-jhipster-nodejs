@@ -27,8 +27,6 @@ export const prepareSampleEntry = sampleData => {
       sample,
       {
         'sample-file': sample,
-        'legacy-template-name': sample,
-        'legacy-sample-file': sample,
         'sample-folder': 'samples/',
         'sample-type': 'yo-rc',
         ...data,
@@ -63,8 +61,6 @@ export const prepareSampleEntry = sampleData => {
     sample,
     {
       'sample-file': sampleFile,
-      'legacy-template-name': sample,
-      'legacy-sample-file': sampleFile,
       'sample-folder': 'samples/',
       'sample-type': 'jdl',
       generatorOptions,
