@@ -51,7 +51,7 @@ const validValues = Object.fromEntries(
         .map(field => [field.fieldName, field.nodejsApiFakeValue()])
         .filter(([, value]) => value !== undefined && value !== null),
 );
-const requiredField = validatedFields.find(field => field.fieldValidateRules.includes('required'));
+const requiredField = validatedFields.find(field => field.fieldValidationRequired);
 const enumField = fields.find(field => !field.id && field.fieldIsEnum);
 _%>
     const validEntity: any = {

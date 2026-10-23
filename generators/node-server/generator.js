@@ -25,6 +25,7 @@ import {
   getNodeDevDatabaseType,
   getNodeDevSqliteDatabase,
   hasRuntimeColumnTypes,
+  joinTable,
   mutateEntityAuthorities,
   mutateEntityPaths,
   mutateRelatedValues,
@@ -400,10 +401,9 @@ export default class extends BaseApplicationGenerator {
           entity.nodejsApiFakeEntity = () => apiFakeEntity(entity);
         }
       },
-      prepareAuthorityAlertName({ application, entities }) {
+      prepareAuthorityAlertName({ application }) {
         // The name of the built-in Authority in its alerts (adminAuthority), the key of its translations in the client.
-        const authority = entities.find(entity => entity.builtInAuthority);
-        application.nodejsAuthorityAlertName = authority?.entityAlertName ?? 'authority';
+        application.nodejsAuthorityAlertName = application.authority?.entityAlertName ?? 'authority';
       },
       prepareUserLoginVm({ application }) {
         // The class of the logged user's data: the DTO of the built-in User entity, prepared with the entities, else
@@ -420,6 +420,10 @@ export default class extends BaseApplicationGenerator {
         for (const entity of entities.filter(entity => !entity.skipServer && !entity.builtIn)) {
           entity.nodejsMigration = entityMigration(entity);
           entity.nodejsConstraintsMigration = constraintsMigration(entity);
+          // The join tables of the entity, its @JoinTable the same as its constraints migration.
+          for (const relationship of entity.relationships.filter(relationship => relationship.shouldWriteJoinTable)) {
+            relationship.nodejsJoinTable = joinTable(entity, relationship);
+          }
         }
       },
     });
