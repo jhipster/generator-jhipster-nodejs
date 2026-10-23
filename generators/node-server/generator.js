@@ -13,12 +13,14 @@ import { serverFiles } from './files.js';
 import {
   MIGRATION_TIMESTAMP_OFFSET,
   apiFakeEntity,
+  apiFakeValue,
   columnTransformer,
   constraintsMigration,
   contentTypeColumnOptions,
   entityMigration,
   fieldColumnOptions,
   fieldColumnTypeImports,
+  fieldTypeValidators,
   getDatabasePort,
   getNodeDevDatabaseType,
   getNodeDevSqliteDatabase,
@@ -282,7 +284,6 @@ export default class extends BaseApplicationGenerator {
           );
       },
       async preparing({ application }) {
-        application.typeormOrderSupport = !application.databaseTypeMongodb;
         application.typeormRelationsSupport = !application.databaseTypeMongodb;
       },
     });
@@ -324,8 +325,11 @@ export default class extends BaseApplicationGenerator {
           __override__: true,
           nodejsColumnOptions: fieldColumnOptions(field, application),
           nodejsColumnTypeImports: fieldColumnTypeImports(field, application),
+          nodejsTypeValidators: fieldTypeValidators(field),
           nodejsContentTypeColumnOptions: contentTypeColumnOptions(field, application),
         });
+        // The fake value of the field as the API exchanges it, generated when a template calls it (after its faker seed).
+        field.nodejsApiFakeValue = () => apiFakeValue(field);
       },
     });
   }

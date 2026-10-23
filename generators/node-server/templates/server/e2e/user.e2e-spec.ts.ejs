@@ -159,11 +159,9 @@ describe('User', () => {
         await service.delete(activated);
         await service.delete(inactive);
     });
-<%_ if (typeormOrderSupport) { _%>
 
     it('/GET public users sorted on a property out of the allowed ones is a bad request', () =>
         request(app.getHttpServer()).get('/api/users?sort=password,asc').expect(400));
-<%_ } _%>
 
     it('/POST create user with an invalid email is a validation error', async () => {
         const response = await request(app.getHttpServer())
@@ -302,7 +300,6 @@ describe('User', () => {
         expect(userUndefined).toBeUndefined();
     });
 
-<%_ if (typeormOrderSupport) { _%>
     it('/GET users sorted on a property of the user', async () => {
         await request(app.getHttpServer()).get('/api/admin/users?sort=login,desc').expect(200);
         await request(app.getHttpServer()).get('/api/admin/users?sort=createdDate,asc').expect(200);
@@ -315,7 +312,6 @@ describe('User', () => {
         }
     });
 
-<%_ } _%>
     afterEach(async () => {
         await app?.close();
     });

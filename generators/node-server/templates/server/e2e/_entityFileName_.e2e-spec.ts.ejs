@@ -2,13 +2,13 @@
 // The fake data of this test, whatever the templates rendered before: the faker of the entity is seeded for it.
 resetFakerSeed('nodejs-e2e-mock');
 const numericId = primaryKey.tsType === 'number';
-// The fake data of the fields, reproducible (the faker of the entity is seeded), as TypeScript literals: distinct ids of
-// the type of the primary key, and a value for each field of the entity.
+// The fake data of the fields, reproducible (the faker of the entity is seeded): distinct ids of the type of the primary
+// key, as TypeScript literals, and a value for each field of the entity, as the API exchanges it.
 const idField = primaryKey.fields[0];
 const [entityId, unknownId, anotherId] = [idField.generateFakeData('ts'), idField.generateFakeData('ts'), idField.generateFakeData('ts')];
 const fakeFields = fields
   .filter(field => !field.id && !field.transient && !field.collection)
-  .map(field => [field.propertyName, field.generateFakeData('ts')])
+  .map(field => [field.propertyName, field.nodejsApiFakeValue()])
   .filter(([, value]) => value !== undefined && value !== null);
 // An id the pipe of the path rejects: neither a number nor a UUID.
 const invalidId = faker.lorem.word({ length: { min: 5, max: 10 } });
@@ -23,10 +23,8 @@ import { AuthGuard } from '../src/security/guards/auth.guard.ts';
 import { RolesGuard } from '../src/security/guards/roles.guard.ts';
 import { <%= dtoClass %> } from '../src/service/dto/<%= entityFileName %>.dto.ts';
 import { <%= entityClass %>Service } from '../src/service/<%= entityFileName %>.service.ts';
-<%_ if (typeormOrderSupport) { _%>
 import { DataSource, EntityMetadata } from 'typeorm';
 import { <%= entityClass %> } from '../src/domain/<%= entityFileName %>.entity.ts';
-<%_ } _%>
 
 // The alert headers the JHipster clients read, named after jhipster.clientApp.name.
 const alertHeader = (headers: Record<string, unknown>, suffix: string): unknown => headers[`x-<%= frontendAppName.toLowerCase() %>${suffix}`];
@@ -39,7 +37,7 @@ describe('<%= entityClass %> Controller', () => {
     const entityMock: any = {
         id: <%- entityId %>,
 <%_ for (const [propertyName, value] of fakeFields) { _%>
-        <%- propertyName %>: <%- value %>,
+        <%- propertyName %>: <%- JSON.stringify(value) %>,
 <%_ } _%>
     }
     const unknownId = <%- unknownId %>;
@@ -50,7 +48,7 @@ resetFakerSeed('nodejs-e2e');
 const validatedFields = fields.filter(field => !field.id && field.fieldValidate && field.fieldType !== 'byte[]');
 const validValues = Object.fromEntries(
     validatedFields
-        .map(field => [field.fieldName, field.generateFakeData('json-serializable')])
+        .map(field => [field.fieldName, field.nodejsApiFakeValue()])
         .filter(([, value]) => value !== undefined && value !== null),
 );
 const requiredField = validatedFields.find(field => field.fieldValidateRules.includes('required'));
@@ -63,7 +61,7 @@ _%>
 <%_ } _%>
     };
 
-    const serviceMock<% if (typeormOrderSupport) { %>: { metadata?: EntityMetadata, [method: string]: unknown }<% } %> = {
+    const serviceMock: { metadata?: EntityMetadata, [method: string]: unknown } = {
         findById: (id: any): any => (id === entityMock.id ? { ...entityMock } : undefined),
         findAndCount: (): any => [entityMock, 0],
         save: (): any => entityMock,
@@ -82,10 +80,8 @@ _%>
         .overrideProvider(<%= entityClass %>Service)
         .useValue(serviceMock)
         .compile();
-<%_ if (typeormOrderSupport) { _%>
         // The sort is validated with the TypeORM metadata of the entity.
         serviceMock.metadata = moduleFixture.get(DataSource).getMetadata(<%= entityClass %>);
-<%_ } _%>
 
         app = moduleFixture.createNestApplication();
         configureApp(app);
@@ -103,7 +99,6 @@ _%>
     }
     );
 
-<%_ if (typeormOrderSupport) { _%>
 <%_
 const sortField = fields.find(field => !field.id && !field.transient);
 const sortRelationship = relationships.find(relationship => relationship.ownerSide && !relationship.collection);
@@ -139,7 +134,6 @@ _%>
 
         expect(response.body.detail).toBe('Invalid sort property: unknownProperty');
     });
-<%_ } _%>
 
     it('/GET all <%= entityApiUrl %> with the links of the pages', async () => {
         const { findAndCount } = serviceMock;

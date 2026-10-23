@@ -1,11 +1,15 @@
 import { Injectable, HttpException, HttpStatus, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { <% if (typeormOrderSupport) { %>EntityMetadata, <% } %>FindManyOptions, FindOneOptions, Repository } from 'typeorm';
+import { EntityMetadata, FindManyOptions, FindOneOptions, Repository } from 'typeorm';
 import { <%= entityClass %> } from '../domain/<%= entityFileName %>.entity.ts';
 import { <%= dtoClass %> }  from '../service/dto/<%= entityFileName %>.dto.ts';
 import { <%= entityClass %>Mapper }  from '../service/mapper/<%= entityFileName %>.mapper.ts';
 <%_ if (databaseType === 'mongodb') { _%>
 import { updatableProperties } from '../common/updatable-properties.ts';
+<%_ if (databaseTypeMongodb) { _%>
+import { ObjectId } from 'mongodb';
+import { documentOrder } from '../common/sortable-properties.ts';
+<%_ } _%>
 <%_ } _%>
 
 <%_
@@ -25,15 +29,19 @@ export class <%= entityClass %>Service {
     logger = new Logger('<%= entityClass %>Service');
 
     constructor(@InjectRepository(<%= entityClass %>) private <%= entityInstance %>Repository: Repository<<%= entityClass %>>) {}
-<%_ if (typeormOrderSupport) { _%>
 
     /** The TypeORM metadata of the entity, the sort of its lists is validated with. */
     get metadata(): EntityMetadata {
         return this.<%= entityInstance %>Repository.metadata;
     }
-<%_ } _%>
 
       async findById(id: <%= pkType %>): Promise<<%= dtoClass %> | undefined> {
+<%_ if (databaseTypeMongodb) { _%>
+        // An id that is not an ObjectId is the one of no document, like an unknown id of JHipster Spring Boot.
+        if (!ObjectId.isValid(id)) {
+          return undefined;
+        }
+<%_ } _%>
         const result = await this.<%= entityInstance %>Repository.findOne({
 <%_ if (typeormRelationsSupport && eagerLoadRelations.length > 0) { _%>
           relations,
@@ -52,6 +60,8 @@ export class <%= entityClass %>Service {
         const resultList = await this.<%= entityInstance %>Repository.findAndCount(
 <%_ if (typeormRelationsSupport && eagerLoadRelations.length > 0) { _%>
           { ...options, relations },
+<%_ } else if (databaseTypeMongodb) { _%>
+          { ...options, order: documentOrder(this.metadata, options.order) },
 <%_ } else { _%>
           options,
 <%_ } _%>
@@ -64,6 +74,14 @@ export class <%= entityClass %>Service {
         return resultList;
       }
 
+<%_ for (const relationship of relationships.filter(relationship => relationship.relationshipOneToOne && !relationship.ownerSide)) { _%>
+      /** The records without <%= relationship.relationshipName %>, like the findAllWhere<%- relationship.relationshipNameCapitalized %>IsNull of JHipster Spring Boot. */
+      async findAllWhere<%- relationship.relationshipNameCapitalized %>IsNull(): Promise<<%= dtoClass %>[]> {
+        const results = await this.<%= entityInstance %>Repository.find({ relations: { <%= relationship.propertyName %>: true } });
+        return results.filter(<%= entityInstance %> => !<%= entityInstance %>.<%= relationship.propertyName %>).map(<%= entityInstance %> => <%= entityClass %>Mapper.fromEntityToDTO(<%= entityInstance %>));
+      }
+
+<%_ } _%>
       async save(<%= entityInstance %>DTO: <%= dtoClass %>, creator?: string): Promise<<%= dtoClass %>> {
         const entity = <%= entityClass %>Mapper.fromDTOtoEntity(<%= entityInstance %>DTO);
         if (creator) {
@@ -93,6 +111,11 @@ export class <%= entityClass %>Service {
       }
 
       async deleteById(id: <%= pkType %>): Promise<void> {
+<%_ if (databaseTypeMongodb) { _%>
+        if (!ObjectId.isValid(id)) {
+          return;
+        }
+<%_ } _%>
         await this.<%= entityInstance %>Repository.delete(id);
       }
 

@@ -61,9 +61,11 @@ if (field.fieldValidate === true) {
         // Like Bean Validation @Pattern, the whole value matches the pattern.
         validators.push('@Matches(' + JSON.stringify('^(?:' + field.fieldValidateRulesPattern + ')$') + ')');
     }
-} else if (field.fieldIsEnum) {
+} else if (field.fieldIsEnum || field.nodejsTypeValidators.length > 0) {
     validators.push('@IsOptional()');
 }
+// Like the JSON deserialization of JHipster Spring Boot, a value of another type is a bad request (400).
+validators.push(...field.nodejsTypeValidators);
 if (field.fieldIsEnum) {
     // Like the JSON deserialization of JHipster Spring Boot, a value out of the enum is a bad request (400), not a database error.
     validators.push('@IsEnum(' + field.fieldType + ')');

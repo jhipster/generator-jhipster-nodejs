@@ -3,10 +3,13 @@ import { Injectable<% if (generateUserManagement) { %>, Logger<% } %> } from '@n
 import { Cron } from '@nestjs/schedule';
 <%_ } _%>
 import { InjectRepository } from '@nestjs/typeorm';
-import { <% if (typeormOrderSupport) { %>EntityMetadata, <% } %>FindManyOptions, FindOneOptions, <% if (generateUserManagement && typeormRelationsSupport) { %>IsNull, LessThan, Not, <% } %>Repository } from 'typeorm';
+import { EntityMetadata, FindManyOptions, FindOneOptions, <% if (generateUserManagement && typeormRelationsSupport) { %>IsNull, LessThan, Not, <% } %>Repository } from 'typeorm';
 import { <%= user.persistClass %> } from '../domain/user.entity.ts';
 import { PublicUserDTO, <%= user.dtoClass%> } from './dto/user.dto.ts';
 import { UserMapper } from './mapper/user.mapper.ts';
+<%_ if (databaseTypeMongodb) { _%>
+import { documentOrder } from '../common/sortable-properties.ts';
+<%_ } _%>
 import { User } from '../domain/user.entity.ts';
 <%_ if (authenticationType === 'jwt') { _%>
 import { PasswordService } from '../security/password.service.ts';
@@ -28,13 +31,11 @@ export class UserService {
         private readonly passwordService: PasswordService,
 <%_ } _%>
     ) {}
-<%_ if (typeormOrderSupport) { _%>
 
     /** The TypeORM metadata of the user, the sort of the user lists is validated with. */
     get metadata(): EntityMetadata {
         return this.userRepository.metadata;
     }
-<%_ } _%>
 
     async findById(id: <%= user.primaryKey.tsType %>): Promise<<%= user.dtoClass%> | undefined> {
         const result = await this.userRepository.findOneBy({ id });
@@ -62,7 +63,7 @@ export class UserService {
 <%_ if (typeormRelationsSupport) { _%>
           { ...options, relations },
 <%_ } else { _%>
-          options,
+          { ...options, order: documentOrder(this.metadata, options.order) },
 <%_ } _%>
         );
         const usersDTO: <%= user.dtoClass%>[] = [];
@@ -75,7 +76,13 @@ export class UserService {
 
     /** The users of the public user list, like JHipster Spring Boot: the activated ones, by their id and login only. */
     async findPublicUsers(options: FindManyOptions<<%= user.persistClass %>>): Promise<[PublicUserDTO[], number]> {
-        const [users, count] = await this.userRepository.findAndCount({ ...options, where: { activated: true } });
+        const [users, count] = await this.userRepository.findAndCount({
+          ...options,
+<%_ if (databaseTypeMongodb) { _%>
+          order: documentOrder(this.metadata, options.order),
+<%_ } _%>
+          where: { activated: true },
+        });
         return [users.map(user => ({ id: user.<%- user.primaryKey.name %>!, login: user.login })), count];
     }
 
