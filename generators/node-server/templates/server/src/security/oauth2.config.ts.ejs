@@ -15,6 +15,12 @@ export class OAuth2Config {
   readonly tokenURL: string;
   readonly logoutUrl: string;
   readonly callbackURL: string;
+  /** The keys of the issuer (JWKS), the bearer tokens are verified with. */
+  readonly jwksUri: string;
+  /** The issuer of the tokens, the configured one (the browser's), not the one the application reaches from a container. */
+  readonly issuer: string;
+  /** The audiences of the access tokens the API accepts as bearer tokens, like JHipster Spring Boot. */
+  readonly audience: string[];
   readonly isOktaProvider: boolean;
 
   constructor(configService: ConfigService<ApplicationConfig, true>) {
@@ -25,14 +31,21 @@ export class OAuth2Config {
     // URL of the request (the X-Forwarded-Proto of a proxy included), the URL the browser reaches the application at.
     this.callbackURL = '/login/oauth2/code/oidc';
     this.isOktaProvider = issuerUri.includes('okta');
+    this.issuer = issuerUri;
+    this.audience = String(configService.get('jhipster.security.oauth2.audience', { infer: true }) ?? '')
+      .split(',')
+      .map(audience => audience.trim())
+      .filter(Boolean);
     if (this.isOktaProvider) {
       this.authorizationURL = `${issuerUri}/v1/authorize`;
       this.tokenURL = `${issuerUri}/v1/token`;
       this.logoutUrl = `${issuerUri}/v1/logout`;
+      this.jwksUri = `${dockerIssuerUri}/v1/keys`;
     } else {
       this.authorizationURL = `${issuerUri}/${openIdProtocol}/auth`;
       this.tokenURL = `${dockerIssuerUri}/${openIdProtocol}/token`;
       this.logoutUrl = `${issuerUri}/${openIdProtocol}/logout`;
+      this.jwksUri = `${dockerIssuerUri}/${openIdProtocol}/certs`;
     }
   }
 }

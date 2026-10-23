@@ -1092,6 +1092,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > with oauth2 > s
   "server/e2e/management.e2e-spec.ts": {
     "stateCleared": "modified",
   },
+  "server/e2e/oauth2-bearer.e2e-spec.ts": {
+    "stateCleared": "modified",
+  },
   "server/e2e/setup.test.js": {
     "stateCleared": "modified",
   },
@@ -1200,6 +1203,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > with oauth2 > s
   "server/src/orm.config.ts": {
     "stateCleared": "modified",
   },
+  "server/src/security/csrf.middleware.ts": {
+    "stateCleared": "modified",
+  },
   "server/src/security/decorators/auth-user.decorator.ts": {
     "stateCleared": "modified",
   },
@@ -1207,6 +1213,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > with oauth2 > s
     "stateCleared": "modified",
   },
   "server/src/security/guards/auth.guard.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/security/guards/oauth2-login.guard.ts": {
     "stateCleared": "modified",
   },
   "server/src/security/guards/roles.guard.ts": {
@@ -1219,6 +1228,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > with oauth2 > s
     "stateCleared": "modified",
   },
   "server/src/security/oauth2.config.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/security/passport.oauth2-bearer.strategy.ts": {
     "stateCleared": "modified",
   },
   "server/src/security/passport.oauth2.strategy.ts": {
@@ -1302,7 +1314,13 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > with oauth2 > s
   "server/test/domain/column-types.spec.ts": {
     "stateCleared": "modified",
   },
+  "server/test/security/csrf.middleware.spec.ts": {
+    "stateCleared": "modified",
+  },
   "server/test/security/oauth2.authorities.spec.ts": {
+    "stateCleared": "modified",
+  },
+  "server/test/security/passport.oauth2.strategy.spec.ts": {
     "stateCleared": "modified",
   },
   "server/tsconfig.build.json": {
@@ -1404,6 +1422,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > with oauth2 and
     "stateCleared": "modified",
   },
   "server/e2e/management.e2e-spec.ts": {
+    "stateCleared": "modified",
+  },
+  "server/e2e/oauth2-bearer.e2e-spec.ts": {
     "stateCleared": "modified",
   },
   "server/e2e/setup.test.js": {
@@ -1529,6 +1550,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > with oauth2 and
   "server/src/orm.config.ts": {
     "stateCleared": "modified",
   },
+  "server/src/security/csrf.middleware.ts": {
+    "stateCleared": "modified",
+  },
   "server/src/security/decorators/auth-user.decorator.ts": {
     "stateCleared": "modified",
   },
@@ -1536,6 +1560,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > with oauth2 and
     "stateCleared": "modified",
   },
   "server/src/security/guards/auth.guard.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/security/guards/oauth2-login.guard.ts": {
     "stateCleared": "modified",
   },
   "server/src/security/guards/roles.guard.ts": {
@@ -1548,6 +1575,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > with oauth2 and
     "stateCleared": "modified",
   },
   "server/src/security/oauth2.config.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/security/passport.oauth2-bearer.strategy.ts": {
     "stateCleared": "modified",
   },
   "server/src/security/passport.oauth2.strategy.ts": {
@@ -1646,7 +1676,13 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > with oauth2 and
   "server/test/domain/column-types.spec.ts": {
     "stateCleared": "modified",
   },
+  "server/test/security/csrf.middleware.spec.ts": {
+    "stateCleared": "modified",
+  },
   "server/test/security/oauth2.authorities.spec.ts": {
+    "stateCleared": "modified",
+  },
+  "server/test/security/passport.oauth2.strategy.spec.ts": {
     "stateCleared": "modified",
   },
   "server/tsconfig.build.json": {

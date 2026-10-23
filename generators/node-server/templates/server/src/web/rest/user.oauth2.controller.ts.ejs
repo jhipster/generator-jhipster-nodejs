@@ -1,10 +1,11 @@
+import { randomUUID } from 'node:crypto';
+
 import { Controller, Get, Logger, Post, Res, UseGuards, Req } from '@nestjs/common';
 import { AuthService } from '../../service/auth.service.ts';
 import { ApiTags, ApiResponse, ApiOperation, ApiExcludeEndpoint } from '@nestjs/swagger';
-import { AuthGuard, RolesGuard } from '../../security/index.ts';
+import { setCsrfCookie } from '../../security/csrf.middleware.ts';
+import { OAuth2LoginGuard } from '../../security/guards/oauth2-login.guard.ts';
 import { OAuth2Config } from '../../security/oauth2.config.ts';
-<%_ if (skipClient) { _%>
-<%_ } _%>
 
 @Controller()
 @ApiTags('user-oauth2-controller')
@@ -17,33 +18,33 @@ export class UserOauth2Controller {
   ) {}
 
   @ApiExcludeEndpoint()
-  @UseGuards(AuthGuard, RolesGuard)
+  @UseGuards(OAuth2LoginGuard)
   @Get('/login/oauth2/code/oidc')
   @ApiOperation({ summary: 'Backend redirect' })
   @ApiResponse({
     status: 200,
     description: 'Redirect oauth2 oidc after login',
   })
-  redirect(@Req() req: any, @Res() res: any): any {
-    res.session = req.session;
-    res.session.user = req.user;
-    res.session.idToken = req.idToken;
-    <%_ if (skipClient) { _%>
-    // The request the login started from, saved by the AuthGuard, like the saved request of Spring Security.
-    const url = req.session.url;
-    <%_ } else { _%>
-    let url = '/';
-    if (this.oauth2Config.isOktaProvider) {
-        url = req.session.url;
-    }
-    <%_ } _%>
-    return res.redirect(url || '/');
-
+  redirect(@Req() req: any, @Res() res: any): void {
+    const { user } = req;
+    // Like Spring Security, a new session for the authenticated user (the id of the session before the login is not
+    // kept), with the CSRF token the clients send back as X-XSRF-TOKEN.
+    req.session.regenerate((error?: Error) => {
+      if (error) {
+        this.logger.error(`The session of the login could not be created: ${error.message}`);
+        res.status(500).end();
+        return;
+      }
+      req.session.user = user;
+      req.session.csrfToken = randomUUID();
+      setCsrfCookie(res, req.session.csrfToken);
+      req.session.save(() => res.redirect('/'));
+    });
   }
 
   @ApiExcludeEndpoint()
   @Get('/oauth2/authorization/oidc')
-  @UseGuards(AuthGuard, RolesGuard)
+  @UseGuards(OAuth2LoginGuard)
   @ApiOperation({ summary: 'Perform login oauth2 oidc from client' })
   @ApiResponse({
     status: 200,

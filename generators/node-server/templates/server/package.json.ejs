@@ -84,12 +84,12 @@
 <%_ } _%>
     "js-yaml": "<%- nodeServerDependencies['js-yaml'] %>",
 <%_ if (authenticationType === 'oauth2') { _%>
+    "jwks-rsa": "<%- nodeServerDependencies['jwks-rsa'] %>",
     "jwt-decode": "<%- nodeServerDependencies['jwt-decode'] %>",
 <%_ } _%>
     "passport": "<%- nodeServerDependencies['passport'] %>",
-<%_ if (authenticationType === 'jwt') { _%>
     "passport-jwt": "<%- nodeServerDependencies['passport-jwt'] %>",
-<%_ } else if (authenticationType === 'oauth2') {_%>
+<%_ if (authenticationType === 'oauth2') {_%>
     "passport-oauth2": "<%- nodeServerDependencies['passport-oauth2'] %>",
 <%_ } _%>
     "prom-client": "<%- nodeServerDependencies['prom-client'] %>",
@@ -113,9 +113,7 @@
 <%_ if (authenticationType === 'oauth2') { _%>
     "@types/passport": "<%- nodeServerDependencies['@types/passport'] %>",
 <%_ } _%>
-<%_ if (authenticationType === 'jwt') { _%>
     "@types/passport-jwt": "<%- nodeServerDependencies['@types/passport-jwt'] %>",
-<%_ } _%>
 <%_ if (authenticationType === 'oauth2') { _%>
     "@types/passport-oauth2": "<%- nodeServerDependencies['@types/passport-oauth2'] %>",
 <%_ } _%>

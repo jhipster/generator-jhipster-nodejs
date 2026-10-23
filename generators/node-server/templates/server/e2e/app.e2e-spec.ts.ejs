@@ -12,6 +12,10 @@ import { UserLoginDTO } from '../src/service/dto/user-login.dto.ts';
 <%_ } else if (authenticationType === 'jwt') { _%>
 import { ConfigService } from '@nestjs/config';
 import { JWT_ALGORITHM, jwtSecretKey } from '../src/security/jwt.config.ts';
+<%_ } else if (authenticationType === 'oauth2' && generateBuiltInUserEntity) { _%>
+import { oidcUserOfClaims } from '../src/security/oauth2.authorities.ts';
+import { AuthService } from '../src/service/auth.service.ts';
+import { UserService } from '../src/service/user.service.ts';
 <%_ } _%>
 
 describe('App', () => {
@@ -163,8 +167,19 @@ describe('App', () => {
 
     it('/GET account not logged', () => request(app.getHttpServer())
         .get('/api/account')
-        .expect(200)
-        .expect({}));
+        // Like JHipster Spring Boot, the clients take a 401 for not logged.
+        .expect(401));
+    <%_ if (generateBuiltInUserEntity) { _%>
+
+    it('saves the user of the identity provider at its logins, without a password, like JHipster Spring Boot', async () => {
+        const authService = app.get(AuthService);
+        await authService.findUserOrSave(oidcUserOfClaims({ sub: 'idp-user', preferred_username: 'IdP-User', groups: ['ROLE_USER'] }));
+        await authService.findUserOrSave(oidcUserOfClaims({ sub: 'idp-user', preferred_username: 'idp-user', given_name: 'Updated', groups: ['ROLE_USER'] }));
+
+        const saved = await app.get(UserService).findByFields({ where: { login: 'idp-user' } });
+        expect(saved).toMatchObject({ login: 'idp-user', firstName: 'Updated', email: 'idp-user@localhost', activated: true });
+    });
+    <%_ } _%>
     <%_ } _%>
 
     afterEach(async () => {

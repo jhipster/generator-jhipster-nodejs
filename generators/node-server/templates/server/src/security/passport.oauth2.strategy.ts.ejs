@@ -1,11 +1,12 @@
 import { jwtDecode } from 'jwt-decode';
 import Strategy from 'passport-oauth2';
 import { PassportStrategy } from '@nestjs/passport';
-import { Injectable, UnauthorizedException, Logger } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { AuthService } from '../service/auth.service.ts';
+import { <%= userLoginVmClass %> } from '../service/dto/user.dto.ts';
 import { OAuth2Config } from './oauth2.config.ts';
-import { extractAuthoritiesFromClaims } from './oauth2.authorities.ts';
+import { oidcUserOfClaims } from './oauth2.authorities.ts';
 
 @Injectable()
 export class Oauth2Strategy extends PassportStrategy(Strategy, undefined, true) {
@@ -22,42 +23,22 @@ export class Oauth2Strategy extends PassportStrategy(Strategy, undefined, true) 
             scope: 'openid profile',
             state: true,
             pkce: true,
+            // The user comes from the tokens of the response (validate), not from a profile request.
+            skipUserProfile: true,
         });
     }
 
     /**
-     * Called with the token response (params) too, the callback arity of the strategy following this signature.
+     * The user of the login, like the OIDC user of JHipster Spring Boot: the claims of the ID token over the ones of the
+     * access token (the access token of some providers, like Okta, has no login nor mail). With its 4 parameters, passport-oauth2
+     * gives it the params of the token response (the ID token): with 3, it gives the profile instead, undefined here.
      */
-    <%- generateBuiltInUserEntity ? 'async ' : '' %>validate(accessToken: string, refreshToken: string, params: any, user: any): <%- generateBuiltInUserEntity ? 'Promise<any>' : 'any' %> {
+    <%- generateBuiltInUserEntity ? 'async ' : '' %>validate(accessToken: string, refreshToken: string, params: any, _profile: unknown): <%- generateBuiltInUserEntity ? `Promise<${userLoginVmClass} & { idToken?: string }>` : `${userLoginVmClass} & { idToken?: string }` %> {
+        const user = oidcUserOfClaims({ ...jwtDecode(accessToken), ...(params.id_token ? jwtDecode(params.id_token) : {}) });
 <%_ if (generateBuiltInUserEntity) { _%>
         await this.authService.findUserOrSave(user);
 <%_ } _%>
-        user.idToken = params.id_token;
-        return user;
-    }
-
-    userProfile(accessToken: string, done: (err?: unknown, profile?: any) => void): void {
-
-        try {
-            const profile: any = jwtDecode(accessToken);
-            const userProfile = {
-                login: profile.preferred_username,
-                password: '***',
-                firstName: profile.given_name,
-                lastName: profile.family_name,
-                email: profile.email,
-                imageUrl: '',
-                activated: true,
-                langKey: 'en',
-                createdBy: 'system',
-                lastModifiedBy: 'system',
-                authorities: extractAuthoritiesFromClaims(profile),
-            };
-
-            done(null, userProfile);
-        } catch (e) {
-            this.logger.error(e);
-            done(new UnauthorizedException({ message: 'error to retrieve user info from accessToken' }), false);
-        }
+        // The ID token of the session, for the logout.
+        return Object.assign(user, { idToken: params.id_token });
     }
 }

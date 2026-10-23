@@ -1,0 +1,36 @@
+import { randomUUID } from 'crypto';
+import { ForbiddenException, Injectable, NestMiddleware } from '@nestjs/common';
+import { NextFunction, Request, Response } from 'express';
+
+/** The idle lifetime of a session, rolling: its cookie and the CSRF cookie expire together. */
+export const SESSION_MAX_AGE = 30 * 60 * 1000;
+
+/** The methods that change nothing, which the CSRF token does not protect, like the ones of Spring Security. */
+const SAFE_METHODS = ['GET', 'HEAD', 'OPTIONS', 'TRACE'];
+
+/** The XSRF-TOKEN cookie the clients (Angular HttpClient, axios) send back as the X-XSRF-TOKEN header. */
+export function setCsrfCookie(res: Response, token: string): void {
+  res.cookie('XSRF-TOKEN', token, { sameSite: 'lax', path: '/', maxAge: SESSION_MAX_AGE });
+}
+
+/**
+ * The CSRF protection of the sessions, like the CSRF filter of Spring Security and the CookieCsrfFilter of JHipster Spring
+ * Boot: every response of a logged session gives its token back as the XSRF-TOKEN cookie, and every unsafe request of it,
+ * the logout included, must send it as X-XSRF-TOKEN, else 403. A request with a bearer token has no session to protect.
+ */
+@Injectable()
+export class CsrfMiddleware implements NestMiddleware {
+  use(req: Request, res: Response, next: NextFunction): void {
+    const session = req.session as any;
+    if (!session?.user) {
+      next();
+      return;
+    }
+    session.csrfToken ??= randomUUID();
+    setCsrfCookie(res, session.csrfToken);
+    if (!SAFE_METHODS.includes(req.method) && req.headers['x-xsrf-token'] !== session.csrfToken) {
+      throw new ForbiddenException('Invalid CSRF token');
+    }
+    next();
+  }
+}
