@@ -53,7 +53,13 @@ export const serverFiles = {
     {
       path: SERVER_NODEJS_DIR,
       condition: ctx => ctx.generateBuiltInAuthorityEntity,
-      templates: ['src/domain/authority.entity.ts', 'src/migrations/1570200490072-SeedUsersRoles.ts'],
+      templates: [
+        'src/domain/authority.entity.ts',
+        'src/migrations/1570200490072-SeedUsersRoles.ts',
+        'src/service/dto/authority.dto.ts',
+        'src/web/rest/authority.controller.ts',
+        'e2e/authority.e2e-spec.ts',
+      ],
     },
     {
       path: SERVER_NODEJS_DIR,

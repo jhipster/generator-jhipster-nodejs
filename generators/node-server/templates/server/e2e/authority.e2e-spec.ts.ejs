@@ -1,0 +1,50 @@
+import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { INestApplication } from '@nestjs/common';
+import { Test, TestingModule } from '@nestjs/testing';
+import request from 'supertest';
+
+import { configureApp } from '../src/app.config.ts';
+import { AppModule } from '../src/app.module.ts';
+import { AuthGuard } from '../src/security/guards/auth.guard.ts';
+import { RolesGuard } from '../src/security/guards/roles.guard.ts';
+
+describe('Authority Controller', () => {
+    let app: INestApplication;
+
+    beforeAll(async () => {
+        const moduleFixture: TestingModule = await Test.createTestingModule({
+            imports: [AppModule],
+        })
+            .overrideGuard(AuthGuard)
+            .useValue({ canActivate: (): any => true })
+            .overrideGuard(RolesGuard)
+            .useValue({ canActivate: (): any => true })
+            .compile();
+
+        app = moduleFixture.createNestApplication();
+        configureApp(app);
+        await app.init();
+    });
+
+    afterAll(async () => {
+        await app?.close();
+    });
+
+    it('/GET the authorities the user management assigns, like JHipster Spring Boot', async () => {
+        const authorities = (await request(app.getHttpServer()).get('/api/authorities').expect(200)).body;
+        expect(authorities).toEqual(expect.arrayContaining([{ name: 'ROLE_ADMIN' }, { name: 'ROLE_USER' }]));
+    });
+
+    it('/POST, /GET and /DELETE an authority, like JHipster Spring Boot', async () => {
+        const created = await request(app.getHttpServer()).post('/api/authorities').send({ name: 'ROLE_E2E' }).expect(201);
+        expect(created.body).toEqual({ name: 'ROLE_E2E' });
+        expect(created.headers.location).toBe('/api/authorities/ROLE_E2E');
+
+        const problem = (await request(app.getHttpServer()).post('/api/authorities').send({ name: 'ROLE_E2E' }).expect(400)).body;
+        expect(problem).toMatchObject({ message: 'error.idexists' });
+
+        await request(app.getHttpServer()).get('/api/authorities/ROLE_E2E').expect(200).expect({ name: 'ROLE_E2E' });
+        await request(app.getHttpServer()).delete('/api/authorities/ROLE_E2E').expect(204);
+        await request(app.getHttpServer()).get('/api/authorities/ROLE_E2E').expect(404);
+    });
+});

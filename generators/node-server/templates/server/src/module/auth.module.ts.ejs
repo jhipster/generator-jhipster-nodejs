@@ -24,6 +24,7 @@ import { JWT_ALGORITHM, jwtSecretKey } from '../security/jwt.config.ts';
 <%_ if (generateBuiltInAuthorityEntity) { _%>
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Authority } from '../domain/authority.entity.ts';
+import { AuthorityController } from '../web/rest/authority.controller.ts';
 <%_ } _%>
 <%_ if (generateBuiltInUserEntity) { _%>
 import { PublicUserController } from '../web/rest/public.user.controller.ts';
@@ -61,6 +62,9 @@ import { AccountController } from '../web/rest/account.controller.ts';
   UserJWTController,
   <%_ } else if (authenticationType === 'oauth2') { _%>
   UserOauth2Controller,
+  <%_ } _%>
+  <%_ if (generateBuiltInAuthorityEntity) { _%>
+  AuthorityController,
   <%_ } _%>
   <%- generateBuiltInUserEntity ? 'PublicUserController' : 'ManagementController' %>, AccountController ],
   providers: [AuthService,

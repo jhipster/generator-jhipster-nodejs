@@ -1,0 +1,10 @@
+import { ApiProperty } from '@nestjs/swagger';
+import { IsNotEmpty, MaxLength } from 'class-validator';
+
+/** An authority, like the Authority of JHipster Spring Boot: its name, like ROLE_USER. */
+export class AuthorityDTO {
+  @ApiProperty({ example: 'ROLE_USER', description: 'The name of the authority' })
+  @IsNotEmpty()
+  @MaxLength(50)
+  name!: string;
+}
