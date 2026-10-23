@@ -99,6 +99,9 @@ export const loggerLevels = new LoggerLevels();
  * levels Nest applies to every logger.
  */
 export class LevelsConsoleLogger extends ConsoleLogger {
+  /** Whether the messages of the last log were printed: the stack trace of an error is printed with them only. */
+  private printed = true;
+
   constructor(private readonly levels: LoggerLevels = loggerLevels) {
     super({ logLevels: ['verbose', 'debug', 'log', 'warn', 'error', 'fatal'] });
   }
@@ -111,8 +114,16 @@ export class LevelsConsoleLogger extends ConsoleLogger {
     errorStack?: unknown,
     params?: Record<string, any>,
   ): void {
-    if (this.levels.isEnabled(context, logLevel)) {
+    this.printed = this.levels.isEnabled(context, logLevel);
+    if (this.printed) {
       super.printMessages(messages, context, logLevel, writeStreamType, errorStack, params);
+    }
+  }
+
+  /** The stack trace of an error, which ConsoleLogger prints after its messages: not printed when they are not (OFF). */
+  protected printStackTrace(stack: string): void {
+    if (this.printed) {
+      super.printStackTrace(stack);
     }
   }
 }

@@ -11,6 +11,9 @@ import { isProfileActive } from '../config.ts';
 interface EurekaClient {
   start(callback: (error?: Error) => void): void;
   stop(callback: (error?: Error) => void): void;
+  startHeartbeats(): void;
+  startRegistryFetches(): void;
+  on(event: 'registered', listener: () => void): void;
   logger: { level(level: string): void };
 }
 
@@ -80,7 +83,28 @@ export class EurekaService implements BeforeApplicationShutdown {
     // The requests to the Eureka server are logged in development only.
     client.logger.level(isProfileActive('dev') ? 'debug' : 'warn');
     this.logger.log(`Registering ${appName} with Eureka at ${serviceUrl.host}`);
-    client.start(error => (error ? this.logger.error(`Eureka registration failed: ${error.message}`) : this.logger.log('Eureka registration complete')));
+    let registered = false;
+    client.on('registered', () => {
+      registered = true;
+    });
+    client.start(error => {
+      if (!error) {
+        this.logger.log('Eureka registration complete');
+        return;
+      }
+      if (registered || !this.configService.get('eureka.client.register-with-eureka', { infer: true })) {
+        // The first registry fetch failed: the next ones are at its interval.
+        this.logger.warn(`Eureka registry fetch failed: ${error.message}`);
+        return;
+      }
+      this.logger.error(`Eureka registration failed, retried at each heartbeat: ${error.message}`);
+      // Registered by the first heartbeat the server answers (404 for an unknown instance), like the Eureka client of Spring
+      // Cloud keeps on registering: eureka-js-client starts the heartbeats and the registry fetches once registered only.
+      client.startHeartbeats();
+      if (this.configService.get('eureka.client.fetch-registry', { infer: true })) {
+        client.startRegistryFetches();
+      }
+    });
     this.client = client;
   }
 

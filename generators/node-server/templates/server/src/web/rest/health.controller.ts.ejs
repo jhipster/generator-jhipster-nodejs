@@ -50,6 +50,20 @@ export class HealthController {
     return { status: 'UP' };
   }
 
+<%_ if (databaseTypeSql) { _%>
+  /**
+   * The readiness probe, like the readiness group of JHipster Spring Boot (readinessState,db): UP once the application
+   * accepts requests and reaches its database, DOWN with the status 503 otherwise. A JHipster gateway waits for it before
+   * routing to a microservice.
+   */
+  @ApiExcludeEndpoint()
+  @Get('/health/readiness')
+  @SkipLogging()
+  async readiness(@Res({ passthrough: true }) response: Response): Promise<Pick<Health, 'status'>> {
+    const { status } = await this.health(response);
+    return { status };
+  }
+<%_ } else { _%>
   /**
    * The readiness probe, like the readiness group of Spring Boot Actuator (readinessState): UP once the application
    * accepts requests. A JHipster gateway waits for it before routing to a microservice.
@@ -60,6 +74,7 @@ export class HealthController {
   readiness(): Pick<Health, 'status'> {
     return { status: 'UP' };
   }
+<%_ } _%>
 }
 
 function toHealth({ status, details }: HealthCheckResult): Health {

@@ -11,8 +11,10 @@ import { ValidationException } from './web/rest/errors/problem.exception.ts';
 
 type AppConfigService = ConfigService<ApplicationConfig, true>;
 
-// The paths CORS applies to, like the WebConfigurer of JHipster Spring Boot.
+// The paths of the API, which CORS applies to like the WebConfigurer of JHipster Spring Boot.
 const CORS_PATHS = [/^\/api\//, /^\/management\//, /^\/v3\/api-docs(\?|$)/];
+// The paths of the API as Express routes them: case insensitive, with or without a trailing slash.
+const API_PATH = /^\/(?:api|management|v3\/api-docs)(?:\/|$)/i;
 const REGEXP_SPECIAL_CHARACTERS = /[.+?^${}()|[\]\\]/g;
 
 function propertyList(value: string | undefined): string[] {
@@ -39,13 +41,21 @@ export function corsOptions(configService: AppConfigService): CorsOptions | unde
   const allowedMethods = propertyList(cors['allowed-methods']);
   const allowedHeaders = propertyList(cors['allowed-headers']);
   const maxAge = Number(cors['max-age']);
+  const credentials = String(cors['allow-credentials']) === 'true';
+  if (credentials && allowedOrigins.includes('*')) {
+    // Like the CorsConfiguration of Spring: browsers refuse * as the allowed origin of a request with credentials.
+    throw new Error(
+      'When jhipster.cors.allow-credentials is true, jhipster.cors.allowed-origins cannot contain *: list the origins, or use jhipster.cors.allowed-origin-patterns',
+    );
+  }
   return {
-    origin: [...allowedOrigins, ...allowedOriginPatterns],
+    // * allows any origin, like the allowed origins of the CorsConfiguration of Spring (cors compares the origins as given).
+    origin: allowedOrigins.includes('*') ? '*' : [...allowedOrigins, ...allowedOriginPatterns],
     // Left out for *: the default methods of cors (all of them), the request headers echoed.
     ...(allowedMethods.includes('*') ? {} : { methods: allowedMethods }),
     ...(allowedHeaders.includes('*') ? {} : { allowedHeaders }),
     exposedHeaders: propertyList(cors['exposed-headers']),
-    credentials: String(cors['allow-credentials']) === 'true',
+    credentials,
     ...(maxAge > 0 ? { maxAge } : {}),
   };
 }
@@ -59,6 +69,12 @@ function responseHeaders(<% if (!skipClient) { %>configService: AppConfigService
   const contentSecurityPolicy = String(configService.get('jhipster.security.content-security-policy', { infer: true }) ?? '');
 <%_ } _%>
   return (req, res, next) => {
+    if (API_PATH.test(req.path)) {
+      // The cache control of Spring Security on the responses of the API: not cached (the static files of the client are).
+      res.setHeader('Cache-Control', 'no-cache, no-store, max-age=0, must-revalidate');
+      res.setHeader('Pragma', 'no-cache');
+      res.setHeader('Expires', '0');
+    }
     res.setHeader('X-Content-Type-Options', 'nosniff');
     res.setHeader('X-XSS-Protection', '0');
 <%_ if (skipClient) { _%>

@@ -1,4 +1,4 @@
-import { afterEach, beforeEach, describe, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { Test, TestingModule } from '@nestjs/testing';
 import request from 'supertest';
 import { INestApplication } from '@nestjs/common';
@@ -21,7 +21,7 @@ describe('CORS', () => {
     };
 
     afterEach(async () => {
-        config.addAll({ 'jhipster.cors.allowed-origins': '', 'jhipster.cors.allowed-origin-patterns': '' });
+        config.addAll({ 'jhipster.cors.allowed-origins': '', 'jhipster.cors.allowed-origin-patterns': '', 'jhipster.cors.allow-credentials': false });
         await app?.close();
     });
 
@@ -75,5 +75,36 @@ describe('CORS', () => {
                 throw new Error(`Unexpected Access-Control-Allow-Origin: ${response.headers['access-control-allow-origin']}`);
             }
         });
+    });
+
+    describe('with * as allowed origins, without credentials', () => {
+        beforeEach(() => createApp({ 'jhipster.cors.allowed-origins': '*', 'jhipster.cors.allow-credentials': false }));
+
+        it('allows any origin, like the CorsConfiguration of Spring', async () => {
+            const response = await request(app.getHttpServer())
+                .get('/management/health')
+                .set('Origin', 'http://any.example.com')
+                .expect(200)
+                .expect('Access-Control-Allow-Origin', '*');
+            expect(response.headers['access-control-allow-credentials']).toBeUndefined();
+        });
+    });
+
+    it('refuses * as allowed origins with credentials, which browsers refuse, like the CorsConfiguration of Spring', async () => {
+        await expect(createApp({ 'jhipster.cors.allowed-origins': '*', 'jhipster.cors.allow-credentials': true })).rejects.toThrow(
+            /allowed-origin-patterns/,
+        );
+    });
+
+    describe('with * as allowed origin patterns and credentials', () => {
+        beforeEach(() => createApp({ 'jhipster.cors.allowed-origin-patterns': '*', 'jhipster.cors.allow-credentials': true }));
+
+        it('allows any origin with credentials, the origin given back', () =>
+            request(app.getHttpServer())
+                .get('/management/health')
+                .set('Origin', 'http://any.example.com')
+                .expect(200)
+                .expect('Access-Control-Allow-Origin', 'http://any.example.com')
+                .expect('Access-Control-Allow-Credentials', 'true'));
     });
 });

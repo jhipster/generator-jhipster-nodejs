@@ -102,6 +102,8 @@ async function loadCloudConfig(): Promise<void> {
       name: config.get('cloud.config.name'),
       // The active profiles, like Spring Cloud Config.
       profiles: activeProfiles,
+      // The label (git branch, tag or commit) of the configuration, like spring.cloud.config.label.
+      label: config.get('cloud.config.label'),
       // auth: {
       //   user: config.get('jhipster.registry.username') || 'admin',
       //   pass: config.get('jhipster.registry.password') || 'admin'
