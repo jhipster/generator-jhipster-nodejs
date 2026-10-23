@@ -147,6 +147,43 @@ describe('Session authentication', () => {
     await agent.get('/api/account').expect(401);
   });
 
+  it('lists the sessions of the user and ends one of them, like the sessions page of JHipster Spring Boot', async () => {
+    await request(app.getHttpServer()).get('/api/account/sessions').expect(401);
+    const token = cookieValue(await login({ username: 'session-user', password }), 'XSRF-TOKEN')!;
+    // Another session of the same user, in another browser.
+    const other = request.agent(app.getHttpServer());
+    const otherToken = cookieValue(await other.get('/api/account').expect(401), 'XSRF-TOKEN')!;
+    await other.post('/api/authentication').set('X-XSRF-TOKEN', otherToken).set('User-Agent', 'other-browser').type('form').send({ username: 'session-user', password }).expect(200);
+
+    const { body: sessions } = await agent.get('/api/account/sessions').expect(200);
+    expect(sessions).toHaveLength(2);
+    expect(sessions).toEqual(
+      expect.arrayContaining([
+        { series: expect.any(String), tokenDate: new Date().toISOString().slice(0, 10), ipAddress: expect.any(String), userAgent: 'other-browser' },
+      ]),
+    );
+    const otherSeries = sessions.find((session: any) => session.userAgent === 'other-browser').series;
+
+    await agent.delete(`/api/account/sessions/${otherSeries}`).expect(403);
+    await agent.delete(`/api/account/sessions/${otherSeries}`).set('X-XSRF-TOKEN', token).expect(200);
+    await other.get('/api/account').expect(401);
+    await agent.get('/api/account').expect(200);
+    expect((await agent.get('/api/account/sessions').expect(200)).body).toHaveLength(1);
+  });
+
+  it('neither lists nor ends the sessions of another user', async () => {
+    await login({ username: 'session-user', password });
+    const admin = request.agent(app.getHttpServer());
+    users.push(await service.save({ login: 'session-other', email: 'session-other@localhost', password, activated: true }, 'session-other', true));
+    const adminToken = cookieValue(await admin.get('/api/account').expect(401), 'XSRF-TOKEN')!;
+    await admin.post('/api/authentication').set('X-XSRF-TOKEN', adminToken).type('form').send({ username: 'session-other', password }).expect(200);
+    const { body: otherSessions } = await admin.get('/api/account/sessions').expect(200);
+    const { body: sessions } = await agent.get('/api/account/sessions').expect(200);
+    expect(sessions).toHaveLength(1);
+    expect(otherSessions).toHaveLength(1);
+    expect(otherSessions[0].series).not.toEqual(sessions[0].series);
+  });
+
   it('refuses the administration to a user without ROLE_ADMIN', async () => {
     await login({ username: 'session-user', password });
     await agent.get('/api/admin/users').expect(403);

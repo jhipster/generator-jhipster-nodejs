@@ -1,11 +1,12 @@
-import { randomUUID } from 'node:crypto';
+import { randomBytes, randomUUID } from 'node:crypto';
 
-import { Body, Controller, HttpCode, Logger, Post, Req, Res, UnauthorizedException } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpCode, Logger, Param, Post, Req, Res, UnauthorizedException, UseGuards } from '@nestjs/common';
 import { ApiConsumes, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Request, Response } from 'express';
 import { AuthService } from '../../service/auth.service.ts';
 import { checkLoginCsrfToken, REMEMBER_ME_MAX_AGE, setCsrfCookie } from '../../security/csrf.middleware.ts';
 import { sessionUser } from '../../security/session-user.middleware.ts';
+import { AuthGuard } from '../../security/guards/auth.guard.ts';
 
 /** The form of the session login, the one the JHipster clients post, like the formLogin of JHipster Spring Boot. */
 interface LoginForm {
@@ -16,6 +17,26 @@ interface LoginForm {
 
 /** The values of the remember-me parameter that ask for it, like the ones of the RememberMeServices of Spring Security. */
 const REMEMBER_ME_VALUES = ['true', 'on', 'yes', '1'];
+
+/** A session of the user, as the sessions page of the clients shows it, like the PersistentToken of JHipster Spring Boot. */
+interface SessionDTO {
+  series: string;
+  tokenDate: string;
+  ipAddress?: string;
+  userAgent?: string;
+}
+
+/** The sessions of the store, by their ids, the expired ones left out (store.all of express-session). */
+function allSessions(req: Request): Promise<Record<string, any>> {
+  return new Promise((resolve, reject) =>
+    req.sessionStore.all!((error: any, sessions: any) => (error ? reject(error as Error) : resolve(sessions ?? {}))),
+  );
+}
+
+/** The ids of the sessions of a user, with their data. */
+async function userSessions(req: Request, login: string): Promise<[string, any][]> {
+  return Object.entries(await allSessions(req)).filter(([, session]) => session?.user?.login === login && session.series);
+}
 
 @Controller('api')
 @ApiTags('user-session-controller')
@@ -43,6 +64,12 @@ export class UserSessionController {
     const session = req.session as any;
     session.user = user;
     session.csrfToken = randomUUID();
+    // The session as the sessions page shows it, like the PersistentToken of JHipster Spring Boot: its series (random,
+    // not its id), the date, the address and the browser of its login.
+    session.series = randomBytes(16).toString('base64url');
+    session.tokenDate = new Date().toISOString().slice(0, 10);
+    session.ipAddress = req.ip;
+    session.userAgent = req.get('user-agent');
     if (REMEMBER_ME_VALUES.includes(String(form['remember-me']).toLowerCase())) {
       // Like the remember-me of JHipster Spring Boot, the login is kept after the browser is closed, until the session
       // is unused for 31 days.
@@ -58,5 +85,25 @@ export class UserSessionController {
   @ApiResponse({ status: 200, description: 'Logged out' })
   async logout(@Req() req: Request): Promise<void> {
     await new Promise<void>(resolve => req.session.destroy(() => resolve()));
+  }
+
+  @Get('/account/sessions')
+  @UseGuards(AuthGuard)
+  @ApiOperation({ summary: 'The sessions of the current user, like the persistent tokens of JHipster Spring Boot' })
+  @ApiResponse({ status: 200, description: 'The sessions of the user' })
+  async getCurrentSessions(@Req() req: Request): Promise<SessionDTO[]> {
+    const { login } = (req.session as any).user;
+    return (await userSessions(req, login)).map(([, { series, tokenDate, ipAddress, userAgent }]) => ({ series, tokenDate, ipAddress, userAgent }));
+  }
+
+  @Delete('/account/sessions/:series')
+  @UseGuards(AuthGuard)
+  @ApiOperation({ summary: 'Ends a session of the current user, like the invalidation of a persistent token of JHipster Spring Boot' })
+  @ApiResponse({ status: 200, description: 'The session of the series, if any, ended' })
+  async invalidateSession(@Req() req: Request, @Param('series') series: string): Promise<void> {
+    const { login } = (req.session as any).user;
+    for (const [id] of (await userSessions(req, login)).filter(([, session]) => session.series === series)) {
+      await new Promise<void>((resolve, reject) => req.sessionStore.destroy(id, error => (error ? reject(error as Error) : resolve())));
+    }
   }
 }
