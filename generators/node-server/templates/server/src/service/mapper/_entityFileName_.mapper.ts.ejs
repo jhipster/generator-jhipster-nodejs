@@ -1,3 +1,7 @@
+<%_
+// The relationships the other entity stores (nodejsMappedByRelationships): never stored from this entity.
+const inverseProperties = nodejsMappedByRelationships.map(relationship => relationship.propertyName);
+_%>
 import { <%= persistClass %> } from '../../domain/<%= entityFileName %>.entity.ts';
 import { <%= dtoClass %> } from '../dto/<%= entityFileName %>.dto.ts';
 
@@ -13,7 +17,13 @@ export class <%= entityClass %>Mapper {
     if (!entityDTO) {
       return undefined;
     }
+<%_ if (inverseProperties.length > 0) { _%>
+    // The relationships the other entity owns are not stored from this one.
+    const { <%- inverseProperties.map(property => `${property}: _${property}`).join(', ') %>, ...fields } = entityDTO;
+    return Object.assign(new <%= persistClass %>(), fields);
+<%_ } else { _%>
     return Object.assign(new <%= persistClass %>(), entityDTO);
+<%_ } _%>
   }
 
   static fromEntityToDTO(entity: <%= persistClass %>): <%= dtoClass %>;

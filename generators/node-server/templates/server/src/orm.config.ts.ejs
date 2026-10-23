@@ -41,6 +41,26 @@ const drivers: Record<string, () => unknown> = {
   mongodb: () => require('mongodb'),
 <%_ } _%>
 };
+<%_ if (databaseTypeMongodb) { _%>
+
+/**
+ * An in-memory MongoDB server, created again when another one took its port: mongodb-memory-server draws a free port and
+ * releases it before mongod listens on it, so the test files running in parallel can draw the same port.
+ */
+async function createMongoMemoryServer(
+  MongoMemoryServer: typeof import('mongodb-memory-server').MongoMemoryServer,
+  attempts = 3,
+): Promise<import('mongodb-memory-server').MongoMemoryServer> {
+  try {
+    return await MongoMemoryServer.create();
+  } catch (error) {
+    if (attempts > 1 && String(error).includes('already in use')) {
+      return createMongoMemoryServer(MongoMemoryServer, attempts - 1);
+    }
+    throw error;
+  }
+}
+<%_ } _%>
 
 /**
  * The TypeORM options of the database of the active profiles: the database section of their application-{profile}.yml
@@ -63,7 +83,7 @@ function ormConfig(read: ConfigReader = key => config.get(key)): TypeOrmModuleOp
   if (read('database.embedded')) {
     // An in-memory MongoDB server, mongodb-memory-server is a dev dependency only loaded for it (test profile).
     const { MongoMemoryServer } = await import('mongodb-memory-server');
-    const mongod = await MongoMemoryServer.create();
+    const mongod = await createMongoMemoryServer(MongoMemoryServer);
     host = '127.0.0.1';
     port = mongod.instanceInfo?.port;
     database = mongod.instanceInfo?.dbName;
