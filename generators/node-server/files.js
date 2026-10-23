@@ -143,7 +143,7 @@ export const serverFiles = {
     {
       path: SERVER_NODEJS_DIR,
       condition: ctx => ctx.serviceDiscoveryEureka,
-      templates: ['src/service/eureka.service.ts'],
+      templates: ['src/service/eureka.service.ts', 'test/eureka.service.spec.ts'],
     },
     {
       path: SERVER_NODEJS_DIR,
