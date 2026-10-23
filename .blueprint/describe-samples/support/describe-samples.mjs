@@ -16,11 +16,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { createRequire } from 'node:module';
-import { dirname, join } from 'node:path';
+import { existsSync, statSync } from 'node:fs';
+import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import { convertToGitHubMatrix } from 'generator-jhipster/ci';
+import {
+  convertToGitHubMatrix,
+  describeGithubSamplesGroup,
+  getGithubSamplesFolderGroup,
+  githubSamplesGroupOf,
+} from 'generator-jhipster/ci';
 
 import angular from '../../generate-sample/templates/angular.js';
 import microservice from '../../generate-sample/templates/microservice.js';
@@ -34,11 +39,6 @@ export { formatSample, formatSamplesList } from 'generator-jhipster/ci';
 
 // Synchronous, without top-level await, like the describe-samples of generator-jhipster: tools load this module with
 // require (requireSibling('support') of yeoman-environment), which refuses a module with a top-level await.
-// The synchronous part of describeGithubSamples, not exported by generator-jhipster/ci yet.
-/** @type {{ describeGithubSamplesGroup: (options: { samplesGroupFolder: string, group: string, samples: object, root: string }) => SampleDescription[] }} */
-const { describeGithubSamplesGroup } = createRequire(import.meta.url)(
-  join(dirname(createRequire(import.meta.url).resolve('generator-jhipster/package.json')), 'dist/lib/ci/describe-samples.js'),
-);
 
 const root = fileURLToPath(new URL('../../../', import.meta.url));
 
@@ -52,14 +52,31 @@ export const samplesGroupFolder = fileURLToPath(new URL('../../generate-sample/t
  * @type {Record<string, Record<string, object>>}
  */
 export const samplesGroups = Object.fromEntries(
-  Object.entries({ angular, microservice, react, vue }).map(([group, samples]) => [
-    group,
-    Object.fromEntries(Object.entries(samples).map(([name, sample]) => [name, { ...sample, 'samples-group': group }])),
-  ]),
+  Object.entries({ angular, microservice, react, vue }).map(([group, samples]) => [group, githubSamplesGroupOf(group, samples)]),
 );
 
 /** Every described workflow: the samples groups of the blueprint. */
 export const WORKFLOWS = Object.keys(samplesGroups);
+
+/**
+ * The samples of a samples group: a workflow (a `<group>.js` module), else a folder of samples, like the `samples` folder
+ * of every sample file, which no workflow runs.
+ * @param {string} group
+ * @returns {Record<string, object> | undefined}
+ */
+export const samplesGroupOf = group => {
+  if (samplesGroups[group]) return samplesGroups[group];
+  const folder = join(samplesGroupFolder, group);
+  // A folder of samples, without code: a sample by jdl file or by .yo-rc.json folder, with the options of its samples.json.
+  return existsSync(folder) && statSync(folder).isDirectory() ? getGithubSamplesFolderGroup(samplesGroupFolder, group) : undefined;
+};
+
+/**
+ * The GitHub matrix of a samples group, the jobs of its workflow: the one of github-build-matrix, which the CI runs, and of
+ * describeChangedSamples.
+ * @param {string} group
+ */
+export const samplesGroupMatrix = group => convertToGitHubMatrix(samplesGroupOf(group));
 
 /** @type {SampleDescription[] | undefined} */
 let descriptions;
@@ -165,7 +182,5 @@ export const describeSample = name => summaryOf(findSamples({ sampleName: name }
  */
 export const describeChangedSamples = async _files =>
   Object.fromEntries(
-    WORKFLOWS.map(group => [group, convertToGitHubMatrix(samplesGroups[group]).include.map(job => job.sample)]).filter(
-      ([, samples]) => samples.length > 0,
-    ),
+    WORKFLOWS.map(group => [group, samplesGroupMatrix(group).include.map(job => job.sample)]).filter(([, samples]) => samples.length > 0),
   );

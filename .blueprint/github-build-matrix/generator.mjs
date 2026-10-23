@@ -1,11 +1,14 @@
-import { join } from 'node:path';
-
-import { convertToGitHubMatrix, getGithubOutputFile, getGithubSamplesGroup, setGithubTaskOutput } from 'generator-jhipster/ci';
+import { getGithubOutputFile, setGithubTaskOutput } from 'generator-jhipster/ci';
 import BaseCoreGenerator from 'generator-jhipster/generators/base-core';
 
+import { WORKFLOWS, samplesGroupMatrix, samplesGroupOf } from '../describe-samples/support/describe-samples.mjs';
+
+/**
+ * The GitHub matrix of the jobs of a workflow: the samples of its samples group, as describe-samples gives them, so the CI
+ * runs the samples the tools choosing the samples of a change (describeChangedSamples) give. A folder of samples is a
+ * group too, like the `samples` folder by default.
+ */
 export default class extends BaseCoreGenerator {
-  /** @type {string} */
-  samplesFolder;
   /** @type {string} */
   samplesGroup;
   /** @type {object} */
@@ -15,13 +18,10 @@ export default class extends BaseCoreGenerator {
     return this.asAnyTaskGroup({
       async buildMatrix() {
         const { samplesGroup = 'samples' } = this;
-        const templatePath = this.templatePath('../../generate-sample/templates/');
-        const samplesFolder = this.samplesFolder ? join(templatePath, this.samplesFolder) : templatePath;
-        const { samples, warnings } = await getGithubSamplesGroup(samplesFolder, samplesGroup);
-        if (warnings.length > 0) {
-          this.log.info(warnings.join('\n'));
+        if (!samplesGroupOf(samplesGroup)) {
+          throw new Error(`Samples group ${samplesGroup} not found, expected a folder of samples or one of ${WORKFLOWS.join(', ')}`);
         }
-        this.matrix = convertToGitHubMatrix(samples);
+        this.matrix = samplesGroupMatrix(samplesGroup);
         const githubOutputFile = getGithubOutputFile();
         this.log.info('matrix', this.matrix);
         if (githubOutputFile) {
