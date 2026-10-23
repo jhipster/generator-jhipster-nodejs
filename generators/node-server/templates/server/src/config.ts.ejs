@@ -15,7 +15,7 @@ export class Config {
   // The level of the loggers without a level of their own, like Spring Boot.
   'logging.level.ROOT' = 'INFO';
   'server.port' = '<%= serverPort %>';
-  'jhipster.clientApp.name' = '<%= baseName %>';
+  'jhipster.clientApp.name' = '<%= frontendAppName %>';
 <%_ if (serviceDiscoveryEureka) { _%>
   'jhipster.registry.password' = 'admin';
 <%_ } _%>

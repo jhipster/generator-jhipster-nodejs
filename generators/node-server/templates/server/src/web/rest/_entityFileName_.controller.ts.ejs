@@ -17,7 +17,7 @@ import { Request } from '../../common/request.ts';
 
 import { BadRequestAlertException } from './errors/problem.exception.ts';
 
-const ENTITY_NAME = '<%= entityClass %>';
+const ENTITY_NAME = '<%= entityAlertName %>';
 <%_ if (typeormOrderSupport) { _%>
 <%_
 const sortLabels = relationships

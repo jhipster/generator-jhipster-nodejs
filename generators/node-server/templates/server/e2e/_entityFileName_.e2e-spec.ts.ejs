@@ -28,8 +28,8 @@ import { DataSource, EntityMetadata } from 'typeorm';
 import { <%= entityClass %> } from '../src/domain/<%= entityFileName %>.entity.ts';
 <%_ } _%>
 
-const alertHeader = (headers: Record<string, unknown>, suffix: string): unknown =>
-    Object.entries(headers).find(([name]) => name.endsWith(suffix))?.[1];
+// The alert headers the JHipster clients read, named after jhipster.clientApp.name.
+const alertHeader = (headers: Record<string, unknown>, suffix: string): unknown => headers[`x-<%= frontendAppName.toLowerCase() %>${suffix}`];
 
 describe('<%= entityClass %> Controller', () => {
     let app: INestApplication;
@@ -206,7 +206,7 @@ _%>
 
         expect(response.body).toEqual(entityMock);
         expect(response.headers.location).toBe(`/api/<%= entityApiUrl %>/${entityMock.id}`);
-        expect(alertHeader(response.headers, '-alert')).toMatch(<%- enableTranslation ? `/\\.${entityClass}\\.created$/` : `/^A new ${entityClass} is created with identifier /` %>);
+        expect(alertHeader(response.headers, '-alert')).toMatch(<%- enableTranslation ? `/^${frontendAppName}\\.${entityAlertName}\\.created$/` : `/^A new ${entityAlertName} is created with identifier /` %>);
     });
 
     it('/POST create <%= entityApiUrl %> ignores the properties its DTO does not declare', async () => {
@@ -234,8 +234,8 @@ _%>
             .expect(400);
 
         expect(alertHeader(response.headers, '-error')).toBe('error.idexists');
-        expect(response.body).toMatchObject({ message: 'error.idexists', params: '<%= entityClass %>' });
-        expect(alertHeader(response.headers, '-params')).toBe('<%= entityClass %>');
+        expect(response.body).toMatchObject({ message: 'error.idexists', params: '<%= entityAlertName %>' });
+        expect(alertHeader(response.headers, '-params')).toBe('<%= entityAlertName %>');
     });
 
 <%_ if (requiredField) { _%>
@@ -273,7 +273,7 @@ _%>
             .expect(200);
 
         expect(response.body).toEqual(validEntity);
-        expect(alertHeader(response.headers, '-alert')).toMatch(<%- enableTranslation ? `/\\.${entityClass}\\.updated$/` : `/^A ${entityClass} is updated with identifier /` %>);
+        expect(alertHeader(response.headers, '-alert')).toMatch(<%- enableTranslation ? `/^${frontendAppName}\\.${entityAlertName}\\.updated$/` : `/^A ${entityAlertName} is updated with identifier /` %>);
         expect(alertHeader(response.headers, '-params')).toBe(String(entityMock.id));
     }
     );
@@ -285,7 +285,7 @@ _%>
             .expect(400);
 
         expect(alertHeader(response.headers, '-error')).toBe('error.idinvalid');
-        expect(response.body).toMatchObject({ message: 'error.idinvalid', params: '<%= entityClass %>' });
+        expect(response.body).toMatchObject({ message: 'error.idinvalid', params: '<%= entityAlertName %>' });
     });
 
     it('/PUT update <%= entityApiUrl %> without id', async () => {
@@ -295,7 +295,7 @@ _%>
             .expect(400);
 
         expect(alertHeader(response.headers, '-error')).toBe('error.idnull');
-        expect(response.body).toMatchObject({ message: 'error.idnull', params: '<%= entityClass %>' });
+        expect(response.body).toMatchObject({ message: 'error.idnull', params: '<%= entityAlertName %>' });
     });
 
     it('/PUT update an unknown <%= entityApiUrl %>', async () => {
@@ -305,7 +305,7 @@ _%>
             .expect(400);
 
         expect(alertHeader(response.headers, '-error')).toBe('error.idnotfound');
-        expect(response.body).toMatchObject({ message: 'error.idnotfound', params: '<%= entityClass %>' });
+        expect(response.body).toMatchObject({ message: 'error.idnotfound', params: '<%= entityAlertName %>' });
     });
 
     it('/DELETE <%= entityApiUrl %>', async () => {

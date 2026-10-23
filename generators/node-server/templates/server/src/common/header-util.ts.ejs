@@ -54,6 +54,19 @@ export class HeaderUtil {
   }
 
   /**
+   * The alerts of the user management, like the UserResource of JHipster Spring Boot: translated by the client from its
+   * userManagement keys.
+   */
+  addUserManagementHeaders(res: Response, action: 'created' | 'updated' | 'deleted', login: string): any {
+    res.status({ created: 201, updated: 200, deleted: 204 }[action]);
+<%_ if (enableTranslation) { _%>
+    this.createAlert(res, `userManagement.${action}`, login);
+<%_ } else { _%>
+    this.createAlert(res, `A user is ${action} with identifier ${login}`, login);
+<%_ } _%>
+  }
+
+  /**
    * Like the failure alert of JHipster Spring Boot (BadRequestAlertException), the status comes from the thrown exception.
    */
   addFailureAlertHeaders(res: Response, entityName: string, errorKey: string): any {
