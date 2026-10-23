@@ -437,6 +437,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > jwt microservic
   "server/src/common/metrics.ts": {
     "stateCleared": "modified",
   },
+  "server/src/common/reference-by-id.ts": {
+    "stateCleared": "modified",
+  },
   "server/src/common/request.ts": {
     "stateCleared": "modified",
   },
@@ -746,6 +749,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > run > should su
     "stateCleared": "modified",
   },
   "server/src/common/metrics.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/common/reference-by-id.ts": {
     "stateCleared": "modified",
   },
   "server/src/common/request.ts": {
@@ -1131,6 +1137,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > with oauth2 > s
   "server/src/common/metrics.ts": {
     "stateCleared": "modified",
   },
+  "server/src/common/reference-by-id.ts": {
+    "stateCleared": "modified",
+  },
   "server/src/common/request.ts": {
     "stateCleared": "modified",
   },
@@ -1443,6 +1452,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > with oauth2 and
     "stateCleared": "modified",
   },
   "server/src/common/metrics.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/common/reference-by-id.ts": {
     "stateCleared": "modified",
   },
   "server/src/common/request.ts": {
@@ -2162,6 +2174,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > without client 
     "stateCleared": "modified",
   },
   "server/src/common/metrics.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/common/reference-by-id.ts": {
     "stateCleared": "modified",
   },
   "server/src/common/request.ts": {
