@@ -371,6 +371,9 @@ exports[`SubGenerator server of nodejs JHipster blueprint > run > should succeed
   "server/test/admin/management.controller.spec.ts": {
     "stateCleared": "modified",
   },
+  "server/test/app.config.spec.ts": {
+    "stateCleared": "modified",
+  },
   "server/test/common/logging.interceptor.spec.ts": {
     "stateCleared": "modified",
   },
