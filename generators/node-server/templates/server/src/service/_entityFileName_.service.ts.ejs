@@ -13,7 +13,8 @@ import { documentOrder } from '../common/sortable-properties.ts';
 <%_ } _%>
 
 <%_
-const eagerLoadRelations = relationships.filter(rel => rel.ownerSide).map(rel => rel.propertyName);
+// The relationships the entity stores (the persistableRelationships of JHipster), loaded with it.
+const eagerLoadRelations = persistableRelationships.map(relationship => relationship.propertyName);
 const pkType = primaryKey.tsType;
 _%>
 <%_ if (typeormRelationsSupport && eagerLoadRelations.length > 0) { _%>
@@ -74,7 +75,7 @@ export class <%= entityClass %>Service {
         return resultList;
       }
 
-<%_ for (const relationship of relationships.filter(relationship => relationship.relationshipOneToOne && !relationship.ownerSide)) { _%>
+<%_ for (const relationship of nodejsMappedByRelationships.filter(relationship => relationship.relationshipOneToOne)) { _%>
       /** The records without <%= relationship.relationshipName %>, like the findAllWhere<%- relationship.relationshipNameCapitalized %>IsNull of JHipster Spring Boot. */
       async findAllWhere<%- relationship.relationshipNameCapitalized %>IsNull(): Promise<<%= dtoClass %>[]> {
         const results = await this.<%= entityInstance %>Repository.find({ relations: { <%= relationship.propertyName %>: true } });

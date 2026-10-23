@@ -54,7 +54,7 @@ export class <%= entityClass %>Controller {
     isArray: true,
   })
   async getAll(@Req() req: Request): Promise<<%= dtoClass %> []>  {
-<%_ for (const relationship of relationships.filter(relationship => relationship.relationshipOneToOne && !relationship.ownerSide)) { _%>
+<%_ for (const relationship of nodejsMappedByRelationships.filter(relationship => relationship.relationshipOneToOne)) { _%>
     // The records without <%= relationship.relationshipName %>, for the form of the other entity, like JHipster Spring Boot.
     if (req.query.filter === '<%- relationship.relationshipName.toLowerCase() %>-is-null') {
       return this.<%= entityInstance %>Service.findAllWhere<%- relationship.relationshipNameCapitalized %>IsNull();

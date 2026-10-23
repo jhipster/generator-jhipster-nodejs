@@ -4,25 +4,13 @@ resetFakerSeed('nodejs-database-e2e');
 const created = nodejsApiFakeEntity();
 const updated = nodejsApiFakeEntity();
 const approximateFields = created.approximateFields;
-// The relationships of the entity with a join column or a join table: stored by the id of the related record.
-const storedRelationships = databaseTypeSql
-  ? relationships.filter(
-      relationship =>
-        relationship.relationshipType === 'many-to-one' ||
-        (relationship.relationshipType === 'one-to-one' && relationship.ownerSide) ||
-        (relationship.relationshipType === 'many-to-many' && relationship.ownerSide),
-    )
-  : [];
+// The relationships of the entity with a join column or a join table (the persistableRelationships of JHipster): stored
+// by the id of the related record.
+const storedRelationships = databaseTypeSql ? persistableRelationships : [];
 const anyUserRelationship = storedRelationships.some(relationship => relationship.otherEntity.builtInUser);
-// The relationships the other entity owns (its join column or its join table): not stored from this side.
+// The relationships the other entity stores (nodejsMappedByRelationships), with another entity of the application.
 const inverseRelationships = databaseTypeSql
-  ? relationships.filter(
-      relationship =>
-        !relationship.ownerSide &&
-        ['one-to-many', 'one-to-one', 'many-to-many'].includes(relationship.relationshipType) &&
-        !relationship.otherEntity.builtIn &&
-        relationship.otherRelationship?.propertyName,
-    )
+  ? nodejsMappedByRelationships.filter(relationship => !relationship.otherEntity.builtIn && relationship.otherRelationship?.propertyName)
   : [];
 const literal = value => JSON.stringify(value);
 _%>

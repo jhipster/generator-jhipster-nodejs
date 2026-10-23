@@ -344,6 +344,9 @@ export default class extends BaseApplicationGenerator {
           entity.nodejsColumnTypeImports = [...new Set(entity.fields.flatMap(field => field.nodejsColumnTypeImports ?? []))];
           // The fake values of the fields as the API exchanges them, generated when a template calls it (after its faker seed).
           entity.nodejsApiFakeEntity = () => apiFakeEntity(entity);
+          // The relationships the other entity stores (its join column or its join table), never stored from this entity, like
+          // the mappedBy side of JHipster Spring Boot: the complement of the persistableRelationships of JHipster.
+          entity.nodejsMappedByRelationships = entity.relationships.filter(relationship => !relationship.persistableRelationship);
         }
       },
       prepareAuthorityAlertName({ application, entities }) {
