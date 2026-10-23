@@ -1,4 +1,4 @@
-import { bigDecimalPrecision, columnRules } from './columns.js';
+import { bigDecimalPrecision } from './columns.js';
 import { serverEnumInfo } from './enums.js';
 
 /**
@@ -30,14 +30,8 @@ export const CONSTRAINTS_TIMESTAMP_OFFSET = 3 * 10 ** 12;
  */
 export const MIGRATION_TIMESTAMP_OFFSET = 6 * 10 ** 12;
 
-/** The JavaScript timestamp (milliseconds, UTC) of a changelogDate of JHipster (yyyyMMddHHmmss). */
-export const changelogDateToTimestamp = changelogDate => {
-  const [, year, month, day, hours, minutes, seconds] = /^(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})$/.exec(changelogDate) ?? [];
-  if (!year) {
-    throw new Error(`The changelogDate ${changelogDate} is not a date of the yyyyMMddHHmmss format`);
-  }
-  return Date.UTC(Number(year), Number(month) - 1, Number(day), Number(hours), Number(minutes), Number(seconds));
-};
+/** The JavaScript timestamp (milliseconds, UTC) of the changelogDate of an entity, the date JHipster parses it to. */
+const entityTimestamp = entity => entity.changelogDateForRecent.getTime();
 
 /** The TypeScript of the type of a column whose @Column decorator has none: the TypeScript type of its property. */
 const typeOfFieldType = {
@@ -66,7 +60,7 @@ const referenceColumn = (name, entity) => ({
 
 /** The migration columns of a field, like the @Column decorators of the entity: its column, and the content type of a blob. */
 export const fieldColumns = field => {
-  const { required, unique, maxlength } = columnRules(field);
+  const { fieldValidationRequired: required, fieldValidationUnique: unique, fieldValidationMaxlength: maxlength } = field;
   const nullable = !required;
   const type = field.nodejsColumnType ? literal(field.nodejsColumnType) : (typeOfFieldType[field.nodejsFieldType] ?? 'String');
   const column = { name: field.fieldNameAsDatabaseColumn, type, nullable, unique };
@@ -98,12 +92,11 @@ export const typeormCamelCase = text =>
 const joinColumnName = relationship =>
   typeormCamelCase(`${relationship.relationshipFieldName}_${relationship.otherEntity.primaryKey.name}`);
 
-/** The relationships of an entity with a join column: the many-to-one ones, and the one-to-one ones on their owner side. */
-const joinColumnRelationships = entity =>
-  entity.relationships.filter(
-    relationship =>
-      relationship.relationshipType === 'many-to-one' || (relationship.relationshipType === 'one-to-one' && relationship.ownerSide),
-  );
+/**
+ * The relationships of an entity with a join column, the persistableRelationships of JHipster but the many-to-many ones:
+ * the many-to-one ones, and the one-to-one ones on their owner side.
+ */
+const joinColumnRelationships = entity => entity.persistableRelationships.filter(relationship => !relationship.relationshipManyToMany);
 
 /**
  * The names of the columns of a join table, like TypeORM names the ones of a @JoinTable: the same names, like the ones of a
@@ -114,13 +107,33 @@ const junctionColumnNames = (joinColumnName, inverseJoinColumnName) =>
     ? [`${joinColumnName}_1`, `${inverseJoinColumnName}_2`]
     : [joinColumnName, inverseJoinColumnName];
 
-/** The relationships of an entity with a join table: the many-to-many ones on their owner side. */
-const joinTableRelationships = entity =>
-  entity.relationships.filter(relationship => relationship.relationshipType === 'many-to-many' && relationship.ownerSide);
+/** The relationships of an entity with a join table, the many-to-many ones on their owner side (shouldWriteJoinTable of JHipster). */
+const joinTableRelationships = entity => entity.relationships.filter(relationship => relationship.shouldWriteJoinTable);
+
+/**
+ * The join table of a many-to-many relationship on its owner side, the one of its @JoinTable and of its constraints
+ * migration: the joinTable of JHipster, its columns named by the table of the entity and the relationship.
+ */
+export const joinTable = (entity, relationship) => {
+  const [joinColumnName, inverseJoinColumnName] = junctionColumnNames(`${entity.entityTableName}_id`, `${relationship.columnName}_id`);
+  return {
+    name: relationship.joinTable.name,
+    joinColumn: {
+      ...referenceColumn(joinColumnName, entity),
+      referencedTableName: entity.entityTableName,
+      referencedColumnName: entity.primaryKey.name,
+    },
+    inverseJoinColumn: {
+      ...referenceColumn(inverseJoinColumnName, relationship.otherEntity),
+      referencedTableName: relationship.otherEntity.entityTableName,
+      referencedColumnName: relationship.otherEntity.primaryKey.name,
+    },
+  };
+};
 
 /** The migration adding the table of an entity, its name, its class and its columns. */
 export const entityMigration = entity => {
-  const timestamp = changelogDateToTimestamp(entity.changelogDate);
+  const timestamp = entityTimestamp(entity);
   const relationships = joinColumnRelationships(entity);
   return {
     timestamp,
@@ -136,7 +149,7 @@ export const entityMigration = entity => {
       })),
     ],
     relationUniques: relationships
-      .filter(relationship => relationship.relationshipType === 'one-to-one')
+      .filter(relationship => relationship.relationshipOneToOne)
       .map(relationship => joinColumnName(relationship)),
   };
 };
@@ -149,7 +162,7 @@ export const constraintsMigration = entity => {
   const joinColumns = joinColumnRelationships(entity);
   const joinTables = joinTableRelationships(entity);
   if (joinColumns.length === 0 && joinTables.length === 0) return undefined;
-  const timestamp = changelogDateToTimestamp(entity.changelogDate) + CONSTRAINTS_TIMESTAMP_OFFSET;
+  const timestamp = entityTimestamp(entity) + CONSTRAINTS_TIMESTAMP_OFFSET;
   return {
     timestamp,
     className: `AddedEntityConstraints${entity.entityClass}${timestamp}`,
@@ -160,22 +173,7 @@ export const constraintsMigration = entity => {
       referencedTableName: relationship.otherEntity.entityTableName,
       referencedColumnName: relationship.otherEntity.primaryKey.name,
     })),
-    joinTables: joinTables.map(relationship => {
-      const [joinColumnName, inverseJoinColumnName] = junctionColumnNames(`${entity.entityTableName}_id`, `${relationship.columnName}_id`);
-      return {
-        name: relationship.joinTable.name,
-        joinColumn: {
-          ...referenceColumn(joinColumnName, entity),
-          referencedTableName: entity.entityTableName,
-          referencedColumnName: entity.primaryKey.name,
-        },
-        inverseJoinColumn: {
-          ...referenceColumn(inverseJoinColumnName, relationship.otherEntity),
-          referencedTableName: relationship.otherEntity.entityTableName,
-          referencedColumnName: relationship.otherEntity.primaryKey.name,
-        },
-      };
-    }),
+    joinTables: joinTables.map(relationship => joinTable(entity, relationship)),
   };
 };
 
