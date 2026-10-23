@@ -68,6 +68,7 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > entity column t
     "contents": "import {PrimaryGeneratedColumn, Entity, Column, JoinColumn, OneToOne, ManyToOne, OneToMany, ManyToMany, JoinTable, type Relation} from 'typeorm';
 import { BaseEntity } from './base/base.entity.ts';
 import { numberTransformer, blobTransformer } from './base/column-transformers.ts';
+import { columnType } from './base/column-types.ts';
 
 
 import { Level } from './enumeration/level.ts';
@@ -106,12 +107,12 @@ export class Sample extends BaseEntity  {
     @Column({ type: 'simple-enum', name: 'level', enum: Level, nullable: true })
     level?: Level;
 
-    @Column({ type: 'blob', name: 'photo', nullable: true, transformer: blobTransformer })
+    @Column({ type: columnType('blob'), name: 'photo', nullable: true, transformer: blobTransformer })
     photo?: string;
 
     @Column({ name: 'photo_content_type', nullable: true })
     photoContentType?: string;
-    @Column({ type: 'blob', name: 'notes', nullable: true, transformer: blobTransformer })
+    @Column({ type: columnType('text'), name: 'notes', nullable: true })
     notes?: string;
 
 
@@ -474,6 +475,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > jwt microservic
   "server/src/domain/base/column-transformers.ts": {
     "stateCleared": "modified",
   },
+  "server/src/domain/base/column-types.ts": {
+    "stateCleared": "modified",
+  },
   "server/src/domain/base/pagination.entity.spec.ts": {
     "stateCleared": "modified",
   },
@@ -598,6 +602,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > jwt microservic
     "stateCleared": "modified",
   },
   "server/test/domain/column-transformers.spec.ts": {
+    "stateCleared": "modified",
+  },
+  "server/test/domain/column-types.spec.ts": {
     "stateCleared": "modified",
   },
   "server/test/security/jwt.config.spec.ts": {
@@ -777,6 +784,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > run > should su
     "stateCleared": "modified",
   },
   "server/src/domain/base/column-transformers.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/domain/base/column-types.ts": {
     "stateCleared": "modified",
   },
   "server/src/domain/base/pagination.entity.spec.ts": {
@@ -965,6 +975,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > run > should su
   "server/test/domain/column-transformers.spec.ts": {
     "stateCleared": "modified",
   },
+  "server/test/domain/column-types.spec.ts": {
+    "stateCleared": "modified",
+  },
   "server/test/mail.service.spec.ts": {
     "stateCleared": "modified",
   },
@@ -1147,6 +1160,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > with oauth2 > s
   "server/src/domain/base/column-transformers.ts": {
     "stateCleared": "modified",
   },
+  "server/src/domain/base/column-types.ts": {
+    "stateCleared": "modified",
+  },
   "server/src/domain/base/pagination.entity.spec.ts": {
     "stateCleared": "modified",
   },
@@ -1271,6 +1287,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > with oauth2 > s
     "stateCleared": "modified",
   },
   "server/test/domain/column-transformers.spec.ts": {
+    "stateCleared": "modified",
+  },
+  "server/test/domain/column-types.spec.ts": {
     "stateCleared": "modified",
   },
   "server/test/security/oauth2.authorities.spec.ts": {
@@ -1455,6 +1474,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > with oauth2 and
   "server/src/domain/base/column-transformers.ts": {
     "stateCleared": "modified",
   },
+  "server/src/domain/base/column-types.ts": {
+    "stateCleared": "modified",
+  },
   "server/src/domain/base/pagination.entity.spec.ts": {
     "stateCleared": "modified",
   },
@@ -1600,6 +1622,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > with oauth2 and
     "stateCleared": "modified",
   },
   "server/test/domain/column-transformers.spec.ts": {
+    "stateCleared": "modified",
+  },
+  "server/test/domain/column-types.spec.ts": {
     "stateCleared": "modified",
   },
   "server/test/security/oauth2.authorities.spec.ts": {
@@ -2159,6 +2184,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > without client 
   "server/src/domain/base/column-transformers.ts": {
     "stateCleared": "modified",
   },
+  "server/src/domain/base/column-types.ts": {
+    "stateCleared": "modified",
+  },
   "server/src/domain/base/pagination.entity.spec.ts": {
     "stateCleared": "modified",
   },
@@ -2343,6 +2371,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > without client 
     "stateCleared": "modified",
   },
   "server/test/domain/column-transformers.spec.ts": {
+    "stateCleared": "modified",
+  },
+  "server/test/domain/column-types.spec.ts": {
     "stateCleared": "modified",
   },
   "server/test/mail.service.spec.ts": {

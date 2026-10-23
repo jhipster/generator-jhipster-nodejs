@@ -47,7 +47,8 @@ export const serverFiles = {
     {
       path: SERVER_NODEJS_DIR,
       condition: ctx => ctx.databaseTypeSql,
-      templates: ['src/migrations/support/schema.ts'],
+      // The column types of the database of the active profiles, given to the entities and to the migrations.
+      templates: ['src/migrations/support/schema.ts', 'src/domain/base/column-types.ts', 'test/domain/column-types.spec.ts'],
     },
     {
       path: SERVER_NODEJS_DIR,

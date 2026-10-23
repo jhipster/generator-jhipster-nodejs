@@ -1,6 +1,8 @@
 import { type ColumnType, type QueryRunner, Table, type TableColumnOptions, TableForeignKey } from 'typeorm';
 import type { ColumnMetadata } from 'typeorm/metadata/ColumnMetadata.js';
 
+import { databaseColumnType, databaseDatetimePrecision } from '../../domain/base/column-types.ts';
+
 /**
  * A column of a migration, with the options of the @Column decorator of its entity: the driver of the database gives its
  * type, its length and its default like it does for the entity, so the table is the one the entity maps.
@@ -30,8 +32,15 @@ export interface MigrationForeignKey {
   onUpdate?: string;
 }
 
-const tableColumn = (queryRunner: QueryRunner, column: MigrationColumn): TableColumnOptions => {
+const tableColumn = (queryRunner: QueryRunner, migrationColumn: MigrationColumn): TableColumnOptions => {
   const { driver } = queryRunner.connection;
+  // The type and the precision of the database, like the ones the @Column decorators give (domain/base/column-types.ts).
+  const instant = migrationColumn.type === Date && migrationColumn.precision === undefined;
+  const column = {
+    ...migrationColumn,
+    type: databaseColumnType(driver.options.type, migrationColumn.type),
+    ...(instant ? { precision: databaseDatetimePrecision(driver.options.type) } : {}),
+  };
   // The properties of the column metadata the driver reads.
   const metadata = {
     ...column,
