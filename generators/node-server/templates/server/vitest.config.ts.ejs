@@ -8,6 +8,8 @@ export default defineConfig({
     setupFiles: ['./e2e/setup.test.js'],
     coverage: {
       include: ['src/**/*.ts'],
+      // The specs next to the code are tests, not code to cover.
+      exclude: ['src/**/*.spec.ts'],
       reporter: ['text', 'lcov'],
     },
   },
