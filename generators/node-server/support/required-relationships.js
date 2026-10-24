@@ -115,11 +115,12 @@ export const mutateRequiredRelationshipsEntity = ({ databaseTypeSql }) => ({
         if (user) return { name, user, login, email: `${login}@localhost` };
         // A seed of the tests of this entity: JHipster keeps the unique values of a field for the whole generation.
         recordEntity.resetFakerSeed(`nodejs-database-e2e-required-${entity.entityInstance}`);
-        const values = literal(apiFakeEntity(recordEntity).values);
+        const { values } = apiFakeEntity(recordEntity);
         return {
           name,
           entityApiUrl: recordEntity.entityApiUrl,
-          body: recordReferences.length > 0 ? `{ ...${values}, ${referencesLiteral(recordReferences)} }` : values,
+          values,
+          body: recordReferences.length > 0 ? `{ ...${literal(values)}, ${referencesLiteral(recordReferences)} }` : literal(values),
         };
       }),
       references: Object.entries(references).map(([instance, entityReferences]) => ({

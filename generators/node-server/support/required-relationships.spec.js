@@ -100,8 +100,8 @@ describe('mutateRequiredRelationshipsEntity', () => {
     expect(city.nodejsRequiredRelationships.map(relationship => relationship.propertyName)).toEqual(['region', 'owner']);
     expect(city.nodejsRequiredRecords).toMatchObject({
       records: [
-        { name: 'requiredCountry', entityApiUrl: 'countrys', body: '{}' },
-        { name: 'requiredRegion', entityApiUrl: 'regions', body: '{ ...{}, country: { id: requiredCountry.id } }' },
+        { name: 'requiredCountry', entityApiUrl: 'countrys', values: {}, body: '{}' },
+        { name: 'requiredRegion', entityApiUrl: 'regions', values: {}, body: '{ ...{}, country: { id: requiredCountry.id } }' },
         { name: 'requiredUser', user: true, login: 'city-required-e2e', email: 'city-required-e2e@localhost' },
       ],
       references: [
