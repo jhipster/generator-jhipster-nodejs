@@ -63,7 +63,7 @@ entity Activity {
 //}
 
 relationship ManyToOne {
-    Activity {demetrauser} to DemetraUser
+    Activity {demetrauser required} to DemetraUser
 }
 
 
