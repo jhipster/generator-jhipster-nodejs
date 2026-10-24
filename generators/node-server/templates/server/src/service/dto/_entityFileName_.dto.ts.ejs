@@ -94,7 +94,7 @@ export class <%= dtoClass %> extends BaseDTO {
         if (typeof relationship.javadoc != 'undefined') { _%>
   <%- formatAsFieldJavadoc(relationship.javadoc) %>
         <%_ } _%>
-  <%_ if (relationship.relationshipRequired && relationship.persistableRelationship) { _%>
+  <%_ if (relationship.columnRequired) { _%>
   // Like the @NotNull relationships of JHipster Spring Boot.
   @IsNotEmpty()
   <%_ } _%>

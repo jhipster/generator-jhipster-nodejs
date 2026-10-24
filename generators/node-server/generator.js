@@ -25,9 +25,9 @@ import {
   getNodeDevDatabaseType,
   getNodeDevSqliteDatabase,
   hasRuntimeColumnTypes,
+  mutateRequiredRelationship,
+  mutateRequiredRelationshipsEntity,
   primaryKeyColumn,
-  requiredRecords,
-  requiredReferencesLiteral,
   serverEnumInfo,
   thymeleafMailToHandlebars,
   userAuthorityJoinTable,
@@ -315,6 +315,19 @@ export default class extends BaseApplicationGenerator {
             delayMarker ?? relationships.filter(relationship => !relationship.persistableRelationship),
         });
       },
+      prepareRequiredRelationships({ application, entityDefaults }) {
+        // The required relationships the entity stores, and the records its end-to-end tests create first for them
+        // (support/required-relationships.js).
+        entityDefaults(mutateRequiredRelationshipsEntity(application));
+      },
+    });
+  }
+
+  get [BaseApplicationGenerator.PREPARING_EACH_ENTITY_RELATIONSHIP]() {
+    return this.asPreparingEachEntityRelationshipTaskGroup({
+      prepareRequiredRelationship({ relationshipDefaults }) {
+        relationshipDefaults(mutateRequiredRelationship);
+      },
     });
   }
 
@@ -363,10 +376,6 @@ export default class extends BaseApplicationGenerator {
           entity.nodejsColumnTypeImports = [...new Set(entity.fields.flatMap(field => field.nodejsColumnTypeImports ?? []))];
           // The fake values of the fields as the API exchanges them, generated when a template calls it (after its faker seed).
           entity.nodejsApiFakeEntity = () => apiFakeEntity(entity);
-          // The records the end-to-end tests of the entity create first for the required relationships of the entities
-          // they store, like the createEntity methods of the resource tests of JHipster Spring Boot.
-          entity.nodejsRequiredRecords = (otherEntities = []) => requiredRecords([entity, ...otherEntities]);
-          entity.nodejsRequiredReferencesLiteral = requiredReferencesLiteral;
         }
       },
       prepareAuthorityAlertName({ application, entities }) {
