@@ -17,7 +17,7 @@ const UNSORTABLE_PROPERTIES = ['password', 'activationKey', 'resetKey', 'resetDa
 @Controller('api/admin/users')
 @UseGuards(AuthGuard, RolesGuard)
 @UseInterceptors(ClassSerializerInterceptor)
-<%_ if (authenticationTypeJwt) { _%>
+<%_ if (authenticationType === 'jwt') { _%>
 @ApiBearerAuth()
 <%_ } else { _%>
 @ApiSecurity({})

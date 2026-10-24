@@ -1,6 +1,6 @@
 <%_ const UserEntity = user.persistClass %>
 import { MigrationInterface, QueryRunner } from 'typeorm';
-<%_ if (generateUserManagement) { _%>
+<%_ if (authenticationType !== 'oauth2') { _%>
 import { <%= UserEntity %> } from '../domain/user.entity.ts';
 import { config } from '../config.ts';
 import { encodePassword } from '../security/password-util.ts';
@@ -12,7 +12,7 @@ export class SeedUsersRoles1570200490072 implements MigrationInterface {
 
   role2: Authority = { name: 'ROLE_USER' };
 
-  <%_ if (generateUserManagement) { _%>
+  <%_ if (authenticationType !== 'oauth2') { _%>
   // The users of JHipster Spring Boot: an administrator and a user, in the native language of the application.
   user1: <%= UserEntity %> = {
     login: 'admin',
@@ -45,7 +45,7 @@ export class SeedUsersRoles1570200490072 implements MigrationInterface {
 
     const authorityRepository = queryRunner.manager.getRepository("<%- jhiTablePrefix %>_authority");
 
-   <%_ if (!generateUserManagement) { _%>
+   <%_ if (authenticationType === 'oauth2') { _%>
 
     await authorityRepository.save([this.role1, this.role2]);
 

@@ -142,7 +142,7 @@ export class AccountController {
     await this.authService.completePasswordReset(keyAndPassword.newPassword, keyAndPassword.key);
   }
 
-  <%_ } else if (authenticationTypeOauth2) { _%>
+  <%_ } else if (authenticationType === 'oauth2') { _%>
 
   @Get('/account')
   @ApiBearerAuth()

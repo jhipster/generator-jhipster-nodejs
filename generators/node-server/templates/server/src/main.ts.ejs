@@ -20,7 +20,7 @@ import { LevelsConsoleLogger, loggerLevels } from './common/logging.ts';
 <%_ if (!skipClient) { _%>
 import * as fs from 'fs';
 <%_ } _%>
-<%_ if (authenticationTypeOauth2) { _%>
+<%_ if (authenticationType === 'oauth2') { _%>
 import passport from 'passport';
 <%_ } _%>
 // The levels of the loggers (logging.level.* of the configuration), like Spring Boot, the loggers endpoint changes them.
@@ -48,7 +48,7 @@ async function bootstrap(): Promise<void> {
   // CORS, global validation<% if (authenticationUsesCsrf) { %>, HTTP settings and sessions<% } else { %> and HTTP settings<% } %>, shared with the e2e tests.
   configureApp(app);
 
-  <%_ if (authenticationTypeOauth2) { _%>
+  <%_ if (authenticationType === 'oauth2') { _%>
 
   app.use(passport.initialize());
   app.use(passport.session());

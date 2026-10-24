@@ -13,7 +13,7 @@ export function setupSwagger(app: INestApplication): any {
     .setTitle(configService.getOrThrow<string>('jhipster.swagger.title'))
     .setDescription(configService.getOrThrow<string>('jhipster.swagger.description'))
     .setVersion(configService.getOrThrow<string>('jhipster.swagger.version'))
-    <%_ if (authenticationTypeJwt) { _%>
+    <%_ if (authenticationType === 'jwt') { _%>
     .addBearerAuth()
     <%_ } _%>
     .build();

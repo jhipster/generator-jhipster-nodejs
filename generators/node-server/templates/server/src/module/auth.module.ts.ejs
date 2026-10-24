@@ -1,4 +1,4 @@
-<%_ if (authenticationTypeOauth2) { _%>
+<%_ if (authenticationType === 'oauth2') { _%>
 import { HttpModule } from '@nestjs/axios';
 <%_ } _%>
 import { <% if (authenticationUsesCsrf) { %>MiddlewareConsumer, NestModule, <% } %>Module } from '@nestjs/common';
@@ -7,13 +7,13 @@ import { AuthService } from '../service/auth.service.ts';
 import { UserModule } from '../module/user.module.ts';
 <%_ } _%>
 import { PassportModule } from '@nestjs/passport';
-<%_ if (authenticationTypeJwt) { _%>
+<%_ if (authenticationType === 'jwt') { _%>
   <%_ if (generateBuiltInUserEntity) { _%>
 import { JwtModule } from '@nestjs/jwt';
 import { UserJWTController} from '../web/rest/user.jwt.controller.ts';
   <%_ } _%>
 import { JwtStrategy } from '../security/passport.jwt.strategy.ts';
-<%_ } else if (authenticationTypeOauth2) { _%>
+<%_ } else if (authenticationType === 'oauth2') { _%>
 import { Oauth2Strategy } from '../security/passport.oauth2.strategy.ts';
 import { Oauth2BearerStrategy } from '../security/passport.oauth2-bearer.strategy.ts';
 import { UserOauth2Controller } from '../web/rest/user.oauth2.controller.ts';
@@ -26,7 +26,7 @@ import { CsrfMiddleware } from '../security/csrf.middleware.ts';
 import { Session } from '../domain/session.entity.ts';
 import { SessionStore } from '../security/session.store.ts';
 <%_ } _%>
-<%_ if (authenticationTypeJwt && generateBuiltInUserEntity) { _%>
+<%_ if (authenticationType === 'jwt' && generateBuiltInUserEntity) { _%>
 import { ConfigService } from '@nestjs/config';
 import { JWT_ALGORITHM, jwtSecretKey } from '../security/jwt.config.ts';
 <%_ } _%>
@@ -53,7 +53,7 @@ import { AccountController } from '../web/rest/account.controller.ts';
   UserModule,
   <%_ } _%>
   PassportModule,
-  <%_ if (authenticationTypeJwt && generateBuiltInUserEntity) { _%>
+  <%_ if (authenticationType === 'jwt' && generateBuiltInUserEntity) { _%>
     JwtModule.registerAsync({
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => ({
@@ -64,14 +64,14 @@ import { AccountController } from '../web/rest/account.controller.ts';
         },
       }),
     }),
-  <%_ } else if (authenticationTypeOauth2) { _%>
+  <%_ } else if (authenticationType === 'oauth2') { _%>
   HttpModule,
   <%_ } _%>
   ],
   controllers: [
-  <%_ if (authenticationTypeJwt && generateBuiltInUserEntity) { _%>
+  <%_ if (authenticationType === 'jwt' && generateBuiltInUserEntity) { _%>
   UserJWTController,
-  <%_ } else if (authenticationTypeOauth2) { _%>
+  <%_ } else if (authenticationType === 'oauth2') { _%>
   UserOauth2Controller,
   <%_ } else if (authenticationTypeSession) { _%>
   UserSessionController,
@@ -84,9 +84,9 @@ import { AccountController } from '../web/rest/account.controller.ts';
   <%_ if (authenticationUsesCsrf) { _%>
   SessionStore,
   <%_ } _%>
-  <%_ if (authenticationTypeJwt) { _%>
+  <%_ if (authenticationType === 'jwt') { _%>
   JwtStrategy
-  <%_ } else if (authenticationTypeOauth2) { _%>
+  <%_ } else if (authenticationType === 'oauth2') { _%>
   Oauth2Strategy,
   Oauth2BearerStrategy
   <%_ } _%>

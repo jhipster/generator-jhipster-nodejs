@@ -9,7 +9,7 @@ import { Repository } from 'typeorm';
 <%_ if (generateUserManagement) { _%>
 import { PasswordService } from '../security/password.service.ts';
 <%_ } _%>
-<%_ if (authenticationTypeJwt && generateUserManagement) { _%>
+<%_ if (authenticationType === 'jwt' && generateBuiltInUserEntity) { _%>
 import { JwtService } from '@nestjs/jwt';
 import { UserLoginDTO } from '../service/dto/user-login.dto.ts';
 import { Payload } from '../security/payload.interface.ts';
@@ -24,7 +24,7 @@ import { EmailAlreadyUsedException, InvalidPasswordException, LoginAlreadyUsedEx
 <%_ } _%>
 <%_ } _%>
 import { <%= userLoginVmClass %> } from './dto/user.dto.ts';
-<%_ if (authenticationTypeJwt && generateUserManagement) { _%>
+<%_ if (authenticationType === 'jwt' && generateBuiltInUserEntity) { _%>
 import { ConfigService } from '@nestjs/config';
 <%_ } _%>
 
@@ -47,7 +47,7 @@ function isPasswordLengthInvalid(password?: string): boolean {
 export class AuthService {
     logger = new Logger('AuthService');
   constructor(
-    <%_ if (authenticationTypeJwt && generateUserManagement) { _%>
+    <%_ if (authenticationType === 'jwt' && generateBuiltInUserEntity) { _%>
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
     <%_ } _%>
@@ -253,7 +253,7 @@ export class AuthService {
     return userFind;
   }
 
-  <%_ } else if (authenticationTypeOauth2) { _%>
+  <%_ } else if (authenticationType === 'oauth2') { _%>
     <%_ if (generateBuiltInUserEntity) { _%>
     /**
      * The user of the identity provider in the database, like the user synchronization of JHipster Spring Boot: the

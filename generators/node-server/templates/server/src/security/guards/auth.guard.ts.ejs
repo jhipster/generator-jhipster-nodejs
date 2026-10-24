@@ -1,4 +1,4 @@
-<%_ if (authenticationTypeOauth2) { _%>
+<%_ if (authenticationType === 'oauth2') { _%>
 import { ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common';
 import { AuthGuard as NestAuthGuard } from '@nestjs/passport';
 
