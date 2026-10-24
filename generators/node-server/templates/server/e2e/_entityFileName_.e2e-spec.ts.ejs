@@ -54,12 +54,22 @@ const validValues = Object.fromEntries(
         .filter(([, value]) => value !== undefined && value !== null),
 );
 const requiredField = validatedFields.find(field => field.fieldValidationRequired);
+// The required relationships, by the id of a related record: the service is a mock, any id of their type.
+const requiredRelationships = relationships.filter(relationship => relationship.relationshipRequired && relationship.persistableRelationship);
+const requiredReferences = requiredRelationships.map(relationship => {
+  const otherIdField = relationship.otherEntity.primaryKey.fields[0];
+  const reference = `{ ${otherIdField.fieldName}: ${otherIdField.generateFakeData('ts')} }`;
+  return [relationship.propertyName, relationship.collection ? `[${reference}]` : reference];
+});
 const enumField = fields.find(field => !field.id && field.fieldIsEnum);
 _%>
     const validEntity: any = {
         ...entityMock,
 <%_ for (const [fieldName, value] of Object.entries(validValues)) { _%>
         <%= fieldName %>: <%- JSON.stringify(value) %>,
+<%_ } _%>
+<%_ for (const [propertyName, reference] of requiredReferences) { _%>
+        <%= propertyName %>: <%- reference %>,
 <%_ } _%>
     };
 
@@ -271,6 +281,19 @@ _%>
             message: 'error.validation',
             fieldErrors: [{ objectName: '<%= entityInstance %>', field: '<%= requiredField.fieldName %>', message: expect.any(String) }],
         });
+    });
+
+<%_ } _%>
+<%_ for (const relationship of requiredRelationships) { _%>
+    it('/POST create <%= entityApiUrl %> without its required <%= relationship.propertyName %> is a validation error, like JHipster Spring Boot', async () => {
+        const { <%= relationship.propertyName %>: _<%= relationship.propertyName %>, id: _id, ...invalidEntity } = validEntity;
+
+        const error = (await request(app.getHttpServer())
+            .post('/api/<%= entityApiUrl %>')
+            .send(invalidEntity)
+            .expect(400)).body;
+
+        expect(error).toMatchObject({ message: 'error.validation', fieldErrors: [expect.objectContaining({ field: '<%= relationship.propertyName %>' })] });
     });
 
 <%_ } _%>
