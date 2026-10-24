@@ -339,4 +339,64 @@ _%>
     afterEach(async () => {
         await app?.close();
     });
+<%_ if (nodejsReadRoles) { _%>
+
+    describe('with the roles of <%= entityClass %>, like the @PreAuthorize of JHipster Spring Boot', () => {
+        let rolesApp: INestApplication;
+
+        /** The application with its RolesGuard, for a user of these roles. */
+        const appOfUser = async (authorities: string[]): Promise<INestApplication> => {
+            const moduleFixture: TestingModule = await Test.createTestingModule({
+                imports: [AppModule],
+            }).overrideGuard(AuthGuard)
+            .useValue({ canActivate: (context: any): boolean => {
+                context.switchToHttp().getRequest().user = { login: 'user', authorities };
+                return true;
+            } })
+            .overrideProvider(<%= entityClass %>Service)
+            .useValue(serviceMock)
+            .compile();
+            serviceMock.metadata = moduleFixture.get(DataSource).getMetadata(<%= entityClass %>);
+            const rolesNestApp = moduleFixture.createNestApplication();
+            configureApp(rolesNestApp);
+            await rolesNestApp.init();
+            return rolesNestApp;
+        };
+
+        afterEach(async () => {
+            await rolesApp?.close();
+        });
+
+        it('refuses a user without its roles with 403', async () => {
+            rolesApp = await appOfUser(['ROLE_OTHER']);
+            await request(rolesApp.getHttpServer()).get('/api/<%= entityApiUrl %>').expect(403);
+            await request(rolesApp.getHttpServer()).get(`/api/<%= entityApiUrl %>/${entityMock.id}`).expect(403);
+<%_ if (nodejsWriteRoles) { _%>
+            const { id: _id, ...newEntity } = validEntity;
+            await request(rolesApp.getHttpServer()).post('/api/<%= entityApiUrl %>').send(newEntity).expect(403);
+            await request(rolesApp.getHttpServer()).delete(`/api/<%= entityApiUrl %>/${entityMock.id}`).expect(403);
+<%_ } _%>
+        });
+<%_ if (nodejsWriteRoles) { _%>
+
+        it('allows a user of its roles to read and to write', async () => {
+            rolesApp = await appOfUser([<%- nodejsWriteRoles %>]);
+            await request(rolesApp.getHttpServer()).get('/api/<%= entityApiUrl %>').expect(200);
+            const { id: _id, ...newEntity } = validEntity;
+            await request(rolesApp.getHttpServer()).post('/api/<%= entityApiUrl %>').send(newEntity).expect(201);
+        });
+<%_ } _%>
+<%_ if (nodejsReadOnlyRoles) { _%>
+
+        it('allows a user of its read roles to read only', async () => {
+            rolesApp = await appOfUser([<%- nodejsReadOnlyRoles %>]);
+            await request(rolesApp.getHttpServer()).get('/api/<%= entityApiUrl %>').expect(200);
+<%_ if (nodejsWriteRoles) { _%>
+            const { id: _id, ...newEntity } = validEntity;
+            await request(rolesApp.getHttpServer()).post('/api/<%= entityApiUrl %>').send(newEntity).expect(403);
+<%_ } _%>
+        });
+<%_ } _%>
+    });
+<%_ } _%>
 });
