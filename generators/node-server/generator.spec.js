@@ -520,13 +520,13 @@ describe('SubGenerator node-server of nodejs JHipster blueprint', () => {
         .withConfiguredBlueprint();
     });
 
-    it('should give the related record of every relationship test a value of its unique field', () => {
-      for (let index = 0; index < 7; index++) {
-        result.assertFileContent(
-          `server/e2e/item-${index}.database.e2e-spec.ts`,
-          /const relatedValues: Record<string, any> = \{ ?"?name"?: ?["'][^"']+["'] ?\};/,
-        );
-      }
+    it('should give the related record of every relationship test its own value of the unique field', () => {
+      const names = related.map(({ name }) => {
+        const [owner] = result.entities[name].relationships;
+        expect(owner.nodejsRelatedValues).toMatchObject({ name: expect.any(String) });
+        return owner.nodejsRelatedValues.name;
+      });
+      expect(new Set(names).size).toBe(related.length);
     });
   });
   describe('entity validators', () => {
