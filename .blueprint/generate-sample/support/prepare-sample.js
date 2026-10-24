@@ -17,7 +17,7 @@ const MONGODB_RUNNER_OS = 'ubuntu-22.04';
 export const prepareSampleEntry = sampleData => {
   const [sample, data = {}] = Array.isArray(sampleData) ? sampleData : [sampleData];
   const clientFrameworks = ['angular', 'vue', 'react'];
-  const authenticationTypes = ['jwt', 'oauth2'];
+  const authenticationTypes = ['jwt', 'oauth2', 'session'];
   const databaseTypes = ['mysql', 'mssql', 'postgresql', 'mongodb'];
 
   let split = sample.split('-');

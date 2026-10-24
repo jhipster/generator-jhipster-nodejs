@@ -23,6 +23,24 @@ export class AuthGuard extends NestAuthGuard('oauth2-bearer') {
     return super.canActivate(context);
   }
 }
+<%_ } else if (authenticationTypeSession) { _%>
+import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common';
+
+/**
+ * The authentication of the API, like JHipster Spring Boot with sessions: the user of the session of the login (its unsafe
+ * requests checked by the CsrfMiddleware), else 401.
+ */
+@Injectable()
+export class AuthGuard implements CanActivate {
+  canActivate(context: ExecutionContext): boolean {
+    const request = context.switchToHttp().getRequest();
+    if (!request.session?.user) {
+      throw new UnauthorizedException();
+    }
+    request.user = request.session.user;
+    return true;
+  }
+}
 <%_ } else { _%>
 import { Injectable } from '@nestjs/common';
 import { AuthGuard as NestAuthGuard } from '@nestjs/passport';

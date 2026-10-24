@@ -60,7 +60,7 @@ export class SeedUsersRoles1570200490072 implements MigrationInterface {
     this.user2.authorities= [userRole];
 
     // The migrations run outside of the dependency injection: the rounds of the configuration, like the PasswordService.
-    const rounds = Number(config.get('jhipster.security.authentication.jwt.hash-salt-or-rounds'));
+    const rounds = Number(config.get('<%= nodejsPasswordRoundsProperty %>'));
     const users = await Promise.all(
       [this.user1, this.user2].map(async user => ({ ...user, password: await encodePassword(user.password, rounds) })),
     );

@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
 import { ForbiddenException } from '@nestjs/common';
-import { CsrfMiddleware } from '../../src/security/csrf.middleware.ts';
+import { <% if (authenticationTypeSession) { %>checkLoginCsrfToken, <% } %>CsrfMiddleware } from '../../src/security/csrf.middleware.ts';
 
 const call = (method: string, session: any, headers: Record<string, string> = {}): { res: any; next: any } => {
   const res = { cookie: vi.fn() };
@@ -10,11 +10,35 @@ const call = (method: string, session: any, headers: Record<string, string> = {}
 };
 
 describe('CsrfMiddleware', () => {
+<%_ if (authenticationTypeSession) { _%>
+  it('lets the requests without a logged session pass, giving a token cookie to a client without one', () => {
+    const { res, next } = call('POST', {});
+    expect(next).toHaveBeenCalled();
+    expect(res.cookie).toHaveBeenCalledWith('XSRF-TOKEN', expect.any(String), expect.objectContaining({ path: '/' }));
+    expect(call('POST', {}, { cookie: 'XSRF-TOKEN=t0k' }).res.cookie).not.toHaveBeenCalled();
+  });
+
+  it('refuses a login without the token of its cookie, like Spring Security', () => {
+    expect(() => checkLoginCsrfToken({ headers: {} } as any)).toThrow(ForbiddenException);
+    expect(() => checkLoginCsrfToken({ headers: { 'x-xsrf-token': 't0k' } } as any)).toThrow(ForbiddenException);
+    expect(() => checkLoginCsrfToken({ headers: { cookie: 'XSRF-TOKEN=t0k', 'x-xsrf-token': 'other' } } as any)).toThrow(ForbiddenException);
+  });
+
+  it('accepts a login with the token of its cookie', () => {
+    expect(() => checkLoginCsrfToken({ headers: { cookie: 'SESSION=1; XSRF-TOKEN=t0k', 'x-xsrf-token': 't0k' } } as any)).not.toThrow();
+  });
+
+  it('gives the CSRF cookie of a remember-me session its lifetime', () => {
+    const { res } = call('GET', { user: { login: 'user' }, csrfToken: 't0k', cookie: { originalMaxAge: 1000 } });
+    expect(res.cookie).toHaveBeenCalledWith('XSRF-TOKEN', 't0k', expect.objectContaining({ maxAge: 1000 }));
+  });
+<%_ } else { _%>
   it('lets the requests without a logged session pass, without the cookie', () => {
     const { res, next } = call('POST', {});
     expect(next).toHaveBeenCalled();
     expect(res.cookie).not.toHaveBeenCalled();
   });
+<%_ } _%>
 
   it('gives the token of a logged session back as the XSRF-TOKEN cookie on its safe requests too', () => {
     const { res, next } = call('GET', { user: { login: 'user' }, csrfToken: 't0k' });

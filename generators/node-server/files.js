@@ -118,6 +118,7 @@ export const serverFiles = {
         'test/admin/health.controller.spec.ts',
         'test/common/logging.interceptor.spec.ts',
         'test/config.spec.ts',
+        'test/app.config.spec.ts',
         'nest-cli.json',
         {
           // The profile of the development scripts (nest start --env-file .env.dev), not of the built application.
@@ -193,14 +194,44 @@ export const serverFiles = {
       path: SERVER_NODEJS_DIR,
       // The authentication API, without built-in User (a microservice) the application only validates the tokens.
       condition: ctx => ctx.authenticationTypeJwt && ctx.generateBuiltInUserEntity,
+      templates: ['src/web/rest/user.jwt.controller.ts', 'src/service/dto/user-login.dto.ts'],
+    },
+  ],
+  userManagement: [
+    {
+      path: SERVER_NODEJS_DIR,
+      // The passwords of the users of the user management, the ones of JWT and of the sessions.
+      condition: ctx => ctx.generateUserManagement,
       templates: [
-        'src/web/rest/user.jwt.controller.ts',
         'src/security/password-util.ts',
         'src/security/password.service.ts',
         'src/service/dto/password-change.dto.ts',
         'src/service/dto/key-and-password.dto.ts',
-        'src/service/dto/user-login.dto.ts',
       ],
+    },
+  ],
+  session: [
+    {
+      path: SERVER_NODEJS_DIR,
+      // The sessions of the server, of the session login and of the OAuth2 login, protected from CSRF.
+      condition: ctx => ctx.authenticationUsesCsrf,
+      templates: [
+        'src/security/csrf.middleware.ts',
+        'test/security/csrf.middleware.spec.ts',
+        'src/domain/session.entity.ts',
+        'src/security/session.store.ts',
+        'test/security/session.store.spec.ts',
+      ],
+    },
+    {
+      path: SERVER_NODEJS_DIR,
+      condition: ctx => ctx.authenticationUsesCsrf && ctx.databaseTypeSql,
+      templates: ['src/migrations/1570200270082-CreateSessions.ts'],
+    },
+    {
+      path: SERVER_NODEJS_DIR,
+      condition: ctx => ctx.authenticationTypeSession,
+      templates: ['src/web/rest/user.session.controller.ts', 'src/security/session-user.middleware.ts', 'e2e/session.e2e-spec.ts'],
     },
   ],
   oauth2: [
@@ -214,10 +245,8 @@ export const serverFiles = {
         'src/security/oauth2.authorities.ts',
         'src/security/passport.oauth2-bearer.strategy.ts',
         'src/security/guards/oauth2-login.guard.ts',
-        'src/security/csrf.middleware.ts',
         'test/security/oauth2.authorities.spec.ts',
         'test/security/passport.oauth2.strategy.spec.ts',
-        'test/security/csrf.middleware.spec.ts',
         'e2e/oauth2-bearer.e2e-spec.ts',
       ],
     },

@@ -22,8 +22,6 @@ import * as fs from 'fs';
 <%_ } _%>
 <%_ if (authenticationType === 'oauth2') { _%>
 import passport from 'passport';
-import session from 'express-session';
-import { SESSION_MAX_AGE } from './security/csrf.middleware.ts';
 <%_ } _%>
 // The levels of the loggers (logging.level.* of the configuration), like Spring Boot, the loggers endpoint changes them.
 loggerLevels.configure(config);
@@ -47,20 +45,10 @@ async function bootstrap(): Promise<void> {
   const app = await NestFactory.create(AppModule, { abortOnError: false, logger: appLogger, httpsOptions: tlsOptions });
   // Close the application (HTTP server, database connections) on SIGTERM, the signal docker stop sends.
   app.enableShutdownHooks();
-  // CORS, global validation and HTTP settings, shared with the e2e tests.
+  // CORS, global validation<% if (authenticationUsesCsrf) { %>, HTTP settings and sessions<% } else { %> and HTTP settings<% } %>, shared with the e2e tests.
   configureApp(app);
 
   <%_ if (authenticationType === 'oauth2') { _%>
-  app.use(
-    session({
-      secret: config.get('jhipster.security.session.secret'),
-      resave: false,
-      saveUninitialized: false,
-      // Like the session of JHipster Spring Boot, it expires after 30 minutes without requests.
-      rolling: true,
-      cookie: { httpOnly: true, sameSite: 'lax', secure: 'auto', maxAge: SESSION_MAX_AGE },
-    }),
-  );
 
   app.use(passport.initialize());
   app.use(passport.session());
