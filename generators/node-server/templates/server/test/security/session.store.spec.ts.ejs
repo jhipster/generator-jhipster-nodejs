@@ -76,6 +76,21 @@ describe('SessionStore', () => {
     expect(await store.sessionsOf('user')).toEqual([{ sid: 's1', data: { a: 1 } }]);
   });
 
+  it('waits for the operations in progress before the database is closed, like a touch ending a response', async () => {
+    let finish!: () => void;
+    const slow = new SessionStore({ ...repository(rows), update: () => new Promise<void>(resolve => (finish = resolve)) });
+    let touched = false;
+    slow.touch('s1', sessionData('user', inOneHour), () => (touched = true));
+    let closed = false;
+    const closing = slow.onModuleDestroy().then(() => (closed = true));
+    await Promise.resolve();
+    expect(closed).toBe(false);
+    finish();
+    await closing;
+    expect(touched).toBe(true);
+    expect(closed).toBe(true);
+  });
+
   it('removes the expired sessions', async () => {
     rows.push({ sid: 's1', login: 'user', expires: inOneHour, data: '{}' }, { sid: 's2', login: 'user', expires: anHourAgo, data: '{}' });
     await store.prune();

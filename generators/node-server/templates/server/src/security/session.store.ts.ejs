@@ -19,12 +19,15 @@ export interface StoredSession {
 /**
  * The sessions of the server in the database of the application, the store of express-session: a session outlives a
  * restart of the application and is shared by its instances, unlike the MemoryStore of express-session, and the expired
- * sessions are removed every hour.
+ * sessions are removed every hour. The application closes after the operations in progress: express-session ends a
+ * response in the callback of its touch, after the client has the whole response.
  */
 @Injectable()
 export class SessionStore extends session.Store implements OnModuleInit, OnModuleDestroy {
   private readonly logger = new Logger('SessionStore');
   private pruneTimer?: NodeJS.Timeout;
+  /** The operations in progress on the database, waited for before the database is closed. */
+  private readonly pending = new Set<Promise<unknown>>();
 
   constructor(@InjectRepository(Session) private readonly repository: Repository<Session>) {
     super();
@@ -38,32 +41,34 @@ export class SessionStore extends session.Store implements OnModuleInit, OnModul
     this.pruneTimer.unref();
   }
 
-  onModuleDestroy(): void {
+  /** Before TypeORM closes the database (onApplicationShutdown): the operations in progress end first. */
+  async onModuleDestroy(): Promise<void> {
     clearInterval(this.pruneTimer);
+    await Promise.allSettled([...this.pending]);
   }
 
   get(sid: string, callback: Callback<session.SessionData | null>): void {
-    this.repository.findOne({ where: { sid } }).then(
+    this.track(this.repository.findOne({ where: { sid } })).then(
       found => callback(null, found && found.expires.getTime() > Date.now() ? JSON.parse(found.data) : null),
       callback,
     );
   }
 
   set(sid: string, data: session.SessionData, callback?: Callback): void {
-    this.save(sid, data).then(() => callback?.(), error => callback?.(error));
+    this.track(this.save(sid, data)).then(() => callback?.(), error => callback?.(error));
   }
 
   touch(sid: string, data: session.SessionData, callback?: Callback): void {
     // The rolling expiry of a session its request did not change.
-    this.repository.update({ sid }, { expires: expiresOf(data) }).then(() => callback?.(), error => callback?.(error));
+    this.track(this.repository.update({ sid }, { expires: expiresOf(data) })).then(() => callback?.(), error => callback?.(error));
   }
 
   destroy(sid: string, callback?: Callback): void {
-    this.repository.delete({ sid }).then(() => callback?.(), error => callback?.(error));
+    this.track(this.repository.delete({ sid })).then(() => callback?.(), error => callback?.(error));
   }
 
   all(callback: Callback<Record<string, session.SessionData>>): void {
-    this.repository.find().then(
+    this.track(this.repository.find()).then(
       sessions => callback(null, Object.fromEntries(alive(sessions).map(({ sid, data }) => [sid, data]))),
       callback,
     );
@@ -81,6 +86,16 @@ export class SessionStore extends session.Store implements OnModuleInit, OnModul
 <%_ } else { _%>
     await this.repository.delete({ expires: { $lt: new Date() } } as any);
 <%_ } _%>
+  }
+
+  /** An operation on the database, in progress until it settles. */
+  private track<T>(operation: Promise<T>): Promise<T> {
+    this.pending.add(operation);
+    const settled = (): void => {
+      this.pending.delete(operation);
+    };
+    operation.then(settled, settled);
+    return operation;
   }
 
   private async save(sid: string, data: session.SessionData): Promise<void> {
