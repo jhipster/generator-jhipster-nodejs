@@ -101,7 +101,8 @@ describe('<%= entityClass %> on the database', () => {
       users.create({ login: '<%= entityInstance.toLowerCase() %>-required-e2e', email: '<%= entityInstance.toLowerCase() %>-required-e2e@localhost', password: '' }),
     );
 <%_     } else {
-          const values = (record.entity.resetFakerSeed('nodejs-database-e2e-required'), record.entity.nodejsApiFakeEntity().values); _%>
+          // A seed of the tests of this entity: JHipster keeps the unique values of a field for the whole generation.
+          const values = (record.entity.resetFakerSeed(`nodejs-database-e2e-required-${entityInstance}`), record.entity.nodejsApiFakeEntity().values); _%>
     const { body: <%= record.name %> } = await request(server)
       .post('/api/<%= record.entity.entityApiUrl %>')
 <%_       if (record.references.length > 0) { _%>

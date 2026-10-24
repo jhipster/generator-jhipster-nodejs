@@ -654,6 +654,48 @@ describe('SubGenerator node-server of nodejs JHipster blueprint', () => {
       expect(new Set(names).size).toBe(related.length);
     });
   });
+
+
+  describe('with many required relationships to an entity of a unique field', () => {
+    // JHipster keeps the unique values of a field for the whole generation: the required records of each entity draw their own.
+    const owner = {
+      name: 'Owner',
+      changelogDate: '20240101000000',
+      fields: [{ fieldName: 'name', fieldType: 'String', fieldValidateRules: ['required', 'unique'] }],
+    };
+    const related = Array.from({ length: 7 }, (_, index) => ({
+      name: `Item${index}`,
+      changelogDate: `2024010100000${index + 1}`,
+      fields: [{ fieldName: 'title', fieldType: 'String' }],
+      relationships: [
+        {
+          relationshipName: 'owner',
+          otherEntityName: 'owner',
+          relationshipType: 'many-to-one',
+          otherEntityField: 'name',
+          relationshipValidateRules: ['required'],
+        },
+      ],
+    }));
+
+    beforeAll(async function () {
+      await helpers
+        .run(SUB_GENERATOR_NAMESPACE)
+        .withJHipsterConfig({ skipClient: true }, [owner, ...related])
+        .withOptions({ ignoreNeedlesError: true })
+        .withJHipsterGenerators()
+        .withConfiguredBlueprint();
+    });
+
+    it('should create the required record of every entity with a value of its unique field', () => {
+      for (let index = 0; index < 7; index++) {
+        result.assertFileContent(
+          `server/e2e/item-${index}.database.e2e-spec.ts`,
+          /post\('\/api\/owners'\)\s*\.send\(\{ ?"?name"?: ?["'][^"']+["'] ?\}\)/,
+        );
+      }
+    });
+  });
   describe('entity validators', () => {
     const bookEntity = {
       name: 'Book',
