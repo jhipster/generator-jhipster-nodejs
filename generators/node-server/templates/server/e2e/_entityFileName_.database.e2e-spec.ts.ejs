@@ -98,7 +98,9 @@ describe('<%= entityClass %> on the database', () => {
     const otherId = otherEntity.primaryKey.name;
     const collection = relationship.relationshipType === 'many-to-many';
     const property = relationship.propertyName;
-    const otherValues = otherEntity.builtIn ? undefined : (otherEntity.resetFakerSeed('nodejs-database-e2e'), otherEntity.nodejsApiFakeEntity().values);
+    // A seed of this test: JHipster keeps the unique values of a field for the whole generation, the same seed in every test
+    // would draw them again, until the field is left without one.
+    const otherValues = otherEntity.builtIn ? undefined : (otherEntity.resetFakerSeed(`nodejs-database-e2e-${entityInstance}-${property}`), otherEntity.nodejsApiFakeEntity().values);
     // A text field of the related record, sent changed with its id: the relationship does not store it (no cascade).
     const otherTextField = otherValues && otherEntity.fields.find(field => !field.id && field.fieldType === 'String' && field.fieldName in otherValues);
 _%>
@@ -161,7 +163,7 @@ _%>
     const collection = relationship.relationshipType !== 'one-to-one';
     const otherProperty = relationship.otherRelationship.propertyName;
     const otherCollection = relationship.relationshipType === 'many-to-many';
-    const otherValues = (otherEntity.resetFakerSeed('nodejs-database-e2e'), otherEntity.nodejsApiFakeEntity().values);
+    const otherValues = (otherEntity.resetFakerSeed(`nodejs-database-e2e-${entityInstance}-${property}`), otherEntity.nodejsApiFakeEntity().values);
 _%>
 
   it('should not store the <%= property %> relationship from this side, like the mappedBy side of JHipster Spring Boot', async () => {
