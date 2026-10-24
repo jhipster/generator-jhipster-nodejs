@@ -497,6 +497,38 @@ describe('SubGenerator node-server of nodejs JHipster blueprint', () => {
       result.assertNoFileContent('server/src/module/user.module.ts', 'UserController');
     });
   });
+  describe('with many relationships to an entity of a unique field', () => {
+    // JHipster keeps the unique values of a field for the whole generation: the relationship tests draw their own.
+    const owner = {
+      name: 'Owner',
+      changelogDate: '20240101000000',
+      fields: [{ fieldName: 'name', fieldType: 'String', fieldValidateRules: ['required', 'unique'] }],
+    };
+    const related = Array.from({ length: 7 }, (_, index) => ({
+      name: `Item${index}`,
+      changelogDate: `2024010100000${index + 1}`,
+      fields: [{ fieldName: 'title', fieldType: 'String' }],
+      relationships: [{ relationshipName: 'owner', otherEntityName: 'owner', relationshipType: 'many-to-one', otherEntityField: 'name' }],
+    }));
+
+    beforeAll(async function () {
+      await helpers
+        .run(SUB_GENERATOR_NAMESPACE)
+        .withJHipsterConfig({ skipClient: true }, [owner, ...related])
+        .withOptions({ ignoreNeedlesError: true })
+        .withJHipsterGenerators()
+        .withConfiguredBlueprint();
+    });
+
+    it('should give the related record of every relationship test its own value of the unique field', () => {
+      const names = related.map(({ name }) => {
+        const [owner] = result.entities[name].relationships;
+        expect(owner.nodejsRelatedValues).toMatchObject({ name: expect.any(String) });
+        return owner.nodejsRelatedValues.name;
+      });
+      expect(new Set(names).size).toBe(related.length);
+    });
+  });
   describe('entity validators', () => {
     const bookEntity = {
       name: 'Book',

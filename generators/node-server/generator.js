@@ -25,6 +25,7 @@ import {
   getNodeDevDatabaseType,
   getNodeDevSqliteDatabase,
   hasRuntimeColumnTypes,
+  mutateRelatedValues,
   primaryKeyColumn,
   serverEnumInfo,
   thymeleafMailToHandlebars,
@@ -312,6 +313,15 @@ export default class extends BaseApplicationGenerator {
           nodejsMappedByRelationships: ({ relationships }, { delayMarker }) =>
             delayMarker ?? relationships.filter(relationship => !relationship.persistableRelationship),
         });
+      },
+    });
+  }
+
+  get [BaseApplicationGenerator.PREPARING_EACH_ENTITY_RELATIONSHIP]() {
+    return this.asPreparingEachEntityRelationshipTaskGroup({
+      prepareRelatedValues({ entity, relationshipDefaults }) {
+        // The values of the related record of the relationship tests (support/api-fake-data.js).
+        relationshipDefaults(mutateRelatedValues(entity));
       },
     });
   }
