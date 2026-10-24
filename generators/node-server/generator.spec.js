@@ -655,7 +655,6 @@ describe('SubGenerator node-server of nodejs JHipster blueprint', () => {
     });
   });
 
-
   describe('with many required relationships to an entity of a unique field', () => {
     // JHipster keeps the unique values of a field for the whole generation: the required records of each entity draw their own.
     const owner = {

@@ -135,7 +135,7 @@ describe('entityMigration', () => {
       primaryKey,
       fields: [{ id: true }, field({ fieldNameAsDatabaseColumn: 'name', nodejsFieldType: 'string', fieldType: 'String' })],
       relationships: [
-        relationship({ relationshipType: 'many-to-one', relationshipFieldName: 'region', relationshipRequired: true, otherEntity: region }),
+        relationship({ relationshipType: 'many-to-one', relationshipFieldName: 'region', columnRequired: true, otherEntity: region }),
         relationship({ relationshipType: 'one-to-one', ownerSide: true, relationshipFieldName: 'gadget', otherEntity: gadget }),
         relationship({ relationshipType: 'one-to-many', relationshipFieldName: 'countries', otherEntity: region }),
       ],

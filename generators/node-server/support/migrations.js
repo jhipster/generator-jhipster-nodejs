@@ -189,7 +189,7 @@ export const entityMigration = (entity, changelogDate = entity.changelogDate) =>
       ...relationships.map(relationship => ({
         ...referenceColumn(joinColumnName(relationship), relationship.otherEntity),
         // Like the join column of a required relationship of JHipster Spring Boot, not null.
-        nullable: !relationship.relationshipRequired,
+        nullable: !relationship.columnRequired,
       })),
     ],
     relationUniques: relationships
