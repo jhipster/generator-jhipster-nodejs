@@ -214,7 +214,7 @@ export const serverFiles = {
     {
       path: SERVER_NODEJS_DIR,
       // The sessions of the server, of the session login and of the OAuth2 login, protected from CSRF.
-      condition: ctx => ctx.authenticationTypeSession || ctx.authenticationTypeOauth2,
+      condition: ctx => ctx.authenticationUsesCsrf,
       templates: [
         'src/security/csrf.middleware.ts',
         'test/security/csrf.middleware.spec.ts',
@@ -225,7 +225,7 @@ export const serverFiles = {
     },
     {
       path: SERVER_NODEJS_DIR,
-      condition: ctx => (ctx.authenticationTypeSession || ctx.authenticationTypeOauth2) && ctx.databaseTypeSql,
+      condition: ctx => ctx.authenticationUsesCsrf && ctx.databaseTypeSql,
       templates: ['src/migrations/1570200270082-CreateSessions.ts'],
     },
     {

@@ -1,7 +1,7 @@
 <%_ if (authenticationTypeOauth2) { _%>
 import { HttpModule } from '@nestjs/axios';
 <%_ } _%>
-import { <% if (authenticationTypeSession || authenticationTypeOauth2) { %>MiddlewareConsumer, NestModule, <% } %>Module } from '@nestjs/common';
+import { <% if (authenticationUsesCsrf) { %>MiddlewareConsumer, NestModule, <% } %>Module } from '@nestjs/common';
 import { AuthService } from '../service/auth.service.ts';
 <%_ if (generateBuiltInUserEntity) { _%>
 import { UserModule } from '../module/user.module.ts';
@@ -21,7 +21,7 @@ import { UserOauth2Controller } from '../web/rest/user.oauth2.controller.ts';
 import { UserSessionController } from '../web/rest/user.session.controller.ts';
 import { SessionUserMiddleware } from '../security/session-user.middleware.ts';
 <%_ } _%>
-<%_ if (authenticationTypeSession || authenticationTypeOauth2) { _%>
+<%_ if (authenticationUsesCsrf) { _%>
 import { CsrfMiddleware } from '../security/csrf.middleware.ts';
 import { Session } from '../domain/session.entity.ts';
 import { SessionStore } from '../security/session.store.ts';
@@ -30,7 +30,7 @@ import { SessionStore } from '../security/session.store.ts';
 import { ConfigService } from '@nestjs/config';
 import { JWT_ALGORITHM, jwtSecretKey } from '../security/jwt.config.ts';
 <%_ } _%>
-<%_ if (generateBuiltInAuthorityEntity || authenticationTypeSession || authenticationTypeOauth2) { _%>
+<%_ if (generateBuiltInAuthorityEntity || authenticationUsesCsrf) { _%>
 import { TypeOrmModule } from '@nestjs/typeorm';
 <%_ } _%>
 <%_ if (generateBuiltInAuthorityEntity) { _%>
@@ -46,8 +46,8 @@ import { AccountController } from '../web/rest/account.controller.ts';
 
 @Module({
   imports: [
-  <%_ if (generateBuiltInAuthorityEntity || authenticationTypeSession || authenticationTypeOauth2) { _%>
-  TypeOrmModule.forFeature([<%- [generateBuiltInAuthorityEntity && 'Authority', (authenticationTypeSession || authenticationTypeOauth2) && 'Session'].filter(Boolean).join(', ') %>]),
+  <%_ if (generateBuiltInAuthorityEntity || authenticationUsesCsrf) { _%>
+  TypeOrmModule.forFeature([<%- [generateBuiltInAuthorityEntity && 'Authority', authenticationUsesCsrf && 'Session'].filter(Boolean).join(', ') %>]),
   <%_ } _%>
   <%_ if (generateBuiltInUserEntity) { _%>
   UserModule,
@@ -81,7 +81,7 @@ import { AccountController } from '../web/rest/account.controller.ts';
   <%_ } _%>
   <%- generateBuiltInUserEntity ? 'PublicUserController' : 'ManagementController' %>, AccountController ],
   providers: [AuthService,
-  <%_ if (authenticationTypeSession || authenticationTypeOauth2) { _%>
+  <%_ if (authenticationUsesCsrf) { _%>
   SessionStore,
   <%_ } _%>
   <%_ if (authenticationTypeJwt) { _%>
@@ -93,7 +93,7 @@ import { AccountController } from '../web/rest/account.controller.ts';
   ],
   exports: [AuthService],
 })
-<%_ if (authenticationTypeSession || authenticationTypeOauth2) { _%>
+<%_ if (authenticationUsesCsrf) { _%>
 export class AuthModule implements NestModule {
   configure(consumer: MiddlewareConsumer): void {
     consumer.apply(<% if (authenticationTypeSession) { %>SessionUserMiddleware, <% } %>CsrfMiddleware).forRoutes('*');

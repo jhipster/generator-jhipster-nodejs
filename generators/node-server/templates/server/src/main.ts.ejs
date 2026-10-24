@@ -45,7 +45,7 @@ async function bootstrap(): Promise<void> {
   const app = await NestFactory.create(AppModule, { abortOnError: false, logger: appLogger, httpsOptions: tlsOptions });
   // Close the application (HTTP server, database connections) on SIGTERM, the signal docker stop sends.
   app.enableShutdownHooks();
-  // CORS, global validation<% if (authenticationTypeSession || authenticationTypeOauth2) { %>, HTTP settings and sessions<% } else { %> and HTTP settings<% } %>, shared with the e2e tests.
+  // CORS, global validation<% if (authenticationUsesCsrf) { %>, HTTP settings and sessions<% } else { %> and HTTP settings<% } %>, shared with the e2e tests.
   configureApp(app);
 
   <%_ if (authenticationTypeOauth2) { _%>

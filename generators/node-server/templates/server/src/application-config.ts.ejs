@@ -30,7 +30,7 @@ export interface ApplicationConfig {
         'hash-salt-or-rounds': number;
       };
 <%_ } _%>
-<%_ if (authenticationTypeSession || authenticationTypeOauth2) { _%>
+<%_ if (authenticationUsesCsrf) { _%>
       session: { secret: string };
 <%_ } _%>
 <%_ if (authenticationTypeOauth2) { _%>
@@ -127,7 +127,7 @@ const rules: Rule[] = [
 <%_ if (authenticationTypeOauth2) { _%>
   ['jhipster.security.oauth2.client.provider.oidc.issuer-uri', value => isURL(String(value), { require_tld: false }), 'the URL of the OpenID Connect issuer'],
 <%_ } _%>
-<%_ if (authenticationTypeSession || authenticationTypeOauth2) { _%>
+<%_ if (authenticationUsesCsrf) { _%>
   ['jhipster.security.session.secret', isNotEmpty, 'the secret of the sessions'],
 <%_ } _%>
 <%_ if (serviceDiscoveryEureka) { _%>

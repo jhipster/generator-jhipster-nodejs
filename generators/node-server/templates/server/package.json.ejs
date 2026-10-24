@@ -46,7 +46,7 @@
 <%_ if (authenticationTypeOauth2) { _%>
     "@nestjs/axios": "<%- nodeServerDependencies['@nestjs/axios'] %>",
 <%_ } _%>
-<%_ if (authenticationTypeSession || authenticationTypeOauth2) { _%>
+<%_ if (authenticationUsesCsrf) { _%>
     "express-session": "<%- nodeServerDependencies['express-session'] %>",
 <%_ } _%>
     "@nestjs/common": "<%- nodeServerDependencies['@nestjs/common'] %>",
@@ -108,7 +108,7 @@
     "@types/express": "<%- nodeServerDependencies['@types/express'] %>",
     "@types/express-serve-static-core": "<%- nodeServerDependencies['@types/express-serve-static-core'] %>",
     "@types/superagent": "<%- nodeServerDependencies['@types/superagent'] %>",
-<%_ if (authenticationTypeSession || authenticationTypeOauth2) { _%>
+<%_ if (authenticationUsesCsrf) { _%>
     "@types/express-session": "<%- nodeServerDependencies['@types/express-session'] %>",
 <%_ } _%>
     "@types/node": "<%- nodeServerDependencies['@types/node'] %>",
