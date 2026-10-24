@@ -497,6 +497,38 @@ describe('SubGenerator node-server of nodejs JHipster blueprint', () => {
       result.assertNoFileContent('server/src/module/user.module.ts', 'UserController');
     });
   });
+  describe('with the authorities of the entities', () => {
+    const entities = [
+      {
+        name: 'Report',
+        changelogDate: '20240101000001',
+        entityAuthority: 'ROLE_MANAGER',
+        entityReadAuthority: 'ROLE_USER',
+        fields: [{ fieldName: 'title', fieldType: 'String' }],
+      },
+      { name: 'Note', changelogDate: '20240101000002', fields: [{ fieldName: 'title', fieldType: 'String' }] },
+    ];
+
+    beforeAll(async function () {
+      await helpers
+        .run(SUB_GENERATOR_NAMESPACE)
+        .withJHipsterConfig({ skipClient: true }, entities)
+        .withOptions({ ignoreNeedlesError: true })
+        .withJHipsterGenerators()
+        .withConfiguredBlueprint();
+    });
+
+    it('should prepare the roles of the endpoints, like the @PreAuthorize of JHipster Spring Boot', () => {
+      expect(result.entities.Report).toMatchObject({
+        nodejsWriteRoles: "'ROLE_MANAGER'",
+        nodejsReadRoles: "'ROLE_MANAGER', 'ROLE_USER'",
+        nodejsReadOnlyRoles: "'ROLE_USER'",
+      });
+      expect(result.entities.Note).toMatchObject({ nodejsWriteRoles: undefined, nodejsReadRoles: undefined });
+      // The built-in Authority is an admin entity.
+      expect(result.entities.Authority).toMatchObject({ nodejsWriteRoles: "'ROLE_ADMIN'", nodejsReadOnlyRoles: undefined });
+    });
+  });
   describe('entity validators', () => {
     const bookEntity = {
       name: 'Book',

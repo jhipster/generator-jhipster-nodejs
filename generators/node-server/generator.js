@@ -25,6 +25,7 @@ import {
   getNodeDevDatabaseType,
   getNodeDevSqliteDatabase,
   hasRuntimeColumnTypes,
+  mutateEntityAuthorities,
   primaryKeyColumn,
   serverEnumInfo,
   thymeleafMailToHandlebars,
@@ -312,6 +313,10 @@ export default class extends BaseApplicationGenerator {
           nodejsMappedByRelationships: ({ relationships }, { delayMarker }) =>
             delayMarker ?? relationships.filter(relationship => !relationship.persistableRelationship),
         });
+      },
+      prepareEntityAuthorities({ entityDefaults }) {
+        // The roles of the endpoints of the entity, like the @PreAuthorize of JHipster Spring Boot (support/entity-authorities.js).
+        entityDefaults(mutateEntityAuthorities);
       },
     });
   }

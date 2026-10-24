@@ -6,7 +6,7 @@ import { Repository } from 'typeorm';
 import { HeaderUtil } from '../../common/header-util.ts';
 import { Request } from '../../common/request.ts';
 import { Authority } from '../../domain/authority.entity.ts';
-import { AuthGuard, Roles, RolesGuard, RoleType } from '../../security/index.ts';
+import { AuthGuard, Roles, RolesGuard } from '../../security/index.ts';
 import { AuthorityDTO } from '../../service/dto/authority.dto.ts';
 
 import { BadRequestAlertException } from './errors/problem.exception.ts';
@@ -19,7 +19,7 @@ const ENTITY_NAME = '<%= nodejsAuthorityAlertName %>';
  */
 @Controller('api/authorities')
 @UseGuards(AuthGuard, RolesGuard)
-@Roles(RoleType.ADMIN)
+@Roles(<%- authority.nodejsWriteRoles %>)
 <%_ if (authenticationTypeJwt) { _%>
 @ApiBearerAuth()
 <%_ } else { _%>
@@ -33,6 +33,10 @@ export class AuthorityController {
   ) {}
 
   @Get()
+<%_ if (authority.nodejsReadOnlyRoles) { _%>
+  // The roles of @EntityReadAuthority read the authorities too, like JHipster Spring Boot.
+  @Roles(<%- authority.nodejsReadRoles %>)
+<%_ } _%>
   @ApiOperation({ summary: 'Get all the authorities' })
   @ApiResponse({ status: 200, type: AuthorityDTO, isArray: true })
   async getAll(): Promise<AuthorityDTO[]> {
@@ -41,6 +45,10 @@ export class AuthorityController {
   }
 
   @Get('/:name')
+<%_ if (authority.nodejsReadOnlyRoles) { _%>
+  // The roles of @EntityReadAuthority read the authorities too, like JHipster Spring Boot.
+  @Roles(<%- authority.nodejsReadRoles %>)
+<%_ } _%>
   @ApiOperation({ summary: 'Get an authority' })
   @ApiResponse({ status: 200, type: AuthorityDTO })
   @ApiResponse({ status: 404, description: 'No authority of that name.' })

@@ -12,7 +12,7 @@ import { PageRequest, Page } from '../../domain/base/pagination.entity.ts';
 <%_ } else { _%>
 import { PageRequest } from '../../domain/base/pagination.entity.ts';
 <%_ } _%>
-import { AuthGuard, RolesGuard } from '../../security/index.ts';
+import { AuthGuard, <% if (nodejsReadRoles) { %>Roles, <% } %>RolesGuard } from '../../security/index.ts';
 import { HeaderUtil } from '../../common/header-util.ts';
 import { isSortableProperty } from '../../common/sortable-properties.ts';
 import { Request } from '../../common/request.ts';
@@ -47,6 +47,9 @@ export class <%= entityClass %>Controller {
 
 
   @Get('/')
+<%_ if (nodejsReadRoles) { _%>
+  @Roles(<%- nodejsReadRoles %>)
+<%_ } _%>
   @ApiResponse({
     status: 200,
     description: 'List all records',
@@ -84,6 +87,9 @@ export class <%= entityClass %>Controller {
   }
 
   @Get('/:id')
+<%_ if (nodejsReadRoles) { _%>
+  @Roles(<%- nodejsReadRoles %>)
+<%_ } _%>
   @ApiResponse({
     status: 200,
     description: 'The found record',
@@ -98,6 +104,9 @@ export class <%= entityClass %>Controller {
   }
 
   @PostMethod('/')
+<%_ if (nodejsWriteRoles) { _%>
+  @Roles(<%- nodejsWriteRoles %>)
+<%_ } _%>
   @ApiOperation({ summary: 'Create <%= entityInstance %>' })
   @ApiResponse({
     status: 201,
@@ -118,6 +127,9 @@ export class <%= entityClass %>Controller {
   }
 
   @Put('/:id')
+<%_ if (nodejsWriteRoles) { _%>
+  @Roles(<%- nodejsWriteRoles %>)
+<%_ } _%>
   @ApiOperation({ summary: 'Update <%= entityInstance %> with id' })
   @ApiResponse({
     status: 200,
@@ -133,6 +145,9 @@ export class <%= entityClass %>Controller {
   }
 
   @Delete('/:id')
+<%_ if (nodejsWriteRoles) { _%>
+  @Roles(<%- nodejsWriteRoles %>)
+<%_ } _%>
   @ApiOperation({ summary: 'Delete <%= entityInstance %>' })
   @ApiResponse({
     status: 204,
