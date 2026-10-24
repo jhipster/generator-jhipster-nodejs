@@ -25,6 +25,8 @@ import {
   getNodeDevDatabaseType,
   getNodeDevSqliteDatabase,
   hasRuntimeColumnTypes,
+  mutateRequiredRelationship,
+  mutateRequiredRelationshipsEntity,
   primaryKeyColumn,
   serverEnumInfo,
   thymeleafMailToHandlebars,
@@ -312,6 +314,19 @@ export default class extends BaseApplicationGenerator {
           nodejsMappedByRelationships: ({ relationships }, { delayMarker }) =>
             delayMarker ?? relationships.filter(relationship => !relationship.persistableRelationship),
         });
+      },
+      prepareRequiredRelationships({ application, entityDefaults }) {
+        // The required relationships the entity stores, and the records its end-to-end tests create first for them
+        // (support/required-relationships.js).
+        entityDefaults(mutateRequiredRelationshipsEntity(application));
+      },
+    });
+  }
+
+  get [BaseApplicationGenerator.PREPARING_EACH_ENTITY_RELATIONSHIP]() {
+    return this.asPreparingEachEntityRelationshipTaskGroup({
+      prepareRequiredRelationship({ relationshipDefaults }) {
+        relationshipDefaults(mutateRequiredRelationship);
       },
     });
   }

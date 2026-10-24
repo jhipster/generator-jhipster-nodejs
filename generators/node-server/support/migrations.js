@@ -132,7 +132,8 @@ export const entityMigration = entity => {
       ...entity.fields.filter(field => !field.id).flatMap(fieldColumns),
       ...relationships.map(relationship => ({
         ...referenceColumn(joinColumnName(relationship), relationship.otherEntity),
-        nullable: true,
+        // Like the join column of a required relationship of JHipster Spring Boot, not null.
+        nullable: !relationship.columnRequired,
       })),
     ],
     relationUniques: relationships

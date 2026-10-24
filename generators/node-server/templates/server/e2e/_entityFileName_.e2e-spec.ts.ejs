@@ -59,6 +59,9 @@ _%>
 <%_ for (const [fieldName, value] of Object.entries(validValues)) { _%>
         <%= fieldName %>: <%- JSON.stringify(value) %>,
 <%_ } _%>
+<%_ for (const relationship of nodejsRequiredRelationships) { _%>
+        <%= relationship.propertyName %>: <%- relationship.nodejsMockReference %>,
+<%_ } _%>
     };
 
     const serviceMock: { metadata?: EntityMetadata, [method: string]: unknown } = {
@@ -269,6 +272,19 @@ _%>
             message: 'error.validation',
             fieldErrors: [{ objectName: '<%= entityInstance %>', field: '<%= requiredField.fieldName %>', message: expect.any(String) }],
         });
+    });
+
+<%_ } _%>
+<%_ for (const relationship of nodejsRequiredRelationships) { _%>
+    it('/POST create <%= entityApiUrl %> without its required <%= relationship.propertyName %> is a validation error, like JHipster Spring Boot', async () => {
+        const { <%= relationship.propertyName %>: _<%= relationship.propertyName %>, id: _id, ...invalidEntity } = validEntity;
+
+        const error = (await request(app.getHttpServer())
+            .post('/api/<%= entityApiUrl %>')
+            .send(invalidEntity)
+            .expect(400)).body;
+
+        expect(error).toMatchObject({ message: 'error.validation', fieldErrors: [expect.objectContaining({ field: '<%= relationship.propertyName %>' })] });
     });
 
 <%_ } _%>

@@ -109,7 +109,7 @@ describe('entityMigration', () => {
       primaryKey,
       fields: [{ id: true }, field({ fieldNameAsDatabaseColumn: 'name', nodejsFieldType: 'string', fieldType: 'String' })],
       relationships: [
-        { relationshipType: 'many-to-one', relationshipFieldName: 'region', otherEntity: region },
+        { relationshipType: 'many-to-one', relationshipFieldName: 'region', columnRequired: true, otherEntity: region },
         { relationshipType: 'one-to-one', ownerSide: true, relationshipFieldName: 'gadget', otherEntity: gadget },
         { relationshipType: 'one-to-many', relationshipFieldName: 'countries', otherEntity: region },
       ],
@@ -123,7 +123,8 @@ describe('entityMigration', () => {
       columns: [
         { name: 'id', type: 'Number', primary: true, generated: 'increment' },
         { name: 'name', type: 'String', nullable: true, unique: false },
-        { name: 'regionId', type: 'Number', nullable: true },
+        // Not null, the join column of a required relationship.
+        { name: 'regionId', type: 'Number', nullable: false },
         { name: 'gadgetId', type: "'uuid'", nullable: true },
       ],
       relationUniques: ['gadgetId'],
