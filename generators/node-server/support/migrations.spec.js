@@ -3,11 +3,18 @@ import { describe, expect, it } from 'vitest';
 import {
   CONSTRAINTS_TIMESTAMP_OFFSET,
   MIGRATION_TIMESTAMP_OFFSET,
+  changelogChanges,
   changelogDateToTimestamp,
+  changelogsSinceCreation,
   constraintsMigration,
+  createdChangelogDate,
   entityMigration,
   fieldColumns,
+  previousField,
+  previousRelationship,
   typeormCamelCase,
+  updatedConstraintsMigration,
+  updatedEntityMigration,
   userAuthorityJoinTable,
 } from './migrations.js';
 
@@ -208,6 +215,212 @@ describe('constraintsMigration', () => {
     expect(String(timestamp)).toHaveLength(13);
     // Before the migrations of the developers, created after the entity.
     expect(timestamp).toBeLessThan(changelogDateToTimestamp(region.changelogDate) + MIGRATION_TIMESTAMP_OFFSET);
+  });
+});
+
+describe('changelogsSinceCreation', () => {
+  const changelog = (changelogDate, entityName, operation) => ({ changelogDate, entityName, operation });
+
+  it('should give the changelogs of the table of an entity: its last creation, then its updates', () => {
+    const changelogs = [
+      changelog('20200101000000', 'Region', 'create'),
+      changelog('20200101000100', 'Country', 'create'),
+      changelog('20200102000000', 'Region', 'remove'),
+      changelog('20200103000000', 'Region', 'create'),
+      changelog('20200104000000', 'Region', 'update'),
+    ];
+    expect(changelogsSinceCreation(changelogs, 'Region').map(({ changelogDate }) => changelogDate)).toEqual([
+      '20200103000000',
+      '20200104000000',
+    ]);
+  });
+
+  it('should be none without changelogs, without incrementalChangelog', () => {
+    expect(changelogsSinceCreation([], 'Region')).toEqual([]);
+  });
+});
+
+describe('createdChangelogDate', () => {
+  it('should give the changelogDate of the entity a creation creates, the one of its AddedEntity migration', () => {
+    expect(
+      createdChangelogDate({ changelogDate: '20200105000000', entity: { annotations: { incrementalChangelogDate: '20200103000000' } } }),
+    ).toBe('20200103000000');
+    expect(createdChangelogDate({ changelogDate: '20200105000000', entity: { annotations: { changelogDate: '20200101000000' } } })).toBe(
+      '20200101000000',
+    );
+    expect(createdChangelogDate({ changelogDate: '20200105000000', entity: {} })).toBe('20200105000000');
+  });
+});
+
+describe('changelogChanges', () => {
+  const owner = { relationshipName: 'owner', otherEntityName: 'user', relationshipType: 'many-to-one', relationshipSide: 'left' };
+  const previousEntity = {
+    fields: [
+      { fieldName: 'name', fieldType: 'String' },
+      { fieldName: 'photo', fieldType: 'ImageBlob' },
+    ],
+    relationships: [
+      owner,
+      { relationshipName: 'tags', otherEntityName: 'tag', relationshipType: 'many-to-many', relationshipSide: 'left' },
+    ],
+  };
+
+  it('should give the added fields and relationships by name, the removed ones as the entity before declares them', () => {
+    const changelog = {
+      entity: { relationships: [owner] },
+      addedFields: ['code'],
+      removedFields: ['photo'],
+      addedRelationships: ['country'],
+      removedRelationships: ['tags'],
+      changedRelationships: [],
+    };
+    expect(changelogChanges(previousEntity, changelog)).toEqual({
+      addedFields: ['code'],
+      removedFields: [{ fieldName: 'photo', fieldType: 'ImageBlob' }],
+      addedRelationships: ['country'],
+      removedRelationships: [previousEntity.relationships[1]],
+    });
+  });
+
+  it('should remove and add again a relationship changed in its type, not one changed in its options only', () => {
+    const changed = { ...owner, relationshipType: 'one-to-one' };
+    expect(changelogChanges(previousEntity, { entity: { relationships: [changed] }, changedRelationships: ['owner'] })).toMatchObject({
+      addedRelationships: ['owner'],
+      removedRelationships: [owner],
+    });
+    expect(
+      changelogChanges(previousEntity, {
+        entity: { relationships: [{ ...owner, options: { onDelete: 'CASCADE' } }] },
+        changedRelationships: ['owner'],
+      }),
+    ).toMatchObject({ addedRelationships: [], removedRelationships: [] });
+  });
+});
+
+describe('updatedEntityMigration', () => {
+  const nextTimestamp = () => 7577923200000;
+
+  it('should be none without an added or a removed field', () => {
+    expect(updatedEntityMigration({ entity: region, addedFields: [], removedFields: [] }, nextTimestamp)).toBeUndefined();
+  });
+
+  it('should add the columns of the added fields and drop the ones of the removed fields', () => {
+    expect(
+      updatedEntityMigration(
+        {
+          entity: region,
+          addedFields: [field({ fieldNameAsDatabaseColumn: 'status', nodejsFieldType: 'string', fieldType: 'String' })],
+          removedFields: [{ fieldNameAsDatabaseColumn: 'photo', fieldType: 'byte[]', fieldTypeBlobContent: 'image' }],
+        },
+        nextTimestamp,
+      ),
+    ).toEqual({
+      timestamp: 7577923200000,
+      className: 'UpdatedEntityRegion7577923200000',
+      fileName: '7577923200000-UpdatedEntityRegion',
+      tableName: 'region',
+      addedColumns: [{ name: 'status', type: 'String', nullable: true, unique: false }],
+      addedColumnNames: "['status']",
+      removedColumnNames: "['photo', 'photo_content_type']",
+      schemaImports: 'addColumns, dropColumns',
+    });
+  });
+});
+
+describe('updatedConstraintsMigration', () => {
+  const nextTimestamp = () => 7577923260000;
+  const changes = properties => ({
+    entity: region,
+    addedRelationships: [],
+    removedRelationships: [],
+    ...properties,
+  });
+
+  it('should be none without a join column or a join table added or removed', () => {
+    const countries = { relationshipName: 'countries', relationshipType: 'one-to-many', relationshipFieldName: 'countries' };
+    expect(updatedConstraintsMigration(changes({ addedRelationships: [countries] }), nextTimestamp)).toBeUndefined();
+  });
+
+  it('should drop the join columns and the join tables of the removed relationships, then add the ones of the added relationships', () => {
+    const migration = updatedConstraintsMigration(
+      changes({
+        addedRelationships: [
+          { relationshipType: 'one-to-one', ownerSide: true, relationshipFieldName: 'gadget', otherEntity: gadget },
+          {
+            relationshipType: 'many-to-many',
+            ownerSide: true,
+            relationshipFieldName: 'gadgets',
+            columnName: 'gadgets',
+            joinTable: { name: 'rel_region__gadgets' },
+            otherEntity: gadget,
+          },
+        ],
+        removedRelationships: [
+          previousRelationship(
+            region,
+            { relationshipName: 'owner', relationshipType: 'many-to-one', relationshipSide: 'left' },
+            { otherEntity: user },
+          ),
+          previousRelationship(region, { relationshipName: 'tags', relationshipType: 'many-to-many', relationshipSide: 'left' }, {}),
+        ],
+      }),
+      nextTimestamp,
+    );
+    expect(migration).toMatchObject({
+      className: 'UpdatedEntityConstraintsRegion7577923260000',
+      tableName: 'region',
+      addedJoinColumns: [{ name: 'gadgetId', type: "'uuid'", nullable: true }],
+      addedForeignKeys: [{ columnName: 'gadgetId', referencedTableName: 'gadget', referencedColumnName: 'id' }],
+      addedJoinTables: [{ name: 'rel_region__gadgets', joinColumn: { name: 'region_id' }, inverseJoinColumn: { name: 'gadgets_id' } }],
+      removedJoinColumnNames: "['ownerId']",
+      removedJoinTables: ['rel_region__tags'],
+      relationUniques: "['gadgetId']",
+      schemaImports: 'addColumns, createForeignKeys, createJoinTable, dropColumns',
+    });
+  });
+});
+
+describe('previousField', () => {
+  it('should give a blob type of an entity file the type byte[] of its blob content, like JHipster', () => {
+    expect(previousField({ fieldName: 'photo', fieldType: 'ImageBlob' })).toEqual({
+      fieldName: 'photo',
+      fieldType: 'byte[]',
+      fieldTypeBlobContent: 'image',
+    });
+    expect(previousField({ fieldName: 'notes', fieldType: 'TextBlob' })).toMatchObject({
+      fieldType: 'byte[]',
+      fieldTypeBlobContent: 'text',
+    });
+    expect(previousField({ fieldName: 'name', fieldType: 'String' })).toEqual({ fieldName: 'name', fieldType: 'String' });
+  });
+});
+
+describe('previousRelationship', () => {
+  it('should prepare a relationship of an entity file like JHipster, its join column named by the entity it references now', () => {
+    const relationship = {
+      relationshipName: 'Seller',
+      otherEntityName: 'gadget',
+      relationshipType: 'many-to-one',
+      relationshipSide: 'left',
+    };
+    expect(previousRelationship(region, relationship, { otherEntity: gadget })).toMatchObject({
+      relationshipFieldName: 'seller',
+      ownerSide: true,
+      otherEntity: gadget,
+      joinTable: undefined,
+    });
+    expect(previousRelationship(region, relationship, {}).otherEntity).toEqual({ primaryKey: { name: 'id' } });
+  });
+
+  it('should give the join table of the owner side of a many-to-many relationship, like JHipster names it', () => {
+    const tags = { relationshipName: 'tags', relationshipType: 'many-to-many' };
+    expect(previousRelationship(region, { ...tags, relationshipSide: 'left' }, {}).joinTable).toEqual({ name: 'rel_region__tags' });
+    // The other side JHipster adds to the entity a relationship references, without a side.
+    expect(previousRelationship(region, tags, {})).toMatchObject({ ownerSide: false, joinTable: undefined });
+    expect(previousRelationship(region, { ...tags, relationshipSide: 'right' }, {})).toMatchObject({
+      ownerSide: false,
+      joinTable: undefined,
+    });
   });
 });
 

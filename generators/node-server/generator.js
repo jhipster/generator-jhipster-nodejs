@@ -3,7 +3,12 @@ import { readFile } from 'node:fs/promises';
 import { TEMPLATES_WEBAPP_SOURCES_DIR } from 'generator-jhipster';
 import BaseApplicationGenerator from 'generator-jhipster/generators/base-application';
 import { createNeedleCallback } from 'generator-jhipster/generators/base-core/support';
+import {
+  CHANGELOGS_CUSTOM_OBJECT,
+  getEntityChangelogs,
+} from 'generator-jhipster/generators/base-entity-changes/generators/changelogs/support';
 import { createKeyStore } from 'generator-jhipster/generators/java/support';
+import { prepareField as prepareServerField } from 'generator-jhipster/generators/server/support';
 import { createBase64Secret, createReproducibleBase64Secret, mutateData } from 'generator-jhipster/utils';
 
 import { SERVER_NODEJS_SRC_DIR } from '../generator-nodejs-constants.js';
@@ -14,21 +19,31 @@ import {
   MIGRATION_TIMESTAMP_OFFSET,
   apiFakeEntity,
   apiFakeValue,
+  changelogChanges,
+  changelogDateToTimestamp,
+  changelogsSinceCreation,
   columnTransformer,
   constraintsMigration,
   contentTypeColumnOptions,
+  createdChangelogDate,
   entityMigration,
   fieldColumnOptions,
   fieldColumnTypeImports,
   fieldTypeValidators,
+  formerChangelogs,
   getDatabasePort,
   getNodeDevDatabaseType,
   getNodeDevSqliteDatabase,
   hasRuntimeColumnTypes,
+  migrationOf,
   mutateEntityAuthorities,
+  previousField,
+  previousRelationship,
   primaryKeyColumn,
   serverEnumInfo,
   thymeleafMailToHandlebars,
+  updatedConstraintsMigration,
+  updatedEntityMigration,
   userAuthorityJoinTable,
 } from './support/index.js';
 
@@ -115,10 +130,30 @@ const databaseDevDrivers = {
   mssql: 'better-sqlite3',
 };
 
+/**
+ * The generator of the server. With incrementalChangelog, the migrations of the entities are the ones of their changelogs
+ * JHipster records (the changelogs custom object), each written by the generation recording it.
+ */
 export default class extends BaseApplicationGenerator {
   oldNodejsVersion;
   existingNodejsVersion;
   nodejsPackageJson;
+  /** Whether a changelog is of a former generation (see formerChangelogs). */
+  #formerChangelogs;
+
+  constructor(args, options, features) {
+    super(args, options, { ...features, customObjects: [{ name: CHANGELOGS_CUSTOM_OBJECT }] });
+  }
+
+  /** The changelogs of the entities with incrementalChangelog, the ones of this generation recorded. */
+  get changelogs() {
+    return getEntityChangelogs(this);
+  }
+
+  /** Whether a changelog is one of this generation, whose migrations it writes. */
+  #isWritten(changelog) {
+    return !this.#formerChangelogs(changelog);
+  }
 
   async beforeQueue() {
     await this.dependsOnJHipster('jhipster-nodejs:node-server:bootstrap');
@@ -128,6 +163,7 @@ export default class extends BaseApplicationGenerator {
   get [BaseApplicationGenerator.INITIALIZING]() {
     return this.asInitializingTaskGroup({
       async initializing() {
+        this.#formerChangelogs = formerChangelogs(this);
         this.existingNodejsVersion = this.blueprintConfig.nodejsVersion;
         this.oldNodejsVersion = this.existingNodejsVersion ?? '3.0.0';
         this.nodejsPackageJson = JSON.parse((await readFile(this.templatePath('../../../package.json'), 'utf-8')).toString());
@@ -402,9 +438,70 @@ export default class extends BaseApplicationGenerator {
           application.nodejsUserPrimaryKeyColumn = primaryKeyColumn(application.user);
           application.nodejsUserAuthorityJoinTable = userAuthorityJoinTable(application);
         }
+        // With incrementalChangelog, the changelogs of the entities JHipster records, the ones of this generation too.
+        const changelogs = getEntityChangelogs(this);
         for (const entity of entities.filter(entity => !entity.skipServer && !entity.builtIn)) {
-          entity.nodejsMigration = entityMigration(entity);
-          entity.nodejsConstraintsMigration = constraintsMigration(entity);
+          const entityChangelogs = changelogsSinceCreation(changelogs, entity.name);
+          const [creation] = entityChangelogs;
+          if (!creation || (entityChangelogs.length === 1 && this.#isWritten(creation))) {
+            // A new entity, or without incrementalChangelog: its migrations are the ones of the entity as it is.
+            entity.nodejsMigration = entityMigration(entity);
+            entity.nodejsConstraintsMigration = constraintsMigration(entity);
+            entity.nodejsMigrations = [entity.nodejsMigration, entity.nodejsConstraintsMigration].filter(Boolean);
+            continue;
+          }
+          // The migrations the database may have run already are kept, the ones of a changelog of this generation written.
+          entity.nodejsMigrationsKept = true;
+          const prepareRelationship = relationship =>
+            previousRelationship(entity, relationship, {
+              otherEntity: entities.find(other => other.name.toLowerCase() === relationship.otherEntityName.toLowerCase()),
+              prodDatabaseType: application.prodDatabaseType,
+            });
+          const createdEntity = {
+            ...entity,
+            changelogDate: createdChangelogDate(creation),
+            relationships: (creation.entity.relationships ?? []).map(prepareRelationship),
+          };
+          entity.nodejsMigrations = [migrationOf('AddedEntity', createdEntity), constraintsMigration(createdEntity)].filter(Boolean);
+          entityChangelogs.slice(1).forEach((changelog, index) => {
+            const written = this.#isWritten(changelog);
+            const changes = changelogChanges(entityChangelogs[index].entity, changelog);
+            // The added fields and relationships of a changelog of this generation are the ones of the entity, prepared.
+            const added = (items, names, key) => items.filter(item => names.includes(item[key]));
+            const removedFields = changes.removedFields.map(field => {
+              // The column names of the removed fields, like JHipster names the ones of the fields of the entity.
+              const removedField = previousField(field);
+              prepareServerField(application, entity, removedField, this);
+              return removedField;
+            });
+            const timestamp = changelogDateToTimestamp(changelog.changelogDate) + MIGRATION_TIMESTAMP_OFFSET;
+            const fieldsMigration = updatedEntityMigration(
+              {
+                entity,
+                addedFields: written
+                  ? added(entity.fields, changes.addedFields, 'fieldName')
+                  : added(changelog.entity.fields ?? [], changes.addedFields, 'fieldName').map(previousField),
+                removedFields,
+              },
+              () => timestamp,
+            );
+            // The relationships after the fields, whose join columns may reference them.
+            const constraintsChanges = updatedConstraintsMigration(
+              {
+                entity,
+                addedRelationships: written
+                  ? added(entity.relationships, changes.addedRelationships, 'relationshipName')
+                  : added(changelog.entity.relationships ?? [], changes.addedRelationships, 'relationshipName').map(prepareRelationship),
+                removedRelationships: changes.removedRelationships.map(prepareRelationship),
+              },
+              () => timestamp + 1,
+            );
+            if (written) {
+              entity.nodejsUpdatedMigration = fieldsMigration;
+              entity.nodejsUpdatedConstraintsMigration = constraintsChanges;
+            }
+            entity.nodejsMigrations.push(...[fieldsMigration, constraintsChanges].filter(Boolean));
+          });
         }
       },
     });
@@ -608,7 +705,7 @@ export default class extends BaseApplicationGenerator {
           if (!entity.builtIn) {
             source.addEntityToAppModule({ entityFileName, entityClass });
           }
-          for (const migration of [entity.nodejsMigration, entity.nodejsConstraintsMigration].filter(Boolean)) {
+          for (const migration of entity.nodejsMigrations ?? []) {
             source.addMigrationToNodeConfig(migration);
           }
         }
