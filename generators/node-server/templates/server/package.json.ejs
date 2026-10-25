@@ -95,6 +95,7 @@
     "passport-oauth2": "<%- nodeServerDependencies['passport-oauth2'] %>",
 <%_ } _%>
     "prom-client": "<%- nodeServerDependencies['prom-client'] %>",
+    "qs": "<%- nodeServerDependencies['qs'] %>",
     "reflect-metadata": "<%- nodeServerDependencies['reflect-metadata'] %>",
     "rxjs": "<%- nodeServerDependencies['rxjs'] %>",
     "swagger-ui-express": "<%- nodeServerDependencies['swagger-ui-express'] %>",
@@ -119,6 +120,7 @@
 <%_ if (authenticationType === 'oauth2') { _%>
     "@types/passport-oauth2": "<%- nodeServerDependencies['@types/passport-oauth2'] %>",
 <%_ } _%>
+    "@types/qs": "<%- nodeServerDependencies['@types/qs'] %>",
     "@types/supertest": "<%- nodeServerDependencies['@types/supertest'] %>",
     "@vitest/coverage-v8": "<%- nodeServerDependencies['@vitest/coverage-v8'] %>",
 <%_ if (databaseType !== 'mongodb') { _%>
