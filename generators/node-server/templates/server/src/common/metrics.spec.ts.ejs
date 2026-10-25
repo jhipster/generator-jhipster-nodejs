@@ -1,0 +1,43 @@
+import { describe, expect, it } from 'vitest';
+import { MetricsService } from './metrics.ts';
+
+describe('MetricsService', () => {
+  it('should give the requests by status and by endpoint, like the jhimetrics endpoint', () => {
+    const metricsService = new MetricsService();
+    metricsService.recordRequest('GET', '/api/regions/:id', 200, 10);
+    metricsService.recordRequest('GET', '/api/regions/:id', 200, 30);
+    metricsService.recordRequest('POST', '/api/regions', 400, 5);
+
+    const metrics = metricsService.jhipsterMetrics();
+
+    expect(metrics['http.server.requests']).toEqual({
+      all: { count: 3 },
+      percode: { '200': { max: 30, mean: 20, count: 2 }, '400': { max: 5, mean: 5, count: 1 } },
+    });
+    expect(metrics.services).toEqual({
+      '/api/regions/:id': { GET: { max: 30, mean: 20, count: 2 } },
+      '/api/regions': { POST: { max: 5, mean: 5, count: 1 } },
+    });
+  });
+
+  it('should give the memory of the heap and the processor use', () => {
+    const metrics = new MetricsService().jhipsterMetrics();
+
+    expect(metrics.jvm.heap.used).toBeGreaterThan(0);
+    expect(metrics.jvm.heap.max).toBeGreaterThanOrEqual(metrics.jvm.heap.used);
+    expect(metrics.processMetrics['system.cpu.count']).toBeGreaterThan(0);
+    expect(metrics.processMetrics['process.cpu.usage']).toBeGreaterThanOrEqual(0);
+    expect(metrics.processMetrics['process.start.time']).toBeLessThanOrEqual(Date.now());
+  });
+
+  it('should give the requests in the format of Prometheus, like the timer of Micrometer', async () => {
+    const metricsService = new MetricsService();
+    metricsService.recordRequest('GET', '/api/regions', 200, 250);
+
+    const prometheus = await metricsService.prometheus();
+
+    expect(prometheus).toContain('http_server_requests_seconds_count{method="GET",uri="/api/regions",status="200",outcome="SUCCESS"} 1');
+    expect(prometheus).toContain('http_server_requests_seconds_max{method="GET",uri="/api/regions",status="200",outcome="SUCCESS"} 0.25');
+    expect(prometheus).toContain('process_cpu_user_seconds_total');
+  });
+});

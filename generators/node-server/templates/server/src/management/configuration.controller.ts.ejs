@@ -1,0 +1,80 @@
+import { Controller, Get, UseGuards } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { ApiExcludeController } from '@nestjs/swagger';
+
+import { activeProfiles, config, configFiles } from '../config.ts';
+import { AuthGuard, Roles, RolesGuard, RoleType } from '../auth/index.ts';
+
+const MASK = '******';
+
+export interface PropertySource {
+  name: string;
+  properties: Record<string, { value: unknown }>;
+}
+
+export interface Env {
+  activeProfiles: string[];
+  propertySources: PropertySource[];
+}
+
+export interface ConfigProps {
+  contexts: Record<string, { beans: Record<string, { prefix: string; properties: Record<string, unknown> }> }>;
+}
+
+/**
+ * The env and configprops endpoints of Spring Boot Actuator the configuration page of the JHipster clients reads, for
+ * the administrators: the sources of the configuration (the environment variables, then the files of the active
+ * profiles and application.yml, the highest precedence first) and the properties of the application by prefix. Their
+ * values are shown as ****** unless management.endpoint.<endpoint>.show-values is always, like Spring Boot.
+ */
+@ApiExcludeController()
+@Controller('management')
+@UseGuards(AuthGuard, RolesGuard)
+@Roles(RoleType.ADMIN)
+export class ConfigurationController {
+  constructor(private readonly configService: ConfigService) {}
+
+  @Get('/env')
+  env(): Env {
+    const value = this.valueFor('env');
+    const source = (name: string, properties: Record<string, unknown>): PropertySource => ({
+      name,
+      properties: Object.fromEntries(Object.entries(properties).map(([key, property]) => [key, { value: value(property) }])),
+    });
+    return {
+      activeProfiles,
+      propertySources: [source('systemEnvironment', process.env), ...configFiles.map(({ name, properties }) => source(name, properties))],
+    };
+  }
+
+  @Get('/configprops')
+  configprops(): ConfigProps {
+    const value = this.valueFor('configprops');
+    const beans: ConfigProps['contexts'][string]['beans'] = {};
+    for (const [key, property] of Object.entries(config)) {
+      const separator = key.indexOf('.');
+      if (separator > 0 && typeof property !== 'function') {
+        const prefix = key.substring(0, separator);
+        beans[prefix] ??= { prefix, properties: {} };
+        setNested(beans[prefix].properties, key.substring(separator + 1).split('.'), value(property));
+      }
+    }
+    return { contexts: { [this.configService.get<string>('jhipster.clientApp.name') ?? 'application']: { beans } } };
+  }
+
+  private valueFor(endpoint: 'env' | 'configprops'): (property: unknown) => unknown {
+    const showValues = this.configService.get<string>(`management.endpoint.${endpoint}.show-values`) === 'always';
+    return property => (showValues ? property : MASK);
+  }
+}
+
+const isRecord = (value: unknown): value is Record<string, unknown> => typeof value === 'object' && value !== null;
+
+function setNested(target: Record<string, unknown>, names: string[], value: unknown): void {
+  let parent = target;
+  for (const name of names.slice(0, -1)) {
+    const child = parent[name];
+    parent = parent[name] = isRecord(child) ? child : {};
+  }
+  parent[names[names.length - 1]] = value;
+}

@@ -1,0 +1,32 @@
+import { Injectable } from '@nestjs/common';
+import { PassportStrategy } from '@nestjs/passport';
+import { passportJwtSecret } from 'jwks-rsa';
+import { ExtractJwt, Strategy } from 'passport-jwt';
+
+import { <%= userLoginVmClass %> } from '../users/dto/user.dto.ts';
+import { oidcUserOfClaims } from './oauth2.authorities.ts';
+import { OAuth2Config } from './oauth2.config.ts';
+
+/**
+ * The access tokens of the identity provider sent as bearer tokens, like the oauth2ResourceServer of JHipster Spring
+ * Boot: signed by the keys of the issuer (its JWKS), not expired, the user and its authorities from their claims. A
+ * gateway relays them to its microservices, the mobile clients send them.
+ */
+@Injectable()
+export class Oauth2BearerStrategy extends PassportStrategy(Strategy, 'oauth2-bearer') {
+  constructor(oauth2Config: OAuth2Config) {
+    super({
+      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+      ignoreExpiration: false,
+      secretOrKeyProvider: passportJwtSecret({ jwksUri: oauth2Config.jwksUri, cache: true, rateLimit: true }),
+      algorithms: ['RS256'],
+      // Issued by the identity provider for this API, like the issuer and audience validators of JHipster Spring Boot.
+      issuer: oauth2Config.issuer,
+      audience: oauth2Config.audience,
+    });
+  }
+
+  validate(claims: Record<string, any>): <%= userLoginVmClass %> {
+    return oidcUserOfClaims(claims);
+  }
+}

@@ -1,0 +1,33 @@
+import { <%= userLoginVmClass %> } from '../users/dto/user.dto.ts';
+
+// Claim with the roles when the provider namespaces it, like Auth0.
+export const CLAIMS_NAMESPACE = 'https://www.jhipster.tech/';
+
+/**
+ * The authorities of an OIDC user, from the claims of its token, as JHipster's Spring Boot application reads them:
+ * the "groups" claim, else "roles", else the namespaced "roles", keeping the ROLE_ ones.
+ */
+export function extractAuthoritiesFromClaims(claims: Record<string, unknown>): string[] {
+  const roles = claims.groups ?? claims.roles ?? claims[`${CLAIMS_NAMESPACE}roles`] ?? [];
+  return Array.isArray(roles) ? roles.filter((role): role is string => typeof role === 'string' && role.startsWith('ROLE_')) : [];
+}
+
+/**
+ * The user of the claims of an OIDC token (the ID token over the access token at the login, the access token of a bearer
+ * request), like the OIDC user of JHipster Spring Boot: the login of preferred_username (else sub) and the mail in lower
+ * case, the names, the language and the authorities.
+ */
+export function oidcUserOfClaims(claims: Record<string, any>): <%= userLoginVmClass %> {
+  const login = String(claims.preferred_username ?? claims.sub).toLowerCase();
+  // Without a password, nor a mail when the token has none (the login of the user saved has its fallback).
+  return Object.assign(new <%= userLoginVmClass %>(), {
+    login,
+    firstName: claims.given_name,
+    lastName: claims.family_name,
+    email: claims.email ? String(claims.email).toLowerCase() : undefined,
+    imageUrl: claims.picture ?? '',
+    activated: true,
+    langKey: typeof claims.locale === 'string' ? claims.locale.split(/[-_]/)[0] : 'en',
+    authorities: extractAuthoritiesFromClaims(claims),
+  });
+}

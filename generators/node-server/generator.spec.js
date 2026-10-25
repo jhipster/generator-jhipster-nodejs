@@ -336,16 +336,16 @@ describe('SubGenerator node-server of nodejs JHipster blueprint', () => {
     });
 
     it('should not generate built-in users by default (syncUserWithIdp disabled)', () => {
-      result.assertFile(['server/src/web/rest/account.controller.ts', 'server/src/web/rest/management.controller.ts']);
+      result.assertFile(['server/src/auth/account.controller.ts', 'server/src/management/management.controller.ts']);
       result.assertNoFile([
-        'server/src/domain/user.entity.ts',
-        'server/src/domain/authority.entity.ts',
-        'server/src/module/user.module.ts',
-        'server/src/web/rest/user.controller.ts',
-        'server/src/web/rest/public.user.controller.ts',
+        'server/src/users/user.entity.ts',
+        'server/src/users/authority.entity.ts',
+        'server/src/users/user.module.ts',
+        'server/src/users/user.controller.ts',
+        'server/src/users/public.user.controller.ts',
         'server/src/migrations/1570200490072-SeedUsersRoles.ts',
       ]);
-      result.assertFileContent('server/src/module/auth.module.ts', 'ManagementController');
+      result.assertFileContent('server/src/auth/auth.module.ts', 'ManagementController');
     });
   });
   describe('with session', () => {
@@ -366,23 +366,23 @@ describe('SubGenerator node-server of nodejs JHipster blueprint', () => {
 
     it('should generate the session login and the user management, without JWT nor OAuth2', () => {
       result.assertFile([
-        'server/src/web/rest/user.session.controller.ts',
-        'server/src/security/csrf.middleware.ts',
-        'server/src/security/password.service.ts',
-        'server/src/web/rest/user.controller.ts',
+        'server/src/auth/user.session.controller.ts',
+        'server/src/auth/csrf.middleware.ts',
+        'server/src/auth/password.service.ts',
+        'server/src/users/user.controller.ts',
         'server/e2e/session.e2e-spec.ts',
-        'server/src/domain/session.entity.ts',
-        'server/src/security/session.store.ts',
+        'server/src/auth/session.entity.ts',
+        'server/src/auth/session.store.ts',
         'server/src/migrations/1570200270082-CreateSessions.ts',
       ]);
       result.assertNoFile([
-        'server/src/web/rest/user.jwt.controller.ts',
-        'server/src/security/passport.jwt.strategy.ts',
-        'server/src/web/rest/user.oauth2.controller.ts',
+        'server/src/auth/user.jwt.controller.ts',
+        'server/src/auth/passport.jwt.strategy.ts',
+        'server/src/auth/user.oauth2.controller.ts',
       ]);
       result.assertJsonFileContent('server/package.json', { dependencies: { 'express-session': /./, bcrypt: /./ } });
       result.assertNoJsonFileContent('server/package.json', { dependencies: { '@nestjs/jwt': /./ } });
-      result.assertFileContent('server/src/security/password.service.ts', 'jhipster.security.authentication.hash-salt-or-rounds');
+      result.assertFileContent('server/src/auth/password.service.ts', 'jhipster.security.authentication.hash-salt-or-rounds');
       result.assertFileContent('server/src/config/application-secret-samples.yml', /session:\n\s+secret:/);
     });
   });
@@ -406,10 +406,10 @@ describe('SubGenerator node-server of nodejs JHipster blueprint', () => {
 
     it('should register in the Eureka server of the defaultZone once the application listens', () => {
       result.assertFileContent(
-        'server/src/service/eureka.service.ts',
+        'server/src/registry/eureka.service.ts',
         "this.configService.get('eureka.client.service-url.defaultZone', { infer: true })",
       );
-      result.assertFileContent('server/src/service/eureka.service.ts', 'beforeApplicationShutdown');
+      result.assertFileContent('server/src/registry/eureka.service.ts', 'beforeApplicationShutdown');
       result.assertFileContent('server/src/app.module.ts', 'EurekaService,');
       result.assertFileContent('server/src/main.ts', /await app\.listen\(port\);[\s\S]*app\.get\(EurekaService\)\.register/);
       result.assertNoFileContent('server/src/main.ts', 'registerAsEurekaService');
@@ -435,12 +435,12 @@ describe('SubGenerator node-server of nodejs JHipster blueprint', () => {
     });
 
     it('should register in Consul with the health check of the application once it listens', () => {
-      result.assertFileContent('server/src/service/consul.service.ts', "discovery['health-check-path']");
-      result.assertFileContent('server/src/service/consul.service.ts', 'beforeApplicationShutdown');
+      result.assertFileContent('server/src/registry/consul.service.ts', "discovery['health-check-path']");
+      result.assertFileContent('server/src/registry/consul.service.ts', 'beforeApplicationShutdown');
       result.assertFileContent('server/src/app.module.ts', 'ConsulService,');
       result.assertFileContent('server/src/main.ts', /await app\.listen\(port\);[\s\S]*app\.get\(ConsulService\)\.register/);
       expect(result.fs.readJSON(join(result.cwd, 'server/package.json')).dependencies).toHaveProperty('consul');
-      result.assertNoFile('server/src/service/eureka.service.ts');
+      result.assertNoFile('server/src/registry/eureka.service.ts');
     });
   });
 
@@ -466,16 +466,16 @@ describe('SubGenerator node-server of nodejs JHipster blueprint', () => {
     });
 
     it('should only validate the tokens, without users nor authentication API', () => {
-      result.assertFile(['server/src/security/passport.jwt.strategy.ts', 'server/src/web/rest/account.controller.ts']);
+      result.assertFile(['server/src/auth/passport.jwt.strategy.ts', 'server/src/auth/account.controller.ts']);
       result.assertNoFile([
-        'server/src/domain/user.entity.ts',
-        'server/src/service/user.service.ts',
-        'server/src/web/rest/user.jwt.controller.ts',
-        'server/src/security/password-util.ts',
-        'server/src/service/dto/user-login.dto.ts',
-        'server/src/service/dto/password-change.dto.ts',
+        'server/src/users/user.entity.ts',
+        'server/src/users/user.service.ts',
+        'server/src/auth/user.jwt.controller.ts',
+        'server/src/auth/password-util.ts',
+        'server/src/auth/dto/user-login.dto.ts',
+        'server/src/auth/dto/password-change.dto.ts',
       ]);
-      result.assertNoFileContent('server/src/security/passport.jwt.strategy.ts', 'AuthService');
+      result.assertNoFileContent('server/src/auth/passport.jwt.strategy.ts', 'AuthService');
     });
   });
 
@@ -527,13 +527,13 @@ describe('SubGenerator node-server of nodejs JHipster blueprint', () => {
 
     it('should generate the users of the identity provider without the users administration', () => {
       result.assertFile([
-        'server/src/domain/user.entity.ts',
-        'server/src/domain/authority.entity.ts',
-        'server/src/web/rest/public.user.controller.ts',
+        'server/src/users/user.entity.ts',
+        'server/src/users/authority.entity.ts',
+        'server/src/users/public.user.controller.ts',
         'server/src/migrations/1570200490072-SeedUsersRoles.ts',
       ]);
-      result.assertNoFile(['server/src/web/rest/user.controller.ts', 'server/e2e/user.e2e-spec.ts']);
-      result.assertNoFileContent('server/src/module/user.module.ts', 'UserController');
+      result.assertNoFile(['server/src/users/user.controller.ts', 'server/e2e/user.e2e-spec.ts']);
+      result.assertNoFileContent('server/src/users/user.module.ts', 'UserController');
     });
   });
   describe('with the authorities of the entities', () => {
@@ -598,20 +598,20 @@ describe('SubGenerator node-server of nodejs JHipster blueprint', () => {
     });
 
     it('should anchor the pattern of a field, like Bean Validation @Pattern', () => {
-      result.assertFileContent('server/src/service/dto/book.dto.ts', String.raw`@Matches("^(?:^\\d{3}-[0-9]{6}$)$")`);
-      result.assertNoFileContent('server/src/service/dto/book.dto.ts', 'undefined');
+      result.assertFileContent('server/src/entities/book/dto/book.dto.ts', String.raw`@Matches("^(?:^\\d{3}-[0-9]{6}$)$")`);
+      result.assertNoFileContent('server/src/entities/book/dto/book.dto.ts', 'undefined');
     });
 
     it('should validate a required blob, so the whitelist of the ValidationPipe keeps it', () => {
-      result.assertFileContent('server/src/service/dto/book.dto.ts', /@IsNotEmpty\(\)\s+@ApiProperty\([^)]*\)\s+cover!/);
+      result.assertFileContent('server/src/entities/book/dto/book.dto.ts', /@IsNotEmpty\(\)\s+@ApiProperty\([^)]*\)\s+cover!/);
     });
 
     it('should refuse a value out of an enum, like the JSON deserialization of Spring Boot', () => {
-      result.assertFileContent('server/src/service/dto/book.dto.ts', /@IsOptional\(\)\s+@IsEnum\(Genre\)/);
-      result.assertFileContent('server/src/service/dto/book.dto.ts', /@IsNotEmpty\(\)\s+@IsEnum\(BookFormat\)/);
+      result.assertFileContent('server/src/entities/book/dto/book.dto.ts', /@IsOptional\(\)\s+@IsEnum\(Genre\)/);
+      result.assertFileContent('server/src/entities/book/dto/book.dto.ts', /@IsNotEmpty\(\)\s+@IsEnum\(BookFormat\)/);
       result.assertFileContent('server/e2e/book.e2e-spec.ts', "genre: 'NOT_A_GENRE'");
-      result.assertFileContent('server/src/domain/book.entity.ts', 'enum: Genre, nullable: true })');
-      result.assertFileContent('server/src/domain/book.entity.ts', 'enum: BookFormat })');
+      result.assertFileContent('server/src/entities/book/book.entity.ts', 'enum: Genre, nullable: true })');
+      result.assertFileContent('server/src/entities/book/book.entity.ts', 'enum: BookFormat })');
     });
 
     it('should accept a missing value of an optional validated field', () => {
@@ -667,6 +667,8 @@ describe('SubGenerator node-server of nodejs JHipster blueprint', () => {
       'server/src/module/user.module.ts',
       'server/src/domain/authority.entity.ts',
       'server/src/migrations/1570200490072-SeedUsersRoles.ts',
+      'server/src/module/auth.module.ts',
+      'server/src/security/index.ts',
     ];
     // An existing project is read from the disk: its .yo-rc.json and its files.
     const writeExistingProject =
@@ -703,11 +705,15 @@ describe('SubGenerator node-server of nodejs JHipster blueprint', () => {
 
       it('should keep synchronizing the users', () => {
         result.assertJsonFileContent('.yo-rc.json', { 'generator-jhipster': { syncUserWithIdp: true } });
-        result.assertFile(['server/src/domain/user.entity.ts', 'server/src/domain/authority.entity.ts']);
+        result.assertFile(['server/src/users/user.entity.ts', 'server/src/users/authority.entity.ts']);
       });
 
       it('should remove the users administration', () => {
-        result.assertNoFile(['server/src/web/rest/user.controller.ts', 'server/e2e/user.e2e-spec.ts']);
+        result.assertNoFile([
+          'server/src/web/rest/user.controller.ts',
+          'server/src/users/user.controller.ts',
+          'server/e2e/user.e2e-spec.ts',
+        ]);
       });
 
       it('should remove the entrypoint script', () => {
@@ -760,6 +766,11 @@ describe('SubGenerator node-server of nodejs JHipster blueprint', () => {
           'server/src/client/interceptors/logging.interceptor.ts',
         ]);
         result.assertFile('server/src/common/header-util.ts');
+      });
+
+      it('should move the files of 4.2.0 to the feature modules', () => {
+        result.assertNoFile(['server/src/module/auth.module.ts', 'server/src/security/index.ts']);
+        result.assertFile(['server/src/auth/auth.module.ts', 'server/src/auth/index.ts']);
       });
     });
 

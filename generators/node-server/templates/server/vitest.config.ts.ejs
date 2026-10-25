@@ -1,10 +1,10 @@
 import { defineConfig } from 'vitest/config';
 
-// The unit tests: test/ and the specs next to the code. Vite transforms the decorators with their metadata from
+// The unit tests: the specs next to the code. Vite transforms the decorators with their metadata from
 // tsconfig.json (experimentalDecorators, emitDecoratorMetadata), which the dependency injection of NestJS needs.
 export default defineConfig({
   test: {
-    include: ['src/**/*.spec.ts', 'test/**/*.spec.ts'],
+    include: ['src/**/*.spec.ts'],
     setupFiles: ['./e2e/setup.test.js'],
     coverage: {
       include: ['src/**/*.ts'],

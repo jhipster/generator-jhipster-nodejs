@@ -1,0 +1,83 @@
+import { describe, expect, it, vi } from 'vitest';
+import { LevelsConsoleLogger, LoggerLevels } from './logging.ts';
+
+describe('LoggerLevels', () => {
+  it('should give the ROOT level to the loggers without a level of their own', () => {
+    const levels = new LoggerLevels();
+    levels.configure({ 'logging.level.ROOT': 'warn' });
+
+    expect(levels.getLevel('AuthService')).toEqual({ configuredLevel: null, effectiveLevel: 'WARN' });
+    expect(levels.isEnabled('AuthService', 'warn')).toBe(true);
+    expect(levels.isEnabled('AuthService', 'log')).toBe(false);
+  });
+
+  it('should give a logger its level, else the one of its parent', () => {
+    const levels = new LoggerLevels();
+    levels.configure({ 'logging.level.ROOT': 'INFO', 'logging.level.app': 'DEBUG', 'logging.level.AuthService': 'ERROR' });
+
+    expect(levels.getLevel('AuthService').effectiveLevel).toBe('ERROR');
+    expect(levels.getLevel('app.service')).toEqual({ configuredLevel: null, effectiveLevel: 'DEBUG' });
+    expect(levels.isEnabled('app.service', 'debug')).toBe(true);
+    expect(levels.isEnabled('app.service', 'verbose')).toBe(false);
+  });
+
+  it('should list the ROOT logger first, then the known loggers by name', () => {
+    const levels = new LoggerLevels();
+    levels.isEnabled('UserService', 'log');
+    levels.setLevel('AuthService', 'DEBUG');
+
+    expect(Object.keys(levels.getLevels())).toEqual(['ROOT', 'AuthService', 'UserService']);
+  });
+
+  it('should give a logger the level of its parent again when its level is removed', () => {
+    const levels = new LoggerLevels();
+    levels.setLevel('AuthService', 'TRACE');
+    levels.setLevel('AuthService', null);
+    levels.setLevel('ROOT', null);
+
+    expect(levels.getLevel('AuthService')).toEqual({ configuredLevel: null, effectiveLevel: 'INFO' });
+    expect(levels.getLevel('ROOT').configuredLevel).toBe('INFO');
+  });
+
+  it('should print nothing for a logger OFF', () => {
+    const levels = new LoggerLevels();
+    levels.setLevel('Quiet', 'OFF');
+
+    expect(levels.isEnabled('Quiet', 'fatal')).toBe(false);
+  });
+});
+
+describe('LevelsConsoleLogger', () => {
+  it('should print the messages the level of their logger allows', () => {
+    const levels = new LoggerLevels();
+    levels.setLevel('Allowed', 'DEBUG');
+    const write = vi.spyOn(process.stdout, 'write').mockReturnValue(true);
+    try {
+      const logger = new LevelsConsoleLogger(levels);
+      logger.debug('printed', 'Allowed');
+      logger.debug('not printed', 'Other');
+      const printed = write.mock.calls.map(([chunk]) => String(chunk));
+      expect(printed.some(line => line.includes('printed') && line.includes('Allowed'))).toBe(true);
+      expect(printed.some(line => line.includes('not printed'))).toBe(false);
+    } finally {
+      write.mockRestore();
+    }
+  });
+
+  it('should print the stack trace of an error with its message only, not for a logger OFF', () => {
+    const levels = new LoggerLevels();
+    levels.setLevel('Silent', 'OFF');
+    const write = vi.spyOn(process.stderr, 'write').mockReturnValue(true);
+    try {
+      const logger = new LevelsConsoleLogger(levels);
+      logger.error('silenced', 'Error: silenced\n    at silencedStack', 'Silent');
+      logger.error('failed', 'Error: failed\n    at printedStack', 'Printed');
+      const printed = write.mock.calls.map(([chunk]) => String(chunk)).join('');
+      expect(printed).not.toContain('silenced');
+      expect(printed).toContain('failed');
+      expect(printed).toContain('printedStack');
+    } finally {
+      write.mockRestore();
+    }
+  });
+});

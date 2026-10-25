@@ -1,0 +1,104 @@
+<%_ if (authenticationType === 'oauth2') { _%>
+import { HttpModule } from '@nestjs/axios';
+<%_ } _%>
+import { <% if (authenticationUsesCsrf) { %>MiddlewareConsumer, NestModule, <% } %>Module } from '@nestjs/common';
+import { AuthService } from './auth.service.ts';
+<%_ if (generateBuiltInUserEntity) { _%>
+import { UserModule } from '../users/user.module.ts';
+<%_ } _%>
+import { PassportModule } from '@nestjs/passport';
+<%_ if (authenticationType === 'jwt') { _%>
+  <%_ if (generateBuiltInUserEntity) { _%>
+import { JwtModule } from '@nestjs/jwt';
+import { UserJWTController} from './user.jwt.controller.ts';
+  <%_ } _%>
+import { JwtStrategy } from './passport.jwt.strategy.ts';
+<%_ } else if (authenticationType === 'oauth2') { _%>
+import { Oauth2Strategy } from './passport.oauth2.strategy.ts';
+import { Oauth2BearerStrategy } from './passport.oauth2-bearer.strategy.ts';
+import { UserOauth2Controller } from './user.oauth2.controller.ts';
+<%_ } else if (authenticationTypeSession) { _%>
+import { UserSessionController } from './user.session.controller.ts';
+import { SessionUserMiddleware } from './session-user.middleware.ts';
+<%_ } _%>
+<%_ if (authenticationUsesCsrf) { _%>
+import { CsrfMiddleware } from './csrf.middleware.ts';
+import { Session } from './session.entity.ts';
+import { SessionStore } from './session.store.ts';
+<%_ } _%>
+<%_ if (authenticationType === 'jwt' && generateBuiltInUserEntity) { _%>
+import { ConfigService } from '@nestjs/config';
+import { JWT_ALGORITHM, jwtSecretKey } from './jwt.config.ts';
+<%_ } _%>
+<%_ if (generateBuiltInAuthorityEntity || authenticationUsesCsrf) { _%>
+import { TypeOrmModule } from '@nestjs/typeorm';
+<%_ } _%>
+<%_ if (generateBuiltInAuthorityEntity) { _%>
+import { Authority } from '../users/authority.entity.ts';
+import { AuthorityController } from '../users/authority.controller.ts';
+<%_ } _%>
+<%_ if (generateBuiltInUserEntity) { _%>
+import { PublicUserController } from '../users/public.user.controller.ts';
+<%_ } else { _%>
+import { ManagementController } from '../management/management.controller.ts';
+<%_ } _%>
+import { AccountController } from './account.controller.ts';
+
+@Module({
+  imports: [
+  <%_ if (generateBuiltInAuthorityEntity || authenticationUsesCsrf) { _%>
+  TypeOrmModule.forFeature([<%- [generateBuiltInAuthorityEntity && 'Authority', authenticationUsesCsrf && 'Session'].filter(Boolean).join(', ') %>]),
+  <%_ } _%>
+  <%_ if (generateBuiltInUserEntity) { _%>
+  UserModule,
+  <%_ } _%>
+  PassportModule,
+  <%_ if (authenticationType === 'jwt' && generateBuiltInUserEntity) { _%>
+    JwtModule.registerAsync({
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => ({
+        secret: jwtSecretKey(configService),
+        signOptions: {
+          algorithm: JWT_ALGORITHM,
+          expiresIn: Number(configService.getOrThrow('jhipster.security.authentication.jwt.token-validity-in-seconds')),
+        },
+      }),
+    }),
+  <%_ } else if (authenticationType === 'oauth2') { _%>
+  HttpModule,
+  <%_ } _%>
+  ],
+  controllers: [
+  <%_ if (authenticationType === 'jwt' && generateBuiltInUserEntity) { _%>
+  UserJWTController,
+  <%_ } else if (authenticationType === 'oauth2') { _%>
+  UserOauth2Controller,
+  <%_ } else if (authenticationTypeSession) { _%>
+  UserSessionController,
+  <%_ } _%>
+  <%_ if (generateBuiltInAuthorityEntity) { _%>
+  AuthorityController,
+  <%_ } _%>
+  <%- generateBuiltInUserEntity ? 'PublicUserController' : 'ManagementController' %>, AccountController ],
+  providers: [AuthService,
+  <%_ if (authenticationUsesCsrf) { _%>
+  SessionStore,
+  <%_ } _%>
+  <%_ if (authenticationType === 'jwt') { _%>
+  JwtStrategy
+  <%_ } else if (authenticationType === 'oauth2') { _%>
+  Oauth2Strategy,
+  Oauth2BearerStrategy
+  <%_ } _%>
+  ],
+  exports: [AuthService],
+})
+<%_ if (authenticationUsesCsrf) { _%>
+export class AuthModule implements NestModule {
+  configure(consumer: MiddlewareConsumer): void {
+    consumer.apply(<% if (authenticationTypeSession) { %>SessionUserMiddleware, <% } %>CsrfMiddleware).forRoutes('*');
+  }
+}
+<%_ } else { _%>
+export class AuthModule {}
+<%_ } _%>

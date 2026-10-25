@@ -1,0 +1,45 @@
+import { ExtractJwt, Strategy<% if (generateBuiltInUserEntity) { %>, VerifiedCallback<% } %> } from 'passport-jwt';
+import { PassportStrategy } from '@nestjs/passport';
+import { ConfigService } from '@nestjs/config';
+import { Injectable<% if (generateBuiltInUserEntity) { %>, UnauthorizedException<% } %> } from '@nestjs/common';
+import { Payload<% if (!generateBuiltInUserEntity) { %>, payloadAuthorities<% } %> } from './payload.interface.ts';
+import { JWT_ALGORITHM, jwtSecretKey } from './jwt.config.ts';
+<%_ if (generateBuiltInUserEntity) { _%>
+import { AuthService } from './auth.service.ts';
+<%_ } else { _%>
+import { <%= userLoginVmClass %> } from '../users/dto/user.dto.ts';
+<%_ } _%>
+
+@Injectable()
+export class JwtStrategy extends PassportStrategy(Strategy) {
+<%_ if (generateBuiltInUserEntity) { _%>
+  constructor(private readonly authService: AuthService, configService: ConfigService) {
+<%_ } else { _%>
+  constructor(configService: ConfigService) {
+<%_ } _%>
+    super({
+      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+      ignoreExpiration: false,
+      secretOrKey: jwtSecretKey(configService),
+      algorithms: [JWT_ALGORITHM],
+    });
+  }
+
+<%_ if (generateBuiltInUserEntity) { _%>
+ async validate(payload: Payload, done: VerifiedCallback): Promise<any> {
+    const user = await this.authService.validateUser(payload);
+    if (!user) {
+      return done(new UnauthorizedException({ message: 'user does not exist' }), false);
+    }
+
+    return done(null, user);
+  }
+<%_ } else { _%>
+  /**
+   * Without built-in User, the user is the one of the token, signed by the application issuing it (the gateway).
+   */
+  validate(payload: Payload): <%= userLoginVmClass %> {
+    return Object.assign(new <%= userLoginVmClass %>(), { login: payload.sub, authorities: payloadAuthorities(payload) });
+  }
+<%_ } _%>
+}

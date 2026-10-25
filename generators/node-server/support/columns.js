@@ -2,7 +2,7 @@
 export const bigDecimalPrecision = { precision: 21, scale: 2 };
 
 /**
- * The transformer of the column of a field (src/domain/base/column-transformers.ts), so the API gives the values of the
+ * The transformer of the column of a field (src/common/database/column-transformers.ts), so the API gives the values of the
  * JSON of JHipster Spring Boot whatever the SQL database: undefined when the driver gives them already.
  * - number: a bigint or a decimal, which the PostgreSQL and MySQL drivers give as a string;
  * - duration: the nanoseconds of a bigint column, an ISO-8601 duration (PT1H30M) in the API;
@@ -23,7 +23,7 @@ export const columnRules = field => {
 
 /**
  * The databases with column types of JHipster Spring Boot better-sqlite3 (dev and test) has not, chosen at runtime by
- * src/domain/base/column-types.ts: the long blobs and texts and the microseconds of MySQL and MariaDB.
+ * src/common/database/column-types.ts: the long blobs and texts and the microseconds of MySQL and MariaDB.
  */
 const runtimeColumnTypeDatabases = ['mysql', 'mariadb'];
 
@@ -35,7 +35,7 @@ export const hasRuntimeColumnTypes = ({ databaseTypeSql, prodDatabaseType }) =>
 const runtimeColumnType = field => ['blob', 'text'].includes(field.nodejsColumnType);
 const runtimeDatetimePrecision = field => ['Instant', 'ZonedDateTime'].includes(field.fieldType);
 
-/** The helpers of src/domain/base/column-types.ts the @Column decorator of a field uses. */
+/** The helpers of src/common/database/column-types.ts the @Column decorator of a field uses. */
 export const fieldColumnTypeImports = (field, application) => {
   if (!hasRuntimeColumnTypes(application)) return [];
   return [runtimeColumnType(field) && 'columnType', runtimeDatetimePrecision(field) && 'datetimePrecision'].filter(Boolean);

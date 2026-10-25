@@ -2,13 +2,13 @@
 
 exports[`SubGenerator node-server of nodejs JHipster blueprint > entity column types > with mssql > should generate column types valid on the prod database and on SQLite 1`] = `
 {
-  "server/src/domain/sample.entity.ts": {
+  "server/src/entities/sample/sample.entity.ts": {
     "contents": "import {PrimaryGeneratedColumn, Entity, Column, JoinColumn, OneToOne, ManyToOne, OneToMany, ManyToMany, JoinTable, type Relation} from 'typeorm';
-import { BaseEntity } from './base/base.entity.ts';
-import { numberTransformer } from './base/column-transformers.ts';
+import { BaseEntity } from '../../common/database/base.entity.ts';
+import { numberTransformer } from '../../common/database/column-transformers.ts';
 
 
-import { Level } from './enumeration/level.ts';
+import { Level } from '../enumeration/level.ts';
 
 
 /**
@@ -64,14 +64,14 @@ export class Sample extends BaseEntity  {
 
 exports[`SubGenerator node-server of nodejs JHipster blueprint > entity column types > with mysql > should generate column types valid on the prod database and on SQLite 1`] = `
 {
-  "server/src/domain/sample.entity.ts": {
+  "server/src/entities/sample/sample.entity.ts": {
     "contents": "import {PrimaryGeneratedColumn, Entity, Column, JoinColumn, OneToOne, ManyToOne, OneToMany, ManyToMany, JoinTable, type Relation} from 'typeorm';
-import { BaseEntity } from './base/base.entity.ts';
-import { numberTransformer, blobTransformer } from './base/column-transformers.ts';
-import { columnType } from './base/column-types.ts';
+import { BaseEntity } from '../../common/database/base.entity.ts';
+import { numberTransformer, blobTransformer } from '../../common/database/column-transformers.ts';
+import { columnType } from '../../common/database/column-types.ts';
 
 
-import { Level } from './enumeration/level.ts';
+import { Level } from '../enumeration/level.ts';
 
 
 /**
@@ -127,13 +127,13 @@ export class Sample extends BaseEntity  {
 
 exports[`SubGenerator node-server of nodejs JHipster blueprint > entity column types > with oracle > should generate column types valid on the prod database and on SQLite 1`] = `
 {
-  "server/src/domain/sample.entity.ts": {
+  "server/src/entities/sample/sample.entity.ts": {
     "contents": "import {PrimaryGeneratedColumn, Entity, Column, JoinColumn, OneToOne, ManyToOne, OneToMany, ManyToMany, JoinTable, type Relation} from 'typeorm';
-import { BaseEntity } from './base/base.entity.ts';
-import { numberTransformer, blobTransformer } from './base/column-transformers.ts';
+import { BaseEntity } from '../../common/database/base.entity.ts';
+import { numberTransformer, blobTransformer } from '../../common/database/column-transformers.ts';
 
 
-import { Level } from './enumeration/level.ts';
+import { Level } from '../enumeration/level.ts';
 
 
 /**
@@ -189,13 +189,13 @@ export class Sample extends BaseEntity  {
 
 exports[`SubGenerator node-server of nodejs JHipster blueprint > entity column types > with postgresql > should generate column types valid on the prod database and on SQLite 1`] = `
 {
-  "server/src/domain/sample.entity.ts": {
+  "server/src/entities/sample/sample.entity.ts": {
     "contents": "import {PrimaryGeneratedColumn, Entity, Column, JoinColumn, OneToOne, ManyToOne, OneToMany, ManyToMany, JoinTable, type Relation} from 'typeorm';
-import { BaseEntity } from './base/base.entity.ts';
-import { numberTransformer } from './base/column-transformers.ts';
+import { BaseEntity } from '../../common/database/base.entity.ts';
+import { numberTransformer } from '../../common/database/column-transformers.ts';
 
 
-import { Level } from './enumeration/level.ts';
+import { Level } from '../enumeration/level.ts';
 
 
 /**
@@ -251,14 +251,14 @@ export class Sample extends BaseEntity  {
 
 exports[`SubGenerator node-server of nodejs JHipster blueprint > entity validators > should accept a missing value of an optional validated field 1`] = `
 {
-  "server/src/service/dto/book.dto.ts": {
+  "server/src/entities/book/dto/book.dto.ts": {
     "contents": "import { ApiProperty } from '@nestjs/swagger';
 import { Allow, IsNotEmpty, IsOptional, IsEnum, MinLength, MaxLength, Length, Min, Max, Matches, IsInt, IsNumber, IsBoolean, IsUUID, IsISO8601 } from 'class-validator';
-import { BaseDTO } from './base.dto.ts';
+import { BaseDTO } from '../../../common/dto/base.dto.ts';
 
 
-import { Genre } from '../../domain/enumeration/genre.ts';
-import { BookFormat } from '../../domain/enumeration/book-format.ts';
+import { Genre } from '../../enumeration/genre.ts';
+import { BookFormat } from '../../enumeration/book-format.ts';
 
 
 /**
@@ -416,6 +416,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > jwt microservic
   "server/sonar-project.properties": {
     "stateCleared": "modified",
   },
+  "server/src/app.config.spec.ts": {
+    "stateCleared": "modified",
+  },
   "server/src/app.config.ts": {
     "stateCleared": "modified",
   },
@@ -425,13 +428,97 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > jwt microservic
   "server/src/application-config.ts": {
     "stateCleared": "modified",
   },
+  "server/src/auth/account.controller.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/auth/auth.module.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/auth/auth.service.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/auth/decorators/auth-user.decorator.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/auth/decorators/roles.decorator.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/auth/guards/auth.guard.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/auth/guards/roles.guard.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/auth/index.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/auth/jwt.config.spec.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/auth/jwt.config.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/auth/passport.jwt.strategy.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/auth/payload.interface.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/auth/role-type.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/common/common.module.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/common/database/base.entity.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/common/database/column-transformers.spec.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/common/database/column-transformers.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/common/database/column-types.spec.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/common/database/column-types.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/common/database/pagination.entity.spec.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/common/database/pagination.entity.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/common/dto/base.dto.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/common/errors/error-constants.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/common/errors/problem-details.filter.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/common/errors/problem.exception.ts": {
+    "stateCleared": "modified",
+  },
   "server/src/common/header-util.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/common/interceptors/logging.interceptor.spec.ts": {
     "stateCleared": "modified",
   },
   "server/src/common/interceptors/logging.interceptor.ts": {
     "stateCleared": "modified",
   },
+  "server/src/common/logging.spec.ts": {
+    "stateCleared": "modified",
+  },
   "server/src/common/logging.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/common/metrics.spec.ts": {
     "stateCleared": "modified",
   },
   "server/src/common/metrics.ts": {
@@ -441,6 +528,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > jwt microservic
     "stateCleared": "modified",
   },
   "server/src/common/sortable-properties.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/config.spec.ts": {
     "stateCleared": "modified",
   },
   "server/src/config.ts": {
@@ -470,82 +560,49 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > jwt microservic
   "server/src/config/tls/keystore-samples.p12": {
     "stateCleared": "modified",
   },
-  "server/src/domain/base/base.entity.ts": {
-    "stateCleared": "modified",
-  },
-  "server/src/domain/base/column-transformers.ts": {
-    "stateCleared": "modified",
-  },
-  "server/src/domain/base/column-types.ts": {
-    "stateCleared": "modified",
-  },
-  "server/src/domain/base/pagination.entity.spec.ts": {
-    "stateCleared": "modified",
-  },
-  "server/src/domain/base/pagination.entity.ts": {
-    "stateCleared": "modified",
-  },
   "server/src/main.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/management/api-docs.controller.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/management/api-docs.service.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/management/configuration.controller.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/management/health.controller.spec.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/management/health.controller.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/management/health.module.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/management/loggers.controller.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/management/management.controller.spec.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/management/management.controller.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/management/management.module.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/management/metrics.controller.ts": {
     "stateCleared": "modified",
   },
   "server/src/migrations/support/schema.ts": {
     "stateCleared": "modified",
   },
-  "server/src/module/auth.module.ts": {
-    "stateCleared": "modified",
-  },
-  "server/src/module/common.module.ts": {
-    "stateCleared": "modified",
-  },
-  "server/src/module/health.module.ts": {
-    "stateCleared": "modified",
-  },
-  "server/src/module/management.module.ts": {
-    "stateCleared": "modified",
-  },
   "server/src/orm.config.ts": {
     "stateCleared": "modified",
   },
-  "server/src/security/decorators/auth-user.decorator.ts": {
-    "stateCleared": "modified",
-  },
-  "server/src/security/decorators/roles.decorator.ts": {
-    "stateCleared": "modified",
-  },
-  "server/src/security/guards/auth.guard.ts": {
-    "stateCleared": "modified",
-  },
-  "server/src/security/guards/roles.guard.ts": {
-    "stateCleared": "modified",
-  },
-  "server/src/security/index.ts": {
-    "stateCleared": "modified",
-  },
-  "server/src/security/jwt.config.ts": {
-    "stateCleared": "modified",
-  },
-  "server/src/security/passport.jwt.strategy.ts": {
-    "stateCleared": "modified",
-  },
-  "server/src/security/payload.interface.ts": {
-    "stateCleared": "modified",
-  },
-  "server/src/security/role-type.ts": {
-    "stateCleared": "modified",
-  },
-  "server/src/service/api-docs.service.ts": {
-    "stateCleared": "modified",
-  },
-  "server/src/service/auth.service.ts": {
-    "stateCleared": "modified",
-  },
-  "server/src/service/consul.service.ts": {
-    "stateCleared": "modified",
-  },
-  "server/src/service/dto/base.dto.ts": {
-    "stateCleared": "modified",
-  },
-  "server/src/service/dto/user.dto.ts": {
+  "server/src/registry/consul.service.ts": {
     "stateCleared": "modified",
   },
   "server/src/swagger.ts": {
@@ -554,64 +611,7 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > jwt microservic
   "server/src/tls.ts": {
     "stateCleared": "modified",
   },
-  "server/src/web/rest/account.controller.ts": {
-    "stateCleared": "modified",
-  },
-  "server/src/web/rest/api-docs.controller.ts": {
-    "stateCleared": "modified",
-  },
-  "server/src/web/rest/configuration.controller.ts": {
-    "stateCleared": "modified",
-  },
-  "server/src/web/rest/errors/error-constants.ts": {
-    "stateCleared": "modified",
-  },
-  "server/src/web/rest/errors/problem-details.filter.ts": {
-    "stateCleared": "modified",
-  },
-  "server/src/web/rest/errors/problem.exception.ts": {
-    "stateCleared": "modified",
-  },
-  "server/src/web/rest/health.controller.ts": {
-    "stateCleared": "modified",
-  },
-  "server/src/web/rest/loggers.controller.ts": {
-    "stateCleared": "modified",
-  },
-  "server/src/web/rest/management.controller.ts": {
-    "stateCleared": "modified",
-  },
-  "server/src/web/rest/metrics.controller.ts": {
-    "stateCleared": "modified",
-  },
-  "server/test/admin/health.controller.spec.ts": {
-    "stateCleared": "modified",
-  },
-  "server/test/admin/management.controller.spec.ts": {
-    "stateCleared": "modified",
-  },
-  "server/test/app.config.spec.ts": {
-    "stateCleared": "modified",
-  },
-  "server/test/common/logging.interceptor.spec.ts": {
-    "stateCleared": "modified",
-  },
-  "server/test/common/logging.spec.ts": {
-    "stateCleared": "modified",
-  },
-  "server/test/common/metrics.spec.ts": {
-    "stateCleared": "modified",
-  },
-  "server/test/config.spec.ts": {
-    "stateCleared": "modified",
-  },
-  "server/test/domain/column-transformers.spec.ts": {
-    "stateCleared": "modified",
-  },
-  "server/test/domain/column-types.spec.ts": {
-    "stateCleared": "modified",
-  },
-  "server/test/security/jwt.config.spec.ts": {
+  "server/src/users/dto/user.dto.ts": {
     "stateCleared": "modified",
   },
   "server/tsconfig.build.json": {
@@ -730,6 +730,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > run > should su
   "server/sonar-project.properties": {
     "stateCleared": "modified",
   },
+  "server/src/app.config.spec.ts": {
+    "stateCleared": "modified",
+  },
   "server/src/app.config.ts": {
     "stateCleared": "modified",
   },
@@ -739,13 +742,115 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > run > should su
   "server/src/application-config.ts": {
     "stateCleared": "modified",
   },
+  "server/src/auth/account.controller.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/auth/auth.module.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/auth/auth.service.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/auth/decorators/auth-user.decorator.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/auth/decorators/roles.decorator.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/auth/dto/key-and-password.dto.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/auth/dto/password-change.dto.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/auth/dto/user-login.dto.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/auth/guards/auth.guard.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/auth/guards/roles.guard.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/auth/index.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/auth/jwt.config.spec.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/auth/jwt.config.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/auth/passport.jwt.strategy.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/auth/password-util.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/auth/password.service.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/auth/payload.interface.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/auth/role-type.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/auth/user.jwt.controller.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/common/common.module.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/common/database/base.entity.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/common/database/column-transformers.spec.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/common/database/column-transformers.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/common/database/column-types.spec.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/common/database/column-types.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/common/database/pagination.entity.spec.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/common/database/pagination.entity.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/common/dto/base.dto.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/common/errors/error-constants.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/common/errors/problem-details.filter.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/common/errors/problem.exception.ts": {
+    "stateCleared": "modified",
+  },
   "server/src/common/header-util.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/common/interceptors/logging.interceptor.spec.ts": {
     "stateCleared": "modified",
   },
   "server/src/common/interceptors/logging.interceptor.ts": {
     "stateCleared": "modified",
   },
+  "server/src/common/logging.spec.ts": {
+    "stateCleared": "modified",
+  },
   "server/src/common/logging.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/common/metrics.spec.ts": {
     "stateCleared": "modified",
   },
   "server/src/common/metrics.ts": {
@@ -755,6 +860,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > run > should su
     "stateCleared": "modified",
   },
   "server/src/common/sortable-properties.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/config.spec.ts": {
     "stateCleared": "modified",
   },
   "server/src/config.ts": {
@@ -784,34 +892,55 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > run > should su
   "server/src/config/tls/keystore-samples.p12": {
     "stateCleared": "modified",
   },
-  "server/src/domain/authority.entity.ts": {
-    "stateCleared": "modified",
-  },
-  "server/src/domain/base/base.entity.ts": {
-    "stateCleared": "modified",
-  },
-  "server/src/domain/base/column-transformers.ts": {
-    "stateCleared": "modified",
-  },
-  "server/src/domain/base/column-types.ts": {
-    "stateCleared": "modified",
-  },
-  "server/src/domain/base/pagination.entity.spec.ts": {
-    "stateCleared": "modified",
-  },
-  "server/src/domain/base/pagination.entity.ts": {
-    "stateCleared": "modified",
-  },
-  "server/src/domain/user.entity.ts": {
-    "stateCleared": "modified",
-  },
   "server/src/i18n/messages.properties": {
     "stateCleared": "modified",
   },
   "server/src/i18n/messages_en.properties": {
     "stateCleared": "modified",
   },
+  "server/src/mail/mail.module.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/mail/mail.service.spec.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/mail/mail.service.ts": {
+    "stateCleared": "modified",
+  },
   "server/src/main.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/management/api-docs.controller.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/management/api-docs.service.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/management/configuration.controller.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/management/health.controller.spec.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/management/health.controller.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/management/health.module.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/management/loggers.controller.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/management/management.controller.spec.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/management/management.controller.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/management/management.module.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/management/metrics.controller.ts": {
     "stateCleared": "modified",
   },
   "server/src/migrations/1570200270081-CreateTables.ts": {
@@ -823,91 +952,7 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > run > should su
   "server/src/migrations/support/schema.ts": {
     "stateCleared": "modified",
   },
-  "server/src/module/auth.module.ts": {
-    "stateCleared": "modified",
-  },
-  "server/src/module/common.module.ts": {
-    "stateCleared": "modified",
-  },
-  "server/src/module/health.module.ts": {
-    "stateCleared": "modified",
-  },
-  "server/src/module/mail.module.ts": {
-    "stateCleared": "modified",
-  },
-  "server/src/module/management.module.ts": {
-    "stateCleared": "modified",
-  },
-  "server/src/module/user.module.ts": {
-    "stateCleared": "modified",
-  },
   "server/src/orm.config.ts": {
-    "stateCleared": "modified",
-  },
-  "server/src/security/decorators/auth-user.decorator.ts": {
-    "stateCleared": "modified",
-  },
-  "server/src/security/decorators/roles.decorator.ts": {
-    "stateCleared": "modified",
-  },
-  "server/src/security/guards/auth.guard.ts": {
-    "stateCleared": "modified",
-  },
-  "server/src/security/guards/roles.guard.ts": {
-    "stateCleared": "modified",
-  },
-  "server/src/security/index.ts": {
-    "stateCleared": "modified",
-  },
-  "server/src/security/jwt.config.ts": {
-    "stateCleared": "modified",
-  },
-  "server/src/security/passport.jwt.strategy.ts": {
-    "stateCleared": "modified",
-  },
-  "server/src/security/password-util.ts": {
-    "stateCleared": "modified",
-  },
-  "server/src/security/password.service.ts": {
-    "stateCleared": "modified",
-  },
-  "server/src/security/payload.interface.ts": {
-    "stateCleared": "modified",
-  },
-  "server/src/security/role-type.ts": {
-    "stateCleared": "modified",
-  },
-  "server/src/service/api-docs.service.ts": {
-    "stateCleared": "modified",
-  },
-  "server/src/service/auth.service.ts": {
-    "stateCleared": "modified",
-  },
-  "server/src/service/dto/authority.dto.ts": {
-    "stateCleared": "modified",
-  },
-  "server/src/service/dto/base.dto.ts": {
-    "stateCleared": "modified",
-  },
-  "server/src/service/dto/key-and-password.dto.ts": {
-    "stateCleared": "modified",
-  },
-  "server/src/service/dto/password-change.dto.ts": {
-    "stateCleared": "modified",
-  },
-  "server/src/service/dto/user-login.dto.ts": {
-    "stateCleared": "modified",
-  },
-  "server/src/service/dto/user.dto.ts": {
-    "stateCleared": "modified",
-  },
-  "server/src/service/mail.service.ts": {
-    "stateCleared": "modified",
-  },
-  "server/src/service/mapper/user.mapper.ts": {
-    "stateCleared": "modified",
-  },
-  "server/src/service/user.service.ts": {
     "stateCleared": "modified",
   },
   "server/src/swagger.ts": {
@@ -925,79 +970,34 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > run > should su
   "server/src/tls.ts": {
     "stateCleared": "modified",
   },
-  "server/src/web/rest/account.controller.ts": {
+  "server/src/users/authority.controller.ts": {
     "stateCleared": "modified",
   },
-  "server/src/web/rest/api-docs.controller.ts": {
+  "server/src/users/authority.entity.ts": {
     "stateCleared": "modified",
   },
-  "server/src/web/rest/authority.controller.ts": {
+  "server/src/users/dto/authority.dto.ts": {
     "stateCleared": "modified",
   },
-  "server/src/web/rest/configuration.controller.ts": {
+  "server/src/users/dto/user.dto.ts": {
     "stateCleared": "modified",
   },
-  "server/src/web/rest/errors/error-constants.ts": {
+  "server/src/users/public.user.controller.ts": {
     "stateCleared": "modified",
   },
-  "server/src/web/rest/errors/problem-details.filter.ts": {
+  "server/src/users/user.controller.ts": {
     "stateCleared": "modified",
   },
-  "server/src/web/rest/errors/problem.exception.ts": {
+  "server/src/users/user.entity.ts": {
     "stateCleared": "modified",
   },
-  "server/src/web/rest/health.controller.ts": {
+  "server/src/users/user.mapper.ts": {
     "stateCleared": "modified",
   },
-  "server/src/web/rest/loggers.controller.ts": {
+  "server/src/users/user.module.ts": {
     "stateCleared": "modified",
   },
-  "server/src/web/rest/management.controller.ts": {
-    "stateCleared": "modified",
-  },
-  "server/src/web/rest/metrics.controller.ts": {
-    "stateCleared": "modified",
-  },
-  "server/src/web/rest/public.user.controller.ts": {
-    "stateCleared": "modified",
-  },
-  "server/src/web/rest/user.controller.ts": {
-    "stateCleared": "modified",
-  },
-  "server/src/web/rest/user.jwt.controller.ts": {
-    "stateCleared": "modified",
-  },
-  "server/test/admin/health.controller.spec.ts": {
-    "stateCleared": "modified",
-  },
-  "server/test/admin/management.controller.spec.ts": {
-    "stateCleared": "modified",
-  },
-  "server/test/app.config.spec.ts": {
-    "stateCleared": "modified",
-  },
-  "server/test/common/logging.interceptor.spec.ts": {
-    "stateCleared": "modified",
-  },
-  "server/test/common/logging.spec.ts": {
-    "stateCleared": "modified",
-  },
-  "server/test/common/metrics.spec.ts": {
-    "stateCleared": "modified",
-  },
-  "server/test/config.spec.ts": {
-    "stateCleared": "modified",
-  },
-  "server/test/domain/column-transformers.spec.ts": {
-    "stateCleared": "modified",
-  },
-  "server/test/domain/column-types.spec.ts": {
-    "stateCleared": "modified",
-  },
-  "server/test/mail.service.spec.ts": {
-    "stateCleared": "modified",
-  },
-  "server/test/security/jwt.config.spec.ts": {
+  "server/src/users/user.service.ts": {
     "stateCleared": "modified",
   },
   "server/tsconfig.build.json": {
@@ -1119,6 +1119,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > with oauth2 > s
   "server/sonar-project.properties": {
     "stateCleared": "modified",
   },
+  "server/src/app.config.spec.ts": {
+    "stateCleared": "modified",
+  },
   "server/src/app.config.ts": {
     "stateCleared": "modified",
   },
@@ -1128,13 +1131,124 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > with oauth2 > s
   "server/src/application-config.ts": {
     "stateCleared": "modified",
   },
+  "server/src/auth/account.controller.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/auth/auth.module.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/auth/auth.service.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/auth/csrf.middleware.spec.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/auth/csrf.middleware.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/auth/decorators/auth-user.decorator.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/auth/decorators/roles.decorator.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/auth/guards/auth.guard.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/auth/guards/oauth2-login.guard.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/auth/guards/roles.guard.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/auth/index.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/auth/oauth2.authorities.spec.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/auth/oauth2.authorities.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/auth/oauth2.config.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/auth/passport.oauth2-bearer.strategy.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/auth/passport.oauth2.strategy.spec.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/auth/passport.oauth2.strategy.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/auth/role-type.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/auth/session.entity.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/auth/session.store.spec.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/auth/session.store.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/auth/user.oauth2.controller.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/common/common.module.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/common/database/base.entity.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/common/database/column-transformers.spec.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/common/database/column-transformers.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/common/database/column-types.spec.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/common/database/column-types.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/common/database/pagination.entity.spec.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/common/database/pagination.entity.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/common/dto/base.dto.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/common/errors/error-constants.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/common/errors/problem-details.filter.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/common/errors/problem.exception.ts": {
+    "stateCleared": "modified",
+  },
   "server/src/common/header-util.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/common/interceptors/logging.interceptor.spec.ts": {
     "stateCleared": "modified",
   },
   "server/src/common/interceptors/logging.interceptor.ts": {
     "stateCleared": "modified",
   },
+  "server/src/common/logging.spec.ts": {
+    "stateCleared": "modified",
+  },
   "server/src/common/logging.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/common/metrics.spec.ts": {
     "stateCleared": "modified",
   },
   "server/src/common/metrics.ts": {
@@ -1144,6 +1258,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > with oauth2 > s
     "stateCleared": "modified",
   },
   "server/src/common/sortable-properties.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/config.spec.ts": {
     "stateCleared": "modified",
   },
   "server/src/config.ts": {
@@ -1173,25 +1290,40 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > with oauth2 > s
   "server/src/config/tls/keystore-samples.p12": {
     "stateCleared": "modified",
   },
-  "server/src/domain/base/base.entity.ts": {
-    "stateCleared": "modified",
-  },
-  "server/src/domain/base/column-transformers.ts": {
-    "stateCleared": "modified",
-  },
-  "server/src/domain/base/column-types.ts": {
-    "stateCleared": "modified",
-  },
-  "server/src/domain/base/pagination.entity.spec.ts": {
-    "stateCleared": "modified",
-  },
-  "server/src/domain/base/pagination.entity.ts": {
-    "stateCleared": "modified",
-  },
-  "server/src/domain/session.entity.ts": {
-    "stateCleared": "modified",
-  },
   "server/src/main.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/management/api-docs.controller.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/management/api-docs.service.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/management/configuration.controller.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/management/health.controller.spec.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/management/health.controller.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/management/health.module.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/management/loggers.controller.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/management/management.controller.spec.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/management/management.controller.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/management/management.module.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/management/metrics.controller.ts": {
     "stateCleared": "modified",
   },
   "server/src/migrations/1570200270082-CreateSessions.ts": {
@@ -1200,70 +1332,7 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > with oauth2 > s
   "server/src/migrations/support/schema.ts": {
     "stateCleared": "modified",
   },
-  "server/src/module/auth.module.ts": {
-    "stateCleared": "modified",
-  },
-  "server/src/module/common.module.ts": {
-    "stateCleared": "modified",
-  },
-  "server/src/module/health.module.ts": {
-    "stateCleared": "modified",
-  },
-  "server/src/module/management.module.ts": {
-    "stateCleared": "modified",
-  },
   "server/src/orm.config.ts": {
-    "stateCleared": "modified",
-  },
-  "server/src/security/csrf.middleware.ts": {
-    "stateCleared": "modified",
-  },
-  "server/src/security/decorators/auth-user.decorator.ts": {
-    "stateCleared": "modified",
-  },
-  "server/src/security/decorators/roles.decorator.ts": {
-    "stateCleared": "modified",
-  },
-  "server/src/security/guards/auth.guard.ts": {
-    "stateCleared": "modified",
-  },
-  "server/src/security/guards/oauth2-login.guard.ts": {
-    "stateCleared": "modified",
-  },
-  "server/src/security/guards/roles.guard.ts": {
-    "stateCleared": "modified",
-  },
-  "server/src/security/index.ts": {
-    "stateCleared": "modified",
-  },
-  "server/src/security/oauth2.authorities.ts": {
-    "stateCleared": "modified",
-  },
-  "server/src/security/oauth2.config.ts": {
-    "stateCleared": "modified",
-  },
-  "server/src/security/passport.oauth2-bearer.strategy.ts": {
-    "stateCleared": "modified",
-  },
-  "server/src/security/passport.oauth2.strategy.ts": {
-    "stateCleared": "modified",
-  },
-  "server/src/security/role-type.ts": {
-    "stateCleared": "modified",
-  },
-  "server/src/security/session.store.ts": {
-    "stateCleared": "modified",
-  },
-  "server/src/service/api-docs.service.ts": {
-    "stateCleared": "modified",
-  },
-  "server/src/service/auth.service.ts": {
-    "stateCleared": "modified",
-  },
-  "server/src/service/dto/base.dto.ts": {
-    "stateCleared": "modified",
-  },
-  "server/src/service/dto/user.dto.ts": {
     "stateCleared": "modified",
   },
   "server/src/swagger.ts": {
@@ -1272,76 +1341,7 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > with oauth2 > s
   "server/src/tls.ts": {
     "stateCleared": "modified",
   },
-  "server/src/web/rest/account.controller.ts": {
-    "stateCleared": "modified",
-  },
-  "server/src/web/rest/api-docs.controller.ts": {
-    "stateCleared": "modified",
-  },
-  "server/src/web/rest/configuration.controller.ts": {
-    "stateCleared": "modified",
-  },
-  "server/src/web/rest/errors/error-constants.ts": {
-    "stateCleared": "modified",
-  },
-  "server/src/web/rest/errors/problem-details.filter.ts": {
-    "stateCleared": "modified",
-  },
-  "server/src/web/rest/errors/problem.exception.ts": {
-    "stateCleared": "modified",
-  },
-  "server/src/web/rest/health.controller.ts": {
-    "stateCleared": "modified",
-  },
-  "server/src/web/rest/loggers.controller.ts": {
-    "stateCleared": "modified",
-  },
-  "server/src/web/rest/management.controller.ts": {
-    "stateCleared": "modified",
-  },
-  "server/src/web/rest/metrics.controller.ts": {
-    "stateCleared": "modified",
-  },
-  "server/src/web/rest/user.oauth2.controller.ts": {
-    "stateCleared": "modified",
-  },
-  "server/test/admin/health.controller.spec.ts": {
-    "stateCleared": "modified",
-  },
-  "server/test/admin/management.controller.spec.ts": {
-    "stateCleared": "modified",
-  },
-  "server/test/app.config.spec.ts": {
-    "stateCleared": "modified",
-  },
-  "server/test/common/logging.interceptor.spec.ts": {
-    "stateCleared": "modified",
-  },
-  "server/test/common/logging.spec.ts": {
-    "stateCleared": "modified",
-  },
-  "server/test/common/metrics.spec.ts": {
-    "stateCleared": "modified",
-  },
-  "server/test/config.spec.ts": {
-    "stateCleared": "modified",
-  },
-  "server/test/domain/column-transformers.spec.ts": {
-    "stateCleared": "modified",
-  },
-  "server/test/domain/column-types.spec.ts": {
-    "stateCleared": "modified",
-  },
-  "server/test/security/csrf.middleware.spec.ts": {
-    "stateCleared": "modified",
-  },
-  "server/test/security/oauth2.authorities.spec.ts": {
-    "stateCleared": "modified",
-  },
-  "server/test/security/passport.oauth2.strategy.spec.ts": {
-    "stateCleared": "modified",
-  },
-  "server/test/security/session.store.spec.ts": {
+  "server/src/users/dto/user.dto.ts": {
     "stateCleared": "modified",
   },
   "server/tsconfig.build.json": {
@@ -1466,6 +1466,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > with oauth2 and
   "server/sonar-project.properties": {
     "stateCleared": "modified",
   },
+  "server/src/app.config.spec.ts": {
+    "stateCleared": "modified",
+  },
   "server/src/app.config.ts": {
     "stateCleared": "modified",
   },
@@ -1475,13 +1478,124 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > with oauth2 and
   "server/src/application-config.ts": {
     "stateCleared": "modified",
   },
+  "server/src/auth/account.controller.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/auth/auth.module.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/auth/auth.service.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/auth/csrf.middleware.spec.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/auth/csrf.middleware.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/auth/decorators/auth-user.decorator.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/auth/decorators/roles.decorator.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/auth/guards/auth.guard.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/auth/guards/oauth2-login.guard.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/auth/guards/roles.guard.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/auth/index.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/auth/oauth2.authorities.spec.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/auth/oauth2.authorities.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/auth/oauth2.config.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/auth/passport.oauth2-bearer.strategy.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/auth/passport.oauth2.strategy.spec.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/auth/passport.oauth2.strategy.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/auth/role-type.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/auth/session.entity.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/auth/session.store.spec.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/auth/session.store.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/auth/user.oauth2.controller.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/common/common.module.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/common/database/base.entity.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/common/database/column-transformers.spec.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/common/database/column-transformers.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/common/database/column-types.spec.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/common/database/column-types.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/common/database/pagination.entity.spec.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/common/database/pagination.entity.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/common/dto/base.dto.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/common/errors/error-constants.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/common/errors/problem-details.filter.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/common/errors/problem.exception.ts": {
+    "stateCleared": "modified",
+  },
   "server/src/common/header-util.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/common/interceptors/logging.interceptor.spec.ts": {
     "stateCleared": "modified",
   },
   "server/src/common/interceptors/logging.interceptor.ts": {
     "stateCleared": "modified",
   },
+  "server/src/common/logging.spec.ts": {
+    "stateCleared": "modified",
+  },
   "server/src/common/logging.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/common/metrics.spec.ts": {
     "stateCleared": "modified",
   },
   "server/src/common/metrics.ts": {
@@ -1491,6 +1605,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > with oauth2 and
     "stateCleared": "modified",
   },
   "server/src/common/sortable-properties.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/config.spec.ts": {
     "stateCleared": "modified",
   },
   "server/src/config.ts": {
@@ -1520,31 +1637,40 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > with oauth2 and
   "server/src/config/tls/keystore-samples.p12": {
     "stateCleared": "modified",
   },
-  "server/src/domain/authority.entity.ts": {
-    "stateCleared": "modified",
-  },
-  "server/src/domain/base/base.entity.ts": {
-    "stateCleared": "modified",
-  },
-  "server/src/domain/base/column-transformers.ts": {
-    "stateCleared": "modified",
-  },
-  "server/src/domain/base/column-types.ts": {
-    "stateCleared": "modified",
-  },
-  "server/src/domain/base/pagination.entity.spec.ts": {
-    "stateCleared": "modified",
-  },
-  "server/src/domain/base/pagination.entity.ts": {
-    "stateCleared": "modified",
-  },
-  "server/src/domain/session.entity.ts": {
-    "stateCleared": "modified",
-  },
-  "server/src/domain/user.entity.ts": {
-    "stateCleared": "modified",
-  },
   "server/src/main.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/management/api-docs.controller.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/management/api-docs.service.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/management/configuration.controller.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/management/health.controller.spec.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/management/health.controller.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/management/health.module.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/management/loggers.controller.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/management/management.controller.spec.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/management/management.controller.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/management/management.module.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/management/metrics.controller.ts": {
     "stateCleared": "modified",
   },
   "server/src/migrations/1570200270081-CreateTables.ts": {
@@ -1559,82 +1685,7 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > with oauth2 and
   "server/src/migrations/support/schema.ts": {
     "stateCleared": "modified",
   },
-  "server/src/module/auth.module.ts": {
-    "stateCleared": "modified",
-  },
-  "server/src/module/common.module.ts": {
-    "stateCleared": "modified",
-  },
-  "server/src/module/health.module.ts": {
-    "stateCleared": "modified",
-  },
-  "server/src/module/management.module.ts": {
-    "stateCleared": "modified",
-  },
-  "server/src/module/user.module.ts": {
-    "stateCleared": "modified",
-  },
   "server/src/orm.config.ts": {
-    "stateCleared": "modified",
-  },
-  "server/src/security/csrf.middleware.ts": {
-    "stateCleared": "modified",
-  },
-  "server/src/security/decorators/auth-user.decorator.ts": {
-    "stateCleared": "modified",
-  },
-  "server/src/security/decorators/roles.decorator.ts": {
-    "stateCleared": "modified",
-  },
-  "server/src/security/guards/auth.guard.ts": {
-    "stateCleared": "modified",
-  },
-  "server/src/security/guards/oauth2-login.guard.ts": {
-    "stateCleared": "modified",
-  },
-  "server/src/security/guards/roles.guard.ts": {
-    "stateCleared": "modified",
-  },
-  "server/src/security/index.ts": {
-    "stateCleared": "modified",
-  },
-  "server/src/security/oauth2.authorities.ts": {
-    "stateCleared": "modified",
-  },
-  "server/src/security/oauth2.config.ts": {
-    "stateCleared": "modified",
-  },
-  "server/src/security/passport.oauth2-bearer.strategy.ts": {
-    "stateCleared": "modified",
-  },
-  "server/src/security/passport.oauth2.strategy.ts": {
-    "stateCleared": "modified",
-  },
-  "server/src/security/role-type.ts": {
-    "stateCleared": "modified",
-  },
-  "server/src/security/session.store.ts": {
-    "stateCleared": "modified",
-  },
-  "server/src/service/api-docs.service.ts": {
-    "stateCleared": "modified",
-  },
-  "server/src/service/auth.service.ts": {
-    "stateCleared": "modified",
-  },
-  "server/src/service/dto/authority.dto.ts": {
-    "stateCleared": "modified",
-  },
-  "server/src/service/dto/base.dto.ts": {
-    "stateCleared": "modified",
-  },
-  "server/src/service/dto/user.dto.ts": {
-    "stateCleared": "modified",
-  },
-  "server/src/service/mapper/user.mapper.ts": {
-    "stateCleared": "modified",
-  },
-  "server/src/service/user.service.ts": {
     "stateCleared": "modified",
   },
   "server/src/swagger.ts": {
@@ -1643,82 +1694,31 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > with oauth2 and
   "server/src/tls.ts": {
     "stateCleared": "modified",
   },
-  "server/src/web/rest/account.controller.ts": {
+  "server/src/users/authority.controller.ts": {
     "stateCleared": "modified",
   },
-  "server/src/web/rest/api-docs.controller.ts": {
+  "server/src/users/authority.entity.ts": {
     "stateCleared": "modified",
   },
-  "server/src/web/rest/authority.controller.ts": {
+  "server/src/users/dto/authority.dto.ts": {
     "stateCleared": "modified",
   },
-  "server/src/web/rest/configuration.controller.ts": {
+  "server/src/users/dto/user.dto.ts": {
     "stateCleared": "modified",
   },
-  "server/src/web/rest/errors/error-constants.ts": {
+  "server/src/users/public.user.controller.ts": {
     "stateCleared": "modified",
   },
-  "server/src/web/rest/errors/problem-details.filter.ts": {
+  "server/src/users/user.entity.ts": {
     "stateCleared": "modified",
   },
-  "server/src/web/rest/errors/problem.exception.ts": {
+  "server/src/users/user.mapper.ts": {
     "stateCleared": "modified",
   },
-  "server/src/web/rest/health.controller.ts": {
+  "server/src/users/user.module.ts": {
     "stateCleared": "modified",
   },
-  "server/src/web/rest/loggers.controller.ts": {
-    "stateCleared": "modified",
-  },
-  "server/src/web/rest/management.controller.ts": {
-    "stateCleared": "modified",
-  },
-  "server/src/web/rest/metrics.controller.ts": {
-    "stateCleared": "modified",
-  },
-  "server/src/web/rest/public.user.controller.ts": {
-    "stateCleared": "modified",
-  },
-  "server/src/web/rest/user.oauth2.controller.ts": {
-    "stateCleared": "modified",
-  },
-  "server/test/admin/health.controller.spec.ts": {
-    "stateCleared": "modified",
-  },
-  "server/test/admin/management.controller.spec.ts": {
-    "stateCleared": "modified",
-  },
-  "server/test/app.config.spec.ts": {
-    "stateCleared": "modified",
-  },
-  "server/test/common/logging.interceptor.spec.ts": {
-    "stateCleared": "modified",
-  },
-  "server/test/common/logging.spec.ts": {
-    "stateCleared": "modified",
-  },
-  "server/test/common/metrics.spec.ts": {
-    "stateCleared": "modified",
-  },
-  "server/test/config.spec.ts": {
-    "stateCleared": "modified",
-  },
-  "server/test/domain/column-transformers.spec.ts": {
-    "stateCleared": "modified",
-  },
-  "server/test/domain/column-types.spec.ts": {
-    "stateCleared": "modified",
-  },
-  "server/test/security/csrf.middleware.spec.ts": {
-    "stateCleared": "modified",
-  },
-  "server/test/security/oauth2.authorities.spec.ts": {
-    "stateCleared": "modified",
-  },
-  "server/test/security/passport.oauth2.strategy.spec.ts": {
-    "stateCleared": "modified",
-  },
-  "server/test/security/session.store.spec.ts": {
+  "server/src/users/user.service.ts": {
     "stateCleared": "modified",
   },
   "server/tsconfig.build.json": {
@@ -1915,6 +1915,22 @@ For more information, refer to the [Code quality page][].
 \`\`\`bash
 $ npm install
 \`\`\`
+
+## Project structure
+
+The server is organized by feature, like the modules NestJS generates (\`nest g resource\`): each feature folder of \`src\`
+has its module, its controllers, its services, its entities and its DTOs, the unit tests (\`*.spec.ts\`) next to the code
+they test, the end-to-end tests in \`e2e\`.
+
+- \`src/entities/<entity>/\`: an entity of the JDL, its TypeORM entity, its DTO (\`dto/\`), its mapper, its service, its
+  REST controller and its module; \`src/entities/enumeration/\` the enumerations of the entities.
+- \`src/users/\`: the users and their authorities, their administration API.
+- \`src/auth/\`: the authentication, its guards, its decorators, its strategies and the account API.
+- \`src/mail/\`: the emails of the user management.
+- \`src/management/\`: the management endpoints (health, metrics, loggers, configuration, API documentation).
+- \`src/common/\`: the helpers of every feature: the errors, the HTTP helpers, the base entity and the column types
+  (\`database/\`), the base DTO.
+- \`src/config/\`: the configuration of each profile; \`src/migrations/\`: the migrations of the database schema.
 
 ## TypeORM configuration
 
@@ -2215,6 +2231,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > without client 
   "server/sonar-project.properties": {
     "stateCleared": "modified",
   },
+  "server/src/app.config.spec.ts": {
+    "stateCleared": "modified",
+  },
   "server/src/app.config.ts": {
     "stateCleared": "modified",
   },
@@ -2224,13 +2243,115 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > without client 
   "server/src/application-config.ts": {
     "stateCleared": "modified",
   },
+  "server/src/auth/account.controller.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/auth/auth.module.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/auth/auth.service.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/auth/decorators/auth-user.decorator.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/auth/decorators/roles.decorator.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/auth/dto/key-and-password.dto.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/auth/dto/password-change.dto.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/auth/dto/user-login.dto.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/auth/guards/auth.guard.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/auth/guards/roles.guard.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/auth/index.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/auth/jwt.config.spec.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/auth/jwt.config.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/auth/passport.jwt.strategy.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/auth/password-util.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/auth/password.service.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/auth/payload.interface.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/auth/role-type.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/auth/user.jwt.controller.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/common/common.module.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/common/database/base.entity.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/common/database/column-transformers.spec.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/common/database/column-transformers.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/common/database/column-types.spec.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/common/database/column-types.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/common/database/pagination.entity.spec.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/common/database/pagination.entity.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/common/dto/base.dto.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/common/errors/error-constants.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/common/errors/problem-details.filter.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/common/errors/problem.exception.ts": {
+    "stateCleared": "modified",
+  },
   "server/src/common/header-util.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/common/interceptors/logging.interceptor.spec.ts": {
     "stateCleared": "modified",
   },
   "server/src/common/interceptors/logging.interceptor.ts": {
     "stateCleared": "modified",
   },
+  "server/src/common/logging.spec.ts": {
+    "stateCleared": "modified",
+  },
   "server/src/common/logging.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/common/metrics.spec.ts": {
     "stateCleared": "modified",
   },
   "server/src/common/metrics.ts": {
@@ -2240,6 +2361,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > without client 
     "stateCleared": "modified",
   },
   "server/src/common/sortable-properties.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/config.spec.ts": {
     "stateCleared": "modified",
   },
   "server/src/config.ts": {
@@ -2269,34 +2393,55 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > without client 
   "server/src/config/tls/keystore-samples.p12": {
     "stateCleared": "modified",
   },
-  "server/src/domain/authority.entity.ts": {
-    "stateCleared": "modified",
-  },
-  "server/src/domain/base/base.entity.ts": {
-    "stateCleared": "modified",
-  },
-  "server/src/domain/base/column-transformers.ts": {
-    "stateCleared": "modified",
-  },
-  "server/src/domain/base/column-types.ts": {
-    "stateCleared": "modified",
-  },
-  "server/src/domain/base/pagination.entity.spec.ts": {
-    "stateCleared": "modified",
-  },
-  "server/src/domain/base/pagination.entity.ts": {
-    "stateCleared": "modified",
-  },
-  "server/src/domain/user.entity.ts": {
-    "stateCleared": "modified",
-  },
   "server/src/i18n/messages.properties": {
     "stateCleared": "modified",
   },
   "server/src/i18n/messages_en.properties": {
     "stateCleared": "modified",
   },
+  "server/src/mail/mail.module.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/mail/mail.service.spec.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/mail/mail.service.ts": {
+    "stateCleared": "modified",
+  },
   "server/src/main.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/management/api-docs.controller.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/management/api-docs.service.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/management/configuration.controller.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/management/health.controller.spec.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/management/health.controller.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/management/health.module.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/management/loggers.controller.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/management/management.controller.spec.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/management/management.controller.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/management/management.module.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/management/metrics.controller.ts": {
     "stateCleared": "modified",
   },
   "server/src/migrations/1570200270081-CreateTables.ts": {
@@ -2308,91 +2453,7 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > without client 
   "server/src/migrations/support/schema.ts": {
     "stateCleared": "modified",
   },
-  "server/src/module/auth.module.ts": {
-    "stateCleared": "modified",
-  },
-  "server/src/module/common.module.ts": {
-    "stateCleared": "modified",
-  },
-  "server/src/module/health.module.ts": {
-    "stateCleared": "modified",
-  },
-  "server/src/module/mail.module.ts": {
-    "stateCleared": "modified",
-  },
-  "server/src/module/management.module.ts": {
-    "stateCleared": "modified",
-  },
-  "server/src/module/user.module.ts": {
-    "stateCleared": "modified",
-  },
   "server/src/orm.config.ts": {
-    "stateCleared": "modified",
-  },
-  "server/src/security/decorators/auth-user.decorator.ts": {
-    "stateCleared": "modified",
-  },
-  "server/src/security/decorators/roles.decorator.ts": {
-    "stateCleared": "modified",
-  },
-  "server/src/security/guards/auth.guard.ts": {
-    "stateCleared": "modified",
-  },
-  "server/src/security/guards/roles.guard.ts": {
-    "stateCleared": "modified",
-  },
-  "server/src/security/index.ts": {
-    "stateCleared": "modified",
-  },
-  "server/src/security/jwt.config.ts": {
-    "stateCleared": "modified",
-  },
-  "server/src/security/passport.jwt.strategy.ts": {
-    "stateCleared": "modified",
-  },
-  "server/src/security/password-util.ts": {
-    "stateCleared": "modified",
-  },
-  "server/src/security/password.service.ts": {
-    "stateCleared": "modified",
-  },
-  "server/src/security/payload.interface.ts": {
-    "stateCleared": "modified",
-  },
-  "server/src/security/role-type.ts": {
-    "stateCleared": "modified",
-  },
-  "server/src/service/api-docs.service.ts": {
-    "stateCleared": "modified",
-  },
-  "server/src/service/auth.service.ts": {
-    "stateCleared": "modified",
-  },
-  "server/src/service/dto/authority.dto.ts": {
-    "stateCleared": "modified",
-  },
-  "server/src/service/dto/base.dto.ts": {
-    "stateCleared": "modified",
-  },
-  "server/src/service/dto/key-and-password.dto.ts": {
-    "stateCleared": "modified",
-  },
-  "server/src/service/dto/password-change.dto.ts": {
-    "stateCleared": "modified",
-  },
-  "server/src/service/dto/user-login.dto.ts": {
-    "stateCleared": "modified",
-  },
-  "server/src/service/dto/user.dto.ts": {
-    "stateCleared": "modified",
-  },
-  "server/src/service/mail.service.ts": {
-    "stateCleared": "modified",
-  },
-  "server/src/service/mapper/user.mapper.ts": {
-    "stateCleared": "modified",
-  },
-  "server/src/service/user.service.ts": {
     "stateCleared": "modified",
   },
   "server/src/swagger.ts": {
@@ -2410,79 +2471,34 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > without client 
   "server/src/tls.ts": {
     "stateCleared": "modified",
   },
-  "server/src/web/rest/account.controller.ts": {
+  "server/src/users/authority.controller.ts": {
     "stateCleared": "modified",
   },
-  "server/src/web/rest/api-docs.controller.ts": {
+  "server/src/users/authority.entity.ts": {
     "stateCleared": "modified",
   },
-  "server/src/web/rest/authority.controller.ts": {
+  "server/src/users/dto/authority.dto.ts": {
     "stateCleared": "modified",
   },
-  "server/src/web/rest/configuration.controller.ts": {
+  "server/src/users/dto/user.dto.ts": {
     "stateCleared": "modified",
   },
-  "server/src/web/rest/errors/error-constants.ts": {
+  "server/src/users/public.user.controller.ts": {
     "stateCleared": "modified",
   },
-  "server/src/web/rest/errors/problem-details.filter.ts": {
+  "server/src/users/user.controller.ts": {
     "stateCleared": "modified",
   },
-  "server/src/web/rest/errors/problem.exception.ts": {
+  "server/src/users/user.entity.ts": {
     "stateCleared": "modified",
   },
-  "server/src/web/rest/health.controller.ts": {
+  "server/src/users/user.mapper.ts": {
     "stateCleared": "modified",
   },
-  "server/src/web/rest/loggers.controller.ts": {
+  "server/src/users/user.module.ts": {
     "stateCleared": "modified",
   },
-  "server/src/web/rest/management.controller.ts": {
-    "stateCleared": "modified",
-  },
-  "server/src/web/rest/metrics.controller.ts": {
-    "stateCleared": "modified",
-  },
-  "server/src/web/rest/public.user.controller.ts": {
-    "stateCleared": "modified",
-  },
-  "server/src/web/rest/user.controller.ts": {
-    "stateCleared": "modified",
-  },
-  "server/src/web/rest/user.jwt.controller.ts": {
-    "stateCleared": "modified",
-  },
-  "server/test/admin/health.controller.spec.ts": {
-    "stateCleared": "modified",
-  },
-  "server/test/admin/management.controller.spec.ts": {
-    "stateCleared": "modified",
-  },
-  "server/test/app.config.spec.ts": {
-    "stateCleared": "modified",
-  },
-  "server/test/common/logging.interceptor.spec.ts": {
-    "stateCleared": "modified",
-  },
-  "server/test/common/logging.spec.ts": {
-    "stateCleared": "modified",
-  },
-  "server/test/common/metrics.spec.ts": {
-    "stateCleared": "modified",
-  },
-  "server/test/config.spec.ts": {
-    "stateCleared": "modified",
-  },
-  "server/test/domain/column-transformers.spec.ts": {
-    "stateCleared": "modified",
-  },
-  "server/test/domain/column-types.spec.ts": {
-    "stateCleared": "modified",
-  },
-  "server/test/mail.service.spec.ts": {
-    "stateCleared": "modified",
-  },
-  "server/test/security/jwt.config.spec.ts": {
+  "server/src/users/user.service.ts": {
     "stateCleared": "modified",
   },
   "server/tsconfig.build.json": {

@@ -4,12 +4,12 @@ import { INestApplication } from '@nestjs/common';
 import request from 'supertest';
 import { AppModule } from '../src/app.module.ts';
 import { configureApp } from '../src/app.config.ts';
-import { <%= user.dtoClass %> } from '../src/service/dto/user.dto.ts';
-import { UserService } from '../src/service/user.service.ts';
-import { PasswordService } from '../src/security/password.service.ts';
+import { <%= user.dtoClass %> } from '../src/users/dto/user.dto.ts';
+import { UserService } from '../src/users/user.service.ts';
+import { PasswordService } from '../src/auth/password.service.ts';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Session } from '../src/domain/session.entity.ts';
+import { Session } from '../src/auth/session.entity.ts';
 
 /** A cookie of the Set-Cookie headers of a response, with its attributes. */
 const setCookie = (response: request.Response, name: string): string | undefined =>

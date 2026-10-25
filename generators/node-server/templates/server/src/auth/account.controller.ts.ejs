@@ -1,0 +1,183 @@
+import { <%_ if (generateUserManagement) { _%> Body, Post, Query, <%_ } _%>UseGuards, Controller, Get, HttpCode, Logger, Req, UseInterceptors, ClassSerializerInterceptor, InternalServerErrorException } from '@nestjs/common';
+import { AuthGuard } from './index.ts';
+<%_ if (generateUserManagement) { _%>
+import { PasswordChangeDTO } from './dto/password-change.dto.ts';
+import { KeyAndPasswordDTO } from './dto/key-and-password.dto.ts';
+import { MailService } from '../mail/mail.service.ts';
+<%_ } _%>
+import { <% if (generateUserManagement) { %>Managed<%- userLoginVmClass %>, <% } %><%- userLoginVmClass %> } from '../users/dto/user.dto.ts';
+import { ApiBearerAuth, ApiTags, ApiResponse, ApiOperation } from '@nestjs/swagger';
+import { AuthService } from './auth.service.ts';
+
+@Controller('api')
+@UseInterceptors(ClassSerializerInterceptor)
+@ApiTags('account-resource')
+export class AccountController {
+  logger = new Logger('AccountController');
+
+  constructor(
+    private readonly authService: AuthService,
+<%_ if (generateUserManagement) { _%>
+    private readonly mailService: MailService,
+<%_ } _%>
+  ) { }
+  <%_ if (generateUserManagement) { _%>
+
+  @Post('/register')
+  @ApiOperation({ summary: 'Register user' })
+  @ApiResponse({
+    status: 201,
+    description: 'Registered user',
+    type: <%- user.dtoClass %>,
+  })
+  async registerAccount(@Req() req: { user: <%- userLoginVmClass %> }, @Body() userDTO: Managed<%- user.dtoClass %>): Promise <any> {
+    const user = await this.authService.registerNewUser(userDTO);
+    void this.mailService.sendActivationEmail(user);
+    return user;
+  }
+
+  @Get('/activate')
+  @ApiOperation({ summary: 'Activate the registered user' })
+  @ApiResponse({
+    status: 200,
+    description: 'activated',
+  })
+  @ApiResponse({ status: 500, description: 'No user was found for this activation key' })
+  async activateAccount(@Query('key') key: string): Promise<void> {
+    const user = await this.authService.activateRegistration(key);
+    if (!user) {
+      throw new InternalServerErrorException('No user was found for this activation key');
+    }
+  }
+
+  @Get('/authenticate')
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard)
+  @ApiOperation({ summary: 'Check if the user is authenticated' })
+  @ApiResponse({
+    status: 200,
+    description: 'login authenticated',
+  })
+  isAuthenticated(@Req() req: { user: <%- userLoginVmClass %> }): any {
+    const { user } = req;
+    return (user).login;
+  }
+
+  @Get('/account')
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard)
+  @ApiOperation({ summary: 'Get the current user.' })
+  @ApiResponse({
+    status: 200,
+    description: 'user retrieved',
+  })
+  async getAccount(@Req() req: { user: <%- userLoginVmClass %> }): Promise<any> {
+    const { user } = req;
+    const userProfileFound = await this.authService.getAccount(user.id!);
+    <%_ if (databaseType === 'mongodb') { _%>
+    if (userProfileFound && !userProfileFound.firstName) {
+        userProfileFound.firstName ='';
+    }
+    if (userProfileFound && !userProfileFound.lastName) {
+        userProfileFound.lastName ='';
+    }
+    <%_ } _%>
+    return userProfileFound;
+  }
+
+  @Post('/account')
+  @HttpCode(200)
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard)
+  @ApiOperation({ summary: 'Update the current user information' })
+  @ApiResponse({
+    status: 200,
+    description: 'user info updated',
+    type: <%- user.dtoClass %>,
+  })
+  async saveAccount(@Req() req: { user: <%- userLoginVmClass %> }, @Body() newUserInfo: <%- user.dtoClass %>): Promise<any> {
+    const { user } = req;
+    return await this.authService.updateUserSettings(user.login, newUserInfo);
+  }
+
+  @Post('/account/change-password')
+  @HttpCode(200)
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard)
+  @ApiOperation({ summary: 'Change current password' })
+  @ApiResponse({
+    status: 200,
+    description: 'user password changed',
+    type: PasswordChangeDTO,
+  })
+  async changePassword(@Req() req: { user: <%- userLoginVmClass %> }, @Body() passwordChange: PasswordChangeDTO): Promise<any> {
+    const { user } = req;
+    return await this.authService.changePassword(user.login, passwordChange.currentPassword, passwordChange.newPassword);
+  }
+
+  @Post('/account/reset-password/init')
+  @HttpCode(200)
+  @ApiOperation({ summary: 'Send an email to reset the password of the user' })
+  @ApiResponse({
+    status: 200,
+    description: 'Reset key given to the activated user of the mail, if any',
+  })
+  async requestPasswordReset(@Body() mail: string): Promise<void> {
+    const user = await this.authService.requestPasswordReset(String(mail));
+    if (user) {
+      void this.mailService.sendPasswordResetMail(user);
+    } else {
+      this.logger.warn('Password reset requested for non existing mail');
+    }
+  }
+
+  @Post('/account/reset-password/finish')
+  @HttpCode(200)
+  @ApiOperation({ summary: 'Finish to reset the password of the user' })
+  @ApiResponse({
+    status: 200,
+    description: 'password reset',
+  })
+  async finishPasswordReset(@Body() keyAndPassword: KeyAndPasswordDTO): Promise<void> {
+    await this.authService.completePasswordReset(keyAndPassword.newPassword, keyAndPassword.key);
+  }
+
+  <%_ } else if (authenticationType === 'oauth2') { _%>
+
+  @Get('/account')
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard)
+  @ApiOperation({ summary: 'Get the current user, of the session or of the bearer token, else 401' })
+  @ApiResponse({
+    status: 200,
+    description: 'User retrieved',
+    type: <%- userLoginVmClass %>,
+  })
+  getAccount(@Req() req: { user: <%- userLoginVmClass %> }): any {
+    return this.authService.getAccount(req.user);
+  }
+
+  <%_ } else {_%>
+
+  @Get('/account')
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard)
+  @ApiOperation({ summary: 'Get the current user.' })
+  @ApiResponse({
+    status: 200,
+    description: 'user retrieved',
+  })
+  <%_ if (generateBuiltInUserEntity) { _%>
+  async getAccount(@Req() req: { user: <%- userLoginVmClass %> }): Promise<any> {
+    const { user } = req;
+    return await this.authService.getAccount(user.id!);
+  }
+  <%_ } else { _%>
+  getAccount(@Req() req: { user: <%- userLoginVmClass %> }): <%- userLoginVmClass %> {
+    // The user of the token, without built-in User.
+    return req.user;
+  }
+  <%_ } _%>
+  <%_ } _%>
+
+}

@@ -1,0 +1,21 @@
+import { describe, expect, it } from 'vitest';
+import { databaseColumnType, databaseDatetimePrecision } from './column-types.ts';
+
+describe('column types', () => {
+  it('should give the long blobs and texts of MySQL and MariaDB, like JHipster Spring Boot', () => {
+    expect(databaseColumnType('mysql', 'blob')).toBe('longblob');
+    expect(databaseColumnType('mariadb', 'text')).toBe('longtext');
+  });
+
+  it('should keep the types better-sqlite3 has and the other types', () => {
+    expect(databaseColumnType('better-sqlite3', 'blob')).toBe('blob');
+    expect(databaseColumnType('better-sqlite3', 'text')).toBe('text');
+    expect(databaseColumnType('mysql', 'varchar')).toBe('varchar');
+    expect(databaseColumnType('mysql', Date)).toBe(Date);
+  });
+
+  it('should give the microseconds of the instants of MySQL and MariaDB only', () => {
+    expect(databaseDatetimePrecision('mysql')).toBe(6);
+    expect(databaseDatetimePrecision('better-sqlite3')).toBeUndefined();
+  });
+});

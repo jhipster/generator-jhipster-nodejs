@@ -1,0 +1,40 @@
+import { BadRequestException, Body, Controller, Get, HttpCode, Param, Post, UseGuards } from '@nestjs/common';
+import { ApiExcludeController } from '@nestjs/swagger';
+
+import { LEVELS, Level, LoggerLevel, isLevel, loggerLevels } from '../common/logging.ts';
+import { AuthGuard, Roles, RolesGuard, RoleType } from '../auth/index.ts';
+
+export interface Loggers {
+  levels: readonly Level[];
+  loggers: Record<string, LoggerLevel>;
+}
+
+/**
+ * The loggers endpoint of Spring Boot Actuator, the logs page of the JHipster clients reads and changes: the level of
+ * each logger, changed while the application runs. For the administrators, like the management endpoints of JHipster.
+ */
+@ApiExcludeController()
+@Controller('management/loggers')
+@UseGuards(AuthGuard, RolesGuard)
+@Roles(RoleType.ADMIN)
+export class LoggersController {
+  @Get()
+  loggers(): Loggers {
+    return { levels: LEVELS, loggers: loggerLevels.getLevels() };
+  }
+
+  @Get('/:name')
+  logger(@Param('name') name: string): LoggerLevel {
+    return loggerLevels.getLevel(name);
+  }
+
+  /** Sets the level of a logger, a null `configuredLevel` gives it the level of its parent again. */
+  @Post('/:name')
+  @HttpCode(204)
+  setLevel(@Param('name') name: string, @Body() { configuredLevel }: { configuredLevel?: string | null }): void {
+    if (configuredLevel !== null && configuredLevel !== undefined && !isLevel(configuredLevel)) {
+      throw new BadRequestException(`Unknown level ${configuredLevel}, expected one of ${LEVELS.join(', ')}`);
+    }
+    loggerLevels.setLevel(name, configuredLevel ? (configuredLevel.toUpperCase() as Level) : null);
+  }
+}

@@ -1,5 +1,5 @@
 import { Request as ExpressRequest, Response } from 'express';
-import { <%= userLoginVmClass%> } from '../service/dto/user.dto.ts';
+import { <%= userLoginVmClass%> } from '../users/dto/user.dto.ts';
 
 export interface Request extends ExpressRequest {
   user?: <%= userLoginVmClass%>;

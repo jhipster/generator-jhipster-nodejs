@@ -1,0 +1,85 @@
+import { Controller, Get, Res, UseGuards } from '@nestjs/common';
+import { ApiExcludeController } from '@nestjs/swagger';
+import { Response } from 'express';
+import { isMainThread, threadId } from 'worker_threads';
+
+import { SkipLogging } from '../common/interceptors/logging.interceptor.ts';
+import { JHipsterMetrics, MetricsService } from '../common/metrics.ts';
+import { AuthGuard, Roles, RolesGuard, RoleType } from '../auth/index.ts';
+
+/** A thread of the threaddump endpoint of Spring Boot Actuator. */
+export interface Thread {
+  threadName: string;
+  threadId: number;
+  threadState: 'RUNNABLE';
+  daemon: boolean;
+  priority: number;
+  blockedTime: number;
+  blockedCount: number;
+  waitedTime: number;
+  waitedCount: number;
+  lockName: null;
+  lockOwnerId: number;
+  lockOwnerName: null;
+  inNative: boolean;
+  suspended: boolean;
+  stackTrace: [];
+  lockedMonitors: [];
+  lockedSynchronizers: [];
+  lockInfo: null;
+}
+
+/**
+ * The metrics endpoints of JHipster Spring Boot: jhimetrics and threaddump for the metrics page of the JHipster
+ * clients (administrators only), prometheus for the Prometheus of docker/prometheus (public, like JHipster).
+ */
+@ApiExcludeController()
+@Controller('management')
+export class MetricsController {
+  constructor(private readonly metricsService: MetricsService) {}
+
+  @Get('/jhimetrics')
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles(RoleType.ADMIN)
+  jhimetrics(): JHipsterMetrics {
+    return this.metricsService.jhipsterMetrics();
+  }
+
+  /** The thread running the JavaScript of the application: Node.js runs it on a single thread, its event loop. */
+  @Get('/threaddump')
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles(RoleType.ADMIN)
+  threaddump(): { threads: Thread[] } {
+    return {
+      threads: [
+        {
+          threadName: isMainThread ? 'main' : `worker-${threadId}`,
+          threadId,
+          threadState: 'RUNNABLE',
+          daemon: false,
+          priority: 5,
+          blockedTime: -1,
+          blockedCount: 0,
+          waitedTime: -1,
+          waitedCount: 0,
+          lockName: null,
+          lockOwnerId: -1,
+          lockOwnerName: null,
+          inNative: false,
+          suspended: false,
+          stackTrace: [],
+          lockedMonitors: [],
+          lockedSynchronizers: [],
+          lockInfo: null,
+        },
+      ],
+    };
+  }
+
+  @Get('/prometheus')
+  @SkipLogging()
+  async prometheus(@Res({ passthrough: true }) response: Response): Promise<string> {
+    response.type(this.metricsService.registry.contentType);
+    return this.metricsService.prometheus();
+  }
+}

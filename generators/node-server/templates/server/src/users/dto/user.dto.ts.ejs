@@ -1,0 +1,116 @@
+import { ApiProperty } from '@nestjs/swagger';
+import { Allow, IsBoolean, IsEmail, IsNotEmpty, IsOptional, IsString, Length, Matches, MaxLength } from 'class-validator';
+<%_ if (databaseTypeMongodb) { _%>
+import { Transform } from 'class-transformer';
+<%_ } _%>
+import { Exclude } from 'class-transformer';
+import { BaseDTO } from '../../common/dto/base.dto.ts';
+
+/** The pattern of a login, the one of the clients of JHipster (the LOGIN_REGEX of JHipster Spring Boot). */
+export const LOGIN_PATTERN = /^[a-zA-Z0-9!$&*+=?^_`{|}~.-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$|^[_.@A-Za-z0-9-]+$/;
+export const PASSWORD_MIN_LENGTH = 4;
+export const PASSWORD_MAX_LENGTH = 100;
+
+/**
+ * A user, with the constraints of the AdminUserDTO of JHipster Spring Boot.
+ */
+export class <%= userLoginVmClass %> extends BaseDTO {
+<%_ if (user) { _%>
+<%_ if (databaseTypeMongodb) { _%>
+  @Transform(({ value }) => value?.toHexString ? value?.toHexString() : value, {toPlainOnly: true})
+<%_ } _%>
+  @Allow()
+  <%= user.primaryKey.name %>?: <%= user.primaryKey.tsType %>;
+<%_ } else { _%>
+  @Allow()
+  id?: string;
+<%_ } _%>
+
+  @ApiProperty({ uniqueItems: true, example: 'myuser', description: 'User login' })
+  @IsString()
+  @IsNotEmpty()
+  @Length(1, 50)
+  @Matches(LOGIN_PATTERN)
+  login!: string;
+
+  @ApiProperty({ example: 'MyUser', description: 'User first name', required: false })
+  @IsOptional()
+  @IsString()
+  @MaxLength(50)
+  firstName?: string;
+
+  @ApiProperty({ example: 'MyUser', description: 'User last name', required: false })
+  @IsOptional()
+  @IsString()
+  @MaxLength(50)
+  lastName?: string;
+
+  @ApiProperty({ example: 'myuser@localhost', description: 'User email' })
+  // A domain without a top level domain too, like user@localhost, as the @Email of JHipster Spring Boot.
+  @IsEmail({ require_tld: false })
+  @Length(5, 254)
+  email!: string;
+
+  @ApiProperty({ example: 'true', description: 'User activation', required: false })
+  @IsOptional()
+  @IsBoolean()
+  activated?: boolean;
+
+  @ApiProperty({ example: 'en', description: 'User language', required: false })
+  @IsOptional()
+  @IsString()
+  @Length(2, 10)
+  langKey?: string;
+
+  @ApiProperty({
+    isArray: true,
+    enum: ['ROLE_USER', 'ROLE_ADMIN', 'ROLE_ANONYMOUS'],
+    description: 'Array of permissions',
+    required: false
+  })
+  @Allow()
+  authorities?: any[];
+
+  // Never in the responses.
+  @Exclude({ toPlainOnly: true })
+  @ApiProperty({ example: 'myuser', description: 'User password' })
+  @Allow()
+  password<%- generateUserManagement ? '!' : '?' %>: string;
+
+  @ApiProperty({ example: 'http://my-image-url', description: 'Image url', required: false })
+  @IsOptional()
+  @IsString()
+  @MaxLength(256)
+  imageUrl?: string;
+
+  // The keys the mails send to the user, never in the responses, like the DTOs of JHipster Spring Boot.
+  @Exclude()
+  activationKey?: string;
+
+  @Exclude()
+  resetKey?: string;
+
+  @Exclude()
+  resetDate?: Date;
+}
+
+/** A user registering, with a password, like the ManagedUserVM of JHipster Spring Boot. */
+export class Managed<%= userLoginVmClass %> extends <%= userLoginVmClass %> {
+  @Exclude({ toPlainOnly: true })
+  @ApiProperty({ example: 'myuser', description: 'User password', minLength: PASSWORD_MIN_LENGTH, maxLength: PASSWORD_MAX_LENGTH })
+  @IsString()
+  @Length(PASSWORD_MIN_LENGTH, PASSWORD_MAX_LENGTH)
+  // Initialized like the redeclaration of a property must be (useDefineForClassFields), the body sets it.
+  override password = '';
+}
+<%_ if (user) { _%>
+
+/** A user of the public user list, like the UserDTO of JHipster Spring Boot: its id and login only. */
+export class PublicUserDTO {
+  @ApiProperty({ description: 'User id' })
+  id!: <%= user.primaryKey.tsType %>;
+
+  @ApiProperty({ example: 'myuser', description: 'User login' })
+  login!: string;
+}
+<%_ } _%>

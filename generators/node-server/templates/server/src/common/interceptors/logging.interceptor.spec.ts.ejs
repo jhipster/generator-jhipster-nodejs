@@ -1,0 +1,93 @@
+import { afterEach, beforeEach, describe, expect, it, type MockInstance, vi } from 'vitest';
+import { CallHandler, Controller, ExecutionContext, Get, Logger } from '@nestjs/common';
+import { Reflector } from '@nestjs/core';
+import { EventEmitter } from 'events';
+import { of } from 'rxjs';
+import { LoggingInterceptor, SkipLogging } from './logging.interceptor.ts';
+
+@Controller('test')
+class TestController {
+  @Get('/logged')
+  logged(): string {
+    return 'logged';
+  }
+
+  @Get('/skipped')
+  @SkipLogging()
+  skipped(): string {
+    return 'skipped';
+  }
+}
+
+@Controller('skipped')
+@SkipLogging()
+class SkippedController {
+  @Get('/')
+  get(): string {
+    return 'skipped';
+  }
+}
+
+describe('LoggingInterceptor', () => {
+  const interceptor = new LoggingInterceptor(new Reflector());
+  const next: CallHandler = { handle: () => of('result') };
+  let response: EventEmitter & { statusCode: number };
+  let debug: MockInstance<Logger['debug']>;
+  let error: MockInstance<Logger['error']>;
+
+  const contextOf = (controller: any, handler: string): ExecutionContext =>
+    ({
+      getType: () => 'http',
+      getClass: () => controller,
+      getHandler: () => controller.prototype[handler],
+      switchToHttp: () => ({
+        getRequest: () => ({ method: 'GET', originalUrl: '/test/logged' }),
+        getResponse: () => response,
+      }),
+    }) as unknown as ExecutionContext;
+
+  beforeEach(() => {
+    response = Object.assign(new EventEmitter(), { statusCode: 200 });
+    debug = vi.spyOn(Logger.prototype, 'debug').mockImplementation(() => undefined);
+    error = vi.spyOn(Logger.prototype, 'error').mockImplementation(() => undefined);
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  it('logs the method, URL, status and elapsed time once the response is sent', () => {
+    interceptor.intercept(contextOf(TestController, 'logged'), next);
+    expect(debug).not.toHaveBeenCalled();
+    response.emit('finish');
+    expect(debug).toHaveBeenCalledWith(expect.stringMatching(/^GET \/test\/logged 200 \d+ms - TestController\.logged\(\)$/));
+    expect(error).not.toHaveBeenCalled();
+  });
+
+  it('logs the client errors at the debug level', () => {
+    interceptor.intercept(contextOf(TestController, 'logged'), next);
+    response.statusCode = 404;
+    response.emit('finish');
+    expect(debug).toHaveBeenCalledWith(expect.stringMatching(/^GET \/test\/logged 404 \d+ms/));
+  });
+
+  it('logs the server errors at the error level', () => {
+    interceptor.intercept(contextOf(TestController, 'logged'), next);
+    response.statusCode = 500;
+    response.emit('finish');
+    expect(error).toHaveBeenCalledWith(expect.stringMatching(/^GET \/test\/logged 500 \d+ms/));
+    expect(debug).not.toHaveBeenCalled();
+  });
+
+  it('does not log a handler with @SkipLogging()', () => {
+    interceptor.intercept(contextOf(TestController, 'skipped'), next);
+    response.emit('finish');
+    expect(debug).not.toHaveBeenCalled();
+  });
+
+  it('does not log a controller with @SkipLogging()', () => {
+    interceptor.intercept(contextOf(SkippedController, 'get'), next);
+    response.emit('finish');
+    expect(debug).not.toHaveBeenCalled();
+  });
+});

@@ -9,11 +9,11 @@ import session from 'express-session';
 
 import type { ApplicationConfig } from './application-config.ts';
 import { HeaderUtil } from './common/header-util.ts';
-import { ProblemDetailsFilter } from './web/rest/errors/problem-details.filter.ts';
-import { ValidationException } from './web/rest/errors/problem.exception.ts';
+import { ProblemDetailsFilter } from './common/errors/problem-details.filter.ts';
+import { ValidationException } from './common/errors/problem.exception.ts';
 <%_ if (authenticationUsesCsrf) { _%>
-import { SESSION_MAX_AGE } from './security/csrf.middleware.ts';
-import { SessionStore } from './security/session.store.ts';
+import { SESSION_MAX_AGE } from './auth/csrf.middleware.ts';
+import { SessionStore } from './auth/session.store.ts';
 <%_ } _%>
 
 type AppConfigService = ConfigService<ApplicationConfig, true>;

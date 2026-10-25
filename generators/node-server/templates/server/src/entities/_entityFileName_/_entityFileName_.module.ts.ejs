@@ -1,0 +1,14 @@
+import { Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { <%= entityClass %> } from './<%= entityFileName %>.entity.ts';
+import { <%= entityClass %>Controller } from './<%= entityFileName %>.controller.ts';
+import { <%= entityClass %>Service } from './<%= entityFileName %>.service.ts';
+
+
+@Module({
+  imports: [TypeOrmModule.forFeature([<%= entityClass %>])],
+  controllers: [<%= entityClass %>Controller],
+  providers: [<%= entityClass %>Service],
+  exports: [<%= entityClass %>Service],
+})
+export class <%= entityClass %>Module {}
