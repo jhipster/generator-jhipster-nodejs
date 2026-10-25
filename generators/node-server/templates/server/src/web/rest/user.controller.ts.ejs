@@ -105,6 +105,8 @@ export class UserController {
       );
       void this.mailService.sendCreationEmail(created);
       this.headerUtil.addUserManagementHeaders(req.res, 'created', created.login);
+      // Like JHipster Spring Boot, the location of the created user, by its login.
+      req.res.location(`/api/admin/users/${encodeURIComponent(created.login)}`);
       return created;
   }
 

@@ -69,15 +69,15 @@ describe('User', () => {
     });
 
     it('/POST create user', async () => {
-        const createdUser: <%= user.dtoClass%> = (
-            await request(app.getHttpServer())
-                .post('/api/admin/users')
-                .send(testUserRequestObject)
-                .expect(201)
-        ).body;
+        const response = await request(app.getHttpServer())
+            .post('/api/admin/users')
+            .send(testUserRequestObject)
+            .expect(201);
+        const createdUser: <%= user.dtoClass%> = response.body;
 
-        // Like JHipster Spring Boot, the login in lower case.
+        // Like JHipster Spring Boot, the login in lower case, and the location of the user by its login.
         expect(createdUser.login).toEqual(testUserRequestObject.login.toLowerCase());
+        expect(response.headers.location).toBe(`/api/admin/users/${encodeURIComponent(createdUser.login)}`);
         // Like JHipster Spring Boot, an activated user with a random password, and a reset key sent by mail.
         const savedUser = (await service.findByFields({ where: { login: createdUser.login } }))!;
         expect(savedUser.activated).toBe(true);
