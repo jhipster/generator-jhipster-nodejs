@@ -146,7 +146,9 @@ export class <%= entityClass %>Controller {
   }
 
   @Patch('/:id')
-  @Roles(RoleType.USER)
+<%_ if (nodejsWriteRoles) { _%>
+  @Roles(<%- nodejsWriteRoles %>)
+<%_ } _%>
   @ApiOperation({ summary: 'Partially update <%= entityInstance %> with id, the absent fields are kept and the null ones cleared' })
   @ApiResponse({
     status: 200,

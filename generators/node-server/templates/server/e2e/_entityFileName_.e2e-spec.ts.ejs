@@ -450,6 +450,7 @@ _%>
 <%_ if (nodejsWriteRoles) { _%>
             const { id: _id, ...newEntity } = validEntity;
             await request(rolesApp.getHttpServer()).post('/api/<%= entityApiUrl %>').send(newEntity).expect(403);
+            await request(rolesApp.getHttpServer()).patch(`/api/<%= entityApiUrl %>/${validEntity.id}`).send({ id: validEntity.id }).expect(403);
 <%_ } _%>
         });
 <%_ } _%>
