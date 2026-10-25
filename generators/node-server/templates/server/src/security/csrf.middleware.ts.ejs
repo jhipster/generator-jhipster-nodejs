@@ -4,30 +4,70 @@ import { NextFunction, Request, Response } from 'express';
 
 /** The idle lifetime of a session, rolling: its cookie and the CSRF cookie expire together. */
 export const SESSION_MAX_AGE = 30 * 60 * 1000;
+<%_ if (authenticationTypeSession) { _%>
+
+/**
+ * The idle lifetime of a session logged in with remember-me, like the validity of the remember-me tokens of JHipster
+ * Spring Boot (31 days): kept in the database (SessionStore), the session outlives a restart like those tokens.
+ */
+export const REMEMBER_ME_MAX_AGE = 31 * 24 * 60 * 60 * 1000;
+<%_ } _%>
 
 /** The methods that change nothing, which the CSRF token does not protect, like the ones of Spring Security. */
 const SAFE_METHODS = ['GET', 'HEAD', 'OPTIONS', 'TRACE'];
 
 /** The XSRF-TOKEN cookie the clients (Angular HttpClient, axios) send back as the X-XSRF-TOKEN header. */
-export function setCsrfCookie(res: Response, token: string): void {
-  res.cookie('XSRF-TOKEN', token, { sameSite: 'lax', path: '/', maxAge: SESSION_MAX_AGE });
+export function setCsrfCookie(res: Response, token: string, maxAge = SESSION_MAX_AGE): void {
+  res.cookie('XSRF-TOKEN', token, { sameSite: 'lax', path: '/', maxAge });
 }
+<%_ if (authenticationTypeSession) { _%>
+
+/** The XSRF-TOKEN cookie of a request. */
+function csrfCookie(req: Request): string | undefined {
+  const cookie = req.headers.cookie
+    ?.split(';')
+    .map(value => value.trim())
+    .find(value => value.startsWith('XSRF-TOKEN='));
+  return cookie ? decodeURIComponent(cookie.slice('XSRF-TOKEN='.length)) : undefined;
+}
+
+/**
+ * The CSRF check of the session login, like the CookieCsrfTokenRepository of Spring Security: the X-XSRF-TOKEN header is
+ * the token of the XSRF-TOKEN cookie of the client, else 403, so another site cannot log the browser of a user into another
+ * account. Called by the login itself, whatever the path Express routes to it (its case, a trailing slash).
+ */
+export function checkLoginCsrfToken(req: Request): void {
+  const token = csrfCookie(req);
+  if (!token || req.headers['x-xsrf-token'] !== token) {
+    throw new ForbiddenException('Invalid CSRF token');
+  }
+}
+<%_ } _%>
 
 /**
  * The CSRF protection of the sessions, like the CSRF filter of Spring Security and the CookieCsrfFilter of JHipster Spring
  * Boot: every response of a logged session gives its token back as the XSRF-TOKEN cookie, and every unsafe request of it,
  * the logout included, must send it as X-XSRF-TOKEN, else 403. A request with a bearer token has no session to protect.
+<%_ if (authenticationTypeSession) { _%>
+ * A client without a logged session gets a token cookie, which its login must send back (checkLoginCsrfToken).
+<%_ } _%>
  */
 @Injectable()
 export class CsrfMiddleware implements NestMiddleware {
   use(req: Request, res: Response, next: NextFunction): void {
     const session = req.session as any;
     if (!session?.user) {
+<%_ if (authenticationTypeSession) { _%>
+      if (!csrfCookie(req)) {
+        setCsrfCookie(res, randomUUID());
+      }
+<%_ } _%>
       next();
       return;
     }
     session.csrfToken ??= randomUUID();
-    setCsrfCookie(res, session.csrfToken);
+    // The CSRF cookie expires with the session cookie<% if (authenticationTypeSession) { %>, later for a remember-me login<% } %>.
+    setCsrfCookie(res, session.csrfToken, session.cookie?.originalMaxAge ?? SESSION_MAX_AGE);
     if (!SAFE_METHODS.includes(req.method) && req.headers['x-xsrf-token'] !== session.csrfToken) {
       throw new ForbiddenException('Invalid CSRF token');
     }

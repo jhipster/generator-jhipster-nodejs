@@ -1,0 +1,36 @@
+import { Column, Entity, Index, <%_ if (databaseTypeMongodb) { _%>ObjectIdColumn<%_ } else { _%>PrimaryColumn<%_ } _%> } from 'typeorm';
+
+/**
+ * A session of the server, kept in the database of the application by the SessionStore: the sessions outlive a restart
+ * and are shared by the instances of the application, like the HTTP sessions of a cluster of JHipster Spring Boot with
+ * Spring Session, and the remember-me logins outlive a restart like its persistent tokens.
+ */
+@Entity('<%- jhiTablePrefix %>_session')
+export class Session {
+<%_ if (databaseTypeMongodb) { _%>
+  @ObjectIdColumn({ name: '_id' })
+  _id?: string;
+
+  /** The id of the session, the one of its cookie. */
+  @Column({ unique: true })
+  sid!: string;
+<%_ } else { _%>
+  /** The id of the session, the one of its cookie. */
+  @PrimaryColumn()
+  sid!: string;
+<%_ } _%>
+
+  /** The login of the user of the session, its sessions listed by the sessions page. */
+  @Index()
+  @Column({ nullable: true })
+  login?: string;
+
+  /** The end of the session, extended by its requests. */
+  @Index()
+  @Column()
+  expires!: Date;
+
+  /** The data of the session, as JSON. */
+  @Column('text')
+  data!: string;
+}

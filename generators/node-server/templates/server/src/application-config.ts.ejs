@@ -8,6 +8,7 @@ import { isInt, isNotEmpty, isPort<% if (authenticationTypeOauth2 || serviceDisc
 export interface ApplicationConfig {
   server: {
     port: string | number;
+    'forward-headers-strategy': 'none' | 'native';
     ssl: { enabled: boolean; 'key-store': string; 'key-store-password': string; 'key-store-type': string };
   };
   jhipster: {
@@ -23,6 +24,14 @@ export interface ApplicationConfig {
           'hash-salt-or-rounds': number;
         };
       };
+<%_ } _%>
+<%_ if (authenticationTypeSession) { _%>
+      authentication: {
+        'hash-salt-or-rounds': number;
+      };
+<%_ } _%>
+<%_ if (authenticationUsesCsrf) { _%>
+      session: { secret: string };
 <%_ } _%>
 <%_ if (authenticationTypeOauth2) { _%>
       oauth2: {
@@ -102,11 +111,14 @@ const positiveInt = (value: any): boolean => isInt(Number(value)) && Number(valu
  */
 const rules: Rule[] = [
   ['server.port', value => isPort(String(value)), 'a port'],
+  ['server.forward-headers-strategy', value => ['none', 'native'].includes(value), 'none or native'],
   ['jhipster.clientApp.name', isNotEmpty, 'the name of the application'],
 <%_ if (authenticationTypeJwt) { _%>
   ['jhipster.security.authentication.jwt.token-validity-in-seconds', positiveInt, 'a positive number of seconds'],
   ['jhipster.security.authentication.jwt.token-validity-in-seconds-for-remember-me', positiveInt, 'a positive number of seconds'],
-  ['jhipster.security.authentication.jwt.hash-salt-or-rounds', value => isInt(Number(value)) && value >= 4 && value <= 31, 'bcrypt rounds, from 4 to 31'],
+<%_ } _%>
+<%_ if (generateUserManagement) { _%>
+  ['<%= nodejsPasswordRoundsProperty %>', value => isInt(Number(value)) && value >= 4 && value <= 31, 'bcrypt rounds, from 4 to 31'],
 <%_ } _%>
   ['jhipster.cors.max-age', value => isInt(Number(value)) && value >= 0, 'a number of seconds'],
 <%_ if (generateUserManagement) { _%>
@@ -114,6 +126,8 @@ const rules: Rule[] = [
 <%_ } _%>
 <%_ if (authenticationTypeOauth2) { _%>
   ['jhipster.security.oauth2.client.provider.oidc.issuer-uri', value => isURL(String(value), { require_tld: false }), 'the URL of the OpenID Connect issuer'],
+<%_ } _%>
+<%_ if (authenticationUsesCsrf) { _%>
   ['jhipster.security.session.secret', isNotEmpty, 'the secret of the sessions'],
 <%_ } _%>
 <%_ if (serviceDiscoveryEureka) { _%>

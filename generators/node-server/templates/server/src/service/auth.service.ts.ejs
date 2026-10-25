@@ -1,13 +1,15 @@
-import { Injectable, <%_ if (authenticationType === 'jwt' && generateBuiltInUserEntity) { _%> HttpException, HttpStatus, InternalServerErrorException, <%_ } _%> Logger } from '@nestjs/common';
-<%_ if (authenticationType === 'jwt' && generateBuiltInUserEntity) { _%>
+import { Injectable, <%_ if (generateUserManagement) { _%> HttpException, HttpStatus, InternalServerErrorException, <%_ } _%> Logger } from '@nestjs/common';
+<%_ if (generateUserManagement) { _%>
 import { randomBytes } from 'crypto';
 <%_ } _%>
 <%_ if (generateBuiltInAuthorityEntity) { _%>
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 <%_ } _%>
-<%_ if (authenticationType === 'jwt' && generateBuiltInUserEntity) { _%>
+<%_ if (generateUserManagement) { _%>
 import { PasswordService } from '../security/password.service.ts';
+<%_ } _%>
+<%_ if (authenticationType === 'jwt' && generateBuiltInUserEntity) { _%>
 import { JwtService } from '@nestjs/jwt';
 import { UserLoginDTO } from '../service/dto/user-login.dto.ts';
 import { Payload } from '../security/payload.interface.ts';
@@ -17,7 +19,7 @@ import { Authority } from '../domain/authority.entity.ts';
 <%_ } _%>
 <%_ if (generateBuiltInUserEntity) { _%>
 import { UserService } from '../service/user.service.ts';
-<%_ if (authenticationType === 'jwt' && generateBuiltInUserEntity) { _%>
+<%_ if (generateUserManagement) { _%>
 import { EmailAlreadyUsedException, InvalidPasswordException, LoginAlreadyUsedException } from '../web/rest/errors/problem.exception.ts';
 <%_ } _%>
 <%_ } _%>
@@ -29,7 +31,7 @@ import { ConfigService } from '@nestjs/config';
 <%_
 const userIdType = user?.primaryKey.tsType;
 _%>
-<%_ if (authenticationType === 'jwt' && generateBuiltInUserEntity) { _%>
+<%_ if (generateUserManagement) { _%>
 
 /** The length of a password, like the one of the ManagedUserVM of JHipster Spring Boot. */
 const PASSWORD_MIN_LENGTH = 4;
@@ -48,6 +50,8 @@ export class AuthService {
     <%_ if (authenticationType === 'jwt' && generateBuiltInUserEntity) { _%>
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
+    <%_ } _%>
+    <%_ if (generateUserManagement) { _%>
     private readonly passwordService: PasswordService,
     <%_ } _%>
     <%_ if (generateBuiltInAuthorityEntity) { _%>
@@ -58,17 +62,18 @@ export class AuthService {
     <%_ } _%>
   ) {}
 
-  <%_ if (authenticationType === 'jwt' && generateBuiltInUserEntity) { _%>
-  async login(userLogin: UserLoginDTO): Promise<any> {
-    const loginUserName = userLogin.username;
-    const loginPassword = userLogin.password;
-    if (!loginUserName || !loginPassword) {
-      throw new HttpException('Username and password are required!', HttpStatus.BAD_REQUEST);
-    }
+  <%_ if (generateUserManagement) { _%>
+  /** The hash an unknown login is checked with, like the timing attack protection of the DaoAuthenticationProvider of Spring Security. */
+  private unknownUserPasswordHash?: Promise<string>;
 
+  /** The activated user of a login and its password, with its authorities, else 401, like the login of JHipster Spring Boot. */
+  async authenticate(loginUserName: string, loginPassword: string): Promise<<%= user.dtoClass %>> {
     // The logins are in lower case, like the ones of JHipster Spring Boot.
     const userFind = await this.userService.findByFields({ where: { login: loginUserName.toLowerCase() } });
-    const validPassword = !!userFind && (await this.passwordService.matches(loginPassword, userFind.password));
+    // An unknown login checks the password with a hash too: it answers in the time of a known one, which does not tell
+    // the logins of the users.
+    this.unknownUserPasswordHash ??= this.passwordService.encode(randomBytes(16).toString('hex'));
+    const validPassword = await this.passwordService.matches(loginPassword, userFind?.password ?? (await this.unknownUserPasswordHash));
     if (!userFind || !validPassword) {
       throw new HttpException('Invalid login name or password!', HttpStatus.UNAUTHORIZED);
     }
@@ -81,6 +86,17 @@ export class AuthService {
     if (!user) {
       throw new HttpException('Invalid login name or password!', HttpStatus.UNAUTHORIZED);
     }
+    return user;
+  }
+  <%_ if (authenticationTypeJwt) { _%>
+
+  async login(userLogin: UserLoginDTO): Promise<any> {
+    const loginUserName = userLogin.username;
+    const loginPassword = userLogin.password;
+    if (!loginUserName || !loginPassword) {
+      throw new HttpException('Username and password are required!', HttpStatus.BAD_REQUEST);
+    }
+    const user = await this.authenticate(loginUserName, loginPassword);
 
     const payload: Payload = { sub: user.login, auth: (user.authorities ?? []).join(' '), userId: user.id };
 
@@ -98,6 +114,7 @@ export class AuthService {
     // The user of the token subject, like the login of JHipster Spring Boot tokens.
     return await this.userService.findByFields({ where: { login: payload.sub } });
   }
+  <%_ } _%>
 
   async findUserWithAuthById(userId: <%= userIdType %>): Promise<<%= user.dtoClass %> | undefined> {
     <%_ if (databaseType === 'mongodb') { _%>

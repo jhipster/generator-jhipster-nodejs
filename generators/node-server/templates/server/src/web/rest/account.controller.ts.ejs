@@ -1,11 +1,11 @@
-import { <%_ if (authenticationType === 'jwt') { _%> Body, Post, Query, <%_ } _%>UseGuards, Controller, Get, HttpCode, Logger, Req, UseInterceptors, ClassSerializerInterceptor, InternalServerErrorException } from '@nestjs/common';
+import { <%_ if (generateUserManagement) { _%> Body, Post, Query, <%_ } _%>UseGuards, Controller, Get, HttpCode, Logger, Req, UseInterceptors, ClassSerializerInterceptor, InternalServerErrorException } from '@nestjs/common';
 import { AuthGuard } from '../../security/index.ts';
-<%_ if (authenticationType === 'jwt' && generateUserManagement) { _%>
+<%_ if (generateUserManagement) { _%>
 import { PasswordChangeDTO } from '../../service/dto/password-change.dto.ts';
 import { KeyAndPasswordDTO } from '../../service/dto/key-and-password.dto.ts';
 import { MailService } from '../../service/mail.service.ts';
 <%_ } _%>
-import { <% if (authenticationType === 'jwt' && generateUserManagement) { %>Managed<%- userLoginVmClass %>, <% } %><%- userLoginVmClass %> } from '../../service/dto/user.dto.ts';
+import { <% if (generateUserManagement) { %>Managed<%- userLoginVmClass %>, <% } %><%- userLoginVmClass %> } from '../../service/dto/user.dto.ts';
 import { ApiBearerAuth, ApiTags, ApiResponse, ApiOperation } from '@nestjs/swagger';
 import { AuthService } from '../../service/auth.service.ts';
 
@@ -17,11 +17,11 @@ export class AccountController {
 
   constructor(
     private readonly authService: AuthService,
-<%_ if (authenticationType === 'jwt' && generateUserManagement) { _%>
+<%_ if (generateUserManagement) { _%>
     private readonly mailService: MailService,
 <%_ } _%>
   ) { }
-  <%_ if (authenticationType === 'jwt' && generateUserManagement) { _%>
+  <%_ if (generateUserManagement) { _%>
 
   @Post('/register')
   @ApiOperation({ summary: 'Register user' })

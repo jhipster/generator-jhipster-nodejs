@@ -133,6 +133,17 @@ For this you can use the client login page (if you have generated it), or a clie
 <%_ } else { _%>
 This application has no users of its own: it validates the tokens issued by the application sharing this secret (like the gateway), and the user of a request is the one of its token.
 <%_ } _%>
+<%_ } else if (authenticationTypeSession) { _%>
+
+### Session authentication
+
+Like JHipster Spring Boot with HTTP sessions, the client logs in by posting the `username`, `password` and `remember-me`
+form to `api/authentication`, and logs out by posting to `api/logout`. The sessions are kept in the database of the
+application (the `<%- jhiTablePrefix %>_session` table or collection): they outlive a restart and are shared by the instances of a
+cluster. A session ends after 30 minutes without requests, 31 days with remember-me, and the account page lists the
+sessions of the user, any of which it can end. Its unsafe requests, the login included, send the token of the
+`XSRF-TOKEN` cookie as the `X-XSRF-TOKEN` header, as the JHipster clients do. The secret of the sessions is
+`jhipster.security.session.secret`, set it in production with the `JHIPSTER_SECURITY_SESSION_SECRET` environment variable.
 <%_ } _%>
 <%_ if (generateUserManagement) { _%>
 

@@ -160,7 +160,7 @@ describe('Management', () => {
         });
     });
 
-<%_ if (authenticationTypeJwt) { _%>
+<%_ if (authenticationTypeJwt || authenticationTypeSession) { _%>
     describe('without authentication', () => {
         beforeEach(async () => {
             app = await createApp(true);

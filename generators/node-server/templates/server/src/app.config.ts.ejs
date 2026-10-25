@@ -3,11 +3,18 @@ import { ConfigService } from '@nestjs/config';
 import { CorsOptions } from '@nestjs/common/interfaces/external/cors-options.interface';
 import { NextFunction, Request, Response } from 'express';
 import { NestExpressApplication } from '@nestjs/platform-express';
+<%_ if (authenticationUsesCsrf) { _%>
+import session from 'express-session';
+<%_ } _%>
 
 import type { ApplicationConfig } from './application-config.ts';
 import { HeaderUtil } from './common/header-util.ts';
 import { ProblemDetailsFilter } from './web/rest/errors/problem-details.filter.ts';
 import { ValidationException } from './web/rest/errors/problem.exception.ts';
+<%_ if (authenticationUsesCsrf) { _%>
+import { SESSION_MAX_AGE } from './security/csrf.middleware.ts';
+import { SessionStore } from './security/session.store.ts';
+<%_ } _%>
 
 type AppConfigService = ConfigService<ApplicationConfig, true>;
 
@@ -103,10 +110,21 @@ function responseHeaders(<% if (!skipClient) { %>configService: AppConfigService
  * exercise the same validation and HTTP behaviour as the started application.
  * It has no side effect at import (main.ts starts the application when imported), and does not listen.
  */
+/**
+ * The proxies whose X-Forwarded-* headers (the protocol, the host and the address of the client) the application trusts, the
+ * trust proxy setting of Express, like the server.forward-headers-strategy of Spring Boot: none, or native, the proxies of
+ * the local networks like the internal proxies of the RemoteIpValve of Tomcat.<% if (authenticationUsesCsrf) { %> Behind a proxy of HTTPS, the session cookie is then
+ * secure.<% } %>
+ */
+export function trustProxy(strategy: string | undefined): string | false {
+  return strategy === 'native' ? 'loopback, linklocal, uniquelocal' : false;
+}
+
 export function configureApp(app: INestApplication): INestApplication {
   // Without the X-Powered-By: Express header, like the responses of JHipster Spring Boot.
   app.getHttpAdapter().getInstance().disable('x-powered-by');
   const configService = app.get<AppConfigService>(ConfigService);
+  (app as NestExpressApplication).set('trust proxy', trustProxy(configService.get('server.forward-headers-strategy', { infer: true })));
   app.use(responseHeaders(<% if (!skipClient) { %>configService<% } %>));
   const cors = corsOptions(configService);
   if (cors) {
@@ -114,6 +132,22 @@ export function configureApp(app: INestApplication): INestApplication {
       callback(null, CORS_PATHS.some(path => path.test(req.url)) ? cors : { origin: false }),
     );
   }
+<%_ if (authenticationUsesCsrf) { _%>
+  app.use(
+    session({
+      // The session cookie of JHipster Spring Boot.
+      name: 'JSESSIONID',
+      secret: configService.get('jhipster.security.session.secret', { infer: true }),
+      // The sessions in the database of the application, which outlive a restart and are shared by its instances.
+      store: app.get(SessionStore),
+      resave: false,
+      saveUninitialized: false,
+      // Like the session of JHipster Spring Boot, it expires after 30 minutes without requests.
+      rolling: true,
+      cookie: { httpOnly: true, sameSite: 'lax', secure: 'auto', maxAge: SESSION_MAX_AGE },
+    }),
+  );
+<%_ } _%>
   app.useGlobalPipes(
     new ValidationPipe({
       // The errors of the fields, like JHipster Spring Boot.
@@ -132,7 +166,7 @@ export function configureApp(app: INestApplication): INestApplication {
   );
   // The errors as the problem details of JHipster Spring Boot.
   app.useGlobalFilters(new ProblemDetailsFilter(app.get(HeaderUtil)));
-<%_ if (authenticationTypeJwt && generateUserManagement) { _%>
+<%_ if (generateUserManagement) { _%>
   // The mail of a password reset request is a text/plain body, as the JHipster clients send it.
   (app as NestExpressApplication).useBodyParser('text');
 <%_ } _%>

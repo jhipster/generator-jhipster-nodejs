@@ -270,18 +270,16 @@ describe('Account', () => {
             .send(testPasswordChange)
             .expect(200);
 
-        const successFullyLoggedInWithNewPassword = await authService.login(
-            {
-                username: testUserAuthenticated.login,
-                password: testPasswordChange.newPassword
-            }).then(() => true, () => false);
+        const successFullyLoggedInWithNewPassword = await authService
+            .authenticate(testUserAuthenticated.login, testPasswordChange.newPassword)
+            .then(() => true, () => false);
 
         expect(successFullyLoggedInWithNewPassword).toEqual(true);
     });
 
     it<%- databaseTypeMongodb ? '.skip' : ''%>('logs in with the login in another case', async () => {
         const loggedIn = await authService
-            .login({ username: testUserAuthenticated.login.toUpperCase(), password: testUserAuthenticated.password })
+            .authenticate(testUserAuthenticated.login.toUpperCase(), testUserAuthenticated.password)
             .then(() => true, () => false);
         expect(loggedIn).toEqual(true);
     });
@@ -316,7 +314,7 @@ describe('Account', () => {
 
         expect((await service.findByFields({ where: { login: testUserAuthenticated.login } }))?.resetKey).toBeFalsy();
         const loggedInWithNewPassword = await authService
-            .login({ username: testUserAuthenticated.login, password: 'resetPassword' })
+            .authenticate(testUserAuthenticated.login, 'resetPassword')
             .then(() => true, () => false);
         expect(loggedInWithNewPassword).toEqual(true);
     });

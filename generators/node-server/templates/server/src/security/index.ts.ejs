@@ -2,7 +2,7 @@ export * from './guards/auth.guard.ts';
 export * from './guards/roles.guard.ts';
 export * from './decorators/roles.decorator.ts';
 export * from './decorators/auth-user.decorator.ts';
-<%_ if (authenticationType === 'jwt' && generateBuiltInUserEntity) { _%>
+<%_ if (generateUserManagement) { _%>
 export * from './password-util.ts';
 <%_ } _%>
 export * from './role-type.ts';
