@@ -614,6 +614,10 @@ describe('SubGenerator node-server of nodejs JHipster blueprint', () => {
       result.assertFileContent('server/src/domain/book.entity.ts', 'enum: BookFormat })');
     });
 
+    it('should record no changelog without incrementalChangelog', () => {
+      expect(result.fs.readJSON(join(result.cwd, '.yo-rc.json'))).not.toHaveProperty('objects');
+    });
+
     it('should accept a missing value of an optional validated field', () => {
       expect(result.getSnapshot('**/book.dto.ts')).toMatchSnapshot();
     });

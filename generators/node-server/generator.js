@@ -3,11 +3,7 @@ import { readFile } from 'node:fs/promises';
 import { TEMPLATES_WEBAPP_SOURCES_DIR } from 'generator-jhipster';
 import BaseApplicationGenerator from 'generator-jhipster/generators/base-application';
 import { createNeedleCallback } from 'generator-jhipster/generators/base-core/support';
-import {
-  CHANGELOGS_CUSTOM_OBJECT,
-  getEntityChangelogs,
-  isNewEntityChangelog,
-} from 'generator-jhipster/generators/base-entity-changes/generators/changelogs/support';
+import { getEntityChangelogs, isNewEntityChangelog } from 'generator-jhipster/generators/base-entity-changes/generators/changelogs/support';
 import { createKeyStore } from 'generator-jhipster/generators/java/support';
 import { prepareField as prepareServerField } from 'generator-jhipster/generators/server/support';
 import { createBase64Secret, createReproducibleBase64Secret, mutateData } from 'generator-jhipster/utils';
@@ -131,20 +127,12 @@ const databaseDevDrivers = {
 
 /**
  * The generator of the server. With incrementalChangelog, the migrations of the entities are the ones of their changelogs
- * JHipster records (the changelogs custom object), each written by the generation recording it.
+ * JHipster records (getEntityChangelogs), each written by the generation recording it.
  */
 export default class extends BaseApplicationGenerator {
   oldNodejsVersion;
   existingNodejsVersion;
   nodejsPackageJson;
-  constructor(args, options, features) {
-    super(args, options, { ...features, customObjects: [{ name: CHANGELOGS_CUSTOM_OBJECT }] });
-  }
-
-  /** The changelogs of the entities with incrementalChangelog, the ones of this generation recorded. */
-  get changelogs() {
-    return getEntityChangelogs(this);
-  }
 
   async beforeQueue() {
     await this.dependsOnJHipster('jhipster-nodejs:node-server:bootstrap');
@@ -429,7 +417,7 @@ export default class extends BaseApplicationGenerator {
           application.nodejsUserAuthorityJoinTable = userAuthorityJoinTable(application);
         }
         // With incrementalChangelog, the changelogs of the entities JHipster records, the ones of this generation too.
-        const changelogs = getEntityChangelogs(this);
+        const changelogs = application.incrementalChangelog ? getEntityChangelogs(this) : [];
         for (const entity of entities.filter(entity => !entity.skipServer && !entity.builtIn)) {
           const entityChangelogs = changelogsSinceCreation(changelogs, entity.name);
           const [creation] = entityChangelogs;
