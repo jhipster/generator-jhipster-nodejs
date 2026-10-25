@@ -54,6 +54,7 @@
     "@types/passport": "1.0.17",
     "@types/passport-jwt": "4.0.1",
     "@types/passport-oauth2": "1.8.0",
+    "@types/qs": "6.15.1",
     "@types/superagent": "8.1.11",
     "@types/supertest": "7.2.1",
     "@vitest/coverage-v8": "5.0.5",

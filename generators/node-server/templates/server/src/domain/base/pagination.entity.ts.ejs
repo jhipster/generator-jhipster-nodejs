@@ -1,6 +1,6 @@
 import { BadRequestException } from '@nestjs/common';
 import { Type, Expose as JsonProperty } from 'class-transformer';
-import { ParsedQs } from 'qs';
+import type { ParsedQs } from 'qs';
 
 export type SortDirection = 'ASC' | 'DESC';
 
