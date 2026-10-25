@@ -42,6 +42,9 @@ entity DemetraUser {
     // profileimage ImageBlob
 }
 
+// The roles of the entity, like @PreAuthorize of JHipster Spring Boot: ROLE_USER writes, ROLE_ADMIN reads too.
+@EntityAuthority(ROLE_USER)
+@EntityReadAuthority(ROLE_ADMIN)
 entity SingleCourse {
     title String,
     // description String pattern(/^[A-Z]$/),
