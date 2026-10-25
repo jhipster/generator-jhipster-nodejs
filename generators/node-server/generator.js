@@ -6,6 +6,7 @@ import { createNeedleCallback } from 'generator-jhipster/generators/base-core/su
 import {
   CHANGELOGS_CUSTOM_OBJECT,
   getEntityChangelogs,
+  isNewEntityChangelog,
 } from 'generator-jhipster/generators/base-entity-changes/generators/changelogs/support';
 import { createKeyStore } from 'generator-jhipster/generators/java/support';
 import { prepareField as prepareServerField } from 'generator-jhipster/generators/server/support';
@@ -25,12 +26,10 @@ import {
   columnTransformer,
   constraintsMigration,
   contentTypeColumnOptions,
-  createdChangelogDate,
   entityMigration,
   fieldColumnOptions,
   fieldColumnTypeImports,
   fieldTypeValidators,
-  formerChangelogs,
   getDatabasePort,
   getNodeDevDatabaseType,
   getNodeDevSqliteDatabase,
@@ -138,9 +137,6 @@ export default class extends BaseApplicationGenerator {
   oldNodejsVersion;
   existingNodejsVersion;
   nodejsPackageJson;
-  /** Whether a changelog is of a former generation (see formerChangelogs). */
-  #formerChangelogs;
-
   constructor(args, options, features) {
     super(args, options, { ...features, customObjects: [{ name: CHANGELOGS_CUSTOM_OBJECT }] });
   }
@@ -148,11 +144,6 @@ export default class extends BaseApplicationGenerator {
   /** The changelogs of the entities with incrementalChangelog, the ones of this generation recorded. */
   get changelogs() {
     return getEntityChangelogs(this);
-  }
-
-  /** Whether a changelog is one of this generation, whose migrations it writes. */
-  #isWritten(changelog) {
-    return !this.#formerChangelogs(changelog);
   }
 
   async beforeQueue() {
@@ -163,7 +154,6 @@ export default class extends BaseApplicationGenerator {
   get [BaseApplicationGenerator.INITIALIZING]() {
     return this.asInitializingTaskGroup({
       async initializing() {
-        this.#formerChangelogs = formerChangelogs(this);
         this.existingNodejsVersion = this.blueprintConfig.nodejsVersion;
         this.oldNodejsVersion = this.existingNodejsVersion ?? '3.0.0';
         this.nodejsPackageJson = JSON.parse((await readFile(this.templatePath('../../../package.json'), 'utf-8')).toString());
@@ -443,7 +433,7 @@ export default class extends BaseApplicationGenerator {
         for (const entity of entities.filter(entity => !entity.skipServer && !entity.builtIn)) {
           const entityChangelogs = changelogsSinceCreation(changelogs, entity.name);
           const [creation] = entityChangelogs;
-          if (!creation || (entityChangelogs.length === 1 && this.#isWritten(creation))) {
+          if (!creation || (entityChangelogs.length === 1 && isNewEntityChangelog(this, creation))) {
             // A new entity, or without incrementalChangelog: its migrations are the ones of the entity as it is.
             entity.nodejsMigration = entityMigration(entity);
             entity.nodejsConstraintsMigration = constraintsMigration(entity);
@@ -459,12 +449,12 @@ export default class extends BaseApplicationGenerator {
             });
           const createdEntity = {
             ...entity,
-            changelogDate: createdChangelogDate(creation),
+            changelogDate: creation.changelogDate,
             relationships: (creation.entity.relationships ?? []).map(prepareRelationship),
           };
           entity.nodejsMigrations = [migrationOf('AddedEntity', createdEntity), constraintsMigration(createdEntity)].filter(Boolean);
           entityChangelogs.slice(1).forEach((changelog, index) => {
-            const written = this.#isWritten(changelog);
+            const written = isNewEntityChangelog(this, changelog);
             const changes = changelogChanges(entityChangelogs[index].entity, changelog);
             // The added fields and relationships of a changelog of this generation are the ones of the entity, prepared.
             const added = (items, names, key) => items.filter(item => names.includes(item[key]));

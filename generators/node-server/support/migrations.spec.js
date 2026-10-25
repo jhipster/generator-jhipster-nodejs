@@ -7,7 +7,6 @@ import {
   changelogDateToTimestamp,
   changelogsSinceCreation,
   constraintsMigration,
-  createdChangelogDate,
   entityMigration,
   fieldColumns,
   previousField,
@@ -237,18 +236,6 @@ describe('changelogsSinceCreation', () => {
 
   it('should be none without changelogs, without incrementalChangelog', () => {
     expect(changelogsSinceCreation([], 'Region')).toEqual([]);
-  });
-});
-
-describe('createdChangelogDate', () => {
-  it('should give the changelogDate of the entity a creation creates, the one of its AddedEntity migration', () => {
-    expect(
-      createdChangelogDate({ changelogDate: '20200105000000', entity: { annotations: { incrementalChangelogDate: '20200103000000' } } }),
-    ).toBe('20200103000000');
-    expect(createdChangelogDate({ changelogDate: '20200105000000', entity: { annotations: { changelogDate: '20200101000000' } } })).toBe(
-      '20200101000000',
-    );
-    expect(createdChangelogDate({ changelogDate: '20200105000000', entity: {} })).toBe('20200105000000');
   });
 });
 

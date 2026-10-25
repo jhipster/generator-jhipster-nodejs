@@ -1,6 +1,3 @@
-import { existsSync } from 'node:fs';
-
-import { getEntitiesFromDir } from 'generator-jhipster/generators/base-application/support';
 import { getJoinTableName } from 'generator-jhipster/generators/server/support';
 
 import { bigDecimalPrecision, columnRules } from './columns.js';
@@ -226,30 +223,6 @@ export const changelogsSinceCreation = (changelogs, entityName) => {
   return creation === -1
     ? []
     : entityChangelogs.slice(creation).filter((changelog, index) => index === 0 || changelog.operation === 'update');
-};
-
-/** The changelogDate of the entity a creation changelog creates, the one of its AddedEntity migration. */
-export const createdChangelogDate = ({ entity, changelogDate }) =>
-  entity.annotations?.incrementalChangelogDate ?? entity.annotations?.changelogDate ?? changelogDate;
-
-/** The name of a changelog object of JHipster. */
-const changelogName = ({ changelogDate, entityName }) => `${changelogDate}_${entityName}`;
-
-/**
- * Whether a changelog is of a former generation, read before the generation records its own: a changelog recorded then,
- * or, in a project without changelogs, the creation of an entity its entity files on the disk declare, which JHipster
- * records first (see getEntityChangelogs of JHipster).
- * @param {any} generator the generator
- * @returns {(changelog: any) => boolean}
- */
-export const formerChangelogs = generator => {
-  const recorded = new Set(generator.findObjects('changelog').map(changelogName));
-  const formerEntities =
-    recorded.size > 0
-      ? []
-      : getEntitiesFromDir(generator.getEntitiesConfigPath()).filter(name => existsSync(generator.getEntityConfigPath(name)));
-  return changelog =>
-    recorded.has(changelogName(changelog)) || (changelog.operation === 'create' && formerEntities.includes(changelog.entityName));
 };
 
 /** Whether two relationships of entity files are the same, but their options: the type, the entity and the side. */
