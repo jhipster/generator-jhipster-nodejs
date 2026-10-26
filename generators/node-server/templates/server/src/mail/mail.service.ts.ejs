@@ -1,0 +1,120 @@
+import { existsSync, readFileSync } from 'fs';
+import * as path from 'path';
+
+import { Injectable, Logger } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { MailerService } from '@nestjs-modules/mailer';
+
+import { <%= user.dtoClass %> } from '../users/dto/user.dto.ts';
+
+/** A language tag of JHipster, like pt-br: the langKey of a user, which the user can change, read as a file name. */
+const LANGUAGE_TAG = /^[a-zA-Z0-9-]+$/;
+
+const i18nFolder = path.join(import.meta.dirname, '../i18n');
+
+/** The messages of a .properties file, like the ones of the MessageSource of Spring. */
+export function parseProperties(content: string): Record<string, string> {
+  const messages: Record<string, string> = {};
+  for (const line of content.split(/\r?\n/)) {
+    const trimmed = line.trim();
+    if (!trimmed || trimmed.startsWith('#') || trimmed.startsWith('!')) {
+      continue;
+    }
+    const separator = trimmed.search(/[=:]/);
+    if (separator > 0) {
+      messages[trimmed.substring(0, separator).trim()] = trimmed
+        .substring(separator + 1)
+        .trim()
+        .replace(/\\u([0-9a-fA-F]{4})/g, (_, code: string) => String.fromCharCode(parseInt(code, 16)))
+        .replace(/\\(.)/g, '$1');
+    }
+  }
+  return messages;
+}
+
+/**
+ * Sends the account mails, like the MailService of JHipster Spring Boot: the activation mail of a registered user, the
+ * creation mail of a user created by an administrator and the password reset mail, in the language of the user (its
+ * langKey), with the SMTP server of the mail properties. Like the @Async methods of Spring, a mail is sent without
+ * failing the request: a mail that could not be sent is logged.
+ */
+@Injectable()
+export class MailService {
+  logger = new Logger('MailService');
+
+  private readonly defaultMessages: Record<string, string>;
+
+  private readonly languageMessages = new Map<string, Record<string, string>>();
+
+  constructor(
+    private readonly mailerService: MailerService,
+    private readonly configService: ConfigService,
+  ) {
+    this.defaultMessages = parseProperties(readFileSync(path.join(i18nFolder, 'messages.properties'), 'utf8'));
+  }
+
+  async sendActivationEmail(user: <%= user.dtoClass %>): Promise<void> {
+    this.logger.debug(`Sending activation email to '${user.email}'`);
+    await this.sendEmailFromTemplate(user, 'activationEmail', 'email.activation.title');
+  }
+
+  async sendCreationEmail(user: <%= user.dtoClass %>): Promise<void> {
+    this.logger.debug(`Sending creation email to '${user.email}'`);
+    await this.sendEmailFromTemplate(user, 'creationEmail', 'email.activation.title');
+  }
+
+  async sendPasswordResetMail(user: <%= user.dtoClass %>): Promise<void> {
+    this.logger.debug(`Sending password reset email to '${user.email}'`);
+    await this.sendEmailFromTemplate(user, 'passwordResetEmail', 'email.reset.title');
+  }
+
+  /**
+   * The mail of a template of templates/mail, like the sendEmailFromTemplate of JHipster Spring Boot: rendered with the
+   * user, the base URL of the client and the messages of the language of the user (the message helper of the templates).
+   */
+  async sendEmailFromTemplate(user: <%= user.dtoClass %>, template: string, titleKey: string): Promise<void> {
+    if (!user.email) {
+      this.logger.debug(`Email doesn't exist for user '${user.login}'`);
+      return;
+    }
+    const messages = this.messages(user.langKey);
+    const message = (key: string, ...args: string[]): string =>
+      (messages[key] ?? this.defaultMessages[key] ?? key).replace(/\{(\d+)\}/g, (_, index: string) => args[Number(index)] ?? '');
+    const subject = message(titleKey);
+    this.logger.debug(`Send email to '${user.email}' with subject '${subject}'`);
+    try {
+      await this.mailerService.sendMail({
+        to: user.email,
+        subject,
+        template,
+        context: {
+          user,
+          baseUrl: this.configService.get<string>('jhipster.mail.base-url') ?? '',
+          langKey: user.langKey ?? 'en',
+          messages: { ...this.defaultMessages, ...messages },
+        },
+      });
+      this.logger.debug(`Sent email to User '${user.email}'`);
+    } catch (error) {
+      this.logger.warn(`Email could not be sent to user '${user.email}': ${(error as Error).message}`);
+    }
+  }
+
+  /**
+   * The messages of a language, from its file named by its language tag (messages_pt-br.properties, written by the
+   * server:i18n generator of JHipster), the default ones (messages.properties) for a language without its own file,
+   * like a language added after the generation of the application.
+   */
+  private messages(langKey?: string): Record<string, string> {
+    const fileName = langKey && LANGUAGE_TAG.test(langKey) ? `messages_${langKey}.properties` : undefined;
+    if (!fileName || !existsSync(path.join(i18nFolder, fileName))) {
+      return this.defaultMessages;
+    }
+    let messages = this.languageMessages.get(fileName);
+    if (!messages) {
+      messages = parseProperties(readFileSync(path.join(i18nFolder, fileName), 'utf8'));
+      this.languageMessages.set(fileName, messages);
+    }
+    return messages;
+  }
+}

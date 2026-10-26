@@ -1,0 +1,26 @@
+import { beforeEach, describe, expect, it } from 'vitest';
+import { ConfigService } from '@nestjs/config';
+import { Test, TestingModule } from '@nestjs/testing';
+import { activeProfiles } from '../config.ts';
+import { ManagementController } from './management.controller.ts';
+
+describe('Management Controller', () => {
+  let controller: ManagementController;
+
+  beforeEach(async () => {
+    const module: TestingModule = await Test.createTestingModule({
+      controllers: [ManagementController],
+      providers: [{ provide: ConfigService, useValue: new ConfigService({ info: { 'display-ribbon-on-profiles': 'dev,staging' } }) }],
+    }).compile();
+
+    controller = module.get<ManagementController>(ManagementController);
+  });
+
+  it('should be defined', () => {
+    expect(controller).toBeDefined();
+  });
+
+  it('info gives the active profiles and the profiles of the ribbon', () => {
+    expect(controller.info()).toEqual({ activeProfiles, 'display-ribbon-on-profiles': 'dev,staging' });
+  });
+});

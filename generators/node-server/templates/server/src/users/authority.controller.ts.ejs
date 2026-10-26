@@ -1,0 +1,85 @@
+import { Body, Controller, Delete, Get, NotFoundException, Param, Post as PostMethod, Req, UseGuards } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { <% if (authenticationTypeJwt) { %>ApiBearerAuth<% } else { %>ApiSecurity<% } %>, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { Repository } from 'typeorm';
+
+import { HeaderUtil } from '../common/header-util.ts';
+import { Request } from '../common/request.ts';
+import { Authority } from './authority.entity.ts';
+import { AuthGuard, Roles, RolesGuard } from '../auth/index.ts';
+import { AuthorityDTO } from './dto/authority.dto.ts';
+
+import { BadRequestAlertException } from '../common/errors/problem.exception.ts';
+
+const ENTITY_NAME = '<%= nodejsAuthorityAlertName %>';
+
+/**
+ * The authorities, like the AuthorityResource of JHipster Spring Boot: for the administrators, the profiles the user
+ * management assigns, and the authority pages of the client.
+ */
+@Controller('api/authorities')
+@UseGuards(AuthGuard, RolesGuard)
+@Roles(<%- authority.nodejsWriteRoles %>)
+<%_ if (authenticationTypeJwt) { _%>
+@ApiBearerAuth()
+<%_ } else { _%>
+@ApiSecurity({})
+<%_ } _%>
+@ApiTags('authority-resource')
+export class AuthorityController {
+  constructor(
+    @InjectRepository(Authority) private readonly authorityRepository: Repository<Authority>,
+    private readonly headerUtil: HeaderUtil,
+  ) {}
+
+  @Get()
+<%_ if (authority.nodejsReadOnlyRoles) { _%>
+  // The roles of @EntityReadAuthority read the authorities too, like JHipster Spring Boot.
+  @Roles(<%- authority.nodejsReadRoles %>)
+<%_ } _%>
+  @ApiOperation({ summary: 'Get all the authorities' })
+  @ApiResponse({ status: 200, type: AuthorityDTO, isArray: true })
+  async getAll(): Promise<AuthorityDTO[]> {
+    const authorities = await this.authorityRepository.find();
+    return authorities.map(({ name }) => ({ name }));
+  }
+
+  @Get('/:name')
+<%_ if (authority.nodejsReadOnlyRoles) { _%>
+  // The roles of @EntityReadAuthority read the authorities too, like JHipster Spring Boot.
+  @Roles(<%- authority.nodejsReadRoles %>)
+<%_ } _%>
+  @ApiOperation({ summary: 'Get an authority' })
+  @ApiResponse({ status: 200, type: AuthorityDTO })
+  @ApiResponse({ status: 404, description: 'No authority of that name.' })
+  async getOne(@Param('name') name: string): Promise<AuthorityDTO> {
+    const authority = await this.authorityRepository.findOne({ where: { name } });
+    if (!authority) {
+      throw new NotFoundException();
+    }
+    return { name: authority.name };
+  }
+
+  @PostMethod()
+  @ApiOperation({ summary: 'Create an authority' })
+  @ApiResponse({ status: 201, type: AuthorityDTO })
+  @ApiResponse({ status: 400, description: 'The authority exists already.' })
+  async create(@Req() req: Request, @Body() authorityDTO: AuthorityDTO): Promise<AuthorityDTO> {
+    // Like JHipster Spring Boot, the name is the id of an authority: an existing one is not a new one.
+    if (await this.authorityRepository.findOne({ where: { name: authorityDTO.name } })) {
+      throw new BadRequestAlertException('A new authority cannot already have an ID', ENTITY_NAME, 'idexists');
+    }
+    await this.authorityRepository.save(this.authorityRepository.create({ name: authorityDTO.name }));
+    this.headerUtil.addEntityCreatedHeaders(req.res, ENTITY_NAME, authorityDTO.name);
+    req.res.location(`/api/authorities/${encodeURIComponent(authorityDTO.name)}`);
+    return { name: authorityDTO.name };
+  }
+
+  @Delete('/:name')
+  @ApiOperation({ summary: 'Delete an authority' })
+  @ApiResponse({ status: 204, description: 'The authority has been deleted.' })
+  async delete(@Req() req: Request, @Param('name') name: string): Promise<void> {
+    this.headerUtil.addEntityDeletedHeaders(req.res, ENTITY_NAME, name);
+    await this.authorityRepository.delete({ name });
+  }
+}

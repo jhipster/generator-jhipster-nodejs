@@ -26,6 +26,7 @@ import {
   getNodeDevSqliteDatabase,
   hasRuntimeColumnTypes,
   mutateEntityAuthorities,
+  mutateEntityPaths,
   primaryKeyColumn,
   serverEnumInfo,
   thymeleafMailToHandlebars,
@@ -85,7 +86,7 @@ const prodDatabaseColumnTypes = {
   mssql: { Boolean: undefined, 'byte[]': 'text', TextBlob: 'text' },
   // Oracle has neither boolean nor bigint (integer is NUMBER(38)), nor a time type.
   oracle: { Boolean: undefined, Long: 'integer', Duration: 'integer', LocalTime: 'varchar', TextBlob: 'clob' },
-  // A text, a longtext on MySQL and MariaDB at runtime like the blobs a longblob (src/domain/base/column-types.ts).
+  // A text, a longtext on MySQL and MariaDB at runtime like the blobs a longblob (src/common/database/column-types.ts).
   mysql: { TextBlob: 'text' },
   mariadb: { TextBlob: 'text' },
 };
@@ -267,12 +268,12 @@ export default class extends BaseApplicationGenerator {
         });
       },
       async source({ source }) {
-        source.addEntityToNodeConfig = ({ entityFileName, persistClass }) =>
+        source.addEntityToNodeConfig = ({ nodejsEntityPath, persistClass }) =>
           this.editFile(
             `${SERVER_NODEJS_SRC_DIR}/src/orm.config.ts`,
             createNeedleCallback({
               needle: 'add-entity-to-ormconfig-imports',
-              contentToAdd: `import { ${persistClass} } from './domain/${entityFileName}.entity.ts';`,
+              contentToAdd: `import { ${persistClass} } from './${nodejsEntityPath}';`,
             }),
             createNeedleCallback({
               needle: 'add-entity-to-ormconfig-entities',
@@ -291,12 +292,12 @@ export default class extends BaseApplicationGenerator {
               contentToAdd: `${className},`,
             }),
           );
-        source.addEntityToAppModule = ({ entityClass, entityFileName }) =>
+        source.addEntityToAppModule = ({ entityClass, nodejsModulePath }) =>
           this.editFile(
             `${SERVER_NODEJS_SRC_DIR}/src/app.module.ts`,
             createNeedleCallback({
               needle: 'jhipster-needle-add-entity-module-to-main-import',
-              contentToAdd: `import { ${entityClass}Module } from './module/${entityFileName}.module.ts';`,
+              contentToAdd: `import { ${entityClass}Module } from './${nodejsModulePath}';`,
             }),
             createNeedleCallback({
               needle: 'jhipster-needle-add-entity-module-to-main',
@@ -330,6 +331,10 @@ export default class extends BaseApplicationGenerator {
           nodejsMappedByRelationships: ({ relationships }, { delayMarker }) =>
             delayMarker ?? relationships.filter(relationship => !relationship.persistableRelationship),
         });
+      },
+      prepareEntityPaths({ entityDefaults }) {
+        // The files of the entity in its feature module (support/entity-paths.js).
+        entityDefaults(mutateEntityPaths);
       },
       prepareEntityAuthorities({ entityDefaults }) {
         // The roles of the endpoints of the entity, like the @PreAuthorize of JHipster Spring Boot (support/entity-authorities.js).
@@ -451,6 +456,42 @@ export default class extends BaseApplicationGenerator {
               'server/webpack.server.prod.config.js',
               // The Nest CLI builds and starts the server, and copies the configuration files (assets of nest-cli.json).
               'server/scripts/copy-resources.ts',
+              // The files of 4.2.0 moved to the feature modules (auth, users, management, common), their specs next to them.
+              'server/src/domain/authority.entity.ts',
+              'server/src/domain/user.entity.ts',
+              'server/src/domain/base/base.entity.ts',
+              'server/src/domain/base/pagination.entity.ts',
+              'server/src/domain/base/pagination.entity.spec.ts',
+              'server/src/module/auth.module.ts',
+              'server/src/module/user.module.ts',
+              'server/src/security/decorators/auth-user.decorator.ts',
+              'server/src/security/decorators/roles.decorator.ts',
+              'server/src/security/guards/auth.guard.ts',
+              'server/src/security/guards/roles.guard.ts',
+              'server/src/security/index.ts',
+              'server/src/security/oauth2.authorities.ts',
+              'server/src/security/oauth2.config.ts',
+              'server/src/security/passport.jwt.strategy.ts',
+              'server/src/security/passport.oauth2.strategy.ts',
+              'server/src/security/password-util.ts',
+              'server/src/security/payload.interface.ts',
+              'server/src/security/role-type.ts',
+              'server/src/service/auth.service.ts',
+              'server/src/service/user.service.ts',
+              'server/src/service/dto/base.dto.ts',
+              'server/src/service/dto/password-change.dto.ts',
+              'server/src/service/dto/user-login.dto.ts',
+              'server/src/service/dto/user.dto.ts',
+              'server/src/service/mapper/user.mapper.ts',
+              'server/src/web/rest/account.controller.ts',
+              'server/src/web/rest/management.controller.ts',
+              'server/src/web/rest/public.user.controller.ts',
+              'server/src/web/rest/user.controller.ts',
+              'server/src/web/rest/user.jwt.controller.ts',
+              'server/src/web/rest/user.oauth2.controller.ts',
+              'server/test/admin/management.controller.spec.ts',
+              'server/test/config.spec.ts',
+              'server/test/security/oauth2.authorities.spec.ts',
             ],
           });
         }
@@ -501,6 +542,18 @@ export default class extends BaseApplicationGenerator {
         if (control.existingProject) {
           await control.cleanupFiles(this.oldNodejsVersion, {
             '3.0.1': entities.filter(e => !e.skipServer).map(e => `server/src/repository/${e.entityFileName}.repository.ts`),
+            // The files of the entities, of 4.2.0, moved to their feature module (src/entities/<entity>).
+            '4.3.1': entities
+              .filter(entity => !entity.skipServer && !entity.builtIn)
+              .flatMap(({ entityFileName, fields }) => [
+                `server/src/domain/${entityFileName}.entity.ts`,
+                `server/src/module/${entityFileName}.module.ts`,
+                `server/src/service/${entityFileName}.service.ts`,
+                `server/src/service/dto/${entityFileName}.dto.ts`,
+                `server/src/service/mapper/${entityFileName}.mapper.ts`,
+                `server/src/web/rest/${entityFileName}.controller.ts`,
+                ...fields.filter(field => field.fieldIsEnum).map(field => `server/src/domain/enumeration/${field.enumFileName}.ts`),
+              ]),
           });
         }
       },
@@ -515,7 +568,7 @@ export default class extends BaseApplicationGenerator {
             context: { ...application, ...entity },
           });
 
-          const webappEnumerationsDir = `${SERVER_NODEJS_SRC_DIR}/src/domain/enumeration/`;
+          const webappEnumerationsDir = `${SERVER_NODEJS_SRC_DIR}/src/entities/enumeration/`;
           for (const field of entity.fields.filter(field => field.fieldIsEnum)) {
             const enumInfo = serverEnumInfo(field, entity.clientRootFolder);
             await this.writeFile(
@@ -601,12 +654,12 @@ export default class extends BaseApplicationGenerator {
     return this.asPostWritingEntitiesTaskGroup({
       async postWritingEntitiesTemplateTask({ entities, source }) {
         for (const entity of entities.filter(entity => !entity.skipServer)) {
-          const { entityFileName, persistClass, entityClass } = entity;
+          const { nodejsEntityPath, nodejsModulePath, persistClass, entityClass } = entity;
           if (!entity.builtInUserManagement) {
-            source.addEntityToNodeConfig({ entityFileName, persistClass });
+            source.addEntityToNodeConfig({ nodejsEntityPath, persistClass });
           }
           if (!entity.builtIn) {
-            source.addEntityToAppModule({ entityFileName, entityClass });
+            source.addEntityToAppModule({ nodejsModulePath, entityClass });
           }
           for (const migration of [entity.nodejsMigration, entity.nodejsConstraintsMigration].filter(Boolean)) {
             source.addMigrationToNodeConfig(migration);

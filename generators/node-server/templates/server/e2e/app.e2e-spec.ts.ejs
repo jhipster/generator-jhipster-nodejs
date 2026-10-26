@@ -8,14 +8,14 @@ import { INestApplication } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 <%_ } _%>
 <%_ if (authenticationType === 'jwt' && generateUserManagement) { _%>
-import { UserLoginDTO } from '../src/service/dto/user-login.dto.ts';
+import { UserLoginDTO } from '../src/auth/dto/user-login.dto.ts';
 <%_ } else if (authenticationType === 'jwt') { _%>
 import { ConfigService } from '@nestjs/config';
-import { JWT_ALGORITHM, jwtSecretKey } from '../src/security/jwt.config.ts';
+import { JWT_ALGORITHM, jwtSecretKey } from '../src/auth/jwt.config.ts';
 <%_ } else if (authenticationType === 'oauth2' && generateBuiltInUserEntity) { _%>
-import { oidcUserOfClaims } from '../src/security/oauth2.authorities.ts';
-import { AuthService } from '../src/service/auth.service.ts';
-import { UserService } from '../src/service/user.service.ts';
+import { oidcUserOfClaims } from '../src/auth/oauth2.authorities.ts';
+import { AuthService } from '../src/auth/auth.service.ts';
+import { UserService } from '../src/users/user.service.ts';
 <%_ } _%>
 
 describe('App', () => {

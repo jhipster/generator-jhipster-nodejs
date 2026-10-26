@@ -10,10 +10,10 @@ import { setupSwagger } from './swagger.ts';
 import { <% if (serviceDiscoveryEureka) { %>activeProfiles, <% } %>config, isProfileActive } from './config.ts';
 import { httpsOptions } from './tls.ts';
 <%_ if (serviceDiscoveryEureka) { _%>
-import { EurekaService } from './service/eureka.service.ts';
+import { EurekaService } from './registry/eureka.service.ts';
 <%_ } _%>
 <%_ if (serviceDiscoveryConsul) { _%>
-import { ConsulService } from './service/consul.service.ts';
+import { ConsulService } from './registry/consul.service.ts';
 <%_ } _%>
 import { Logger } from '@nestjs/common';
 import { LevelsConsoleLogger, loggerLevels } from './common/logging.ts';

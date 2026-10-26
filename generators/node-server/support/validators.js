@@ -1,4 +1,4 @@
-/** An ISO-8601 duration, like Duration.parse of Java: the pattern of parseDuration (src/domain/base/column-transformers.ts). */
+/** An ISO-8601 duration, like Duration.parse of Java: the pattern of parseDuration (src/common/database/column-transformers.ts). */
 const ISO_DURATION = String.raw`/^([-+]?)P(?:([-+]?\d+)D)?(?:T(?:([-+]?\d+)H)?(?:([-+]?\d+)M)?(?:([-+]?)(\d+)(?:[.,](\d{0,9}))?S)?)?$/i`;
 
 /**

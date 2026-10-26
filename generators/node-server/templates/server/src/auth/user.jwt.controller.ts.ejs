@@ -1,0 +1,26 @@
+import { Body, Controller, Logger, Post, Res, Req, HttpCode } from '@nestjs/common';
+import { Response, Request } from 'express';
+import { UserLoginDTO } from './dto/user-login.dto.ts';
+import { AuthService } from './auth.service.ts';
+import { ApiTags, ApiResponse, ApiOperation } from '@nestjs/swagger';
+
+@Controller('api')
+@ApiTags('user-jwt-controller')
+export class UserJWTController {
+  logger = new Logger('UserJWTController');
+
+  constructor(private readonly authService: AuthService) {}
+
+  @Post('/authenticate')
+  @HttpCode(200)
+  @ApiOperation({ summary: 'Authorization api retrieving token' })
+  @ApiResponse({
+    status: 200,
+    description: 'Authorized',
+  })
+  async authorize(@Req() req: Request, @Body() user: UserLoginDTO, @Res() res: Response): Promise<any> {
+    const jwt = await this.authService.login(user);
+    res.setHeader('Authorization', 'Bearer ' + jwt.id_token);
+    return res.json(jwt);
+  }
+}

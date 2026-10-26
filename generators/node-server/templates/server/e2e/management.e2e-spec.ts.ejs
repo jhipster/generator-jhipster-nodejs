@@ -6,8 +6,8 @@ import { AppModule } from '../src/app.module.ts';
 import { configureApp } from '../src/app.config.ts';
 import { loggerLevels } from '../src/common/logging.ts';
 import { setupSwagger } from '../src/swagger.ts';
-import { AuthGuard } from '../src/security/guards/auth.guard.ts';
-import { RolesGuard } from '../src/security/guards/roles.guard.ts';
+import { AuthGuard } from '../src/auth/guards/auth.guard.ts';
+import { RolesGuard } from '../src/auth/guards/roles.guard.ts';
 
 describe('Management', () => {
     let app: INestApplication;

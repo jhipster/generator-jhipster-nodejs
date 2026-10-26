@@ -10,14 +10,14 @@ export const entityFiles = {
   server: [
     {
       path: SERVER_NODEJS_DIR,
-      renameTo: (data, filepath) => `${SERVER_NODEJS_DIR}${filepath.replace('_entityFileName_', data.entityFileName)}`,
+      renameTo: (data, filepath) => `${SERVER_NODEJS_DIR}${filepath.replaceAll('_entityFileName_', data.entityFileName)}`,
       templates: [
-        'src/domain/_entityFileName_.entity.ts',
-        'src/module/_entityFileName_.module.ts',
-        'src/service/_entityFileName_.service.ts',
-        'src/service/dto/_entityFileName_.dto.ts',
-        'src/service/mapper/_entityFileName_.mapper.ts',
-        'src/web/rest/_entityFileName_.controller.ts',
+        'src/entities/_entityFileName_/_entityFileName_.entity.ts',
+        'src/entities/_entityFileName_/_entityFileName_.module.ts',
+        'src/entities/_entityFileName_/_entityFileName_.service.ts',
+        'src/entities/_entityFileName_/dto/_entityFileName_.dto.ts',
+        'src/entities/_entityFileName_/_entityFileName_.mapper.ts',
+        'src/entities/_entityFileName_/_entityFileName_.controller.ts',
         'e2e/_entityFileName_.e2e-spec.ts',
         'e2e/_entityFileName_.database.e2e-spec.ts',
       ],

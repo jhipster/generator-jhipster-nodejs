@@ -4,13 +4,13 @@ import request from 'supertest';
 import { AppModule } from '../src/app.module.ts';
 import { configureApp } from '../src/app.config.ts';
 import { ExecutionContext, INestApplication } from '@nestjs/common';
-import { AuthGuard } from '../src/security/guards/auth.guard.ts';
-import { RolesGuard } from '../src/security/guards/roles.guard.ts';
-import { <%= user.dtoClass%> } from '../src/service/dto/user.dto.ts';
-import { UserService } from '../src/service/user.service.ts';
-import { PasswordChangeDTO } from '../src/service/dto/password-change.dto.ts';
-import { AuthService } from '../src/service/auth.service.ts';
-import { MailService } from '../src/service/mail.service.ts';
+import { AuthGuard } from '../src/auth/guards/auth.guard.ts';
+import { RolesGuard } from '../src/auth/guards/roles.guard.ts';
+import { <%= user.dtoClass%> } from '../src/users/dto/user.dto.ts';
+import { UserService } from '../src/users/user.service.ts';
+import { PasswordChangeDTO } from '../src/auth/dto/password-change.dto.ts';
+import { AuthService } from '../src/auth/auth.service.ts';
+import { MailService } from '../src/mail/mail.service.ts';
 
 describe('Account', () => {
     let app: INestApplication;

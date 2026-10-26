@@ -1,0 +1,27 @@
+import { Controller, Get, NotFoundException, UseGuards } from '@nestjs/common';
+import { ApiExcludeController, OpenAPIObject } from '@nestjs/swagger';
+
+import { AuthGuard, Roles, RolesGuard, RoleType } from '../auth/index.ts';
+import { ApiDocsService } from './api-docs.service.ts';
+
+/**
+ * The OpenAPI document of the api-docs profile at the path of springdoc, which the API page of the JHipster clients
+ * reads, for the administrators like JHipster Spring Boot.
+ */
+@ApiExcludeController()
+@Controller('v3')
+@UseGuards(AuthGuard, RolesGuard)
+@Roles(RoleType.ADMIN)
+export class ApiDocsController {
+  constructor(private readonly apiDocsService: ApiDocsService) {}
+
+  @Get('/api-docs')
+  apiDocs(): OpenAPIObject {
+    const document = this.apiDocsService.document;
+    if (!document) {
+      // Without the api-docs profile.
+      throw new NotFoundException();
+    }
+    return document;
+  }
+}

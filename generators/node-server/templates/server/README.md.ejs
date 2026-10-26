@@ -34,6 +34,29 @@
 $ npm install
 ```
 
+## Project structure
+
+The server is organized by feature, like the modules NestJS generates (`nest g resource`): each feature folder of `src`
+has its module, its controllers, its services, its entities and its DTOs, the unit tests (`*.spec.ts`) next to the code
+they test, the end-to-end tests in `e2e`.
+
+- `src/entities/<entity>/`: an entity of the JDL, its TypeORM entity, its DTO (`dto/`), its mapper, its service, its
+  REST controller and its module; `src/entities/enumeration/` the enumerations of the entities.
+<%_ if (generateBuiltInUserEntity) { _%>
+- `src/users/`: the users and their authorities, their administration API.
+<%_ } _%>
+- `src/auth/`: the authentication, its guards, its decorators, its strategies and the account API.
+<%_ if (generateUserManagement) { _%>
+- `src/mail/`: the emails of the user management.
+<%_ } _%>
+- `src/management/`: the management endpoints (health, metrics, loggers, configuration, API documentation).
+<%_ if (serviceDiscoveryAny) { _%>
+- `src/registry/`: the registration of the service in its registry.
+<%_ } _%>
+- `src/common/`: the helpers of every feature: the errors, the HTTP helpers, the base entity and the column types
+  (`database/`), the base DTO.
+- `src/config/`: the configuration of each profile; `src/migrations/`: the migrations of the database schema.
+
 ## TypeORM configuration
 
 ### The database of each profile

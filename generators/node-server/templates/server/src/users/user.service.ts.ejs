@@ -1,0 +1,156 @@
+import { Injectable<% if (generateUserManagement) { %>, Logger<% } %> } from '@nestjs/common';
+<%_ if (generateUserManagement) { _%>
+import { Cron } from '@nestjs/schedule';
+<%_ } _%>
+import { InjectRepository } from '@nestjs/typeorm';
+import { EntityMetadata, FindManyOptions, FindOneOptions, <% if (generateUserManagement && typeormRelationsSupport) { %>IsNull, LessThan, Not, <% } %>Repository } from 'typeorm';
+import { <%= user.persistClass %> } from './user.entity.ts';
+import { PublicUserDTO, <%= user.dtoClass%> } from './dto/user.dto.ts';
+import { UserMapper } from './user.mapper.ts';
+<%_ if (databaseTypeMongodb) { _%>
+import { documentOrder } from '../common/sortable-properties.ts';
+<%_ } _%>
+import { User } from './user.entity.ts';
+<%_ if (generateUserManagement) { _%>
+import { PasswordService } from '../auth/password.service.ts';
+<%_ } _%>
+
+<%_ if (typeormRelationsSupport) { _%>
+const relations = { authorities: true } as const;
+
+<%_ } _%>
+@Injectable()
+export class UserService {
+<%_ if (generateUserManagement) { _%>
+    logger = new Logger('UserService');
+
+<%_ } _%>
+    constructor(
+        @InjectRepository(User) private userRepository: Repository<User>,
+<%_ if (generateUserManagement) { _%>
+        private readonly passwordService: PasswordService,
+<%_ } _%>
+    ) {}
+
+    /** The TypeORM metadata of the user, the sort of the user lists is validated with. */
+    get metadata(): EntityMetadata {
+        return this.userRepository.metadata;
+    }
+
+    async findById(id: <%= user.primaryKey.tsType %>): Promise<<%= user.dtoClass%> | undefined> {
+        const result = await this.userRepository.findOneBy({ id });
+        return UserMapper.fromEntityToDTO(this.flatAuthorities(result))
+    }
+
+    async findByFields(options: FindOneOptions<<%= user.dtoClass%>>): Promise<<%= user.dtoClass%> | undefined> {
+        const result = await this.userRepository.findOne(
+<%_ if (typeormRelationsSupport) { _%>
+          { ...options, relations },
+<%_ } else { _%>
+          options,
+<%_ } _%>
+        );
+        return UserMapper.fromEntityToDTO(this.flatAuthorities(result));
+    }
+
+    async find(options: FindManyOptions<<%= user.dtoClass%>>): Promise<<%= user.dtoClass%> | undefined> {
+        const result = await this.userRepository.findOne(options);
+        return UserMapper.fromEntityToDTO(this.flatAuthorities(result));
+    }
+
+    async findAndCount(options: FindManyOptions<<%= user.dtoClass%>>): Promise<[<%= user.dtoClass%>[], number]> {
+        const resultList = await this.userRepository.findAndCount(
+<%_ if (typeormRelationsSupport) { _%>
+          { ...options, relations },
+<%_ } else { _%>
+          { ...options, order: documentOrder(this.metadata, options.order) },
+<%_ } _%>
+        );
+        const usersDTO: <%= user.dtoClass%>[] = [];
+        if (resultList && resultList[0]) {
+            resultList[0].forEach(user => usersDTO.push(UserMapper.fromEntityToDTO(this.flatAuthorities(user))));
+            resultList[0] = usersDTO;
+        }
+        return resultList;
+    }
+
+    /** The users of the public user list, like JHipster Spring Boot: the activated ones, by their id and login only. */
+    async findPublicUsers(options: FindManyOptions<<%= user.persistClass %>>): Promise<[PublicUserDTO[], number]> {
+        const [users, count] = await this.userRepository.findAndCount({
+          ...options,
+<%_ if (databaseTypeMongodb) { _%>
+          order: documentOrder(this.metadata, options.order),
+<%_ } _%>
+          where: { activated: true },
+        });
+        return [users.map(user => ({ id: user.<%- user.primaryKey.name %>!, login: user.login })), count];
+    }
+
+    async save(userDTO: <%= user.dtoClass%>, creator?: string<% if (generateUserManagement) { %>, updatePassword = false<% } %>): Promise<<%= user.dtoClass%>> {
+        const user = this.convertInAuthorities(UserMapper.fromDTOtoEntity(userDTO));
+<%_ if (generateUserManagement) { _%>
+        if (updatePassword) {
+            await this.passwordService.transform(user);
+        }
+<%_ } _%>
+        if (creator) {
+            if (!user.createdBy ) {
+                user.createdBy = creator;
+            }
+            user.lastModifiedBy = creator;
+        }
+        const result = await this.userRepository.save(user);
+        return UserMapper.fromEntityToDTO(this.flatAuthorities(result));
+    }
+
+    async update(userDTO: <%= user.dtoClass%>, updater?: string): Promise<<%= user.dtoClass%>> {
+        return this.save(userDTO, updater);
+    }
+
+    async delete(userDTO: <%= user.dtoClass%>): Promise<<%= user.dtoClass%> | undefined> {
+        const user = UserMapper.fromDTOtoEntity(userDTO);
+        const result = await this.userRepository.remove(user)
+        return UserMapper.fromEntityToDTO(result);
+    }
+
+<%_ if (generateUserManagement) { _%>
+    /**
+     * Like JHipster Spring Boot, removes every day, at 01:00, the users registered more than 3 days ago and still not
+     * activated: their login and mail are free again.
+     */
+    @Cron('0 0 1 * * *')
+    async removeNotActivatedUsers(): Promise<void> {
+        const registeredBefore = new Date(Date.now() - 3 * 24 * 60 * 60 * 1000);
+        const users = await this.userRepository.find({
+<%_ if (typeormRelationsSupport) { _%>
+            where: { activated: false, activationKey: Not(IsNull()), createdDate: LessThan(registeredBefore) },
+<%_ } else { _%>
+            // The operators of MongoDB: TypeORM does not translate its find operators (LessThan) for it.
+            where: { activated: false, activationKey: { $ne: null }, createdDate: { $lt: registeredBefore } } as any,
+<%_ } _%>
+        });
+        for (const user of users) {
+            this.logger.debug(`Deleting not activated user ${user.login}`);
+            await this.userRepository.remove(user);
+        }
+    }
+
+<%_ } _%>
+    private flatAuthorities<T extends <%= user.persistClass %> | null>(user: T): T {
+        if (user && user.authorities) {
+            const authorities: string[] = [];
+            user.authorities.forEach((authority: { name: string }) => authorities.push(authority.name));
+            user.authorities = authorities as any[];
+        }
+        return user;
+    }
+
+    private convertInAuthorities(user: any): <%= user.persistClass %> {
+        if (user && user.authorities) {
+            const authorities: any[] = [];
+            user.authorities.forEach((authority: string) => authorities.push({ name: authority }));
+            user.authorities = authorities;
+        }
+        return user;
+    }
+}

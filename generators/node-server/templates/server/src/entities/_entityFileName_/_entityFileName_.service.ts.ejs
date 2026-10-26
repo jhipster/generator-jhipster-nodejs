@@ -1,0 +1,123 @@
+import { Injectable, HttpException, HttpStatus, Logger } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { EntityMetadata, FindManyOptions, FindOneOptions, Repository } from 'typeorm';
+import { <%= entityClass %> } from './<%= entityFileName %>.entity.ts';
+import { <%= dtoClass %> }  from './dto/<%= entityFileName %>.dto.ts';
+import { <%= entityClass %>Mapper }  from './<%= entityFileName %>.mapper.ts';
+<%_ if (databaseType === 'mongodb') { _%>
+import { updatableProperties } from '../../common/updatable-properties.ts';
+<%_ if (databaseTypeMongodb) { _%>
+import { ObjectId } from 'mongodb';
+import { documentOrder } from '../../common/sortable-properties.ts';
+<%_ } _%>
+<%_ } _%>
+
+<%_
+// The relationships the entity stores (the persistableRelationships of JHipster), loaded with it.
+const eagerLoadRelations = persistableRelationships.map(relationship => relationship.propertyName);
+const pkType = primaryKey.tsType;
+_%>
+<%_ if (typeormRelationsSupport && eagerLoadRelations.length > 0) { _%>
+const relations = {
+  <%_ for (const rel of eagerLoadRelations) { _%>
+  '<%= rel %>': true,
+  <%_ } _%>
+} as const;
+
+<%_ } _%>
+@Injectable()
+export class <%= entityClass %>Service {
+    logger = new Logger('<%= entityClass %>Service');
+
+    constructor(@InjectRepository(<%= entityClass %>) private <%= entityInstance %>Repository: Repository<<%= entityClass %>>) {}
+
+    /** The TypeORM metadata of the entity, the sort of its lists is validated with. */
+    get metadata(): EntityMetadata {
+        return this.<%= entityInstance %>Repository.metadata;
+    }
+
+      async findById(id: <%= pkType %>): Promise<<%= dtoClass %> | undefined> {
+<%_ if (databaseTypeMongodb) { _%>
+        // An id that is not an ObjectId is the one of no document, like an unknown id of JHipster Spring Boot.
+        if (!ObjectId.isValid(id)) {
+          return undefined;
+        }
+<%_ } _%>
+        const result = await this.<%= entityInstance %>Repository.findOne({
+<%_ if (typeormRelationsSupport && eagerLoadRelations.length > 0) { _%>
+          relations,
+<%_ } _%>
+          where: { id },
+        });
+        return <%= entityClass %>Mapper.fromEntityToDTO(result);
+      }
+
+      async findByFields(options: FindOneOptions<<%= dtoClass %>>): Promise<<%= dtoClass %> | undefined> {
+        const result = await this.<%= entityInstance %>Repository.findOne(options);
+        return <%= entityClass %>Mapper.fromEntityToDTO(result);
+      }
+
+      async findAndCount(options: FindManyOptions<<%= dtoClass %>>): Promise<[<%= dtoClass %>[], number]> {
+        const resultList = await this.<%= entityInstance %>Repository.findAndCount(
+<%_ if (typeormRelationsSupport && eagerLoadRelations.length > 0) { _%>
+          { ...options, relations },
+<%_ } else if (databaseTypeMongodb) { _%>
+          { ...options, order: documentOrder(this.metadata, options.order) },
+<%_ } else { _%>
+          options,
+<%_ } _%>
+        );
+        const <%= entityInstance %>DTO: <%= dtoClass %>[] = [];
+        if (resultList && resultList[0]) {
+            resultList[0].forEach(<%= entityInstance %> => <%= entityInstance %>DTO.push(<%= entityClass %>Mapper.fromEntityToDTO(<%= entityInstance %>)));
+            resultList[0] = <%= entityInstance %>DTO;
+        }
+        return resultList;
+      }
+
+<%_ for (const relationship of nodejsMappedByRelationships.filter(relationship => relationship.relationshipOneToOne)) { _%>
+      /** The records without <%= relationship.relationshipName %>, like the findAllWhere<%- relationship.relationshipNameCapitalized %>IsNull of JHipster Spring Boot. */
+      async findAllWhere<%- relationship.relationshipNameCapitalized %>IsNull(): Promise<<%= dtoClass %>[]> {
+        const results = await this.<%= entityInstance %>Repository.find({ relations: { <%= relationship.propertyName %>: true } });
+        return results.filter(<%= entityInstance %> => !<%= entityInstance %>.<%= relationship.propertyName %>).map(<%= entityInstance %> => <%= entityClass %>Mapper.fromEntityToDTO(<%= entityInstance %>));
+      }
+
+<%_ } _%>
+      async save(<%= entityInstance %>DTO: <%= dtoClass %>, creator?: string): Promise<<%= dtoClass %>> {
+        const entity = <%= entityClass %>Mapper.fromDTOtoEntity(<%= entityInstance %>DTO);
+        if (creator) {
+            entity.createdBy = creator;
+            entity.lastModifiedBy = creator;
+        }
+        const result = await this.<%= entityInstance %>Repository.save(entity);
+        return <%= entityClass %>Mapper.fromEntityToDTO(result);
+      }
+
+      async update(<%= entityInstance %>DTO: <%= dtoClass %>, updater?: string): Promise<<%= dtoClass %>> {
+        const entity = <%= entityClass %>Mapper.fromDTOtoEntity(<%= entityInstance %>DTO);
+        if (updater) {
+            entity.lastModifiedBy = updater;
+        }
+      <%_ if (databaseType === 'mongodb') { _%>
+        await this.<%= entityInstance %>Repository.update(entity.id!, updatableProperties(this.<%= entityInstance %>Repository.metadata, entity));
+      <%_ } else { _%>
+        await this.<%= entityInstance %>Repository.save(entity);
+      <%_ } _%>
+        // The stored entity, with its relationships and audit fields, rather than the request.
+        const result = await this.findById(entity.id!);
+        if (!result) {
+          throw new HttpException('Entity not found', HttpStatus.NOT_FOUND);
+        }
+        return result;
+      }
+
+      async deleteById(id: <%= pkType %>): Promise<void> {
+<%_ if (databaseTypeMongodb) { _%>
+        if (!ObjectId.isValid(id)) {
+          return;
+        }
+<%_ } _%>
+        await this.<%= entityInstance %>Repository.delete(id);
+      }
+
+}

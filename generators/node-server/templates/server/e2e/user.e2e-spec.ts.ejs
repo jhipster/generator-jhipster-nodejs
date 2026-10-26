@@ -4,16 +4,16 @@ import request from 'supertest';
 import { AppModule } from '../src/app.module.ts';
 import { configureApp } from '../src/app.config.ts';
 import { INestApplication } from '@nestjs/common';
-import { AuthGuard } from '../src/security/guards/auth.guard.ts';
-import { RolesGuard } from '../src/security/guards/roles.guard.ts';
-import { <%= user.dtoClass%> } from '../src/service/dto/user.dto.ts';
-import { UserService } from '../src/service/user.service.ts';
-import { MailService } from '../src/service/mail.service.ts';
-import { comparePassword } from '../src/security/password-util.ts';
+import { AuthGuard } from '../src/auth/guards/auth.guard.ts';
+import { RolesGuard } from '../src/auth/guards/roles.guard.ts';
+import { <%= user.dtoClass%> } from '../src/users/dto/user.dto.ts';
+import { UserService } from '../src/users/user.service.ts';
+import { MailService } from '../src/mail/mail.service.ts';
+import { comparePassword } from '../src/auth/password-util.ts';
 <%_ if (databaseTypeMongodb) { _%>
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { User } from '../src/domain/user.entity.ts';
+import { User } from '../src/users/user.entity.ts';
 <%_ } _%>
 
 describe('User', () => {

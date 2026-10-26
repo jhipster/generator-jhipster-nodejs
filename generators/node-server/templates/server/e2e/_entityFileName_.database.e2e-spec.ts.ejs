@@ -25,10 +25,10 @@ import { DataSource } from 'typeorm';
 import { AppModule } from '../src/app.module.ts';
 import { configureApp } from '../src/app.config.ts';
 <%_ if (anyUserRelationship) { _%>
-import { <%= user.persistClass %> } from '../src/domain/user.entity.ts';
+import { <%= user.persistClass %> } from '../src/users/user.entity.ts';
 <%_ } _%>
-import { AuthGuard } from '../src/security/guards/auth.guard.ts';
-import { RolesGuard } from '../src/security/guards/roles.guard.ts';
+import { AuthGuard } from '../src/auth/guards/auth.guard.ts';
+import { RolesGuard } from '../src/auth/guards/roles.guard.ts';
 
 /**
  * <%= entityClass %> stored in the database and read back through the REST API, like the resource tests of JHipster
