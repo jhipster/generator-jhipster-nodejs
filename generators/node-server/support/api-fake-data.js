@@ -37,3 +37,18 @@ export const apiFakeEntity = entity => {
     .map(field => field.fieldName);
   return { values, approximateFields };
 };
+
+/**
+ * The mutations of a relationship of an entity: the values of the related record its relationship test of the database
+ * end-to-end tests posts, as the API exchanges them, drawn with a seed of that test. JHipster keeps the unique values of a
+ * field for the whole generation: the same seed in every test would draw them again, until a unique field is left without
+ * one (from the fifth relationship to the same entity).
+ */
+export const mutateRelatedValues = entity => ({
+  __override__: false,
+  nodejsRelatedValues: ({ otherEntity, propertyName }) => {
+    if (otherEntity.builtIn) return undefined;
+    otherEntity.resetFakerSeed(`nodejs-database-e2e-${entity.entityInstance}-${propertyName}`);
+    return apiFakeEntity(otherEntity).values;
+  },
+});

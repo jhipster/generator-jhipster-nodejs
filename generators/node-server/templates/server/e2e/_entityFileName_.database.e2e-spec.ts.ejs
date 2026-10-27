@@ -98,7 +98,7 @@ describe('<%= entityClass %> on the database', () => {
     const otherId = otherEntity.primaryKey.name;
     const collection = relationship.relationshipType === 'many-to-many';
     const property = relationship.propertyName;
-    const otherValues = otherEntity.builtIn ? undefined : (otherEntity.resetFakerSeed('nodejs-database-e2e'), otherEntity.nodejsApiFakeEntity().values);
+    const otherValues = relationship.nodejsRelatedValues;
     // A text field of the related record, sent changed with its id: the relationship does not store it (no cascade).
     const otherTextField = otherValues && otherEntity.fields.find(field => !field.id && field.fieldType === 'String' && field.fieldName in otherValues);
 _%>
@@ -161,7 +161,7 @@ _%>
     const collection = relationship.relationshipType !== 'one-to-one';
     const otherProperty = relationship.otherRelationship.propertyName;
     const otherCollection = relationship.relationshipType === 'many-to-many';
-    const otherValues = (otherEntity.resetFakerSeed('nodejs-database-e2e'), otherEntity.nodejsApiFakeEntity().values);
+    const otherValues = relationship.nodejsRelatedValues;
 _%>
 
   it('should not store the <%= property %> relationship from this side, like the mappedBy side of JHipster Spring Boot', async () => {
