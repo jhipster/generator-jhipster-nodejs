@@ -6,7 +6,7 @@
   "license": "MIT",
   "type": "module",
   "scripts": {
-    "clean": "rimraf dist ../target/db/",
+    "clean": "rimraf dist <%= relativeDir(nodeServerRootDir, temporaryDir) %>db/",
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\"",
     "sonar:scanner": "sonar-scanner",
@@ -57,6 +57,7 @@
 <%_ } _%>
     "@nestjs/passport": "<%- nodeServerDependencies['@nestjs/passport'] %>",
     "@nestjs/platform-express": "<%- nodeServerDependencies['@nestjs/platform-express'] %>",
+    "express": "<%- nodeServerDependencies['express'] %>",
 <%_ if (generateUserManagement) { _%>
     "@nestjs/schedule": "<%- nodeServerDependencies['@nestjs/schedule'] %>",
 <%_ } _%>

@@ -30,8 +30,13 @@ const jdlOptions = Object.fromEntries(
     .map(([name, { description, jdl, choices, scope }]) => [name, { description, jdl, choices, scope }]),
 );
 if (jdlOptions.devDatabaseType) {
-  // SQLite, the embedded development database of the former versions of the blueprint, is still accepted.
-  jdlOptions.devDatabaseType.choices = [...jdlOptions.devDatabaseType.choices, 'sqlite'];
+  // SQLite, the embedded development database of the NodeJS server, on disk or in memory, instead of the H2 databases of
+  // JHipster Spring Boot.
+  jdlOptions.devDatabaseType.choices = [
+    ...jdlOptions.devDatabaseType.choices.filter(choice => !choice.startsWith('h2')),
+    'sqlite',
+    'sqliteMemory',
+  ];
 }
 
 export default asCommand({

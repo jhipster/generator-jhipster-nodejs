@@ -33,6 +33,10 @@ describe('SubGenerator node-server of nodejs JHipster blueprint', () => {
       result.assertJsonFileContent('server/package.json', { dependencies: { '@nestjs/config': /./ } });
     });
 
+    it('should declare express, which the server imports: pnpm exposes no package a dependency brings', () => {
+      result.assertJsonFileContent('server/package.json', { dependencies: { express: /./, '@nestjs/platform-express': /./ } });
+    });
+
     it('should import the TypeScript files', () => {
       result.assertFileContent('server/tsconfig.json', '"rewriteRelativeImportExtensions": true');
       result.assertFileContent('server/src/main.ts', "import { AppModule } from './app.module.ts';");
@@ -274,6 +278,28 @@ describe('SubGenerator node-server of nodejs JHipster blueprint', () => {
       result.assertJsonFileContent('server/package.json', { dependencies: { mysql2: /./ } });
     });
   });
+
+  for (const [devDatabaseType, sqliteDevDatabaseType, database] of [
+    ['h2Disk', 'sqlite', '../tmp/db/sqlite-dev-db.sql'],
+    ['h2Memory', 'sqliteMemory', ':memory:'],
+  ]) {
+    describe(`with devDatabaseType ${devDatabaseType}`, () => {
+      beforeAll(async function () {
+        await helpers
+          .run(SUB_GENERATOR_NAMESPACE)
+          .withJHipsterConfig({ devDatabaseType, skipClient: true })
+          .withOptions({ ignoreNeedlesError: true })
+          .withJHipsterGenerators()
+          .withConfiguredBlueprint()
+          .withBlueprintConfig({});
+      });
+
+      it(`should migrate it to ${sqliteDevDatabaseType}`, () => {
+        result.assertJsonFileContent('.yo-rc.json', { 'generator-jhipster': { devDatabaseType: sqliteDevDatabaseType } });
+        result.assertFileContent('server/src/config/application-dev.yml', `name: '${database}'`);
+      });
+    });
+  }
 
   for (const [config, refused] of [
     [{ searchEngine: 'elasticsearch' }, 'searchEngine elasticsearch'],
