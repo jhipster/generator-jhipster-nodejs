@@ -1,42 +1,21 @@
-# Sample application generation
+# Samples
 
-To generate test applications, either automatically by the CI or locally on the developer machine, a number of pre-defined configurations have been prepared.
+The applications the CI generates and tests. Each samples group is a workflow of the CI, a module of the parent folder
+(`angular.js`, `react.js`, `vue.js`, `microservice.js`, `microservice-stack.js`) listing its samples:
 
-## Application configurations
+- a sample ending with `-jdl` is generated from a jdl file of this folder: its client framework, authentication type
+  and production database, in its name, are given as options to a template (`monolith-react-oauth2-jdl` generates
+  `monolith-client-auth-template-jdl.jdl` with `clientFramework react` and `authenticationType oauth2`);
+- a sample ending with `-dev` is a folder of this one with a `.yo-rc.json` file (`monolith-angular-jwt-i18n-dev`);
+- `microservice-oauth2-jdl.jdl` is generated as it is;
+- a `microservice-stack-` sample is a jdl file of `microservice-stack/`, a workspace of a JHipster Spring Boot gateway, a
+  NodeJS microservice and their docker-compose deployment, each application with the blueprints of its jdl.
 
-Those are described in `.yo-rc.json` files which is the descriptor file created by Yeoman to keep track of the choices selected while generating an application.
+Generate a sample by its name, or choose one from the prompts:
 
-- monolith-angular-jwt-18n-dev
-- monolith-react-oauth2-dev
+```bash
+./cli/cli.cjs generate-sample monolith-react-oauth2-jdl
+./cli/cli.cjs generate-sample
+```
 
-Instead, `-jdl` suffix folders contain `.jdl` files which is the model to create full app and entities:
-
-- monolith-client-auth-template-jdl
-- monolith-angular-auth-mongodb-template-jdl
-- monolith-client-auth-i18n-template-jdl
-- monolith-client-database-prod-template-jdl
-- microservice-oauth2-jdl
-
-Every `*template-jdl` app will be customized to generate **five applications** changing **client** (`react`, `vue` or `angular`) and **auth** (`jwt`, `oauth2` or `session`) :
-
-- monolith-react-jwt-jdl
-- monolith-react-oauth2-jdl
-- monolith-angular-jwt-jdl
-- monolith-angular-oauth2-jdl
-- monolith-angular-session-jdl
-- monolith-angular-oauth2-mongodb-jdl
-- monolith-angular-jwt-mongodb-jdl
-- monolith-react-jwt-i18n-jdl
-- monolith-react-oauth2-i18n-jdl
-- monolith-angular-jwt-i18n-jdl
-- monolith-angular-oauth2-i18n-jdl
-- monolith-vue-jwt-i18n-jdl
-- monolith-vue-oauth2-i18n-jdl
-
-In case of **database** (`mssql`, `mongodb`, `mysql` and `postgresql`) will be generated:
-
-- monolith-angular-mssql-prod-jdl
-- monolith-react-mysql-prod-jdl
-- monolith-angular-mongodb-prod-jdl
-- monolith-angular-postgresql-prod-jdl
-- monolith-vue-mongodb-prod-jdl
+`./cli/cli.cjs describe-samples` lists the samples, with what each one generates.
