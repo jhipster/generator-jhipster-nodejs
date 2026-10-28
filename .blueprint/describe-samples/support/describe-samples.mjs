@@ -17,21 +17,16 @@
  * limitations under the License.
  */
 import { existsSync, statSync } from 'node:fs';
-import { join } from 'node:path';
+import { basename, extname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import {
   convertToGitHubMatrix,
   describeGithubSamplesGroup,
   getGithubSamplesFolderGroup,
-  githubSamplesGroupOf,
+  getGithubSamplesGroupSync,
+  getGithubSamplesGroupsSync,
 } from 'generator-jhipster/ci';
-
-import angular from '../../generate-sample/templates/angular.js';
-import microserviceStack from '../../generate-sample/templates/microservice-stack.js';
-import microservice from '../../generate-sample/templates/microservice.js';
-import react from '../../generate-sample/templates/react.js';
-import vue from '../../generate-sample/templates/vue.js';
 
 export { formatSample, formatSamplesList } from 'generator-jhipster/ci';
 
@@ -47,20 +42,21 @@ const root = fileURLToPath(new URL('../../../', import.meta.url));
 export const samplesGroupFolder = fileURLToPath(new URL('../../generate-sample/templates/', import.meta.url));
 
 /**
- * The samples groups of the blueprint (the `<group>.js` modules), imported statically so they are read synchronously, like
- * the samples-groups of generator-jhipster, each sample tagged with its group like getGithubSamplesGroup does. A spec checks
- * it lists every group of the folder.
+ * Every described workflow: the samples groups of the blueprint, the `<group>.js` modules of the folder. Its folders, like
+ * `samples`, are the files of the samples, which no workflow runs.
+ */
+export const WORKFLOWS = getGithubSamplesGroupsSync(samplesGroupFolder, true)
+  .filter(name => extname(name))
+  .map(name => basename(name, extname(name)));
+
+/**
+ * The samples of each workflow, read synchronously by generator-jhipster (getGithubSamplesGroupSync, like the
+ * samples-groups of generator-jhipster), each sample tagged with its group.
  * @type {Record<string, Record<string, object>>}
  */
 export const samplesGroups = Object.fromEntries(
-  Object.entries({ angular, microservice, 'microservice-stack': microserviceStack, react, vue }).map(([group, samples]) => [
-    group,
-    githubSamplesGroupOf(group, samples),
-  ]),
+  WORKFLOWS.map(group => [group, getGithubSamplesGroupSync(samplesGroupFolder, group).samples]),
 );
-
-/** Every described workflow: the samples groups of the blueprint. */
-export const WORKFLOWS = Object.keys(samplesGroups);
 
 /**
  * The samples of a samples group: a workflow (a `<group>.js` module), else a folder of samples, like the `samples` folder

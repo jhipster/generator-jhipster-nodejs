@@ -19,7 +19,9 @@
 import { describe, expect, it } from 'vitest';
 import { readdirSync } from 'node:fs';
 
-import { WORKFLOWS, describeChangedSamples, samplesGroupFolder } from './describe-samples.mjs';
+import { getGithubSamplesGroup } from 'generator-jhipster/ci';
+
+import { WORKFLOWS, describeChangedSamples, samplesGroupFolder, samplesGroups } from './describe-samples.mjs';
 
 describe('describe-samples', () => {
   it('should list every samples group of the folder', () => {
@@ -27,6 +29,12 @@ describe('describe-samples', () => {
       .filter(file => file.endsWith('.js'))
       .map(file => file.replace(/\.js$/, ''));
     expect([...WORKFLOWS].sort()).toEqual(groups.sort());
+  });
+
+  it('should read the samples of every workflow synchronously, the ones getGithubSamplesGroup reads', async () => {
+    for (const group of WORKFLOWS) {
+      expect(samplesGroups[group]).toEqual((await getGithubSamplesGroup(samplesGroupFolder, group)).samples);
+    }
   });
 
   it('should give the samples of the matrix of every workflow for any change', async () => {
