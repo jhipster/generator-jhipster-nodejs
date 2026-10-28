@@ -100,17 +100,63 @@ describe('mutateRequiredRelationshipsEntity', () => {
     expect(city.nodejsRequiredRelationships.map(relationship => relationship.propertyName)).toEqual(['region', 'owner']);
     expect(city.nodejsRequiredRecords).toMatchObject({
       records: [
-        { name: 'requiredCountry', entityApiUrl: 'countrys', values: {}, body: '{}' },
-        { name: 'requiredRegion', entityApiUrl: 'regions', values: {}, body: '{ ...{}, country: { id: requiredCountry.id } }' },
-        { name: 'requiredUser', user: true, login: 'city-required-e2e', email: 'city-required-e2e@localhost' },
+        { name: 'requiredCountry', creator: 'createRequiredCountry', shared: true, entityApiUrl: 'countrys', values: {}, body: '{}' },
+        {
+          name: 'requiredRegion',
+          creator: 'createRequiredRegion',
+          shared: true,
+          entityApiUrl: 'regions',
+          values: {},
+          body: '{ ...{}, country: { id: requiredCountry.id } }',
+        },
+        { name: 'requiredUser', creator: 'createRequiredUser', shared: true, user: true, login: 'city-required-e2e' },
       ],
       references: [
-        { instance: 'city', literal: 'region: { id: requiredRegion.id }, owner: { id: requiredUser.id }' },
-        { instance: 'region', literal: 'country: { id: requiredCountry.id }' },
+        { instance: 'city', literal: 'region: { id: requiredRegion.id }, owner: { id: requiredUser.id }', creating: false },
+        { instance: 'region', literal: 'country: { id: requiredCountry.id }', creating: false },
       ],
       anyUser: true,
-      createdValues: '{ ...createdValues, ...required.city }',
-      relatedValues: { city: '{ ...relatedValues, ...required.city }', region: '{ ...relatedValues, ...required.region }' },
+      createdValues: '{ ...createdValues, ...(await required.city()) }',
+      relatedValues: {
+        city: '{ ...relatedValues, ...(await required.city()) }',
+        region: '{ ...relatedValues, ...(await required.region()) }',
+      },
+    });
+  });
+
+  it('should reference a new record for each record of a required one-to-one relationship, whose join column is unique', () => {
+    const profile = entity('Profile');
+    const owner = entity('Owner');
+    owner.relationships = [stored('profile', profile, { relationshipOneToOne: true })];
+    const report = entity('Report');
+    report.relationships = [stored('owner', owner)];
+    mutateData(report, mutateRequiredRelationshipsEntity({ databaseTypeSql: true }));
+
+    expect(report.nodejsRequiredRecords).toMatchObject({
+      records: [
+        { name: 'requiredProfile', creator: 'createRequiredProfile', shared: false },
+        { name: 'requiredOwner', shared: true, body: '{ ...{}, profile: { id: (await createRequiredProfile()).id } }' },
+      ],
+      references: [
+        { instance: 'report', literal: 'owner: { id: requiredOwner.id }', creating: false },
+        // The owners of the relationship tests of the report, each with a new profile.
+        { instance: 'owner', literal: 'profile: { id: (await createRequiredProfile()).id }', creating: true },
+      ],
+    });
+  });
+
+  it('should create a record of the entity of the tests another entity of the tests requires', () => {
+    const tag = entity('Tag');
+    const owner = entity('Owner');
+    owner.relationships = [stored('profile', tag, { relationshipOneToOne: true })];
+    tag.relationships = [
+      { propertyName: 'owner', otherEntity: owner, persistableRelationship: false, otherRelationship: { propertyName: 'profile' } },
+    ];
+    mutateData(tag, mutateRequiredRelationshipsEntity({ databaseTypeSql: true }));
+
+    expect(tag.nodejsRequiredRecords).toMatchObject({
+      records: [{ name: 'requiredTag', shared: false }],
+      references: [{ instance: 'owner', literal: 'profile: { id: (await createRequiredTag()).id }', creating: true }],
     });
   });
 
@@ -121,6 +167,7 @@ describe('mutateRequiredRelationshipsEntity', () => {
       records: [],
       references: [],
       anyUser: false,
+      anyRequested: false,
       spreads: {},
       createdValues: 'createdValues',
       relatedValues: {},
