@@ -33,6 +33,10 @@ describe('SubGenerator node-server of nodejs JHipster blueprint', () => {
       result.assertJsonFileContent('server/package.json', { dependencies: { '@nestjs/config': /./ } });
     });
 
+    it('should declare express, which the server imports: pnpm exposes no package a dependency brings', () => {
+      result.assertJsonFileContent('server/package.json', { dependencies: { express: /./, '@nestjs/platform-express': /./ } });
+    });
+
     it('should import the TypeScript files', () => {
       result.assertFileContent('server/tsconfig.json', '"rewriteRelativeImportExtensions": true');
       result.assertFileContent('server/src/main.ts', "import { AppModule } from './app.module.ts';");
