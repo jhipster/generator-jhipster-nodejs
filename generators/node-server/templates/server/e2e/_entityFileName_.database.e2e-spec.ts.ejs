@@ -55,8 +55,11 @@ describe('<%= entityClass %> on the database', () => {
   };
 
 <%_ if (nodejsRequiredRecords.records.length > 0) { _%>
-  /** The references of the required relationships of the entities of the tests, to the records created first. */
-  const required: Record<string, Record<string, unknown>> = {};
+  /**
+   * The references of the required relationships of the entities of the tests: to the records created first, to a new
+   * record for a one-to-one relationship, whose join column is unique.
+   */
+  const required: Record<string, () => Promise<Record<string, unknown>>> = {};
 
 <%_ } _%>
   /** The values read back: a Float is approximate on the databases keeping it in single precision. */
@@ -85,22 +88,41 @@ describe('<%= entityClass %> on the database', () => {
 
     app = moduleFixture.createNestApplication();
     configureApp(app);
+<%_ if (nodejsRequiredRecords.anyRequested) { _%>
+    // Listening, for the requests creating a record of a required relationship while the request of a test is built.
+    await app.listen(0);
+<%_ } else { _%>
     await app.init();
+<%_ } _%>
 <%_ if (nodejsRequiredRecords.records.length > 0) { _%>
 
     // The records of the required relationships, created first like the createEntity of the resource tests of JHipster
     // Spring Boot.
+<%_   if (nodejsRequiredRecords.anyRequested) { _%>
     const server = app.getHttpServer();
+<%_   } _%>
 <%_   for (const record of nodejsRequiredRecords.records) { _%>
 <%_     if (record.user) { _%>
     const users = app.get(DataSource).getRepository(<%= user.persistClass %>);
-    const <%= record.name %> = await users.save(users.create({ login: '<%= record.login %>', email: '<%= record.email %>', password: '' }));
+    let createdUsers = 0;
+    const <%= record.creator %> = () => {
+      createdUsers++;
+      return users.save(users.create({ login: `<%= record.login %>-${createdUsers}`, email: `<%= record.login %>-${createdUsers}@localhost`, password: '' }));
+    };
 <%_     } else { _%>
-    const { body: <%= record.name %> } = await request(server).post('/api/<%= record.entityApiUrl %>').send(<%- record.body %>).expect(201);
+    const <%= record.creator %> = async () =>
+      (await request(server).post('/api/<%= record.entityApiUrl %>').send(<%- record.body %>).expect(201)).body;
+<%_     } _%>
+<%_     if (record.shared) { _%>
+    const <%= record.name %> = await <%= record.creator %>();
 <%_     } _%>
 <%_   } _%>
 <%_   for (const reference of nodejsRequiredRecords.references) { _%>
-    required.<%= reference.instance %> = { <%- reference.literal %> };
+<%_     if (reference.creating) { _%>
+    required.<%= reference.instance %> = async () => ({ <%- reference.literal %> });
+<%_     } else { _%>
+    required.<%= reference.instance %> = () => Promise.resolve({ <%- reference.literal %> });
+<%_     } _%>
 <%_   } _%>
 <%_ } _%>
   });
