@@ -24,6 +24,7 @@ import {
   getDatabasePort,
   getNodeDevDatabaseType,
   getNodeDevSqliteDatabase,
+  getNodejsTemporaryDir,
   hasRuntimeColumnTypes,
   joinTable,
   mutateEntityAuthorities,
@@ -264,6 +265,7 @@ export default class extends BaseApplicationGenerator {
           nodeProdDatabaseType: ({ databaseType, prodDatabaseType = databaseType }) =>
             prodDatabaseType === 'postgresql' ? 'postgres' : prodDatabaseType,
           nodeDevDatabaseType: getNodeDevDatabaseType,
+          nodejsTemporaryDir: getNodejsTemporaryDir,
           nodeDevSqliteDatabase: getNodeDevSqliteDatabase,
           nodeDatabasePort: getDatabasePort,
           nodejsRuntimeColumnTypes: hasRuntimeColumnTypes,

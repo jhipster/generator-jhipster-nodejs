@@ -1,3 +1,5 @@
+import { posix } from 'node:path';
+
 /**
  * The default port of each production database type of JHipster, the port of its docker service: the database of the
  * application-dev.yml and application-prod.yml files.
@@ -23,6 +25,12 @@ export const getNodeDevDatabaseType = ({ databaseType, devDatabaseType = databas
   return devDatabaseType === 'postgresql' ? 'postgres' : devDatabaseType;
 };
 
-/** The SQLite database of an embedded development database: in memory for h2Memory, else a file. */
-export const getNodeDevSqliteDatabase = ({ databaseType, devDatabaseType = databaseType }) =>
-  devDatabaseType === 'h2Memory' ? ':memory:' : 'target/db/sqlite-dev-db.sql';
+/**
+ * The temporary folder of the application (its temporaryDir, at its root), from the server folder the server runs in: the
+ * folder of the files the development of the application writes, ignored by git and docker.
+ */
+export const getNodejsTemporaryDir = ({ nodeServerRootDir, temporaryDir }) => `${posix.relative(nodeServerRootDir, temporaryDir)}/`;
+
+/** The SQLite database of an embedded development database: in memory for h2Memory, else a file of the temporary folder. */
+export const getNodeDevSqliteDatabase = ({ databaseType, devDatabaseType = databaseType, nodejsTemporaryDir }) =>
+  devDatabaseType === 'h2Memory' ? ':memory:' : `${nodejsTemporaryDir}db/sqlite-dev-db.sql`;

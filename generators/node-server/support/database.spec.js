@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { getDatabasePort, getNodeDevDatabaseType, getNodeDevSqliteDatabase } from './database.js';
+import { getDatabasePort, getNodeDevDatabaseType, getNodeDevSqliteDatabase, getNodejsTemporaryDir } from './database.js';
 
 describe('getDatabasePort', () => {
   it('should give the default port of the production database', () => {
@@ -29,8 +29,16 @@ describe('getNodeDevDatabaseType', () => {
 });
 
 describe('getNodeDevSqliteDatabase', () => {
-  it('should keep an h2Memory database in memory and an h2Disk one in a file', () => {
-    expect(getNodeDevSqliteDatabase({ databaseType: 'sql', devDatabaseType: 'h2Memory' })).toBe(':memory:');
-    expect(getNodeDevSqliteDatabase({ databaseType: 'sql', devDatabaseType: 'h2Disk' })).toBe('target/db/sqlite-dev-db.sql');
+  it('should keep an h2Memory database in memory and an h2Disk one in a file of the temporary folder', () => {
+    expect(getNodeDevSqliteDatabase({ databaseType: 'sql', devDatabaseType: 'h2Memory', nodejsTemporaryDir: '../tmp/' })).toBe(':memory:');
+    expect(getNodeDevSqliteDatabase({ databaseType: 'sql', devDatabaseType: 'h2Disk', nodejsTemporaryDir: '../tmp/' })).toBe(
+      '../tmp/db/sqlite-dev-db.sql',
+    );
+  });
+});
+
+describe('getNodejsTemporaryDir', () => {
+  it('should give the temporary folder of the root of the application from the folder of the server', () => {
+    expect(getNodejsTemporaryDir({ nodeServerRootDir: 'server/', temporaryDir: 'tmp/' })).toBe('../tmp/');
   });
 });
