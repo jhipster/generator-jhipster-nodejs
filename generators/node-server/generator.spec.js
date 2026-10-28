@@ -279,6 +279,28 @@ describe('SubGenerator node-server of nodejs JHipster blueprint', () => {
     });
   });
 
+  for (const [devDatabaseType, sqliteDevDatabaseType, database] of [
+    ['h2Disk', 'sqlite', '../tmp/db/sqlite-dev-db.sql'],
+    ['h2Memory', 'sqliteMemory', ':memory:'],
+  ]) {
+    describe(`with devDatabaseType ${devDatabaseType}`, () => {
+      beforeAll(async function () {
+        await helpers
+          .run(SUB_GENERATOR_NAMESPACE)
+          .withJHipsterConfig({ devDatabaseType, skipClient: true })
+          .withOptions({ ignoreNeedlesError: true })
+          .withJHipsterGenerators()
+          .withConfiguredBlueprint()
+          .withBlueprintConfig({});
+      });
+
+      it(`should migrate it to ${sqliteDevDatabaseType}`, () => {
+        result.assertJsonFileContent('.yo-rc.json', { 'generator-jhipster': { devDatabaseType: sqliteDevDatabaseType } });
+        result.assertFileContent('server/src/config/application-dev.yml', `name: '${database}'`);
+      });
+    });
+  }
+
   for (const [config, refused] of [
     [{ searchEngine: 'elasticsearch' }, 'searchEngine elasticsearch'],
     [{ cacheProvider: 'redis' }, 'cacheProvider redis'],

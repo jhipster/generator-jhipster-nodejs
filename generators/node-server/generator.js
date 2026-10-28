@@ -153,6 +153,16 @@ export default class extends BaseApplicationGenerator {
           this.jhipsterConfig.prodDatabaseType = 'mongodb';
         }
       },
+      sqliteDevDatabase() {
+        // The embedded development database of the NodeJS server is SQLite, not the H2 of JHipster Spring Boot: the H2
+        // database of an application is migrated to SQLite, on disk or in memory like it.
+        const sqliteDevDatabaseTypes = { h2Disk: 'sqlite', h2Memory: 'sqliteMemory' };
+        const { devDatabaseType } = this.jhipsterConfig;
+        if (sqliteDevDatabaseTypes[devDatabaseType]) {
+          this.log.info(`The development database ${devDatabaseType} migrated to ${sqliteDevDatabaseTypes[devDatabaseType]}.`);
+          this.jhipsterConfig.devDatabaseType = sqliteDevDatabaseTypes[devDatabaseType];
+        }
+      },
       unsupportedOptions() {
         // Options of JHipster the NodeJS server does not implement: refused like the database types, instead of
         // generating an application without what they ask for. The configuration as given, as the defaults of
@@ -263,6 +273,10 @@ export default class extends BaseApplicationGenerator {
           nodeProdDatabaseType: ({ databaseType, prodDatabaseType = databaseType }) =>
             prodDatabaseType === 'postgresql' ? 'postgres' : prodDatabaseType,
           nodeDevDatabaseType: getNodeDevDatabaseType,
+          // The SQLite development database: in memory for sqliteMemory, else a file of the temporary folder of the
+          // application, at its root, from the server folder the server runs in.
+          nodeDevSqliteDatabase: ({ devDatabaseType, nodeServerRootDir, temporaryDir }) =>
+            devDatabaseType === 'sqliteMemory' ? ':memory:' : `${this.relativeDir(nodeServerRootDir, temporaryDir)}db/sqlite-dev-db.sql`,
           nodeDatabasePort: getDatabasePort,
           nodejsRuntimeColumnTypes: hasRuntimeColumnTypes,
         });

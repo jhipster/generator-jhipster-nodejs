@@ -15,8 +15,8 @@ describe('getDatabasePort', () => {
 });
 
 describe('getNodeDevDatabaseType', () => {
-  it('should use SQLite for the embedded development databases', () => {
-    for (const devDatabaseType of ['h2Disk', 'h2Memory', 'sqlite']) {
+  it('should use better-sqlite3 for the embedded development databases, SQLite on disk or in memory', () => {
+    for (const devDatabaseType of ['sqlite', 'sqliteMemory']) {
       expect(getNodeDevDatabaseType({ databaseType: 'sql', devDatabaseType })).toBe('better-sqlite3');
     }
   });

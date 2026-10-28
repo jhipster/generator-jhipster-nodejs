@@ -14,8 +14,8 @@ export const databasePorts = {
 /** The default port of the production database of an application. */
 export const getDatabasePort = ({ databaseType, prodDatabaseType = databaseType }) => databasePorts[prodDatabaseType];
 
-/** The embedded development databases of JHipster (H2) and of the former versions of the blueprint: SQLite. */
-const embeddedDevDatabaseTypes = ['h2Disk', 'h2Memory', 'sqlite'];
+/** The embedded development databases of the NodeJS server: SQLite, on disk or in memory. */
+const embeddedDevDatabaseTypes = ['sqlite', 'sqliteMemory'];
 
 /** The TypeORM type of the development database: better-sqlite3 for an embedded one, else the server type. */
 export const getNodeDevDatabaseType = ({ databaseType, devDatabaseType = databaseType }) => {

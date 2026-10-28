@@ -50,12 +50,7 @@ database:
 <%_ if (nodeDevDatabaseType === 'better-sqlite3') { _%>
   # SQLite, the embedded database of development like H2 in a Spring Boot application.
   type: better-sqlite3
-<%_   if (devDatabaseTypeH2Memory) { _%>
-  name: ':memory:'
-<%_   } else { _%>
-  # A file of the temporary folder of the application, at its root.
-  name: '<%= relativeDir(nodeServerRootDir, temporaryDir) %>db/sqlite-dev-db.sql'
-<%_   } _%>
+  name: '<%- nodeDevSqliteDatabase %>'
   logging: true
 <%_ } else { _%>
   # The database of docker/<%= databaseTypeSql ? prodDatabaseType : 'mongodb' %>.yml (npm run docker:db:up).
