@@ -6,7 +6,7 @@
   "license": "MIT",
   "type": "module",
   "scripts": {
-    "clean": "rimraf dist <%= nodejsTemporaryDir %>db/",
+    "clean": "rimraf dist <%= relativeDir(nodeServerRootDir, temporaryDir) %>db/",
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\"",
     "sonar:scanner": "sonar-scanner",
