@@ -72,45 +72,30 @@ export class <%= persistClass %> extends BaseEntity  {
     <%_ }
     } _%>
 
-    <%_
-    for (idx in relationships) {
-        const relationship = relationships[idx];
-        const otherEntityRelationshipName = relationships[idx].otherEntityRelationshipName;
-        const otherEntityRelationshipNamePlural = relationships[idx].otherEntityRelationshipNamePlural;
-        const relationshipName = relationships[idx].relationshipName;
-        const relationshipFieldName = relationships[idx].relationshipFieldName;
-        const relationshipFieldNamePlural = relationships[idx].relationshipFieldNamePlural;
-        const relationshipType = relationships[idx].relationshipType;
-        const relationshipValidate = relationships[idx].relationshipValidate;
-        const relationshipRequired = relationships[idx].relationshipRequired;
-        const ownerSide = relationships[idx].ownerSide; // before was ownerSide === true in and userRel many-to-one
-        const otherEntityClass = relationships[idx].otherEntity.persistClass;
-        let userRelationship = false;
-        if (otherEntityClass === 'User'){
-            userRelationship = true;
-        }
-
-        if (relationshipType === 'one-to-many') {_%>
-    @OneToMany(() => <%= otherEntityClass %> <%_ if (userRelationship === false) { _%>, other => other.<%= otherEntityRelationshipName %><%_ } _%>)
+    <%_ for (const relationship of relationships) {
+        const { otherEntityRelationshipName, otherEntityRelationshipNamePlural, relationshipFieldName, relationshipFieldNamePlural, ownerSide, otherEntityUser } = relationship;
+        const otherEntityClass = relationship.otherEntity.persistClass;
+        if (relationship.relationshipOneToMany) { _%>
+    @OneToMany(() => <%= otherEntityClass %> <%_ if (!otherEntityUser) { _%>, other => other.<%= otherEntityRelationshipName %><%_ } _%>)
     <%= relationshipFieldNamePlural %><%- relationship.relationshipRequired ? '!' : '?' %>: Relation<<%= otherEntityClass %>[]>;
 
-    <%_ } else if (relationshipType === 'many-to-one') { _%>
-    @ManyToOne(() => <%= otherEntityClass %> <%_ if (!ownerSide && userRelationship === false ) { _%>, other => other.<%= otherEntityRelationshipNamePlural %>  <%_ } _%>)
+    <%_ } else if (relationship.relationshipManyToOne) { _%>
+    @ManyToOne(() => <%= otherEntityClass %> <%_ if (!ownerSide && !otherEntityUser) { _%>, other => other.<%= otherEntityRelationshipNamePlural %>  <%_ } _%>)
     <%= relationshipFieldName %><%- relationship.relationshipRequired ? '!' : '?' %>: Relation<<%= otherEntityClass %>>;
 
-    <%_ } else if (relationshipType === 'many-to-many') { _%>
+    <%_ } else if (relationship.relationshipManyToMany) { _%>
     @ManyToMany(() => <%= otherEntityClass %> )
-        <%_ if (ownerSide === true) { _%>
+        <%_ if (relationship.nodejsJoinTable) { _%>
     @JoinTable({
-        name: '<%= relationship.joinTable.name %>',
-        joinColumn: { name: '<%= entityTableName %>_id', referencedColumnName: "id" },
-        inverseJoinColumn: { name: '<%= relationship.columnName %>_id', referencedColumnName: "id" }
+        name: '<%= relationship.nodejsJoinTable.name %>',
+        joinColumn: { name: '<%= relationship.nodejsJoinTable.joinColumn.name %>', referencedColumnName: '<%= relationship.nodejsJoinTable.joinColumn.referencedColumnName %>' },
+        inverseJoinColumn: { name: '<%= relationship.nodejsJoinTable.inverseJoinColumn.name %>', referencedColumnName: '<%= relationship.nodejsJoinTable.inverseJoinColumn.referencedColumnName %>' }
     })
         <%_ } _%>
     <%= relationshipFieldNamePlural %><%- relationship.relationshipRequired ? '!' : '?' %>: Relation<<%= otherEntityClass %>[]>;
 
     <%_ } else { _%>
-    <%_ if (ownerSide === true) { _%>
+    <%_ if (ownerSide) { _%>
     @OneToOne(() => <%= otherEntityClass %>)
     @JoinColumn()
     <%_ } else { _%>

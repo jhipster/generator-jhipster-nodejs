@@ -3,47 +3,57 @@ import { describe, expect, it } from 'vitest';
 import {
   CONSTRAINTS_TIMESTAMP_OFFSET,
   MIGRATION_TIMESTAMP_OFFSET,
-  changelogDateToTimestamp,
   constraintsMigration,
   entityMigration,
   fieldColumns,
+  joinTable,
   typeormCamelCase,
   userAuthorityJoinTable,
 } from './migrations.js';
 
+/** The timestamp of a changelogDate (yyyyMMddHHmmss), in UTC like the changelogDateForRecent of JHipster. */
+const changelogDateToTimestamp = changelogDate =>
+  Date.parse(changelogDate.replace(/^(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})$/, '$1-$2-$3T$4:$5:$6Z'));
+
+/** An entity with the properties JHipster prepares: the date of its changelogDate and its persistable relationships. */
+const entity = ({ fields = [], relationships = [], ...properties }) => ({
+  ...properties,
+  fields,
+  relationships,
+  persistableRelationships: relationships.filter(relationship => relationship.persistableRelationship),
+  changelogDateForRecent: properties.changelogDate ? new Date(changelogDateToTimestamp(properties.changelogDate)) : undefined,
+});
+
+/** A relationship with the properties JHipster prepares: its type flags, its owner side and whether it has a join table. */
+const relationship = ({ relationshipType, ownerSide = relationshipType === 'many-to-one', ...properties }) => ({
+  relationshipType,
+  relationshipManyToOne: relationshipType === 'many-to-one',
+  relationshipOneToOne: relationshipType === 'one-to-one',
+  relationshipManyToMany: relationshipType === 'many-to-many',
+  ownerSide,
+  persistableRelationship: ownerSide,
+  shouldWriteJoinTable: relationshipType === 'many-to-many' && ownerSide,
+  ...properties,
+});
+
 const primaryKey = { name: 'id', typeUUID: false };
-const region = {
-  entityClass: 'Region',
-  entityTableName: 'region',
-  changelogDate: '20231215172515',
-  primaryKey,
-  fields: [],
-  relationships: [],
-};
-const gadget = {
+const region = entity({ entityClass: 'Region', entityTableName: 'region', changelogDate: '20231215172515', primaryKey });
+const gadget = entity({
   entityClass: 'Gadget',
   entityTableName: 'gadget',
   changelogDate: '20231215172915',
   primaryKey: { name: 'id', typeUUID: true },
-  fields: [],
-  relationships: [],
-};
-const user = { entityClass: 'User', entityTableName: 'jhi_user', builtIn: true, primaryKey, fields: [], relationships: [] };
-
-const field = properties => ({
-  fieldValidate: false,
-  fieldValidateRules: [],
-  ...properties,
 });
+const user = entity({ entityClass: 'User', entityTableName: 'jhi_user', builtIn: true, primaryKey });
 
-describe('changelogDateToTimestamp', () => {
-  it('should give the JavaScript timestamp of a changelogDate, in UTC', () => {
-    expect(changelogDateToTimestamp('20231215172615')).toBe(Date.UTC(2023, 11, 15, 17, 26, 15));
-  });
-
-  it('should refuse a changelogDate of another format', () => {
-    expect(() => changelogDateToTimestamp('2023-12-15')).toThrow('yyyyMMddHHmmss');
-  });
+/** A field with the validation flags JHipster prepares from its rules. */
+const field = ({ fieldValidateRules = [], ...properties }) => ({
+  fieldValidate: fieldValidateRules.length > 0,
+  fieldValidateRules,
+  fieldValidationRequired: fieldValidateRules.includes('required'),
+  fieldValidationUnique: fieldValidateRules.includes('unique'),
+  fieldValidationMaxlength: fieldValidateRules.includes('maxlength'),
+  ...properties,
 });
 
 describe('fieldColumns', () => {
@@ -60,7 +70,6 @@ describe('fieldColumns', () => {
           fieldNameAsDatabaseColumn: 'code',
           nodejsColumnType: 'varchar',
           fieldType: 'String',
-          fieldValidate: true,
           fieldValidateRules: ['required', 'unique', 'maxlength'],
           fieldValidateRulesMaxlength: 3,
         }),
@@ -102,18 +111,18 @@ describe('fieldColumns', () => {
 
 describe('entityMigration', () => {
   it('should add the table, with the primary key, the fields and the join columns, named like TypeORM', () => {
-    const country = {
+    const country = entity({
       entityClass: 'Country',
       entityTableName: 'country',
       changelogDate: '20231215172615',
       primaryKey,
       fields: [{ id: true }, field({ fieldNameAsDatabaseColumn: 'name', nodejsFieldType: 'string', fieldType: 'String' })],
       relationships: [
-        { relationshipType: 'many-to-one', relationshipFieldName: 'region', otherEntity: region },
-        { relationshipType: 'one-to-one', ownerSide: true, relationshipFieldName: 'gadget', otherEntity: gadget },
-        { relationshipType: 'one-to-many', relationshipFieldName: 'countries', otherEntity: region },
+        relationship({ relationshipType: 'many-to-one', relationshipFieldName: 'region', otherEntity: region }),
+        relationship({ relationshipType: 'one-to-one', ownerSide: true, relationshipFieldName: 'gadget', otherEntity: gadget }),
+        relationship({ relationshipType: 'one-to-many', relationshipFieldName: 'countries', otherEntity: region }),
       ],
-    };
+    });
     const timestamp = Date.UTC(2023, 11, 15, 17, 26, 15);
     expect(entityMigration(country)).toEqual({
       timestamp,
@@ -137,41 +146,42 @@ describe('constraintsMigration', () => {
   });
 
   it('should suffix the columns of a join table named the same, like TypeORM', () => {
-    const person = { ...region, entityClass: 'Person', entityTableName: 'person' };
-    person.relationships = [
-      {
-        relationshipType: 'many-to-many',
-        ownerSide: true,
-        relationshipFieldName: 'person',
-        columnName: 'person',
-        joinTable: { name: 'rel_person__person' },
-        otherEntity: person,
-      },
-    ];
-    const [joinTable] = constraintsMigration(person).joinTables;
-    expect([joinTable.joinColumn.name, joinTable.inverseJoinColumn.name]).toEqual(['person_id_1', 'person_id_2']);
+    const person = entity({ ...region, entityClass: 'Person', entityTableName: 'person' });
+    const people = relationship({
+      relationshipType: 'many-to-many',
+      ownerSide: true,
+      relationshipFieldName: 'person',
+      columnName: 'person',
+      joinTable: { name: 'rel_person__person' },
+      otherEntity: person,
+    });
+    person.relationships = [people];
+    person.persistableRelationships = [people];
+    const [migrationJoinTable] = constraintsMigration(person).joinTables;
+    expect([migrationJoinTable.joinColumn.name, migrationJoinTable.inverseJoinColumn.name]).toEqual(['person_id_1', 'person_id_2']);
+    // The @JoinTable of the entity has the columns of its migration.
+    expect(joinTable(person, people)).toEqual(migrationJoinTable);
   });
 
   it('should run after the migrations of the tables it references, the latest one', () => {
-    const country = {
+    const country = entity({
       entityClass: 'Country',
       entityTableName: 'country',
       changelogDate: '20231215172615',
       primaryKey,
-      fields: [],
       relationships: [
-        { relationshipType: 'many-to-one', relationshipFieldName: 'owner', otherEntity: user },
-        { relationshipType: 'many-to-one', relationshipFieldName: 'region', otherEntity: region },
-        {
+        relationship({ relationshipType: 'many-to-one', relationshipFieldName: 'owner', otherEntity: user }),
+        relationship({ relationshipType: 'many-to-one', relationshipFieldName: 'region', otherEntity: region }),
+        relationship({
           relationshipType: 'many-to-many',
           ownerSide: true,
           relationshipFieldName: 'gadgets',
           columnName: 'gadgets',
           joinTable: { name: 'rel_country__gadgets' },
           otherEntity: gadget,
-        },
+        }),
       ],
-    };
+    });
     const timestamp = changelogDateToTimestamp(country.changelogDate) + CONSTRAINTS_TIMESTAMP_OFFSET;
     expect(constraintsMigration(country)).toEqual({
       timestamp,
@@ -193,15 +203,17 @@ describe('constraintsMigration', () => {
   });
 
   it('should keep the timestamp of the entity, whatever the entities it references, after the tables of every entity', () => {
-    const owner = { relationshipType: 'many-to-one', relationshipFieldName: 'owner', otherEntity: user };
-    const later = { ...gadget, changelogDate: '21001231235959' };
-    const country = { ...region, relationships: [owner] };
+    const owner = relationship({ relationshipType: 'many-to-one', relationshipFieldName: 'owner', otherEntity: user });
+    const later = entity({ ...gadget, changelogDate: '21001231235959' });
+    const country = entity({ ...region, relationships: [owner] });
     const { timestamp } = constraintsMigration(country);
     expect(
-      constraintsMigration({
-        ...country,
-        relationships: [owner, { relationshipType: 'many-to-one', relationshipFieldName: 'later', otherEntity: later }],
-      }).timestamp,
+      constraintsMigration(
+        entity({
+          ...region,
+          relationships: [owner, relationship({ relationshipType: 'many-to-one', relationshipFieldName: 'later', otherEntity: later })],
+        }),
+      ).timestamp,
     ).toBe(timestamp);
     expect(timestamp).toBeGreaterThan(changelogDateToTimestamp(later.changelogDate));
     // TypeORM reads the timestamp of the last 13 digits of the class name.
