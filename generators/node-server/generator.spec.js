@@ -833,6 +833,21 @@ describe('SubGenerator node-server of nodejs JHipster blueprint', () => {
       });
     });
 
+    describe('generated with 4.3.0', () => {
+      beforeAll(async function () {
+        await helpers
+          .run(SUB_GENERATOR_NAMESPACE)
+          .doInDir(writeExistingProject({ syncUserWithIdp: false }, '4.3.0'))
+          .withOptions({ ignoreNeedlesError: true })
+          .withJHipsterGenerators()
+          .withConfiguredBlueprint();
+      });
+
+      it('should keep the files at the paths of 4.2.0, moved before 4.3.0', () => {
+        result.assertFile(['server/src/client/request.ts', 'server/src/module/auth.module.ts', 'server/src/security/index.ts']);
+      });
+    });
+
     describe('with syncUserWithIdp disabled', () => {
       beforeAll(async function () {
         await helpers

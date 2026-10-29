@@ -471,7 +471,7 @@ export default class extends BaseApplicationGenerator {
                 'server/src/migrations/1570200490072-SeedUsersRoles.ts',
               ],
             ],
-            '4.3.1': [
+            '4.2.1': [
               // The HTTP helpers of the server moved from src/client (a name taken by the client workspace) to src/common.
               'server/src/client/header-util.ts',
               'server/src/client/request.ts',
@@ -569,7 +569,7 @@ export default class extends BaseApplicationGenerator {
           await control.cleanupFiles(this.oldNodejsVersion, {
             '3.0.1': entities.filter(e => !e.skipServer).map(e => `server/src/repository/${e.entityFileName}.repository.ts`),
             // The files of the entities, of 4.2.0, moved to their feature module (src/entities/<entity>).
-            '4.3.1': entities
+            '4.2.1': entities
               .filter(entity => !entity.skipServer && !entity.builtIn)
               .flatMap(({ entityFileName, fields }) => [
                 `server/src/domain/${entityFileName}.entity.ts`,
