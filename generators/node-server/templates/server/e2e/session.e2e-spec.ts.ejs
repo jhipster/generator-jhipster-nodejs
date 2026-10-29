@@ -163,7 +163,11 @@ describe('Session authentication', () => {
     const response = await login({ username: 'session-user', password, 'remember-me': 'true' });
     expect(response.status).toBe(200);
     expect(cookieExpiry(response, 'JSESSIONID')).toBeGreaterThan(Date.now() + 30 * 24 * 60 * 60 * 1000);
-    expect(cookieExpiry(response, 'XSRF-TOKEN')).toBeGreaterThan(Date.now() + 30 * 24 * 60 * 60 * 1000);
+    // The CSRF cookie lasts until the browser is closed, the next response giving the token of the session again.
+    expect(setCookie(response, 'XSRF-TOKEN')).not.toMatch(/Expires|Max-Age/);
+    const token = cookieValue(response, 'XSRF-TOKEN');
+    const reopened = request(app.getHttpServer()).get('/api/account').set('Cookie', setCookie(response, 'JSESSIONID')!.split(';')[0]);
+    expect(cookieValue(await reopened.expect(200), 'XSRF-TOKEN')).toEqual(token);
   });
 
   it('sets no cookie in the responses of a logged session: a response of a session ended by a login meanwhile puts nothing back', async () => {

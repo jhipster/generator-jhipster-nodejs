@@ -2,14 +2,15 @@ import { randomUUID } from 'crypto';
 import { ForbiddenException, Injectable, NestMiddleware } from '@nestjs/common';
 import { NextFunction, Request, Response } from 'express';
 
-/** The idle lifetime of a session, on the server: its cookie and the CSRF cookie last until the browser is closed. */
+/** The idle lifetime of a session, on the server: its cookie lasts until the browser is closed. */
 export const SESSION_MAX_AGE = 30 * 60 * 1000;
 <%_ if (authenticationTypeSession) { _%>
 
 /**
  * The idle lifetime of a session logged in with remember-me, like the validity of the remember-me tokens of JHipster
  * Spring Boot (31 days): kept in the database (SessionStore), the session outlives a restart like those tokens. Its
- * cookie and the CSRF cookie expire 31 days after the login.
+ * cookie expires 31 days after the login, unlike the remember-me cookie of JHipster Spring Boot, renewed at each new
+ * session it logs in.
  */
 export const REMEMBER_ME_MAX_AGE = 31 * 24 * 60 * 60 * 1000;
 <%_ } _%>
@@ -19,10 +20,10 @@ const SAFE_METHODS = ['GET', 'HEAD', 'OPTIONS', 'TRACE'];
 
 /**
  * The XSRF-TOKEN cookie the clients (Angular HttpClient, axios) send back as the X-XSRF-TOKEN header: until the browser is
- * closed, like the one of JHipster Spring Boot, or the lifetime of a remember-me session.
+ * closed, like the one of JHipster Spring Boot, a remember-me session included.
  */
-export function setCsrfCookie(res: Response, token: string, maxAge?: number | null): void {
-  res.cookie('XSRF-TOKEN', token, { sameSite: 'lax', path: '/', ...(maxAge ? { maxAge } : {}) });
+export function setCsrfCookie(res: Response, token: string): void {
+  res.cookie('XSRF-TOKEN', token, { sameSite: 'lax', path: '/' });
 }
 
 /** The XSRF-TOKEN cookie of a request. */
@@ -71,10 +72,10 @@ export class CsrfMiddleware implements NestMiddleware {
     }
     session.csrfToken ??= randomUUID();
     if (csrfCookie(req) !== session.csrfToken) {
-      // The CSRF cookie expires with the session cookie<% if (authenticationTypeSession) { %>, 31 days after a remember-me login<% } %>. It is set
-      // when the client has not the token of its session only: a response of a session ended by a login meanwhile does
-      // not put the token of the ended session back.
-      setCsrfCookie(res, session.csrfToken, session.cookie?.originalMaxAge);
+      // Like Spring Security, the cookie is set when the client has not the token of its session only (a remember-me
+      // session after the browser is closed): a response of a session ended by a login meanwhile does not put the token
+      // of the ended session back.
+      setCsrfCookie(res, session.csrfToken);
     }
     if (!SAFE_METHODS.includes(req.method) && req.headers['x-xsrf-token'] !== session.csrfToken) {
       throw new ForbiddenException('Invalid CSRF token');

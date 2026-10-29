@@ -28,9 +28,9 @@ describe('CsrfMiddleware', () => {
     expect(() => checkLoginCsrfToken({ headers: { cookie: 'SESSION=1; XSRF-TOKEN=t0k', 'x-xsrf-token': 't0k' } } as any)).not.toThrow();
   });
 
-  it('gives the CSRF cookie of a remember-me session its lifetime', () => {
+  it('gives the CSRF cookie of a remember-me session until the browser is closed, like JHipster Spring Boot', () => {
     const { res } = call('GET', { user: { login: 'user' }, csrfToken: 't0k', cookie: { originalMaxAge: 1000 } });
-    expect(res.cookie).toHaveBeenCalledWith('XSRF-TOKEN', 't0k', expect.objectContaining({ maxAge: 1000 }));
+    expect(res.cookie).toHaveBeenCalledWith('XSRF-TOKEN', 't0k', expect.not.objectContaining({ maxAge: expect.anything() }));
   });
 
   it('gives a CSRF cookie until the browser is closed to a client without a session, like JHipster Spring Boot', () => {
