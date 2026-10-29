@@ -482,6 +482,9 @@ export default class extends BaseApplicationGenerator {
               'server/webpack.server.prod.config.js',
               // The Nest CLI builds and starts the server, and copies the configuration files (assets of nest-cli.json).
               'server/scripts/copy-resources.ts',
+              // The development profile of 4.2.0 (BACKEND_ENV=dev) is in .env.dev: the .env file, loaded by every start of the
+              // server, would start the built server with the development profile.
+              'server/.env',
               // The files of 4.2.0 moved to the feature modules (auth, users, management, common), their specs next to them.
               'server/src/domain/authority.entity.ts',
               'server/src/domain/user.entity.ts',
