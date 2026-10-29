@@ -65,8 +65,6 @@
     "docker:build": "docker build -t <%= baseName.toLowerCase() %> .",
     "lint": "<%= clientPackageManager %> run lint --workspaces",
     "lint:fix": "<%= clientPackageManager %> run lint:fix --workspaces",
-    "prettier:check": "prettier --check \"{,src/**/}*.{<%= prettierExtensions %>}\"",
-    "prettier:format": "prettier --write \"{,src/**/}*.{<%= prettierExtensions %>}\"",
 <%_ if (clientFrameworkAny) { _%>
     "start": "concurrently -k -s first -n application,client -c red,green npm:start:server npm:start:client",
 <%_ } else { _%>
