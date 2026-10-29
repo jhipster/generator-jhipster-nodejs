@@ -59,7 +59,7 @@ export class SessionStore extends session.Store implements OnModuleInit, OnModul
   }
 
   touch(sid: string, data: session.SessionData, callback?: Callback): void {
-    // The rolling expiry of a session its request did not change.
+    // The idle expiry of a session its request did not change.
     this.track(this.repository.update({ sid }, { expires: expiresOf(data) })).then(() => callback?.(), error => callback?.(error));
   }
 
@@ -104,7 +104,7 @@ export class SessionStore extends session.Store implements OnModuleInit, OnModul
   }
 }
 
-/** The end of a session: the expiry of its cookie. */
+/** The end of a session: the expiry of its cookie with remember-me, else 30 minutes after its last request. */
 function expiresOf(data: session.SessionData): Date {
   return data.cookie?.expires ? new Date(data.cookie.expires) : new Date(Date.now() + SESSION_MAX_AGE);
 }
