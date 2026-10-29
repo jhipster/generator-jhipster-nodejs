@@ -33,6 +33,10 @@ describe('SubGenerator node-server of nodejs JHipster blueprint', () => {
       result.assertJsonFileContent('server/package.json', { dependencies: { '@nestjs/config': /./ } });
     });
 
+    it('should check the server and the client sources with prettier', () => {
+      result.assertJsonFileContent('package.json', { scripts: { 'prettier:check': /server\/src\/\*\*\/.*client\// } });
+    });
+
     it('should declare express, which the server imports: pnpm exposes no package a dependency brings', () => {
       result.assertJsonFileContent('server/package.json', { dependencies: { express: /./, '@nestjs/platform-express': /./ } });
     });
@@ -256,6 +260,27 @@ describe('SubGenerator node-server of nodejs JHipster blueprint', () => {
       result.assertNoFileContent('package.json', 'no client');
     });
   });
+  describe('in a monorepository', () => {
+    beforeAll(async function () {
+      await helpers
+        .run(SUB_GENERATOR_NAMESPACE)
+        .withJHipsterConfig({ skipClient: true })
+        .withOptions({
+          ignoreNeedlesError: true,
+          monorepository: true,
+        })
+        .withJHipsterGenerators()
+        .withConfiguredBlueprint()
+        .withBlueprintConfig({});
+    });
+
+    it('should leave the prettier scripts to the root of the monorepository', () => {
+      const { scripts } = result.fs.readJSON(join(result.cwd, 'package.json'));
+      expect(scripts).not.toHaveProperty('prettier:check');
+      expect(scripts).not.toHaveProperty('prettier:format');
+    });
+  });
+
   describe('with mariadb', () => {
     beforeAll(async function () {
       await helpers
