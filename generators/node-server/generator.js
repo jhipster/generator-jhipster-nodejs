@@ -471,7 +471,7 @@ export default class extends BaseApplicationGenerator {
                 'server/src/migrations/1570200490072-SeedUsersRoles.ts',
               ],
             ],
-            '4.3.1': [
+            '4.2.1': [
               // The HTTP helpers of the server moved from src/client (a name taken by the client workspace) to src/common.
               'server/src/client/header-util.ts',
               'server/src/client/request.ts',
@@ -482,6 +482,9 @@ export default class extends BaseApplicationGenerator {
               'server/webpack.server.prod.config.js',
               // The Nest CLI builds and starts the server, and copies the configuration files (assets of nest-cli.json).
               'server/scripts/copy-resources.ts',
+              // The development profile of 4.2.0 (BACKEND_ENV=dev) is in .env.dev: the .env file, loaded by every start of the
+              // server, would start the built server with the development profile.
+              'server/.env',
               // The files of 4.2.0 moved to the feature modules (auth, users, management, common), their specs next to them.
               'server/src/domain/authority.entity.ts',
               'server/src/domain/user.entity.ts',
@@ -569,7 +572,7 @@ export default class extends BaseApplicationGenerator {
           await control.cleanupFiles(this.oldNodejsVersion, {
             '3.0.1': entities.filter(e => !e.skipServer).map(e => `server/src/repository/${e.entityFileName}.repository.ts`),
             // The files of the entities, of 4.2.0, moved to their feature module (src/entities/<entity>).
-            '4.3.1': entities
+            '4.2.1': entities
               .filter(entity => !entity.skipServer && !entity.builtIn)
               .flatMap(({ entityFileName, fields }) => [
                 `server/src/domain/${entityFileName}.entity.ts`,

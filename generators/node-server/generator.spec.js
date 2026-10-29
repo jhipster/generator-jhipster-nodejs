@@ -728,6 +728,7 @@ describe('SubGenerator node-server of nodejs JHipster blueprint', () => {
       'server/src/migrations/1570200490072-SeedUsersRoles.ts',
       'server/src/module/auth.module.ts',
       'server/src/security/index.ts',
+      'server/.env',
     ];
     // An existing project is read from the disk: its .yo-rc.json and its files.
     const writeExistingProject =
@@ -830,6 +831,26 @@ describe('SubGenerator node-server of nodejs JHipster blueprint', () => {
       it('should move the files of 4.2.0 to the feature modules', () => {
         result.assertNoFile(['server/src/module/auth.module.ts', 'server/src/security/index.ts']);
         result.assertFile(['server/src/auth/auth.module.ts', 'server/src/auth/index.ts']);
+      });
+    });
+
+    describe('generated with 4.3.0', () => {
+      beforeAll(async function () {
+        await helpers
+          .run(SUB_GENERATOR_NAMESPACE)
+          .doInDir(writeExistingProject({ syncUserWithIdp: false }, '4.3.0'))
+          .withOptions({ ignoreNeedlesError: true })
+          .withJHipsterGenerators()
+          .withConfiguredBlueprint();
+      });
+
+      it('should keep the files at the paths of 4.2.0, moved before 4.3.0', () => {
+        result.assertFile([
+          'server/src/client/request.ts',
+          'server/src/module/auth.module.ts',
+          'server/src/security/index.ts',
+          'server/.env',
+        ]);
       });
     });
 
