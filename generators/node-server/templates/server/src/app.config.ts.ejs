@@ -12,7 +12,6 @@ import { HeaderUtil } from './common/header-util.ts';
 import { ProblemDetailsFilter } from './common/errors/problem-details.filter.ts';
 import { ValidationException } from './common/errors/problem.exception.ts';
 <%_ if (authenticationUsesCsrf) { _%>
-import { SESSION_MAX_AGE } from './auth/csrf.middleware.ts';
 import { SessionStore } from './auth/session.store.ts';
 <%_ } _%>
 
@@ -142,9 +141,10 @@ export function configureApp(app: INestApplication): INestApplication {
       store: app.get(SessionStore),
       resave: false,
       saveUninitialized: false,
-      // Like the session of JHipster Spring Boot, it expires after 30 minutes without requests.
-      rolling: true,
-      cookie: { httpOnly: true, sameSite: 'lax', secure: 'auto', maxAge: SESSION_MAX_AGE },
+      // Like the JSESSIONID of JHipster Spring Boot, a cookie until the browser is closed, set when the session is created
+      // only: the session expires on the server, after 30 minutes without requests (SessionStore). A cookie set again by
+      // every response would let a response of a session ended by a login meanwhile put the ended session back.
+      cookie: { httpOnly: true, sameSite: 'lax', secure: 'auto' },
     }),
   );
 <%_ } _%>

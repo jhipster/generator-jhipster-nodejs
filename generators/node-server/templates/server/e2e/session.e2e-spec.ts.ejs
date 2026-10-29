@@ -121,9 +121,14 @@ describe('Session authentication', () => {
   });
 
   it('logs in the user of the login, in lower case, in a session of 30 minutes without requests', async () => {
+    const sessions = app.get<Repository<Session>>(getRepositoryToken(Session));
     const response = await login({ username: 'Session-User', password, 'remember-me': 'false' });
     expect(response.status).toBe(200);
-    expect(cookieExpiry(response, 'JSESSIONID')).toBeLessThanOrEqual(Date.now() + 30 * 60 * 1000);
+    // Like the JSESSIONID of JHipster Spring Boot, a cookie until the browser is closed: the session expires on the server.
+    expect(setCookie(response, 'JSESSIONID')).not.toMatch(/Expires|Max-Age/);
+    expect(setCookie(response, 'XSRF-TOKEN')).not.toMatch(/Expires|Max-Age/);
+    const [stored] = await sessions.find({ where: { login: 'session-user' } });
+    expect(stored.expires.getTime()).toBeLessThanOrEqual(Date.now() + 30 * 60 * 1000);
     const { body } = await agent.get('/api/account').expect(200);
     expect(body).toMatchObject({ login: 'session-user' });
     expect(body.password).toBeUndefined();
@@ -159,6 +164,12 @@ describe('Session authentication', () => {
     expect(response.status).toBe(200);
     expect(cookieExpiry(response, 'JSESSIONID')).toBeGreaterThan(Date.now() + 30 * 24 * 60 * 60 * 1000);
     expect(cookieExpiry(response, 'XSRF-TOKEN')).toBeGreaterThan(Date.now() + 30 * 24 * 60 * 60 * 1000);
+  });
+
+  it('sets no cookie in the responses of a logged session: a response of a session ended by a login meanwhile puts nothing back', async () => {
+    await login({ username: 'session-user', password });
+    const response = await agent.get('/api/account').expect(200);
+    expect(response.headers['set-cookie']).toBeUndefined();
   });
 
   it('refuses the unsafe requests of a session without its CSRF token, the logout included', async () => {

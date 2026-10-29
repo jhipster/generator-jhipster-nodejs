@@ -32,6 +32,10 @@ describe('CsrfMiddleware', () => {
     const { res } = call('GET', { user: { login: 'user' }, csrfToken: 't0k', cookie: { originalMaxAge: 1000 } });
     expect(res.cookie).toHaveBeenCalledWith('XSRF-TOKEN', 't0k', expect.objectContaining({ maxAge: 1000 }));
   });
+
+  it('gives a CSRF cookie until the browser is closed to a client without a session, like JHipster Spring Boot', () => {
+    expect(call('GET', {}).res.cookie).toHaveBeenCalledWith('XSRF-TOKEN', expect.any(String), expect.not.objectContaining({ maxAge: expect.anything() }));
+  });
 <%_ } else { _%>
   it('lets the requests without a logged session pass, without the cookie', () => {
     const { res, next } = call('POST', {});
@@ -40,10 +44,17 @@ describe('CsrfMiddleware', () => {
   });
 <%_ } _%>
 
-  it('gives the token of a logged session back as the XSRF-TOKEN cookie on its safe requests too', () => {
+  it('gives the token of a logged session as the XSRF-TOKEN cookie on its safe requests too, until the browser is closed', () => {
     const { res, next } = call('GET', { user: { login: 'user' }, csrfToken: 't0k' });
     expect(next).toHaveBeenCalled();
-    expect(res.cookie).toHaveBeenCalledWith('XSRF-TOKEN', 't0k', expect.objectContaining({ path: '/', maxAge: expect.any(Number) }));
+    expect(res.cookie).toHaveBeenCalledWith('XSRF-TOKEN', 't0k', expect.objectContaining({ path: '/' }));
+    expect(res.cookie).toHaveBeenCalledWith('XSRF-TOKEN', 't0k', expect.not.objectContaining({ maxAge: expect.anything() }));
+  });
+
+  it('does not set the cookie of a client with the token of its session: a response of a session ended meanwhile puts no old token back', () => {
+    const { res, next } = call('GET', { user: { login: 'user' }, csrfToken: 't0k' }, { cookie: 'JSESSIONID=s1; XSRF-TOKEN=t0k' });
+    expect(next).toHaveBeenCalled();
+    expect(res.cookie).not.toHaveBeenCalled();
   });
 
   it('refuses an unsafe request of a logged session without its token, the logout too, like Spring Security', () => {
