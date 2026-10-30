@@ -53,7 +53,9 @@ export default class extends BaseApplicationGenerator {
     return {
       prepareMigrations: ({ changelogs }) => {
         const entities = this.#entities;
-        for (const changelog of changelogs.filter(changelog => isNewEntityChangelog(this, changelog))) {
+        // The last changelog of each entity, the changelogs being sorted by date.
+        const lastChangelogs = new Map(changelogs.map(changelog => [changelog.entityName, changelog]));
+        for (const changelog of changelogs.filter(changelog => this.#writesMigrations(changelog, lastChangelogs))) {
           // The entity of a creation or an update; a removal has none, its migration written from the entity before it.
           const entity = entities.find(entity => entity.name === changelog.entityName);
           if (!(entity ?? changelog.previousEntity).skipServer) {
@@ -85,6 +87,18 @@ export default class extends BaseApplicationGenerator {
         }
       },
     });
+  }
+
+  /**
+   * Whether the migrations of a changelog are written: the ones of a changelog of this generation, and the ones of the
+   * creation of an entity, its last changelog, generated again from the entity, which has not changed since (a project
+   * whose changelogs JHipster records for the first time, its entities as they are, included). The migrations of an
+   * update recorded before are kept: the entity before it is only known to the generation recording it.
+   */
+  #writesMigrations(changelog, lastChangelogs) {
+    return (
+      isNewEntityChangelog(this, changelog) || (changelog.operation === 'create' && lastChangelogs.get(changelog.entityName) === changelog)
+    );
   }
 
   /**

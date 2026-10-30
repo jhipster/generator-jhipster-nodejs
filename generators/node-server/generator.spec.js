@@ -1143,4 +1143,67 @@ describe('SubGenerator node-server of nodejs JHipster blueprint', () => {
       expect(ormConfig).toContain(`import { RemovedEntityProduct${timestamp} } from './migrations/${timestamp}-RemovedEntityProduct.ts';`);
     });
   });
+
+  describe('with entities on the disk without changelogs', () => {
+    const migrationsDir = 'server/src/migrations';
+    const customer = { name: 'Customer', changelogDate: '20200101000100', fields: [{ fieldName: 'name', fieldType: 'String' }] };
+    const order = {
+      name: 'Order',
+      changelogDate: '20200101000200',
+      fields: [{ fieldName: 'total', fieldType: 'Integer' }],
+      relationships: [
+        { relationshipName: 'customer', otherEntityName: 'customer', relationshipType: 'many-to-one', relationshipSide: 'left' },
+      ],
+    };
+
+    beforeAll(async function () {
+      await helpers
+        .run(SUB_GENERATOR_NAMESPACE)
+        .withJHipsterConfig({ skipClient: true }, [customer, order])
+        // The entity files on the disk, like a project generated before JHipster recorded its changelogs.
+        .commitFiles()
+        .withOptions({ ignoreNeedlesError: true })
+        .withJHipsterGenerators()
+        .withConfiguredBlueprint();
+    });
+
+    it('should write the migrations of the creation of the entities, their last changelog, and record them', () => {
+      result.assertFile([
+        join(migrationsDir, '1577836860000-AddedEntityCustomer.ts'),
+        join(migrationsDir, '1577836920000-AddedEntityOrder.ts'),
+        join(migrationsDir, '4577836920000-AddedEntityConstraintsOrder.ts'),
+      ]);
+      const { objects } = result.fs.readJSON(join(result.cwd, '.yo-rc.json'));
+      expect(objects['20200101000200_Order'].nodejsMigrations).toEqual([
+        '1577836920000-AddedEntityOrder',
+        '4577836920000-AddedEntityConstraintsOrder',
+      ]);
+      const ormConfig = result.fs.read(join(result.cwd, 'server/src/orm.config.ts'));
+      expect(ormConfig).toContain("import { AddedEntityCustomer1577836860000 } from './migrations/1577836860000-AddedEntityCustomer.ts';");
+    });
+
+    describe('regenerated without a change', () => {
+      let previous;
+
+      beforeAll(async function () {
+        previous = result.fs.read(join(result.cwd, migrationsDir, '4577836920000-AddedEntityConstraintsOrder.ts'));
+        await result
+          .create(SUB_GENERATOR_NAMESPACE)
+          .withOptions({ ignoreNeedlesError: true })
+          .withJHipsterGenerators()
+          .withConfiguredBlueprint()
+          .run();
+      });
+
+      it('should generate the migrations of the creations again, the same, and register them', () => {
+        expect(Object.keys(result.getSnapshot(`**/${migrationsDir}/*-AddedEntity*.ts`))).toHaveLength(3);
+        expect(result.fs.read(join(result.cwd, migrationsDir, '4577836920000-AddedEntityConstraintsOrder.ts'))).toBe(previous);
+        expect(Object.keys(result.getSnapshot(`**/${migrationsDir}/*-UpdatedEntity*.ts`))).toEqual([]);
+        const ormConfig = result.fs.read(join(result.cwd, 'server/src/orm.config.ts'));
+        expect(ormConfig).toContain(
+          "import { AddedEntityConstraintsOrder4577836920000 } from './migrations/4577836920000-AddedEntityConstraintsOrder.ts';",
+        );
+      });
+    });
+  });
 });
