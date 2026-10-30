@@ -5,11 +5,11 @@ import {
   MIGRATION_TIMESTAMP_OFFSET,
   changelogChanges,
   changelogDateToTimestamp as toTimestamp,
-  changelogMigrationNames,
   constraintsMigration,
   entityMigration,
   fieldColumns,
   joinTable,
+  migrationOfFile,
   typeormCamelCase,
   updatedConstraintsMigration,
   updatedEntityMigration,
@@ -258,24 +258,12 @@ describe('changelogDateToTimestamp', () => {
   });
 });
 
-describe('changelogMigrationNames', () => {
-  const timestamp = changelogDateToTimestamp('20231215172515');
-
-  it('names the migrations of a creation, the table at its date and its constraints after every table', () => {
-    expect(
-      changelogMigrationNames({ changelogDate: '20231215172515', operation: 'create' }, 'Region').map(({ fileName }) => fileName),
-    ).toEqual([`${timestamp}-AddedEntityRegion`, `${timestamp + CONSTRAINTS_TIMESTAMP_OFFSET}-AddedEntityConstraintsRegion`]);
-  });
-
-  it('names the migrations of an update after every constraints migration, its constraints 1 ms after its fields', () => {
-    expect(changelogMigrationNames({ changelogDate: '20231215172515', operation: 'update' }, 'Region')).toEqual([
-      expect.objectContaining({ className: `UpdatedEntityRegion${timestamp + MIGRATION_TIMESTAMP_OFFSET}` }),
-      expect.objectContaining({ className: `UpdatedEntityConstraintsRegion${timestamp + MIGRATION_TIMESTAMP_OFFSET + 1}` }),
-    ]);
-  });
-
-  it('names no migration for a removal', () => {
-    expect(changelogMigrationNames({ changelogDate: '20231215172515', operation: 'remove' }, 'Region')).toEqual([]);
+describe('migrationOfFile', () => {
+  it('gives the class of a migration by its file, the timestamp at the end of its name', () => {
+    expect(migrationOfFile('7703274738000-UpdatedEntityCustomer')).toEqual({
+      fileName: '7703274738000-UpdatedEntityCustomer',
+      className: 'UpdatedEntityCustomer7703274738000',
+    });
   });
 });
 

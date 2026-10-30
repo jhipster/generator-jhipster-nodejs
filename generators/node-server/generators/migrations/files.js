@@ -3,20 +3,20 @@ import { SERVER_NODEJS_SRC_DIR } from '../../../generator-nodejs-constants.js';
 const SERVER_NODEJS_DIR = `${SERVER_NODEJS_SRC_DIR}/`;
 
 /**
- * The migrations of an entity, like its Liquibase changelogs: its table, then its constraints when it has some, kept with
- * incrementalChangelog once written, and the ones of its changes of this generation.
+ * The migrations of the changelog of an entity of this generation, like its Liquibase changelogs: for its creation its table,
+ * then its constraints when it has some; for an update its fields, then its relationships.
  */
 export const migrationFiles = {
   migrations: [
     {
       path: SERVER_NODEJS_DIR,
-      condition: ctx => !ctx.nodejsMigrationsKept,
+      condition: ctx => ctx.nodejsMigration,
       renameTo: data => `${SERVER_NODEJS_DIR}src/migrations/${data.nodejsMigration.fileName}.ts`,
       templates: ['src/migrations/_entityMigration_.ts'],
     },
     {
       path: SERVER_NODEJS_DIR,
-      condition: ctx => !ctx.nodejsMigrationsKept && ctx.nodejsConstraintsMigration,
+      condition: ctx => ctx.nodejsConstraintsMigration,
       renameTo: data => `${SERVER_NODEJS_DIR}src/migrations/${data.nodejsConstraintsMigration.fileName}.ts`,
       templates: ['src/migrations/_entityConstraintsMigration_.ts'],
     },

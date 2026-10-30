@@ -201,30 +201,8 @@ const foreignKey = relationship => ({
   referencedColumnName: relationship.otherEntity.primaryKey.name,
 });
 
-/**
- * The migrations a changelog of an entity may have, by their names: AddedEntity and AddedEntityConstraints for its
- * creation, UpdatedEntity and UpdatedEntityConstraints for an update, none for its removal. A migration written by a former
- * generation is the file of one of these names.
- * @param {{ changelogDate: string, operation: string }} changelog the changelog
- * @param {string} entityClass the class of the entity
- */
-export const changelogMigrationNames = ({ changelogDate, operation }, entityClass) => {
-  const timestamp = changelogDateToTimestamp(changelogDate);
-  if (operation === 'create') {
-    return [
-      migrationName('AddedEntity', entityClass, timestamp),
-      migrationName('AddedEntityConstraints', entityClass, timestamp + CONSTRAINTS_TIMESTAMP_OFFSET),
-    ];
-  }
-  if (operation === 'update') {
-    const updateTimestamp = timestamp + MIGRATION_TIMESTAMP_OFFSET;
-    return [
-      migrationName('UpdatedEntity', entityClass, updateTimestamp),
-      migrationName('UpdatedEntityConstraints', entityClass, updateTimestamp + 1),
-    ];
-  }
-  return [];
-};
+/** The class of a migration, by the name of its file (`<timestamp>-<kind><Entity>`, its class `<kind><Entity><timestamp>`). */
+export const migrationOfFile = fileName => ({ fileName, className: fileName.replace(/^(\d+)-(\w+)$/, '$2$1') });
 
 /**
  * The fields and the relationships an update changelog of an entity adds and removes: the added ones the entity has,
