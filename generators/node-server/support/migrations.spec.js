@@ -3,11 +3,16 @@ import { describe, expect, it } from 'vitest';
 import {
   CONSTRAINTS_TIMESTAMP_OFFSET,
   MIGRATION_TIMESTAMP_OFFSET,
+  changelogChanges,
+  changelogDateToTimestamp as toTimestamp,
+  changelogMigrationNames,
   constraintsMigration,
   entityMigration,
   fieldColumns,
   joinTable,
   typeormCamelCase,
+  updatedConstraintsMigration,
+  updatedEntityMigration,
   userAuthorityJoinTable,
 } from './migrations.js';
 
@@ -37,8 +42,9 @@ const relationship = ({ relationshipType, ownerSide = relationshipType === 'many
 });
 
 const primaryKey = { name: 'id', typeUUID: false };
-const region = entity({ entityClass: 'Region', entityTableName: 'region', changelogDate: '20231215172515', primaryKey });
+const region = entity({ name: 'Region', entityClass: 'Region', entityTableName: 'region', changelogDate: '20231215172515', primaryKey });
 const gadget = entity({
+  name: 'Gadget',
   entityClass: 'Gadget',
   entityTableName: 'gadget',
   changelogDate: '20231215172915',
@@ -239,5 +245,136 @@ describe('typeormCamelCase', () => {
     expect(typeormCamelCase('x2y_id')).toBe('x2yId');
     expect(typeormCamelCase('region_id')).toBe('regionId');
     expect(typeormCamelCase('jhi_user_id')).toBe('jhiUserId');
+  });
+});
+
+describe('changelogDateToTimestamp', () => {
+  it('gives the timestamp of a changelogDate, in UTC like JHipster', () => {
+    expect(toTimestamp('20231215172515')).toBe(changelogDateToTimestamp('20231215172515'));
+  });
+
+  it('refuses a date of another format', () => {
+    expect(() => toTimestamp('2023-12-15')).toThrow('The changelogDate 2023-12-15 is not a date of the yyyyMMddHHmmss format');
+  });
+});
+
+describe('changelogMigrationNames', () => {
+  const timestamp = changelogDateToTimestamp('20231215172515');
+
+  it('names the migrations of a creation, the table at its date and its constraints after every table', () => {
+    expect(
+      changelogMigrationNames({ changelogDate: '20231215172515', operation: 'create' }, 'Region').map(({ fileName }) => fileName),
+    ).toEqual([`${timestamp}-AddedEntityRegion`, `${timestamp + CONSTRAINTS_TIMESTAMP_OFFSET}-AddedEntityConstraintsRegion`]);
+  });
+
+  it('names the migrations of an update after every constraints migration, its constraints 1 ms after its fields', () => {
+    expect(changelogMigrationNames({ changelogDate: '20231215172515', operation: 'update' }, 'Region')).toEqual([
+      expect.objectContaining({ className: `UpdatedEntityRegion${timestamp + MIGRATION_TIMESTAMP_OFFSET}` }),
+      expect.objectContaining({ className: `UpdatedEntityConstraintsRegion${timestamp + MIGRATION_TIMESTAMP_OFFSET + 1}` }),
+    ]);
+  });
+
+  it('names no migration for a removal', () => {
+    expect(changelogMigrationNames({ changelogDate: '20231215172515', operation: 'remove' }, 'Region')).toEqual([]);
+  });
+});
+
+describe('the migrations of an update changelog', () => {
+  const status = field({ fieldName: 'status', fieldNameAsDatabaseColumn: 'status', fieldType: 'String', nodejsFieldType: 'string' });
+  const country = relationship({
+    relationshipType: 'many-to-one',
+    relationshipName: 'country',
+    relationshipFieldName: 'country',
+    otherEntity: region,
+  });
+  const gadgets = relationship({
+    relationshipType: 'many-to-many',
+    ownerSide: true,
+    relationshipName: 'gadgets',
+    relationshipFieldName: 'gadgets',
+    columnName: 'gadgets',
+    joinTable: { name: 'rel_shop__gadgets' },
+    otherEntity: gadget,
+  });
+  const shop = entity({ entityClass: 'Shop', entityTableName: 'shop', primaryKey, fields: [status], relationships: [country, gadgets] });
+  // The entity before the changelog, as the changelog records it.
+  const previousEntity = {
+    fields: [
+      { fieldName: 'legacy', columnName: 'legacy', fieldType: 'String' },
+      { fieldName: 'photo', columnName: 'photo', fieldType: 'byte[]', fieldTypeBlobContent: 'image' },
+      { fieldName: 'notes', columnName: 'notes', fieldType: 'byte[]', fieldTypeBlobContent: 'text' },
+    ],
+    relationships: [
+      { relationshipName: 'owner', relationshipType: 'many-to-one', otherEntityName: 'region', ownerSide: true },
+      {
+        relationshipName: 'gifts',
+        relationshipType: 'many-to-many',
+        otherEntityName: 'gadget',
+        ownerSide: true,
+        joinTable: { name: 'rel_shop__gifts' },
+      },
+      { relationshipName: 'buyers', relationshipType: 'one-to-many', otherEntityName: 'region', ownerSide: false },
+      { relationshipName: 'country', relationshipType: 'one-to-one', otherEntityName: 'region', ownerSide: true },
+    ],
+  };
+  const changelog = {
+    operation: 'update',
+    previousEntity,
+    addedFields: ['status'],
+    removedFields: ['legacy', 'photo', 'notes'],
+    addedRelationships: ['gadgets'],
+    removedRelationships: ['owner', 'gifts', 'buyers'],
+    recreatedRelationships: ['country'],
+  };
+  const changes = { entity: shop, ...changelogChanges(changelog, shop, [region, gadget]) };
+
+  it('adds the columns of the added fields, and drops the ones of the removed fields with the content type of a binary blob', () => {
+    const migration = updatedEntityMigration(changes, 7000);
+    expect(migration).toMatchObject({
+      className: 'UpdatedEntityShop7000',
+      tableName: 'shop',
+      addedColumns: [{ name: 'status', type: 'String', nullable: true }],
+      addedColumnNames: "['status']",
+      removedColumnNames: "['legacy', 'photo', 'photo_content_type', 'notes']",
+      schemaImports: 'addColumns, dropColumns',
+    });
+  });
+
+  it('recreates a relationship changed in its type, and adds and drops the join columns and the join tables', () => {
+    const migration = updatedConstraintsMigration(changes, 7001);
+    expect(migration).toMatchObject({
+      className: 'UpdatedEntityConstraintsShop7001',
+      addedJoinColumnNames: "['countryId']",
+      addedForeignKeys: [{ columnName: 'countryId', referencedTableName: 'region', referencedColumnName: 'id' }],
+      addedJoinTables: [expect.objectContaining({ name: 'rel_shop__gadgets' })],
+      // The join column of the one-to-one relationship before, named by the primary key of its other entity.
+      removedJoinColumnNames: "['ownerId', 'countryId']",
+      removedJoinTables: ['rel_shop__gifts'],
+      schemaImports: 'addColumns, createForeignKeys, createJoinTable, dropColumns',
+    });
+  });
+
+  it('names the join column of a relationship with an entity removed by the primary key id', () => {
+    const { removedRelationships } = changelogChanges(
+      {
+        ...changelog,
+        previousEntity: {
+          relationships: [{ relationshipName: 'Seller', relationshipType: 'many-to-one', otherEntityName: 'vendor', ownerSide: true }],
+        },
+        removedRelationships: ['Seller'],
+        recreatedRelationships: [],
+      },
+      shop,
+      [region, gadget],
+    );
+    expect(updatedConstraintsMigration({ entity: shop, addedRelationships: [], removedRelationships }, 7001).removedJoinColumnNames).toBe(
+      "['sellerId']",
+    );
+  });
+
+  it('gives no migration without a change of a column, a join column or a join table', () => {
+    const none = { entity: shop, addedFields: [], removedFields: [], addedRelationships: [], removedRelationships: [] };
+    expect(updatedEntityMigration(none, 7000)).toBeUndefined();
+    expect(updatedConstraintsMigration(none, 7001)).toBeUndefined();
   });
 });

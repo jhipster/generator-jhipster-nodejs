@@ -894,4 +894,184 @@ describe('SubGenerator node-server of nodejs JHipster blueprint', () => {
       });
     });
   });
+
+  describe('regenerated with changed entities', () => {
+    const migrationsDir = 'server/src/migrations';
+    // The entities of the former generation.
+    const previousEntities = [
+      {
+        name: 'Customer',
+        changelogDate: '20200101000100',
+        fields: [
+          { fieldName: 'original', fieldType: 'String' },
+          { fieldName: 'legacy', fieldType: 'String' },
+          { fieldName: 'photo', fieldType: 'ImageBlob' },
+        ],
+        relationships: [],
+      },
+      {
+        name: 'Purchase',
+        changelogDate: '20200101000200',
+        fields: [{ fieldName: 'total', fieldType: 'Integer' }],
+        relationships: [
+          { relationshipName: 'customer', otherEntityName: 'customer', relationshipType: 'many-to-one', relationshipSide: 'left' },
+          { relationshipName: 'seller', otherEntityName: 'customer', relationshipType: 'many-to-one', relationshipSide: 'left' },
+          { relationshipName: 'gifts', otherEntityName: 'customer', relationshipType: 'many-to-many', relationshipSide: 'left' },
+        ],
+      },
+    ];
+    // The migrations of the former generation.
+    const previousMigrations = [
+      '1577836860000-AddedEntityCustomer.ts',
+      '1577836920000-AddedEntityPurchase.ts',
+      '4577836920000-AddedEntityConstraintsPurchase.ts',
+    ];
+    // The entities of the regeneration: a field added and two removed, relationships added and removed, a new entity.
+    const entities = [
+      {
+        ...previousEntities[0],
+        fields: [
+          { fieldName: 'original', fieldType: 'String' },
+          { fieldName: 'status', fieldType: 'String', fieldValidateRules: ['maxlength'], fieldValidateRulesMaxlength: 20 },
+        ],
+      },
+      {
+        ...previousEntities[1],
+        relationships: [
+          { relationshipName: 'customer', otherEntityName: 'customer', relationshipType: 'many-to-one', relationshipSide: 'left' },
+          { relationshipName: 'products', otherEntityName: 'product', relationshipType: 'many-to-many', relationshipSide: 'left' },
+          { relationshipName: 'voucher', otherEntityName: 'product', relationshipType: 'one-to-one', relationshipSide: 'left' },
+        ],
+      },
+      { name: 'Product', changelogDate: '20200103000000', fields: [{ fieldName: 'title', fieldType: 'String' }] },
+    ];
+    let previousFiles;
+    // The objects of the .yo-rc.json of the former generation, its changelogs.
+    let previousObjects;
+
+    /** The migration of a change, of the regeneration, by its kind and its entity. */
+    const updatedMigration = name => {
+      const files = Object.keys(result.getSnapshot(`**/${migrationsDir}/*-${name}.ts`));
+      expect(files).toHaveLength(1);
+      return files[0];
+    };
+
+    beforeAll(async function () {
+      await helpers
+        .run(SUB_GENERATOR_NAMESPACE)
+        .withJHipsterConfig({ skipClient: true }, previousEntities)
+        .withOptions({ ignoreNeedlesError: true })
+        .withJHipsterGenerators()
+        .withConfiguredBlueprint();
+      previousFiles = Object.fromEntries(previousMigrations.map(file => [file, result.fs.read(join(result.cwd, migrationsDir, file))]));
+      previousObjects = result.fs.readJSON(join(result.cwd, '.yo-rc.json')).objects;
+      await result
+        .create(SUB_GENERATOR_NAMESPACE)
+        .withJHipsterConfig({ skipClient: true, entities: entities.map(entity => entity.name) })
+        // The entity files replaced, like a JDL replaces them: a JSON object would be merged with the former ones.
+        .withFiles(Object.fromEntries(entities.map(entity => [`.jhipster/${entity.name}.json`, JSON.stringify(entity)])))
+        .withOptions({ ignoreNeedlesError: true })
+        .withJHipsterGenerators()
+        .withConfiguredBlueprint()
+        .run();
+    });
+
+    it('should keep the migrations of the former generation, a database may have run them', () => {
+      for (const [file, content] of Object.entries(previousFiles)) {
+        expect(result.fs.read(join(result.cwd, migrationsDir, file))).toBe(content);
+      }
+      expect(Object.keys(result.getSnapshot(`**/${migrationsDir}/*-AddedEntity{,Constraints}{Customer,Purchase}.ts`))).toEqual([]);
+    });
+
+    it('should write the migrations of the changelogs JHipster records, at their date', () => {
+      const { objects } = result.fs.readJSON(join(result.cwd, '.yo-rc.json'));
+      const update = name => Object.values(objects).find(object => object.entityName === name && object.operation === 'update');
+      expect(update('Customer')).toMatchObject({ addedFields: ['status'], removedFields: ['legacy', 'photo'] });
+      const [, timestamp] = /(\d{13})-/.exec(updatedMigration('UpdatedEntityCustomer'));
+      expect(Number(timestamp)).toBe(
+        Date.parse(update('Customer').changelogDate.replace(/^(\d{4})(\d\d)(\d\d)(\d\d)(\d\d)(\d\d)$/, '$1-$2-$3T$4:$5:$6Z')) +
+          6 * 10 ** 12,
+      );
+      expect(updatedMigration('UpdatedEntityConstraintsPurchase')).toMatch(/\d{12}1-UpdatedEntityConstraintsPurchase\.ts$/);
+    });
+
+    it('should add the migrations of a new entity', () => {
+      result.assertFile([join(migrationsDir, '1578009600000-AddedEntityProduct.ts')]);
+    });
+
+    it('should add the columns of the added fields and drop the ones of the removed fields, like the updated_entity changelog', () => {
+      const file = updatedMigration('UpdatedEntityCustomer');
+      result.assertFileContent(
+        file,
+        "await addColumns(queryRunner, 'customer', [\n      { name: 'status', type: String, length: 20, nullable: true },\n    ]);",
+      );
+      result.assertFileContent(file, "await dropColumns(queryRunner, 'customer', ['legacy', 'photo', 'photo_content_type']);");
+      result.assertFileContent(file, "await dropColumns(queryRunner, 'customer', ['status']);");
+    });
+
+    it('should change the join columns and the join tables of the relationships, like the updated_entity_constraints changelog', () => {
+      const file = updatedMigration('UpdatedEntityConstraintsPurchase');
+      result.assertFileContent(file, "await queryRunner.dropTable('rel_purchase__gifts', true);");
+      result.assertFileContent(file, "await dropColumns(queryRunner, 'purchase', ['sellerId']);");
+      result.assertFileContent(file, "{ name: 'voucherId', type: Number, nullable: true },");
+      result.assertFileContent(file, "{ relationUniques: ['voucherId'] },");
+      result.assertFileContent(file, "{ columnName: 'voucherId', referencedTableName: 'product', referencedColumnName: 'id' },");
+      result.assertFileContent(file, "await createJoinTable(\n      queryRunner,\n      'rel_purchase__products',");
+      result.assertNoFileContent(file, 'customerId');
+      expect(Object.keys(result.getSnapshot(`**/${migrationsDir}/*-UpdatedEntityPurchase.ts`))).toEqual([]);
+    });
+
+    it('should run the migrations of the changes after the constraints of every entity', () => {
+      for (const name of ['UpdatedEntityCustomer', 'UpdatedEntityConstraintsPurchase']) {
+        const [, timestamp] = /(\d{13})-/.exec(updatedMigration(name));
+        expect(Number(timestamp)).toBeGreaterThan(7 * 10 ** 12);
+      }
+    });
+
+    it('should run the migrations kept and the ones of the changes', () => {
+      const ormConfig = result.fs.read(join(result.cwd, 'server/src/orm.config.ts'));
+      for (const file of [
+        ...previousMigrations,
+        updatedMigration('UpdatedEntityCustomer'),
+        updatedMigration('UpdatedEntityConstraintsPurchase'),
+        '1578009600000-AddedEntityProduct.ts',
+      ]) {
+        const [, timestamp, name] = /(\d{13})-(\w+)\.ts$/.exec(file);
+        expect(ormConfig).toContain(`import { ${name}${timestamp} } from './migrations/${timestamp}-${name}.ts';`);
+      }
+    });
+
+    it('should record the migrations of each changelog in its object', () => {
+      const { objects } = result.fs.readJSON(join(result.cwd, '.yo-rc.json'));
+      expect(objects['20200101000200_Purchase'].nodejsMigrations).toEqual([
+        '1577836920000-AddedEntityPurchase',
+        '4577836920000-AddedEntityConstraintsPurchase',
+      ]);
+      const update = Object.values(objects).find(object => object.entityName === 'Customer' && object.operation === 'update');
+      expect(update.nodejsMigrations).toEqual([updatedMigration('UpdatedEntityCustomer').replace(/^.*\/(.*)\.ts$/, '$1')]);
+    });
+
+    describe('from the configuration of the project only, without its migrations', () => {
+      beforeAll(async function () {
+        await helpers
+          .run(SUB_GENERATOR_NAMESPACE)
+          .withJHipsterConfig({ skipClient: true, entities: entities.map(entity => entity.name) })
+          .withYoRcConfig('objects', previousObjects)
+          .withFiles(Object.fromEntries(entities.map(entity => [`.jhipster/${entity.name}.json`, JSON.stringify(entity)])))
+          .withOptions({ ignoreNeedlesError: true })
+          .withJHipsterGenerators()
+          .withConfiguredBlueprint();
+      });
+
+      it('should run the migrations of the former changelogs, the ones they record, without writing them', () => {
+        const ormConfig = result.fs.read(join(result.cwd, 'server/src/orm.config.ts'));
+        for (const file of previousMigrations) {
+          const [, timestamp, name] = /(\d{13})-(\w+)\.ts$/.exec(file);
+          expect(ormConfig).toContain(`import { ${name}${timestamp} } from './migrations/${timestamp}-${name}.ts';`);
+        }
+        expect(Object.keys(result.getSnapshot(`**/${migrationsDir}/*-AddedEntity{,Constraints}{Customer,Purchase}.ts`))).toEqual([]);
+        expect(Object.keys(result.getSnapshot(`**/${migrationsDir}/*-UpdatedEntityCustomer.ts`))).toHaveLength(1);
+      });
+    });
+  });
 });

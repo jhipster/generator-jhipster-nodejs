@@ -1977,11 +1977,17 @@ creates the tables of the users and of the authorities, then each entity has the
 (\`<timestamp>-AddedEntity<Entity>.ts\`, the timestamp of its \`changelogDate\`) and, when it has relationships, the one adding
 its foreign keys and its join tables (\`<timestamp>-AddedEntityConstraints<Entity>.ts\`, its timestamp plus 3000000000000),
 run after the tables of every entity, like the constraints changelogs of Liquibase. A database the application ran them
-on already is not changed by a regeneration of a migration: when an entity changes, add the migration of the change
-(\`npm run typeorm:migration:generate\`) or recreate the development database. Like the Liquibase changelogs without
-incremental changelogs, a regeneration rewrites the migrations of the entity changed (a new column in the migration of its
-table): restore the migrations a database ran already (\`git restore src/migrations\`), keeping the entities, before
-generating the migration of the change, so an empty database runs them all.
+on already is not changed by a regeneration of a migration.
+
+Like the incremental changelogs of Liquibase, a regeneration keeps the migrations of an entity and generates the ones of
+its changes since, run after the others (their timestamp plus 6000000000000):
+\`<timestamp>-UpdatedEntity<Entity>.ts\` adds the columns of the added fields and drops the ones of the removed fields, then
+\`<timestamp>-UpdatedEntityConstraints<Entity>.ts\` adds and drops the join columns, their foreign keys and the join tables
+of the relationships. The changes are the changelogs JHipster records in the \`objects\` of \`.yo-rc.json\`, one for each
+change of the database schema of an entity: keep them with the migrations, the migrations of the application are the ones
+of its changelogs. A field changed (its type, its validations), a table renamed and an entity removed are not migrated,
+and a required field added to a table having rows needs a migration of your own giving them a value
+(\`npm run typeorm:migration:generate\`).
 
 The application runs the migrations [src/orm.config.ts](src/orm.config.ts) lists: import the class of a migration of
 your own and add it to \`migrations\`, so the application runs it at startup, like the ones JHipster adds. The

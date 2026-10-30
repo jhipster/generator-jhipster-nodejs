@@ -15,9 +15,7 @@ import {
   apiFakeEntity,
   apiFakeValue,
   columnTransformer,
-  constraintsMigration,
   contentTypeColumnOptions,
-  entityMigration,
   fieldColumnOptions,
   fieldColumnTypeImports,
   fieldTypeValidators,
@@ -219,6 +217,12 @@ export default class extends BaseApplicationGenerator {
     return this.asComposingTaskGroup({
       async composingTemplateTask() {
         await this.composeWithJHipster('docker');
+      },
+      async composeMigrations() {
+        // The migrations of the entities of a SQL database, from their changelogs, like the incremental Liquibase changelogs.
+        if (this.jhipsterConfigWithDefaults.databaseType === 'sql') {
+          await this.composeWithJHipster('jhipster-nodejs:node-server:migrations');
+        }
       },
       async composeLanguages() {
         // Like the spring-boot generator: the languages of the application to generate (languagesToGenerate), the server
@@ -429,9 +433,8 @@ export default class extends BaseApplicationGenerator {
           application.nodejsUserPrimaryKeyColumn = primaryKeyColumn(application.user);
           application.nodejsUserAuthorityJoinTable = userAuthorityJoinTable(application);
         }
+        // The migrations of the entities are the ones of their changelogs (the migrations generator).
         for (const entity of entities.filter(entity => !entity.skipServer && !entity.builtIn)) {
-          entity.nodejsMigration = entityMigration(entity);
-          entity.nodejsConstraintsMigration = constraintsMigration(entity);
           // The join tables of the entity, its @JoinTable the same as its constraints migration.
           for (const relationship of entity.relationships.filter(relationship => relationship.shouldWriteJoinTable)) {
             relationship.nodejsJoinTable = joinTable(entity, relationship);
@@ -689,9 +692,6 @@ export default class extends BaseApplicationGenerator {
           }
           if (!entity.builtIn) {
             source.addEntityToAppModule({ nodejsModulePath, entityClass });
-          }
-          for (const migration of [entity.nodejsMigration, entity.nodejsConstraintsMigration].filter(Boolean)) {
-            source.addMigrationToNodeConfig(migration);
           }
         }
       },

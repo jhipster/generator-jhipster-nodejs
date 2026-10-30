@@ -1,0 +1,28 @@
+import type { MigrationInterface, QueryRunner } from 'typeorm';
+
+import { <%= nodejsUpdatedMigration.schemaImports %> } from './support/schema.ts';
+
+/** Updated the fields of the entity <%= entityClass %>: the columns of its added fields, the ones of its removed fields dropped. */
+export class <%= nodejsUpdatedMigration.className %> implements MigrationInterface {
+  public async up(queryRunner: QueryRunner): Promise<void> {
+<%_ if (nodejsUpdatedMigration.addedColumnNames) { _%>
+    await addColumns(queryRunner, '<%= nodejsUpdatedMigration.tableName %>', [
+<%_ for (const column of nodejsUpdatedMigration.addedColumns) { _%>
+      { name: '<%= column.name %>', type: <%- column.type %><% if (column.enum) { %>, enum: <%- column.enum %><% } %><% if (column.length) { %>, length: <%= column.length %><% } %><% if (column.precision) { %>, precision: <%= column.precision %>, scale: <%= column.scale %><% } %><% if (column.nullable) { %>, nullable: true<% } %><% if (column.unique) { %>, unique: true<% } %> },
+<%_ } _%>
+    ]);
+<%_ } _%>
+<%_ if (nodejsUpdatedMigration.removedColumnNames) { _%>
+    await dropColumns(queryRunner, '<%= nodejsUpdatedMigration.tableName %>', <%- nodejsUpdatedMigration.removedColumnNames %>);
+<%_ } _%>
+  }
+
+  public async down(queryRunner: QueryRunner): Promise<void> {
+<%_ if (nodejsUpdatedMigration.removedColumnNames) { _%>
+    // The columns of the removed fields are not restored, nor their values.
+<%_ } _%>
+<%_ if (nodejsUpdatedMigration.addedColumnNames) { _%>
+    await dropColumns(queryRunner, '<%= nodejsUpdatedMigration.tableName %>', <%- nodejsUpdatedMigration.addedColumnNames %>);
+<%_ } _%>
+  }
+}

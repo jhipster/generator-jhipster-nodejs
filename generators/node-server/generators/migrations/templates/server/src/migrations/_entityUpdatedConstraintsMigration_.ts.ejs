@@ -1,0 +1,60 @@
+import type { MigrationInterface, QueryRunner } from 'typeorm';
+<%_ if (nodejsUpdatedConstraintsMigration.schemaImports) { _%>
+
+import { <%= nodejsUpdatedConstraintsMigration.schemaImports %> } from './support/schema.ts';
+<%_ } _%>
+
+/**
+ * Updated the relationships of the entity <%= entityClass %>: the join columns, their foreign keys and the join tables of its
+ * removed relationships dropped, the ones of its added relationships.
+ */
+export class <%= nodejsUpdatedConstraintsMigration.className %> implements MigrationInterface {
+  public async up(queryRunner: QueryRunner): Promise<void> {
+<%_ for (const name of nodejsUpdatedConstraintsMigration.removedJoinTables) { _%>
+    await queryRunner.dropTable('<%= name %>', true);
+<%_ } _%>
+<%_ if (nodejsUpdatedConstraintsMigration.removedJoinColumnNames) { _%>
+    await dropColumns(queryRunner, '<%= nodejsUpdatedConstraintsMigration.tableName %>', <%- nodejsUpdatedConstraintsMigration.removedJoinColumnNames %>);
+<%_ } _%>
+<%_ if (nodejsUpdatedConstraintsMigration.addedJoinColumnNames) { _%>
+    await addColumns(
+      queryRunner,
+      '<%= nodejsUpdatedConstraintsMigration.tableName %>',
+      [
+<%_ for (const column of nodejsUpdatedConstraintsMigration.addedJoinColumns) { _%>
+        { name: '<%= column.name %>', type: <%- column.type %>, nullable: true },
+<%_ } _%>
+      ],
+<%_ if (nodejsUpdatedConstraintsMigration.relationUniques) { _%>
+      { relationUniques: <%- nodejsUpdatedConstraintsMigration.relationUniques %> },
+<%_ } _%>
+    );
+    await createForeignKeys(queryRunner, '<%= nodejsUpdatedConstraintsMigration.tableName %>', [
+<%_ for (const foreignKey of nodejsUpdatedConstraintsMigration.addedForeignKeys) { _%>
+      { columnName: '<%= foreignKey.columnName %>', referencedTableName: '<%= foreignKey.referencedTableName %>', referencedColumnName: '<%= foreignKey.referencedColumnName %>' },
+<%_ } _%>
+    ]);
+<%_ } _%>
+<%_ for (const joinTable of nodejsUpdatedConstraintsMigration.addedJoinTables) { _%>
+    await createJoinTable(
+      queryRunner,
+      '<%= joinTable.name %>',
+<%_ for (const column of [joinTable.joinColumn, joinTable.inverseJoinColumn]) { _%>
+      { name: '<%= column.name %>', type: <%- column.type %>, referencedTableName: '<%= column.referencedTableName %>', referencedColumnName: '<%= column.referencedColumnName %>' },
+<%_ } _%>
+    );
+<%_ } _%>
+  }
+
+  public async down(queryRunner: QueryRunner): Promise<void> {
+<%_ if (nodejsUpdatedConstraintsMigration.removedJoinColumnNames || nodejsUpdatedConstraintsMigration.removedJoinTables.length > 0) { _%>
+    // The join columns and the join tables of the removed relationships are not restored, nor their values.
+<%_ } _%>
+<%_ for (const joinTable of nodejsUpdatedConstraintsMigration.addedJoinTables) { _%>
+    await queryRunner.dropTable('<%= joinTable.name %>', true);
+<%_ } _%>
+<%_ if (nodejsUpdatedConstraintsMigration.addedJoinColumnNames) { _%>
+    await dropColumns(queryRunner, '<%= nodejsUpdatedConstraintsMigration.tableName %>', <%- nodejsUpdatedConstraintsMigration.addedJoinColumnNames %>);
+<%_ } _%>
+  }
+}
