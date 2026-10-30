@@ -75,7 +75,8 @@ export default class extends BaseApplicationGenerator {
     return this.asDefaultTaskGroup({
       postPreparing({ application }) {
         if (application.authority) {
-          application.authority.skipClient = !application.clientFrameworkAngular;
+          // The clients of JHipster with the screens of the built-in Authority, which their user management uses.
+          application.authority.skipClient = !application.clientFrameworkAngular && !application.clientFrameworkVue;
         }
       },
     });
