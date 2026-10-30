@@ -201,6 +201,30 @@ const foreignKey = relationship => ({
   referencedColumnName: relationship.otherEntity.primaryKey.name,
 });
 
+/**
+ * The migrations of a changelog of an entity, of this generation: for its creation the table of the entity at its date
+ * (nodejsMigration), then its constraints (nodejsConstraintsMigration); for an update its fields (nodejsUpdatedMigration),
+ * then its relationships (nodejsUpdatedConstraintsMigration), after the constraints of every entity; none for its removal.
+ * @param {any} changelog the changelog
+ * @param {any} entity the entity, prepared
+ * @param {any[]} entities the entities of the application, prepared
+ */
+export const changelogMigrations = (changelog, entity, entities) => {
+  const timestamp = changelogDateToTimestamp(changelog.changelogDate);
+  if (changelog.operation === 'create') {
+    return { nodejsMigration: entityMigration(entity, timestamp), nodejsConstraintsMigration: constraintsMigration(entity, timestamp) };
+  }
+  if (changelog.operation === 'update') {
+    const changes = { entity, ...changelogChanges(changelog, entity, entities) };
+    return {
+      nodejsUpdatedMigration: updatedEntityMigration(changes, timestamp + MIGRATION_TIMESTAMP_OFFSET),
+      // The relationships after the fields, whose join columns may reference them.
+      nodejsUpdatedConstraintsMigration: updatedConstraintsMigration(changes, timestamp + MIGRATION_TIMESTAMP_OFFSET + 1),
+    };
+  }
+  return {};
+};
+
 /** The class of a migration, by the name of its file (`<timestamp>-<kind><Entity>`, its class `<kind><Entity><timestamp>`). */
 export const migrationOfFile = fileName => ({ fileName, className: fileName.replace(/^(\d+)-(\w+)$/, '$2$1') });
 
@@ -215,16 +239,15 @@ export const migrationOfFile = fileName => ({ fileName, className: fileName.repl
  * @param {any[]} entities the entities of the application, prepared
  */
 export const changelogChanges = (changelog, entity, entities) => {
-  const previousEntity = changelog.previousEntity ?? {};
-  const recreated = changelog.recreatedRelationships ?? [];
-  const named = (items = [], names = [], key) => items.filter(item => names.includes(item[key]));
+  const { previousEntity, recreatedRelationships } = changelog;
+  const named = (items, names, key) => items.filter(item => names.includes(item[key]));
   return {
     addedFields: named(entity.fields, changelog.addedFields, 'fieldName'),
     removedFields: named(previousEntity.fields, changelog.removedFields, 'fieldName'),
-    addedRelationships: named(entity.relationships, [...(changelog.addedRelationships ?? []), ...recreated], 'relationshipName'),
+    addedRelationships: named(entity.relationships, [...changelog.addedRelationships, ...recreatedRelationships], 'relationshipName'),
     removedRelationships: named(
       previousEntity.relationships,
-      [...(changelog.removedRelationships ?? []), ...recreated],
+      [...changelog.removedRelationships, ...recreatedRelationships],
       'relationshipName',
     ).map(relationship => removedRelationship(relationship, entities)),
   };
@@ -236,7 +259,7 @@ export const changelogChanges = (changelog, entity, entities) => {
  * of its other entity (id when the other entity is no longer).
  */
 const removedRelationship = (relationship, entities) => {
-  const otherEntity = entities.find(entity => entity.name.toLowerCase() === relationship.otherEntityName?.toLowerCase());
+  const otherEntity = entities.find(entity => entity.name.toLowerCase() === relationship.otherEntityName.toLowerCase());
   return {
     ...relationship,
     relationshipFieldName: `${relationship.relationshipName.charAt(0).toLowerCase()}${relationship.relationshipName.slice(1)}`,

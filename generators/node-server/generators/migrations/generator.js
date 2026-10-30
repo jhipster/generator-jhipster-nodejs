@@ -7,16 +7,7 @@ import {
 } from 'generator-jhipster/generators/base-application/generators/database-changelogs/support';
 import { CONTEXT_DATA_APPLICATION_ENTITIES_KEY } from 'generator-jhipster/generators/base-application/support';
 
-import {
-  MIGRATION_TIMESTAMP_OFFSET,
-  changelogChanges,
-  changelogDateToTimestamp,
-  constraintsMigration,
-  entityMigration,
-  migrationOfFile,
-  updatedConstraintsMigration,
-  updatedEntityMigration,
-} from '../../support/index.js';
+import { changelogMigrations, migrationOfFile } from '../../support/index.js';
 
 import { migrationFiles } from './files.js';
 
@@ -93,29 +84,19 @@ export default class extends BaseApplicationGenerator {
   }
 
   /**
-   * The migrations of a changelog of this generation, recorded in its object (nodejsMigrations), which the next generations
-   * register: for a creation AddedEntity and AddedEntityConstraints at its date, for an update UpdatedEntity and
-   * UpdatedEntityConstraints after the constraints of every entity.
+   * The migrations of a changelog of this generation (support/migrations.js), recorded in its object (nodejsMigrations),
+   * which the next generations register.
    */
   #prepareMigrations(changelog, entity, entities) {
-    const timestamp = changelogDateToTimestamp(changelog.changelogDate);
-    if (changelog.operation === 'create') {
-      entity.nodejsMigration = entityMigration(entity, timestamp);
-      entity.nodejsConstraintsMigration = constraintsMigration(entity, timestamp);
-    } else if (changelog.operation === 'update') {
-      const changes = { entity, ...changelogChanges(changelog, entity, entities) };
-      entity.nodejsUpdatedMigration = updatedEntityMigration(changes, timestamp + MIGRATION_TIMESTAMP_OFFSET);
-      // The relationships after the fields, whose join columns may reference them.
-      entity.nodejsUpdatedConstraintsMigration = updatedConstraintsMigration(changes, timestamp + MIGRATION_TIMESTAMP_OFFSET + 1);
-    }
-    const migrations = [
-      entity.nodejsMigration,
-      entity.nodejsConstraintsMigration,
-      entity.nodejsUpdatedMigration,
-      entity.nodejsUpdatedConstraintsMigration,
-    ].filter(Boolean);
+    const migrations = changelogMigrations(changelog, entity, entities);
+    Object.assign(entity, migrations);
     const name = changelogName(changelog);
-    this.setObjectConfig(name, { ...this.getObjectConfig(name), nodejsMigrations: migrations.map(migration => migration.fileName) });
+    this.setObjectConfig(name, {
+      ...this.getObjectConfig(name),
+      nodejsMigrations: Object.values(migrations)
+        .filter(Boolean)
+        .map(migration => migration.fileName),
+    });
   }
 }
 

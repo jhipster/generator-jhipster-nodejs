@@ -5,6 +5,7 @@ import {
   MIGRATION_TIMESTAMP_OFFSET,
   changelogChanges,
   changelogDateToTimestamp as toTimestamp,
+  changelogMigrations,
   constraintsMigration,
   entityMigration,
   fieldColumns,
@@ -63,6 +64,12 @@ const field = ({ fieldValidateRules = [], ...properties }) => ({
 });
 
 describe('fieldColumns', () => {
+  it('should give a column of a TypeScript type without a migration type a String', () => {
+    expect(fieldColumns(field({ fieldNameAsDatabaseColumn: 'data', nodejsFieldType: 'any', fieldType: 'AnyBlob' }))[0]).toMatchObject({
+      type: 'String',
+    });
+  });
+
   it('should give the column of a field without column type the type of its TypeScript property', () => {
     expect(fieldColumns(field({ fieldNameAsDatabaseColumn: 'name', nodejsFieldType: 'string', fieldType: 'String' }))).toEqual([
       { name: 'name', type: 'String', nullable: true, unique: false },
@@ -116,6 +123,10 @@ describe('fieldColumns', () => {
 });
 
 describe('entityMigration', () => {
+  it('should add a primary key of an entity with a UUID, generated', () => {
+    expect(entityMigration(gadget).columns[0]).toEqual({ name: 'id', type: "'uuid'", primary: true, generated: 'uuid' });
+  });
+
   it('should add the table, with the primary key, the fields and the join columns, named like TypeORM', () => {
     const country = entity({
       entityClass: 'Country',
@@ -245,6 +256,7 @@ describe('typeormCamelCase', () => {
     expect(typeormCamelCase('x2y_id')).toBe('x2yId');
     expect(typeormCamelCase('region_id')).toBe('regionId');
     expect(typeormCamelCase('jhi_user_id')).toBe('jhiUserId');
+    expect(typeormCamelCase('Region_id')).toBe('regionId');
   });
 });
 
@@ -347,6 +359,7 @@ describe('the migrations of an update changelog', () => {
       {
         ...changelog,
         previousEntity: {
+          fields: [],
           relationships: [{ relationshipName: 'Seller', relationshipType: 'many-to-one', otherEntityName: 'vendor', ownerSide: true }],
         },
         removedRelationships: ['Seller'],
@@ -360,9 +373,49 @@ describe('the migrations of an update changelog', () => {
     );
   });
 
+  it('gives the migrations of the update, after the constraints of every entity', () => {
+    const timestamp = changelogDateToTimestamp('20231215172515') + MIGRATION_TIMESTAMP_OFFSET;
+    const migrations = changelogMigrations({ ...changelog, changelogDate: '20231215172515' }, shop, [region, gadget]);
+    expect(migrations).toEqual({
+      nodejsUpdatedMigration: expect.objectContaining({ className: `UpdatedEntityShop${timestamp}` }),
+      nodejsUpdatedConstraintsMigration: expect.objectContaining({ className: `UpdatedEntityConstraintsShop${timestamp + 1}` }),
+    });
+  });
+
+  it('drops the columns of the removed fields only, without adding one', () => {
+    const migration = updatedEntityMigration({ ...changes, addedFields: [] }, 7000);
+    expect(migration).toMatchObject({
+      addedColumnNames: undefined,
+      removedColumnNames: "['legacy', 'photo', 'photo_content_type', 'notes']",
+      schemaImports: 'dropColumns',
+    });
+  });
+
   it('gives no migration without a change of a column, a join column or a join table', () => {
     const none = { entity: shop, addedFields: [], removedFields: [], addedRelationships: [], removedRelationships: [] };
     expect(updatedEntityMigration(none, 7000)).toBeUndefined();
     expect(updatedConstraintsMigration(none, 7001)).toBeUndefined();
+  });
+});
+
+describe('changelogMigrations', () => {
+  it('gives the migrations of a creation at the date of its changelog: the table, then the constraints', () => {
+    const timestamp = changelogDateToTimestamp('20240101000000');
+    const shop = entity({
+      entityClass: 'Shop',
+      entityTableName: 'shop',
+      primaryKey,
+      relationships: [relationship({ relationshipType: 'many-to-one', relationshipFieldName: 'region', otherEntity: region })],
+    });
+    expect(changelogMigrations({ operation: 'create', changelogDate: '20240101000000' }, shop, [region])).toEqual({
+      nodejsMigration: expect.objectContaining({ className: `AddedEntityShop${timestamp}` }),
+      nodejsConstraintsMigration: expect.objectContaining({
+        className: `AddedEntityConstraintsShop${timestamp + CONSTRAINTS_TIMESTAMP_OFFSET}`,
+      }),
+    });
+  });
+
+  it('gives no migration for a removal', () => {
+    expect(changelogMigrations({ operation: 'remove', changelogDate: '20240101000000' }, region, [region])).toEqual({});
   });
 });
