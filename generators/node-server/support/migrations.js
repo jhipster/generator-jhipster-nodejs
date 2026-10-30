@@ -204,9 +204,10 @@ const foreignKey = relationship => ({
 /**
  * The migrations of a changelog of an entity, of this generation: for its creation the table of the entity at its date
  * (nodejsMigration), then its constraints (nodejsConstraintsMigration); for an update its fields (nodejsUpdatedMigration),
- * then its relationships (nodejsUpdatedConstraintsMigration), after the constraints of every entity; none for its removal.
+ * then its relationships (nodejsUpdatedConstraintsMigration), after the constraints of every entity; for its removal its
+ * join tables and its table (nodejsRemovedMigration), after the updates of the entities whose relationships referenced it.
  * @param {any} changelog the changelog
- * @param {any} entity the entity, prepared
+ * @param {any} entity the entity, prepared: none for a removal
  * @param {any[]} entities the entities of the application, prepared
  */
 export const changelogMigrations = (changelog, entity, entities) => {
@@ -222,8 +223,22 @@ export const changelogMigrations = (changelog, entity, entities) => {
       nodejsUpdatedConstraintsMigration: updatedConstraintsMigration(changes, timestamp + MIGRATION_TIMESTAMP_OFFSET + 1),
     };
   }
-  return {};
+  return { nodejsRemovedMigration: removedEntityMigration(changelog, timestamp + MIGRATION_TIMESTAMP_OFFSET) };
 };
+
+/**
+ * The migration of the removal of an entity, like the dropTable of Liquibase: the join tables it owned, then its table, from
+ * the entity before the changelog (its previousEntity). The relationships of the other entities referencing it are removed
+ * with it, their join columns and their join tables dropped by their update migrations, dated before.
+ * @param {any} changelog the removal changelog of this generation
+ * @param {number} timestamp the timestamp of the migration
+ */
+export const removedEntityMigration = ({ entityName, previousEntity }, timestamp) => ({
+  ...migrationName('RemovedEntity', `${entityName.charAt(0).toUpperCase()}${entityName.slice(1)}`, timestamp),
+  entityName,
+  tableName: previousEntity.entityTableName,
+  joinTables: previousEntity.relationships.filter(hasJoinTable).map(relationship => relationship.joinTable.name),
+});
 
 /** The class of a migration, by the name of its file (`<timestamp>-<kind><Entity>`, its class `<kind><Entity><timestamp>`). */
 export const migrationOfFile = fileName => ({ fileName, className: fileName.replace(/^(\d+)-(\w+)$/, '$2$1') });

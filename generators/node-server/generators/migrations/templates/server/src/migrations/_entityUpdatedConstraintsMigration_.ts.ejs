@@ -46,7 +46,7 @@ export class <%= nodejsUpdatedConstraintsMigration.className %> implements Migra
 <%_ } _%>
   }
 
-  public async down(queryRunner: QueryRunner): Promise<void> {
+  public async down(<%= nodejsUpdatedConstraintsMigration.addedJoinColumnNames || nodejsUpdatedConstraintsMigration.addedJoinTables.length > 0 ? '' : '_' %>queryRunner: QueryRunner): Promise<void> {
 <%_ if (nodejsUpdatedConstraintsMigration.removedJoinColumnNames || nodejsUpdatedConstraintsMigration.removedJoinTables.length > 0) { _%>
     // The join columns and the join tables of the removed relationships are not restored, nor their values.
 <%_ } _%>

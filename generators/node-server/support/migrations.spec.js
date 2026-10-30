@@ -415,7 +415,30 @@ describe('changelogMigrations', () => {
     });
   });
 
-  it('gives no migration for a removal', () => {
-    expect(changelogMigrations({ operation: 'remove', changelogDate: '20240101000000' }, region, [region])).toEqual({});
+  it('gives the migration of a removal after the updates of its generation: its join tables, then its table', () => {
+    const timestamp = changelogDateToTimestamp('20240101000000') + MIGRATION_TIMESTAMP_OFFSET;
+    const previousEntity = {
+      entityTableName: 'store',
+      fields: [],
+      relationships: [
+        { relationshipName: 'owner', relationshipType: 'many-to-one', otherEntityName: 'region', ownerSide: true },
+        { relationshipName: 'products', relationshipType: 'many-to-many', ownerSide: true, joinTable: { name: 'rel_store__products' } },
+        { relationshipName: 'sellers', relationshipType: 'many-to-many', ownerSide: false },
+      ],
+    };
+    expect(
+      changelogMigrations({ operation: 'remove', entityName: 'store', changelogDate: '20240101000000', previousEntity }, undefined, [
+        region,
+      ]),
+    ).toEqual({
+      nodejsRemovedMigration: {
+        timestamp,
+        className: `RemovedEntityStore${timestamp}`,
+        fileName: `${timestamp}-RemovedEntityStore`,
+        entityName: 'store',
+        tableName: 'store',
+        joinTables: ['rel_store__products'],
+      },
+    });
   });
 });

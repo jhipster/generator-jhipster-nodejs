@@ -17,7 +17,7 @@ export class <%= nodejsUpdatedMigration.className %> implements MigrationInterfa
 <%_ } _%>
   }
 
-  public async down(queryRunner: QueryRunner): Promise<void> {
+  public async down(<%= nodejsUpdatedMigration.addedColumnNames ? '' : '_' %>queryRunner: QueryRunner): Promise<void> {
 <%_ if (nodejsUpdatedMigration.removedColumnNames) { _%>
     // The columns of the removed fields are not restored, nor their values.
 <%_ } _%>

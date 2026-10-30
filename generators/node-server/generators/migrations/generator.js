@@ -19,6 +19,9 @@ import { migrationFiles } from './files.js';
  * in them, and registers every one: the ones of the former changelogs as they record them, written once.
  */
 export default class extends BaseApplicationGenerator {
+  /** The migrations of the changelogs of this generation, with their entity. */
+  #migrations = [];
+
   constructor(args, options, features) {
     // The changelogs once the entities are prepared: their migrations are written from the entities and their fields.
     super(args, options, { ...features, customObjects: [changelogsCustomObject] });
@@ -51,8 +54,9 @@ export default class extends BaseApplicationGenerator {
       prepareMigrations: ({ changelogs }) => {
         const entities = this.#entities;
         for (const changelog of changelogs.filter(changelog => isNewEntityChangelog(this, changelog))) {
-          const entity = entities.find(entity => entity.name === changelog.entityName && !entity.skipServer);
-          if (entity) {
+          // The entity of a creation or an update; a removal has none, its migration written from the entity before it.
+          const entity = entities.find(entity => entity.name === changelog.entityName);
+          if (!(entity ?? changelog.previousEntity).skipServer) {
             this.#prepareMigrations(changelog, entity, entities);
           }
         }
@@ -63,8 +67,8 @@ export default class extends BaseApplicationGenerator {
   get [BaseApplicationGenerator.WRITING_OBJECTS]() {
     return this.asWritingObjectsTaskGroup({
       async writeMigrations({ application }) {
-        for (const entity of this.#entities.filter(entity => !entity.skipServer && !entity.builtIn)) {
-          await this.writeFiles({ sections: migrationFiles, context: { ...application, ...entity } });
+        for (const { entity, migrations } of this.#migrations) {
+          await this.writeFiles({ sections: migrationFiles, context: { ...application, ...entity, ...migrations } });
         }
       },
     });
@@ -84,12 +88,12 @@ export default class extends BaseApplicationGenerator {
   }
 
   /**
-   * The migrations of a changelog of this generation (support/migrations.js), recorded in its object (nodejsMigrations),
-   * which the next generations register.
+   * The migrations of a changelog of this generation (support/migrations.js), written with its entity, and recorded in its
+   * object (nodejsMigrations), which the next generations register.
    */
   #prepareMigrations(changelog, entity, entities) {
     const migrations = changelogMigrations(changelog, entity, entities);
-    Object.assign(entity, migrations);
+    this.#migrations.push({ entity, migrations });
     const name = changelogName(changelog);
     this.setObjectConfig(name, {
       ...this.getObjectConfig(name),

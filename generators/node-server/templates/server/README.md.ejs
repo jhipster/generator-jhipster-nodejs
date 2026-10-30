@@ -107,12 +107,14 @@ on already is not changed by a regeneration of a migration.
 
 Like the incremental changelogs of Liquibase, a regeneration keeps the migrations of an entity and generates the ones of
 its changes since, run after the others (their timestamp plus <%= nodejsMigrationTimestampOffset %>):
-`<timestamp>-UpdatedEntity<Entity>.ts` adds the columns of the added fields and drops the ones of the removed fields, then
-`<timestamp>-UpdatedEntityConstraints<Entity>.ts` adds and drops the join columns, their foreign keys and the join tables
-of the relationships. The changes are the changelogs JHipster records in the `objects` of `.yo-rc.json`, one for each
-change of the database schema of an entity: keep them with the migrations, the migrations of the application are the ones
-of its changelogs. A field changed (its type, its validations), a table renamed and an entity removed are not migrated,
-and a required field added to a table having rows needs a migration of your own giving them a value
+`<timestamp>-UpdatedEntity<Entity>.ts` adds the columns of the added fields and drops the ones of the removed fields,
+then `<timestamp>-UpdatedEntityConstraints<Entity>.ts` adds and drops the join columns, their foreign keys and the join
+tables of the relationships, and `<timestamp>-RemovedEntity<Entity>.ts` drops the join tables and the table of a removed
+entity, after the updates of the entities whose relationships referenced it. The changes are the changelogs JHipster
+records in the `objects` of `.yo-rc.json`, one for each change of the database schema of an entity: keep them with the
+migrations, the migrations of the application are the ones of its changelogs. A field changed (its type, its
+validations) and a table renamed are not migrated, a dropped column or table keeps none of its values, and a required
+field added to a table having rows needs a migration of your own giving them a value
 (`npm run typeorm:migration:generate`).
 
 The application runs the migrations [src/orm.config.ts](src/orm.config.ts) lists: import the class of a migration of

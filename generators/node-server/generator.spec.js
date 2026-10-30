@@ -1074,4 +1074,73 @@ describe('SubGenerator node-server of nodejs JHipster blueprint', () => {
       });
     });
   });
+
+  describe('regenerated with an entity removed', () => {
+    const migrationsDir = 'server/src/migrations';
+    const product = { name: 'Product', changelogDate: '20200103000000', fields: [{ fieldName: 'title', fieldType: 'String' }] };
+    const purchase = {
+      name: 'Purchase',
+      changelogDate: '20200101000200',
+      fields: [{ fieldName: 'total', fieldType: 'Integer' }],
+      relationships: [
+        { relationshipName: 'products', otherEntityName: 'product', relationshipType: 'many-to-many', relationshipSide: 'left' },
+        { relationshipName: 'voucher', otherEntityName: 'product', relationshipType: 'one-to-one', relationshipSide: 'left' },
+      ],
+    };
+    // The regeneration without Product, nor the relationships of Purchase referencing it.
+    const entities = [{ ...purchase, relationships: [] }];
+
+    /** The migration of the regeneration, by its kind and its entity. */
+    const migrationFile = name => {
+      const files = Object.keys(result.getSnapshot(`**/${migrationsDir}/*-${name}.ts`));
+      expect(files).toHaveLength(1);
+      return files[0];
+    };
+    const timestampOf = file => Number(/(\d{13})-/.exec(file)[1]);
+
+    beforeAll(async function () {
+      await helpers
+        .run(SUB_GENERATOR_NAMESPACE)
+        .withJHipsterConfig({ skipClient: true }, [purchase, product])
+        .withOptions({ ignoreNeedlesError: true })
+        .withJHipsterGenerators()
+        .withConfiguredBlueprint();
+      // The entity removed from the project: its entity file and its name in the .yo-rc.json, which the regeneration reads.
+      result.fs.delete(join(result.cwd, '.jhipster/Product.json'));
+      const yoRc = result.fs.readJSON(join(result.cwd, '.yo-rc.json'));
+      result.fs.writeJSON(join(result.cwd, '.yo-rc.json'), {
+        ...yoRc,
+        'generator-jhipster': { ...yoRc['generator-jhipster'], entities: entities.map(entity => entity.name) },
+      });
+      await result
+        .create(SUB_GENERATOR_NAMESPACE)
+        .withFiles(Object.fromEntries(entities.map(entity => [`.jhipster/${entity.name}.json`, JSON.stringify(entity)])))
+        .withOptions({ ignoreNeedlesError: true })
+        .withJHipsterGenerators()
+        .withConfiguredBlueprint()
+        .run();
+    });
+
+    it('should drop the table of the removed entity, like the dropTable of Liquibase', () => {
+      const file = migrationFile('RemovedEntityProduct');
+      result.assertFileContent(file, "await queryRunner.dropTable('product', true);");
+      result.assertNoFileContent(file, 'rel_');
+    });
+
+    it('should drop the join columns and the join tables referencing it first, in the update of the entities that had them', () => {
+      const file = migrationFile('UpdatedEntityConstraintsPurchase');
+      result.assertFileContent(file, "await queryRunner.dropTable('rel_purchase__products', true);");
+      result.assertFileContent(file, "await dropColumns(queryRunner, 'purchase', ['voucherId']);");
+      // Nothing to undo: the join columns and the join tables dropped are not restored.
+      result.assertFileContent(file, 'public async down(_queryRunner: QueryRunner): Promise<void> {');
+      expect(timestampOf(migrationFile('RemovedEntityProduct'))).toBeGreaterThan(timestampOf(file));
+    });
+
+    it('should keep running the migrations of the removed entity, which created its table, and the one dropping it', () => {
+      const ormConfig = result.fs.read(join(result.cwd, 'server/src/orm.config.ts'));
+      expect(ormConfig).toContain("import { AddedEntityProduct1578009600000 } from './migrations/1578009600000-AddedEntityProduct.ts';");
+      const [, timestamp] = /(\d{13})-/.exec(migrationFile('RemovedEntityProduct'));
+      expect(ormConfig).toContain(`import { RemovedEntityProduct${timestamp} } from './migrations/${timestamp}-RemovedEntityProduct.ts';`);
+    });
+  });
 });
