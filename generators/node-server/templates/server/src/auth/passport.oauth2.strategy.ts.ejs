@@ -6,7 +6,7 @@ import { ConfigService } from '@nestjs/config';
 import { AuthService } from './auth.service.ts';
 import { <%= userLoginVmClass %> } from '../users/dto/user.dto.ts';
 import { OAuth2Config } from './oauth2.config.ts';
-import { oidcUserOfClaims } from './oauth2.authorities.ts';
+import { OidcUser, oidcUserOfClaims } from './oauth2.authorities.ts';
 
 @Injectable()
 export class Oauth2Strategy extends PassportStrategy(Strategy, undefined, true) {
@@ -33,7 +33,7 @@ export class Oauth2Strategy extends PassportStrategy(Strategy, undefined, true) 
      * access token (the access token of some providers, like Okta, has no login nor mail). With its 4 parameters, passport-oauth2
      * gives it the params of the token response (the ID token): with 3, it gives the profile instead, undefined here.
      */
-    <%- generateBuiltInUserEntity ? 'async ' : '' %>validate(accessToken: string, refreshToken: string, params: any, _profile: unknown): <%- generateBuiltInUserEntity ? `Promise<${userLoginVmClass} & { idToken?: string }>` : `${userLoginVmClass} & { idToken?: string }` %> {
+    <%- generateBuiltInUserEntity ? 'async ' : '' %>validate(accessToken: string, refreshToken: string, params: { id_token?: string }, _profile: unknown): <%- generateBuiltInUserEntity ? 'Promise<OidcUser>' : 'OidcUser' %> {
         const user = oidcUserOfClaims({ ...jwtDecode(accessToken), ...(params.id_token ? jwtDecode(params.id_token) : {}) });
 <%_ if (generateBuiltInUserEntity) { _%>
         await this.authService.findUserOrSave(user);

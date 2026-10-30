@@ -1,5 +1,8 @@
 import { <%= userLoginVmClass %> } from '../users/dto/user.dto.ts';
 
+/** The user of an OIDC login, with the ID token its logout sends to the provider. */
+export type OidcUser = <%= userLoginVmClass %> & { idToken?: string };
+
 // Claim with the roles when the provider namespaces it, like Auth0.
 export const CLAIMS_NAMESPACE = 'https://www.jhipster.tech/';
 
@@ -17,17 +20,23 @@ export function extractAuthoritiesFromClaims(claims: Record<string, unknown>): s
  * request), like the OIDC user of JHipster Spring Boot: the login of preferred_username (else sub) and the mail in lower
  * case, the names, the language and the authorities.
  */
-export function oidcUserOfClaims(claims: Record<string, any>): <%= userLoginVmClass %> {
+export function oidcUserOfClaims(claims: Record<string, unknown>): <%= userLoginVmClass %> {
   const login = String(claims.preferred_username ?? claims.sub).toLowerCase();
   // Without a password, nor a mail when the token has none (the login of the user saved has its fallback).
   return Object.assign(new <%= userLoginVmClass %>(), {
     login,
-    firstName: claims.given_name,
-    lastName: claims.family_name,
-    email: claims.email ? String(claims.email).toLowerCase() : undefined,
-    imageUrl: claims.picture ?? '',
+    firstName: claimOf(claims, 'given_name'),
+    lastName: claimOf(claims, 'family_name'),
+    email: claimOf(claims, 'email')?.toLowerCase(),
+    imageUrl: claimOf(claims, 'picture') ?? '',
     activated: true,
     langKey: typeof claims.locale === 'string' ? claims.locale.split(/[-_]/)[0] : 'en',
     authorities: extractAuthoritiesFromClaims(claims),
   });
+}
+
+/** A text claim of a token, else undefined. */
+function claimOf(claims: Record<string, unknown>, name: string): string | undefined {
+  const value = claims[name];
+  return typeof value === 'string' && value ? value : undefined;
 }

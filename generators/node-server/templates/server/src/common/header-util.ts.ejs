@@ -18,12 +18,12 @@ export class HeaderUtil {
     this.applicationName = configService.get('jhipster.clientApp.name', { infer: true });
   }
 
-  createAlert(res: Response, message: string, param: string): any {
+  createAlert(res: Response, message: string, param: string): void {
     res.set(`X-${this.applicationName}-alert`, message);
     res.set(`X-${this.applicationName}-params`, param);
   }
 
-  addEntityCreatedHeaders(res: Response, entityName: string, param: string | number | undefined): any {
+  addEntityCreatedHeaders(res: Response, entityName: string, param: string | number | undefined): void {
     res.status(201);
 <%_ if (enableTranslation) { _%>
     // The translation key of the alert, translated by the client.
@@ -33,7 +33,7 @@ export class HeaderUtil {
 <%_ } _%>
   }
 
-  addEntityUpdatedHeaders(res: Response, entityName: string, param: string | number | undefined): any {
+  addEntityUpdatedHeaders(res: Response, entityName: string, param: string | number | undefined): void {
     res.status(200);
 <%_ if (enableTranslation) { _%>
     // The translation key of the alert, translated by the client.
@@ -43,7 +43,7 @@ export class HeaderUtil {
 <%_ } _%>
   }
 
-  addEntityDeletedHeaders(res: Response, entityName: string, param: string | number | undefined): any {
+  addEntityDeletedHeaders(res: Response, entityName: string, param: string | number | undefined): void {
     res.status(204);
 <%_ if (enableTranslation) { _%>
     // The translation key of the alert, translated by the client.
@@ -57,7 +57,7 @@ export class HeaderUtil {
    * The alerts of the user management, like the UserResource of JHipster Spring Boot: translated by the client from its
    * userManagement keys.
    */
-  addUserManagementHeaders(res: Response, action: 'created' | 'updated' | 'deleted', login: string): any {
+  addUserManagementHeaders(res: Response, action: 'created' | 'updated' | 'deleted', login: string): void {
     res.status({ created: 201, updated: 200, deleted: 204 }[action]);
 <%_ if (enableTranslation) { _%>
     this.createAlert(res, `userManagement.${action}`, login);
@@ -69,7 +69,7 @@ export class HeaderUtil {
   /**
    * Like the failure alert of JHipster Spring Boot (BadRequestAlertException), the status comes from the thrown exception.
    */
-  addFailureAlertHeaders(res: Response, entityName: string, errorKey: string): any {
+  addFailureAlertHeaders(res: Response, entityName: string, errorKey: string): void {
     res.set(`X-${this.applicationName}-error`, `error.${errorKey}`);
     res.set(`X-${this.applicationName}-params`, entityName);
   }
@@ -78,7 +78,7 @@ export class HeaderUtil {
    * The pagination headers, like the PaginationUtil of JHipster Spring Boot: the total count of the elements, and the
    * links of the next, previous, last and first pages.
    */
-  addPaginationHeaders<T>(res: Response, page: Page<T>): any {
+  addPaginationHeaders<T>(res: Response, page: Page<T>): void {
     const url = res.req.url;
     res.set('X-Total-Count', page.total.toString());
     const pageNumber = page.pageable.page;

@@ -14,7 +14,11 @@ import { CreateSessions1570200270082 } from './migrations/1570200270082-CreateSe
 import { activeProfiles, config } from './config.ts';
 
 /** Reads a property of the configuration: ConfigService in the application, config outside of it (the typeorm CLI). */
-export type ConfigReader = (key: string) => any;
+export type ConfigReader = (key: string) => unknown;
+
+/** A property of the configuration as a text, else undefined. */
+const text = (value: unknown): string | undefined =>
+  typeof value === 'string' ? value : typeof value === 'number' || typeof value === 'boolean' ? String(value) : undefined;
 
 // typeorm fails to auto load the drivers due to workspaces resolution: the driver of each database type, required when
 // its database is used.
@@ -74,14 +78,14 @@ async function ormConfig(read: ConfigReader = key => config.get(key)): Promise<T
 <%_ } else { _%>
 function ormConfig(read: ConfigReader = key => config.get(key)): TypeOrmModuleOptions {
 <%_ } _%>
-  const type = read('database.type');
+  const type = text(read('database.type')) ?? '';
   const driver = drivers[type];
   if (!driver) {
     throw new Error(`The database.type '${type}' of the ${activeProfiles.join(',')} profiles is not supported`);
   }
-  <%= databaseTypeMongodb ? 'let' : 'const' %> host = read('database.host');
-  <%= databaseTypeMongodb ? 'let' : 'const' %> port = read('database.port');
-  <%= databaseTypeMongodb ? 'let' : 'const' %> database = read('database.name');
+  <%= databaseTypeMongodb ? 'let' : 'const' %> host = text(read('database.host'));
+  <%= databaseTypeMongodb ? 'let' : 'const' %> port = read('database.port') ? Number(read('database.port')) : undefined;
+  <%= databaseTypeMongodb ? 'let' : 'const' %> database = text(read('database.name'));
 <%_ if (databaseTypeMongodb) { _%>
   if (read('database.embedded')) {
     // An in-memory MongoDB server, mongodb-memory-server is a dev dependency only loaded for it (test profile).
@@ -98,15 +102,15 @@ function ormConfig(read: ConfigReader = key => config.get(key)): TypeOrmModuleOp
     driver: driver(),
     host,
     port,
-    username: read('database.username'),
-    password: read('database.password'),
+    username: text(read('database.username')),
+    password: text(read('database.password')),
     database,
 <%_ if (prodDatabaseTypeMysql || prodDatabaseTypeMariadb) { _%>
     // The instants in UTC, like the hibernate.jdbc.time_zone of JHipster Spring Boot (better-sqlite3 ignores it).
     timezone: 'Z',
 <%_ } _%>
-    logging: read('database.logging') ?? false,
-    synchronize: read('database.synchronize') ?? false,
+    logging: read('database.logging') === true,
+    synchronize: read('database.synchronize') === true,
     migrationsRun: true,
 <%_ if (databaseTypeMongodb) { _%>
     // each migration runs in its own transaction, unless it sets transaction = false (CreateTables)
@@ -141,7 +145,8 @@ function ormConfig(read: ConfigReader = key => config.get(key)): TypeOrmModuleOp
       trustServerCertificate: true,
     },
 <%_ } _%>
-  };
+    // A type of database the drivers support (checked above), the options of its configuration.
+  } as TypeOrmModuleOptions;
 }
 
 export { ormConfig };

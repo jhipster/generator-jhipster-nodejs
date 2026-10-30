@@ -16,12 +16,12 @@ export function httpsOptions(): HttpsOptions | undefined {
   if (keyStoreType !== 'PKCS12') {
     throw new Error(`The server.ssl.key-store-type '${keyStoreType}' is not supported, use a PKCS12 keystore`);
   }
-  const keyStore = config.get('server.ssl.key-store');
+  const keyStore = config.getString('server.ssl.key-store');
   if (!keyStore) {
     throw new Error('TLS is enabled without a keystore: set server.ssl.key-store, or activate the tls-samples profile in development');
   }
   return {
     pfx: fs.readFileSync(keyStore.startsWith('classpath:') ? path.join(import.meta.dirname, keyStore.substring('classpath:'.length)) : keyStore),
-    passphrase: config.get('server.ssl.key-store-password'),
+    passphrase: config.getString('server.ssl.key-store-password'),
   };
 }

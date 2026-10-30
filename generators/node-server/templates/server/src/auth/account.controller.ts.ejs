@@ -8,6 +8,9 @@ import { MailService } from '../mail/mail.service.ts';
 import { <% if (generateUserManagement) { %>Managed<%- userLoginVmClass %>, <% } %><%- userLoginVmClass %> } from '../users/dto/user.dto.ts';
 import { ApiBearerAuth, ApiTags, ApiResponse, ApiOperation } from '@nestjs/swagger';
 import { AuthService } from './auth.service.ts';
+<%_ if (authenticationTypeOauth2) { _%>
+import { OidcUser } from './oauth2.authorities.ts';
+<%_ } _%>
 
 @Controller('api')
 @UseInterceptors(ClassSerializerInterceptor)
@@ -30,7 +33,7 @@ export class AccountController {
     description: 'Registered user',
     type: <%- user.dtoClass %>,
   })
-  async registerAccount(@Req() req: { user: <%- userLoginVmClass %> }, @Body() userDTO: Managed<%- user.dtoClass %>): Promise <any> {
+  async registerAccount(@Req() req: { user: <%- userLoginVmClass %> }, @Body() userDTO: Managed<%- user.dtoClass %>): Promise<<%- user.dtoClass %>> {
     const user = await this.authService.registerNewUser(userDTO);
     void this.mailService.sendActivationEmail(user);
     return user;
@@ -58,7 +61,7 @@ export class AccountController {
     status: 200,
     description: 'login authenticated',
   })
-  isAuthenticated(@Req() req: { user: <%- userLoginVmClass %> }): any {
+  isAuthenticated(@Req() req: { user: <%- userLoginVmClass %> }): string {
     const { user } = req;
     return (user).login;
   }
@@ -71,7 +74,7 @@ export class AccountController {
     status: 200,
     description: 'user retrieved',
   })
-  async getAccount(@Req() req: { user: <%- userLoginVmClass %> }): Promise<any> {
+  async getAccount(@Req() req: { user: <%- userLoginVmClass %> }): Promise<<%- user.dtoClass %> | undefined> {
     const { user } = req;
     const userProfileFound = await this.authService.getAccount(user.id!);
     <%_ if (databaseType === 'mongodb') { _%>
@@ -95,7 +98,7 @@ export class AccountController {
     description: 'user info updated',
     type: <%- user.dtoClass %>,
   })
-  async saveAccount(@Req() req: { user: <%- userLoginVmClass %> }, @Body() newUserInfo: <%- user.dtoClass %>): Promise<any> {
+  async saveAccount(@Req() req: { user: <%- userLoginVmClass %> }, @Body() newUserInfo: <%- user.dtoClass %>): Promise<<%- user.dtoClass %>> {
     const { user } = req;
     return await this.authService.updateUserSettings(user.login, newUserInfo);
   }
@@ -110,7 +113,7 @@ export class AccountController {
     description: 'user password changed',
     type: PasswordChangeDTO,
   })
-  async changePassword(@Req() req: { user: <%- userLoginVmClass %> }, @Body() passwordChange: PasswordChangeDTO): Promise<any> {
+  async changePassword(@Req() req: { user: <%- userLoginVmClass %> }, @Body() passwordChange: PasswordChangeDTO): Promise<void> {
     const { user } = req;
     return await this.authService.changePassword(user.login, passwordChange.currentPassword, passwordChange.newPassword);
   }
@@ -153,7 +156,7 @@ export class AccountController {
     description: 'User retrieved',
     type: <%- userLoginVmClass %>,
   })
-  getAccount(@Req() req: { user: <%- userLoginVmClass %> }): any {
+  getAccount(@Req() req: { user: OidcUser }): <%- userLoginVmClass %> | undefined {
     return this.authService.getAccount(req.user);
   }
 
@@ -168,7 +171,7 @@ export class AccountController {
     description: 'user retrieved',
   })
   <%_ if (generateBuiltInUserEntity) { _%>
-  async getAccount(@Req() req: { user: <%- userLoginVmClass %> }): Promise<any> {
+  async getAccount(@Req() req: { user: <%- userLoginVmClass %> }): Promise<<%- user.dtoClass %> | undefined> {
     const { user } = req;
     return await this.authService.getAccount(user.id!);
   }

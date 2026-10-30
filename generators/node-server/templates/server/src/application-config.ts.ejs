@@ -98,10 +98,10 @@ export interface ApplicationConfig {
 }
 
 /** A rule of a property: its path, the check of its value and the value it expects. */
-type Rule = [path: string, check: (value: any) => boolean, expected: string];
+type Rule = [path: string, check: (value: unknown) => boolean, expected: string];
 
 <%_ if (authenticationTypeJwt) { _%>
-const positiveInt = (value: any): boolean => isInt(Number(value)) && Number(value) > 0;
+const positiveInt = (value: unknown): boolean => isInt(Number(value)) && Number(value) > 0;
 <%_ } _%>
 
 /**
@@ -111,16 +111,16 @@ const positiveInt = (value: any): boolean => isInt(Number(value)) && Number(valu
  */
 const rules: Rule[] = [
   ['server.port', value => isPort(String(value)), 'a port'],
-  ['server.forward-headers-strategy', value => ['none', 'native'].includes(value), 'none or native'],
+  ['server.forward-headers-strategy', value => ['none', 'native'].includes(String(value)), 'none or native'],
   ['jhipster.clientApp.name', isNotEmpty, 'the name of the application'],
 <%_ if (authenticationTypeJwt) { _%>
   ['jhipster.security.authentication.jwt.token-validity-in-seconds', positiveInt, 'a positive number of seconds'],
   ['jhipster.security.authentication.jwt.token-validity-in-seconds-for-remember-me', positiveInt, 'a positive number of seconds'],
 <%_ } _%>
 <%_ if (generateUserManagement) { _%>
-  ['<%= nodejsPasswordRoundsProperty %>', value => isInt(Number(value)) && value >= 4 && value <= 31, 'bcrypt rounds, from 4 to 31'],
+  ['<%= nodejsPasswordRoundsProperty %>', value => isInt(Number(value)) && Number(value) >= 4 && Number(value) <= 31, 'bcrypt rounds, from 4 to 31'],
 <%_ } _%>
-  ['jhipster.cors.max-age', value => isInt(Number(value)) && value >= 0, 'a number of seconds'],
+  ['jhipster.cors.max-age', value => isInt(Number(value)) && Number(value) >= 0, 'a number of seconds'],
 <%_ if (generateUserManagement) { _%>
   ['mail.port', value => isPort(String(value)), 'a port'],
 <%_ } _%>
@@ -138,11 +138,11 @@ const rules: Rule[] = [
 <%_ } _%>
 ];
 
-const valueOf = (configuration: Record<string, any>, path: string): unknown =>
-  path.split('.').reduce<any>((value, name) => value?.[name], configuration);
+const valueOf = (configuration: Record<string, unknown>, path: string): unknown =>
+  path.split('.').reduce<unknown>((value, name) => (typeof value === 'object' && value !== null ? (value as Record<string, unknown>)[name] : undefined), configuration);
 
 /** Validates the configuration, nested by the dotted names of the properties: throws an error telling the invalid ones. */
-export function validateConfiguration<T extends Record<string, any>>(configuration: T): T {
+export function validateConfiguration<T extends Record<string, unknown>>(configuration: T): T {
   const errors = rules
     .filter(([path, check]) => !check(valueOf(configuration, path)))
     .map(([path, , expected]) => `${path} is ${JSON.stringify(valueOf(configuration, path))}, expected ${expected}`);

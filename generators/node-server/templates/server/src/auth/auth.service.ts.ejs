@@ -24,6 +24,9 @@ import { EmailAlreadyUsedException, InvalidPasswordException, LoginAlreadyUsedEx
 <%_ } _%>
 <%_ } _%>
 import { <%= userLoginVmClass %> } from '../users/dto/user.dto.ts';
+<%_ if (authenticationTypeOauth2) { _%>
+import { OidcUser } from './oauth2.authorities.ts';
+<%_ } _%>
 <%_ if (authenticationType === 'jwt' && generateBuiltInUserEntity) { _%>
 import { ConfigService } from '@nestjs/config';
 <%_ } _%>
@@ -90,7 +93,7 @@ export class AuthService {
   }
   <%_ if (authenticationTypeJwt) { _%>
 
-  async login(userLogin: UserLoginDTO): Promise<any> {
+  async login(userLogin: UserLoginDTO): Promise<{ id_token: string }> {
     const loginUserName = userLogin.username;
     const loginPassword = userLogin.password;
     if (!loginUserName || !loginPassword) {
@@ -280,12 +283,12 @@ export class AuthService {
       }
     <%_ } _%>
 
-  getAccount(userDTO: <%= userLoginVmClass %>): any {
+  getAccount(userDTO: OidcUser): <%= userLoginVmClass %> | undefined {
     if (!userDTO) {
       return;
     }
     // Without the ID token of the session, kept for the logout only.
-    const { idToken: _idToken, ...account } = userDTO as any;
+    const { idToken: _idToken, ...account } = userDTO;
     return account;
   }
 

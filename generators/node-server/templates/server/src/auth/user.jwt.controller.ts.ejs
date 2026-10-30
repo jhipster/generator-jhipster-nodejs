@@ -18,7 +18,7 @@ export class UserJWTController {
     status: 200,
     description: 'Authorized',
   })
-  async authorize(@Req() req: Request, @Body() user: UserLoginDTO, @Res() res: Response): Promise<any> {
+  async authorize(@Req() req: Request, @Body() user: UserLoginDTO, @Res() res: Response): Promise<Response> {
     const jwt = await this.authService.login(user);
     res.setHeader('Authorization', 'Bearer ' + jwt.id_token);
     return res.json(jwt);

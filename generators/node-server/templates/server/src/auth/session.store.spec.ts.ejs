@@ -25,7 +25,7 @@ const repository = (rows: Session[]): any => ({
 
 /** All the sessions of the store, by their ids. */
 const allOf = (store: SessionStore): Promise<Record<string, unknown>> =>
-  new Promise((resolve, reject) => store.all((error, sessions) => (error ? reject(error as Error) : resolve(sessions ?? {}))));
+  new Promise((resolve, reject) => store.all((error, sessions) => (error ? reject(error) : resolve(sessions ?? {}))));
 
 const sessionData = (login: string | undefined, expires: Date): any => ({ cookie: { expires: expires.toISOString() }, ...(login ? { user: { login } } : {}) });
 

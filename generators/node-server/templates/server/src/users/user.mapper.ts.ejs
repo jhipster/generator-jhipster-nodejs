@@ -1,8 +1,9 @@
+import { Authority } from './authority.entity.ts';
 import { <%= user.persistClass %> } from './user.entity.ts';
 import { <%= user.dtoClass%> } from './dto/user.dto.ts';
 
 /**
- * An User mapper object.
+ * An User mapper object: the authorities of the entity, by their names in the DTO.
  */
 export class UserMapper {
 
@@ -12,7 +13,8 @@ export class UserMapper {
     if (!userDTO) {
       return undefined;
     }
-    return Object.assign(new <%= user.persistClass %>(), userDTO);
+    const { authorities, ...user } = userDTO;
+    return Object.assign(new <%= user.persistClass %>(), user, authorities ? { authorities: authorities.map(name => Object.assign(new Authority(), { name })) } : {});
   }
 
   static fromEntityToDTO(user: <%= user.persistClass %>): <%= user.dtoClass%>;
@@ -21,6 +23,7 @@ export class UserMapper {
     if (!user) {
       return undefined;
     }
-    return Object.assign(new <%= user.dtoClass%>(), user);
+    const { authorities, ...userDTO } = user;
+    return Object.assign(new <%= user.dtoClass%>(), userDTO, authorities ? { authorities: authorities.map(({ name }) => name) } : {});
   }
 }

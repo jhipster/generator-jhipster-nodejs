@@ -22,7 +22,7 @@ export class LoggingInterceptor implements NestInterceptor {
 
   constructor(private readonly reflector: Reflector) {}
 
-  intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
+  intercept(context: ExecutionContext, next: CallHandler): Observable<unknown> {
     if (
       context.getType() !== 'http' ||
       this.reflector.getAllAndOverride<boolean>(SKIP_LOGGING, [context.getHandler(), context.getClass()])
