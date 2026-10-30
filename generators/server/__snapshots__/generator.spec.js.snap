@@ -365,6 +365,9 @@ exports[`SubGenerator server of nodejs JHipster blueprint > run > should succeed
   "server/src/templates/mail/passwordResetEmail.hbs": {
     "stateCleared": "modified",
   },
+  "server/src/tls.spec.ts": {
+    "stateCleared": "modified",
+  },
   "server/src/tls.ts": {
     "stateCleared": "modified",
   },

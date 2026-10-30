@@ -608,6 +608,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > jwt microservic
   "server/src/swagger.ts": {
     "stateCleared": "modified",
   },
+  "server/src/tls.spec.ts": {
+    "stateCleared": "modified",
+  },
   "server/src/tls.ts": {
     "stateCleared": "modified",
   },
@@ -967,6 +970,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > run > should su
   "server/src/templates/mail/passwordResetEmail.hbs": {
     "stateCleared": "modified",
   },
+  "server/src/tls.spec.ts": {
+    "stateCleared": "modified",
+  },
   "server/src/tls.ts": {
     "stateCleared": "modified",
   },
@@ -1099,6 +1105,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > with oauth2 > s
     "stateCleared": "modified",
   },
   "server/e2e/oauth2-bearer.e2e-spec.ts": {
+    "stateCleared": "modified",
+  },
+  "server/e2e/oauth2-login.e2e-spec.ts": {
     "stateCleared": "modified",
   },
   "server/e2e/setup.test.js": {
@@ -1338,6 +1347,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > with oauth2 > s
   "server/src/swagger.ts": {
     "stateCleared": "modified",
   },
+  "server/src/tls.spec.ts": {
+    "stateCleared": "modified",
+  },
   "server/src/tls.ts": {
     "stateCleared": "modified",
   },
@@ -1446,6 +1458,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > with oauth2 and
     "stateCleared": "modified",
   },
   "server/e2e/oauth2-bearer.e2e-spec.ts": {
+    "stateCleared": "modified",
+  },
+  "server/e2e/oauth2-login.e2e-spec.ts": {
     "stateCleared": "modified",
   },
   "server/e2e/setup.test.js": {
@@ -1689,6 +1704,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > with oauth2 and
     "stateCleared": "modified",
   },
   "server/src/swagger.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/tls.spec.ts": {
     "stateCleared": "modified",
   },
   "server/src/tls.ts": {
@@ -2466,6 +2484,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > without client 
     "stateCleared": "modified",
   },
   "server/src/templates/mail/passwordResetEmail.hbs": {
+    "stateCleared": "modified",
+  },
+  "server/src/tls.spec.ts": {
     "stateCleared": "modified",
   },
   "server/src/tls.ts": {

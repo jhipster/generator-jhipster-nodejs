@@ -111,6 +111,7 @@ export const serverFiles = {
         'src/common/common.module.ts',
         'src/swagger.ts',
         'src/tls.ts',
+        'src/tls.spec.ts',
         'src/app.module.ts',
         'src/orm.config.ts',
         'tsconfig.build.json',
@@ -249,6 +250,12 @@ export const serverFiles = {
         'src/auth/passport.oauth2.strategy.spec.ts',
         'e2e/oauth2-bearer.e2e-spec.ts',
       ],
+    },
+    {
+      path: SERVER_NODEJS_DIR,
+      // The login with the identity provider, in a session.
+      condition: generator => generator.authenticationTypeOauth2 && generator.authenticationUsesCsrf,
+      templates: ['e2e/oauth2-login.e2e-spec.ts'],
     },
   ],
 };

@@ -131,6 +131,21 @@ describe('User', () => {
         await service.delete(savedUser);
     });
 
+    it('/POST create user with the email of another user is an email already used problem', async () => {
+        const savedUser = await service.save({ ...testUserDTO, login: 'usedemail', email: 'usedemail@localhost.it' });
+
+        const problem = (
+            await request(app.getHttpServer())
+                .post('/api/admin/users')
+                .send({ ...testUserRequestObject, email: 'UsedEmail@localhost.it' })
+                .expect(400)
+        ).body;
+
+        expect(problem).toMatchObject({ type: 'https://www.jhipster.tech/problem/email-already-used', message: 'error.emailexists' });
+        expect(await service.findByFields({ where: { login: testUserRequestObject.login.toLowerCase() } })).toBeFalsy();
+        await service.delete(savedUser);
+    });
+
     it('removes the users not activated 3 days after their registration', async () => {
         const registeredDate = new Date(Date.now() - 4 * 24 * 60 * 60 * 1000);
         const notActivatedUser = await service.save({ ...testUserDTO, login: 'notactivated', email: 'notactivated@localhost.it', activated: false, activationKey: 'notActivatedKey', createdDate: registeredDate });
@@ -250,6 +265,32 @@ describe('User', () => {
         await service.delete(updatedUser);
     });
 
+    it('/PUT update user with the email or the login of another user is an already used problem, like JHipster Spring Boot', async () => {
+        const savedUser = await service.save({ ...testUserDTO, login: 'updatedconflict', email: 'updatedconflict@localhost.it' });
+        const otherUser = await service.save({ ...testUserDTO, login: 'otherconflict', email: 'otherconflict@localhost.it' });
+
+        const emailProblem = (
+            await request(app.getHttpServer())
+                .put('/api/admin/users')
+                .send({ ...savedUser, email: 'OtherConflict@localhost.it' })
+                .expect(400)
+        ).body;
+        expect(emailProblem).toMatchObject({ type: 'https://www.jhipster.tech/problem/email-already-used' });
+
+        const loginProblem = (
+            await request(app.getHttpServer())
+                .put('/api/admin/users')
+                .send({ ...savedUser, login: 'OtherConflict' })
+                .expect(400)
+        ).body;
+        expect(loginProblem).toMatchObject({ type: 'https://www.jhipster.tech/problem/login-already-used' });
+
+        const unchangedUser = (await service.findByFields({ where: { login: 'updatedconflict' } }))!;
+        expect(unchangedUser.email).toEqual('updatedconflict@localhost.it');
+        await service.delete(savedUser);
+        await service.delete(otherUser);
+    });
+
     it('/PUT update an unknown user is not found, like JHipster Spring Boot', () =>
         request(app.getHttpServer())
             .put('/api/admin/users')
@@ -287,6 +328,9 @@ describe('User', () => {
 
         await service.delete(savedUser);
     });
+
+    it('/GET an unknown user is not found, like JHipster Spring Boot', () =>
+        request(app.getHttpServer()).get('/api/admin/users/unknownuser').expect(404));
 
     it('/DELETE user', async () => {
         testUserDTO.login = 'TestUserDelete';

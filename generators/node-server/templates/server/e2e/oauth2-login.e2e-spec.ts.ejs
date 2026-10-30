@@ -1,0 +1,116 @@
+import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { createServer, Server } from 'node:http';
+import { AddressInfo } from 'node:net';
+import { INestApplication } from '@nestjs/common';
+import { Test } from '@nestjs/testing';
+import request from 'supertest';
+
+/** A cookie of the Set-Cookie headers of a response. */
+const setCookie = (response: request.Response, name: string): string | undefined =>
+  ([] as string[]).concat(response.headers['set-cookie'] ?? []).find(value => value.startsWith(`${name}=`));
+
+/** The value of a cookie of the Set-Cookie headers of a response. */
+const cookieValue = (response: request.Response, name: string): string | undefined => {
+  const cookie = setCookie(response, name);
+  return cookie ? decodeURIComponent(cookie.split(';')[0].slice(name.length + 1)) : undefined;
+};
+
+/** A token of the identity provider, unsigned: the login reads the claims of the token response it requested itself. */
+const unsignedToken = (claims: object): string =>
+  `${Buffer.from(JSON.stringify({ alg: 'none', typ: 'JWT' })).toString('base64url')}.${Buffer.from(JSON.stringify(claims)).toString('base64url')}.`;
+
+/**
+ * The login with the identity provider, like the oauth2Login of JHipster Spring Boot: the authorization code with PKCE,
+ * the tokens of the token endpoint of the provider, a new session for the user, and the logout URL of the provider.
+ */
+describe('OAuth2 login', () => {
+  let provider: Server;
+  let app: INestApplication;
+  let issuer: string;
+  /** The bodies of the requests to the token endpoint of the provider. */
+  const tokenRequests: string[] = [];
+  const idToken = unsignedToken({ sub: 'abc', preferred_username: 'Login-User', email: 'Login@Example.com', given_name: 'Login', groups: ['ROLE_USER'] });
+
+  beforeAll(async () => {
+    // The token endpoint of the provider, which exchanges the code for the tokens.
+    provider = createServer((req, res) => {
+      let body = '';
+      req.on('data', chunk => (body += chunk));
+      req.on('end', () => {
+        tokenRequests.push(body);
+        res.setHeader('content-type', 'application/json');
+        res.end(JSON.stringify({ access_token: unsignedToken({ sub: 'abc' }), id_token: idToken, token_type: 'Bearer', expires_in: 300 }));
+      });
+    });
+    await new Promise<void>(resolve => provider.listen(0, '127.0.0.1', resolve));
+    issuer = `http://127.0.0.1:${(provider.address() as AddressInfo).port}/realms/test`;
+    // The issuer of the configuration, before the application reads it.
+    process.env.JHIPSTER_SECURITY_OAUTH2_CLIENT_PROVIDER_OIDC_ISSUERURI = issuer;
+    const { AppModule } = await import('../src/app.module.ts');
+    const { configureApp } = await import('../src/app.config.ts');
+    const moduleFixture = await Test.createTestingModule({ imports: [AppModule] }).compile();
+    app = moduleFixture.createNestApplication();
+    configureApp(app);
+    await app.init();
+  });
+
+  afterAll(async () => {
+    await app?.close();
+    provider?.close();
+    delete process.env.JHIPSTER_SECURITY_OAUTH2_CLIENT_PROVIDER_OIDC_ISSUERURI;
+  });
+
+  /** The login of an agent, which keeps the cookies like a browser: the redirection of the callback of the provider. */
+  const login = async (agent: ReturnType<typeof request.agent>): Promise<{ authorization: request.Response; callback: request.Response }> => {
+    const authorization = await agent.get('/oauth2/authorization/oidc').expect(302);
+    const state = new URL(authorization.headers.location).searchParams.get('state');
+    const callback = await agent.get(`/login/oauth2/code/oidc?code=the-code&state=${state}`).expect(302);
+    return { authorization, callback };
+  };
+
+  it('redirects to the authorization endpoint of the provider, with PKCE', async () => {
+    const { headers } = await request(app.getHttpServer()).get('/oauth2/authorization/oidc').expect(302);
+    const location = new URL(headers.location);
+    expect(`${location.origin}${location.pathname}`).toBe(`${issuer}/protocol/openid-connect/auth`);
+    expect(location.searchParams.get('response_type')).toBe('code');
+    expect(location.searchParams.get('code_challenge_method')).toBe('S256');
+    expect(location.searchParams.get('state')).toEqual(expect.any(String));
+  });
+
+  it('logs the user of the ID token in, in a new session, and gives its account without the ID token', async () => {
+    const agent = request.agent(app.getHttpServer());
+    const { authorization, callback } = await login(agent);
+    expect(callback.headers.location).toBe('/');
+    // The code exchanged with its PKCE verifier.
+    expect(tokenRequests.at(-1)).toMatch(/code=the-code/);
+    expect(tokenRequests.at(-1)).toMatch(/code_verifier=/);
+    // Like Spring Security, a new session at the login.
+    expect(setCookie(callback, 'JSESSIONID')).toBeDefined();
+    expect(cookieValue(callback, 'JSESSIONID')).not.toBe(cookieValue(authorization, 'JSESSIONID'));
+
+    const { body } = await agent.get('/api/account').expect(200);
+    expect(body).toMatchObject({ login: 'login-user', email: 'login@example.com', firstName: 'Login', authorities: ['ROLE_USER'] });
+    expect(body.idToken).toBeUndefined();
+  });
+
+  it('refuses a callback without the state of the authorization', async () => {
+    const agent = request.agent(app.getHttpServer());
+    await agent.get('/oauth2/authorization/oidc').expect(302);
+    const callback = await agent.get('/login/oauth2/code/oidc?code=the-code&state=another-state');
+    expect(callback.status).toBeGreaterThanOrEqual(400);
+    await agent.get('/api/account').expect(401);
+  });
+
+  it('logs out with the CSRF token, giving the logout URL of the provider with the ID token', async () => {
+    const agent = request.agent(app.getHttpServer());
+    const { callback } = await login(agent);
+    await agent.post('/api/logout').expect(403);
+
+    const { body } = await agent.post('/api/logout').set('X-XSRF-TOKEN', cookieValue(callback, 'XSRF-TOKEN')!).expect(201);
+    const logoutUrl = new URL(body.logoutUrl);
+    expect(`${logoutUrl.origin}${logoutUrl.pathname}`).toBe(`${issuer}/protocol/openid-connect/logout`);
+    expect(logoutUrl.searchParams.get('id_token_hint')).toBe(idToken);
+    expect(logoutUrl.searchParams.get('post_logout_redirect_uri')).toEqual(expect.any(String));
+    await agent.get('/api/account').expect(401);
+  });
+});
