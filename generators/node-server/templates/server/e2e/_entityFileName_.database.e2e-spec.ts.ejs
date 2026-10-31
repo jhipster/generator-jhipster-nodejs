@@ -15,7 +15,7 @@ const inverseRelationships = databaseTypeSql
 const literal = value => JSON.stringify(value);
 _%>
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
-import { INestApplication } from '@nestjs/common';
+import { ExecutionContext, INestApplication } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import request from 'supertest';
 <%_ if (anyUserRelationship) { _%>
@@ -37,6 +37,7 @@ import { RolesGuard } from '../src/auth/guards/roles.guard.ts';
  */
 describe('<%= entityClass %> on the database', () => {
   let app: INestApplication;
+  const AUDITOR = 'database-e2e';
 
   // The values of the fields, of a creation then of an update.
   const createdValues: Record<string, any> = {
@@ -63,7 +64,13 @@ describe('<%= entityClass %> on the database', () => {
       imports: [AppModule],
     })
       .overrideGuard(AuthGuard)
-      .useValue({ canActivate: () => true })
+      // The user of the requests, which the audit fields record.
+      .useValue({
+        canActivate: (context: ExecutionContext) => {
+          context.switchToHttp().getRequest().user = { login: AUDITOR };
+          return true;
+        },
+      })
       .overrideGuard(RolesGuard)
       .useValue({ canActivate: () => true })
       .compile();
@@ -82,6 +89,8 @@ describe('<%= entityClass %> on the database', () => {
     const { body: stored } = await request(server).post('/api/<%= entityApiUrl %>').send(createdValues).expect(201);
     const { body: read } = await request(server).get(`/api/<%= entityApiUrl %>/${stored.<%= primaryKey.name %>}`).expect(200);
     expect(read).toMatchObject(expected(createdValues));
+    // The audit fields, of the user of the creation.
+    expect(read).toMatchObject({ createdBy: AUDITOR, lastModifiedBy: AUDITOR });
 
     await request(server)
       .put(`/api/<%= entityApiUrl %>/${stored.<%= primaryKey.name %>}`)
@@ -92,6 +101,20 @@ describe('<%= entityClass %> on the database', () => {
 
     await request(server).delete(`/api/<%= entityApiUrl %>/${stored.<%= primaryKey.name %>}`).expect(204);
     await request(server).get(`/api/<%= entityApiUrl %>/${stored.<%= primaryKey.name %>}`).expect(404);
+  });
+
+  it('should list the stored records<% if (pagination !== 'no') { %>, with the pagination headers of JHipster Spring Boot<% } %>', async () => {
+    const server = app.getHttpServer();
+    const { body: stored } = await request(server).post('/api/<%= entityApiUrl %>').send(createdValues).expect(201);
+
+    const response = await request(server).get('/api/<%= entityApiUrl %>?size=2000').expect(200);
+    expect(response.body.map((record: Record<string, unknown>) => record.<%= primaryKey.name %>)).toContain(stored.<%= primaryKey.name %>);
+<%_ if (pagination !== 'no') { _%>
+    expect(Number(response.headers['x-total-count'])).toBe(response.body.length);
+    expect(response.headers.link).toContain('rel="first"');
+<%_ } _%>
+
+    await request(server).delete(`/api/<%= entityApiUrl %>/${stored.<%= primaryKey.name %>}`).expect(204);
   });
 <%_ for (const relationship of storedRelationships) {
     const otherEntity = relationship.otherEntity;

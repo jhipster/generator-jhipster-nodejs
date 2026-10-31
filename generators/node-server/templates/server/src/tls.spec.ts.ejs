@@ -1,0 +1,55 @@
+import { afterEach, describe, expect, it } from 'vitest';
+import { mkdtempSync, writeFileSync } from 'fs';
+import { tmpdir } from 'os';
+import * as path from 'path';
+import { config } from './config.ts';
+import { httpsOptions } from './tls.ts';
+
+describe('httpsOptions', () => {
+  const properties = ['server.ssl.enabled', 'server.ssl.key-store-type', 'server.ssl.key-store', 'server.ssl.key-store-password'];
+  const saved = Object.fromEntries(properties.map(property => [property, config[property]]));
+
+  afterEach(() => {
+    Object.assign(config, saved);
+  });
+
+  /** The server.ssl properties of the tls profile, with a keystore. */
+  const enableTls = (keyStore: string, keyStoreType = 'PKCS12'): void => {
+    Object.assign(config, {
+      'server.ssl.enabled': true,
+      'server.ssl.key-store-type': keyStoreType,
+      'server.ssl.key-store': keyStore,
+      'server.ssl.key-store-password': 'password',
+    });
+  };
+
+  it('gives no HTTPS options without server.ssl.enabled, like Spring Boot', () => {
+    config['server.ssl.enabled'] = false;
+    expect(httpsOptions()).toBeUndefined();
+  });
+
+  it('reads the sample keystore of the config folder (classpath:), with its password', () => {
+    enableTls('classpath:config/tls/keystore-samples.p12');
+    const options = httpsOptions();
+    expect(options?.pfx).toBeInstanceOf(Buffer);
+    expect((options?.pfx as Buffer).length).toBeGreaterThan(0);
+    expect(options?.passphrase).toBe('password');
+  });
+
+  it('reads a keystore of a path', () => {
+    const keyStore = path.join(mkdtempSync(path.join(tmpdir(), 'tls-')), 'keystore.p12');
+    writeFileSync(keyStore, 'keystore');
+    enableTls(keyStore);
+    expect(httpsOptions()?.pfx).toEqual(Buffer.from('keystore'));
+  });
+
+  it('refuses another keystore type than PKCS12', () => {
+    enableTls('classpath:config/tls/keystore-samples.p12', 'JKS');
+    expect(() => httpsOptions()).toThrow("The server.ssl.key-store-type 'JKS' is not supported, use a PKCS12 keystore");
+  });
+
+  it('refuses TLS without a keystore', () => {
+    enableTls('');
+    expect(() => httpsOptions()).toThrow(/TLS is enabled without a keystore/);
+  });
+});
