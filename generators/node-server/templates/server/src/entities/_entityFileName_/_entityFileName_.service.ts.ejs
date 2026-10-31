@@ -75,13 +75,13 @@ export class <%= entityClass %>Service {
         return <%= entityClass %>Mapper.fromEntityToDTO(result);
       }
 
-      async findByFields(options: FindOneOptions<<%= dtoClass %>>): Promise<<%= dtoClass %> | undefined> {
+      async findByFields(options: FindOneOptions<<%= entityClass %>>): Promise<<%= dtoClass %> | undefined> {
         const result = await this.<%= entityInstance %>Repository.findOne(options);
         return <%= entityClass %>Mapper.fromEntityToDTO(result);
       }
 
-      async findAndCount(options: FindManyOptions<<%= dtoClass %>>): Promise<[<%= dtoClass %>[], number]> {
-        const resultList = await this.<%= entityInstance %>Repository.findAndCount(
+      async findAndCount(options: FindManyOptions<<%= entityClass %>>): Promise<[<%= dtoClass %>[], number]> {
+        const [results, count] = await this.<%= entityInstance %>Repository.findAndCount(
 <%_ if (typeormRelationsSupport && eagerLoadRelations.length > 0) { _%>
           { ...options, relations },
 <%_ } else if (databaseTypeMongodb) { _%>
@@ -90,12 +90,7 @@ export class <%= entityClass %>Service {
           options,
 <%_ } _%>
         );
-        const <%= entityInstance %>DTO: <%= dtoClass %>[] = [];
-        if (resultList && resultList[0]) {
-            resultList[0].forEach(<%= entityInstance %> => <%= entityInstance %>DTO.push(<%= entityClass %>Mapper.fromEntityToDTO(<%= entityInstance %>)));
-            resultList[0] = <%= entityInstance %>DTO;
-        }
-        return resultList;
+        return [results.map(<%= entityInstance %> => <%= entityClass %>Mapper.fromEntityToDTO(<%= entityInstance %>)), count];
       }
 
 <%_ for (const relationship of nodejsMappedByRelationships.filter(relationship => relationship.relationshipOneToOne)) { _%>

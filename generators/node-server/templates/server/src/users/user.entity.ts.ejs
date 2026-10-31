@@ -33,7 +33,7 @@ export class <%= user.persistClass %> extends BaseEntity {
   <%_ } else { _%>
   @ManyToMany(() => Authority)
   @JoinTable()
-  authorities?: any[];
+  authorities?: Authority[];
   <%_ } _%>
 
 <%_ if (generateUserManagement) { _%>

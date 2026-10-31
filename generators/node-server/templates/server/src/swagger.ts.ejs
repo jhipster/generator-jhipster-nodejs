@@ -4,7 +4,7 @@ import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 
 import { ApiDocsService } from './management/api-docs.service.ts';
 
-export function setupSwagger(app: INestApplication): any {
+export function setupSwagger(app: INestApplication): void {
 
   const logger: Logger = new Logger('Swagger');
   const configService = app.get(ConfigService);

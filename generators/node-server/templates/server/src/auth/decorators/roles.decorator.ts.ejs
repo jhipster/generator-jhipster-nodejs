@@ -1,4 +1,4 @@
-import { SetMetadata } from '@nestjs/common';
+import { CustomDecorator, SetMetadata } from '@nestjs/common';
 
 /** The roles a route allows, any of them, like a hasAnyAuthority of JHipster Spring Boot: a RoleType or a role of the JDL. */
-export const Roles = (...roles: string[]): any => SetMetadata('roles', roles);
+export const Roles = (...roles: string[]): CustomDecorator<string> => SetMetadata('roles', roles);

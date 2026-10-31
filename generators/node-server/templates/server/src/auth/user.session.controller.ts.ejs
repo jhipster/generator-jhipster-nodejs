@@ -53,7 +53,7 @@ export class UserSessionController {
     // Like Spring Security, a new session for the authenticated user (the id of the session before the login is not
     // kept), with the CSRF token the clients send back as X-XSRF-TOKEN.
     await new Promise<void>((resolve, reject) => req.session.regenerate((error?: Error) => (error ? reject(error) : resolve())));
-    const session = req.session as any;
+    const session = req.session;
     session.user = user;
     session.csrfToken = randomUUID();
     // The session as the sessions page shows it, like the PersistentToken of JHipster Spring Boot: its series (random,
@@ -84,7 +84,7 @@ export class UserSessionController {
   @ApiOperation({ summary: 'The sessions of the current user, like the persistent tokens of JHipster Spring Boot' })
   @ApiResponse({ status: 200, description: 'The sessions of the user' })
   async getCurrentSessions(@Req() req: Request): Promise<SessionDTO[]> {
-    const { login } = (req.session as any).user;
+    const { login } = req.session.user!;
     return (await this.sessionStore.sessionsOf(login))
       .filter(({ data }) => data.series)
       .map(({ data: { series, tokenDate, ipAddress, userAgent } }) => ({ series, tokenDate, ipAddress, userAgent }));
@@ -95,9 +95,9 @@ export class UserSessionController {
   @ApiOperation({ summary: 'Ends a session of the current user, like the invalidation of a persistent token of JHipster Spring Boot' })
   @ApiResponse({ status: 200, description: 'The session of the series, if any, ended' })
   async invalidateSession(@Req() req: Request, @Param('series') series: string): Promise<void> {
-    const { login } = (req.session as any).user;
+    const { login } = req.session.user!;
     for (const { sid } of (await this.sessionStore.sessionsOf(login)).filter(({ data }) => data.series === series)) {
-      await new Promise<void>((resolve, reject) => this.sessionStore.destroy(sid, error => (error ? reject(error as Error) : resolve())));
+      await new Promise<void>((resolve, reject) => this.sessionStore.destroy(sid, error => (error ? reject(error) : resolve())));
     }
   }
 }

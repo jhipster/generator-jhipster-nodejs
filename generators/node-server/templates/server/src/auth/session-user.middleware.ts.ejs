@@ -4,7 +4,10 @@ import { <%= user.dtoClass %> } from '../users/dto/user.dto.ts';
 import { UserService } from '../users/user.service.ts';
 
 /** The user a session keeps: without its secrets, which stay in the database. */
-export function sessionUser(user: <%= user.dtoClass %>): Omit<<%= user.dtoClass %>, 'password' | 'activationKey' | 'resetKey'> {
+export type SessionUser = Omit<<%= user.dtoClass %>, 'password' | 'activationKey' | 'resetKey'>;
+
+/** The user of a session, without its secrets. */
+export function sessionUser(user: <%= user.dtoClass %>): SessionUser {
   const { password: _password, activationKey: _activationKey, resetKey: _resetKey, ...kept } = user;
   return kept;
 }
@@ -19,7 +22,7 @@ export class SessionUserMiddleware implements NestMiddleware {
   constructor(private readonly userService: UserService) {}
 
   async use(req: Request, res: Response, next: NextFunction): Promise<void> {
-    const session = req.session as any;
+    const session = req.session;
     if (session?.user) {
       const user = await this.userService.findByFields({ where: { login: session.user.login } });
       if (user?.activated) {

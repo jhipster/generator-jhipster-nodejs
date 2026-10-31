@@ -75,7 +75,7 @@ export class EurekaService implements BeforeApplicationShutdown {
         fetchRegistry: this.configService.get('eureka.client.fetch-registry', { infer: true }),
         registerWithEureka: this.configService.get('eureka.client.register-with-eureka', { infer: true }),
       },
-      requestMiddleware: (requestOpts: any, done: (requestOpts: any) => void): void => {
+      requestMiddleware: (requestOpts: Record<string, unknown>, done: (requestOpts: Record<string, unknown>) => void): void => {
         requestOpts.auth = { user, password };
         done(requestOpts);
       },

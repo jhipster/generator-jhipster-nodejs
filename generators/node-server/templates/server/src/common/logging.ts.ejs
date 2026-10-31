@@ -112,7 +112,7 @@ export class LevelsConsoleLogger extends ConsoleLogger {
     logLevel: LogLevel = 'log',
     writeStreamType?: 'stdout' | 'stderr',
     errorStack?: unknown,
-    params?: Record<string, any>,
+    params?: Record<string, unknown>,
   ): void {
     this.printed = this.levels.isEnabled(context, logLevel);
     if (this.printed) {

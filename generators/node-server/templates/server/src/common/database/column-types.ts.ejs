@@ -23,7 +23,7 @@ export const databaseDatetimePrecision = (databaseType: string): number | undefi
  * The type of a column on the database of the active profiles, for the @Column decorators: the migrations give the same
  * one with the driver of their connection (migrations/support/schema.ts), so the tables are the ones the entities map.
  */
-export const columnType = (type: ColumnType): ColumnType => databaseColumnType(config.get('database.type'), type);
+export const columnType = (type: ColumnType): ColumnType => databaseColumnType(config.getString('database.type') ?? '', type);
 
 /** The precision of an instant column on the database of the active profiles, for the @Column decorators. */
-export const datetimePrecision = (): number | undefined => databaseDatetimePrecision(config.get('database.type'));
+export const datetimePrecision = (): number | undefined => databaseDatetimePrecision(config.getString('database.type') ?? '');

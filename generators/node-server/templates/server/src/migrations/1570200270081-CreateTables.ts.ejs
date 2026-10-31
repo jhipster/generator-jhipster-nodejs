@@ -6,11 +6,11 @@ export class CreateTables1570200270081 implements MigrationInterface {
   // so the migration runner must not hold one around it
   transaction = false;
 
-  public async up(queryRunner: QueryRunner): Promise<any> {
+  public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.dataSource.synchronize();
   }
 
-  public async down(_queryRunner: QueryRunner): Promise<any> { }
+  public async down(_queryRunner: QueryRunner): Promise<void> { }
 }
 <%_ } else { _%>
 import type { MigrationInterface, QueryRunner } from 'typeorm';

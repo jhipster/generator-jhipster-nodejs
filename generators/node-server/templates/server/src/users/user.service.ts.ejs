@@ -3,7 +3,7 @@ import { Injectable<% if (generateUserManagement) { %>, Logger<% } %> } from '@n
 import { Cron } from '@nestjs/schedule';
 <%_ } _%>
 import { InjectRepository } from '@nestjs/typeorm';
-import { EntityMetadata, FindManyOptions, FindOneOptions, <% if (generateUserManagement && typeormRelationsSupport) { %>IsNull, LessThan, Not, <% } %>Repository } from 'typeorm';
+import { EntityMetadata, FindManyOptions, FindOneOptions, <% if (generateUserManagement && !typeormRelationsSupport) { %>FindOptionsWhere, <% } %><% if (generateUserManagement && typeormRelationsSupport) { %>IsNull, LessThan, Not, <% } %>Repository } from 'typeorm';
 import { <%= user.persistClass %> } from './user.entity.ts';
 import { PublicUserDTO, <%= user.dtoClass%> } from './dto/user.dto.ts';
 import { UserMapper } from './user.mapper.ts';
@@ -39,10 +39,10 @@ export class UserService {
 
     async findById(id: <%= user.primaryKey.tsType %>): Promise<<%= user.dtoClass%> | undefined> {
         const result = await this.userRepository.findOneBy({ id });
-        return UserMapper.fromEntityToDTO(this.flatAuthorities(result))
+        return UserMapper.fromEntityToDTO(result)
     }
 
-    async findByFields(options: FindOneOptions<<%= user.dtoClass%>>): Promise<<%= user.dtoClass%> | undefined> {
+    async findByFields(options: FindOneOptions<<%= user.persistClass %>>): Promise<<%= user.dtoClass%> | undefined> {
         const result = await this.userRepository.findOne(
 <%_ if (typeormRelationsSupport) { _%>
           { ...options, relations },
@@ -50,28 +50,23 @@ export class UserService {
           options,
 <%_ } _%>
         );
-        return UserMapper.fromEntityToDTO(this.flatAuthorities(result));
+        return UserMapper.fromEntityToDTO(result);
     }
 
-    async find(options: FindManyOptions<<%= user.dtoClass%>>): Promise<<%= user.dtoClass%> | undefined> {
+    async find(options: FindManyOptions<<%= user.persistClass %>>): Promise<<%= user.dtoClass%> | undefined> {
         const result = await this.userRepository.findOne(options);
-        return UserMapper.fromEntityToDTO(this.flatAuthorities(result));
+        return UserMapper.fromEntityToDTO(result);
     }
 
-    async findAndCount(options: FindManyOptions<<%= user.dtoClass%>>): Promise<[<%= user.dtoClass%>[], number]> {
-        const resultList = await this.userRepository.findAndCount(
+    async findAndCount(options: FindManyOptions<<%= user.persistClass %>>): Promise<[<%= user.dtoClass%>[], number]> {
+        const [users, count] = await this.userRepository.findAndCount(
 <%_ if (typeormRelationsSupport) { _%>
           { ...options, relations },
 <%_ } else { _%>
           { ...options, order: documentOrder(this.metadata, options.order) },
 <%_ } _%>
         );
-        const usersDTO: <%= user.dtoClass%>[] = [];
-        if (resultList && resultList[0]) {
-            resultList[0].forEach(user => usersDTO.push(UserMapper.fromEntityToDTO(this.flatAuthorities(user))));
-            resultList[0] = usersDTO;
-        }
-        return resultList;
+        return [users.map(user => UserMapper.fromEntityToDTO(user)), count];
     }
 
     /** The users of the public user list, like JHipster Spring Boot: the activated ones, by their id and login only. */
@@ -87,7 +82,7 @@ export class UserService {
     }
 
     async save(userDTO: <%= user.dtoClass%>, creator?: string<% if (generateUserManagement) { %>, updatePassword = false<% } %>): Promise<<%= user.dtoClass%>> {
-        const user = this.convertInAuthorities(UserMapper.fromDTOtoEntity(userDTO));
+        const user = UserMapper.fromDTOtoEntity(userDTO);
 <%_ if (generateUserManagement) { _%>
         if (updatePassword) {
             await this.passwordService.transform(user);
@@ -100,7 +95,7 @@ export class UserService {
             user.lastModifiedBy = creator;
         }
         const result = await this.userRepository.save(user);
-        return UserMapper.fromEntityToDTO(this.flatAuthorities(result));
+        return UserMapper.fromEntityToDTO(result);
     }
 
     async update(userDTO: <%= user.dtoClass%>, updater?: string): Promise<<%= user.dtoClass%>> {
@@ -126,7 +121,7 @@ export class UserService {
             where: { activated: false, activationKey: Not(IsNull()), createdDate: LessThan(registeredBefore) },
 <%_ } else { _%>
             // The operators of MongoDB: TypeORM does not translate its find operators (LessThan) for it.
-            where: { activated: false, activationKey: { $ne: null }, createdDate: { $lt: registeredBefore } } as any,
+            where: { activated: false, activationKey: { $ne: null }, createdDate: { $lt: registeredBefore } } as unknown as FindOptionsWhere<<%= user.persistClass %>>,
 <%_ } _%>
         });
         for (const user of users) {
@@ -136,21 +131,4 @@ export class UserService {
     }
 
 <%_ } _%>
-    private flatAuthorities<T extends <%= user.persistClass %> | null>(user: T): T {
-        if (user && user.authorities) {
-            const authorities: string[] = [];
-            user.authorities.forEach((authority: { name: string }) => authorities.push(authority.name));
-            user.authorities = authorities as any[];
-        }
-        return user;
-    }
-
-    private convertInAuthorities(user: any): <%= user.persistClass %> {
-        if (user && user.authorities) {
-            const authorities: any[] = [];
-            user.authorities.forEach((authority: string) => authorities.push({ name: authority }));
-            user.authorities = authorities;
-        }
-        return user;
-    }
 }

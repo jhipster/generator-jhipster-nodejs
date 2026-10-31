@@ -1,6 +1,7 @@
 import { BadRequestException } from '@nestjs/common';
 import { Type, Expose as JsonProperty } from 'class-transformer';
 import type { ParsedQs } from 'qs';
+import type { FindOptionsOrder } from 'typeorm';
 
 export type SortDirection = 'ASC' | 'DESC';
 
@@ -17,13 +18,14 @@ export class Sort {
   }
 
   /** The TypeORM order of the property, nested for a property of a relationship like `region.name`. */
-  asOrder(): any {
-    return this.property
-      .split('.')
-      .reverse()
-      .reduce<any>((order, key) => ({ [key]: order }), this.direction);
+  asOrder(): Order {
+    const [last, ...parents] = this.property.split('.').reverse();
+    return parents.reduce<Order>((order, key) => ({ [key]: order }), { [last]: this.direction });
   }
 }
+
+/** The TypeORM order of properties, nested for the properties of a relationship. */
+export type Order = { [property: string]: Order | 'ASC' | 'DESC' };
 
 export type PaginationQueryType = string | ParsedQs | (string | ParsedQs)[];
 
@@ -63,17 +65,19 @@ export class PageRequest {
   }
 
   /** The TypeORM order of every sort, in the order of the request, the properties of a relationship merged. */
-  asOrder(): any {
-    const order: any = {};
+  asOrder<T = unknown>(): FindOptionsOrder<T> {
+    const order: Order = {};
     for (const { property, direction } of this.sort) {
       const keys = property.split('.');
       let target = order;
       for (const key of keys.slice(0, -1)) {
-        target = target[key] ??= {};
+        const nested = target[key];
+        target = target[key] = typeof nested === 'object' ? nested : {};
       }
       target[keys[keys.length - 1]] = direction;
     }
-    return order;
+    // The properties are the sortable ones of the entity, checked by the constructor.
+    return order as FindOptionsOrder<T>;
   }
 
   /** Every string of a query parameter given several times, like several `sort` parameters. */

@@ -60,7 +60,7 @@ export function checkLoginCsrfToken(req: Request): void {
 @Injectable()
 export class CsrfMiddleware implements NestMiddleware {
   use(req: Request, res: Response, next: NextFunction): void {
-    const session = req.session as any;
+    const session = req.session;
     if (!session?.user) {
 <%_ if (authenticationTypeSession) { _%>
       if (!csrfCookie(req)) {

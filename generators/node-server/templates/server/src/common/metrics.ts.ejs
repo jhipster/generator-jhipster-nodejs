@@ -181,7 +181,7 @@ function outcomeOf(status: number): string {
 export class MetricsInterceptor implements NestInterceptor {
   constructor(private readonly metricsService: MetricsService) {}
 
-  intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
+  intercept(context: ExecutionContext, next: CallHandler): Observable<unknown> {
     if (context.getType() !== 'http') {
       return next.handle();
     }

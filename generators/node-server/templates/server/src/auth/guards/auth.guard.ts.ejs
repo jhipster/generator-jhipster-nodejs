@@ -1,6 +1,7 @@
 <%_ if (authenticationType === 'oauth2') { _%>
 import { ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common';
 import { AuthGuard as NestAuthGuard } from '@nestjs/passport';
+import { Observable } from 'rxjs';
 
 /**
  * The authentication of the API, like JHipster Spring Boot with OAuth2: the session of the login (the clients of the
@@ -9,7 +10,7 @@ import { AuthGuard as NestAuthGuard } from '@nestjs/passport';
  */
 @Injectable()
 export class AuthGuard extends NestAuthGuard('oauth2-bearer') {
-  canActivate(context: ExecutionContext): any {
+  canActivate(context: ExecutionContext): boolean | Promise<boolean> | Observable<boolean> {
     const request = context.switchToHttp().getRequest();
 
     if (request.session?.user) {

@@ -69,7 +69,7 @@ export class <%= userLoginVmClass %> extends BaseDTO {
     required: false
   })
   @Allow()
-  authorities?: any[];
+  authorities?: string[];
 
   // Never in the responses.
   @Exclude({ toPlainOnly: true })

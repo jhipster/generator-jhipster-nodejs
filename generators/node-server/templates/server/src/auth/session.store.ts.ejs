@@ -1,19 +1,41 @@
 import { Injectable, Logger, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import session from 'express-session';
-import { <% if (databaseTypeSql) { %>LessThan, <% } %>Repository } from 'typeorm';
+import { <% if (databaseTypeSql) { %>LessThan<% } else { %>FindOptionsWhere<% } %>, Repository } from 'typeorm';
 import { Session } from './session.entity.ts';
 import { SESSION_MAX_AGE } from './csrf.middleware.ts';
+<%_ if (authenticationTypeOauth2) { _%>
+import type { OidcUser } from './oauth2.authorities.ts';
+<%_ } else { _%>
+import type { SessionUser } from './session-user.middleware.ts';
+<%_ } _%>
+
+declare module 'express-session' {
+  /** The data of a session of the application. */
+  interface SessionData {
+    /** The logged user. */
+    user: <%= authenticationTypeOauth2 ? 'OidcUser' : 'SessionUser' %>;
+    /** The CSRF token the clients send back as X-XSRF-TOKEN. */
+    csrfToken: string;
+<%_ if (authenticationTypeSession) { _%>
+    /** The session as the sessions page shows it: its series, the date, the address and the browser of its login. */
+    series: string;
+    tokenDate: string;
+    ipAddress?: string;
+    userAgent?: string;
+<%_ } _%>
+  }
+}
 
 /** The interval of the removal of the expired sessions. */
 export const PRUNE_INTERVAL = 60 * 60 * 1000;
 
-type Callback<T = unknown> = (error?: any, value?: T) => void;
+type Callback<T = unknown> = (error?: Error | null, value?: T) => void;
 
 /** A session of a user, its id and its data. */
 export interface StoredSession {
   sid: string;
-  data: session.SessionData & Record<string, any>;
+  data: session.SessionData;
 }
 
 /**
@@ -84,7 +106,8 @@ export class SessionStore extends session.Store implements OnModuleInit, OnModul
 <%_ if (databaseTypeSql) { _%>
     await this.repository.delete({ expires: LessThan(new Date()) });
 <%_ } else { _%>
-    await this.repository.delete({ expires: { $lt: new Date() } } as any);
+    // The operators of MongoDB: TypeORM does not translate its find operators (LessThan) for it.
+    await this.repository.delete({ expires: { $lt: new Date() } } as unknown as FindOptionsWhere<Session>);
 <%_ } _%>
   }
 
@@ -100,7 +123,7 @@ export class SessionStore extends session.Store implements OnModuleInit, OnModul
 
   private async save(sid: string, data: session.SessionData): Promise<void> {
     const found = await this.repository.findOne({ where: { sid } });
-    await this.repository.save({ ...found, sid, login: (data as any).user?.login ?? null, expires: expiresOf(data), data: JSON.stringify(data) });
+    await this.repository.save({ ...found, sid, login: data.user?.login ?? null, expires: expiresOf(data), data: JSON.stringify(data) });
   }
 }
 

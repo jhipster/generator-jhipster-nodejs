@@ -9,8 +9,14 @@ import { Logger } from '@nestjs/common';
 
 const logger = new Logger('Config');
 
+/** The value of a property of the configuration. */
+export type ConfigValue = string | number | boolean | null | undefined;
+
+/** The objects of the configuration files, nested by the dotted names of the properties. */
+type Properties = Record<string, unknown>;
+
 export class Config {
-  [key: string]: any;
+  [key: string]: unknown;
 
   // The level of the loggers without a level of their own, like Spring Boot.
   'logging.level.ROOT' = 'INFO';
@@ -96,12 +102,18 @@ export class Config {
   'cloud.consul.discovery.prefer-ip-address' = false;
 <%_ } _%>
 
-  constructor(properties: Record<string, any>) {
+  constructor(properties: Properties) {
     this.addAll(properties);
   }
 
-  public get(key: string): any {
-    return this[key];
+  public get(key: string): ConfigValue {
+    return this[key] as ConfigValue;
+  }
+
+  /** A property as a text, else undefined. */
+  public getString(key: string): string | undefined {
+    const value = this.get(key);
+    return value === undefined || value === null ? undefined : String(value);
   }
 
   <%_ if (!skipClient) { _%>
@@ -109,12 +121,9 @@ export class Config {
     return path.join(import.meta.dirname, '../dist/static');
   }
   <%_ } _%>
-  public addAll(properties: Record<string, any>): any {
-    properties = objectToArray(properties);
-    for (const property in properties) {
-      if (properties.hasOwnProperty(property)) {
-        this[property] = properties[property];
-      }
+  public addAll(properties: Properties): void {
+    for (const [property, value] of Object.entries(objectToArray(properties))) {
+      this[property] = value;
     }
     this.applyEnvironment();
     this.postProcess();
@@ -136,29 +145,26 @@ export class Config {
     }
   }
 
-  public postProcess(): any {
+  public postProcess(): void {
     // ${random.value} is a random value, like in Spring Boot (the Eureka instance id).
     const variables = { ...this, ...process.env, 'random.value': randomBytes(16).toString('hex') };
-    for (const property in this) {
-      if (this.hasOwnProperty(property)) {
-        const value = this[property];
-        const processedValue = this.processTemplate(value, variables);
-        this[property] = processedValue;
-      }
+    for (const property of Object.keys(this)) {
+      this[property] = this.processTemplate(this[property], variables);
     }
   }
 
-  private processTemplate(template: any, variables: Record<string, any>): any {
-    // console.log(template);
+  private processTemplate(template: unknown, variables: Record<string, unknown>): unknown {
     if (typeof template === 'string') {
-      return template.replace(new RegExp('\\${[^{]+}', 'g'), name => variables[name.substring(2, name.length - 1)]);
+      return template.replace(new RegExp('\\${[^{]+}', 'g'), name => String(variables[name.substring(2, name.length - 1)]));
     }
     return template;
   }
 }
 
 const configFolder = path.join(import.meta.dirname, 'config');
-const yamlConfig: any = yaml.load(fs.readFileSync(path.join(configFolder, 'application.yml'), 'utf8'));
+const yamlConfig = yaml.load(fs.readFileSync(path.join(configFolder, 'application.yml'), 'utf8')) as Properties & {
+  profiles?: { group?: Record<string, string | string[]> };
+};
 
 /**
  * The active profiles, like spring.profiles.active of Spring Boot: the comma separated profiles of BACKEND_ENV (the
@@ -196,7 +202,7 @@ const profileConfigs = profileFiles.map(fileName => objectToArray(yaml.load(fs.r
  * The files of the configuration with their properties, like the property sources of Spring Boot the env endpoint
  * gives: the highest precedence first (the file of the last active profile), application.yml last.
  */
-export const configFiles: { name: string; properties: Record<string, any> }[] = [
+export const configFiles: { name: string; properties: Record<string, ConfigValue> }[] = [
   ...profileFiles.map((fileName, index) => ({ name: `Config resource 'config/${fileName}'`, properties: profileConfigs[index] })).reverse(),
   { name: "Config resource 'config/application.yml'", properties: objectToArray(yamlConfig) },
 ];
@@ -214,30 +220,31 @@ export { config };
  * Boot (application-config.ts): the application does not start with an invalid property.
  */
 export function configuration(): ApplicationConfig {
-  const nested: Record<string, any> = {};
+  const nested: Properties = {};
   for (const [key, value] of Object.entries(config)) {
     const names = key.split('.');
     let target = nested;
     for (const name of names.slice(0, -1)) {
-      target = target[name] = typeof target[name] === 'object' && target[name] !== null ? target[name] : {};
+      const child = target[name];
+      const properties: Properties = typeof child === 'object' && child !== null ? (child as Properties) : {};
+      target = target[name] = properties;
     }
     target[names[names.length - 1]] = value;
   }
   return validateConfiguration(nested) as unknown as ApplicationConfig;
 }
 
-function objectToArray(source: any, currentKey?: string, target?: Record<string, any>): Record<string, any> {
-  target = target || {};
-  for (const property in source) {
-    if (source.hasOwnProperty(property)) {
-      const newKey = currentKey ? currentKey + '.' + property : property;
-      const newVal = source[property];
-
-      if (typeof newVal === 'object') {
-        objectToArray(newVal, newKey, target);
-      } else {
-        target[newKey] = newVal;
-      }
+/** The properties of an object of a configuration file by their dotted names, like `jhipster.mail.base-url`. */
+function objectToArray(source: unknown, currentKey?: string, target: Record<string, ConfigValue> = {}): Record<string, ConfigValue> {
+  if (typeof source !== 'object' || source === null) {
+    return target;
+  }
+  for (const [property, newVal] of Object.entries(source)) {
+    const newKey = currentKey ? `${currentKey}.${property}` : property;
+    if (typeof newVal === 'object') {
+      objectToArray(newVal, newKey, target);
+    } else {
+      target[newKey] = newVal as ConfigValue;
     }
   }
   return target;
