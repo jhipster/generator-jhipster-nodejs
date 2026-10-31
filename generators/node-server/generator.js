@@ -23,6 +23,7 @@ import {
   getNodeDevDatabaseType,
   hasRuntimeColumnTypes,
   insertSortedImport,
+  invalidTypeValue,
   joinTable,
   mutateEntityAuthorities,
   mutateEntityPaths,
@@ -400,6 +401,7 @@ export default class extends BaseApplicationGenerator {
           nodejsColumnOptions: fieldColumnOptions(field, application),
           nodejsColumnTypeImports: fieldColumnTypeImports(field, application),
           nodejsTypeValidators: fieldTypeValidators(field),
+          nodejsInvalidTypeValue: invalidTypeValue(field),
           nodejsContentTypeColumnOptions: contentTypeColumnOptions(field, application),
         });
         // The fake value of the field as the API exchanges it, generated when a template calls it (after its faker seed).
