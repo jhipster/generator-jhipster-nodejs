@@ -3,8 +3,9 @@ const pkType = primaryKey.tsType;
 const idPipe = pkType === 'number' ? 'ParseIntPipe' : primaryKey.typeUUID ? 'ParseUUIDPipe' : undefined;
 const idParam = `@Param('id'${idPipe ? `, ${idPipe}` : ''}) id: ${pkType}`;
 _%>
-import { Body, ClassSerializerInterceptor, Controller, Delete, Get, Logger, NotFoundException, Param,<% if (idPipe) { %> <%= idPipe %>,<% } %> Post as PostMethod, Put, UseGuards, Req, UseInterceptors } from '@nestjs/common';
+import { Body, ClassSerializerInterceptor, Controller, Delete, Get, Logger, NotFoundException, Param,<% if (idPipe) { %> <%= idPipe %>,<% } %> Patch, Post as PostMethod, Put, UseGuards, Req, UseInterceptors } from '@nestjs/common';
 import { <% if (authenticationTypeJwt) { _%> ApiBearerAuth, <% } else { _%> ApiSecurity, <% } _%> ApiTags, ApiResponse, ApiOperation } from '@nestjs/swagger';
+import { validate } from 'class-validator';
 import { <%= dtoClass %> } from './dto/<%= entityFileName %>.dto.ts';
 import { <%= entityClass %>Service } from './<%= entityFileName %>.service.ts';
 <%_ if (pagination !== 'no') { _%>
@@ -17,7 +18,7 @@ import { HeaderUtil } from '../../common/header-util.ts';
 import { isSortableProperty } from '../../common/sortable-properties.ts';
 import { Request } from '../../common/request.ts';
 
-import { BadRequestAlertException } from '../../common/errors/problem.exception.ts';
+import { BadRequestAlertException, ValidationException } from '../../common/errors/problem.exception.ts';
 
 const ENTITY_NAME = '<%= entityAlertName %>';
 <%_
@@ -140,6 +141,32 @@ export class <%= entityClass %>Controller {
   async putId(@Req() req: Request, <%- idParam %>, @Body() <%= entityInstance %>DTO: <%= dtoClass %>): Promise<<%= dtoClass %>>  {
     await this.validateIdForUpdate(req, id, <%= entityInstance %>DTO);
     const updated = await this.<%= entityInstance %>Service.update(<%= entityInstance %>DTO, req.user?.login);
+    this.headerUtil.addEntityUpdatedHeaders(req.res, ENTITY_NAME, id);
+    return updated;
+  }
+
+  @Patch('/:id')
+<%_ if (nodejsWriteRoles) { _%>
+  @Roles(<%- nodejsWriteRoles %>)
+<%_ } _%>
+  @ApiOperation({ summary: 'Partially update <%= entityInstance %> with id, the absent fields are kept and the null ones cleared' })
+  @ApiResponse({
+    status: 200,
+    description: 'The record has been successfully updated.',
+    type: <%= dtoClass %>,
+  })
+  @ApiResponse({ status: 400, description: 'Invalid id or values, or the record does not exist.' })
+  async patchId(@Req() req: Request, <%- idParam %>, @Body() <%= entityInstance %>DTO: Partial<<%= dtoClass %>>): Promise<<%= dtoClass %>>  {
+    const existing = await this.validateIdForUpdate(req, id, <%= entityInstance %>DTO);
+    // Like JHipster Spring Boot, a JSON merge patch: the given fields replace the ones of the record, a null clears
+    // one, and the record is validated as the global ValidationPipe validates a PUT.
+    const patched = Object.assign(new <%= dtoClass %>(), { ...existing, ...<%= entityInstance %>DTO });
+    const errors = await validate(patched, { forbidUnknownValues: false });
+    if (errors.length > 0) {
+      // The errors of the fields, like the ValidationPipe of a PUT.
+      throw new ValidationException(errors);
+    }
+    const updated = await this.<%= entityInstance %>Service.update(patched, req.user?.login);
     this.headerUtil.addEntityUpdatedHeaders(req.res, ENTITY_NAME, id);
     return updated;
   }
