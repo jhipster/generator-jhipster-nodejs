@@ -24,16 +24,20 @@ const referencesLiteral = references =>
     })
     .join(', ');
 
+/**
+ * Whether a relationship is a required one the entity stores, its join column not null: the columnRequired JHipster
+ * prepares for every backend (jhipster:base-application:database-bootstrap), like the @NotNull relationships of JHipster
+ * Spring Boot.
+ */
+const isStoredRequired = ({ columnRequired, persistableRelationship }) => Boolean(columnRequired && persistableRelationship);
+
 /** The mutations of a relationship. */
 export const mutateRequiredRelationship = {
   __override__: false,
-  // A required relationship the entity stores, its join column not null, like the columnRequired of the Liquibase
-  // changelogs of JHipster Spring Boot: the @NotNull relationship of its DTO, the optional = false relationship of its entity.
-  columnRequired: ({ relationshipRequired, persistableRelationship }) => Boolean(relationshipRequired && persistableRelationship),
-  // The reference the mocked controller tests send for a required relationship, an id of the type of the other entity: the
-  // service is a mock, any id of that type.
-  nodejsMockReference: ({ columnRequired, collection, otherEntity, relationshipName }) => {
-    if (!columnRequired) return undefined;
+  // The reference the mocked controller tests send for a required relationship the entity stores (the columnRequired of
+  // JHipster), an id of the type of the other entity: the service is a mock, any id of that type.
+  nodejsMockReference: ({ columnRequired, persistableRelationship, collection, otherEntity, relationshipName }) => {
+    if (!columnRequired || !persistableRelationship) return undefined;
     const idField = otherEntity.primaryKey.fields[0];
     otherEntity.resetFakerSeed(`nodejs-e2e-mock-${relationshipName}`);
     const reference = `{ ${idField.fieldName}: ${idField.generateFakeData('ts')} }`;
@@ -69,22 +73,20 @@ export const requiredRecords = entities => {
   };
 
   const referencesOf = entity =>
-    entity.relationships
-      .filter(relationship => relationship.columnRequired)
-      .flatMap(relationship => {
-        const record = recordFor(relationship.otherEntity);
-        return record
-          ? [
-              {
-                property: relationship.propertyName,
-                record: record.name,
-                id: relationship.otherEntity.primaryKey.name,
-                collection: relationship.collection,
-                unique: relationship.relationshipOneToOne,
-              },
-            ]
-          : [];
-      });
+    entity.relationships.filter(isStoredRequired).flatMap(relationship => {
+      const record = recordFor(relationship.otherEntity);
+      return record
+        ? [
+            {
+              property: relationship.propertyName,
+              record: record.name,
+              id: relationship.otherEntity.primaryKey.name,
+              collection: relationship.collection,
+              unique: relationship.relationshipOneToOne,
+            },
+          ]
+        : [];
+    });
 
   const references = Object.fromEntries(
     entities
@@ -108,9 +110,8 @@ export const requiredRecords = entities => {
  */
 export const mutateRequiredRelationshipsEntity = ({ databaseTypeSql }) => ({
   __override__: false,
-  // The required relationships the entity stores (columnRequired).
-  nodejsRequiredRelationships: ({ relationships }, { delayMarker }) =>
-    delayMarker ?? relationships.filter(relationship => relationship.columnRequired),
+  // The required relationships the entity stores.
+  nodejsRequiredRelationships: ({ relationships }, { delayMarker }) => delayMarker ?? relationships.filter(isStoredRequired),
   nodejsRequiredRecords: (entity, { delayMarker }) => {
     if (delayMarker) return delayMarker;
     const related = databaseTypeSql

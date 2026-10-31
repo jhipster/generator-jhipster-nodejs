@@ -126,6 +126,9 @@ export default class extends BaseApplicationGenerator {
   async beforeQueue() {
     await this.dependsOnJHipster('jhipster-nodejs:node-server:bootstrap');
     await this.dependsOnJHipster('server');
+    // The database preparation of JHipster (the columnRequired of the relationships, among others), composed before the
+    // server like the bootstrap of the server of JHipster composes it, so its tasks of a priority run first.
+    await this.dependsOnJHipster('jhipster:base-application:database-bootstrap');
   }
 
   get [BaseApplicationGenerator.INITIALIZING]() {
