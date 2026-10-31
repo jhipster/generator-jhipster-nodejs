@@ -215,10 +215,8 @@ _%>
 
 <%_
 const pk = primaryKey.name;
-// The one-to-one relationships the entity does not own: the form of the other entity lists the records without one.
-const inverseOneToOnes = databaseTypeSql
-  ? relationships.filter(relationship => relationship.relationshipOneToOne && !relationship.ownerSide && relationship.otherRelationship && !relationship.otherEntity.builtIn)
-  : [];
+// The one-to-one relationships the other entity stores, whose records without one the controller lists (its is-null filter).
+const inverseOneToOnes = nodejsMappedByRelationships.filter(relationship => relationship.relationshipOneToOne);
 _%>
 <%_ if (!primaryKey.typeUUID) { _%>
 
