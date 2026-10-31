@@ -7,6 +7,7 @@ import {
 } from 'generator-jhipster/generators/base-application/generators/database-changelogs/support';
 import { CONTEXT_DATA_APPLICATION_ENTITIES_KEY } from 'generator-jhipster/generators/base-application/support';
 
+import { SERVER_NODEJS_SRC_DIR } from '../../../generator-nodejs-constants.js';
 import { changelogMigrations, migrationOfFile } from '../../support/index.js';
 
 import { migrationFiles } from './files.js';
@@ -69,8 +70,11 @@ export default class extends BaseApplicationGenerator {
   get [BaseApplicationGenerator.WRITING_OBJECTS]() {
     return this.asWritingObjectsTaskGroup({
       async writeMigrations({ application }) {
-        for (const { entity, migrations } of this.#migrations) {
+        for (const { entity, migrations, formerFileNames } of this.#migrations) {
           await this.writeFiles({ sections: migrationFiles, context: { ...application, ...entity, ...migrations } });
+          for (const formerFileName of formerFileNames) {
+            this.removeFile(`${SERVER_NODEJS_SRC_DIR}/src/migrations/${formerFileName}.ts`);
+          }
         }
       },
     });
@@ -107,14 +111,17 @@ export default class extends BaseApplicationGenerator {
    */
   #prepareMigrations(changelog, entity, entities) {
     const migrations = changelogMigrations(changelog, entity, entities);
-    this.#migrations.push({ entity, migrations });
     const name = changelogName(changelog);
-    this.setObjectConfig(name, {
-      ...this.getObjectConfig(name),
-      nodejsMigrations: Object.values(migrations)
-        .filter(Boolean)
-        .map(migration => migration.fileName),
+    const recorded = this.getObjectConfig(name)?.nodejsMigrations ?? [];
+    const written = Object.values(migrations).filter(Boolean);
+    this.#migrations.push({
+      entity,
+      migrations,
+      // The files of the creation of an entity generated again, named by their timestamp up to 0.0.2 of the blueprint (its
+      // changelog recording them so, or none), now by the date of its changelog.
+      formerFileNames: written.filter(migration => !recorded.includes(migration.fileName)).map(migration => migration.formerFileName),
     });
+    this.setObjectConfig(name, { ...this.getObjectConfig(name), nodejsMigrations: written.map(migration => migration.fileName) });
   }
 }
 

@@ -38,9 +38,6 @@ export const CONSTRAINTS_TIMESTAMP_OFFSET = 3 * 10 ** 12;
  */
 export const MIGRATION_TIMESTAMP_OFFSET = 6 * 10 ** 12;
 
-/** The JavaScript timestamp (milliseconds, UTC) of the changelogDate of an entity, the date JHipster parses it to. */
-const entityTimestamp = entity => entity.changelogDateForRecent.getTime();
-
 /** The JavaScript timestamp (milliseconds, UTC) of a changelogDate of JHipster (yyyyMMddHHmmss). */
 export const changelogDateToTimestamp = changelogDate => {
   const [, year, month, day, hours, minutes, seconds] = /^(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})$/.exec(changelogDate) ?? [];
@@ -50,12 +47,34 @@ export const changelogDateToTimestamp = changelogDate => {
   return Date.UTC(Number(year), Number(month) - 1, Number(day), Number(hours), Number(minutes), Number(seconds));
 };
 
-/** The class and the file of a migration of an entity, by the kind of the migration and its timestamp. */
-const migrationName = (kind, entityClass, timestamp) => ({
-  timestamp,
-  className: `${kind}${entityClass}${timestamp}`,
-  fileName: `${timestamp}-${kind}${entityClass}`,
-});
+/**
+ * The offset of the timestamp of each kind of migration from the one of the date of its changelog: the constraints after
+ * the tables of every entity, the updates and the removals after the constraints, the relationships of an update after its
+ * fields.
+ */
+const migrationTimestampOffsets = {
+  AddedEntityConstraints: CONSTRAINTS_TIMESTAMP_OFFSET,
+  AddedEntity: 0,
+  UpdatedEntityConstraints: MIGRATION_TIMESTAMP_OFFSET + 1,
+  UpdatedEntity: MIGRATION_TIMESTAMP_OFFSET,
+  RemovedEntity: MIGRATION_TIMESTAMP_OFFSET,
+};
+
+/**
+ * The class and the file of a migration of an entity, by its kind and the date of its changelog: its class ends with its
+ * timestamp, the order TypeORM runs it in, and its file starts with the date of its changelog, so the files of the
+ * migrations, and their imports sorted by path, are in the order of the changelogs, the ones of a new changelog after the
+ * others. formerFileName is the file of the migration up to 0.0.2 of the blueprint (`<timestamp>-<kind><Entity>`).
+ */
+const migrationName = (kind, entityClass, changelogDate) => {
+  const timestamp = changelogDateToTimestamp(changelogDate) + migrationTimestampOffsets[kind];
+  return {
+    timestamp,
+    className: `${kind}${entityClass}${timestamp}`,
+    fileName: `${changelogDate}-${kind}${entityClass}`,
+    formerFileName: `${timestamp}-${kind}${entityClass}`,
+  };
+};
 
 /** The TypeScript of the type of a column whose @Column decorator has none: the TypeScript type of its property. */
 const typeOfFieldType = {
@@ -158,11 +177,11 @@ export const joinTable = (entity, relationship) => {
   };
 };
 
-/** The migration adding the table of an entity, its name, its class and its columns, at the timestamp of its creation. */
-export const entityMigration = (entity, timestamp = entityTimestamp(entity)) => {
+/** The migration adding the table of an entity, its name, its class and its columns, at the date of its creation. */
+export const entityMigration = (entity, changelogDate = entity.changelogDate) => {
   const relationships = joinColumnRelationships(entity);
   return {
-    ...migrationName('AddedEntity', entity.entityClass, timestamp),
+    ...migrationName('AddedEntity', entity.entityClass, changelogDate),
     tableName: entity.entityTableName,
     columns: [
       primaryKeyColumn(entity),
@@ -182,12 +201,12 @@ export const entityMigration = (entity, timestamp = entityTimestamp(entity)) => 
  * The migration adding the constraints of an entity, its foreign keys and its join tables, when it has some: run after the
  * migrations of every table, like the constraints changelogs of JHipster run after every table.
  */
-export const constraintsMigration = (entity, timestamp = entityTimestamp(entity)) => {
+export const constraintsMigration = (entity, changelogDate = entity.changelogDate) => {
   const joinColumns = joinColumnRelationships(entity);
   const joinTables = joinTableRelationships(entity);
   if (joinColumns.length === 0 && joinTables.length === 0) return undefined;
   return {
-    ...migrationName('AddedEntityConstraints', entity.entityClass, timestamp + CONSTRAINTS_TIMESTAMP_OFFSET),
+    ...migrationName('AddedEntityConstraints', entity.entityClass, changelogDate),
     tableName: entity.entityTableName,
     foreignKeys: joinColumns.map(foreignKey),
     joinTables: joinTables.map(relationship => joinTable(entity, relationship)),
@@ -211,19 +230,22 @@ const foreignKey = relationship => ({
  * @param {any[]} entities the entities of the application, prepared
  */
 export const changelogMigrations = (changelog, entity, entities) => {
-  const timestamp = changelogDateToTimestamp(changelog.changelogDate);
+  const { changelogDate } = changelog;
   if (changelog.operation === 'create') {
-    return { nodejsMigration: entityMigration(entity, timestamp), nodejsConstraintsMigration: constraintsMigration(entity, timestamp) };
-  }
-  if (changelog.operation === 'update') {
-    const changes = { entity, ...changelogChanges(changelog, entity, entities) };
     return {
-      nodejsUpdatedMigration: updatedEntityMigration(changes, timestamp + MIGRATION_TIMESTAMP_OFFSET),
-      // The relationships after the fields, whose join columns may reference them.
-      nodejsUpdatedConstraintsMigration: updatedConstraintsMigration(changes, timestamp + MIGRATION_TIMESTAMP_OFFSET + 1),
+      nodejsMigration: entityMigration(entity, changelogDate),
+      nodejsConstraintsMigration: constraintsMigration(entity, changelogDate),
     };
   }
-  return { nodejsRemovedMigration: removedEntityMigration(changelog, timestamp + MIGRATION_TIMESTAMP_OFFSET) };
+  if (changelog.operation === 'update') {
+    const changes = { entity, changelogDate, ...changelogChanges(changelog, entity, entities) };
+    return {
+      nodejsUpdatedMigration: updatedEntityMigration(changes),
+      // The relationships after the fields, whose join columns may reference them.
+      nodejsUpdatedConstraintsMigration: updatedConstraintsMigration(changes),
+    };
+  }
+  return { nodejsRemovedMigration: removedEntityMigration(changelog) };
 };
 
 /**
@@ -231,17 +253,27 @@ export const changelogMigrations = (changelog, entity, entities) => {
  * the entity before the changelog (its previousEntity). The relationships of the other entities referencing it are removed
  * with it, their join columns and their join tables dropped by their update migrations, dated before.
  * @param {any} changelog the removal changelog of this generation
- * @param {number} timestamp the timestamp of the migration
  */
-export const removedEntityMigration = ({ entityName, previousEntity }, timestamp) => ({
-  ...migrationName('RemovedEntity', `${entityName.charAt(0).toUpperCase()}${entityName.slice(1)}`, timestamp),
+export const removedEntityMigration = ({ entityName, changelogDate, previousEntity }) => ({
+  ...migrationName('RemovedEntity', `${entityName.charAt(0).toUpperCase()}${entityName.slice(1)}`, changelogDate),
   entityName,
   tableName: previousEntity.entityTableName,
   joinTables: previousEntity.relationships.filter(hasJoinTable).map(relationship => relationship.joinTable.name),
 });
 
-/** The class of a migration, by the name of its file (`<timestamp>-<kind><Entity>`, its class `<kind><Entity><timestamp>`). */
-export const migrationOfFile = fileName => ({ fileName, className: fileName.replace(/^(\d+)-(\w+)$/, '$2$1') });
+/**
+ * The class of a migration, by the name of its file: `<changelogDate>-<kind><Entity>`, its class `<kind><Entity><timestamp>`,
+ * or a file named up to 0.0.2 of the blueprint, `<timestamp>-<kind><Entity>`, which a changelog of an update recorded then
+ * keeps.
+ */
+export const migrationOfFile = fileName => {
+  const [, changelogDate, kind, entityClass] =
+    new RegExp(`^(\\d{14})-(${Object.keys(migrationTimestampOffsets).join('|')})(\\w+)$`).exec(fileName) ?? [];
+  if (changelogDate) {
+    return { fileName, className: migrationName(kind, entityClass, changelogDate).className };
+  }
+  return { fileName, className: fileName.replace(/^(\d{13})-(\w+)$/, '$2$1') };
+};
 
 /**
  * The fields and the relationships an update changelog of an entity adds and removes: the added ones the entity has,
@@ -291,14 +323,13 @@ const namesLiteral = names => (names.length > 0 ? `[${names.map(literal).join(',
 /**
  * The migration of the fields of an entity an update changelog changes, like the updated_entity changelog of Liquibase: the
  * columns of the added fields, and the names of the columns of the removed fields. None without an added or a removed field.
- * @param {{ entity: any, addedFields: any[], removedFields: any[] }} changes the changes of the changelog (changelogChanges)
- * @param {number} timestamp the timestamp of the migration
+ * @param {{ entity: any, changelogDate: string, addedFields: any[], removedFields: any[] }} changes the changes of the changelog (changelogChanges)
  */
-export const updatedEntityMigration = ({ entity, addedFields, removedFields }, timestamp) => {
+export const updatedEntityMigration = ({ entity, changelogDate, addedFields, removedFields }) => {
   if (addedFields.length === 0 && removedFields.length === 0) return undefined;
   const addedColumns = addedFields.flatMap(fieldColumns);
   return {
-    ...migrationName('UpdatedEntity', entity.entityClass, timestamp),
+    ...migrationName('UpdatedEntity', entity.entityClass, changelogDate),
     tableName: entity.entityTableName,
     addedColumns,
     // The TypeScript of the names of the columns the migration adds and drops, and of the helpers it imports.
@@ -319,10 +350,9 @@ const hasJoinTable = ({ relationshipType, ownerSide }) => relationshipType === '
  * The migration of the relationships of an entity an update changelog changes, like the updated_entity_constraints changelog
  * of Liquibase: the join columns with their foreign keys and the join tables of the added relationships, and the ones of
  * the removed relationships dropped. None without a join column or a join table added or removed.
- * @param {{ entity: any, addedRelationships: any[], removedRelationships: any[] }} changes the changes of the changelog (changelogChanges)
- * @param {number} timestamp the timestamp of the migration
+ * @param {{ entity: any, changelogDate: string, addedRelationships: any[], removedRelationships: any[] }} changes the changes of the changelog (changelogChanges)
  */
-export const updatedConstraintsMigration = ({ entity, addedRelationships, removedRelationships }, timestamp) => {
+export const updatedConstraintsMigration = ({ entity, changelogDate, addedRelationships, removedRelationships }) => {
   const addedJoinColumns = addedRelationships.filter(hasJoinColumn);
   const changes = {
     addedJoinColumns: addedJoinColumns.map(relationship => ({
@@ -336,7 +366,7 @@ export const updatedConstraintsMigration = ({ entity, addedRelationships, remove
   };
   if (Object.values(changes).every(list => list.length === 0)) return undefined;
   return {
-    ...migrationName('UpdatedEntityConstraints', entity.entityClass, timestamp),
+    ...migrationName('UpdatedEntityConstraints', entity.entityClass, changelogDate),
     tableName: entity.entityTableName,
     ...changes,
     // The TypeScript of the names of the join columns, of the unique ones of the one-to-one relationships, and of the helpers

@@ -144,7 +144,8 @@ describe('entityMigration', () => {
     expect(entityMigration(country)).toEqual({
       timestamp,
       className: `AddedEntityCountry${timestamp}`,
-      fileName: `${timestamp}-AddedEntityCountry`,
+      fileName: '20231215172615-AddedEntityCountry',
+      formerFileName: `${timestamp}-AddedEntityCountry`,
       tableName: 'country',
       columns: [
         { name: 'id', type: 'Number', primary: true, generated: 'increment' },
@@ -203,7 +204,8 @@ describe('constraintsMigration', () => {
     expect(constraintsMigration(country)).toEqual({
       timestamp,
       className: `AddedEntityConstraintsCountry${timestamp}`,
-      fileName: `${timestamp}-AddedEntityConstraintsCountry`,
+      fileName: '20231215172615-AddedEntityConstraintsCountry',
+      formerFileName: `${timestamp}-AddedEntityConstraintsCountry`,
       tableName: 'country',
       foreignKeys: [
         { columnName: 'ownerId', referencedTableName: 'jhi_user', referencedColumnName: 'id' },
@@ -271,7 +273,21 @@ describe('changelogDateToTimestamp', () => {
 });
 
 describe('migrationOfFile', () => {
-  it('gives the class of a migration by its file, the timestamp at the end of its name', () => {
+  it('gives the class of a migration by its file, named by the date of its changelog, its timestamp by its kind', () => {
+    const timestamp = changelogDateToTimestamp('20231215172515');
+    expect(migrationOfFile('20231215172515-AddedEntityCustomer')).toEqual({
+      fileName: '20231215172515-AddedEntityCustomer',
+      className: `AddedEntityCustomer${timestamp}`,
+    });
+    expect(migrationOfFile('20231215172515-AddedEntityConstraintsCustomer').className).toBe(
+      `AddedEntityConstraintsCustomer${timestamp + CONSTRAINTS_TIMESTAMP_OFFSET}`,
+    );
+    expect(migrationOfFile('20231215172515-UpdatedEntityConstraintsCustomer').className).toBe(
+      `UpdatedEntityConstraintsCustomer${timestamp + MIGRATION_TIMESTAMP_OFFSET + 1}`,
+    );
+  });
+
+  it('gives the class of a migration by its file named up to 0.0.2 of the blueprint, the timestamp at the end of its name', () => {
     expect(migrationOfFile('7703274738000-UpdatedEntityCustomer')).toEqual({
       fileName: '7703274738000-UpdatedEntityCustomer',
       className: 'UpdatedEntityCustomer7703274738000',
@@ -326,12 +342,15 @@ describe('the migrations of an update changelog', () => {
     removedRelationships: ['owner', 'gifts', 'buyers'],
     recreatedRelationships: ['country'],
   };
-  const changes = { entity: shop, ...changelogChanges(changelog, shop, [region, gadget]) };
+  const changelogDate = '20231215172515';
+  const timestamp = changelogDateToTimestamp(changelogDate) + MIGRATION_TIMESTAMP_OFFSET;
+  const changes = { entity: shop, changelogDate, ...changelogChanges(changelog, shop, [region, gadget]) };
 
   it('adds the columns of the added fields, and drops the ones of the removed fields with the content type of a binary blob', () => {
-    const migration = updatedEntityMigration(changes, 7000);
+    const migration = updatedEntityMigration(changes);
     expect(migration).toMatchObject({
-      className: 'UpdatedEntityShop7000',
+      className: `UpdatedEntityShop${timestamp}`,
+      fileName: '20231215172515-UpdatedEntityShop',
       tableName: 'shop',
       addedColumns: [{ name: 'status', type: 'String', nullable: true }],
       addedColumnNames: "['status']",
@@ -341,9 +360,10 @@ describe('the migrations of an update changelog', () => {
   });
 
   it('recreates a relationship changed in its type, and adds and drops the join columns and the join tables', () => {
-    const migration = updatedConstraintsMigration(changes, 7001);
+    const migration = updatedConstraintsMigration(changes);
     expect(migration).toMatchObject({
-      className: 'UpdatedEntityConstraintsShop7001',
+      className: `UpdatedEntityConstraintsShop${timestamp + 1}`,
+      fileName: '20231215172515-UpdatedEntityConstraintsShop',
       addedJoinColumnNames: "['countryId']",
       addedForeignKeys: [{ columnName: 'countryId', referencedTableName: 'region', referencedColumnName: 'id' }],
       addedJoinTables: [expect.objectContaining({ name: 'rel_shop__gadgets' })],
@@ -368,14 +388,13 @@ describe('the migrations of an update changelog', () => {
       shop,
       [region, gadget],
     );
-    expect(updatedConstraintsMigration({ entity: shop, addedRelationships: [], removedRelationships }, 7001).removedJoinColumnNames).toBe(
-      "['sellerId']",
-    );
+    expect(
+      updatedConstraintsMigration({ entity: shop, changelogDate, addedRelationships: [], removedRelationships }).removedJoinColumnNames,
+    ).toBe("['sellerId']");
   });
 
   it('gives the migrations of the update, after the constraints of every entity', () => {
-    const timestamp = changelogDateToTimestamp('20231215172515') + MIGRATION_TIMESTAMP_OFFSET;
-    const migrations = changelogMigrations({ ...changelog, changelogDate: '20231215172515' }, shop, [region, gadget]);
+    const migrations = changelogMigrations({ ...changelog, changelogDate }, shop, [region, gadget]);
     expect(migrations).toEqual({
       nodejsUpdatedMigration: expect.objectContaining({ className: `UpdatedEntityShop${timestamp}` }),
       nodejsUpdatedConstraintsMigration: expect.objectContaining({ className: `UpdatedEntityConstraintsShop${timestamp + 1}` }),
@@ -383,7 +402,7 @@ describe('the migrations of an update changelog', () => {
   });
 
   it('drops the columns of the removed fields only, without adding one', () => {
-    const migration = updatedEntityMigration({ ...changes, addedFields: [] }, 7000);
+    const migration = updatedEntityMigration({ ...changes, addedFields: [] });
     expect(migration).toMatchObject({
       addedColumnNames: undefined,
       removedColumnNames: "['legacy', 'photo', 'photo_content_type', 'notes']",
@@ -392,9 +411,9 @@ describe('the migrations of an update changelog', () => {
   });
 
   it('gives no migration without a change of a column, a join column or a join table', () => {
-    const none = { entity: shop, addedFields: [], removedFields: [], addedRelationships: [], removedRelationships: [] };
-    expect(updatedEntityMigration(none, 7000)).toBeUndefined();
-    expect(updatedConstraintsMigration(none, 7001)).toBeUndefined();
+    const none = { entity: shop, changelogDate, addedFields: [], removedFields: [], addedRelationships: [], removedRelationships: [] };
+    expect(updatedEntityMigration(none)).toBeUndefined();
+    expect(updatedConstraintsMigration(none)).toBeUndefined();
   });
 });
 
@@ -434,7 +453,8 @@ describe('changelogMigrations', () => {
       nodejsRemovedMigration: {
         timestamp,
         className: `RemovedEntityStore${timestamp}`,
-        fileName: `${timestamp}-RemovedEntityStore`,
+        fileName: '20240101000000-RemovedEntityStore',
+        formerFileName: `${timestamp}-RemovedEntityStore`,
         entityName: 'store',
         tableName: 'store',
         joinTables: ['rel_store__products'],

@@ -344,7 +344,7 @@ exports[`SubGenerator server of nodejs JHipster blueprint > run > should succeed
   "server/src/migrations/1570200490072-SeedUsersRoles.ts": {
     "stateCleared": "modified",
   },
-  "server/src/migrations/1577836860000-AddedEntityFoo.ts": {
+  "server/src/migrations/20200101000100-AddedEntityFoo.ts": {
     "stateCleared": "modified",
   },
   "server/src/migrations/support/schema.ts": {

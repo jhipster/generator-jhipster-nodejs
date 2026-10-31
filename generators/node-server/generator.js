@@ -22,6 +22,7 @@ import {
   getDatabasePort,
   getNodeDevDatabaseType,
   hasRuntimeColumnTypes,
+  insertSortedImport,
   joinTable,
   mutateEntityAuthorities,
   mutateEntityPaths,
@@ -286,13 +287,18 @@ export default class extends BaseApplicationGenerator {
         });
       },
       async source({ source }) {
+        // An import of orm.config.ts at its sorted place, else at the needle (see insertSortedImport).
+        const addOrmConfigImport = importLine =>
+          function (content, filePath) {
+            return (
+              insertSortedImport(content, importLine) ??
+              createNeedleCallback({ needle: 'add-entity-to-ormconfig-imports', contentToAdd: importLine }).call(this, content, filePath)
+            );
+          };
         source.addEntityToNodeConfig = ({ nodejsEntityPath, persistClass }) =>
           this.editFile(
             `${SERVER_NODEJS_SRC_DIR}/src/orm.config.ts`,
-            createNeedleCallback({
-              needle: 'add-entity-to-ormconfig-imports',
-              contentToAdd: `import { ${persistClass} } from './${nodejsEntityPath}';`,
-            }),
+            addOrmConfigImport(`import { ${persistClass} } from './${nodejsEntityPath}';`),
             createNeedleCallback({
               needle: 'add-entity-to-ormconfig-entities',
               contentToAdd: `${persistClass},`,
@@ -301,10 +307,7 @@ export default class extends BaseApplicationGenerator {
         source.addMigrationToNodeConfig = ({ className, fileName }) =>
           this.editFile(
             `${SERVER_NODEJS_SRC_DIR}/src/orm.config.ts`,
-            createNeedleCallback({
-              needle: 'add-entity-to-ormconfig-imports',
-              contentToAdd: `import { ${className} } from './migrations/${fileName}.ts';`,
-            }),
+            addOrmConfigImport(`import { ${className} } from './migrations/${fileName}.ts';`),
             createNeedleCallback({
               needle: 'add-migration-to-ormconfig-migrations',
               contentToAdd: `${className},`,
