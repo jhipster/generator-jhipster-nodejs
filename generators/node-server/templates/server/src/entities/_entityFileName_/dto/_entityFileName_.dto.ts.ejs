@@ -90,6 +90,10 @@ export class <%= dtoClass %> extends BaseDTO {
         if (typeof relationship.javadoc != 'undefined') { _%>
   <%- formatAsFieldJavadoc(relationship.javadoc) %>
         <%_ } _%>
+  <%_ if (relationship.columnRequired) { _%>
+  // Like the @NotNull relationships of JHipster Spring Boot.
+  @IsNotEmpty()
+  <%_ } _%>
   @Allow()
   @ApiProperty({ type: () => <%= relationship.otherEntity.dtoClass %><%- relationship.collection ? ', isArray: true' : '' %>, <%_ if (typeof relationship.javadoc != 'undefined') { _%>  description: '<%- formatAsApiDescription(relationship.javadoc) %>' <%_ } else { _%> description: '<%= relationship.propertyName %> relationship' <%_ } _%> })
   <%= relationship.propertyName %><%- relationship.relationshipRequired ? '!' : '?' %>: RelatedDTO<<%= relationship.otherEntity.dtoClass %><%- relationship.collection ? '[]' : '' %>>;

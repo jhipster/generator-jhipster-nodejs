@@ -80,7 +80,7 @@ export class <%= persistClass %> extends BaseEntity  {
     <%= relationshipFieldNamePlural %><%- relationship.relationshipRequired ? '!' : '?' %>: Relation<<%= otherEntityClass %>[]>;
 
     <%_ } else if (relationship.relationshipManyToOne) { _%>
-    @ManyToOne(() => <%= otherEntityClass %> <%_ if (!ownerSide && !otherEntityUser) { _%>, other => other.<%= otherEntityRelationshipNamePlural %>  <%_ } _%>)
+    @ManyToOne(() => <%= otherEntityClass %> <%_ if (!ownerSide && !otherEntityUser) { _%>, other => other.<%= otherEntityRelationshipNamePlural %>  <%_ } _%><% if (relationship.columnRequired) { %>, { nullable: false }<% } %>)
     <%= relationshipFieldName %><%- relationship.relationshipRequired ? '!' : '?' %>: Relation<<%= otherEntityClass %>>;
 
     <%_ } else if (relationship.relationshipManyToMany) { _%>
@@ -96,7 +96,7 @@ export class <%= persistClass %> extends BaseEntity  {
 
     <%_ } else { _%>
     <%_ if (ownerSide) { _%>
-    @OneToOne(() => <%= otherEntityClass %>)
+    @OneToOne(() => <%= otherEntityClass %><% if (relationship.columnRequired) { %>, { nullable: false }<% } %>)
     @JoinColumn()
     <%_ } else { _%>
     @OneToOne(() => <%= otherEntityClass %>, other => other.<%= otherEntityRelationshipName %>)
