@@ -27,21 +27,19 @@ const stored = (propertyName, otherEntity, properties = {}) => {
     persistableRelationship: true,
     ...properties,
   };
+  // The columnRequired of jhipster:base-application:database-bootstrap.
+  relationship.columnRequired ??= relationship.relationshipRequired;
   mutateData(relationship, mutateRequiredRelationship);
   return relationship;
 };
 
 describe('mutateRequiredRelationship', () => {
-  it('should require the column of a required relationship the entity stores, not of one the other entity stores', () => {
-    expect(stored('country', entity('Country')).columnRequired).toBe(true);
-    expect(stored('country', entity('Country'), { relationshipRequired: false }).columnRequired).toBe(false);
-    expect(stored('cities', entity('City'), { persistableRelationship: false }).columnRequired).toBe(false);
-  });
-
   it('should give the mocked tests a reference of the type of the id of the other entity', () => {
     expect(stored('country', entity('Country')).nodejsMockReference).toBe('{ id: 42 }');
     expect(stored('tags', entity('Tag'), { collection: true }).nodejsMockReference).toBe('[{ id: 42 }]');
     expect(stored('country', entity('Country'), { relationshipRequired: false }).nodejsMockReference).toBeUndefined();
+    // A required relationship the other entity stores.
+    expect(stored('cities', entity('City'), { persistableRelationship: false }).nodejsMockReference).toBeUndefined();
   });
 });
 
