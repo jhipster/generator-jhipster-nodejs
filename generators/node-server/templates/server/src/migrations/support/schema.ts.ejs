@@ -1,4 +1,4 @@
-import { type ColumnType, type QueryRunner, Table, type TableColumnOptions, TableForeignKey } from 'typeorm';
+import { type ColumnType, type QueryRunner, Table, TableColumn, type TableColumnOptions, TableForeignKey, TableIndex, TableUnique } from 'typeorm';
 import type { ColumnMetadata } from 'typeorm/metadata/ColumnMetadata.js';
 
 import { databaseColumnType, databaseDatetimePrecision } from '../../common/database/column-types.ts';
@@ -111,32 +111,87 @@ export const createTable = async (
   columns: MigrationColumn[],
   options: { relationUniques?: string[] } = {},
 ): Promise<void> => {
+  const { tableColumns, uniques, indices } = uniqueColumns(queryRunner, name, columns, options.relationUniques);
+  await queryRunner.createTable(new Table({ name, columns: tableColumns, uniques, indices }), true);
+};
+
+/**
+ * The columns of a table with their unique constraints, as TypeORM stores them: unique columns, unique constraints or
+ * unique indices, by database.
+ */
+const uniqueColumns = (queryRunner: QueryRunner, tableName: string, columns: MigrationColumn[], relationUniqueColumns: string[] = []) => {
   const { driver, namingStrategy } = queryRunner.connection;
   const uniqueIndices = uniqueIndexDatabases.includes(driver.options.type);
   const relationUniqueIndices = uniqueIndices || driver.options.type === 'mssql';
   // The unique constraint of the join column of a one-to-one relationship, named like TypeORM names it.
-  const relationUniques = (options.relationUniques ?? []).map(columnName => ({
-    name: namingStrategy.relationConstraintName(name, [columnName]),
+  const relationUniques = relationUniqueColumns.map(columnName => ({
+    name: namingStrategy.relationConstraintName(tableName, [columnName]),
     columnNames: [columnName],
   }));
-  await queryRunner.createTable(
-    new Table({
-      name,
-      columns: columns.map(column => tableColumn(queryRunner, { ...column, unique: column.unique && !uniqueIndices })),
-      uniques: relationUniqueIndices ? [] : relationUniques,
-      indices: [
-        ...(uniqueIndices ? columns.filter(column => column.unique).map(column => ({ columnNames: [column.name], isUnique: true })) : []),
-        ...(relationUniqueIndices
-          ? relationUniques.map(unique => ({
-              ...unique,
-              isUnique: true,
-              where: driver.options.type === 'mssql' ? `${driver.escape(unique.columnNames[0])} IS NOT NULL` : undefined,
-            }))
-          : []),
-      ],
-    }),
-    true,
+  return {
+    tableColumns: columns.map(column => tableColumn(queryRunner, { ...column, unique: column.unique && !uniqueIndices })),
+    uniques: relationUniqueIndices ? [] : relationUniques,
+    indices: [
+      ...(uniqueIndices ? columns.filter(column => column.unique).map(column => ({ columnNames: [column.name], isUnique: true })) : []),
+      ...(relationUniqueIndices
+        ? relationUniques.map(unique => ({
+            ...unique,
+            isUnique: true,
+            where: driver.options.type === 'mssql' ? `${driver.escape(unique.columnNames[0])} IS NOT NULL` : undefined,
+          }))
+        : []),
+    ],
+  };
+};
+
+/** The table of a migration, which the database has. */
+const existingTable = async (queryRunner: QueryRunner, tableName: string): Promise<Table> => {
+  const table = await queryRunner.getTable(tableName);
+  if (!table) {
+    throw new Error(`The table ${tableName} does not exist`);
+  }
+  return table;
+};
+
+/**
+ * Adds the columns of a table missing in the database, like createTable creates them: a database synchronized from the
+ * entities has them already.
+ */
+export const addColumns = async (
+  queryRunner: QueryRunner,
+  tableName: string,
+  columns: MigrationColumn[],
+  options: { relationUniques?: string[] } = {},
+): Promise<void> => {
+  const table = await existingTable(queryRunner, tableName);
+  const missing = columns.filter(column => !table.findColumnByName(column.name));
+  if (missing.length === 0) return;
+  const missingNames = missing.map(column => column.name);
+  const { tableColumns, uniques, indices } = uniqueColumns(
+    queryRunner,
+    tableName,
+    missing,
+    (options.relationUniques ?? []).filter(name => missingNames.includes(name)),
   );
+  await queryRunner.addColumns(table, tableColumns.map(column => new TableColumn(column)));
+  if (uniques.length > 0) {
+    await queryRunner.createUniqueConstraints(tableName, uniques.map(unique => new TableUnique(unique)));
+  }
+  if (indices.length > 0) {
+    await queryRunner.createIndices(tableName, indices.map(index => new TableIndex(index)));
+  }
+};
+
+/** Drops the columns of a table the database has, with their foreign keys. */
+export const dropColumns = async (queryRunner: QueryRunner, tableName: string, columnNames: string[]): Promise<void> => {
+  const table = await existingTable(queryRunner, tableName);
+  const existing = columnNames.filter(name => table.findColumnByName(name));
+  if (existing.length === 0) return;
+  const foreignKeys = table.foreignKeys.filter(foreignKey => foreignKey.columnNames.some(name => existing.includes(name)));
+  if (foreignKeys.length > 0) {
+    await queryRunner.dropForeignKeys(table, foreignKeys);
+  }
+  await queryRunner.dropColumns(tableName, existing);
 };
 
 /**
@@ -144,10 +199,7 @@ export const createTable = async (
  * has them already.
  */
 export const createForeignKeys = async (queryRunner: QueryRunner, tableName: string, foreignKeys: MigrationForeignKey[]): Promise<void> => {
-  const table = await queryRunner.getTable(tableName);
-  if (!table) {
-    throw new Error(`The table ${tableName} does not exist`);
-  }
+  const table = await existingTable(queryRunner, tableName);
   const missing = foreignKeys.filter(
     foreignKey =>
       !table.foreignKeys.some(existing => existing.columnNames.length === 1 && existing.columnNames[0] === foreignKey.columnName),

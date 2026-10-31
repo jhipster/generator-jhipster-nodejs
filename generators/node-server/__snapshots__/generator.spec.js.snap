@@ -2004,14 +2004,24 @@ The application runs the ones not run yet at startup, in the order of the timest
 
 Like the Liquibase changelogs of JHipster Spring Boot, JHipster generates the migrations of the schema: \`CreateTables\`
 creates the tables of the users and of the authorities, then each entity has the migration adding its table
-(\`<timestamp>-AddedEntity<Entity>.ts\`, the timestamp of its \`changelogDate\`) and, when it has relationships, the one adding
-its foreign keys and its join tables (\`<timestamp>-AddedEntityConstraints<Entity>.ts\`, its timestamp plus 3000000000000),
-run after the tables of every entity, like the constraints changelogs of Liquibase. A database the application ran them
-on already is not changed by a regeneration of a migration: when an entity changes, add the migration of the change
-(\`npm run typeorm:migration:generate\`) or recreate the development database. Like the Liquibase changelogs without
-incremental changelogs, a regeneration rewrites the migrations of the entity changed (a new column in the migration of its
-table): restore the migrations a database ran already (\`git restore src/migrations\`), keeping the entities, before
-generating the migration of the change, so an empty database runs them all.
+(\`<changelogDate>-AddedEntity<Entity>.ts\`, its class ending with the timestamp of its \`changelogDate\`) and, when it has
+relationships, the one adding its foreign keys and its join tables (\`<changelogDate>-AddedEntityConstraints<Entity>.ts\`,
+its timestamp plus 3000000000000), run after the tables of every entity, like the constraints changelogs of Liquibase.
+The files of the migrations are named by the date of their changelog, so their imports in \`src/orm.config.ts\`, sorted by
+path, are in the order of the changelogs. A database the application ran them
+on already is not changed by a regeneration of a migration.
+
+Like the incremental changelogs of Liquibase, a regeneration keeps the migrations of an entity and generates the ones of
+its changes since, run after the others (their timestamp plus 6000000000000):
+\`<changelogDate>-UpdatedEntity<Entity>.ts\` adds the columns of the added fields and drops the ones of the removed fields,
+then \`<changelogDate>-UpdatedEntityConstraints<Entity>.ts\` adds and drops the join columns, their foreign keys and the join
+tables of the relationships, and \`<changelogDate>-RemovedEntity<Entity>.ts\` drops the join tables and the table of a removed
+entity, after the updates of the entities whose relationships referenced it. The changes are the changelogs JHipster
+records in the \`objects\` of \`.yo-rc.json\`, one for each change of the database schema of an entity: keep them with the
+migrations, the migrations of the application are the ones of its changelogs. A field changed (its type, its
+validations) and a table renamed are not migrated, a dropped column or table keeps none of its values, and a required
+field added to a table having rows needs a migration of your own giving them a value
+(\`npm run typeorm:migration:generate\`).
 
 The application runs the migrations [src/orm.config.ts](src/orm.config.ts) lists: import the class of a migration of
 your own and add it to \`migrations\`, so the application runs it at startup, like the ones JHipster adds. The

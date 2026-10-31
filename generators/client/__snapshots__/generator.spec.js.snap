@@ -593,9 +593,6 @@ exports[`SubGenerator client of nodejs JHipster blueprint > run > should succeed
   "client/src/app/home/home.html": {
     "stateCleared": "modified",
   },
-  "client/src/app/home/home.scss": {
-    "stateCleared": "modified",
-  },
   "client/src/app/home/home.spec.ts": {
     "stateCleared": "modified",
   },
@@ -603,6 +600,9 @@ exports[`SubGenerator client of nodejs JHipster blueprint > run > should succeed
     "stateCleared": "modified",
   },
   "client/src/app/layouts/error/error.html": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/layouts/error/error.route.spec.ts": {
     "stateCleared": "modified",
   },
   "client/src/app/layouts/error/error.route.ts": {

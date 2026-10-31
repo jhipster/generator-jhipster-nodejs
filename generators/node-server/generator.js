@@ -15,15 +15,14 @@ import {
   apiFakeEntity,
   apiFakeValue,
   columnTransformer,
-  constraintsMigration,
   contentTypeColumnOptions,
-  entityMigration,
   fieldColumnOptions,
   fieldColumnTypeImports,
   fieldTypeValidators,
   getDatabasePort,
   getNodeDevDatabaseType,
   hasRuntimeColumnTypes,
+  insertSortedImport,
   joinTable,
   mutateEntityAuthorities,
   mutateEntityPaths,
@@ -220,6 +219,12 @@ export default class extends BaseApplicationGenerator {
       async composingTemplateTask() {
         await this.composeWithJHipster('docker');
       },
+      async composeMigrations() {
+        // The migrations of the entities of a SQL database, from their changelogs, like the incremental Liquibase changelogs.
+        if (this.jhipsterConfigWithDefaults.databaseType === 'sql') {
+          await this.composeWithJHipster('jhipster-nodejs:node-server:migrations');
+        }
+      },
       async composeLanguages() {
         // Like the spring-boot generator: the languages of the application to generate (languagesToGenerate), the server
         // messages of server:i18n among them, without a client composing it.
@@ -282,13 +287,18 @@ export default class extends BaseApplicationGenerator {
         });
       },
       async source({ source }) {
+        // An import of orm.config.ts at its sorted place, else at the needle (see insertSortedImport).
+        const addOrmConfigImport = importLine =>
+          function (content, filePath) {
+            return (
+              insertSortedImport(content, importLine) ??
+              createNeedleCallback({ needle: 'add-entity-to-ormconfig-imports', contentToAdd: importLine }).call(this, content, filePath)
+            );
+          };
         source.addEntityToNodeConfig = ({ nodejsEntityPath, persistClass }) =>
           this.editFile(
             `${SERVER_NODEJS_SRC_DIR}/src/orm.config.ts`,
-            createNeedleCallback({
-              needle: 'add-entity-to-ormconfig-imports',
-              contentToAdd: `import { ${persistClass} } from './${nodejsEntityPath}';`,
-            }),
+            addOrmConfigImport(`import { ${persistClass} } from './${nodejsEntityPath}';`),
             createNeedleCallback({
               needle: 'add-entity-to-ormconfig-entities',
               contentToAdd: `${persistClass},`,
@@ -297,10 +307,7 @@ export default class extends BaseApplicationGenerator {
         source.addMigrationToNodeConfig = ({ className, fileName }) =>
           this.editFile(
             `${SERVER_NODEJS_SRC_DIR}/src/orm.config.ts`,
-            createNeedleCallback({
-              needle: 'add-entity-to-ormconfig-imports',
-              contentToAdd: `import { ${className} } from './migrations/${fileName}.ts';`,
-            }),
+            addOrmConfigImport(`import { ${className} } from './migrations/${fileName}.ts';`),
             createNeedleCallback({
               needle: 'add-migration-to-ormconfig-migrations',
               contentToAdd: `${className},`,
@@ -429,9 +436,8 @@ export default class extends BaseApplicationGenerator {
           application.nodejsUserPrimaryKeyColumn = primaryKeyColumn(application.user);
           application.nodejsUserAuthorityJoinTable = userAuthorityJoinTable(application);
         }
+        // The migrations of the entities are the ones of their changelogs (the migrations generator).
         for (const entity of entities.filter(entity => !entity.skipServer && !entity.builtIn)) {
-          entity.nodejsMigration = entityMigration(entity);
-          entity.nodejsConstraintsMigration = constraintsMigration(entity);
           // The join tables of the entity, its @JoinTable the same as its constraints migration.
           for (const relationship of entity.relationships.filter(relationship => relationship.shouldWriteJoinTable)) {
             relationship.nodejsJoinTable = joinTable(entity, relationship);
@@ -689,9 +695,6 @@ export default class extends BaseApplicationGenerator {
           }
           if (!entity.builtIn) {
             source.addEntityToAppModule({ nodejsModulePath, entityClass });
-          }
-          for (const migration of [entity.nodejsMigration, entity.nodejsConstraintsMigration].filter(Boolean)) {
-            source.addMigrationToNodeConfig(migration);
           }
         }
       },

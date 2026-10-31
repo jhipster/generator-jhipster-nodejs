@@ -23,19 +23,4 @@ export const entityFiles = {
       ],
     },
   ],
-  // The migrations of the entity, like its Liquibase changelogs: its table, then its constraints when it has some.
-  migrations: [
-    {
-      path: SERVER_NODEJS_DIR,
-      condition: ctx => ctx.databaseTypeSql,
-      renameTo: data => `${SERVER_NODEJS_DIR}src/migrations/${data.nodejsMigration.fileName}.ts`,
-      templates: ['src/migrations/_entityMigration_.ts'],
-    },
-    {
-      path: SERVER_NODEJS_DIR,
-      condition: ctx => ctx.databaseTypeSql && ctx.nodejsConstraintsMigration,
-      renameTo: data => `${SERVER_NODEJS_DIR}src/migrations/${data.nodejsConstraintsMigration.fileName}.ts`,
-      templates: ['src/migrations/_entityConstraintsMigration_.ts'],
-    },
-  ],
 };

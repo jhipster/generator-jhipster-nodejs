@@ -1,0 +1,15 @@
+import type { MigrationInterface, QueryRunner } from 'typeorm';
+
+/** Removed the entity <%= nodejsRemovedMigration.entityName %>: its join tables and its table dropped. */
+export class <%= nodejsRemovedMigration.className %> implements MigrationInterface {
+  public async up(queryRunner: QueryRunner): Promise<void> {
+<%_ for (const name of nodejsRemovedMigration.joinTables) { _%>
+    await queryRunner.dropTable('<%= name %>', true);
+<%_ } _%>
+    await queryRunner.dropTable('<%= nodejsRemovedMigration.tableName %>', true);
+  }
+
+  public async down(_queryRunner: QueryRunner): Promise<void> {
+    // The table of the removed entity and its join tables are not restored, nor their values.
+  }
+}
