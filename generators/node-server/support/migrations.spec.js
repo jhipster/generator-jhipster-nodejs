@@ -127,6 +127,18 @@ describe('entityMigration', () => {
     expect(entityMigration(gadget).columns[0]).toEqual({ name: 'id', type: "'uuid'", primary: true, generated: 'uuid' });
   });
 
+  it('should add a String primary key, a varchar the entity generates, and the join columns referencing it', () => {
+    const venue = entity({ entityTableName: 'venue', changelogDate: '20231215172715', primaryKey: { name: 'id', typeString: true } });
+    const show = entity({
+      entityTableName: 'show',
+      changelogDate: '20231215172815',
+      primaryKey,
+      relationships: [relationship({ relationshipType: 'many-to-one', relationshipFieldName: 'venue', otherEntity: venue })],
+    });
+    expect(entityMigration(venue).columns[0]).toEqual({ name: 'id', type: 'String', primary: true });
+    expect(entityMigration(show).columns[1]).toEqual({ name: 'venueId', type: 'String', nullable: true });
+  });
+
   it('should add the table, with the primary key, the fields and the join columns, named like TypeORM', () => {
     const country = entity({
       entityClass: 'Country',

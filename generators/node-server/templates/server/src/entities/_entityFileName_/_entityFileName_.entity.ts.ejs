@@ -1,4 +1,7 @@
-import { <%_ if (databaseType === 'mongodb') { _%> ObjectIdColumn <%_ } else { _%> PrimaryGeneratedColumn <%_ } _%>, Entity, Column <%_ if (databaseType !== 'mongodb') { _%>, JoinColumn, OneToOne, ManyToOne, OneToMany, ManyToMany, JoinTable, type Relation <%_ } _%> } from 'typeorm';
+<%_ if (nodejsGeneratedStringId) { _%>
+import { randomUUID } from 'node:crypto';
+<%_ } _%>
+import { <%_ if (databaseType === 'mongodb') { _%> ObjectIdColumn <%_ } else if (primaryKey.typeString) { _%> <% if (nodejsGeneratedStringId) { %>BeforeInsert, <% } %>PrimaryColumn <%_ } else { _%> PrimaryGeneratedColumn <%_ } _%>, Entity, Column <%_ if (databaseType !== 'mongodb') { _%>, JoinColumn, OneToOne, ManyToOne, OneToMany, ManyToMany, JoinTable, type Relation <%_ } _%> } from 'typeorm';
 import { BaseEntity } from '../../common/database/base.entity.ts';
 <%_ if (nodejsColumnTransformers.length > 0) { _%>
 import { <%- nodejsColumnTransformers.map(name => `${name}Transformer`).join(', ') %> } from '../../common/database/column-transformers.ts';
@@ -53,10 +56,21 @@ export class <%= persistClass %> extends BaseEntity  {
 
 <%_ if (databaseTypeMongodb) { _%>
   @ObjectIdColumn({ name: '_<%- primaryKey.name %>' })
+<%_ } else if (databaseTypeSql && primaryKey.typeString) { _%>
+  // A varchar, like the String id of the Liquibase changelog of JHipster Spring Boot.
+  @PrimaryColumn()
 <%_ } else if (databaseTypeSql) { _%>
   @PrimaryGeneratedColumn(<%- primaryKey.typeUUID ? "'uuid'" : '' %>)
 <%_ } _%>
   <%- primaryKey.name %>?: <%- primaryKey.tsType %>;
+<%_ if (nodejsGeneratedStringId) { _%>
+
+  /** A UUID for a new record, like the @GeneratedValue of the String id of JHipster Spring Boot. */
+  @BeforeInsert()
+  generate<%- primaryKey.nameCapitalized %>(): void {
+    this.<%- primaryKey.name %> ??= randomUUID();
+  }
+<%_ } _%>
 
 <%_ for (const field of fields.filter(field => !field.id)) {
     if (typeof field.javadoc !== 'undefined') { _%>

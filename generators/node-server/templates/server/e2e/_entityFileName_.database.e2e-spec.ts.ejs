@@ -116,6 +116,18 @@ describe('<%= entityClass %> on the database', () => {
 
     await request(server).delete(`/api/<%= entityApiUrl %>/${stored.<%= primaryKey.name %>}`).expect(204);
   });
+<%_ if (nodejsGeneratedStringId) { _%>
+
+  it('should give a new record a UUID as its String <%= primaryKey.name %>, like the @GeneratedValue of JHipster Spring Boot', async () => {
+    const server = app.getHttpServer();
+    const { body: stored } = await request(server).post('/api/<%= entityApiUrl %>').send(createdValues).expect(201);
+
+    expect(stored.<%= primaryKey.name %>).toMatch(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/);
+    await request(server).get(`/api/<%= entityApiUrl %>/${stored.<%= primaryKey.name %>}`).expect(200);
+
+    await request(server).delete(`/api/<%= entityApiUrl %>/${stored.<%= primaryKey.name %>}`).expect(204);
+  });
+<%_ } _%>
 <%_ for (const relationship of storedRelationships) {
     const otherEntity = relationship.otherEntity;
     const otherId = otherEntity.primaryKey.name;

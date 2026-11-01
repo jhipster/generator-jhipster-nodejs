@@ -71,3 +71,10 @@ export const contentTypeColumnOptions = (field, { databaseTypeSql }) => {
     !field.fieldValidationRequired && 'nullable: true',
   ].filter(Boolean);
 };
+
+/**
+ * Whether the String primary key of an SQL entity gets a UUID the entity generates before its insert, like the
+ * @GeneratedValue of a String id of JHipster Spring Boot (the id of the JDL, autoGenerate), in a varchar column like its
+ * Liquibase changelog: the databases generate numbers and uuids only.
+ */
+export const isGeneratedStringId = ({ typeString, autoGenerate }) => Boolean(typeString && autoGenerate);
