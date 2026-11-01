@@ -212,4 +212,58 @@ _%>
     await request(server).delete(`/api/<%= entityApiUrl %>/${stored.<%= primaryKey.name %>}`).expect(204);
   });
 <%_ } _%>
+
+<%_
+const pk = primaryKey.name;
+// The one-to-one relationships the other entity stores, whose records without one the controller lists (its is-null filter).
+const inverseOneToOnes = nodejsMappedByRelationships.filter(relationship => relationship.relationshipOneToOne);
+_%>
+<%_ if (!primaryKey.typeUUID) { _%>
+
+  it('should sort the list by id, the newest first with id,desc, like Spring Data', async () => {
+    const server = app.getHttpServer();
+    const { body: first } = await request(server).post('/api/<%= entityApiUrl %>').send(createdValues).expect(201);
+    const { body: second } = await request(server).post('/api/<%= entityApiUrl %>').send(updatedValues).expect(201);
+
+    const { body: list } = await request(server).get('/api/<%= entityApiUrl %>?sort=<%= pk %>,desc&size=100').expect(200);
+    const ids = list.map((record: any) => String(record.<%= pk %>));
+    expect(ids.indexOf(String(second.<%= pk %>))).toBeLessThan(ids.indexOf(String(first.<%= pk %>)));
+
+    await request(server).delete(`/api/<%= entityApiUrl %>/${first.<%= pk %>}`).expect(204);
+    await request(server).delete(`/api/<%= entityApiUrl %>/${second.<%= pk %>}`).expect(204);
+  });
+<%_ } _%>
+<%_ if (databaseTypeMongodb) { _%>
+
+  it('should answer an id that is not an ObjectId as an unknown one, like JHipster Spring Boot', async () => {
+    const server = app.getHttpServer();
+    await request(server).get('/api/<%= entityApiUrl %>/not-an-id').expect(404);
+    await request(server).delete('/api/<%= entityApiUrl %>/not-an-id').expect(204);
+  });
+<%_ } _%>
+<%_ for (const relationship of inverseOneToOnes) {
+    const otherEntity = relationship.otherEntity;
+    const ownerProperty = relationship.otherRelationship.propertyName;
+    const ownerValues = (otherEntity.resetFakerSeed('nodejs-database-e2e'), otherEntity.nodejsApiFakeEntity().values);
+_%>
+
+  it('should give the records without <%= relationship.propertyName %> to its is-null filter, like JHipster Spring Boot', async () => {
+    const server = app.getHttpServer();
+    const { body: free } = await request(server).post('/api/<%= entityApiUrl %>').send(createdValues).expect(201);
+    const { body: linked } = await request(server).post('/api/<%= entityApiUrl %>').send(updatedValues).expect(201);
+    const { body: owner } = await request(server)
+      .post('/api/<%= otherEntity.entityApiUrl %>')
+      .send({ ...<%- literal(ownerValues) %>, <%= ownerProperty %>: { <%= pk %>: linked.<%= pk %> } })
+      .expect(201);
+
+    const { body: list } = await request(server).get('/api/<%= entityApiUrl %>?filter=<%- relationship.relationshipName.toLowerCase() %>-is-null').expect(200);
+    const ids = list.map((record: any) => record.<%= pk %>);
+    expect(ids).toContain(free.<%= pk %>);
+    expect(ids).not.toContain(linked.<%= pk %>);
+
+    await request(server).delete(`/api/<%= otherEntity.entityApiUrl %>/${owner.<%= otherEntity.primaryKey.name %>}`).expect(204);
+    await request(server).delete(`/api/<%= entityApiUrl %>/${free.<%= pk %>}`).expect(204);
+    await request(server).delete(`/api/<%= entityApiUrl %>/${linked.<%= pk %>}`).expect(204);
+  });
+<%_ } _%>
 });

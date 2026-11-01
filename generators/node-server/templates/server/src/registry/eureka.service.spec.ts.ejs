@@ -1,0 +1,70 @@
+import { describe, expect, it, vi } from 'vitest';
+import { EurekaClient, EurekaService } from './eureka.service.ts';
+
+const config: Record<string, unknown> = {
+  'eureka.client.enabled': true,
+  'eureka.client.service-url.defaultZone': 'http://admin:admin@localhost:8761/eureka',
+  'eureka.client.register-with-eureka': true,
+  'eureka.client.fetch-registry': true,
+  'eureka.client.registry-fetch-interval-seconds': 10,
+  'eureka.instance.appname': 'app',
+  'eureka.instance.instanceId': 'app:1',
+  'eureka.instance.lease-renewal-interval-in-seconds': 5,
+  'eureka.instance.lease-expiration-duration-in-seconds': 10,
+  'eureka.instance.prefer-ip-address': true,
+};
+
+/** A client of eureka-js-client whose start registers or fails, like the server gives it, and the spies of its starts. */
+const fakeClient = (start: { registered: boolean; error?: Error }) => {
+  let registeredListener = (): void => {};
+  const startHeartbeats = vi.fn();
+  const startRegistryFetches = vi.fn();
+  const client: EurekaClient = {
+    logger: { level: vi.fn() },
+    on: (_event: string, listener: () => void) => {
+      registeredListener = listener;
+    },
+    start: (callback: (error?: Error) => void) => {
+      if (start.registered) registeredListener();
+      callback(start.error);
+    },
+    stop: vi.fn(),
+    startHeartbeats,
+    startRegistryFetches,
+  };
+  return { client, startHeartbeats, startRegistryFetches };
+};
+
+const register = (client: EurekaClient): void => {
+  const configService = { get: (key: string) => config[key] };
+  const service = new (class extends EurekaService {
+    protected createClient(): EurekaClient {
+      return client;
+    }
+  })(configService as any);
+  service.register(8081);
+};
+
+describe('EurekaService', () => {
+  it('retries a failed registration at each heartbeat, like the Eureka client of Spring Cloud', () => {
+    const { client, startHeartbeats, startRegistryFetches } = fakeClient({ registered: false, error: new Error('server down') });
+    register(client);
+    // The first heartbeat the server answers (404 for an unknown instance) registers the instance.
+    expect(startHeartbeats).toHaveBeenCalledTimes(1);
+    expect(startRegistryFetches).toHaveBeenCalledTimes(1);
+  });
+
+  it('starts nothing more when the first registry fetch fails after the registration: eureka-js-client started them', () => {
+    const { client, startHeartbeats, startRegistryFetches } = fakeClient({ registered: true, error: new Error('fetch failed') });
+    register(client);
+    expect(startHeartbeats).not.toHaveBeenCalled();
+    expect(startRegistryFetches).not.toHaveBeenCalled();
+  });
+
+  it('starts nothing more when the registration succeeds', () => {
+    const { client, startHeartbeats, startRegistryFetches } = fakeClient({ registered: true });
+    register(client);
+    expect(startHeartbeats).not.toHaveBeenCalled();
+    expect(startRegistryFetches).not.toHaveBeenCalled();
+  });
+});

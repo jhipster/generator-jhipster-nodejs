@@ -8,7 +8,7 @@ import type { ApplicationConfig } from '../application-config.ts';
 import { isProfileActive } from '../config.ts';
 
 /** The client of eureka-js-client (the maintained fork of Rocket Software), which has no types. */
-interface EurekaClient {
+export interface EurekaClient {
   start(callback: (error?: Error) => void): void;
   stop(callback: (error?: Error) => void): void;
   startHeartbeats(): void;
@@ -42,8 +42,7 @@ export class EurekaService implements BeforeApplicationShutdown {
     const leaseRenewalInterval = Number(this.configService.get('eureka.instance.lease-renewal-interval-in-seconds', { infer: true }));
     const user = decodeURIComponent(serviceUrl.username) || this.configService.get('jhipster.registry.username', { infer: true }) || 'admin';
     const password = decodeURIComponent(serviceUrl.password) || this.configService.get('jhipster.registry.password', { infer: true }) || 'admin';
-    const { Eureka } = createRequire(import.meta.url)('@rocketsoftware/eureka-js-client');
-    const client: EurekaClient = new Eureka({
+    const client = this.createClient({
       instance: {
         app: appName,
         instanceId: this.configService.get('eureka.instance.instanceId', { infer: true }),
@@ -106,6 +105,12 @@ export class EurekaService implements BeforeApplicationShutdown {
       }
     });
     this.client = client;
+  }
+
+  /** The client of eureka-js-client with the options of the registration. */
+  protected createClient(options: Record<string, unknown>): EurekaClient {
+    const { Eureka } = createRequire(import.meta.url)('@rocketsoftware/eureka-js-client');
+    return new Eureka(options);
   }
 
   /** Cancels the registration before the server stops, so a gateway no longer routes to the application. */

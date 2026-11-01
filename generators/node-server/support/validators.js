@@ -23,3 +23,22 @@ const typeValidators = {
 
 /** The class-validator decorators of the type of a field: none for a text, a blob or an enum (@IsEnum). */
 export const fieldTypeValidators = field => (field.fieldIsEnum ? [] : (typeValidators[field.fieldType] ?? []));
+
+/** A value of another type than each validated field type, which its validators refuse: for the tests of the 400. */
+const invalidTypeValues = {
+  Integer: 'abc',
+  Long: 'abc',
+  Float: 'abc',
+  Double: 'abc',
+  BigDecimal: 'abc',
+  Boolean: 'yes',
+  UUID: 'not-a-uuid',
+  Instant: 'not-an-instant',
+  ZonedDateTime: 'not-an-instant',
+  LocalDate: '2020-13-45',
+  LocalTime: 'eight',
+  Duration: '1h',
+};
+
+/** A value of another type than the field, which its type validators refuse, or undefined for a field without them. */
+export const invalidTypeValue = field => (fieldTypeValidators(field).length > 0 ? invalidTypeValues[field.fieldType] : undefined);
