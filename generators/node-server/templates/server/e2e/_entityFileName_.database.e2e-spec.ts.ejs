@@ -116,7 +116,7 @@ describe('<%= entityClass %> on the database', () => {
 
     await request(server).delete(`/api/<%= entityApiUrl %>/${stored.<%= primaryKey.name %>}`).expect(204);
   });
-<%_ if (nodejsGeneratedStringId) { _%>
+<%_ if (databaseTypeSql && primaryKey.typeString && primaryKey.autoGenerate) { _%>
 
   it('should give a new record a UUID as its String <%= primaryKey.name %>, like the @GeneratedValue of JHipster Spring Boot', async () => {
     const server = app.getHttpServer();

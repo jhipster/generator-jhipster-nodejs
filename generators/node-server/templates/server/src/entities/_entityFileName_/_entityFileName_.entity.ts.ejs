@@ -1,7 +1,12 @@
-<%_ if (nodejsGeneratedStringId) { _%>
+<%_
+// A String id of the JDL (autoGenerate), whose UUID the entity generates like the @GeneratedValue of JHipster Spring Boot:
+// the databases generate numbers and uuids only.
+const generatedStringId = databaseTypeSql && primaryKey.typeString && primaryKey.autoGenerate;
+_%>
+<%_ if (generatedStringId) { _%>
 import { randomUUID } from 'node:crypto';
 <%_ } _%>
-import { <%_ if (databaseType === 'mongodb') { _%> ObjectIdColumn <%_ } else if (primaryKey.typeString) { _%> <% if (nodejsGeneratedStringId) { %>BeforeInsert, <% } %>PrimaryColumn <%_ } else { _%> PrimaryGeneratedColumn <%_ } _%>, Entity, Column <%_ if (databaseType !== 'mongodb') { _%>, JoinColumn, OneToOne, ManyToOne, OneToMany, ManyToMany, JoinTable, type Relation <%_ } _%> } from 'typeorm';
+import { <%_ if (databaseType === 'mongodb') { _%> ObjectIdColumn <%_ } else if (primaryKey.typeString) { _%> <% if (generatedStringId) { %>BeforeInsert, <% } %>PrimaryColumn <%_ } else { _%> PrimaryGeneratedColumn <%_ } _%>, Entity, Column <%_ if (databaseType !== 'mongodb') { _%>, JoinColumn, OneToOne, ManyToOne, OneToMany, ManyToMany, JoinTable, type Relation <%_ } _%> } from 'typeorm';
 import { BaseEntity } from '../../common/database/base.entity.ts';
 <%_ if (nodejsColumnTransformers.length > 0) { _%>
 import { <%- nodejsColumnTransformers.map(name => `${name}Transformer`).join(', ') %> } from '../../common/database/column-transformers.ts';
@@ -63,7 +68,7 @@ export class <%= persistClass %> extends BaseEntity  {
   @PrimaryGeneratedColumn(<%- primaryKey.typeUUID ? "'uuid'" : '' %>)
 <%_ } _%>
   <%- primaryKey.name %>?: <%- primaryKey.tsType %>;
-<%_ if (nodejsGeneratedStringId) { _%>
+<%_ if (generatedStringId) { _%>
 
   /** A UUID for a new record, like the @GeneratedValue of the String id of JHipster Spring Boot. */
   @BeforeInsert()

@@ -88,25 +88,25 @@ const typeOfFieldType = {
 const literal = value => `'${String(value).replaceAll('\\', '\\\\').replaceAll("'", "\\'")}'`;
 
 /**
- * Whether the primary key of an entity is a String column: not the one of the built-in User, whose users table the server
- * keeps with a generated id whatever the authentication (the String id of JHipster with OAuth2 is the login of the
- * provider there).
+ * The type of the migration column of a primary key: a uuid, a String (the varchar of a String field), else a number. The
+ * built-in User keeps its generated number with the String id of OAuth2, like its entity.
  */
-const isStringPrimaryKey = entity => Boolean(entity.primaryKey.typeString && !entity.builtInUser);
-
-/** The type of the migration column of a primary key: a uuid, a String (the varchar of a String field), else a number. */
-const primaryKeyType = entity => (entity.primaryKey.typeUUID ? literal('uuid') : isStringPrimaryKey(entity) ? 'String' : 'Number');
+const primaryKeyType = ({ primaryKey, builtInUser }) =>
+  primaryKey.typeUUID ? literal('uuid') : primaryKey.typeString && !builtInUser ? 'String' : 'Number';
 
 /**
  * The migration column of the primary key of an entity, like its @PrimaryGeneratedColumn, or its @PrimaryColumn for a
- * String, whose UUID the entity generates (see support/columns.js).
+ * String, whose UUID the entity generates.
  */
-export const primaryKeyColumn = entity => ({
-  name: entity.primaryKey.name,
-  type: primaryKeyType(entity),
-  primary: true,
-  ...(isStringPrimaryKey(entity) ? {} : { generated: entity.primaryKey.typeUUID ? 'uuid' : 'increment' }),
-});
+export const primaryKeyColumn = entity => {
+  const type = primaryKeyType(entity);
+  return {
+    name: entity.primaryKey.name,
+    type,
+    primary: true,
+    ...(type === 'String' ? {} : { generated: entity.primaryKey.typeUUID ? 'uuid' : 'increment' }),
+  };
+};
 
 /** The migration column referencing the primary key of an entity: a join column, or a column of a join table. */
 const referenceColumn = (name, entity) => ({

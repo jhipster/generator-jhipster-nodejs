@@ -24,7 +24,6 @@ import {
   hasRuntimeColumnTypes,
   insertSortedImport,
   invalidTypeValue,
-  isGeneratedStringId,
   joinTable,
   mutateEntityAuthorities,
   mutateEntityPaths,
@@ -421,12 +420,6 @@ export default class extends BaseApplicationGenerator {
           entity.nodejsColumnTypeImports = [...new Set(entity.fields.flatMap(field => field.nodejsColumnTypeImports ?? []))];
           // The fake values of the fields as the API exchanges them, generated when a template calls it (after its faker seed).
           entity.nodejsApiFakeEntity = () => apiFakeEntity(entity);
-        }
-      },
-      prepareGeneratedStringId({ application, entities }) {
-        // The String primary key of an SQL entity whose UUID the entity generates (support/columns.js).
-        for (const entity of entities.filter(entity => !entity.skipServer && !entity.builtIn)) {
-          entity.nodejsGeneratedStringId = Boolean(application.databaseTypeSql && isGeneratedStringId(entity.primaryKey));
         }
       },
       prepareAuthorityAlertName({ application }) {
