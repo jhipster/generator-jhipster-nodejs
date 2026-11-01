@@ -41,6 +41,10 @@ describe('<%= entityClass %> Controller', () => {
 <%_ for (const [propertyName, value] of fakeFields) { _%>
         <%- propertyName %>: <%- JSON.stringify(value) %>,
 <%_ } _%>
+<%_ // The required relationships in the stored record too: a partial update validates it with the patched fields. _%>
+<%_ for (const relationship of nodejsRequiredRelationships) { _%>
+        <%= relationship.propertyName %>: <%- relationship.nodejsMockReference %>,
+<%_ } _%>
     }
     const unknownId = <%- unknownId %>;
     const anotherId = <%- anotherId %>;
@@ -65,9 +69,6 @@ _%>
         ...entityMock,
 <%_ for (const [fieldName, value] of Object.entries(validValues)) { _%>
         <%= fieldName %>: <%- JSON.stringify(value) %>,
-<%_ } _%>
-<%_ for (const relationship of nodejsRequiredRelationships) { _%>
-        <%= relationship.propertyName %>: <%- relationship.nodejsMockReference %>,
 <%_ } _%>
     };
 
