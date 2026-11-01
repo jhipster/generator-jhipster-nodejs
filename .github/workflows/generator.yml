@@ -15,3 +15,7 @@ jobs:
           cache: 'npm'
       - run: npm ci
       - run: npm run test
+      # The dependencies of the generated server resolved as npm installs the server alone: a peer one refuses, like the
+      # better-sqlite3 TypeORM declares, fails it (ERESOLVE). Only the tree is resolved, nothing is installed.
+      - run: npm install --package-lock-only --ignore-scripts --no-audit --no-fund
+        working-directory: generators/node-server/resources
