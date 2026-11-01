@@ -230,7 +230,8 @@ const pk = primaryKey.name;
 // The one-to-one relationships the other entity stores, whose records without one the controller lists (its is-null filter).
 const inverseOneToOnes = nodejsMappedByRelationships.filter(relationship => relationship.relationshipOneToOne);
 _%>
-<%_ if (!primaryKey.typeUUID) { _%>
+<%_ // A generated id in the order of the records: not a UUID, nor a String id of SQL (a UUID the entity generates). _%>
+<%_ if (!primaryKey.typeUUID && !(databaseTypeSql && primaryKey.typeString)) { _%>
 
   it('should sort the list by id, the newest first with id,desc, like Spring Data', async () => {
     const server = app.getHttpServer();
