@@ -1,3 +1,15 @@
+import type { TransformFnParams } from 'class-transformer';
+
+/** A JSON number: an integer or a decimal, with an exponent or not. */
+const NUMBER = /^[-+]?(?:\d+\.?\d*|\.\d+)(?:[eE][-+]?\d+)?$/;
+
+/**
+ * The @Transform of a number field: a number given as a text is the number, like the JSON deserialization (Jackson) of
+ * JHipster Spring Boot accepts "12.50" for a BigDecimal. Any other value is kept for the validators of the field to refuse.
+ */
+export const numberFromString = ({ value }: TransformFnParams): unknown =>
+  typeof value === 'string' && NUMBER.test(value) ? Number(value) : value;
+
 /**
  * A DTO base object.
  */

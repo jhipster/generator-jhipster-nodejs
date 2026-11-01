@@ -57,6 +57,9 @@ const requiredField = validatedFields.find(field => field.fieldValidationRequire
 const enumField = fields.find(field => !field.id && field.fieldIsEnum);
 // A field whose type the DTO validates, with a value of another type.
 const typedField = fields.find(field => !field.id && !field.transient && field.nodejsInvalidTypeValue !== undefined);
+// A number field with a valid value, sent as a text.
+const validEntityValues = { ...Object.fromEntries(fakeFields), ...validValues };
+const numericField = fields.find(field => !field.id && field.fieldTypeNumeric && typeof validEntityValues[field.fieldName] === 'number');
 _%>
     const validEntity: any = {
         ...entityMock,
@@ -299,6 +302,33 @@ _%>
             .expect(400)).body;
 
         expect(error).toMatchObject({ message: 'error.validation', fieldErrors: [expect.objectContaining({ field: '<%= enumField.fieldName %>' })] });
+    });
+
+<%_ } _%>
+<%_ if (numericField) { _%>
+    it('/POST create <%= entityApiUrl %> with <%= numericField.fieldName %> as a text of a number, the number like the JSON deserialization of JHipster Spring Boot', async () => {
+        const { id: _id, ...newEntity } = validEntity;
+        const save = vi.spyOn(serviceMock as any, 'save');
+        try {
+            await request(app.getHttpServer())
+                .post('/api/<%= entityApiUrl %>')
+                .send({ ...newEntity, <%= numericField.fieldName %>: String(newEntity.<%= numericField.fieldName %>) })
+                .expect(201);
+
+            const [dto] = save.mock.calls[0];
+            expect((dto as any).<%= numericField.fieldName %>).toBe(newEntity.<%= numericField.fieldName %>);
+        } finally {
+            save.mockRestore();
+        }
+    });
+
+    it('/PATCH partial update <%= entityApiUrl %> with <%= numericField.fieldName %> as a text of a number, the number', async () => {
+        const response = await request(app.getHttpServer())
+            .patch(`/api/<%= entityApiUrl %>/${entityMock.id}`)
+            .send({ id: entityMock.id, <%= numericField.fieldName %>: String(validEntity.<%= numericField.fieldName %>) })
+            .expect(200);
+
+        expect(response.body.<%= numericField.fieldName %>).toBe(validEntity.<%= numericField.fieldName %>);
     });
 
 <%_ } _%>

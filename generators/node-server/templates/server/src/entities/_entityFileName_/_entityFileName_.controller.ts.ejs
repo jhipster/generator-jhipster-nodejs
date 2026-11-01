@@ -5,6 +5,7 @@ const idParam = `@Param('id'${idPipe ? `, ${idPipe}` : ''}) id: ${pkType}`;
 _%>
 import { Body, ClassSerializerInterceptor, Controller, Delete, Get, Logger, NotFoundException, Param,<% if (idPipe) { %> <%= idPipe %>,<% } %> Patch, Post as PostMethod, Put, UseGuards, Req, UseInterceptors } from '@nestjs/common';
 import { <% if (authenticationTypeJwt) { _%> ApiBearerAuth, <% } else { _%> ApiSecurity, <% } _%> ApiTags, ApiResponse, ApiOperation } from '@nestjs/swagger';
+import { plainToInstance } from 'class-transformer';
 import { validate } from 'class-validator';
 import { <%= dtoClass %> } from './dto/<%= entityFileName %>.dto.ts';
 import { <%= entityClass %>Service } from './<%= entityFileName %>.service.ts';
@@ -159,8 +160,8 @@ export class <%= entityClass %>Controller {
   async patchId(@Req() req: Request, <%- idParam %>, @Body() <%= entityInstance %>DTO: Partial<<%= dtoClass %>>): Promise<<%= dtoClass %>>  {
     const existing = await this.validateIdForUpdate(req, id, <%= entityInstance %>DTO);
     // Like JHipster Spring Boot, a JSON merge patch: the given fields replace the ones of the record, a null clears
-    // one, and the record is validated as the global ValidationPipe validates a PUT.
-    const patched = Object.assign(new <%= dtoClass %>(), { ...existing, ...<%= entityInstance %>DTO });
+    // one, and the record is transformed and validated as the global ValidationPipe does for a PUT.
+    const patched = plainToInstance(<%= dtoClass %>, { ...existing, ...<%= entityInstance %>DTO });
     const errors = await validate(patched, { forbidUnknownValues: false });
     if (errors.length > 0) {
       // The errors of the fields, like the ValidationPipe of a PUT.

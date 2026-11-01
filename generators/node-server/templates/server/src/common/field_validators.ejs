@@ -64,7 +64,11 @@ if (field.fieldValidate === true) {
 } else if (field.fieldIsEnum || field.nodejsTypeValidators.length > 0) {
     validators.push('@IsOptional()');
 }
-// Like the JSON deserialization of JHipster Spring Boot, a value of another type is a bad request (400).
+// Like the JSON deserialization of JHipster Spring Boot, a value of another type is a bad request (400), but a number
+// given as a text is the number.
+if (field.fieldTypeNumeric) {
+    validators.push('@Transform(numberFromString)');
+}
 validators.push(...field.nodejsTypeValidators);
 if (field.fieldIsEnum) {
     // Like the JSON deserialization of JHipster Spring Boot, a value out of the enum is a bad request (400), not a database error.

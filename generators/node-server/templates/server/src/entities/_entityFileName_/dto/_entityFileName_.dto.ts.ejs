@@ -1,9 +1,10 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Allow<% if (anyPropertyHasValidation || fields.some(field => field.fieldIsEnum || field.nodejsTypeValidators.length > 0)) { %>, IsNotEmpty, IsOptional, IsEnum, MinLength, MaxLength, Length, Min, Max, Matches, IsInt, IsNumber, IsBoolean, IsUUID, IsISO8601<% } %> } from 'class-validator';
-<%_ if (databaseTypeMongodb) { _%>
+<%_ const anyFieldNumeric = fields.some(field => !field.id && field.fieldTypeNumeric); _%>
+<%_ if (databaseTypeMongodb || anyFieldNumeric) { _%>
 import { Transform } from 'class-transformer';
 <%_ } _%>
-import { BaseDTO<% if (relationships.length > 0) { %>, type RelatedDTO<% } %> } from '../../../common/dto/base.dto.ts';
+import { <%- ['BaseDTO', anyFieldNumeric && 'numberFromString', relationships.length > 0 && 'type RelatedDTO'].filter(Boolean).join(', ') %> } from '../../../common/dto/base.dto.ts';
 
 <%_
 let isUserRelationship = false;
