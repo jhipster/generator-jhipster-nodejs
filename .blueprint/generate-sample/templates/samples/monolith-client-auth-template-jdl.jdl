@@ -65,8 +65,15 @@ entity Activity {
 //    Activity to SingleCourse
 //}
 
+// A String primary key, a UUID the server generates, referenced by a relationship.
+entity Classroom {
+    id String,
+    name String required,
+}
+
 relationship ManyToOne {
     Activity {demetrauser} to DemetraUser
+    SingleCourse {classroom(name)} to Classroom
 }
 
 
