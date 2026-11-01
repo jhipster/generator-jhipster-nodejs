@@ -102,6 +102,22 @@ describe('<%= entityClass %> on the database', () => {
     await request(server).delete(`/api/<%= entityApiUrl %>/${stored.<%= primaryKey.name %>}`).expect(204);
     await request(server).get(`/api/<%= entityApiUrl %>/${stored.<%= primaryKey.name %>}`).expect(404);
   });
+<%_ const optionalField = fields.find(field => !field.id && !field.transient && !field.fieldValidationRequired && field.fieldName in created.values); _%>
+<%_ if (optionalField) { _%>
+
+  it('should clear the <%= optionalField.fieldName %> a PUT does not give, like JHipster Spring Boot replacing the record', async () => {
+    const server = app.getHttpServer();
+    const { body: stored } = await request(server).post('/api/<%= entityApiUrl %>').send(createdValues).expect(201);
+    const { <%= optionalField.fieldName %>: _<%= optionalField.fieldName %>, ...withoutField } = stored;
+
+    const { body: updated } = await request(server).put(`/api/<%= entityApiUrl %>/${stored.<%= primaryKey.name %>}`).send(withoutField).expect(200);
+    expect(updated.<%= optionalField.fieldName %>).toBeNull();
+    const { body: read } = await request(server).get(`/api/<%= entityApiUrl %>/${stored.<%= primaryKey.name %>}`).expect(200);
+    expect(read.<%= optionalField.fieldName %>).toBeNull();
+
+    await request(server).delete(`/api/<%= entityApiUrl %>/${stored.<%= primaryKey.name %>}`).expect(204);
+  });
+<%_ } _%>
 
   it('should list the stored records<% if (pagination !== 'no') { %>, with the pagination headers of JHipster Spring Boot<% } %>', async () => {
     const server = app.getHttpServer();

@@ -140,6 +140,24 @@ export class <%= entityClass %>Controller {
   @ApiResponse({ status: 400, description: 'Invalid id, or the record does not exist.' })
   async putId(@Req() req: Request, <%- idParam %>, @Body() <%= entityInstance %>DTO: <%= dtoClass %>): Promise<<%= dtoClass %>>  {
     await this.validateIdForUpdate(req, id, <%= entityInstance %>DTO);
+<%_
+// The fields and the stored relationships, the properties of the entity JHipster Spring Boot deserializes from the body.
+const replacedProperties = [
+  ...fields.filter(field => !field.id && !field.transient).flatMap(field => [
+    [field.fieldName, 'null'],
+    ...(field.fieldWithContentType ? [[`${field.fieldName}ContentType`, 'null']] : []),
+  ]),
+  ...persistableRelationships.map(relationship => [relationship.propertyName, relationship.collection ? '[]' : 'null']),
+];
+_%>
+<%_ if (replacedProperties.length > 0) { _%>
+    // Like JHipster Spring Boot, a PUT replaces the record: a field or a relationship the body does not give is cleared.
+    Object.assign(<%= entityInstance %>DTO, {
+<%_   for (const [property, cleared] of replacedProperties) { _%>
+      <%= property %>: <%= entityInstance %>DTO.<%= property %> ?? <%- cleared %>,
+<%_   } _%>
+    });
+<%_ } _%>
     const updated = await this.<%= entityInstance %>Service.update(<%= entityInstance %>DTO, req.user?.login);
     this.headerUtil.addEntityUpdatedHeaders(req.res, ENTITY_NAME, id);
     return updated;
