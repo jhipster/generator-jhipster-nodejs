@@ -87,8 +87,15 @@ const typeOfFieldType = {
 /** A string literal of TypeScript. */
 const literal = value => `'${String(value).replaceAll('\\', '\\\\').replaceAll("'", "\\'")}'`;
 
+/**
+ * Whether the primary key of an entity is a String column: not the one of the built-in User, whose users table the server
+ * keeps with a generated id whatever the authentication (the String id of JHipster with OAuth2 is the login of the
+ * provider there).
+ */
+const isStringPrimaryKey = entity => Boolean(entity.primaryKey.typeString && !entity.builtInUser);
+
 /** The type of the migration column of a primary key: a uuid, a String (the varchar of a String field), else a number. */
-const primaryKeyType = ({ typeUUID, typeString }) => (typeUUID ? literal('uuid') : typeString ? 'String' : 'Number');
+const primaryKeyType = entity => (entity.primaryKey.typeUUID ? literal('uuid') : isStringPrimaryKey(entity) ? 'String' : 'Number');
 
 /**
  * The migration column of the primary key of an entity, like its @PrimaryGeneratedColumn, or its @PrimaryColumn for a
@@ -96,15 +103,15 @@ const primaryKeyType = ({ typeUUID, typeString }) => (typeUUID ? literal('uuid')
  */
 export const primaryKeyColumn = entity => ({
   name: entity.primaryKey.name,
-  type: primaryKeyType(entity.primaryKey),
+  type: primaryKeyType(entity),
   primary: true,
-  ...(entity.primaryKey.typeString ? {} : { generated: entity.primaryKey.typeUUID ? 'uuid' : 'increment' }),
+  ...(isStringPrimaryKey(entity) ? {} : { generated: entity.primaryKey.typeUUID ? 'uuid' : 'increment' }),
 });
 
 /** The migration column referencing the primary key of an entity: a join column, or a column of a join table. */
 const referenceColumn = (name, entity) => ({
   name,
-  type: primaryKeyType(entity.primaryKey),
+  type: primaryKeyType(entity),
 });
 
 /** The migration columns of a field, like the @Column decorators of the entity: its column, and the content type of a blob. */

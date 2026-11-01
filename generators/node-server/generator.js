@@ -425,7 +425,7 @@ export default class extends BaseApplicationGenerator {
       },
       prepareGeneratedStringId({ application, entities }) {
         // The String primary key of an SQL entity whose UUID the entity generates (support/columns.js).
-        for (const entity of entities.filter(entity => !entity.skipServer)) {
+        for (const entity of entities.filter(entity => !entity.skipServer && !entity.builtIn)) {
           entity.nodejsGeneratedStringId = Boolean(application.databaseTypeSql && isGeneratedStringId(entity.primaryKey));
         }
       },
