@@ -87,18 +87,31 @@ const typeOfFieldType = {
 /** A string literal of TypeScript. */
 const literal = value => `'${String(value).replaceAll('\\', '\\\\').replaceAll("'", "\\'")}'`;
 
-/** The migration column of the primary key of an entity, like its @PrimaryGeneratedColumn. */
-export const primaryKeyColumn = entity => ({
-  name: entity.primaryKey.name,
-  type: entity.primaryKey.typeUUID ? literal('uuid') : 'Number',
-  primary: true,
-  generated: entity.primaryKey.typeUUID ? 'uuid' : 'increment',
-});
+/**
+ * The type of the migration column of a primary key: a uuid, a String (the varchar of a String field), else a number. The
+ * built-in User keeps its generated number with the String id of OAuth2, like its entity.
+ */
+const primaryKeyType = ({ primaryKey, builtInUser }) =>
+  primaryKey.typeUUID ? literal('uuid') : primaryKey.typeString && !builtInUser ? 'String' : 'Number';
+
+/**
+ * The migration column of the primary key of an entity, like its @PrimaryGeneratedColumn, or its @PrimaryColumn for a
+ * String, whose UUID the entity generates.
+ */
+export const primaryKeyColumn = entity => {
+  const type = primaryKeyType(entity);
+  return {
+    name: entity.primaryKey.name,
+    type,
+    primary: true,
+    ...(type === 'String' ? {} : { generated: entity.primaryKey.typeUUID ? 'uuid' : 'increment' }),
+  };
+};
 
 /** The migration column referencing the primary key of an entity: a join column, or a column of a join table. */
 const referenceColumn = (name, entity) => ({
   name,
-  type: entity.primaryKey.typeUUID ? literal('uuid') : 'Number',
+  type: primaryKeyType(entity),
 });
 
 /** The migration columns of a field, like the @Column decorators of the entity: its column, and the content type of a blob. */

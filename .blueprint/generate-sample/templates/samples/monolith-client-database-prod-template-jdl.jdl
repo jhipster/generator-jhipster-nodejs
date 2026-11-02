@@ -35,6 +35,12 @@ entity Mission {
   launchedAt Instant
 }
 
+// A String primary key: a UUID the server generates.
+entity Spacecraft {
+  id String
+  name String required
+}
+
 enum SpaceEventType {
   LAUNCH,
   LANDING

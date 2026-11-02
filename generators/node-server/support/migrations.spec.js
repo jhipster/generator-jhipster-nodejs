@@ -11,6 +11,7 @@ import {
   fieldColumns,
   joinTable,
   migrationOfFile,
+  primaryKeyColumn,
   typeormCamelCase,
   updatedConstraintsMigration,
   updatedEntityMigration,
@@ -125,6 +126,35 @@ describe('fieldColumns', () => {
 describe('entityMigration', () => {
   it('should add a primary key of an entity with a UUID, generated', () => {
     expect(entityMigration(gadget).columns[0]).toEqual({ name: 'id', type: "'uuid'", primary: true, generated: 'uuid' });
+  });
+
+  it('should add a String primary key, a varchar the entity generates, and the join columns referencing it', () => {
+    const venue = entity({ entityTableName: 'venue', changelogDate: '20231215172715', primaryKey: { name: 'id', typeString: true } });
+    const show = entity({
+      entityTableName: 'show',
+      changelogDate: '20231215172815',
+      primaryKey,
+      relationships: [relationship({ relationshipType: 'many-to-one', relationshipFieldName: 'venue', otherEntity: venue })],
+    });
+    expect(entityMigration(venue).columns[0]).toEqual({ name: 'id', type: 'String', primary: true });
+    expect(entityMigration(show).columns[1]).toEqual({ name: 'venueId', type: 'String', nullable: true });
+  });
+
+  it('should keep the generated id of the built-in User, whose String id of OAuth2 the server does not store', () => {
+    const oauth2User = entity({
+      entityTableName: 'jhi_user',
+      builtIn: true,
+      builtInUser: true,
+      primaryKey: { name: 'id', typeString: true },
+    });
+    const note = entity({
+      entityTableName: 'note',
+      changelogDate: '20231215172915',
+      primaryKey,
+      relationships: [relationship({ relationshipType: 'many-to-one', relationshipFieldName: 'user', otherEntity: oauth2User })],
+    });
+    expect(primaryKeyColumn(oauth2User)).toEqual({ name: 'id', type: 'Number', primary: true, generated: 'increment' });
+    expect(entityMigration(note).columns[1]).toEqual({ name: 'userId', type: 'Number', nullable: true });
   });
 
   it('should add the table, with the primary key, the fields and the join columns, named like TypeORM', () => {
