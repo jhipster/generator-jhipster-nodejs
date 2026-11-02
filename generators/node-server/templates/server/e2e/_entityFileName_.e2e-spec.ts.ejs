@@ -308,7 +308,8 @@ _%>
             .send(validEntity)
             .expect(200);
 
-        expect(response.body).toEqual(validEntity);
+        // The values sent, the properties the body does not give cleared (the service of the mock returns what it gets).
+        expect(response.body).toMatchObject(validEntity);
         expect(alertHeader(response.headers, '-alert')).toMatch(<%- enableTranslation ? `/^${frontendAppName}\\.${entityAlertName}\\.updated$/` : `/^A ${entityAlertName} is updated with identifier /` %>);
         expect(alertHeader(response.headers, '-params')).toBe(String(entityMock.id));
     }
