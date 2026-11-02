@@ -1,9 +1,9 @@
 import BaseApplicationGenerator from 'generator-jhipster/generators/base-application';
 import { mutateData } from 'generator-jhipster/utils';
 
-/** The database service of the application, when it has one. */
+/** The database service of the application, when it has one: none for SQLite, a file of the server. */
 const databaseServiceOf = ({ databaseTypeSql, databaseTypeMongodb, prodDatabaseType, databaseType }) =>
-  databaseTypeSql ? prodDatabaseType : databaseTypeMongodb ? databaseType : undefined;
+  databaseTypeSql ? (prodDatabaseType === 'sqlite' ? undefined : prodDatabaseType) : databaseTypeMongodb ? databaseType : undefined;
 
 /**
  * The docker compose file of the NodeJS application, `app`, as its data: the docker generator merges it into the app.yml

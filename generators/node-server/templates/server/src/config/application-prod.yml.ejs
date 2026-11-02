@@ -51,6 +51,10 @@ server:
 # DATABASE_HOST or DATABASE_PASSWORD.
 database:
   type: <%= nodeProdDatabaseType %>
+<%_ if (prodDatabaseTypeSqlite) { _%>
+  # The file of the SQLite database, from the folder the server runs in: DATABASE_NAME sets another one.
+  name: '<%- nodeProdSqliteDatabase %>'
+<%_ } else { _%>
   # The database of the host, like the datasource of JHipster Spring Boot: <%- dockerServicesDir %>app.yml sets the host of its service.
   host: localhost
   port: <%= nodeDatabasePort %>
@@ -66,6 +70,7 @@ database:
   username: ''
   password: ''
   name: <%= baseName %>
+<%_ } _%>
 <%_ } _%>
   logging: false
 

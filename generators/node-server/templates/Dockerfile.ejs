@@ -40,6 +40,15 @@ COPY <%- nodeServerRootDir %>package.json <%- nodeServerRootDir %>
 COPY <%- clientRootDir %>package.json <%- clientRootDir %>
 <%_ } _%>
 RUN npm ci --omit=dev --ignore-scripts --workspace <%- serverDir %> && npm cache clean --force
+<%_ if (prodDatabaseTypeSqlite) { _%>
+# The native module of SQLite, which the install above skips: its prebuilt binary, else built with the tools of a
+# temporary package.
+RUN apk add --no-cache --virtual .build-sqlite python3 make g++ && npm rebuild better-sqlite3 && apk del .build-sqlite
+
+# The SQLite database, a file of a folder of the node user: a volume on /usr/src/app/data keeps it.
+RUN mkdir -p /usr/src/app/data && chown node:node /usr/src/app/data
+ENV DATABASE_NAME=/usr/src/app/data/<%- nodeProdSqliteDatabase %>
+<%_ } _%>
 
 COPY --from=build /usr/src/app/<%- nodeServerRootDir %>dist <%- nodeServerRootDir %>dist
 

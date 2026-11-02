@@ -67,6 +67,19 @@ The database of each profile is the `database` section of its configuration file
 - [src/config/application-dev.yml](src/config/application-dev.yml): the database of development, the one of the
   `docker` folder<% if (databaseTypeSql) { %> (or a SQLite file)<% } %>;
 - [src/config/application-test.yml](src/config/application-test.yml): <%= databaseTypeSql ? 'an in-memory SQLite database' : 'an in-memory MongoDB server' %> for the tests;
+<%_ if (prodDatabaseTypeSqlite) { _%>
+- [src/config/application-prod.yml](src/config/application-prod.yml): the production database, a SQLite file, without
+  a database server.
+
+```yaml
+database:
+  type: better-sqlite3
+  name: '<%- nodeProdSqliteDatabase %>'
+  logging: false
+```
+
+Like every property, an environment variable overrides them: `DATABASE_NAME` sets the file of the database.
+<%_ } else { _%>
 - [src/config/application-prod.yml](src/config/application-prod.yml): the production database, the service of the
   docker compose files by default.
 
@@ -83,6 +96,7 @@ database:
 
 Like every property, an environment variable overrides them: `DATABASE_HOST`, `DATABASE_PORT`, `DATABASE_USERNAME`,
 `DATABASE_PASSWORD`, `DATABASE_NAME`. Keep the production password out of the file this way.
+<%_ } _%>
 
 ### Configuration from environment variables
 

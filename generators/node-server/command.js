@@ -88,6 +88,7 @@ export default asCommand({
         { value: 'mariadb', name: 'MariaDB' },
         { value: 'oracle', name: 'Oracle (Please follow our documentation to use the Oracle proprietary driver)' },
         { value: 'mssql', name: 'Microsoft SQL Server' },
+        { value: 'sqlite', name: 'SQLite (a file of the server, no database server)' },
         { value: 'mongodb', name: 'MongoDB' },
       ],
       scope: 'storage',

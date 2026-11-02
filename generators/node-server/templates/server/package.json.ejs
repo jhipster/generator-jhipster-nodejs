@@ -124,7 +124,7 @@
     "@types/qs": "<%- nodeServerDependencies['@types/qs'] %>",
     "@types/supertest": "<%- nodeServerDependencies['@types/supertest'] %>",
     "@vitest/coverage-v8": "<%- nodeServerDependencies['@vitest/coverage-v8'] %>",
-<%_ if (databaseType !== 'mongodb') { _%>
+<%_ if (databaseType !== 'mongodb' && nodeDevDatabaseDriver !== nodeProdDatabaseDriver) { _%>
     "<%- nodeDevDatabaseDriver %>": "<%- nodeServerDependencies[nodeDevDatabaseDriver] %>",
 <%_ } _%>
     "eslint": "<%- nodeServerDependencies['eslint'] %>",
