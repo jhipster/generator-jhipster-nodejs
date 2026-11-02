@@ -18,7 +18,7 @@ export const prepareSampleEntry = sampleData => {
   const [sample, data = {}] = Array.isArray(sampleData) ? sampleData : [sampleData];
   const clientFrameworks = ['angular', 'vue', 'react'];
   const authenticationTypes = ['jwt', 'oauth2', 'session'];
-  const databaseTypes = ['mysql', 'mssql', 'postgresql', 'mongodb'];
+  const databaseTypes = ['mysql', 'mssql', 'postgresql', 'sqlite', 'mongodb'];
 
   let split = sample.split('-');
   if (!split.includes('jdl')) {
