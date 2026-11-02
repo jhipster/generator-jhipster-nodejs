@@ -154,7 +154,7 @@ describe('<%= entityClass %> on the database', () => {
 
   it('should clear the <%= optionalField.fieldName %> a PUT does not give, like JHipster Spring Boot replacing the record', async () => {
     const server = app.getHttpServer();
-    const { body: stored } = await request(server).post('/api/<%= entityApiUrl %>').send(createdValues).expect(201);
+    const { body: stored } = await request(server).post('/api/<%= entityApiUrl %>').send(<%- nodejsRequiredRecords.createdValues %>).expect(201);
     const { <%= optionalField.fieldName %>: _<%= optionalField.fieldName %>, ...withoutField } = stored;
 
     const { body: updated } = await request(server).put(`/api/<%= entityApiUrl %>/${stored.<%= primaryKey.name %>}`).send(withoutField).expect(200);
@@ -183,7 +183,7 @@ describe('<%= entityClass %> on the database', () => {
 
   it('should give a new record a UUID as its String <%= primaryKey.name %>, like the @GeneratedValue of JHipster Spring Boot', async () => {
     const server = app.getHttpServer();
-    const { body: stored } = await request(server).post('/api/<%= entityApiUrl %>').send(createdValues).expect(201);
+    const { body: stored } = await request(server).post('/api/<%= entityApiUrl %>').send(<%- nodejsRequiredRecords.createdValues %>).expect(201);
 
     expect(stored.<%= primaryKey.name %>).toMatch(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/);
     await request(server).get(`/api/<%= entityApiUrl %>/${stored.<%= primaryKey.name %>}`).expect(200);
@@ -298,8 +298,8 @@ _%>
 
   it('should sort the list by id, the newest first with id,desc, like Spring Data', async () => {
     const server = app.getHttpServer();
-    const { body: first } = await request(server).post('/api/<%= entityApiUrl %>').send(createdValues).expect(201);
-    const { body: second } = await request(server).post('/api/<%= entityApiUrl %>').send(updatedValues).expect(201);
+    const { body: first } = await request(server).post('/api/<%= entityApiUrl %>').send(<%- nodejsRequiredRecords.createdValues %>).expect(201);
+    const { body: second } = await request(server).post('/api/<%= entityApiUrl %>').send(<%- spreads[entityInstance] ? `{ ...updatedValues${spreads[entityInstance]} }` : 'updatedValues' %>).expect(201);
 
     const { body: list } = await request(server).get('/api/<%= entityApiUrl %>?sort=<%= pk %>,desc&size=100').expect(200);
     const ids = list.map((record: any) => String(record.<%= pk %>));
@@ -325,8 +325,8 @@ _%>
 
   it('should give the records without <%= relationship.propertyName %> to its is-null filter, like JHipster Spring Boot', async () => {
     const server = app.getHttpServer();
-    const { body: free } = await request(server).post('/api/<%= entityApiUrl %>').send(createdValues).expect(201);
-    const { body: linked } = await request(server).post('/api/<%= entityApiUrl %>').send(updatedValues).expect(201);
+    const { body: free } = await request(server).post('/api/<%= entityApiUrl %>').send(<%- nodejsRequiredRecords.createdValues %>).expect(201);
+    const { body: linked } = await request(server).post('/api/<%= entityApiUrl %>').send(<%- spreads[entityInstance] ? `{ ...updatedValues${spreads[entityInstance]} }` : 'updatedValues' %>).expect(201);
     const { body: owner } = await request(server)
       .post('/api/<%= otherEntity.entityApiUrl %>')
       .send({ ...<%- literal(ownerValues) %>, <%= ownerProperty %>: { <%= pk %>: linked.<%= pk %> } })
