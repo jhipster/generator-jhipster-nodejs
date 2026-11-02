@@ -254,7 +254,8 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > entity validato
   "server/src/entities/book/dto/book.dto.ts": {
     "contents": "import { ApiProperty } from '@nestjs/swagger';
 import { Allow, IsNotEmpty, IsOptional, IsEnum, MinLength, MaxLength, Length, Min, Max, Matches, IsInt, IsNumber, IsBoolean, IsUUID, IsISO8601 } from 'class-validator';
-import { BaseDTO } from '../../../common/dto/base.dto.ts';
+import { Transform } from 'class-transformer';
+import { BaseDTO, numberFromString } from '../../../common/dto/base.dto.ts';
 
 
 import { Genre } from '../../enumeration/genre.ts';
@@ -281,6 +282,7 @@ export class BookDTO extends BaseDTO {
             @IsOptional()
     @Min(1)
     @Max(5000)
+    @Transform(numberFromString)
     @IsInt()
             @ApiProperty({description: 'pages field', required: false})
         pages?: number;
