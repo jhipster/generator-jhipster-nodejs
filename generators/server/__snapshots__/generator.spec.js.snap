@@ -83,6 +83,9 @@ exports[`SubGenerator server of nodejs JHipster blueprint > run > should succeed
   "server/e2e/management.e2e-spec.ts": {
     "stateCleared": "modified",
   },
+  "server/e2e/samples/foo.test-samples.ts": {
+    "stateCleared": "modified",
+  },
   "server/e2e/setup.test.js": {
     "stateCleared": "modified",
   },

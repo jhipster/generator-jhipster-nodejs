@@ -41,6 +41,12 @@ describe('<%= entityClass %> Controller', () => {
 <%_ for (const [propertyName, value] of fakeFields) { _%>
         <%- propertyName %>: <%- JSON.stringify(value) %>,
 <%_ } _%>
+<%_ // The required relationships in the stored record too: a partial update validates it with the patched fields. _%>
+<%_ for (const relationship of relationships) { _%>
+<%_   if (relationship.nodejsMockReference) { _%>
+        <%= relationship.propertyName %>: <%- relationship.nodejsMockReference %>,
+<%_   } _%>
+<%_ } _%>
     }
     const unknownId = <%- unknownId %>;
     const anotherId = <%- anotherId %>;
@@ -293,6 +299,21 @@ _%>
         });
     });
 
+<%_ } _%>
+<%_ for (const relationship of relationships) { _%>
+<%_   if (relationship.nodejsMockReference) { _%>
+    it('/POST create <%= entityApiUrl %> without its required <%= relationship.propertyName %> is a validation error, like JHipster Spring Boot', async () => {
+        const { <%= relationship.propertyName %>: _<%= relationship.propertyName %>, id: _id, ...invalidEntity } = validEntity;
+
+        const error = (await request(app.getHttpServer())
+            .post('/api/<%= entityApiUrl %>')
+            .send(invalidEntity)
+            .expect(400)).body;
+
+        expect(error).toMatchObject({ message: 'error.validation', fieldErrors: [expect.objectContaining({ field: '<%= relationship.propertyName %>' })] });
+    });
+
+<%_   } _%>
 <%_ } _%>
 <%_ if (enumField) { _%>
     it('/POST create <%= entityApiUrl %> with a <%= enumField.fieldName %> out of its enum is a validation error', async () => {

@@ -8,3 +8,4 @@ export * from './entity-authorities.js';
 export * from './enums.js';
 export * from './validators.js';
 export * from './imports.js';
+export * from './test-samples.js';

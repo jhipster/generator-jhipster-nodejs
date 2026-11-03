@@ -72,7 +72,7 @@ entity Classroom {
 }
 
 relationship ManyToOne {
-    Activity {demetrauser} to DemetraUser
+    Activity {demetrauser required} to DemetraUser
     SingleCourse {classroom(name)} to Classroom
 }
 

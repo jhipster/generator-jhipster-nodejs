@@ -1,0 +1,53 @@
+import { INestApplication } from '@nestjs/common';
+import request from 'supertest';
+<%_ if (nodejsTestSample.user) { _%>
+import { DataSource } from 'typeorm';
+import { <%= user.persistClass %> } from '../../src/users/user.entity.ts';
+<%_ } _%>
+<%_ for (const otherEntity of nodejsTestSample.otherEntities) { _%>
+import * as <%= otherEntity.entityInstance %>Samples from './<%= otherEntity.entityFileName %>.test-samples.ts';
+<%_ } _%>
+
+/** The values of a new <%= entityClass %>, like the test samples of the Angular client of JHipster. */
+export const sampleWithNewData: Record<string, any> = <%- nodejsTestSample.values %>;
+
+Object.freeze(sampleWithNewData);
+
+<%_ if (nodejsTestSample.user) { _%>
+let users = 0;
+
+/** A new user of a required relationship. */
+const storeUser = (app: INestApplication) => {
+  const repository = app.get(DataSource).getRepository(<%= user.persistClass %>);
+  users++;
+  return repository.save(repository.create({ login: `<%= entityFileName %>-${users}`, email: `<%= entityFileName %>-${users}@localhost`, password: '' }));
+};
+
+<%_ } _%>
+/**
+ * The references of the required relationships of a new <%= entityClass %>, like the createEntity of its resource test of
+ * JHipster Spring Boot: the sample stored first, a new one for a one-to-one relationship, whose join column is unique.
+ */
+<%_ if (nodejsTestSample.references.length === 0) { _%>
+export const requiredReferences = (_app: INestApplication): Promise<Record<string, unknown>> => Promise.resolve({});
+<%_ } else { _%>
+export const requiredReferences = async (app: INestApplication): Promise<Record<string, unknown>> => ({
+<%_   for (const { propertyName, reference } of nodejsTestSample.references) { _%>
+  <%= propertyName %>: <%- reference %>,
+<%_   } _%>
+});
+<%_ } _%>
+
+/** A new <%= entityClass %> of the sample, stored through the REST API with its required relationships. */
+export const storeSample = async (app: INestApplication): Promise<Record<string, any>> => {
+  const values = { ...sampleWithNewData, ...(await requiredReferences(app)) };
+  return (await request(app.getHttpServer()).post('/api/<%= entityApiUrl %>').send(values).expect(201)).body;
+};
+
+const stored = new WeakMap<INestApplication, Promise<Record<string, any>>>();
+
+/** The <%= entityClass %> of the sample the required relationships share, stored once by application. */
+export const storedSample = (app: INestApplication): Promise<Record<string, any>> => {
+  if (!stored.has(app)) stored.set(app, storeSample(app));
+  return stored.get(app)!;
+};

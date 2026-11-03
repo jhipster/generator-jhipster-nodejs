@@ -13,6 +13,8 @@ const inverseRelationships = databaseTypeSql
   ? nodejsMappedByRelationships.filter(relationship => !relationship.otherEntity.builtIn && relationship.otherRelationship?.propertyName)
   : [];
 const literal = value => JSON.stringify(value);
+// The references of the required relationships from the test samples (e2e/samples), by entity instance name.
+const spreads = nodejsRequiredSamples.spreads;
 _%>
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { ExecutionContext, INestApplication } from '@nestjs/common';
@@ -29,6 +31,9 @@ import { <%= user.persistClass %> } from '../src/users/user.entity.ts';
 <%_ } _%>
 import { AuthGuard } from '../src/auth/guards/auth.guard.ts';
 import { RolesGuard } from '../src/auth/guards/roles.guard.ts';
+<%_ for (const sampleEntity of nodejsRequiredSamples.entities) { _%>
+import * as <%= sampleEntity.entityInstance %>Samples from './samples/<%= sampleEntity.entityFileName %>.test-samples.ts';
+<%_ } _%>
 
 /**
  * <%= entityClass %> stored in the database and read back through the REST API, like the resource tests of JHipster
@@ -77,7 +82,12 @@ describe('<%= entityClass %> on the database', () => {
 
     app = moduleFixture.createNestApplication();
     configureApp(app);
+<%_ if (nodejsRequiredSamples.entities.length > 0) { _%>
+    // Listening, for the requests storing the samples of the required relationships while the request of a test is built.
+    await app.listen(0);
+<%_ } else { _%>
     await app.init();
+<%_ } _%>
   });
 
   afterAll(async () => {
@@ -86,7 +96,7 @@ describe('<%= entityClass %> on the database', () => {
 
   it('should store every field and read it back, then update and delete it', async () => {
     const server = app.getHttpServer();
-    const { body: stored } = await request(server).post('/api/<%= entityApiUrl %>').send(createdValues).expect(201);
+    const { body: stored } = await request(server).post('/api/<%= entityApiUrl %>').send(<%- spreads[entityInstance] ? `{ ...createdValues${spreads[entityInstance]} }` : 'createdValues' %>).expect(201);
     const { body: read } = await request(server).get(`/api/<%= entityApiUrl %>/${stored.<%= primaryKey.name %>}`).expect(200);
     expect(read).toMatchObject(expected(createdValues));
     // The audit fields, of the user of the creation.
@@ -94,7 +104,7 @@ describe('<%= entityClass %> on the database', () => {
 
     await request(server)
       .put(`/api/<%= entityApiUrl %>/${stored.<%= primaryKey.name %>}`)
-      .send({ ...updatedValues, <%= primaryKey.name %>: stored.<%= primaryKey.name %> })
+      .send({ ...updatedValues<%- spreads[entityInstance] ?? '' %>, <%= primaryKey.name %>: stored.<%= primaryKey.name %> })
       .expect(200);
     const { body: readUpdated } = await request(server).get(`/api/<%= entityApiUrl %>/${stored.<%= primaryKey.name %>}`).expect(200);
     expect(readUpdated).toMatchObject(expected(updatedValues));
@@ -107,7 +117,7 @@ describe('<%= entityClass %> on the database', () => {
 
   it('should clear the <%= optionalField.fieldName %> a PUT does not give, like JHipster Spring Boot replacing the record', async () => {
     const server = app.getHttpServer();
-    const { body: stored } = await request(server).post('/api/<%= entityApiUrl %>').send(createdValues).expect(201);
+    const { body: stored } = await request(server).post('/api/<%= entityApiUrl %>').send(<%- spreads[entityInstance] ? `{ ...createdValues${spreads[entityInstance]} }` : 'createdValues' %>).expect(201);
     const { <%= optionalField.fieldName %>: _<%= optionalField.fieldName %>, ...withoutField } = stored;
 
     const { body: updated } = await request(server).put(`/api/<%= entityApiUrl %>/${stored.<%= primaryKey.name %>}`).send(withoutField).expect(200);
@@ -121,7 +131,7 @@ describe('<%= entityClass %> on the database', () => {
 
   it('should list the stored records<% if (pagination !== 'no') { %>, with the pagination headers of JHipster Spring Boot<% } %>', async () => {
     const server = app.getHttpServer();
-    const { body: stored } = await request(server).post('/api/<%= entityApiUrl %>').send(createdValues).expect(201);
+    const { body: stored } = await request(server).post('/api/<%= entityApiUrl %>').send(<%- spreads[entityInstance] ? `{ ...createdValues${spreads[entityInstance]} }` : 'createdValues' %>).expect(201);
 
     const response = await request(server).get('/api/<%= entityApiUrl %>?size=2000').expect(200);
     expect(response.body.map((record: Record<string, unknown>) => record.<%= primaryKey.name %>)).toContain(stored.<%= primaryKey.name %>);
@@ -136,7 +146,7 @@ describe('<%= entityClass %> on the database', () => {
 
   it('should give a new record a UUID as its String <%= primaryKey.name %>, like the @GeneratedValue of JHipster Spring Boot', async () => {
     const server = app.getHttpServer();
-    const { body: stored } = await request(server).post('/api/<%= entityApiUrl %>').send(createdValues).expect(201);
+    const { body: stored } = await request(server).post('/api/<%= entityApiUrl %>').send(<%- spreads[entityInstance] ? `{ ...createdValues${spreads[entityInstance]} }` : 'createdValues' %>).expect(201);
 
     expect(stored.<%= primaryKey.name %>).toMatch(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/);
     await request(server).get(`/api/<%= entityApiUrl %>/${stored.<%= primaryKey.name %>}`).expect(200);
@@ -170,7 +180,7 @@ _%>
     );
 <%_ } else { _%>
     const relatedValues: Record<string, any> = <%- literal(otherValues) %>;
-    const { body: related } = await request(server).post('/api/<%= otherEntity.entityApiUrl %>').send(relatedValues).expect(201);
+    const { body: related } = await request(server).post('/api/<%= otherEntity.entityApiUrl %>').send(<%- spreads[otherEntity.entityInstance] ? `{ ...relatedValues${spreads[otherEntity.entityInstance]} }` : 'relatedValues' %>).expect(201);
 <%_ } _%>
 <%_ if (otherTextField) { _%>
     const reference = { <%= otherId %>: related.<%= otherId %>, <%= otherTextField.fieldName %>: 'not stored through the relationship' };
@@ -179,7 +189,7 @@ _%>
 <%_ } _%>
     const { body: stored } = await request(server)
       .post('/api/<%= entityApiUrl %>')
-      .send({ ...createdValues, <%= property %>: <%- collection ? '[reference]' : 'reference' %> })
+      .send({ ...createdValues<%- spreads[entityInstance] ?? '' %>, <%= property %>: <%- collection ? '[reference]' : 'reference' %> })
       .expect(201);
 
     const { body: read } = await request(server).get(`/api/<%= entityApiUrl %>/${stored.<%= primaryKey.name %>}`).expect(200);
@@ -217,11 +227,11 @@ _%>
 
   it('should not store the <%= property %> relationship from this side, like the mappedBy side of JHipster Spring Boot', async () => {
     const server = app.getHttpServer();
-    const { body: stored } = await request(server).post('/api/<%= entityApiUrl %>').send(createdValues).expect(201);
+    const { body: stored } = await request(server).post('/api/<%= entityApiUrl %>').send(<%- spreads[entityInstance] ? `{ ...createdValues${spreads[entityInstance]} }` : 'createdValues' %>).expect(201);
     const reference = { <%= primaryKey.name %>: stored.<%= primaryKey.name %> };
     const { body: related } = await request(server)
       .post('/api/<%= otherEntity.entityApiUrl %>')
-      .send({ ...<%- literal(otherValues) %>, <%= otherProperty %>: <%- otherCollection ? '[reference]' : 'reference' %> })
+      .send({ ...<%- literal(otherValues) %><%- spreads[otherEntity.entityInstance] ?? '' %>, <%= otherProperty %>: <%- otherCollection ? '[reference]' : 'reference' %> })
       .expect(201);
 
     await request(server)
@@ -251,8 +261,8 @@ _%>
 
   it('should sort the list by id, the newest first with id,desc, like Spring Data', async () => {
     const server = app.getHttpServer();
-    const { body: first } = await request(server).post('/api/<%= entityApiUrl %>').send(createdValues).expect(201);
-    const { body: second } = await request(server).post('/api/<%= entityApiUrl %>').send(updatedValues).expect(201);
+    const { body: first } = await request(server).post('/api/<%= entityApiUrl %>').send(<%- spreads[entityInstance] ? `{ ...createdValues${spreads[entityInstance]} }` : 'createdValues' %>).expect(201);
+    const { body: second } = await request(server).post('/api/<%= entityApiUrl %>').send(<%- spreads[entityInstance] ? `{ ...updatedValues${spreads[entityInstance]} }` : 'updatedValues' %>).expect(201);
 
     const { body: list } = await request(server).get('/api/<%= entityApiUrl %>?sort=<%= pk %>,desc&size=100').expect(200);
     const ids = list.map((record: any) => String(record.<%= pk %>));
@@ -278,11 +288,11 @@ _%>
 
   it('should give the records without <%= relationship.propertyName %> to its is-null filter, like JHipster Spring Boot', async () => {
     const server = app.getHttpServer();
-    const { body: free } = await request(server).post('/api/<%= entityApiUrl %>').send(createdValues).expect(201);
-    const { body: linked } = await request(server).post('/api/<%= entityApiUrl %>').send(updatedValues).expect(201);
+    const { body: free } = await request(server).post('/api/<%= entityApiUrl %>').send(<%- spreads[entityInstance] ? `{ ...createdValues${spreads[entityInstance]} }` : 'createdValues' %>).expect(201);
+    const { body: linked } = await request(server).post('/api/<%= entityApiUrl %>').send(<%- spreads[entityInstance] ? `{ ...updatedValues${spreads[entityInstance]} }` : 'updatedValues' %>).expect(201);
     const { body: owner } = await request(server)
       .post('/api/<%= otherEntity.entityApiUrl %>')
-      .send({ ...<%- literal(ownerValues) %>, <%= ownerProperty %>: { <%= pk %>: linked.<%= pk %> } })
+      .send({ ...<%- literal(ownerValues) %><%- spreads[otherEntity.entityInstance] ?? '' %>, <%= ownerProperty %>: { <%= pk %>: linked.<%= pk %> } })
       .expect(201);
 
     const { body: list } = await request(server).get('/api/<%= entityApiUrl %>?filter=<%- relationship.relationshipName.toLowerCase() %>-is-null').expect(200);
