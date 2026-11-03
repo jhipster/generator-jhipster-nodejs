@@ -14,16 +14,6 @@ const fakeFields = fields
 const invalidId = faker.lorem.word({ length: { min: 5, max: 10 } });
 // The user a partial update sets as the last modifier.
 const patcher = faker.internet.username();
-// The required relationships the entity stores, each with a reference to an id of the type of the other entity: the
-// service is a mock, any id of that type.
-const requiredReferences = requiredRelationships
-  .filter(relationship => relationship.persistableRelationship)
-  .map(relationship => {
-    const otherIdField = relationship.otherEntity.primaryKey.fields[0];
-    relationship.otherEntity.resetFakerSeed(`nodejs-e2e-mock-${relationship.relationshipName}`);
-    const reference = `{ ${otherIdField.fieldName}: ${otherIdField.generateFakeData('ts')} }`;
-    return { relationship, reference: relationship.collection ? `[${reference}]` : reference };
-  });
 _%>
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { Test, TestingModule } from '@nestjs/testing';
@@ -52,8 +42,10 @@ describe('<%= entityClass %> Controller', () => {
         <%- propertyName %>: <%- JSON.stringify(value) %>,
 <%_ } _%>
 <%_ // The required relationships in the stored record too: a partial update validates it with the patched fields. _%>
-<%_ for (const { relationship, reference } of requiredReferences) { _%>
-        <%= relationship.propertyName %>: <%- reference %>,
+<%_ for (const relationship of relationships) { _%>
+<%_   if (relationship.nodejsMockReference) { _%>
+        <%= relationship.propertyName %>: <%- relationship.nodejsMockReference %>,
+<%_   } _%>
 <%_ } _%>
     }
     const unknownId = <%- unknownId %>;
@@ -308,7 +300,8 @@ _%>
     });
 
 <%_ } _%>
-<%_ for (const { relationship } of requiredReferences) { _%>
+<%_ for (const relationship of relationships) { _%>
+<%_   if (relationship.nodejsMockReference) { _%>
     it('/POST create <%= entityApiUrl %> without its required <%= relationship.propertyName %> is a validation error, like JHipster Spring Boot', async () => {
         const { <%= relationship.propertyName %>: _<%= relationship.propertyName %>, id: _id, ...invalidEntity } = validEntity;
 
@@ -320,6 +313,7 @@ _%>
         expect(error).toMatchObject({ message: 'error.validation', fieldErrors: [expect.objectContaining({ field: '<%= relationship.propertyName %>' })] });
     });
 
+<%_   } _%>
 <%_ } _%>
 <%_ if (enumField) { _%>
     it('/POST create <%= entityApiUrl %> with a <%= enumField.fieldName %> out of its enum is a validation error', async () => {

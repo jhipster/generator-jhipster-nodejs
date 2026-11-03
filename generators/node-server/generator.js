@@ -28,6 +28,8 @@ import {
   mutateEntityAuthorities,
   mutateEntityPaths,
   mutateRelatedValues,
+  mutateRequiredReference,
+  mutateTestSamples,
   primaryKeyColumn,
   serverEnumInfo,
   thymeleafMailToHandlebars,
@@ -365,11 +367,19 @@ export default class extends BaseApplicationGenerator {
         // The roles of the endpoints of the entity, like the @PreAuthorize of JHipster Spring Boot (support/entity-authorities.js).
         entityDefaults(mutateEntityAuthorities);
       },
+      prepareTestSamples({ application, entityDefaults }) {
+        // The test samples of the entity and the ones its database end-to-end tests read (support/test-samples.js).
+        entityDefaults(mutateTestSamples(application));
+      },
     });
   }
 
   get [BaseApplicationGenerator.PREPARING_EACH_ENTITY_RELATIONSHIP]() {
     return this.asPreparingEachEntityRelationshipTaskGroup({
+      prepareRequiredReference({ relationshipDefaults }) {
+        // The reference of a required relationship in the mocked controller tests (support/test-samples.js).
+        relationshipDefaults(mutateRequiredReference);
+      },
       prepareRelatedValues({ entity, relationshipDefaults }) {
         // The values of the related record of the relationship tests (support/api-fake-data.js).
         relationshipDefaults(mutateRelatedValues(entity));

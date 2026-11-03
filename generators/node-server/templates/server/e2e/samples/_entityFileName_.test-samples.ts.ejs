@@ -1,34 +1,19 @@
-<%_
-// The values of the sample, reproducible: the faker of the entity is seeded for it.
-resetFakerSeed('nodejs-test-samples');
-const { values } = nodejsApiFakeEntity();
-// The required relationships the entity stores, like the createEntity of the resource tests of JHipster Spring Boot: the
-// related entities of a cycle of required relationships left out, as it leaves them out.
-const required = requiredRelationships.filter(
-  relationship =>
-    relationship.persistableRelationship &&
-    !relationship.otherEntity.hasCyclicRequiredRelationship &&
-    (relationship.otherEntity.builtInUser || !relationship.otherEntity.builtIn),
-);
-const requiredUser = required.some(relationship => relationship.otherEntity.builtInUser);
-const requiredEntities = [...new Set(required.map(relationship => relationship.otherEntity).filter(otherEntity => !otherEntity.builtIn))];
-_%>
 import { INestApplication } from '@nestjs/common';
 import request from 'supertest';
-<%_ if (requiredUser) { _%>
+<%_ if (nodejsTestSample.user) { _%>
 import { DataSource } from 'typeorm';
 import { <%= user.persistClass %> } from '../../src/users/user.entity.ts';
 <%_ } _%>
-<%_ for (const otherEntity of requiredEntities) { _%>
+<%_ for (const otherEntity of nodejsTestSample.otherEntities) { _%>
 import * as <%= otherEntity.entityInstance %>Samples from './<%= otherEntity.entityFileName %>.test-samples.ts';
 <%_ } _%>
 
 /** The values of a new <%= entityClass %>, like the test samples of the Angular client of JHipster. */
-export const sampleWithNewData: Record<string, any> = <%- JSON.stringify(values) %>;
+export const sampleWithNewData: Record<string, any> = <%- nodejsTestSample.values %>;
 
 Object.freeze(sampleWithNewData);
 
-<%_ if (requiredUser) { _%>
+<%_ if (nodejsTestSample.user) { _%>
 let users = 0;
 
 /** A new user of a required relationship. */
@@ -43,20 +28,13 @@ const storeUser = (app: INestApplication) => {
  * The references of the required relationships of a new <%= entityClass %>, like the createEntity of its resource test of
  * JHipster Spring Boot: the sample stored first, a new one for a one-to-one relationship, whose join column is unique.
  */
-<%_ if (required.length === 0) { _%>
+<%_ if (nodejsTestSample.references.length === 0) { _%>
 export const requiredReferences = (_app: INestApplication): Promise<Record<string, unknown>> => Promise.resolve({});
 <%_ } else { _%>
 export const requiredReferences = async (app: INestApplication): Promise<Record<string, unknown>> => ({
-<%_ for (const relationship of required) {
-  const { otherEntity } = relationship;
-  const id = otherEntity.primaryKey.name;
-  const record = otherEntity.builtInUser
-    ? 'storeUser(app)'
-    : `${otherEntity.entityInstance}Samples.${relationship.relationshipOneToOne ? 'storeSample' : 'storedSample'}(app)`;
-  const reference = `{ ${id}: (await ${record}).${id} }`;
-_%>
-  <%= relationship.propertyName %>: <%- relationship.collection ? `[${reference}]` : reference %>,
-<%_ } _%>
+<%_   for (const { propertyName, reference } of nodejsTestSample.references) { _%>
+  <%= propertyName %>: <%- reference %>,
+<%_   } _%>
 });
 <%_ } _%>
 
