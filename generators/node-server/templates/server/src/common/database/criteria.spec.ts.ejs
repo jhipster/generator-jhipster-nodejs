@@ -1,0 +1,62 @@
+import { describe, expect, it } from 'vitest';
+
+import { BadRequestException } from '@nestjs/common';
+import { And, Equal, ILike, In, IsNull, LessThan, LessThanOrEqual, MoreThan, MoreThanOrEqual, Not } from 'typeorm';
+
+import { criteriaWhere, CriteriaProperty } from './criteria.ts';
+
+const criteria: Record<string, CriteriaProperty> = {
+  id: { property: 'id', kind: 'range', type: 'number' },
+  name: { property: 'name', kind: 'string', type: 'string' },
+  active: { property: 'active', kind: 'equality', type: 'boolean' },
+  createdAt: { property: 'createdAt', kind: 'range', type: 'date' },
+  countryId: { property: 'country.id', kind: 'range', type: 'number' },
+};
+
+describe('criteriaWhere', () => {
+  it('converts the operators of the filters of JHipster Spring Boot', () => {
+    expect(criteriaWhere({ 'id.equals': '1', 'name.notEquals': 'a' }, criteria)).toEqual({ id: Equal(1), name: Not(Equal('a')) });
+    expect(criteriaWhere({ 'name.contains': 'a' }, criteria)).toEqual({ name: ILike('%a%') });
+    expect(criteriaWhere({ 'name.doesNotContain': 'a' }, criteria)).toEqual({ name: Not(ILike('%a%')) });
+    expect(criteriaWhere({ 'name.specified': 'true' }, criteria)).toEqual({ name: Not(IsNull()) });
+    expect(criteriaWhere({ 'name.specified': 'false' }, criteria)).toEqual({ name: IsNull() });
+    expect(criteriaWhere({ 'id.greaterThan': '1' }, criteria)).toEqual({ id: MoreThan(1) });
+    expect(criteriaWhere({ 'id.lessThan': '1' }, criteria)).toEqual({ id: LessThan(1) });
+    expect(criteriaWhere({ 'id.greaterThanOrEqual': '1' }, criteria)).toEqual({ id: MoreThanOrEqual(1) });
+    expect(criteriaWhere({ 'id.lessThanOrEqual': '1' }, criteria)).toEqual({ id: LessThanOrEqual(1) });
+  });
+
+  it('reads in and notIn separated by commas or repeated', () => {
+    expect(criteriaWhere({ 'id.in': '1,2' }, criteria)).toEqual({ id: In([1, 2]) });
+    expect(criteriaWhere({ 'id.in': ['1', '2'] }, criteria)).toEqual({ id: In([1, 2]) });
+    expect(criteriaWhere({ 'id.notIn': '1,2' }, criteria)).toEqual({ id: Not(In([1, 2])) });
+  });
+
+  it('meets every condition of a property', () => {
+    expect(criteriaWhere({ 'id.greaterThan': '1', 'id.lessThan': '5' }, criteria)).toEqual({ id: And(MoreThan(1), LessThan(5)) });
+  });
+
+  it('filters a related record by its id', () => {
+    expect(criteriaWhere({ 'countryId.equals': '1', 'name.equals': 'a' }, criteria)).toEqual({ country: { id: Equal(1) }, name: Equal('a') });
+  });
+
+  it('converts the values to the type of their property', () => {
+    expect(criteriaWhere({ 'active.equals': 'true' }, criteria)).toEqual({ active: Equal(true) });
+    expect(criteriaWhere({ 'createdAt.greaterThan': '2020-01-01T00:00:00Z' }, criteria)).toEqual({
+      createdAt: MoreThan(new Date('2020-01-01T00:00:00Z')),
+    });
+  });
+
+  it('refuses a value of another type, like the binding of Spring', () => {
+    expect(() => criteriaWhere({ 'id.equals': 'a' }, criteria)).toThrow(BadRequestException);
+    expect(() => criteriaWhere({ 'active.equals': 'yes' }, criteria)).toThrow(BadRequestException);
+    expect(() => criteriaWhere({ 'createdAt.equals': 'today' }, criteria)).toThrow(BadRequestException);
+    expect(() => criteriaWhere({ 'name.specified': 'yes' }, criteria)).toThrow(BadRequestException);
+  });
+
+  it('ignores the parameters of no property or operator of the criteria', () => {
+    expect(
+      criteriaWhere({ page: '0', sort: 'id,asc', 'password.equals': 'a', 'name.greaterThan': 'a', 'active.contains': 'a', 'constructor.equals': 'a' }, criteria),
+    ).toEqual({});
+  });
+});

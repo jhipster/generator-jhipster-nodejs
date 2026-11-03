@@ -147,6 +147,28 @@ _%>
 
         expect(response.body.detail).toBe('Invalid sort property: unknownProperty');
     });
+<%_ if (nodejsCriteria) { _%>
+
+    it('/GET the count of <%= entityApiUrl %> matching the criteria, as JSON like JHipster Spring Boot', async () => {
+        const options: any[] = [];
+        serviceMock.count = (countOptions: any): any => {
+            options.push(countOptions);
+            return 3;
+        };
+        try {
+            const response = await request(app.getHttpServer())
+                .get('/api/<%= entityApiUrl %>/count?<%= primaryKey.name %>.specified=true&page=0')
+                .expect('Content-Type', /json/)
+                .expect(200);
+
+            expect(response.body).toBe(3);
+            // The criteria of the request only, the page left out.
+            expect(Object.keys(options[0].where)).toEqual(['<%= primaryKey.name %>']);
+        } finally {
+            delete serviceMock.count;
+        }
+    });
+<%_ } _%>
 
 <%_ if (pagination === 'no') { _%>
     it('/GET all <%= entityApiUrl %> without pagination, like JHipster Spring Boot', async () => {

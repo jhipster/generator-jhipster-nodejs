@@ -1,0 +1,125 @@
+import { BadRequestException } from '@nestjs/common';
+import type { ParsedQs } from 'qs';
+import {
+  And,
+  Equal,
+  FindOperator,
+  type FindOptionsWhere,
+  ILike,
+  In,
+  IsNull,
+  LessThan,
+  LessThanOrEqual,
+  MoreThan,
+  MoreThanOrEqual,
+  Not,
+} from 'typeorm';
+
+/**
+ * The kind of a property of the criteria, its operators like the filters of JHipster Spring Boot
+ * (tech.jhipster.service.filter): a Filter, a RangeFilter or a StringFilter.
+ */
+export type CriteriaKind = 'equality' | 'range' | 'string';
+
+/**
+ * A property of the criteria of an entity: the property it filters (`country.id` for `countryId`, the id of the related
+ * record), its kind and the type of its values in the request.
+ */
+export type CriteriaProperty = { property: string; kind: CriteriaKind; type: 'string' | 'number' | 'boolean' | 'date' };
+
+const equalityOperators = ['equals', 'notEquals', 'in', 'notIn', 'specified'];
+
+const operatorsOf: Record<CriteriaKind, string[]> = {
+  equality: equalityOperators,
+  range: [...equalityOperators, 'greaterThan', 'lessThan', 'greaterThanOrEqual', 'lessThanOrEqual'],
+  string: [...equalityOperators, 'contains', 'doesNotContain'],
+};
+
+/** The value of a request parameter of the criteria, converted to the type of its property. */
+const valueOf = (key: string, value: string, { type }: CriteriaProperty): unknown => {
+  if (type === 'number') {
+    const number = Number(value);
+    if (value.trim() === '' || Number.isNaN(number)) throw new BadRequestException(`Invalid value of ${key}: ${value}`);
+    return number;
+  }
+  if (type === 'boolean') {
+    if (value !== 'true' && value !== 'false') throw new BadRequestException(`Invalid value of ${key}: ${value}`);
+    return value === 'true';
+  }
+  if (type === 'date') {
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) throw new BadRequestException(`Invalid value of ${key}: ${value}`);
+    return date;
+  }
+  return value;
+};
+
+/** The values of a request parameter, given once or repeated. */
+const valuesOf = (value: ParsedQs[string]): string[] =>
+  (Array.isArray(value) ? value : [value]).filter((each): each is string => typeof each === 'string');
+
+/** The TypeORM operator of an operator of the criteria and its value. */
+const operatorOf = (key: string, operator: string, value: string, property: CriteriaProperty): FindOperator<unknown> => {
+  switch (operator) {
+    case 'equals':
+      return Equal(valueOf(key, value, property));
+    case 'notEquals':
+      return Not(Equal(valueOf(key, value, property)));
+    case 'in':
+    case 'notIn': {
+      // A list separated by commas, like the binding of a list by Spring.
+      const values = In(value.split(',').map(each => valueOf(key, each, property)));
+      return operator === 'in' ? values : Not(values);
+    }
+    case 'specified':
+      if (value !== 'true' && value !== 'false') throw new BadRequestException(`Invalid value of ${key}: ${value}`);
+      return value === 'true' ? Not(IsNull()) : IsNull();
+    case 'greaterThan':
+      return MoreThan(valueOf(key, value, property));
+    case 'lessThan':
+      return LessThan(valueOf(key, value, property));
+    case 'greaterThanOrEqual':
+      return MoreThanOrEqual(valueOf(key, value, property));
+    case 'lessThanOrEqual':
+      return LessThanOrEqual(valueOf(key, value, property));
+    case 'contains':
+      // Case insensitive, like the contains of JHipster Spring Boot.
+      return ILike(`%${value}%`);
+    default:
+      return Not(ILike(`%${value}%`));
+  }
+};
+
+/**
+ * The TypeORM where of the criteria of a request, like the QueryService of JHipster Spring Boot:
+ * `name.contains=a&countryId.in=1,2&id.greaterThan=5`, every condition met. The parameters of no property of the criteria,
+ * like the page and the sort, are ignored, like the ones Spring binds to no field of the criteria; the values are given
+ * to the query as parameters, the properties are the ones of the criteria.
+ */
+export const criteriaWhere = <T>(query: ParsedQs, criteria: Record<string, CriteriaProperty>): FindOptionsWhere<T> => {
+  const conditions = new Map<string, FindOperator<unknown>[]>();
+  for (const [key, value] of Object.entries(query)) {
+    const separator = key.lastIndexOf('.');
+    if (separator < 0) continue;
+    const name = key.slice(0, separator);
+    const operator = key.slice(separator + 1);
+    const property = Object.hasOwn(criteria, name) ? criteria[name] : undefined;
+    if (!property || !operatorsOf[property.kind].includes(operator)) continue;
+    const operators = conditions.get(property.property) ?? [];
+    // in and notIn: given once separated by commas or repeated.
+    const values = ['in', 'notIn'].includes(operator) ? [valuesOf(value).join(',')] : valuesOf(value);
+    operators.push(...values.map(each => operatorOf(key, operator, each, property)));
+    conditions.set(property.property, operators);
+  }
+  const where: Record<string, unknown> = {};
+  for (const [path, operators] of conditions) {
+    // A property of a related record (`country.id`) is nested in the where of its relationship.
+    const keys = path.split('.');
+    let target = where;
+    for (const key of keys.slice(0, -1)) {
+      target = (target[key] ??= {}) as Record<string, unknown>;
+    }
+    target[keys[keys.length - 1]] = operators.length === 1 ? operators[0] : And(...operators);
+  }
+  return where as FindOptionsWhere<T>;
+};

@@ -93,6 +93,13 @@ export class <%= entityClass %>Service {
         return [results.map(<%= entityInstance %> => <%= entityClass %>Mapper.fromEntityToDTO(<%= entityInstance %>)), count];
       }
 
+<%_ if (nodejsCriteria) { _%>
+      /** The count of the records matching the options, like the countByCriteria of JHipster Spring Boot. */
+      async count(options: FindManyOptions<<%= entityClass %>>): Promise<number> {
+        return this.<%= entityInstance %>Repository.count(options);
+      }
+
+<%_ } _%>
 <%_ for (const relationship of nodejsMappedByRelationships.filter(relationship => relationship.relationshipOneToOne)) { _%>
       /** The records without <%= relationship.relationshipName %>, like the findAllWhere<%- relationship.relationshipNameCapitalized %>IsNull of JHipster Spring Boot. */
       async findAllWhere<%- relationship.relationshipNameCapitalized %>IsNull(): Promise<<%= dtoClass %>[]> {
