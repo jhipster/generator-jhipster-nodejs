@@ -655,14 +655,13 @@ describe('SubGenerator node-server of nodejs JHipster blueprint', () => {
     });
   });
 
-  describe('with many required relationships to an entity of a unique field', () => {
-    // JHipster keeps the unique values of a field for the whole generation: the required records of each entity draw their own.
+  describe('with required relationships to an entity of a unique field', () => {
     const owner = {
       name: 'Owner',
       changelogDate: '20240101000000',
       fields: [{ fieldName: 'name', fieldType: 'String', fieldValidateRules: ['required', 'unique'] }],
     };
-    const related = Array.from({ length: 7 }, (_, index) => ({
+    const related = Array.from({ length: 3 }, (_, index) => ({
       name: `Item${index}`,
       changelogDate: `2024010100000${index + 1}`,
       fields: [{ fieldName: 'title', fieldType: 'String' }],
@@ -686,13 +685,30 @@ describe('SubGenerator node-server of nodejs JHipster blueprint', () => {
         .withConfiguredBlueprint();
     });
 
-    it('should create the required record of every entity with its own value of the unique field', () => {
-      const names = related.map(({ name }) => {
-        const { records } = result.entities[name].nodejsRequiredRecords;
-        expect(records).toMatchObject([{ name: 'requiredOwner', values: { name: expect.any(String) } }]);
-        return records[0].values.name;
-      });
-      expect(new Set(names).size).toBe(related.length);
+    it('should write the sample of the entity, with its unique field', () => {
+      result.assertFileContent(
+        'server/e2e/samples/owner.test-samples.ts',
+        /export const sampleWithNewData: Record<string, any> = \{"name":"[^"]+"/,
+      );
+    });
+
+    it('should reference the sample of the owner stored once from the samples of the other entities', () => {
+      for (const { name } of related) {
+        const samples = `server/e2e/samples/item-${name.slice(-1)}.test-samples.ts`;
+        result.assertFileContent(samples, "import * as ownerSamples from './owner.test-samples.ts';");
+        result.assertFileContent(samples, 'owner: { id: (await ownerSamples.storedSample(app)).id },');
+      }
+    });
+
+    it('should send the references of the required relationships from the database tests', () => {
+      result.assertFileContent(
+        'server/e2e/item-0.database.e2e-spec.ts',
+        "import * as item0Samples from './samples/item-0.test-samples.ts';",
+      );
+      result.assertFileContent(
+        'server/e2e/item-0.database.e2e-spec.ts',
+        '.send({ ...createdValues, ...(await item0Samples.requiredReferences(app)) })',
+      );
     });
   });
   describe('entity validators', () => {
