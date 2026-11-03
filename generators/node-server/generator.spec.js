@@ -306,6 +306,44 @@ describe('SubGenerator node-server of nodejs JHipster blueprint', () => {
     });
   });
 
+  describe('with sqlite as the prod database', () => {
+    beforeAll(async function () {
+      await helpers
+        .run(SUB_GENERATOR_NAMESPACE)
+        .withJHipsterConfig({ prodDatabaseType: 'sqlite', skipClient: true })
+        .withOptions({ ignoreNeedlesError: true })
+        .withJHipsterGenerators()
+        .withConfiguredBlueprint()
+        .withBlueprintConfig({});
+    });
+
+    it('should open a SQLite file, without a database server', () => {
+      result.assertFileContent('server/src/config/application-prod.yml', /type: better-sqlite3\n.*\n {2}name: 'jhipster\.sqlite'/);
+      // The database section, up to the next one: no host, port, username or password.
+      const database = /^database:\n(?: {2}.*\n|\n)*/m.exec(result.fs.read(join(result.cwd, 'server/src/config/application-prod.yml')))[0];
+      expect(database).not.toMatch(/^ {2}(host|port|username|password):/m);
+      result.assertNoFileContent('server/src/config/application-secret-samples.yml', /^database:/m);
+    });
+
+    it('should declare better-sqlite3 as a dependency of the server, once', () => {
+      const { dependencies, devDependencies } = result.fs.readJSON(join(result.cwd, 'server/package.json'));
+      expect(dependencies).toHaveProperty('better-sqlite3');
+      expect(devDependencies).not.toHaveProperty('better-sqlite3');
+      result.assertFileContent('server/src/orm.config.ts', "'better-sqlite3': () => require('better-sqlite3')");
+    });
+
+    it('should build the native module of SQLite and keep the database in a folder of the node user in the image', () => {
+      result.assertFileContent('Dockerfile', 'npm rebuild better-sqlite3');
+      result.assertFileContent('Dockerfile', 'ENV DATABASE_NAME=/usr/src/app/data/jhipster.sqlite');
+    });
+
+    it('should not write the docker:db scripts of a database service', () => {
+      const { scripts } = result.fs.readJSON(join(result.cwd, 'package.json'));
+      expect(scripts).not.toHaveProperty('docker:db:up');
+      expect(scripts).not.toHaveProperty('docker:db:down');
+    });
+  });
+
   for (const [devDatabaseType, sqliteDevDatabaseType, database] of [
     ['h2Disk', 'sqlite', '../tmp/db/sqlite-dev-db.sql'],
     ['h2Memory', 'sqliteMemory', ':memory:'],

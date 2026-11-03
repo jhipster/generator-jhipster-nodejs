@@ -108,6 +108,7 @@ const databaseDrivers = {
   postgresql: 'pg',
   oracle: 'oracledb',
   mssql: 'mssql',
+  sqlite: 'better-sqlite3',
 };
 
 const databaseDevDrivers = {
@@ -117,6 +118,7 @@ const databaseDevDrivers = {
   postgresql: 'better-sqlite3',
   oracle: 'better-sqlite3',
   mssql: 'better-sqlite3',
+  sqlite: 'better-sqlite3',
 };
 
 export default class extends BaseApplicationGenerator {
@@ -149,7 +151,7 @@ export default class extends BaseApplicationGenerator {
         const { prodDatabaseType, databaseType } = this.jhipsterConfigWithDefaults;
         if (!['sql', 'mongodb'].includes(databaseType)) {
           throw new Error(
-            `The database type ${databaseType} is not supported by the JHipster NodeJS blueprint: use sql (with prodDatabaseType mysql, mariadb, postgresql, mssql or oracle) or mongodb.`,
+            `The database type ${databaseType} is not supported by the JHipster NodeJS blueprint: use sql (with prodDatabaseType mysql, mariadb, postgresql, mssql, oracle or sqlite) or mongodb.`,
           );
         }
         const databaseTypeMongodb = (prodDatabaseType ?? databaseType) === 'mongodb';
@@ -281,9 +283,14 @@ export default class extends BaseApplicationGenerator {
           __override__: false,
           nodeProdDatabaseDriver: ({ databaseType, prodDatabaseType = databaseType }) => databaseDrivers[prodDatabaseType],
           nodeDevDatabaseDriver: ({ databaseType, prodDatabaseType = databaseType }) => databaseDevDrivers[prodDatabaseType],
+          // The type of TypeORM: postgres for PostgreSQL, better-sqlite3 for SQLite.
           nodeProdDatabaseType: ({ databaseType, prodDatabaseType = databaseType }) =>
-            prodDatabaseType === 'postgresql' ? 'postgres' : prodDatabaseType,
+            ({ postgresql: 'postgres', sqlite: 'better-sqlite3' })[prodDatabaseType] ?? prodDatabaseType,
           nodeDevDatabaseType: getNodeDevDatabaseType,
+          // SQLite as the production database: a file the server opens, without a database server, by default in the
+          // folder the server runs in.
+          prodDatabaseTypeSqlite: ({ prodDatabaseType }) => prodDatabaseType === 'sqlite',
+          nodeProdSqliteDatabase: ({ lowercaseBaseName }) => `${lowercaseBaseName}.sqlite`,
           // The SQLite development database: in memory for sqliteMemory, else a file of the temporary folder of the
           // application, at its root, from the server folder the server runs in.
           nodeDevSqliteDatabase: ({ devDatabaseType, nodeServerRootDir, temporaryDir }) =>

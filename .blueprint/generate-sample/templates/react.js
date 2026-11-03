@@ -6,6 +6,7 @@ const samples = [
   'monolith-react-oauth2-jdl',
   'monolith-react-oauth2-i18n-jdl',
   'monolith-react-mysql-prod-jdl',
+  'monolith-react-sqlite-prod-jdl',
   ['monolith-react-mongodb-prod-jdl', { e2e: 'false' }],
   'monolith-react-oauth2-dev',
 ];

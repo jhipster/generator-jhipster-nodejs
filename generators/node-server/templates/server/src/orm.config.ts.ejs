@@ -44,7 +44,9 @@ const drivers: Record<string, () => unknown> = {
 <%_ } else { _%>
   '<%= nodeProdDatabaseType %>': () => require('<%= nodeProdDatabaseDriver %>'),
 <%_ } _%>
+<%_ if (!prodDatabaseTypeSqlite) { _%>
   'better-sqlite3': () => require('better-sqlite3'),
+<%_ } _%>
 <%_ } else { _%>
   mongodb: () => require('mongodb'),
 <%_ } _%>
