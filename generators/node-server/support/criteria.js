@@ -97,7 +97,7 @@ export const mutateCriteria = ({ databaseTypeSql }) => ({
     const properties = criteriaProperties(entity);
     return {
       // The @Filterable decorator of each property of the entity, by its name.
-      decorators: Object.fromEntries(properties.map(({ key, kind, type }) => [key, `@Filterable('${kind}', '${type}')`])),
+      decorators: Object.fromEntries(properties.map(({ key, kind, type }) => [key, `@Filterable({ kind: '${kind}', type: '${type}' })`])),
       // The properties the end-to-end tests filter on, by their kind.
       tests: JSON.stringify(
         properties.map(({ name, property, kind, approximate }) => ({ name, property, kind, ...(approximate ? { approximate } : {}) })),

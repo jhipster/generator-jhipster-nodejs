@@ -792,13 +792,13 @@ describe('SubGenerator node-server of nodejs JHipster blueprint', () => {
     it('should declare the properties of the criteria on the entity by their kind, a relationship to one by the id of the related record', () => {
       const entity = 'server/src/entities/region/region.entity.ts';
       result.assertFileContent(entity, "import { Filterable } from '../../common/database/criteria.ts';");
-      result.assertFileContent(entity, /@Filterable\('range', 'number'\)\n\s+id\?: number;/);
-      result.assertFileContent(entity, /@Filterable\('string', 'string'\)\n\s+name\?: string;/);
-      result.assertFileContent(entity, /@Filterable\('range', 'number'\)\n\s+population\?: number;/);
-      result.assertFileContent(entity, /@Filterable\('range', 'date'\)\n\s+founded\?: Date;/);
-      result.assertFileContent(entity, /@Filterable\('equality', 'boolean'\)\n\s+coastal\?: boolean;/);
-      result.assertFileContent(entity, /@Filterable\('equality', 'string'\)\n\s+code\?: string;/);
-      result.assertFileContent(entity, /@Filterable\('range', 'number'\)\n\s+country\?: Relation<Country>;/);
+      result.assertFileContent(entity, /@Filterable\(\{ kind: 'range', type: 'number' \}\)\n\s+id\?: number;/);
+      result.assertFileContent(entity, /@Filterable\(\{ kind: 'string', type: 'string' \}\)\n\s+name\?: string;/);
+      result.assertFileContent(entity, /@Filterable\(\{ kind: 'range', type: 'number' \}\)\n\s+population\?: number;/);
+      result.assertFileContent(entity, /@Filterable\(\{ kind: 'range', type: 'date' \}\)\n\s+founded\?: Date;/);
+      result.assertFileContent(entity, /@Filterable\(\{ kind: 'equality', type: 'boolean' \}\)\n\s+coastal\?: boolean;/);
+      result.assertFileContent(entity, /@Filterable\(\{ kind: 'equality', type: 'string' \}\)\n\s+code\?: string;/);
+      result.assertFileContent(entity, /@Filterable\(\{ kind: 'range', type: 'number' \}\)\n\s+country\?: Relation<Country>;/);
       // Like JHipster Spring Boot, no filter of a binary blob; the relationships to many records are left out.
       result.assertNoFileContent(entity, /@Filterable\([^)]*\)\n\s+flag\?/);
       result.assertNoFileContent(entity, /@Filterable\([^)]*\)\n\s+neighbours\?/);

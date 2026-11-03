@@ -39,7 +39,7 @@ const filterables = new WeakMap<object, Map<string, { kind: CriteriaKind; type: 
  * relationship to one record, filtered by the id of the related record (`countryId` for `country`).
  */
 export const Filterable =
-  (kind: CriteriaKind, type: CriteriaType): PropertyDecorator =>
+  ({ kind, type }: { kind: CriteriaKind; type: CriteriaType }): PropertyDecorator =>
   (target, propertyKey) => {
     const properties = filterables.get(target.constructor) ?? new Map();
     properties.set(String(propertyKey), { kind, type });

@@ -63,15 +63,15 @@ describe('criteriaWhere', () => {
 
 describe('criteriaOf', () => {
   class Sample {
-    @Filterable('range', 'number')
+    @Filterable({ kind: 'range', type: 'number' })
     id?: number;
 
-    @Filterable('string', 'string')
+    @Filterable({ kind: 'string', type: 'string' })
     name?: string;
 
     notFiltered?: string;
 
-    @Filterable('range', 'number')
+    @Filterable({ kind: 'range', type: 'number' })
     country?: unknown;
   }
   // The TypeORM metadata of the entity, its relationship to the country.
