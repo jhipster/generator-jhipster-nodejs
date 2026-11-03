@@ -39,8 +39,12 @@ const valueTypeOf = ({ fieldTypeNumeric, fieldTypeBoolean, fieldTypeTimed }) => 
  */
 const isFilterableField = field => !field.transient && (!field.fieldTypeBinary || field.fieldTypeBlobContent === 'text');
 
-/** A property of the criteria, as the TypeScript of the server declares it. */
-const criteriaProperty = (name, { property, kind, type, approximate }) => ({ name, property, kind, type, approximate });
+/**
+ * A property of the criteria: its name in the request, the property of the entity declaring it (its @Filterable
+ * decorator), the property the query filters (the id of the related record for a relationship), its kind and the type of
+ * its values.
+ */
+const criteriaProperty = (name, { key, property, kind, type, approximate }) => ({ name, key, property, kind, type, approximate });
 
 /**
  * The properties of the criteria of an entity: its fields, its id and its relationships to one record by the id of the
@@ -51,11 +55,12 @@ const criteriaProperties = entity => {
   const idKind = primaryKey.fields[0].fieldTypeNumeric ? 'range' : 'equality';
   const idType = primaryKey.fields[0].fieldTypeNumeric ? 'number' : 'string';
   return [
-    criteriaProperty(primaryKey.name, { property: primaryKey.name, kind: idKind, type: idType }),
+    criteriaProperty(primaryKey.name, { key: primaryKey.name, property: primaryKey.name, kind: idKind, type: idType }),
     ...entity.fields
       .filter(field => !field.id && isFilterableField(field))
       .map(field =>
         criteriaProperty(field.fieldName, {
+          key: field.fieldName,
           property: field.fieldName,
           kind: field.fieldValues ? 'equality' : kindOf(field),
           type: field.fieldValues ? 'string' : valueTypeOf(field),
@@ -69,6 +74,7 @@ const criteriaProperties = entity => {
         const otherId = relationship.otherEntity.primaryKey;
         const numeric = otherId.fields[0].fieldTypeNumeric;
         return criteriaProperty(`${relationship.relationshipFieldName}Id`, {
+          key: relationship.relationshipFieldName,
           property: `${relationship.propertyName}.${otherId.name}`,
           kind: numeric ? 'range' : 'equality',
           type: numeric ? 'number' : 'string',
@@ -90,10 +96,8 @@ export const mutateCriteria = ({ databaseTypeSql }) => ({
     if (!databaseTypeSql || !entity.jpaMetamodelFiltering) return undefined;
     const properties = criteriaProperties(entity);
     return {
-      // The TypeScript of the properties, the CRITERIA of the controller.
-      literal: `{\n${properties
-        .map(({ name, property, kind, type }) => `  ${name}: { property: '${property}', kind: '${kind}', type: '${type}' },`)
-        .join('\n')}\n}`,
+      // The @Filterable decorator of each property of the entity, by its name.
+      decorators: Object.fromEntries(properties.map(({ key, kind, type }) => [key, `@Filterable('${kind}', '${type}')`])),
       // The properties the end-to-end tests filter on, by their kind.
       tests: JSON.stringify(
         properties.map(({ name, property, kind, approximate }) => ({ name, property, kind, ...(approximate ? { approximate } : {}) })),

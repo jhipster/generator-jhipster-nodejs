@@ -8,6 +8,9 @@ import { randomUUID } from 'node:crypto';
 <%_ } _%>
 import { <%_ if (databaseType === 'mongodb') { _%> ObjectIdColumn <%_ } else if (primaryKey.typeString) { _%> <% if (generatedStringId) { %>BeforeInsert, <% } %>PrimaryColumn <%_ } else { _%> PrimaryGeneratedColumn <%_ } _%>, Entity, Column <%_ if (databaseType !== 'mongodb') { _%>, JoinColumn, OneToOne, ManyToOne, OneToMany, ManyToMany, JoinTable, type Relation <%_ } _%> } from 'typeorm';
 import { BaseEntity } from '../../common/database/base.entity.ts';
+<%_ if (nodejsCriteria) { _%>
+import { Filterable } from '../../common/database/criteria.ts';
+<%_ } _%>
 <%_ if (nodejsColumnTransformers.length > 0) { _%>
 import { <%- nodejsColumnTransformers.map(name => `${name}Transformer`).join(', ') %> } from '../../common/database/column-transformers.ts';
 <%_ } _%>
@@ -67,6 +70,9 @@ export class <%= persistClass %> extends BaseEntity  {
 <%_ } else if (databaseTypeSql) { _%>
   @PrimaryGeneratedColumn(<%- primaryKey.typeUUID ? "'uuid'" : '' %>)
 <%_ } _%>
+<%_ if (nodejsCriteria) { _%>
+  <%- nodejsCriteria.decorators[primaryKey.name] %>
+<%_ } _%>
   <%- primaryKey.name %>?: <%- primaryKey.tsType %>;
 <%_ if (generatedStringId) { _%>
 
@@ -83,6 +89,9 @@ export class <%= persistClass %> extends BaseEntity  {
     <%_ }
     const { fieldType, fieldTypeBlobContent, fieldName } = field; _%>
     @Column({ <%- field.nodejsColumnOptions.join(', ') %> })
+    <%_ if (nodejsCriteria?.decorators[fieldName]) { _%>
+    <%- nodejsCriteria.decorators[fieldName] %>
+    <%_ } _%>
     <%= fieldName %><%- field.fieldValidationRequired ? '!' : '?' %>: <%= field.nodejsFieldType %>;
 
     <%_ if ((fieldType === 'byte[]' || fieldType === 'ByteBuffer') && fieldTypeBlobContent !== 'text') { _%>
@@ -100,6 +109,9 @@ export class <%= persistClass %> extends BaseEntity  {
 
     <%_ } else if (relationship.relationshipManyToOne) { _%>
     @ManyToOne(() => <%= otherEntityClass %> <%_ if (!ownerSide && !otherEntityUser) { _%>, other => other.<%= otherEntityRelationshipNamePlural %>  <%_ } _%><% if (relationship.columnRequired) { %>, { nullable: false }<% } %>)
+    <%_ if (nodejsCriteria?.decorators[relationshipFieldName]) { _%>
+    <%- nodejsCriteria.decorators[relationshipFieldName] %>
+    <%_ } _%>
     <%= relationshipFieldName %><%- relationship.relationshipRequired ? '!' : '?' %>: Relation<<%= otherEntityClass %>>;
 
     <%_ } else if (relationship.relationshipManyToMany) { _%>
@@ -119,6 +131,9 @@ export class <%= persistClass %> extends BaseEntity  {
     @JoinColumn()
     <%_ } else { _%>
     @OneToOne(() => <%= otherEntityClass %>, other => other.<%= otherEntityRelationshipName %>)
+    <%_ } _%>
+    <%_ if (nodejsCriteria?.decorators[relationshipFieldName]) { _%>
+    <%- nodejsCriteria.decorators[relationshipFieldName] %>
     <%_ } _%>
     <%= relationshipFieldName %><%- relationship.relationshipRequired ? '!' : '?' %>: Relation<<%= otherEntityClass %>>;
 

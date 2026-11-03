@@ -2,6 +2,7 @@ import { BadRequestException } from '@nestjs/common';
 import type { ParsedQs } from 'qs';
 import {
   And,
+  type EntityMetadata,
   Equal,
   FindOperator,
   type FindOptionsWhere,
@@ -25,7 +26,46 @@ export type CriteriaKind = 'equality' | 'range' | 'string';
  * A property of the criteria of an entity: the property it filters (`country.id` for `countryId`, the id of the related
  * record), its kind and the type of its values in the request.
  */
-export type CriteriaProperty = { property: string; kind: CriteriaKind; type: 'string' | 'number' | 'boolean' | 'date' };
+export type CriteriaProperty = { property: string; kind: CriteriaKind; type: CriteriaType };
+
+/** The type of the values of a property of the criteria in the request, converted for the query. */
+export type CriteriaType = 'string' | 'number' | 'boolean' | 'date';
+
+/** The filterable properties of the entities, by their class: the ones of their @Filterable decorators. */
+const filterables = new WeakMap<object, Map<string, { kind: CriteriaKind; type: CriteriaType }>>();
+
+/**
+ * A property of an entity its lists filter on, like a filter of the Criteria of JHipster Spring Boot: a column, or a
+ * relationship to one record, filtered by the id of the related record (`countryId` for `country`).
+ */
+export const Filterable =
+  (kind: CriteriaKind, type: CriteriaType): PropertyDecorator =>
+  (target, propertyKey) => {
+    const properties = filterables.get(target.constructor) ?? new Map();
+    properties.set(String(propertyKey), { kind, type });
+    filterables.set(target.constructor, properties);
+  };
+
+const criteriaOfEntities = new WeakMap<EntityMetadata, Record<string, CriteriaProperty>>();
+
+/** The criteria of an entity, from its @Filterable properties and the TypeORM metadata of its relationships. */
+export const criteriaOf = (metadata: EntityMetadata): Record<string, CriteriaProperty> => {
+  let criteria = criteriaOfEntities.get(metadata);
+  if (!criteria) {
+    criteria = {};
+    for (const [propertyName, { kind, type }] of filterables.get(metadata.target as object) ?? []) {
+      const relation = metadata.relations.find(each => each.propertyName === propertyName);
+      if (relation) {
+        const id = relation.inverseEntityMetadata.primaryColumns[0].propertyName;
+        criteria[`${propertyName}Id`] = { property: `${propertyName}.${id}`, kind, type };
+      } else {
+        criteria[propertyName] = { property: propertyName, kind, type };
+      }
+    }
+    criteriaOfEntities.set(metadata, criteria);
+  }
+  return criteria;
+};
 
 const equalityOperators = ['equals', 'notEquals', 'in', 'notIn', 'specified'];
 

@@ -789,23 +789,24 @@ describe('SubGenerator node-server of nodejs JHipster blueprint', () => {
       result.assertFile(['server/src/common/database/criteria.ts', 'server/src/common/database/criteria.spec.ts']);
     });
 
-    it('should declare the properties of the criteria by their kind, a relationship to one by the id of the related record', () => {
-      const controller = 'server/src/entities/region/region.controller.ts';
-      result.assertFileContent(controller, "  id: { property: 'id', kind: 'range', type: 'number' },");
-      result.assertFileContent(controller, "  name: { property: 'name', kind: 'string', type: 'string' },");
-      result.assertFileContent(controller, "  population: { property: 'population', kind: 'range', type: 'number' },");
-      result.assertFileContent(controller, "  founded: { property: 'founded', kind: 'range', type: 'date' },");
-      result.assertFileContent(controller, "  coastal: { property: 'coastal', kind: 'equality', type: 'boolean' },");
-      result.assertFileContent(controller, "  code: { property: 'code', kind: 'equality', type: 'string' },");
-      result.assertFileContent(controller, "  countryId: { property: 'country.id', kind: 'range', type: 'number' },");
+    it('should declare the properties of the criteria on the entity by their kind, a relationship to one by the id of the related record', () => {
+      const entity = 'server/src/entities/region/region.entity.ts';
+      result.assertFileContent(entity, "import { Filterable } from '../../common/database/criteria.ts';");
+      result.assertFileContent(entity, /@Filterable\('range', 'number'\)\n\s+id\?: number;/);
+      result.assertFileContent(entity, /@Filterable\('string', 'string'\)\n\s+name\?: string;/);
+      result.assertFileContent(entity, /@Filterable\('range', 'number'\)\n\s+population\?: number;/);
+      result.assertFileContent(entity, /@Filterable\('range', 'date'\)\n\s+founded\?: Date;/);
+      result.assertFileContent(entity, /@Filterable\('equality', 'boolean'\)\n\s+coastal\?: boolean;/);
+      result.assertFileContent(entity, /@Filterable\('equality', 'string'\)\n\s+code\?: string;/);
+      result.assertFileContent(entity, /@Filterable\('range', 'number'\)\n\s+country\?: Relation<Country>;/);
       // Like JHipster Spring Boot, no filter of a binary blob; the relationships to many records are left out.
-      result.assertNoFileContent(controller, 'flag: { property');
-      result.assertNoFileContent(controller, 'neighbourId: { property');
+      result.assertNoFileContent(entity, /@Filterable\([^)]*\)\n\s+flag\?/);
+      result.assertNoFileContent(entity, /@Filterable\([^)]*\)\n\s+neighbours\?/);
     });
 
     it('should filter the list and count the records of the criteria', () => {
       const controller = 'server/src/entities/region/region.controller.ts';
-      result.assertFileContent(controller, 'where: criteriaWhere(req.query, CRITERIA),');
+      result.assertFileContent(controller, 'where: criteriaWhere(req.query, criteriaOf(this.regionService.metadata)),');
       result.assertFileContent(controller, "@Get('/count')");
       result.assertFileContent(
         'server/src/entities/region/region.service.ts',
@@ -820,6 +821,7 @@ describe('SubGenerator node-server of nodejs JHipster blueprint', () => {
 
     it('should not filter the lists of an entity without filter', () => {
       result.assertNoFileContent('server/src/entities/city/city.controller.ts', 'criteriaWhere');
+      result.assertNoFileContent('server/src/entities/city/city.entity.ts', 'Filterable');
       result.assertNoFileContent('server/src/entities/city/city.controller.ts', "@Get('/count')");
     });
   });

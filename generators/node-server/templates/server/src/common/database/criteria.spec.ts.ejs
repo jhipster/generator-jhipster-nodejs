@@ -1,9 +1,9 @@
 import { describe, expect, it } from 'vitest';
 
 import { BadRequestException } from '@nestjs/common';
-import { And, Equal, ILike, In, IsNull, LessThan, LessThanOrEqual, MoreThan, MoreThanOrEqual, Not } from 'typeorm';
+import { And, EntityMetadata, Equal, ILike, In, IsNull, LessThan, LessThanOrEqual, MoreThan, MoreThanOrEqual, Not } from 'typeorm';
 
-import { criteriaWhere, CriteriaProperty } from './criteria.ts';
+import { criteriaOf, criteriaWhere, CriteriaProperty, Filterable } from './criteria.ts';
 
 const criteria: Record<string, CriteriaProperty> = {
   id: { property: 'id', kind: 'range', type: 'number' },
@@ -58,5 +58,33 @@ describe('criteriaWhere', () => {
     expect(
       criteriaWhere({ page: '0', sort: 'id,asc', 'password.equals': 'a', 'name.greaterThan': 'a', 'active.contains': 'a', 'constructor.equals': 'a' }, criteria),
     ).toEqual({});
+  });
+});
+
+describe('criteriaOf', () => {
+  class Sample {
+    @Filterable('range', 'number')
+    id?: number;
+
+    @Filterable('string', 'string')
+    name?: string;
+
+    notFiltered?: string;
+
+    @Filterable('range', 'number')
+    country?: unknown;
+  }
+  // The TypeORM metadata of the entity, its relationship to the country.
+  const metadata = {
+    target: Sample,
+    relations: [{ propertyName: 'country', inverseEntityMetadata: { primaryColumns: [{ propertyName: 'id' }] } }],
+  } as unknown as EntityMetadata;
+
+  it('reads the @Filterable properties, a relationship by the id of the related record', () => {
+    expect(criteriaOf(metadata)).toEqual({
+      id: { property: 'id', kind: 'range', type: 'number' },
+      name: { property: 'name', kind: 'string', type: 'string' },
+      countryId: { property: 'country.id', kind: 'range', type: 'number' },
+    });
   });
 });

@@ -18,7 +18,7 @@ import { AuthGuard, <% if (nodejsReadRoles) { %>Roles, <% } %>RolesGuard } from 
 import { HeaderUtil } from '../../common/header-util.ts';
 import { isSortableProperty } from '../../common/sortable-properties.ts';
 <%_ if (nodejsCriteria) { _%>
-import { criteriaWhere, CriteriaProperty } from '../../common/database/criteria.ts';
+import { criteriaOf, criteriaWhere } from '../../common/database/criteria.ts';
 <%_ } _%>
 import { Request } from '../../common/request.ts';
 
@@ -32,10 +32,6 @@ const sortLabels = relationships
 _%>
 /** The label of each relationship to one, the other field a list can be sorted on besides the id. */
 const SORT_LABELS: Record<string, string> = { <%- sortLabels.join(', ') %> };
-<%_ if (nodejsCriteria) { _%>
-/** The properties a list filters on, like the <%= entityClass %>Criteria of JHipster Spring Boot. */
-const CRITERIA: Record<string, CriteriaProperty> = <%- nodejsCriteria.literal %>;
-<%_ } _%>
 
 @Controller('api/<%= entityApiUrl %>')
 @UseGuards(AuthGuard, RolesGuard)
@@ -82,7 +78,7 @@ export class <%= entityClass %>Controller {
     // Like JHipster Spring Boot, an entity without pagination lists all its records, without the pagination headers.
     const [results] = await this.<%= entityInstance %>Service.findAndCount({
 <%_ if (nodejsCriteria) { _%>
-      where: criteriaWhere(req.query, CRITERIA),
+      where: criteriaWhere(req.query, criteriaOf(this.<%= entityInstance %>Service.metadata)),
 <%_ } _%>
       order: pageRequest.asOrder(),
     });
@@ -90,7 +86,7 @@ export class <%= entityClass %>Controller {
 <%_ } else { _%>
     const [results, count] = await this.<%= entityInstance %>Service.findAndCount({
 <%_ if (nodejsCriteria) { _%>
-      where: criteriaWhere(req.query, CRITERIA),
+      where: criteriaWhere(req.query, criteriaOf(this.<%= entityInstance %>Service.metadata)),
 <%_ } _%>
       skip: +pageRequest.page * pageRequest.size,
       take: +pageRequest.size,
@@ -114,7 +110,7 @@ export class <%= entityClass %>Controller {
     type: Number,
   })
   async count(@Req() req: Request): Promise<number> {
-    return this.<%= entityInstance %>Service.count({ where: criteriaWhere(req.query, CRITERIA) });
+    return this.<%= entityInstance %>Service.count({ where: criteriaWhere(req.query, criteriaOf(this.<%= entityInstance %>Service.metadata)) });
   }
 
 <%_ } _%>
