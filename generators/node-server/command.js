@@ -94,4 +94,7 @@ export default asCommand({
       scope: 'storage',
     },
   },
+  // The options of the docker generator of JHipster, which the server composes: oauth2AppSchemes, the URL schemes of the
+  // apps signing in at the OAuth2 provider, redirect URIs of the client of its Keycloak realm.
+  import: ['docker'],
 });
