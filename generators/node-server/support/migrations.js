@@ -96,7 +96,7 @@ const primaryKeyType = ({ primaryKey, builtInUser }) =>
 
 /**
  * The migration column of the primary key of an entity, like its @PrimaryGeneratedColumn, or its @PrimaryColumn for a
- * String, whose UUID the entity generates.
+ * String, whose UUID the entity generates, and for an id the client gives.
  */
 export const primaryKeyColumn = entity => {
   const type = primaryKeyType(entity);
@@ -104,7 +104,7 @@ export const primaryKeyColumn = entity => {
     name: entity.primaryKey.name,
     type,
     primary: true,
-    ...(type === 'String' ? {} : { generated: entity.primaryKey.typeUUID ? 'uuid' : 'increment' }),
+    ...(type === 'String' || !entity.primaryKey.autoGenerate ? {} : { generated: entity.primaryKey.typeUUID ? 'uuid' : 'increment' }),
   };
 };
 

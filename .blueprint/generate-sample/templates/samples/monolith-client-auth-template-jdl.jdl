@@ -71,9 +71,20 @@ entity Classroom {
     name String required,
 }
 
+// A primary key the client gives, not named id, referenced by relationships.
+entity Campus {
+    @Id slug String required,
+    name String,
+}
+
 relationship ManyToOne {
     Activity {demetrauser required} to DemetraUser
     SingleCourse {classroom(name)} to Classroom
+    SingleCourse {campus(name)} to Campus
+}
+
+relationship ManyToMany {
+    Activity {campuses(name)} to Campus {activities}
 }
 
 
