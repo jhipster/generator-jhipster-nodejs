@@ -19,7 +19,7 @@ const isStoredRequired = relationship => Boolean(isRequiredRelationship(relation
 const isSampleRelationship = relationship =>
   isStoredRequired(relationship) &&
   !hasCyclicRequiredRelationship(relationship.otherEntity) &&
-  (relationship.otherEntity.builtInUser || !relationship.otherEntity.builtIn);
+  (relationship.otherEntity.builtInUser || relationship.otherEntity.entityRestLayer);
 
 /** The mutations of a relationship. */
 export const mutateRequiredReference = {
@@ -59,7 +59,7 @@ export const mutateTestSamples = ({ databaseTypeSql }) => ({
         const reference = `{ ${id}: (await ${record}).${id} }`;
         return { propertyName, reference: collection ? `[${reference}]` : reference };
       }),
-      otherEntities: [...new Set(relationships.map(({ otherEntity }) => otherEntity).filter(otherEntity => !otherEntity.builtIn))],
+      otherEntities: [...new Set(relationships.map(({ otherEntity }) => otherEntity).filter(otherEntity => !otherEntity.builtInUser))],
       user: relationships.some(({ otherEntity }) => otherEntity.builtInUser),
     };
   },
@@ -73,7 +73,7 @@ export const mutateTestSamples = ({ databaseTypeSql }) => ({
         (databaseTypeSql && (relationship.persistableRelationship || relationship.otherRelationship?.propertyName)),
     );
     const sampleEntities = [...new Set([entity, ...related.map(({ otherEntity }) => otherEntity)])].filter(
-      sampleEntity => !sampleEntity.builtIn && sampleEntity.relationships.some(isSampleRelationship),
+      sampleEntity => sampleEntity.entityRestLayer && sampleEntity.relationships.some(isSampleRelationship),
     );
     return {
       entities: sampleEntities.map(({ entityInstance, entityFileName }) => ({ entityInstance, entityFileName })),

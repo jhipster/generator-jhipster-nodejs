@@ -10,7 +10,7 @@ const storedRelationships = databaseTypeSql ? persistableRelationships : [];
 const anyUserRelationship = storedRelationships.some(relationship => relationship.otherEntity.builtInUser);
 // The relationships the other entity stores (nodejsMappedByRelationships), with another entity of the application.
 const inverseRelationships = databaseTypeSql
-  ? nodejsMappedByRelationships.filter(relationship => !relationship.otherEntity.builtIn && relationship.otherRelationship?.propertyName)
+  ? nodejsMappedByRelationships.filter(relationship => relationship.otherEntity.entityRestLayer && relationship.otherRelationship?.propertyName)
   : [];
 const literal = value => JSON.stringify(value);
 // The references of the required relationships from the test samples (e2e/samples), by entity instance name.
@@ -210,7 +210,7 @@ _%>
     await request(server).delete(`/api/<%= entityApiUrl %>/${stored.<%= primaryKey.name %>}`).expect(204);
 <%_ if (otherEntity.builtInUser) { _%>
     await users.remove(related);
-<%_ } else if (!otherEntity.builtIn) { _%>
+<%_ } else if (otherEntity.entityRestLayer) { _%>
     await request(server).delete(`/api/<%= otherEntity.entityApiUrl %>/${related.<%= otherId %>}`).expect(204);
 <%_ } _%>
   });

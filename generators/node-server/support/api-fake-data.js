@@ -47,7 +47,8 @@ export const apiFakeEntity = entity => {
 export const mutateRelatedValues = entity => ({
   __override__: false,
   nodejsRelatedValues: ({ otherEntity, propertyName }) => {
-    if (otherEntity.builtIn) return undefined;
+    // A related record the test posts through the REST API of the other entity.
+    if (!otherEntity.entityRestLayer) return undefined;
     otherEntity.resetFakerSeed(`nodejs-database-e2e-${entity.entityInstance}-${propertyName}`);
     return apiFakeEntity(otherEntity).values;
   },

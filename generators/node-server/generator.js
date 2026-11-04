@@ -357,6 +357,13 @@ export default class extends BaseApplicationGenerator {
 
   get [BaseApplicationGenerator.PREPARING_EACH_ENTITY]() {
     return this.asPreparingEachEntityTaskGroup({
+      prepareLayers({ entityDefaults }) {
+        // The layers of the entity, like the java domain and spring-boot generators of JHipster: an entity of the JDL, or a
+        // built-in entity a blueprint loads, gets them all. User and Authority get none, their files of src/users written
+        // by the server: the generator-jhipster declaring their layers declares them so, the ones before not.
+        const layer = ({ builtInUser, builtInAuthority }) => !builtInUser && !builtInAuthority;
+        entityDefaults({ __override__: false, entityDomainLayer: layer, entityPersistenceLayer: layer, entityRestLayer: layer });
+      },
       prepareMappedByRelationships({ entityDefaults }) {
         entityDefaults({
           // The relationships the other entity stores (its join column or its join table), never stored from this entity,
@@ -459,7 +466,7 @@ export default class extends BaseApplicationGenerator {
           application.nodejsUserAuthorityJoinTable = userAuthorityJoinTable(application);
         }
         // The migrations of the entities are the ones of their changelogs (the migrations generator).
-        for (const entity of entities.filter(entity => !entity.skipServer && !entity.builtIn)) {
+        for (const entity of entities.filter(entity => !entity.skipServer && entity.entityDomainLayer)) {
           // The join tables of the entity, its @JoinTable the same as its constraints migration.
           for (const relationship of entity.relationships.filter(relationship => relationship.shouldWriteJoinTable)) {
             relationship.nodejsJoinTable = joinTable(entity, relationship);
@@ -615,7 +622,7 @@ export default class extends BaseApplicationGenerator {
         }
       },
       async customEntityServerFiles({ application, entities }) {
-        for (const entity of entities.filter(entity => !entity.skipServer && !entity.builtIn)) {
+        for (const entity of entities.filter(entity => !entity.skipServer && entity.entityDomainLayer)) {
           if (application.databaseType === 'mongodb' && entity.relationships.length > 0) {
             throw new Error('relationships not supported in mongodb!');
           }
@@ -715,7 +722,7 @@ export default class extends BaseApplicationGenerator {
           if (!entity.builtInUserManagement) {
             source.addEntityToNodeConfig({ nodejsEntityPath, persistClass });
           }
-          if (!entity.builtIn) {
+          if (entity.entityDomainLayer) {
             source.addEntityToAppModule({ nodejsModulePath, entityClass });
           }
         }
