@@ -153,7 +153,7 @@ describe('entityMigration', () => {
       entityTableName: 'jhi_user',
       builtIn: true,
       builtInUser: true,
-      primaryKey: { name: 'id', typeString: true, autoGenerate: true },
+      primaryKey: { name: 'id', typeString: true },
     });
     const note = entity({
       entityTableName: 'note',

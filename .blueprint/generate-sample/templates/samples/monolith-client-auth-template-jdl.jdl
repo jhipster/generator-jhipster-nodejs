@@ -71,20 +71,27 @@ entity Classroom {
     name String required,
 }
 
-// A primary key the client gives, not named id, referenced by relationships.
+// A primary key the client gives, not named id, referenced by relationships. Without a client: the update form of
+// the React client of JHipster has no field for it.
 entity Campus {
     @Id slug String required,
     name String,
 }
 
+entity Building {
+    name String required,
+}
+
+skipClient Campus, Building
+
 relationship ManyToOne {
     Activity {demetrauser required} to DemetraUser
     SingleCourse {classroom(name)} to Classroom
-    SingleCourse {campus(name)} to Campus
+    Building {campus(name)} to Campus
 }
 
 relationship ManyToMany {
-    Activity {campuses(name)} to Campus {activities}
+    Building {neighbours(name)} to Campus {neighbourBuildings}
 }
 
 

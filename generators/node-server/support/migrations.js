@@ -104,7 +104,9 @@ export const primaryKeyColumn = entity => {
     name: entity.primaryKey.name,
     type,
     primary: true,
-    ...(type === 'String' || !entity.primaryKey.autoGenerate ? {} : { generated: entity.primaryKey.typeUUID ? 'uuid' : 'increment' }),
+    ...(type === 'String' || (!entity.primaryKey.autoGenerate && !entity.builtInUser)
+      ? {}
+      : { generated: entity.primaryKey.typeUUID ? 'uuid' : 'increment' }),
   };
 };
 
