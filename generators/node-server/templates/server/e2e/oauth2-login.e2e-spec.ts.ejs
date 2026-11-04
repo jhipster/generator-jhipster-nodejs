@@ -29,7 +29,13 @@ describe('OAuth2 login', () => {
   let issuer: string;
   /** The bodies of the requests to the token endpoint of the provider. */
   const tokenRequests: string[] = [];
-  const idToken = unsignedToken({ sub: 'abc', preferred_username: 'Login-User', email: 'Login@Example.com', given_name: 'Login', groups: ['ROLE_USER'] });
+  const idToken = unsignedToken({
+    sub: 'abc',
+    preferred_username: 'Login-User',
+    email: 'Login@Example.com',
+    given_name: 'Login',
+    groups: ['ROLE_USER'],
+  });
 
   beforeAll(async () => {
     // The token endpoint of the provider, which exchanges the code for the tokens.
@@ -61,7 +67,9 @@ describe('OAuth2 login', () => {
   });
 
   /** The login of an agent, which keeps the cookies like a browser: the redirection of the callback of the provider. */
-  const login = async (agent: ReturnType<typeof request.agent>): Promise<{ authorization: request.Response; callback: request.Response }> => {
+  const login = async (
+    agent: ReturnType<typeof request.agent>,
+  ): Promise<{ authorization: request.Response; callback: request.Response }> => {
     const authorization = await agent.get('/oauth2/authorization/oidc').expect(302);
     const state = new URL(authorization.headers.location).searchParams.get('state');
     const callback = await agent.get(`/login/oauth2/code/oidc?code=the-code&state=${state}`).expect(302);

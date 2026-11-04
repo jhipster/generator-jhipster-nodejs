@@ -13,7 +13,11 @@ export interface SortableOptions {
  * the other entity (`region.id`, `region.name`). A relationship itself, a collection, another column of the other
  * entity or a deeper path cannot be sorted on.
  */
-export function isSortableProperty(metadata: EntityMetadata, property: string, { unsortable = [], labels = {} }: SortableOptions = {}): boolean {
+export function isSortableProperty(
+  metadata: EntityMetadata,
+  property: string,
+  { unsortable = [], labels = {} }: SortableOptions = {},
+): boolean {
   const [name, otherProperty, ...deeper] = property.split('.');
   const relation = metadata.findRelationWithPropertyPath(name);
   if (otherProperty === undefined) {
@@ -36,7 +40,10 @@ export function documentOrder<T>(metadata: EntityMetadata, order?: FindOptionsOr
   return (
     order &&
     (Object.fromEntries(
-      Object.entries(order).map(([property, direction]) => [metadata.findColumnWithPropertyPath(property)?.databaseName ?? property, direction]),
+      Object.entries(order).map(([property, direction]) => [
+        metadata.findColumnWithPropertyPath(property)?.databaseName ?? property,
+        direction,
+      ]),
     ) as FindOptionsOrder<T>)
   );
 }

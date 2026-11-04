@@ -6,31 +6,30 @@ import { Transform } from 'class-transformer';
 <%_ } _%>
 import { <%- ['BaseDTO', anyFieldNumeric && 'numberFromString', relationships.length > 0 && 'type RelatedDTO'].filter(Boolean).join(', ') %> } from '../../../common/dto/base.dto.ts';
 
-<%_
-let isUserRelationship = false;
-const uniqueEntities = {};
-const uniqueEnums = {};
-const fieldsWithoutId = [];
+<%_ let isUserRelationship = false;
+    const uniqueEntities = {};
+    const uniqueEnums = {};
+    const fieldsWithoutId = [];
 
-for (idx in fields) {
-    if (fields[idx].fieldIsEnum && (
-            !uniqueEnums[fields[idx].fieldType] || (uniqueEnums[fields[idx].fieldType] && fields[idx].fieldValues.length !== 0))) {
-        uniqueEnums[fields[idx].fieldType] = this._.kebabCase(fields[idx].fieldType);
-    }
-    if (fields[idx].fieldName !== 'id') {
-        fieldsWithoutId.push(fields[idx]);
-    }
-}
-for (idx in relationships) {
-    const relationship = relationships[idx];
-    const otherDto = relationship.otherEntity.dtoClass;
-    if (relationship.otherEntity.entityClass === 'User'){
-        isUserRelationship = true;
-    }
-    else if (!uniqueEntities[otherDto] && otherDto != dtoClass) {
-        uniqueEntities[otherDto] = relationship.otherEntity.nodejsDtoPath;
-    }
-}
+    for (idx in fields) {
+      if (fields[idx].fieldIsEnum && (
+        !uniqueEnums[fields[idx].fieldType] || (uniqueEnums[fields[idx].fieldType] && fields[idx].fieldValues.length !== 0))) {
+          uniqueEnums[fields[idx].fieldType] = this._.kebabCase(fields[idx].fieldType);
+        }
+        if (fields[idx].fieldName !== 'id') {
+          fieldsWithoutId.push(fields[idx]);
+        }
+      }
+      for (idx in relationships) {
+        const relationship = relationships[idx];
+        const otherDto = relationship.otherEntity.dtoClass;
+        if (relationship.otherEntity.entityClass === 'User'){
+          isUserRelationship = true;
+        }
+        else if (!uniqueEntities[otherDto] && otherDto != dtoClass) {
+          uniqueEntities[otherDto] = relationship.otherEntity.nodejsDtoPath;
+        }
+      }
 _%>
 
 <%_ Object.keys(uniqueEntities).forEach(function(entityDto) { _%>
@@ -41,7 +40,7 @@ import { <%= enumClass %> } from '../../enumeration/<%= uniqueEnums[enumClass] %
 <%_ }); _%>
 
 <%_ if (isUserRelationship === true) { _%>
-import { <%= user.dtoClass%> } from '../../../users/dto/user.dto.ts';
+import { <%= user.dtoClass %> } from '../../../users/dto/user.dto.ts';
 <%_ } _%>
 
 /**
@@ -54,43 +53,45 @@ export class <%= dtoClass %> extends BaseDTO {
   @Allow()
   <%= primaryKey.name %>?: <%= primaryKey.tsType %>;
 
-    <%_ for (idx in fieldsWithoutId) {
-        const field = fieldsWithoutId[idx];
-       if (typeof field.javadoc !== 'undefined') { _%>
+<%_ for (idx in fieldsWithoutId) {
+      const field = fieldsWithoutId[idx];
+      if (typeof field.javadoc !== 'undefined') {
+_%>
     <%- formatAsFieldJavadoc(field.javadoc) %>
-    <%_ }
-        const required = field.fieldValidationRequired;
-        const fieldValidate = field.fieldValidate;
-        const fieldType = field.fieldType;
-        const fieldTypeBlobContent = field.fieldTypeBlobContent;
-        const fieldName = field.fieldName;
-        const fieldNameUnderscored = field.fieldNameUnderscored;
-        const fieldNameAsDatabaseColumn = field.fieldNameAsDatabaseColumn;
-        if (fieldValidate === true || field.fieldIsEnum || field.nodejsTypeValidators.length > 0) {
-            _%>
+  <%_ }
+      const required = field.fieldValidationRequired;
+      const fieldValidate = field.fieldValidate;
+      const fieldType = field.fieldType;
+      const fieldTypeBlobContent = field.fieldTypeBlobContent;
+      const fieldName = field.fieldName;
+      const fieldNameUnderscored = field.fieldNameUnderscored;
+      const fieldNameAsDatabaseColumn = field.fieldNameAsDatabaseColumn;
+      if (fieldValidate === true || field.fieldIsEnum || field.nodejsTypeValidators.length > 0) {
+  _%>
             <%- include('../../../common/field_validators', { field }); -%>
-        <%_ } else { _%>
+  <%_ } else { _%>
             @Allow()
-        <%_ } _%>
-            <%_ if (field.fieldIsEnum) { _%>
+  <%_ } _%>
+  <%_ if (field.fieldIsEnum) { _%>
             @ApiProperty({ enum: <%= fieldType %>, <%_ if (typeof field.javadoc != 'undefined') { _%> description: '<%- formatAsApiDescription(field.javadoc) %>' <%_ } else { _%> description: '<%= fieldName %> enum field' <%_ } if (!required) { _%>, required: false <%_ } _%>})
-            <%_ } else { _%>
+  <%_ } else { _%>
             @ApiProperty({ <%_ if (typeof field.javadoc != 'undefined') { _%> description: '<%- formatAsApiDescription(field.javadoc) %>' <%_ } else { _%> description: '<%= fieldName %> field' <%_ } if (!required) { _%>, required: false <%_ } _%>})
-            <%_ } _%>
+  <%_ } _%>
         <%= fieldName %><%- field.fieldValidationRequired ? '!' : '?' %>: <%= field.nodejsFieldType %>;
 
-        <%_ if ((fieldType === 'byte[]' || fieldType === 'ByteBuffer') && fieldTypeBlobContent !== 'text') { _%>
+  <%_ if ((fieldType === 'byte[]' || fieldType === 'ByteBuffer') && fieldTypeBlobContent !== 'text') { _%>
 
         @Allow()
         <%= fieldName %>ContentType<%- field.fieldValidationRequired ? '!' : '?' %>: string;
-        <%_ }
-        } _%>
+<%_ }
+    }
+_%>
 
-        <%_
-  for (const relationship of relationships) {
-        if (typeof relationship.javadoc != 'undefined') { _%>
+<%_ for (const relationship of relationships) {
+      if (typeof relationship.javadoc != 'undefined') {
+_%>
   <%- formatAsFieldJavadoc(relationship.javadoc) %>
-        <%_ } _%>
+  <%_ } _%>
   <%_ if (relationship.columnRequired) { _%>
   // Like the @NotNull relationships of JHipster Spring Boot.
   @IsNotEmpty()
@@ -98,7 +99,7 @@ export class <%= dtoClass %> extends BaseDTO {
   @Allow()
   @ApiProperty({ type: () => <%= relationship.otherEntity.dtoClass %><%- relationship.collection ? ', isArray: true' : '' %>, <%_ if (typeof relationship.javadoc != 'undefined') { _%>  description: '<%- formatAsApiDescription(relationship.javadoc) %>' <%_ } else { _%> description: '<%= relationship.propertyName %> relationship' <%_ } _%> })
   <%= relationship.propertyName %><%- relationship.relationshipRequired ? '!' : '?' %>: RelatedDTO<<%= relationship.otherEntity.dtoClass %><%- relationship.collection ? '[]' : '' %>>;
-  <%_ } _%>
+<%_ } _%>
 
   // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
 }

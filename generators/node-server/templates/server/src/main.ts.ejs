@@ -43,7 +43,11 @@ async function bootstrap(): Promise<void> {
   // abortOnError: false: an error of the initialization (the database still unreachable after the retries) rejects
   // to the catch of bootstrap() below, instead of Nest stopping the process by itself.
   const tlsOptions = httpsOptions();
-  const app = await NestFactory.create<NestExpressApplication>(AppModule, { abortOnError: false, logger: appLogger, httpsOptions: tlsOptions });
+  const app = await NestFactory.create<NestExpressApplication>(AppModule, {
+    abortOnError: false,
+    logger: appLogger,
+    httpsOptions: tlsOptions,
+  });
   // Like JHipster Spring Boot, partial updates (PATCH) accept application/json and application/merge-patch+json
   app.useBodyParser('json', { type: ['application/json', 'application/merge-patch+json'] });
   // Close the application (HTTP server, database connections) on SIGTERM, the signal docker stop sends.
@@ -51,22 +55,22 @@ async function bootstrap(): Promise<void> {
   // CORS, global validation<% if (authenticationUsesCsrf) { %>, HTTP settings and sessions<% } else { %> and HTTP settings<% } %>, shared with the e2e tests.
   configureApp(app);
 
-  <%_ if (authenticationType === 'oauth2') { _%>
+<%_ if (authenticationType === 'oauth2') { _%>
 
   app.use(passport.initialize());
   app.use(passport.session());
-  <%_ } _%>
+<%_ } _%>
 
-  <%_ if (!skipClient) { _%>
+<%_ if (!skipClient) { _%>
   const staticClientPath = config.getClientPath();
   if (fs.existsSync(staticClientPath)) {
     logger.log(`Serving static client resources on ${staticClientPath}`);
   } else {
     logger.log(`No client it has been found`);
   }
-  <%_ } else { _%>
-    logger.log(`The client is not been generated`);
-  <%_ } _%>
+<%_ } else { _%>
+  logger.log(`The client is not been generated`);
+<%_ } _%>
   // The API documentation of the api-docs profile, like JHipster Spring Boot.
   if (isProfileActive('api-docs')) {
     setupSwagger(app);
@@ -112,6 +116,9 @@ async function loadCloudConfig(): Promise<void> {
 bootstrap().catch((error: unknown) => {
   // A failed start (database unreachable after the retries, port in use, cloud config not loaded, ...) stops the process
   // with a failure exit code, for the container orchestrator or the process manager to see it and restart it.
-  logger.error(`Application failed to start: ${error instanceof Error ? error.message : String(error)}`, error instanceof Error ? error.stack : undefined);
+  logger.error(
+    `Application failed to start: ${error instanceof Error ? error.message : String(error)}`,
+    error instanceof Error ? error.stack : undefined,
+  );
   process.exit(1);
 });

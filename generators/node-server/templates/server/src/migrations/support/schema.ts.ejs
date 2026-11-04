@@ -173,12 +173,21 @@ export const addColumns = async (
     missing,
     (options.relationUniques ?? []).filter(name => missingNames.includes(name)),
   );
-  await queryRunner.addColumns(table, tableColumns.map(column => new TableColumn(column)));
+  await queryRunner.addColumns(
+    table,
+    tableColumns.map(column => new TableColumn(column)),
+  );
   if (uniques.length > 0) {
-    await queryRunner.createUniqueConstraints(tableName, uniques.map(unique => new TableUnique(unique)));
+    await queryRunner.createUniqueConstraints(
+      tableName,
+      uniques.map(unique => new TableUnique(unique)),
+    );
   }
   if (indices.length > 0) {
-    await queryRunner.createIndices(tableName, indices.map(index => new TableIndex(index)));
+    await queryRunner.createIndices(
+      tableName,
+      indices.map(index => new TableIndex(index)),
+    );
   }
 };
 

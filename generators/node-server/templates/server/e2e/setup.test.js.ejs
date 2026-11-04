@@ -1,1 +1,1 @@
-process.env.BACKEND_ENV='test'
+process.env.BACKEND_ENV = 'test';

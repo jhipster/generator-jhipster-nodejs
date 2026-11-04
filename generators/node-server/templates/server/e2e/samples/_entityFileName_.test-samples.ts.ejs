@@ -32,9 +32,9 @@ const storeUser = (app: INestApplication) => {
 export const requiredReferences = (_app: INestApplication): Promise<Record<string, unknown>> => Promise.resolve({});
 <%_ } else { _%>
 export const requiredReferences = async (app: INestApplication): Promise<Record<string, unknown>> => ({
-<%_   for (const { propertyName, reference } of nodejsTestSample.references) { _%>
+  <%_ for (const { propertyName, reference } of nodejsTestSample.references) { _%>
   <%= propertyName %>: <%- reference %>,
-<%_   } _%>
+  <%_ } _%>
 });
 <%_ } _%>
 

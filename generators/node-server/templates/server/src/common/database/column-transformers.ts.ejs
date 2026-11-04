@@ -18,8 +18,7 @@ export const blobTransformer: ValueTransformer = {
 };
 
 const NANOS_PER_SECOND = 1_000_000_000n;
-const ISO_DURATION =
-  /^([-+]?)P(?:([-+]?\d+)D)?(?:T(?:([-+]?\d+)H)?(?:([-+]?\d+)M)?(?:([-+]?)(\d+)(?:[.,](\d{0,9}))?S)?)?$/i;
+const ISO_DURATION = /^([-+]?)P(?:([-+]?\d+)D)?(?:T(?:([-+]?\d+)H)?(?:([-+]?\d+)M)?(?:([-+]?)(\d+)(?:[.,](\d{0,9}))?S)?)?$/i;
 
 /** The nanoseconds of an ISO-8601 duration, like Duration.parse of Java: PT1H30M, P2DT3H, PT-0.5S. */
 export function parseDuration(text: string): bigint {
@@ -64,6 +63,5 @@ export function formatDuration(nanos: bigint): string {
 /** A duration, an ISO-8601 text in the API and its nanoseconds in a bigint column, like JHipster Spring Boot. */
 export const durationTransformer: ValueTransformer = {
   to: (value: string | null | undefined) => (value === null || value === undefined ? value : parseDuration(value).toString()),
-  from: (value: string | number | bigint | null) =>
-    value === null || value === undefined ? value : formatDuration(BigInt(value)),
+  from: (value: string | number | bigint | null) => (value === null || value === undefined ? value : formatDuration(BigInt(value))),
 };

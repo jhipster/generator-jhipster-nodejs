@@ -16,7 +16,10 @@ export class CreateSessions1570200270082 implements MigrationInterface {
     ]);
     const { namingStrategy } = queryRunner.connection;
     for (const column of ['login', 'expires']) {
-      await queryRunner.createIndex(SESSION_TABLE, new TableIndex({ name: namingStrategy.indexName(SESSION_TABLE, [column]), columnNames: [column] }));
+      await queryRunner.createIndex(
+        SESSION_TABLE,
+        new TableIndex({ name: namingStrategy.indexName(SESSION_TABLE, [column]), columnNames: [column] }),
+      );
     }
   }
 

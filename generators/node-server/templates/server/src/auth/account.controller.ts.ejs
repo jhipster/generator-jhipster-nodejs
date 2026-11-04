@@ -23,8 +23,8 @@ export class AccountController {
 <%_ if (generateUserManagement) { _%>
     private readonly mailService: MailService,
 <%_ } _%>
-  ) { }
-  <%_ if (generateUserManagement) { _%>
+  ) {}
+<%_ if (generateUserManagement) { _%>
 
   @Post('/register')
   @ApiOperation({ summary: 'Register user' })
@@ -77,14 +77,14 @@ export class AccountController {
   async getAccount(@Req() req: { user: <%- userLoginVmClass %> }): Promise<<%- user.dtoClass %> | undefined> {
     const { user } = req;
     const userProfileFound = await this.authService.getAccount(user.id!);
-    <%_ if (databaseType === 'mongodb') { _%>
+  <%_ if (databaseType === 'mongodb') { _%>
     if (userProfileFound && !userProfileFound.firstName) {
-        userProfileFound.firstName ='';
+      userProfileFound.firstName = '';
     }
     if (userProfileFound && !userProfileFound.lastName) {
-        userProfileFound.lastName ='';
+      userProfileFound.lastName = '';
     }
-    <%_ } _%>
+  <%_ } _%>
     return userProfileFound;
   }
 
@@ -145,7 +145,7 @@ export class AccountController {
     await this.authService.completePasswordReset(keyAndPassword.newPassword, keyAndPassword.key);
   }
 
-  <%_ } else if (authenticationType === 'oauth2') { _%>
+<%_ } else if (authenticationType === 'oauth2') { _%>
 
   @Get('/account')
   @ApiBearerAuth()
@@ -160,7 +160,7 @@ export class AccountController {
     return this.authService.getAccount(req.user);
   }
 
-  <%_ } else {_%>
+<%_ } else { _%>
 
   @Get('/account')
   @ApiBearerAuth()
@@ -181,6 +181,6 @@ export class AccountController {
     return req.user;
   }
   <%_ } _%>
-  <%_ } _%>
+<%_ } _%>
 
 }

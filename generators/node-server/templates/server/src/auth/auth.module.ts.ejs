@@ -46,14 +46,14 @@ import { AccountController } from './account.controller.ts';
 
 @Module({
   imports: [
-  <%_ if (generateBuiltInAuthorityEntity || authenticationUsesCsrf) { _%>
+<%_ if (generateBuiltInAuthorityEntity || authenticationUsesCsrf) { _%>
   TypeOrmModule.forFeature([<%- [generateBuiltInAuthorityEntity && 'Authority', authenticationUsesCsrf && 'Session'].filter(Boolean).join(', ') %>]),
-  <%_ } _%>
-  <%_ if (generateBuiltInUserEntity) { _%>
+<%_ } _%>
+<%_ if (generateBuiltInUserEntity) { _%>
   UserModule,
-  <%_ } _%>
+<%_ } _%>
   PassportModule,
-  <%_ if (authenticationType === 'jwt' && generateBuiltInUserEntity) { _%>
+<%_ if (authenticationType === 'jwt' && generateBuiltInUserEntity) { _%>
     JwtModule.registerAsync({
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => ({
@@ -64,32 +64,32 @@ import { AccountController } from './account.controller.ts';
         },
       }),
     }),
-  <%_ } else if (authenticationType === 'oauth2') { _%>
+<%_ } else if (authenticationType === 'oauth2') { _%>
   HttpModule,
-  <%_ } _%>
+<%_ } _%>
   ],
   controllers: [
-  <%_ if (authenticationType === 'jwt' && generateBuiltInUserEntity) { _%>
+<%_ if (authenticationType === 'jwt' && generateBuiltInUserEntity) { _%>
   UserJWTController,
-  <%_ } else if (authenticationType === 'oauth2') { _%>
+<%_ } else if (authenticationType === 'oauth2') { _%>
   UserOauth2Controller,
-  <%_ } else if (authenticationTypeSession) { _%>
+<%_ } else if (authenticationTypeSession) { _%>
   UserSessionController,
-  <%_ } _%>
-  <%_ if (generateBuiltInAuthorityEntity) { _%>
+<%_ } _%>
+<%_ if (generateBuiltInAuthorityEntity) { _%>
   AuthorityController,
-  <%_ } _%>
+<%_ } _%>
   <%- generateBuiltInUserEntity ? 'PublicUserController' : 'ManagementController' %>, AccountController ],
   providers: [AuthService,
-  <%_ if (authenticationUsesCsrf) { _%>
+<%_ if (authenticationUsesCsrf) { _%>
   SessionStore,
-  <%_ } _%>
-  <%_ if (authenticationType === 'jwt') { _%>
+<%_ } _%>
+<%_ if (authenticationType === 'jwt') { _%>
   JwtStrategy
-  <%_ } else if (authenticationType === 'oauth2') { _%>
+<%_ } else if (authenticationType === 'oauth2') { _%>
   Oauth2Strategy,
   Oauth2BearerStrategy
-  <%_ } _%>
+<%_ } _%>
   ],
   exports: [AuthService],
 })

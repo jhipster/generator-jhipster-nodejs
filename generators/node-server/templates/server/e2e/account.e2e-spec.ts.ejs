@@ -6,7 +6,7 @@ import { configureApp } from '../src/app.config.ts';
 import { ExecutionContext, INestApplication } from '@nestjs/common';
 import { AuthGuard } from '../src/auth/guards/auth.guard.ts';
 import { RolesGuard } from '../src/auth/guards/roles.guard.ts';
-import { <%= user.dtoClass%> } from '../src/users/dto/user.dto.ts';
+import { <%= user.dtoClass %> } from '../src/users/dto/user.dto.ts';
 import { UserService } from '../src/users/user.service.ts';
 import { PasswordChangeDTO } from '../src/auth/dto/password-change.dto.ts';
 import { AuthService } from '../src/auth/auth.service.ts';
@@ -19,7 +19,7 @@ describe('Account', () => {
     let sendActivationEmail: MockInstance<MailService['sendActivationEmail']>;
     let sendPasswordResetMail: MockInstance<MailService['sendPasswordResetMail']>;
 
-    const testUserDTO: <%= user.dtoClass%> = {
+    const testUserDTO: <%= user.dtoClass %> = {
         login: 'userTestLogin',
         email: 'usertest@localhost.it',
         password: 'testPassword',
@@ -38,7 +38,7 @@ describe('Account', () => {
         newPassword: 'newPassword',
     };
 
-    let userAuthenticated: <%= user.dtoClass%>;
+    let userAuthenticated: <%= user.dtoClass %>;
 
     const authGuardMock = { canActivate: (context: ExecutionContext): any => {
         const req = context.switchToHttp().getRequest();
@@ -73,7 +73,7 @@ describe('Account', () => {
     });
 
     it('/POST register new user', async () => {
-        const createdUser: <%= user.dtoClass%> = (
+        const createdUser: <%= user.dtoClass %> = (
             await request(app.getHttpServer())
                 .post('/api/register')
                 .send({ ...testUserDTO, activated: true })
@@ -214,7 +214,7 @@ describe('Account', () => {
 
     it('/POST account update settings', async () => {
 
-        const savedTestUser: <%= user.dtoClass%> = {
+        const savedTestUser: <%= user.dtoClass %> = {
             firstName: 'updateFirstName',
             lastName: 'updateLastName',
             ...testUserAuthenticated,
@@ -264,7 +264,7 @@ describe('Account', () => {
         expect(problem).toMatchObject({ type: 'https://www.jhipster.tech/problem/invalid-password' });
     });
 
-    it<%- databaseTypeMongodb ? '.skip' : ''%>('/POST change password', async () => {
+    it<%- databaseTypeMongodb ? '.skip' : '' %>('/POST change password', async () => {
         await request(app.getHttpServer())
             .post('/api/account/change-password')
             .send(testPasswordChange)
@@ -277,14 +277,14 @@ describe('Account', () => {
         expect(successFullyLoggedInWithNewPassword).toEqual(true);
     });
 
-    it<%- databaseTypeMongodb ? '.skip' : ''%>('logs in with the login in another case', async () => {
+    it<%- databaseTypeMongodb ? '.skip' : '' %>('logs in with the login in another case', async () => {
         const loggedIn = await authService
             .authenticate(testUserAuthenticated.login.toUpperCase(), testUserAuthenticated.password)
             .then(() => true, () => false);
         expect(loggedIn).toEqual(true);
     });
 
-    it<%- databaseTypeMongodb ? '.skip' : ''%>('/POST change password with a wrong current password is an invalid password problem', async () => {
+    it<%- databaseTypeMongodb ? '.skip' : '' %>('/POST change password with a wrong current password is an invalid password problem', async () => {
         const problem = (
             await request(app.getHttpServer())
                 .post('/api/account/change-password')

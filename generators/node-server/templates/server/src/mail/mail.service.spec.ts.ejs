@@ -12,7 +12,14 @@ describe('MailService', () => {
   let mailService: MailService;
   let sendMail: ReturnType<typeof vi.spyOn>;
 
-  const user = { login: 'mailuser', email: 'mailuser@localhost.it', password: '', langKey: 'en', activationKey: 'activationKey', resetKey: 'resetKey' };
+  const user = {
+    login: 'mailuser',
+    email: 'mailuser@localhost.it',
+    password: '',
+    langKey: 'en',
+    activationKey: 'activationKey',
+    resetKey: 'resetKey',
+  };
 
   /** The mail the JSON transport of nodemailer gives back instead of sending it. */
   const sentMail = async (): Promise<{ from: { address: string }; subject: string; html: string }> =>
@@ -30,7 +37,10 @@ describe('MailService', () => {
       ],
     })
       .overrideProvider(MAILER_OPTIONS)
-      .useFactory({ factory: (configService: ConfigService) => ({ ...mailerOptions(configService), transport: { jsonTransport: true } }), inject: [ConfigService] })
+      .useFactory({
+        factory: (configService: ConfigService) => ({ ...mailerOptions(configService), transport: { jsonTransport: true } }),
+        inject: [ConfigService],
+      })
       .compile();
     mailService = moduleRef.get(MailService);
     sendMail = vi.spyOn(moduleRef.get(MailerService), 'sendMail');

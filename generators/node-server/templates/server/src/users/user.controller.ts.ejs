@@ -1,7 +1,7 @@
 import { Body, Controller, NotFoundException, Delete, Get, Logger, Param, Post, Put, UseGuards, Req, UseInterceptors, ClassSerializerInterceptor } from '@nestjs/common';
 import { AuthGuard,  Roles, RolesGuard, RoleType } from '../auth/index.ts';
 import { PageRequest, Page } from '../common/database/pagination.entity.ts';
-import { <%= user.dtoClass%> } from './dto/user.dto.ts';
+import { <%= user.dtoClass %> } from './dto/user.dto.ts';
 import { HeaderUtil } from '../common/header-util.ts';
 import { Request } from '../common/request.ts';
 import {<%_ if (authenticationTypeJwt) { _%> ApiBearerAuth, <%_ } else { _%> ApiSecurity, <%_ } _%> ApiTags, ApiResponse, ApiOperation } from '@nestjs/swagger';
@@ -38,10 +38,10 @@ export class UserController {
   @ApiResponse({
       status: 200,
       description: 'List all users',
-      type: <%= user.dtoClass%>,
+      type: <%= user.dtoClass %>,
       isArray: true,
   })
-  async getAllUsers(@Req() req: Request): Promise<<%= user.dtoClass%>[]> {
+  async getAllUsers(@Req() req: Request): Promise<<%= user.dtoClass %>[]> {
       const pageRequest: PageRequest = new PageRequest(
         req.query.page,
         req.query.size,
@@ -63,11 +63,11 @@ export class UserController {
   @ApiResponse({
       status: 201,
       description: 'The record has been successfully created.',
-      type: <%= user.dtoClass%>,
+      type: <%= user.dtoClass %>,
   })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
   @ApiResponse({ status: 400, description: 'The user already has an id, or its login or mail is already used.' })
-  async createUser(@Req() req: Request, @Body() userDTO: <%= user.dtoClass%>): Promise<<%= user.dtoClass%>> {
+  async createUser(@Req() req: Request, @Body() userDTO: <%= user.dtoClass %>): Promise<<%= user.dtoClass %>> {
       if (userDTO.<%= user.primaryKey.name %> !== undefined && userDTO.<%= user.primaryKey.name %> !== null) {
           // Like JHipster Spring Boot, a new user cannot have an id: it would update an existing one.
           throw new BadRequestAlertException('A new user cannot already have an ID', 'userManagement', 'idexists');
@@ -116,14 +116,14 @@ export class UserController {
   @ApiResponse({
       status: 200,
       description: 'The record has been successfully updated.',
-      type: <%= user.dtoClass%>,
+      type: <%= user.dtoClass %>,
   })
   @ApiResponse({ status: 400, description: 'The login or the mail is used by another user.' })
   @ApiResponse({ status: 404, description: 'No user of this id.' })
-  async updateUser(@Req() req: Request, @Body() userDTO: <%= user.dtoClass%>): Promise<<%= user.dtoClass%>> {
+  async updateUser(@Req() req: Request, @Body() userDTO: <%= user.dtoClass %>): Promise<<%= user.dtoClass %>> {
     // Like JHipster Spring Boot, the user of the id of the body, whose login and mail are not the ones of another user.
     const id = userDTO.<%= user.primaryKey.name %>;
-    const isAnotherUser = (other?: <%= user.dtoClass%>): boolean => other !== undefined && other !== null && String(other.<%= user.primaryKey.name %>) !== String(id);
+    const isAnotherUser = (other?: <%= user.dtoClass %>): boolean => other !== undefined && other !== null && String(other.<%= user.primaryKey.name %>) !== String(id);
     const login = userDTO.login.toLowerCase();
     const email = userDTO.email.toLowerCase();
     if (isAnotherUser(await this.userService.findByFields({ where: { email } }))) {
@@ -161,9 +161,9 @@ export class UserController {
   @ApiResponse({
       status: 200,
       description: 'The found record',
-      type: <%= user.dtoClass%>,
+      type: <%= user.dtoClass %>,
   })
-  async getUser(@Param('login') loginValue: string): Promise<<%= user.dtoClass%>> {
+  async getUser(@Param('login') loginValue: string): Promise<<%= user.dtoClass %>> {
       // With its authorities, which the edition page of the client shows and sends back.
       const user = await this.userService.findByFields({ where: { login: loginValue } });
       if (!user) {
@@ -178,9 +178,9 @@ export class UserController {
   @ApiResponse({
       status: 204,
       description: 'The record has been successfully deleted.',
-      type: <%= user.dtoClass%>
+      type: <%= user.dtoClass %>
   })
-  async deleteUser(@Req() req: Request, @Param('login') loginValue: string): Promise<<%= user.dtoClass%> | undefined> {
+  async deleteUser(@Req() req: Request, @Param('login') loginValue: string): Promise<<%= user.dtoClass %> | undefined> {
       const userToDelete = await this.userService.find({ where: { login: loginValue } });
       if (!userToDelete) {
         throw new NotFoundException();

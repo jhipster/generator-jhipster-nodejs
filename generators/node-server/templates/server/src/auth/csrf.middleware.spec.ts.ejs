@@ -21,7 +21,9 @@ describe('CsrfMiddleware', () => {
   it('refuses a login without the token of its cookie, like Spring Security', () => {
     expect(() => checkLoginCsrfToken({ headers: {} } as any)).toThrow(ForbiddenException);
     expect(() => checkLoginCsrfToken({ headers: { 'x-xsrf-token': 't0k' } } as any)).toThrow(ForbiddenException);
-    expect(() => checkLoginCsrfToken({ headers: { cookie: 'XSRF-TOKEN=t0k', 'x-xsrf-token': 'other' } } as any)).toThrow(ForbiddenException);
+    expect(() => checkLoginCsrfToken({ headers: { cookie: 'XSRF-TOKEN=t0k', 'x-xsrf-token': 'other' } } as any)).toThrow(
+      ForbiddenException,
+    );
   });
 
   it('accepts a login with the token of its cookie', () => {
@@ -34,7 +36,11 @@ describe('CsrfMiddleware', () => {
   });
 
   it('gives a CSRF cookie until the browser is closed to a client without a session, like JHipster Spring Boot', () => {
-    expect(call('GET', {}).res.cookie).toHaveBeenCalledWith('XSRF-TOKEN', expect.any(String), expect.not.objectContaining({ maxAge: expect.anything() }));
+    expect(call('GET', {}).res.cookie).toHaveBeenCalledWith(
+      'XSRF-TOKEN',
+      expect.any(String),
+      expect.not.objectContaining({ maxAge: expect.anything() }),
+    );
   });
 <%_ } else { _%>
   it('lets the requests without a logged session pass, without the cookie', () => {

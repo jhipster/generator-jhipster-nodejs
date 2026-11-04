@@ -10,7 +10,8 @@ import request from 'supertest';
 const { publicKey, privateKey } = generateKeyPairSync('rsa', { modulusLength: 2048 });
 const otherKey = generateKeyPairSync('rsa', { modulusLength: 2048 }).privateKey;
 const kid = 'test-key';
-const base64url = (value: object | Buffer): string => (Buffer.isBuffer(value) ? value : Buffer.from(JSON.stringify(value))).toString('base64url');
+const base64url = (value: object | Buffer): string =>
+  (Buffer.isBuffer(value) ? value : Buffer.from(JSON.stringify(value))).toString('base64url');
 
 describe('OAuth2 bearer tokens', () => {
   let jwks: Server;
@@ -53,7 +54,9 @@ describe('OAuth2 bearer tokens', () => {
   it('answers 401 without a session nor a bearer token, like JHipster Spring Boot', () => account().expect(401));
 
   it('accepts an access token of the identity provider, its user from its claims', async () => {
-    const { body } = await account(`Bearer ${token({ preferred_username: 'Bearer-User', email: 'Bearer@Example.com', groups: ['ROLE_USER'] })}`).expect(200);
+    const { body } = await account(
+      `Bearer ${token({ preferred_username: 'Bearer-User', email: 'Bearer@Example.com', groups: ['ROLE_USER'] })}`,
+    ).expect(200);
     expect(body).toMatchObject({ login: 'bearer-user', email: 'bearer@example.com', authorities: ['ROLE_USER'] });
   });
 
