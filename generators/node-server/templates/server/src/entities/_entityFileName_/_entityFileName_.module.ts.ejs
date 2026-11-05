@@ -1,13 +1,15 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { <%= entityClass %> } from './<%= entityFileName %>.entity.ts';
+<%_ if (entityRestLayer) { _%>
 import { <%= entityClass %>Controller } from './<%= entityFileName %>.controller.ts';
+<%_ } _%>
 import { <%= entityClass %>Service } from './<%= entityFileName %>.service.ts';
 
 
 @Module({
   imports: [TypeOrmModule.forFeature([<%= entityClass %>])],
-  controllers: [<%= entityClass %>Controller],
+  controllers: [<% if (entityRestLayer) { %><%= entityClass %>Controller<% } %>],
   providers: [<%= entityClass %>Service],
   exports: [<%= entityClass %>Service],
 })

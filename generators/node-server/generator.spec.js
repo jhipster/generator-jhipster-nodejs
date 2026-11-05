@@ -901,6 +901,77 @@ describe('SubGenerator node-server of nodejs JHipster blueprint', () => {
     });
   });
 
+  describe('with a built-in entity of a blueprint, like the layers of JHipster', () => {
+    const screen = {
+      name: 'Screen',
+      builtIn: true,
+      changelogDate: '20240101000000',
+      fields: [{ fieldName: 'title', fieldType: 'String' }],
+    };
+    const panel = {
+      name: 'Panel',
+      builtIn: true,
+      changelogDate: '20240101000001',
+      entityRestLayer: false,
+      fields: [{ fieldName: 'title', fieldType: 'String' }],
+    };
+
+    beforeAll(async function () {
+      await helpers
+        .run(SUB_GENERATOR_NAMESPACE)
+        .withJHipsterConfig({ skipClient: true }, [screen, panel])
+        .withOptions({ ignoreNeedlesError: true })
+        .withJHipsterGenerators()
+        .withConfiguredBlueprint();
+    });
+
+    it('should write a built-in entity without layers declared like an entity of the JDL, in its feature module', () => {
+      result.assertFile([
+        'server/src/entities/screen/screen.entity.ts',
+        'server/src/entities/screen/screen.service.ts',
+        'server/src/entities/screen/screen.controller.ts',
+        'server/e2e/screen.e2e-spec.ts',
+        'server/e2e/screen.database.e2e-spec.ts',
+      ]);
+      result.assertFileContent('server/src/app.module.ts', 'ScreenModule');
+    });
+
+    it('should write the REST layer only with entityRestLayer', () => {
+      result.assertFile(['server/src/entities/panel/panel.entity.ts', 'server/src/entities/panel/panel.service.ts']);
+      result.assertNoFile(['server/src/entities/panel/panel.controller.ts', 'server/e2e/panel.e2e-spec.ts']);
+      result.assertNoFileContent('server/src/entities/panel/panel.module.ts', 'PanelController');
+    });
+
+    it('should keep the files of User and Authority in the users module', () => {
+      result.assertFile(['server/src/users/user.entity.ts', 'server/src/users/authority.entity.ts']);
+      result.assertNoFile(['server/src/entities/user/user.entity.ts', 'server/src/entities/authority/authority.entity.ts']);
+    });
+  });
+
+  describe('with a relationship to the built-in Authority', () => {
+    const book = {
+      name: 'Book',
+      changelogDate: '20240101000000',
+      fields: [{ fieldName: 'title', fieldType: 'String' }],
+      relationships: [
+        { relationshipName: 'authority', otherEntityName: 'authority', relationshipType: 'many-to-many', otherEntityField: 'name' },
+      ],
+    };
+
+    beforeAll(async function () {
+      await helpers
+        .run(SUB_GENERATOR_NAMESPACE)
+        .withJHipsterConfig({ skipClient: true }, [book])
+        .withOptions({ ignoreNeedlesError: true })
+        .withJHipsterGenerators()
+        .withConfiguredBlueprint();
+    });
+
+    it('should store an authority of the test in the relationship test', () => {
+      result.assertFileContent('server/e2e/book.database.e2e-spec.ts', 'ROLE_BOOK_AUTHORIT');
+    });
+  });
+
   describe('entity column types', () => {
     // The entities are shared by the prod database and by better-sqlite3 (dev and test).
     const sampleEntity = {

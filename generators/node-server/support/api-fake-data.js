@@ -47,7 +47,10 @@ export const apiFakeEntity = entity => {
 export const mutateRelatedValues = entity => ({
   __override__: false,
   nodejsRelatedValues: ({ otherEntity, propertyName }) => {
-    if (otherEntity.builtIn) return undefined;
+    // An authority of the test: the name is its id, and JHipster has no fake value for it.
+    if (otherEntity.builtInAuthority) return { name: `ROLE_${entity.entityInstance}_${propertyName}`.toUpperCase() };
+    // A related record the test posts through the REST API of the other entity.
+    if (!otherEntity.entityRestLayer) return undefined;
     otherEntity.resetFakerSeed(`nodejs-database-e2e-${entity.entityInstance}-${propertyName}`);
     return apiFakeEntity(otherEntity).values;
   },
