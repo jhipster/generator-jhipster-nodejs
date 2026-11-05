@@ -1,9 +1,8 @@
-<%_
-// A String id of the JDL (autoGenerate), whose UUID the entity generates like the @GeneratedValue of JHipster Spring Boot:
-// the databases generate numbers and uuids only.
-const generatedStringId = databaseTypeSql && primaryKey.typeString && primaryKey.autoGenerate;
-// An id the database stores as given: a String, or one the client gives, like the @Id without @GeneratedValue of JHipster Spring Boot.
-const givenId = primaryKey.typeString || !primaryKey.autoGenerate;
+<%_ // A String id of the JDL (autoGenerate), whose UUID the entity generates like the @GeneratedValue of JHipster Spring Boot:
+    // the databases generate numbers and uuids only.
+    const generatedStringId = databaseTypeSql && primaryKey.typeString && primaryKey.autoGenerate;
+    // An id the database stores as given: a String, or one the client gives, like the @Id without @GeneratedValue of JHipster Spring Boot.
+    const givenId = primaryKey.typeString || !primaryKey.autoGenerate;
 _%>
 <%_ if (generatedStringId) { _%>
 import { randomUUID } from 'node:crypto';
@@ -20,27 +19,26 @@ import { <%- nodejsColumnTransformers.map(name => `${name}Transformer`).join(', 
 import { <%- nodejsColumnTypeImports.join(', ') %> } from '../../common/database/column-types.ts';
 <%_ } _%>
 
-<%_
-let isUserRelationship = false;
-const uniqueEntities = {};
-const uniqueEnums = {};
+<%_ let isUserRelationship = false;
+    const uniqueEntities = {};
+    const uniqueEnums = {};
 
-for (idx in fields) {
-    if (fields[idx].fieldIsEnum && (
-            !uniqueEnums[fields[idx].fieldType] || (uniqueEnums[fields[idx].fieldType] && fields[idx].fieldValues.length !== 0))) {
-        uniqueEnums[fields[idx].fieldType] = this._.kebabCase(fields[idx].fieldType);
-    }
-}
-for (idx in relationships) {
-    const relationship = relationships[idx];
-    const otherEntityClass = relationship.otherEntity.persistClass;
-    if (relationship.otherEntity.entityClass === 'User'){
-        isUserRelationship = true;
-    }
-    else if (!uniqueEntities[otherEntityClass] && otherEntityClass != persistClass) {
-        uniqueEntities[otherEntityClass] = relationship.otherEntity.nodejsEntityPath;
-    }
-}
+    for (idx in fields) {
+      if (fields[idx].fieldIsEnum && (
+        !uniqueEnums[fields[idx].fieldType] || (uniqueEnums[fields[idx].fieldType] && fields[idx].fieldValues.length !== 0))) {
+          uniqueEnums[fields[idx].fieldType] = this._.kebabCase(fields[idx].fieldType);
+        }
+      }
+      for (idx in relationships) {
+        const relationship = relationships[idx];
+        const otherEntityClass = relationship.otherEntity.persistClass;
+        if (relationship.otherEntity.entityClass === 'User'){
+          isUserRelationship = true;
+        }
+        else if (!uniqueEntities[otherEntityClass] && otherEntityClass != persistClass) {
+          uniqueEntities[otherEntityClass] = relationship.otherEntity.nodejsEntityPath;
+        }
+      }
 _%>
 
 <%_ Object.keys(uniqueEntities).forEach(function(entityClass) { _%>
@@ -67,9 +65,9 @@ export class <%= persistClass %> extends BaseEntity  {
 <%_ if (databaseTypeMongodb) { _%>
   @ObjectIdColumn({ name: '_<%- primaryKey.name %>' })
 <%_ } else if (databaseTypeSql && givenId) { _%>
-<%_   if (primaryKey.typeString) { _%>
+  <%_ if (primaryKey.typeString) { _%>
   // A varchar, like the String id of the Liquibase changelog of JHipster Spring Boot.
-<%_   } _%>
+  <%_ } _%>
   @PrimaryColumn()
 <%_ } else if (databaseTypeSql) { _%>
   @PrimaryGeneratedColumn(<%- primaryKey.typeUUID ? "'uuid'" : '' %>)
@@ -88,48 +86,52 @@ export class <%= persistClass %> extends BaseEntity  {
 <%_ } _%>
 
 <%_ for (const field of fields.filter(field => !field.id)) {
-    if (typeof field.javadoc !== 'undefined') { _%>
+      if (typeof field.javadoc !== 'undefined') {
+_%>
 <%- formatAsFieldJavadoc(field.javadoc) %>
-    <%_ }
-    const { fieldType, fieldTypeBlobContent, fieldName } = field; _%>
+  <%_ }
+      const { fieldType, fieldTypeBlobContent, fieldName } = field;
+  _%>
     @Column({ <%- field.nodejsColumnOptions.join(', ') %> })
-    <%_ if (nodejsCriteria?.decorators[fieldName]) { _%>
+  <%_ if (nodejsCriteria?.decorators[fieldName]) { _%>
     <%- nodejsCriteria.decorators[fieldName] %>
-    <%_ } _%>
+  <%_ } _%>
     <%= fieldName %><%- field.fieldValidationRequired ? '!' : '?' %>: <%= field.nodejsFieldType %>;
 
-    <%_ if ((fieldType === 'byte[]' || fieldType === 'ByteBuffer') && fieldTypeBlobContent !== 'text') { _%>
+  <%_ if ((fieldType === 'byte[]' || fieldType === 'ByteBuffer') && fieldTypeBlobContent !== 'text') { _%>
     @Column({ <%- field.nodejsContentTypeColumnOptions.join(', ') %> })
     <%= fieldName %>ContentType<%- field.fieldValidationRequired ? '!' : '?' %>: string;
-    <%_ }
-    } _%>
+<%_ }
+    }
+_%>
 
-    <%_ for (const relationship of relationships) {
-        const { otherEntityRelationshipName, otherEntityRelationshipNamePlural, relationshipFieldName, relationshipFieldNamePlural, ownerSide, otherEntityUser } = relationship;
-        const otherEntityClass = relationship.otherEntity.persistClass;
-        if (relationship.relationshipOneToMany) { _%>
+<%_ for (const relationship of relationships) {
+      const { otherEntityRelationshipName, otherEntityRelationshipNamePlural, relationshipFieldName, relationshipFieldNamePlural, ownerSide, otherEntityUser } = relationship;
+      const otherEntityClass = relationship.otherEntity.persistClass;
+      if (relationship.relationshipOneToMany) {
+_%>
     @OneToMany(() => <%= otherEntityClass %> <%_ if (!otherEntityUser) { _%>, other => other.<%= otherEntityRelationshipName %><%_ } _%>)
     <%= relationshipFieldNamePlural %><%- relationship.relationshipRequired ? '!' : '?' %>: Relation<<%= otherEntityClass %>[]>;
 
-    <%_ } else if (relationship.relationshipManyToOne) { _%>
+  <%_ } else if (relationship.relationshipManyToOne) { _%>
     @ManyToOne(() => <%= otherEntityClass %> <%_ if (!ownerSide && !otherEntityUser) { _%>, other => other.<%= otherEntityRelationshipNamePlural %>  <%_ } _%><%- relationship.nodejsRelationOptions %>)
     <%_ if (nodejsCriteria?.decorators[relationshipFieldName]) { _%>
     <%- nodejsCriteria.decorators[relationshipFieldName] %>
     <%_ } _%>
     <%= relationshipFieldName %><%- relationship.relationshipRequired ? '!' : '?' %>: Relation<<%= otherEntityClass %>>;
 
-    <%_ } else if (relationship.relationshipManyToMany) { _%>
+  <%_ } else if (relationship.relationshipManyToMany) { _%>
     @ManyToMany(() => <%= otherEntityClass %> )
-        <%_ if (relationship.nodejsJoinTable) { _%>
+    <%_ if (relationship.nodejsJoinTable) { _%>
     @JoinTable({
         name: '<%= relationship.nodejsJoinTable.name %>',
         joinColumn: { name: '<%= relationship.nodejsJoinTable.joinColumn.name %>', referencedColumnName: '<%= relationship.nodejsJoinTable.joinColumn.referencedColumnName %>' },
         inverseJoinColumn: { name: '<%= relationship.nodejsJoinTable.inverseJoinColumn.name %>', referencedColumnName: '<%= relationship.nodejsJoinTable.inverseJoinColumn.referencedColumnName %>' }
     })
-        <%_ } _%>
+    <%_ } _%>
     <%= relationshipFieldNamePlural %><%- relationship.relationshipRequired ? '!' : '?' %>: Relation<<%= otherEntityClass %>[]>;
 
-    <%_ } else { _%>
+  <%_ } else { _%>
     <%_ if (ownerSide) { _%>
     @OneToOne(() => <%= otherEntityClass %><%- relationship.nodejsRelationOptions %>)
     @JoinColumn()
@@ -141,8 +143,9 @@ export class <%= persistClass %> extends BaseEntity  {
     <%_ } _%>
     <%= relationshipFieldName %><%- relationship.relationshipRequired ? '!' : '?' %>: Relation<<%= otherEntityClass %>>;
 
-    <%_ }
-    } _%>
+<%_ }
+    }
+_%>
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
 
 }
