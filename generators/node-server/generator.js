@@ -9,7 +9,7 @@ import { createBase64Secret, createReproducibleBase64Secret, mutateData } from '
 import { SERVER_NODEJS_SRC_DIR } from '../generator-nodejs-constants.js';
 
 import { entityFiles } from './entity-files.js';
-import { serverFiles } from './files.js';
+import { criteriaFiles, serverFiles } from './files.js';
 import {
   MIGRATION_TIMESTAMP_OFFSET,
   apiFakeEntity,
@@ -25,6 +25,7 @@ import {
   insertSortedImport,
   invalidTypeValue,
   joinTable,
+  mutateCriteria,
   mutateEntityAuthorities,
   mutateEntityPaths,
   mutateRelatedValues,
@@ -355,6 +356,18 @@ export default class extends BaseApplicationGenerator {
     });
   }
 
+  get [BaseApplicationGenerator.CONFIGURING_EACH_ENTITY]() {
+    return this.asConfiguringEachEntityTaskGroup({
+      configureFiltering({ application, entityName, entityConfig }) {
+        // Like JHipster Spring Boot, the filtering of the lists needs a SQL database.
+        if (entityConfig.jpaMetamodelFiltering && application.databaseType !== 'sql') {
+          this.log.warn(`The filtering of ${entityName} needs a SQL database, disabling it.`);
+          entityConfig.jpaMetamodelFiltering = false;
+        }
+      },
+    });
+  }
+
   get [BaseApplicationGenerator.PREPARING_EACH_ENTITY]() {
     return this.asPreparingEachEntityTaskGroup({
       prepareMappedByRelationships({ entityDefaults }) {
@@ -377,6 +390,10 @@ export default class extends BaseApplicationGenerator {
       prepareTestSamples({ application, entityDefaults }) {
         // The test samples of the entity and the ones its database end-to-end tests read (support/test-samples.js).
         entityDefaults(mutateTestSamples(application));
+      },
+      prepareCriteria({ application, entityDefaults }) {
+        // The properties the lists of the entity filter on, with filter (support/criteria.js).
+        entityDefaults(mutateCriteria(application));
       },
     });
   }
@@ -636,6 +653,12 @@ export default class extends BaseApplicationGenerator {
               enumInfo,
             );
           }
+        }
+      },
+      async writeCriteriaFiles({ application, entities }) {
+        // The criteria shared by the entities whose lists are filtered.
+        if (entities.some(entity => !entity.skipServer && entity.nodejsCriteria)) {
+          await this.writeFiles({ sections: criteriaFiles, context: application });
         }
       },
     });

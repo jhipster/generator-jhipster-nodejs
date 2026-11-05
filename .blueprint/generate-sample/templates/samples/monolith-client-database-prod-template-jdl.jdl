@@ -45,3 +45,8 @@ enum SpaceEventType {
   LAUNCH,
   LANDING
 }
+
+// The lists filtered by criteria, like the filtering of JHipster Spring Boot: on a SQL database (MongoDB disables it).
+// The filters of the Angular client need the pagination.
+filter *
+paginate Mission with pagination

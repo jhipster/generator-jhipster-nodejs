@@ -749,6 +749,107 @@ describe('SubGenerator node-server of nodejs JHipster blueprint', () => {
       );
     });
   });
+  describe('with filter, like the jpaMetamodelFiltering of JHipster Spring Boot', () => {
+    const country = {
+      name: 'Country',
+      changelogDate: '20240101000000',
+      jpaMetamodelFiltering: true,
+      fields: [{ fieldName: 'name', fieldType: 'String' }],
+    };
+    const region = {
+      name: 'Region',
+      changelogDate: '20240101000001',
+      jpaMetamodelFiltering: true,
+      fields: [
+        { fieldName: 'name', fieldType: 'String' },
+        { fieldName: 'population', fieldType: 'Long' },
+        { fieldName: 'founded', fieldType: 'Instant' },
+        { fieldName: 'coastal', fieldType: 'Boolean' },
+        { fieldName: 'code', fieldType: 'UUID' },
+        { fieldName: 'area', fieldType: 'Float' },
+        { fieldName: 'flag', fieldType: 'byte[]', fieldTypeBlobContent: 'image' },
+      ],
+      relationships: [
+        { relationshipName: 'country', otherEntityName: 'country', relationshipType: 'many-to-one' },
+        { relationshipName: 'neighbour', otherEntityName: 'country', relationshipType: 'many-to-many' },
+      ],
+    };
+    const city = { name: 'City', changelogDate: '20240101000002', fields: [{ fieldName: 'name', fieldType: 'String' }] };
+
+    beforeAll(async function () {
+      await helpers
+        .run(SUB_GENERATOR_NAMESPACE)
+        .withJHipsterConfig({ skipClient: true }, [country, region, city])
+        .withOptions({ ignoreNeedlesError: true })
+        .withJHipsterGenerators()
+        .withConfiguredBlueprint();
+    });
+
+    it('should write the criteria shared by the entities', () => {
+      result.assertFile(['server/src/common/database/criteria.ts', 'server/src/common/database/criteria.spec.ts']);
+    });
+
+    it('should declare the properties of the criteria on the entity by their kind, a relationship to one by the id of the related record', () => {
+      const entity = 'server/src/entities/region/region.entity.ts';
+      result.assertFileContent(entity, "import { Filterable } from '../../common/database/criteria.ts';");
+      result.assertFileContent(entity, /@Filterable\(\{ kind: 'range', type: 'number' \}\)\n\s+id\?: number;/);
+      result.assertFileContent(entity, /@Filterable\(\{ kind: 'string', type: 'string' \}\)\n\s+name\?: string;/);
+      result.assertFileContent(entity, /@Filterable\(\{ kind: 'range', type: 'number' \}\)\n\s+population\?: number;/);
+      result.assertFileContent(entity, /@Filterable\(\{ kind: 'range', type: 'date' \}\)\n\s+founded\?: Date;/);
+      result.assertFileContent(entity, /@Filterable\(\{ kind: 'equality', type: 'boolean' \}\)\n\s+coastal\?: boolean;/);
+      result.assertFileContent(entity, /@Filterable\(\{ kind: 'equality', type: 'string' \}\)\n\s+code\?: string;/);
+      result.assertFileContent(entity, /@Filterable\(\{ kind: 'range', type: 'number' \}\)\n\s+country\?: Relation<Country>;/);
+      // Like JHipster Spring Boot, no filter of a binary blob; the relationships to many records are left out.
+      result.assertNoFileContent(entity, /@Filterable\([^)]*\)\n\s+flag\?/);
+      result.assertNoFileContent(entity, /@Filterable\([^)]*\)\n\s+neighbours\?/);
+    });
+
+    it('should filter the list and count the records of the criteria', () => {
+      const controller = 'server/src/entities/region/region.controller.ts';
+      result.assertFileContent(controller, 'where: criteriaWhere(req.query, criteriaOf(this.regionService.metadata)),');
+      result.assertFileContent(controller, "@Get('/count')");
+      result.assertFileContent(
+        'server/src/entities/region/region.service.ts',
+        'async count(options: FindManyOptions<Region>): Promise<number> {',
+      );
+    });
+
+    it('should test the criteria of every property on the database', () => {
+      result.assertFileContent('server/e2e/region.database.e2e-spec.ts', '"name": "countryId",');
+      result.assertFileContent('server/e2e/region.database.e2e-spec.ts', '"approximate": true');
+    });
+
+    it('should not filter the lists of an entity without filter', () => {
+      result.assertNoFileContent('server/src/entities/city/city.controller.ts', 'criteriaWhere');
+      result.assertNoFileContent('server/src/entities/city/city.entity.ts', 'Filterable');
+      result.assertNoFileContent('server/src/entities/city/city.controller.ts', "@Get('/count')");
+    });
+  });
+
+  describe('with filter on MongoDB', () => {
+    beforeAll(async function () {
+      await helpers
+        .run(SUB_GENERATOR_NAMESPACE)
+        .withJHipsterConfig({ skipClient: true, databaseType: 'mongodb' }, [
+          {
+            name: 'Note',
+            changelogDate: '20240101000000',
+            jpaMetamodelFiltering: true,
+            fields: [{ fieldName: 'title', fieldType: 'String' }],
+          },
+        ])
+        .withOptions({ ignoreNeedlesError: true })
+        .withJHipsterGenerators()
+        .withConfiguredBlueprint();
+    });
+
+    it('should not filter the lists, like JHipster Spring Boot needing a SQL database', () => {
+      result.assertNoFile('server/src/common/database/criteria.ts');
+      result.assertNoFileContent('server/src/entities/note/note.controller.ts', 'criteriaWhere');
+      result.assertJsonFileContent('.jhipster/Note.json', { jpaMetamodelFiltering: false });
+    });
+  });
+
   describe('entity validators', () => {
     const bookEntity = {
       name: 'Book',

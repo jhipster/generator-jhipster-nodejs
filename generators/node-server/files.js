@@ -260,3 +260,13 @@ export const serverFiles = {
     },
   ],
 };
+
+/** The criteria of the lists of the entities with filter, like the QueryService of JHipster Spring Boot. */
+export const criteriaFiles = {
+  criteria: [
+    {
+      path: SERVER_NODEJS_DIR,
+      templates: ['src/common/database/criteria.ts', 'src/common/database/criteria.spec.ts'],
+    },
+  ],
+};

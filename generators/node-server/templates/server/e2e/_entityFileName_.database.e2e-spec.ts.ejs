@@ -305,4 +305,60 @@ _%>
     await request(server).delete(`/api/<%= entityApiUrl %>/${linked.<%= pk %>}`).expect(204);
   });
 <%_ } _%>
+<%_ if (nodejsCriteria) { _%>
+
+  /** The properties of the criteria, like the <%= entityClass %>Criteria of JHipster Spring Boot, by their kind. */
+  const criteria: { name: string; property: string; kind: 'equality' | 'range' | 'string'; approximate?: boolean }[] = <%- nodejsCriteria.tests %>;
+
+  it('should filter the list and its count by the criteria of every property, like the filtering of JHipster Spring Boot', async () => {
+    const server = app.getHttpServer();
+    const { body: stored } = await request(server).post('/api/<%= entityApiUrl %>').send(<%- spreads[entityInstance] ? `{ ...createdValues${spreads[entityInstance]} }` : 'createdValues' %>).expect(201);
+    const id = stored.<%= primaryKey.name %>;
+    /** Whether the record stored is among the ones of the criteria, the other records of the database left out. */
+    const found = async (criterion: string, value: unknown): Promise<boolean> => {
+      const query = `${criterion}=${encodeURIComponent(String(value))}&<%= primaryKey.name %>.in=${encodeURIComponent(String(id))}`;
+      const { body } = await request(server).get(`/api/<%= entityApiUrl %>?${query}`).expect(200);
+      const { body: count } = await request(server).get(`/api/<%= entityApiUrl %>/count?${query}`).expect(200);
+      expect(count).toBe(body.length);
+      return body.some((record: any) => record.<%= primaryKey.name %> === id);
+    };
+
+    for (const { name, property, kind, approximate } of criteria) {
+      // The value read back, of the related record for a relationship (`country.id`).
+      const value = property.split('.').reduce<any>((record, key) => record?.[key], stored);
+      if (value === undefined || value === null) {
+        expect(await found(`${name}.specified`, false), `${name}.specified=false`).toBe(true);
+        expect(await found(`${name}.specified`, true), `${name}.specified=true`).toBe(false);
+        continue;
+      }
+      expect(await found(`${name}.specified`, true), `${name}.specified=true`).toBe(true);
+      expect(await found(`${name}.specified`, false), `${name}.specified=false`).toBe(false);
+      // A Float read back is approximate on the databases keeping it in single precision: it equals no stored value.
+      if (approximate) continue;
+      expect(await found(`${name}.equals`, value), `${name}.equals`).toBe(true);
+      expect(await found(`${name}.notEquals`, value), `${name}.notEquals`).toBe(false);
+      if (!String(value).includes(',')) {
+        expect(await found(`${name}.in`, value), `${name}.in`).toBe(true);
+        expect(await found(`${name}.notIn`, value), `${name}.notIn`).toBe(false);
+      }
+      if (kind === 'range') {
+        expect(await found(`${name}.greaterThanOrEqual`, value), `${name}.greaterThanOrEqual`).toBe(true);
+        expect(await found(`${name}.lessThanOrEqual`, value), `${name}.lessThanOrEqual`).toBe(true);
+        expect(await found(`${name}.greaterThan`, value), `${name}.greaterThan`).toBe(false);
+        expect(await found(`${name}.lessThan`, value), `${name}.lessThan`).toBe(false);
+      }
+      if (kind === 'string') {
+        // Case insensitive, like the contains of JHipster Spring Boot.
+        expect(await found(`${name}.contains`, String(value).toUpperCase()), `${name}.contains`).toBe(true);
+        expect(await found(`${name}.doesNotContain`, value), `${name}.doesNotContain`).toBe(false);
+      }
+    }
+<%_ if (primaryKey.fields[0].fieldTypeNumeric) { _%>
+    // A value of another type is a bad request, like the binding of the criteria by Spring.
+    await request(server).get('/api/<%= entityApiUrl %>?<%= primaryKey.name %>.equals=not-a-number').expect(400);
+<%_ } _%>
+
+    await request(server).delete(`/api/<%= entityApiUrl %>/${id}`).expect(204);
+  });
+<%_ } _%>
 });
