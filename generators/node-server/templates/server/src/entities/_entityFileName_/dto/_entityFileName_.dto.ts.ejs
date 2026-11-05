@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Allow<% if (anyPropertyHasValidation || fields.some(field => field.fieldIsEnum || field.nodejsTypeValidators.length > 0)) { %>, IsNotEmpty, IsOptional, IsEnum, MinLength, MaxLength, Length, Min, Max, Matches, IsInt, IsNumber, IsBoolean, IsUUID, IsISO8601<% } %> } from 'class-validator';
+import { Allow<%- (anyPropertyHasValidation || fields.some(field => field.fieldIsEnum || field.nodejsTypeValidators.length > 0)) ? ', IsNotEmpty, IsOptional, IsEnum, MinLength, MaxLength, Length, Min, Max, Matches, IsInt, IsNumber, IsBoolean, IsUUID, IsISO8601' : '' %> } from 'class-validator';
 <%_ const anyFieldNumeric = fields.some(field => (!field.id || !primaryKey.autoGenerate) && field.fieldTypeNumeric); _%>
 <%_ if (databaseTypeMongodb || anyFieldNumeric) { _%>
 import { Transform } from 'class-transformer';
@@ -14,85 +14,76 @@ import { <%- ['BaseDTO', anyFieldNumeric && 'numberFromString', relationships.le
     for (idx in fields) {
       if (fields[idx].fieldIsEnum && (
         !uniqueEnums[fields[idx].fieldType] || (uniqueEnums[fields[idx].fieldType] && fields[idx].fieldValues.length !== 0))) {
-          uniqueEnums[fields[idx].fieldType] = this._.kebabCase(fields[idx].fieldType);
-        }
-        // An id the client gives is declared with its validations, like the other fields.
-        if (!fields[idx].id || !primaryKey.autoGenerate) {
-          fieldsWithoutId.push(fields[idx]);
-        }
+        uniqueEnums[fields[idx].fieldType] = this._.kebabCase(fields[idx].fieldType);
       }
-      for (idx in relationships) {
-        const relationship = relationships[idx];
-        const otherDto = relationship.otherEntity.dtoClass;
-        if (relationship.otherEntity.entityClass === 'User'){
-          isUserRelationship = true;
-        }
-        else if (!uniqueEntities[otherDto] && otherDto != dtoClass) {
-          uniqueEntities[otherDto] = relationship.otherEntity.nodejsDtoPath;
-        }
+      // An id the client gives is declared with its validations, like the other fields.
+      if (!fields[idx].id || !primaryKey.autoGenerate) {
+        fieldsWithoutId.push(fields[idx]);
       }
+    }
+    for (idx in relationships) {
+      const relationship = relationships[idx];
+      const otherDto = relationship.otherEntity.dtoClass;
+      if (relationship.otherEntity.entityClass === 'User') {
+        isUserRelationship = true;
+      }
+      else if (!uniqueEntities[otherDto] && otherDto !== dtoClass) {
+        uniqueEntities[otherDto] = relationship.otherEntity.nodejsDtoPath;
+      }
+    }
 _%>
 
-<%_ Object.keys(uniqueEntities).forEach(function(entityDto) { _%>
-import { <%= entityDto %> } from '../../../<%= uniqueEntities[entityDto] %>';
-<%_ }); _%>
-<%_ Object.keys(uniqueEnums).forEach(function(enumClass) { _%>
-import { <%= enumClass %> } from '../../enumeration/<%= uniqueEnums[enumClass] %>.ts';
-<%_ }); _%>
+<%_ for (const entityDto of Object.keys(uniqueEntities)) { _%>
+import { <%- entityDto %> } from '../../../<%- uniqueEntities[entityDto] %>';
+<%_ } _%>
+<%_ for (const enumClass of Object.keys(uniqueEnums)) { _%>
+import { <%- enumClass %> } from '../../enumeration/<%- uniqueEnums[enumClass] %>.ts';
+<%_ } _%>
 
 <%_ if (isUserRelationship === true) { _%>
-import { <%= user.dtoClass %> } from '../../../users/dto/user.dto.ts';
+import { <%- user.dtoClass %> } from '../../../users/dto/user.dto.ts';
 <%_ } _%>
 
 /**
- * A <%= dtoClass %> object.
+ * A <%- dtoClass %> object.
  */
-export class <%= dtoClass %> extends BaseDTO {
+export class <%- dtoClass %> extends BaseDTO {
 <%_ if (primaryKey.autoGenerate) { _%>
   <%_ if (databaseTypeMongodb) { _%>
   @Transform(({ value }) => value?.toHexString ? value?.toHexString() : value, {toPlainOnly: true})
   <%_ } _%>
   @Allow()
-  <%= primaryKey.name %>?: <%= primaryKey.tsType %>;
+  <%- primaryKey.name %>?: <%- primaryKey.tsType %>;
 <%_ } _%>
 
-<%_ for (idx in fieldsWithoutId) {
-      const field = fieldsWithoutId[idx];
-      if (typeof field.javadoc !== 'undefined') {
-_%>
+<%_ for (idx in fieldsWithoutId) { _%>
+  <%_ const field = fieldsWithoutId[idx]; _%>
+  <%_ if (typeof field.javadoc !== 'undefined') { _%>
     <%- formatAsFieldJavadoc(field.javadoc) %>
-  <%_ }
-      const required = field.fieldValidationRequired;
-      const fieldValidate = field.fieldValidate;
-      const fieldType = field.fieldType;
-      const fieldTypeBlobContent = field.fieldTypeBlobContent;
-      const fieldName = field.fieldName;
-      const fieldNameUnderscored = field.fieldNameUnderscored;
-      const fieldNameAsDatabaseColumn = field.fieldNameAsDatabaseColumn;
-      if (fieldValidate === true || field.fieldIsEnum || field.nodejsTypeValidators.length > 0) {
+  <%_ } _%>
+  <%_ const required = field.fieldValidationRequired;
+      const { fieldValidate } = field;
+      const { fieldType } = field;
+      const { fieldTypeBlobContent } = field;
+      const { fieldName } = field;
   _%>
-            <%- include('../../../common/field_validators', { field }); -%>
+  <%_ if (fieldValidate === true || field.fieldIsEnum || field.nodejsTypeValidators.length > 0) { _%>
+            <%- include('../../../common/field_validators', { field }) -%>
   <%_ } else { _%>
             @Allow()
   <%_ } _%>
-  <%_ if (field.fieldIsEnum) { _%>
-            @ApiProperty({ enum: <%= fieldType %>, <%_ if (typeof field.javadoc != 'undefined') { _%> description: '<%- formatAsApiDescription(field.javadoc) %>' <%_ } else { _%> description: '<%= fieldName %> enum field' <%_ } if (!required) { _%>, required: false <%_ } _%>})
-  <%_ } else { _%>
-            @ApiProperty({ <%_ if (typeof field.javadoc != 'undefined') { _%> description: '<%- formatAsApiDescription(field.javadoc) %>' <%_ } else { _%> description: '<%= fieldName %> field' <%_ } if (!required) { _%>, required: false <%_ } _%>})
-  <%_ } _%>
-        <%= fieldName %><%- field.fieldValidationRequired ? '!' : '?' %>: <%= field.nodejsFieldType %>;
+            @ApiProperty({ <%- field.fieldIsEnum ? `enum: ${fieldType}, ` : '' %>description: '<%- typeof field.javadoc === 'undefined' ? `${fieldName} ${field.fieldIsEnum ? 'enum ' : ''}field` : formatAsApiDescription(field.javadoc) %>'<%- required ? '' : ', required: false' %> })
+        <%- fieldName %><%- field.fieldValidationRequired ? '!' : '?' %>: <%- field.nodejsFieldType %>;
 
   <%_ if ((fieldType === 'byte[]' || fieldType === 'ByteBuffer') && fieldTypeBlobContent !== 'text') { _%>
 
         @Allow()
-        <%= fieldName %>ContentType<%- field.fieldValidationRequired ? '!' : '?' %>: string;
-<%_ }
-    }
-_%>
+        <%- fieldName %>ContentType<%- field.fieldValidationRequired ? '!' : '?' %>: string;
+  <%_ } _%>
+<%_ } _%>
 
-<%_ for (const relationship of relationships) {
-      if (typeof relationship.javadoc != 'undefined') {
-_%>
+<%_ for (const relationship of relationships) { _%>
+  <%_ if (typeof relationship.javadoc !== 'undefined') { _%>
   <%- formatAsFieldJavadoc(relationship.javadoc) %>
   <%_ } _%>
   <%_ if (relationship.columnRequired) { _%>
@@ -100,8 +91,8 @@ _%>
   @IsNotEmpty()
   <%_ } _%>
   @Allow()
-  @ApiProperty({ type: () => <%= relationship.otherEntity.dtoClass %><%- relationship.collection ? ', isArray: true' : '' %>, <%_ if (typeof relationship.javadoc != 'undefined') { _%>  description: '<%- formatAsApiDescription(relationship.javadoc) %>' <%_ } else { _%> description: '<%= relationship.propertyName %> relationship' <%_ } _%> })
-  <%= relationship.propertyName %><%- relationship.relationshipRequired ? '!' : '?' %>: RelatedDTO<<%= relationship.otherEntity.dtoClass %><%- relationship.collection ? '[]' : '' %>>;
+  @ApiProperty({ type: () => <%- relationship.otherEntity.dtoClass %><%- relationship.collection ? ', isArray: true' : '' %>, description: '<%- typeof relationship.javadoc === 'undefined' ? `${relationship.propertyName} relationship` : formatAsApiDescription(relationship.javadoc) %>' })
+  <%- relationship.propertyName %><%- relationship.relationshipRequired ? '!' : '?' %>: RelatedDTO<<%- relationship.otherEntity.dtoClass %><%- relationship.collection ? '[]' : '' %>>;
 <%_ } _%>
 
   // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove

@@ -7,7 +7,13 @@ _%>
 <%_ if (generatedStringId) { _%>
 import { randomUUID } from 'node:crypto';
 <%_ } _%>
-import { <%_ if (databaseType === 'mongodb') { _%> ObjectIdColumn <%_ } else if (givenId) { _%> <% if (generatedStringId) { %>BeforeInsert, <% } %>PrimaryColumn <%_ } else { _%> PrimaryGeneratedColumn <%_ } _%>, Entity, Column <%_ if (databaseType !== 'mongodb') { _%>, JoinColumn, OneToOne, ManyToOne, OneToMany, ManyToMany, JoinTable, type Relation <%_ } _%> } from 'typeorm';
+import { 
+<%_ if (databaseType === 'mongodb') { _%> ObjectIdColumn 
+<%_ } else if (givenId) { _%> <%- generatedStringId ? 'BeforeInsert, ' : '' %>PrimaryColumn 
+<%_ } else { _%> PrimaryGeneratedColumn 
+<%_ } _%>, Entity, Column 
+<%_ if (databaseType !== 'mongodb') { _%>, JoinColumn, OneToOne, ManyToOne, OneToMany, ManyToMany, JoinTable, type Relation 
+<%_ } _%> } from 'typeorm';
 import { BaseEntity } from '../../common/database/base.entity.ts';
 <%_ if (nodejsCriteria) { _%>
 import { Filterable } from '../../common/database/criteria.ts';
@@ -26,41 +32,41 @@ import { <%- nodejsColumnTypeImports.join(', ') %> } from '../../common/database
     for (idx in fields) {
       if (fields[idx].fieldIsEnum && (
         !uniqueEnums[fields[idx].fieldType] || (uniqueEnums[fields[idx].fieldType] && fields[idx].fieldValues.length !== 0))) {
-          uniqueEnums[fields[idx].fieldType] = this._.kebabCase(fields[idx].fieldType);
-        }
+        uniqueEnums[fields[idx].fieldType] = this._.kebabCase(fields[idx].fieldType);
       }
-      for (idx in relationships) {
-        const relationship = relationships[idx];
-        const otherEntityClass = relationship.otherEntity.persistClass;
-        if (relationship.otherEntity.entityClass === 'User'){
-          isUserRelationship = true;
-        }
-        else if (!uniqueEntities[otherEntityClass] && otherEntityClass != persistClass) {
-          uniqueEntities[otherEntityClass] = relationship.otherEntity.nodejsEntityPath;
-        }
+    }
+    for (idx in relationships) {
+      const relationship = relationships[idx];
+      const otherEntityClass = relationship.otherEntity.persistClass;
+      if (relationship.otherEntity.entityClass === 'User') {
+        isUserRelationship = true;
       }
+      else if (!uniqueEntities[otherEntityClass] && otherEntityClass !== persistClass) {
+        uniqueEntities[otherEntityClass] = relationship.otherEntity.nodejsEntityPath;
+      }
+    }
 _%>
 
-<%_ Object.keys(uniqueEntities).forEach(function(entityClass) { _%>
-import { <%= entityClass %> } from '../../<%= uniqueEntities[entityClass] %>';
-<%_ }); _%>
-<%_ Object.keys(uniqueEnums).forEach(function(enumClass) { _%>
-import { <%= enumClass %> } from '../enumeration/<%= uniqueEnums[enumClass] %>.ts';
-<%_ }); _%>
-
-<%_ if (isUserRelationship === true) { _%>
-import { <%= user.persistClass %> } from '../../users/user.entity.ts';
+<%_ for (const entityClass of Object.keys(uniqueEntities)) { _%>
+import { <%- entityClass %> } from '../../<%- uniqueEntities[entityClass] %>';
+<%_ } _%>
+<%_ for (const enumClass of Object.keys(uniqueEnums)) { _%>
+import { <%- enumClass %> } from '../enumeration/<%- uniqueEnums[enumClass] %>.ts';
 <%_ } _%>
 
-<%_ if (typeof javadoc == 'undefined') { _%>
+<%_ if (isUserRelationship === true) { _%>
+import { <%- user.persistClass %> } from '../../users/user.entity.ts';
+<%_ } _%>
+
+<%_ if (typeof javadoc === 'undefined') { _%>
 /**
- * A <%= persistClass %>.
+ * A <%- persistClass %>.
  */
 <%_ } else { _%>
 <%- formatAsClassJavadoc(javadoc) %>
 <%_ } _%>
-@Entity('<%= entityTableName %>')
-export class <%= persistClass %> extends BaseEntity  {
+@Entity('<%- entityTableName %>')
+export class <%- persistClass %> extends BaseEntity  {
 
 <%_ if (databaseTypeMongodb) { _%>
   @ObjectIdColumn({ name: '_<%- primaryKey.name %>' })
@@ -85,67 +91,67 @@ export class <%= persistClass %> extends BaseEntity  {
   }
 <%_ } _%>
 
-<%_ for (const field of fields.filter(field => !field.id)) {
-      if (typeof field.javadoc !== 'undefined') {
-_%>
+<%_ for (const field of fields.filter(field => !field.id)) { _%>
+  <%_ if (typeof field.javadoc !== 'undefined') { _%>
 <%- formatAsFieldJavadoc(field.javadoc) %>
-  <%_ }
-      const { fieldType, fieldTypeBlobContent, fieldName } = field;
-  _%>
+  <%_ } _%>
+  <%_ const { fieldType, fieldTypeBlobContent, fieldName } = field; _%>
     @Column({ <%- field.nodejsColumnOptions.join(', ') %> })
   <%_ if (nodejsCriteria?.decorators[fieldName]) { _%>
     <%- nodejsCriteria.decorators[fieldName] %>
   <%_ } _%>
-    <%= fieldName %><%- field.fieldValidationRequired ? '!' : '?' %>: <%= field.nodejsFieldType %>;
+    <%- fieldName %><%- field.fieldValidationRequired ? '!' : '?' %>: <%- field.nodejsFieldType %>;
 
   <%_ if ((fieldType === 'byte[]' || fieldType === 'ByteBuffer') && fieldTypeBlobContent !== 'text') { _%>
     @Column({ <%- field.nodejsContentTypeColumnOptions.join(', ') %> })
-    <%= fieldName %>ContentType<%- field.fieldValidationRequired ? '!' : '?' %>: string;
-<%_ }
-    }
-_%>
+    <%- fieldName %>ContentType<%- field.fieldValidationRequired ? '!' : '?' %>: string;
+  <%_ } _%>
+<%_ } _%>
 
-<%_ for (const relationship of relationships) {
-      const { otherEntityRelationshipName, otherEntityRelationshipNamePlural, relationshipFieldName, relationshipFieldNamePlural, ownerSide, otherEntityUser } = relationship;
+<%_ for (const relationship of relationships) { _%>
+  <%_ const { otherEntityRelationshipName, otherEntityRelationshipNamePlural, relationshipFieldName, relationshipFieldNamePlural, ownerSide, otherEntityUser } = relationship;
       const otherEntityClass = relationship.otherEntity.persistClass;
-      if (relationship.relationshipOneToMany) {
-_%>
-    @OneToMany(() => <%= otherEntityClass %> <%_ if (!otherEntityUser) { _%>, other => other.<%= otherEntityRelationshipName %><%_ } _%>)
-    <%= relationshipFieldNamePlural %><%- relationship.relationshipRequired ? '!' : '?' %>: Relation<<%= otherEntityClass %>[]>;
+  _%>
+  <%_ if (relationship.relationshipOneToMany) { _%>
+    @OneToMany(() => <%- otherEntityClass %> 
+    <%_ if (!otherEntityUser) { _%>, other => other.<%- otherEntityRelationshipName %>
+    <%_ } _%>)
+    <%- relationshipFieldNamePlural %><%- relationship.relationshipRequired ? '!' : '?' %>: Relation<<%- otherEntityClass %>[]>;
 
   <%_ } else if (relationship.relationshipManyToOne) { _%>
-    @ManyToOne(() => <%= otherEntityClass %> <%_ if (!ownerSide && !otherEntityUser) { _%>, other => other.<%= otherEntityRelationshipNamePlural %>  <%_ } _%><%- relationship.nodejsRelationOptions %>)
+    @ManyToOne(() => <%- otherEntityClass %> 
+    <%_ if (!ownerSide && !otherEntityUser) { _%>, other => other.<%- otherEntityRelationshipNamePlural %>  
+    <%_ } _%><%- relationship.nodejsRelationOptions %>)
     <%_ if (nodejsCriteria?.decorators[relationshipFieldName]) { _%>
     <%- nodejsCriteria.decorators[relationshipFieldName] %>
     <%_ } _%>
-    <%= relationshipFieldName %><%- relationship.relationshipRequired ? '!' : '?' %>: Relation<<%= otherEntityClass %>>;
+    <%- relationshipFieldName %><%- relationship.relationshipRequired ? '!' : '?' %>: Relation<<%- otherEntityClass %>>;
 
   <%_ } else if (relationship.relationshipManyToMany) { _%>
-    @ManyToMany(() => <%= otherEntityClass %> )
+    @ManyToMany(() => <%- otherEntityClass %> )
     <%_ if (relationship.nodejsJoinTable) { _%>
     @JoinTable({
-        name: '<%= relationship.nodejsJoinTable.name %>',
-        joinColumn: { name: '<%= relationship.nodejsJoinTable.joinColumn.name %>', referencedColumnName: '<%= relationship.nodejsJoinTable.joinColumn.referencedColumnName %>' },
-        inverseJoinColumn: { name: '<%= relationship.nodejsJoinTable.inverseJoinColumn.name %>', referencedColumnName: '<%= relationship.nodejsJoinTable.inverseJoinColumn.referencedColumnName %>' }
+        name: '<%- relationship.nodejsJoinTable.name %>',
+        joinColumn: { name: '<%- relationship.nodejsJoinTable.joinColumn.name %>', referencedColumnName: '<%- relationship.nodejsJoinTable.joinColumn.referencedColumnName %>' },
+        inverseJoinColumn: { name: '<%- relationship.nodejsJoinTable.inverseJoinColumn.name %>', referencedColumnName: '<%- relationship.nodejsJoinTable.inverseJoinColumn.referencedColumnName %>' }
     })
     <%_ } _%>
-    <%= relationshipFieldNamePlural %><%- relationship.relationshipRequired ? '!' : '?' %>: Relation<<%= otherEntityClass %>[]>;
+    <%- relationshipFieldNamePlural %><%- relationship.relationshipRequired ? '!' : '?' %>: Relation<<%- otherEntityClass %>[]>;
 
   <%_ } else { _%>
     <%_ if (ownerSide) { _%>
-    @OneToOne(() => <%= otherEntityClass %><%- relationship.nodejsRelationOptions %>)
+    @OneToOne(() => <%- otherEntityClass %><%- relationship.nodejsRelationOptions %>)
     @JoinColumn()
     <%_ } else { _%>
-    @OneToOne(() => <%= otherEntityClass %>, other => other.<%= otherEntityRelationshipName %>)
+    @OneToOne(() => <%- otherEntityClass %>, other => other.<%- otherEntityRelationshipName %>)
     <%_ } _%>
     <%_ if (nodejsCriteria?.decorators[relationshipFieldName]) { _%>
     <%- nodejsCriteria.decorators[relationshipFieldName] %>
     <%_ } _%>
-    <%= relationshipFieldName %><%- relationship.relationshipRequired ? '!' : '?' %>: Relation<<%= otherEntityClass %>>;
+    <%- relationshipFieldName %><%- relationship.relationshipRequired ? '!' : '?' %>: Relation<<%- otherEntityClass %>>;
 
-<%_ }
-    }
-_%>
+  <%_ } _%>
+<%_ } _%>
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
 
 }

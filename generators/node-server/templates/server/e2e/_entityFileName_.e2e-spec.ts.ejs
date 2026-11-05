@@ -22,28 +22,28 @@ import { configureApp } from '../src/app.config.ts';
 import { INestApplication } from '@nestjs/common';
 import { AuthGuard } from '../src/auth/guards/auth.guard.ts';
 import { RolesGuard } from '../src/auth/guards/roles.guard.ts';
-import { <%= dtoClass %> } from '../src/entities/<%= entityFileName %>/dto/<%= entityFileName %>.dto.ts';
-import { <%= entityClass %>Service } from '../src/entities/<%= entityFileName %>/<%= entityFileName %>.service.ts';
+import { <%- dtoClass %> } from '../src/entities/<%- entityFileName %>/dto/<%- entityFileName %>.dto.ts';
+import { <%- entityClass %>Service } from '../src/entities/<%- entityFileName %>/<%- entityFileName %>.service.ts';
 import { DataSource, EntityMetadata } from 'typeorm';
-import { <%= entityClass %> } from '../src/entities/<%= entityFileName %>/<%= entityFileName %>.entity.ts';
+import { <%- entityClass %> } from '../src/entities/<%- entityFileName %>/<%- entityFileName %>.entity.ts';
 
 // The alert headers the JHipster clients read, named after jhipster.clientApp.name.
-const alertHeader = (headers: Record<string, unknown>, suffix: string): unknown => headers[`x-<%= frontendAppName.toLowerCase() %>${suffix}`];
+const alertHeader = (headers: Record<string, unknown>, suffix: string): unknown => headers[`x-<%- frontendAppName.toLowerCase() %>${suffix}`];
 
-describe('<%= entityClass %> Controller', () => {
+describe('<%- entityClass %> Controller', () => {
     let app: INestApplication;
 
     const authGuardMock = { canActivate: (): any => true };
     const rolesGuardMock = { canActivate: (): any => true };
     const entityMock: any = {
-        <%= primaryKey.name %>: <%- entityId %>,
+        <%- primaryKey.name %>: <%- entityId %>,
 <%_ for (const [propertyName, value] of fakeFields) { _%>
         <%- propertyName %>: <%- JSON.stringify(value) %>,
 <%_ } _%>
 <%_ // The required relationships in the stored record too: a partial update validates it with the patched fields. _%>
 <%_ for (const relationship of relationships) { _%>
   <%_ if (relationship.nodejsMockReference) { _%>
-        <%= relationship.propertyName %>: <%- relationship.nodejsMockReference %>,
+        <%- relationship.propertyName %>: <%- relationship.nodejsMockReference %>,
   <%_ } _%>
 <%_ } _%>
     }
@@ -68,20 +68,20 @@ _%>
     const validEntity: any = {
         ...entityMock,
 <%_ for (const [fieldName, value] of Object.entries(validValues)) { _%>
-        <%= fieldName %>: <%- JSON.stringify(value) %>,
+        <%- fieldName %>: <%- JSON.stringify(value) %>,
 <%_ } _%>
     };
 
 <%_ if (primaryKey.autoGenerate) { _%>
     // A new record has no id.
-    const { <%= primaryKey.name %>: _id, ...newEntity } = validEntity;
+    const { <%- primaryKey.name %>: _id, ...newEntity } = validEntity;
 <%_ } else { _%>
     // The client gives the id of a new record.
-    const newEntity: any = { ...validEntity, <%= primaryKey.name %>: unknownId };
+    const newEntity: any = { ...validEntity, <%- primaryKey.name %>: unknownId };
 <%_ } _%>
 
     const serviceMock: { metadata?: EntityMetadata, [method: string]: unknown } = {
-        findById: (id: any): any => (id === entityMock.<%= primaryKey.name %> ? { ...entityMock } : undefined),
+        findById: (id: any): any => (id === entityMock.<%- primaryKey.name %> ? { ...entityMock } : undefined),
         findAndCount: (): any => [entityMock, 0],
         save: (): any => entityMock,
         update: (dto: any): any => dto,
@@ -96,21 +96,21 @@ _%>
         .useValue(authGuardMock)
         .overrideGuard(RolesGuard)
         .useValue(rolesGuardMock)
-        .overrideProvider(<%= entityClass %>Service)
+        .overrideProvider(<%- entityClass %>Service)
         .useValue(serviceMock)
         .compile();
         // The sort is validated with the TypeORM metadata of the entity.
-        serviceMock.metadata = moduleFixture.get(DataSource).getMetadata(<%= entityClass %>);
+        serviceMock.metadata = moduleFixture.get(DataSource).getMetadata(<%- entityClass %>);
 
         app = moduleFixture.createNestApplication();
         configureApp(app);
         await app.init();
     });
 
-    it('/GET all <%= entityApiUrl %> ', async () => {
+    it('/GET all <%- entityApiUrl %> ', async () => {
 
-        const getEntities: <%= dtoClass %>[] = (await request(app.getHttpServer())
-        .get('/api/<%= entityApiUrl %>')
+        const getEntities: <%- dtoClass %>[] = (await request(app.getHttpServer())
+        .get('/api/<%- entityApiUrl %>')
         .expect(200)).body;
 
         expect(getEntities).toEqual(entityMock);
@@ -122,39 +122,39 @@ _%>
     const sortRelationship = relationships.find(relationship => relationship.ownerSide && !relationship.collection);
 _%>
 
-    it('/GET all <%= entityApiUrl %> sorted on a property of the entity', async () => {
+    it('/GET all <%- entityApiUrl %> sorted on a property of the entity', async () => {
         await request(app.getHttpServer())
-            .get('/api/<%= entityApiUrl %>?sort=<%= sortField ? sortField.fieldName : primaryKey.name %>,desc')
+            .get('/api/<%- entityApiUrl %>?sort=<%- sortField ? sortField.fieldName : primaryKey.name %>,desc')
             .expect(200);
     });
 <%_ if (sortRelationship) { _%>
 
-    it('/GET all <%= entityApiUrl %> sorted on the id and the label of a relationship', async () => {
+    it('/GET all <%- entityApiUrl %> sorted on the id and the label of a relationship', async () => {
         await request(app.getHttpServer())
-            .get('/api/<%= entityApiUrl %>?sort=<%= sortRelationship.propertyName %>.<%= sortRelationship.otherEntity.primaryKey.name %>,asc')
+            .get('/api/<%- entityApiUrl %>?sort=<%- sortRelationship.propertyName %>.<%- sortRelationship.otherEntity.primaryKey.name %>,asc')
             .expect(200);
         await request(app.getHttpServer())
-            .get('/api/<%= entityApiUrl %>?sort=<%= sortRelationship.propertyName %>.<%= sortRelationship.otherEntityField %>,desc')
+            .get('/api/<%- entityApiUrl %>?sort=<%- sortRelationship.propertyName %>.<%- sortRelationship.otherEntityField %>,desc')
             .expect(200);
     });
 
-    it('/GET all <%= entityApiUrl %> sorted on a deeper property of a relationship', async () => {
+    it('/GET all <%- entityApiUrl %> sorted on a deeper property of a relationship', async () => {
         await request(app.getHttpServer())
-            .get('/api/<%= entityApiUrl %>?sort=<%= sortRelationship.propertyName %>.<%= sortRelationship.otherEntity.primaryKey.name %>.unknown,asc')
+            .get('/api/<%- entityApiUrl %>?sort=<%- sortRelationship.propertyName %>.<%- sortRelationship.otherEntity.primaryKey.name %>.unknown,asc')
             .expect(400);
     });
 <%_ } _%>
 
-    it('/GET all <%= entityApiUrl %> sorted on an unknown property', async () => {
+    it('/GET all <%- entityApiUrl %> sorted on an unknown property', async () => {
         const response = await request(app.getHttpServer())
-            .get('/api/<%= entityApiUrl %>?sort=unknownProperty,asc')
+            .get('/api/<%- entityApiUrl %>?sort=unknownProperty,asc')
             .expect(400);
 
         expect(response.body.detail).toBe('Invalid sort property: unknownProperty');
     });
 <%_ if (nodejsCriteria) { _%>
 
-    it('/GET the count of <%= entityApiUrl %> matching the criteria, as JSON like JHipster Spring Boot', async () => {
+    it('/GET the count of <%- entityApiUrl %> matching the criteria, as JSON like JHipster Spring Boot', async () => {
         const options: any[] = [];
         serviceMock.count = (countOptions: any): any => {
             options.push(countOptions);
@@ -162,13 +162,13 @@ _%>
         };
         try {
             const response = await request(app.getHttpServer())
-                .get('/api/<%= entityApiUrl %>/count?<%= primaryKey.name %>.specified=true&page=0')
+                .get('/api/<%- entityApiUrl %>/count?<%- primaryKey.name %>.specified=true&page=0')
                 .expect('Content-Type', /json/)
                 .expect(200);
 
             expect(response.body).toBe(3);
             // The criteria of the request only, the page left out.
-            expect(Object.keys(options[0].where)).toEqual(['<%= primaryKey.name %>']);
+            expect(Object.keys(options[0].where)).toEqual(['<%- primaryKey.name %>']);
         } finally {
             delete serviceMock.count;
         }
@@ -176,7 +176,7 @@ _%>
 <%_ } _%>
 
 <%_ if (pagination === 'no') { _%>
-    it('/GET all <%= entityApiUrl %> without pagination, like JHipster Spring Boot', async () => {
+    it('/GET all <%- entityApiUrl %> without pagination, like JHipster Spring Boot', async () => {
         const { findAndCount } = serviceMock;
         const options: any[] = [];
         (serviceMock as any).findAndCount = (findOptions: any): any => {
@@ -185,7 +185,7 @@ _%>
         };
         try {
             const response = await request(app.getHttpServer())
-                .get('/api/<%= entityApiUrl %>')
+                .get('/api/<%- entityApiUrl %>')
                 .expect(200);
 
             expect(options[0].take).toBeUndefined();
@@ -197,30 +197,30 @@ _%>
     });
 
 <%_ } else { _%>
-    it('/GET all <%= entityApiUrl %> with the links of the pages', async () => {
+    it('/GET all <%- entityApiUrl %> with the links of the pages', async () => {
         const { findAndCount } = serviceMock;
         // 45 records, 3 pages of 20.
         serviceMock.findAndCount = (): any => [[entityMock], 45];
         try {
             const response = await request(app.getHttpServer())
-                .get('/api/<%= entityApiUrl %>?page=1&size=20')
+                .get('/api/<%- entityApiUrl %>?page=1&size=20')
                 .expect(200);
 
             expect(response.headers['x-total-count']).toBe('45');
             expect(response.headers.link.split(',')).toEqual([
-                '</api/<%= entityApiUrl %>?page=2&size=20>; rel="next"',
-                '</api/<%= entityApiUrl %>?page=0&size=20>; rel="prev"',
-                '</api/<%= entityApiUrl %>?page=2&size=20>; rel="last"',
-                '</api/<%= entityApiUrl %>?page=0&size=20>; rel="first"',
+                '</api/<%- entityApiUrl %>?page=2&size=20>; rel="next"',
+                '</api/<%- entityApiUrl %>?page=0&size=20>; rel="prev"',
+                '</api/<%- entityApiUrl %>?page=2&size=20>; rel="last"',
+                '</api/<%- entityApiUrl %>?page=0&size=20>; rel="first"',
             ]);
         } finally {
             serviceMock.findAndCount = findAndCount;
         }
     });
 
-    it('/GET all <%= entityApiUrl %> without records links the first page as the last one', async () => {
+    it('/GET all <%- entityApiUrl %> without records links the first page as the last one', async () => {
         const response = await request(app.getHttpServer())
-            .get('/api/<%= entityApiUrl %>')
+            .get('/api/<%- entityApiUrl %>')
             .expect(200);
 
         expect(response.headers.link).toContain('page=0&size=20>; rel="last"');
@@ -228,11 +228,11 @@ _%>
     });
 
 <%_ } _%>
-    it('/GET <%= entityApiUrl %> by id', async () => {
+    it('/GET <%- entityApiUrl %> by id', async () => {
 
 
-        const getEntity: <%= dtoClass %> = (await request(app.getHttpServer())
-            .get(`/api/<%= entityApiUrl %>/${entityMock.<%= primaryKey.name %>}`)
+        const getEntity: <%- dtoClass %> = (await request(app.getHttpServer())
+            .get(`/api/<%- entityApiUrl %>/${entityMock.<%- primaryKey.name %>}`)
             .expect(200)).body;
 
         expect(getEntity).toEqual(entityMock);
@@ -240,37 +240,37 @@ _%>
     }
     );
 
-    it('/GET <%= entityApiUrl %> by an unknown id', async () => {
+    it('/GET <%- entityApiUrl %> by an unknown id', async () => {
         await request(app.getHttpServer())
-            .get(`/api/<%= entityApiUrl %>/${unknownId}`)
+            .get(`/api/<%- entityApiUrl %>/${unknownId}`)
             .expect(404);
     });
 <%_ if (numericId || primaryKey.typeUUID) { _%>
 
-    it('/GET <%= entityApiUrl %> by an invalid id', async () => {
+    it('/GET <%- entityApiUrl %> by an invalid id', async () => {
         await request(app.getHttpServer())
-            .get('/api/<%= entityApiUrl %>/<%= invalidId %>')
+            .get('/api/<%- entityApiUrl %>/<%- invalidId %>')
             .expect(400);
     });
 <%_ } _%>
 
-    it('/POST create <%= entityApiUrl %>', async () => {
+    it('/POST create <%- entityApiUrl %>', async () => {
         const response = await request(app.getHttpServer())
-            .post('/api/<%= entityApiUrl %>')
+            .post('/api/<%- entityApiUrl %>')
             .send(newEntity)
             .expect(201);
 
         expect(response.body).toEqual(entityMock);
-        expect(response.headers.location).toBe(`/api/<%= entityApiUrl %>/${entityMock.<%= primaryKey.name %>}`);
+        expect(response.headers.location).toBe(`/api/<%- entityApiUrl %>/${entityMock.<%- primaryKey.name %>}`);
         expect(alertHeader(response.headers, '-alert')).toMatch(<%- enableTranslation ? `/^${frontendAppName}\\.${entityAlertName}\\.created$/` : `/^A new ${entityAlertName} is created with identifier /` %>);
     });
 
-    it('/POST create <%= entityApiUrl %> ignores the properties its DTO does not declare', async () => {
+    it('/POST create <%- entityApiUrl %> ignores the properties its DTO does not declare', async () => {
         // Like JHipster Spring Boot, which ignores the unknown properties of a request: the service gets the declared ones.
         const save = vi.spyOn(serviceMock as any, 'save');
         try {
             await request(app.getHttpServer())
-                .post('/api/<%= entityApiUrl %>')
+                .post('/api/<%- entityApiUrl %>')
                 .send({ ...newEntity, unknownProperty: 'unknown' })
                 .expect(201);
 
@@ -283,214 +283,214 @@ _%>
     });
 
 <%_ if (!primaryKey.autoGenerate && !idField.fieldValidationRequired) { _%>
-    it('/POST create <%= entityApiUrl %> without its id', async () => {
+    it('/POST create <%- entityApiUrl %> without its id', async () => {
         const response = await request(app.getHttpServer())
-            .post('/api/<%= entityApiUrl %>')
-            .send({ ...newEntity, <%= primaryKey.name %>: undefined })
+            .post('/api/<%- entityApiUrl %>')
+            .send({ ...newEntity, <%- primaryKey.name %>: undefined })
             .expect(400);
 
         expect(alertHeader(response.headers, '-error')).toBe('error.idnull');
     });
 
 <%_ } _%>
-    it('/POST create <%= entityApiUrl %> with <%= primaryKey.autoGenerate ? 'an id' : 'the id of an existing record' %>', async () => {
+    it('/POST create <%- entityApiUrl %> with <%- primaryKey.autoGenerate ? 'an id' : 'the id of an existing record' %>', async () => {
         const response = await request(app.getHttpServer())
-            .post('/api/<%= entityApiUrl %>')
+            .post('/api/<%- entityApiUrl %>')
             .send(validEntity)
             .expect(400);
 
         expect(alertHeader(response.headers, '-error')).toBe('error.idexists');
-        expect(response.body).toMatchObject({ message: 'error.idexists', params: '<%= entityAlertName %>' });
-        expect(alertHeader(response.headers, '-params')).toBe('<%= entityAlertName %>');
+        expect(response.body).toMatchObject({ message: 'error.idexists', params: '<%- entityAlertName %>' });
+        expect(alertHeader(response.headers, '-params')).toBe('<%- entityAlertName %>');
     });
 
 <%_ if (requiredField) { _%>
-    it('/POST create <%= entityApiUrl %> without <%= requiredField.fieldName %> is a validation error', async () => {
-        const { <%= requiredField.fieldName %>: _<%= requiredField.fieldName %>, ...invalidEntity } = validEntity;
+    it('/POST create <%- entityApiUrl %> without <%- requiredField.fieldName %> is a validation error', async () => {
+        const { <%- requiredField.fieldName %>: _<%- requiredField.fieldName %>, ...invalidEntity } = validEntity;
 
         const error = (await request(app.getHttpServer())
-            .post('/api/<%= entityApiUrl %>')
+            .post('/api/<%- entityApiUrl %>')
             .send(invalidEntity)
             .expect(400)).body;
 
         expect(error).toMatchObject({
             type: 'https://www.jhipster.tech/problem/constraint-violation',
             message: 'error.validation',
-            fieldErrors: [{ objectName: '<%= entityInstance %>', field: '<%= requiredField.fieldName %>', message: expect.any(String) }],
+            fieldErrors: [{ objectName: '<%- entityInstance %>', field: '<%- requiredField.fieldName %>', message: expect.any(String) }],
         });
     });
 
 <%_ } _%>
 <%_ if (typedField) { _%>
-    it('/POST create <%= entityApiUrl %> with a <%= typedField.fieldName %> of another type is a validation error, like the JSON deserialization of JHipster Spring Boot', async () => {
+    it('/POST create <%- entityApiUrl %> with a <%- typedField.fieldName %> of another type is a validation error, like the JSON deserialization of JHipster Spring Boot', async () => {
         const error = (await request(app.getHttpServer())
-            .post('/api/<%= entityApiUrl %>')
-            .send({ ...newEntity, <%= typedField.fieldName %>: <%- JSON.stringify(typedField.nodejsInvalidTypeValue) %> })
+            .post('/api/<%- entityApiUrl %>')
+            .send({ ...newEntity, <%- typedField.fieldName %>: <%- JSON.stringify(typedField.nodejsInvalidTypeValue) %> })
             .expect(400)).body;
 
         expect(error).toMatchObject({
             message: 'error.validation',
-            fieldErrors: expect.arrayContaining([expect.objectContaining({ objectName: '<%= entityInstance %>', field: '<%= typedField.fieldName %>' })]),
+            fieldErrors: expect.arrayContaining([expect.objectContaining({ objectName: '<%- entityInstance %>', field: '<%- typedField.fieldName %>' })]),
         });
     });
 
 <%_ } _%>
 <%_ for (const relationship of relationships) { _%>
   <%_ if (relationship.nodejsMockReference) { _%>
-    it('/POST create <%= entityApiUrl %> without its required <%= relationship.propertyName %> is a validation error, like JHipster Spring Boot', async () => {
-        const { <%= relationship.propertyName %>: _<%= relationship.propertyName %>, ...invalidEntity } = newEntity;
+    it('/POST create <%- entityApiUrl %> without its required <%- relationship.propertyName %> is a validation error, like JHipster Spring Boot', async () => {
+        const { <%- relationship.propertyName %>: _<%- relationship.propertyName %>, ...invalidEntity } = newEntity;
 
         const error = (await request(app.getHttpServer())
-            .post('/api/<%= entityApiUrl %>')
+            .post('/api/<%- entityApiUrl %>')
             .send(invalidEntity)
             .expect(400)).body;
 
-        expect(error).toMatchObject({ message: 'error.validation', fieldErrors: [expect.objectContaining({ field: '<%= relationship.propertyName %>' })] });
+        expect(error).toMatchObject({ message: 'error.validation', fieldErrors: [expect.objectContaining({ field: '<%- relationship.propertyName %>' })] });
     });
 
   <%_ } _%>
 <%_ } _%>
 <%_ if (enumField) { _%>
-    it('/POST create <%= entityApiUrl %> with a <%= enumField.fieldName %> out of its enum is a validation error', async () => {
+    it('/POST create <%- entityApiUrl %> with a <%- enumField.fieldName %> out of its enum is a validation error', async () => {
         const error = (await request(app.getHttpServer())
-            .post('/api/<%= entityApiUrl %>')
-            .send({ ...validEntity, <%= enumField.fieldName %>: 'NOT_A_<%= enumField.fieldType.toUpperCase() %>' })
+            .post('/api/<%- entityApiUrl %>')
+            .send({ ...validEntity, <%- enumField.fieldName %>: 'NOT_A_<%- enumField.fieldType.toUpperCase() %>' })
             .expect(400)).body;
 
-        expect(error).toMatchObject({ message: 'error.validation', fieldErrors: [expect.objectContaining({ field: '<%= enumField.fieldName %>' })] });
+        expect(error).toMatchObject({ message: 'error.validation', fieldErrors: [expect.objectContaining({ field: '<%- enumField.fieldName %>' })] });
     });
 
 <%_ } _%>
 <%_ if (numericField) { _%>
-    it('/POST create <%= entityApiUrl %> with <%= numericField.fieldName %> as a text of a number, the number like the JSON deserialization of JHipster Spring Boot', async () => {
+    it('/POST create <%- entityApiUrl %> with <%- numericField.fieldName %> as a text of a number, the number like the JSON deserialization of JHipster Spring Boot', async () => {
         const save = vi.spyOn(serviceMock as any, 'save');
         try {
             await request(app.getHttpServer())
-                .post('/api/<%= entityApiUrl %>')
-                .send({ ...newEntity, <%= numericField.fieldName %>: String(newEntity.<%= numericField.fieldName %>) })
+                .post('/api/<%- entityApiUrl %>')
+                .send({ ...newEntity, <%- numericField.fieldName %>: String(newEntity.<%- numericField.fieldName %>) })
                 .expect(201);
 
             const [dto] = save.mock.calls[0];
-            expect((dto as any).<%= numericField.fieldName %>).toBe(newEntity.<%= numericField.fieldName %>);
+            expect((dto as any).<%- numericField.fieldName %>).toBe(newEntity.<%- numericField.fieldName %>);
         } finally {
             save.mockRestore();
         }
     });
 
-    it('/PATCH partial update <%= entityApiUrl %> with <%= numericField.fieldName %> as a text of a number, the number', async () => {
+    it('/PATCH partial update <%- entityApiUrl %> with <%- numericField.fieldName %> as a text of a number, the number', async () => {
         const response = await request(app.getHttpServer())
-            .patch(`/api/<%= entityApiUrl %>/${entityMock.<%= primaryKey.name %>}`)
-            .send({ <%= primaryKey.name %>: entityMock.<%= primaryKey.name %>, <%= numericField.fieldName %>: String(validEntity.<%= numericField.fieldName %>) })
+            .patch(`/api/<%- entityApiUrl %>/${entityMock.<%- primaryKey.name %>}`)
+            .send({ <%- primaryKey.name %>: entityMock.<%- primaryKey.name %>, <%- numericField.fieldName %>: String(validEntity.<%- numericField.fieldName %>) })
             .expect(200);
 
-        expect(response.body.<%= numericField.fieldName %>).toBe(validEntity.<%= numericField.fieldName %>);
+        expect(response.body.<%- numericField.fieldName %>).toBe(validEntity.<%- numericField.fieldName %>);
     });
 
 <%_ } _%>
-    it('/PUT update <%= entityApiUrl %> from id', async () => {
+    it('/PUT update <%- entityApiUrl %> from id', async () => {
         const response = await request(app.getHttpServer())
-            .put(`/api/<%= entityApiUrl %>/${entityMock.<%= primaryKey.name %>}`)
+            .put(`/api/<%- entityApiUrl %>/${entityMock.<%- primaryKey.name %>}`)
             .send(validEntity)
             .expect(200);
 
         // The values sent, the properties the body does not give cleared (the service of the mock returns what it gets).
         expect(response.body).toMatchObject(validEntity);
         expect(alertHeader(response.headers, '-alert')).toMatch(<%- enableTranslation ? `/^${frontendAppName}\\.${entityAlertName}\\.updated$/` : `/^A ${entityAlertName} is updated with identifier /` %>);
-        expect(alertHeader(response.headers, '-params')).toBe(String(entityMock.<%= primaryKey.name %>));
+        expect(alertHeader(response.headers, '-params')).toBe(String(entityMock.<%- primaryKey.name %>));
     }
     );
 
-    it('/PUT update <%= entityApiUrl %> from another id', async () => {
+    it('/PUT update <%- entityApiUrl %> from another id', async () => {
         const response = await request(app.getHttpServer())
-            .put(`/api/<%= entityApiUrl %>/${anotherId}`)
+            .put(`/api/<%- entityApiUrl %>/${anotherId}`)
             .send(validEntity)
             .expect(400);
 
         expect(alertHeader(response.headers, '-error')).toBe('error.idinvalid');
-        expect(response.body).toMatchObject({ message: 'error.idinvalid', params: '<%= entityAlertName %>' });
+        expect(response.body).toMatchObject({ message: 'error.idinvalid', params: '<%- entityAlertName %>' });
     });
 
 <%_ if (!idField.fieldValidationRequired) { _%>
-    it('/PUT update <%= entityApiUrl %> without id', async () => {
+    it('/PUT update <%- entityApiUrl %> without id', async () => {
         const response = await request(app.getHttpServer())
-            .put(`/api/<%= entityApiUrl %>/${entityMock.<%= primaryKey.name %>}`)
-            .send({ ...validEntity, <%= primaryKey.name %>: undefined })
+            .put(`/api/<%- entityApiUrl %>/${entityMock.<%- primaryKey.name %>}`)
+            .send({ ...validEntity, <%- primaryKey.name %>: undefined })
             .expect(400);
 
         expect(alertHeader(response.headers, '-error')).toBe('error.idnull');
-        expect(response.body).toMatchObject({ message: 'error.idnull', params: '<%= entityAlertName %>' });
+        expect(response.body).toMatchObject({ message: 'error.idnull', params: '<%- entityAlertName %>' });
     });
 
 <%_ } _%>
-    it('/PUT update an unknown <%= entityApiUrl %>', async () => {
+    it('/PUT update an unknown <%- entityApiUrl %>', async () => {
         const response = await request(app.getHttpServer())
-            .put(`/api/<%= entityApiUrl %>/${unknownId}`)
-            .send({ ...validEntity, <%= primaryKey.name %>: unknownId })
+            .put(`/api/<%- entityApiUrl %>/${unknownId}`)
+            .send({ ...validEntity, <%- primaryKey.name %>: unknownId })
             .expect(400);
 
         expect(alertHeader(response.headers, '-error')).toBe('error.idnotfound');
-        expect(response.body).toMatchObject({ message: 'error.idnotfound', params: '<%= entityAlertName %>' });
+        expect(response.body).toMatchObject({ message: 'error.idnotfound', params: '<%- entityAlertName %>' });
     });
 
-    it('/PATCH partial update <%= entityApiUrl %> from id', async () => {
+    it('/PATCH partial update <%- entityApiUrl %> from id', async () => {
         const response = await request(app.getHttpServer())
-            .patch(`/api/<%= entityApiUrl %>/${entityMock.<%= primaryKey.name %>}`)
-            .send({ <%= primaryKey.name %>: entityMock.<%= primaryKey.name %>, lastModifiedBy: '<%= patcher %>', createdBy: null })
+            .patch(`/api/<%- entityApiUrl %>/${entityMock.<%- primaryKey.name %>}`)
+            .send({ <%- primaryKey.name %>: entityMock.<%- primaryKey.name %>, lastModifiedBy: '<%- patcher %>', createdBy: null })
             .expect(200);
 
         // The absent fields are kept, a null clears one.
-        expect(response.body).toEqual({ ...entityMock, lastModifiedBy: '<%= patcher %>', createdBy: null });
+        expect(response.body).toEqual({ ...entityMock, lastModifiedBy: '<%- patcher %>', createdBy: null });
         expect(alertHeader(response.headers, '-alert')).toMatch(<%- enableTranslation ? `/^${frontendAppName}\\.${entityAlertName}\\.updated$/` : `/^A ${entityAlertName} is updated with identifier /` %>);
-        expect(alertHeader(response.headers, '-params')).toBe(String(entityMock.<%= primaryKey.name %>));
+        expect(alertHeader(response.headers, '-params')).toBe(String(entityMock.<%- primaryKey.name %>));
     });
 
 <%_ if (requiredField) { _%>
-    it('/PATCH partial update <%= entityApiUrl %> clearing <%= requiredField.fieldName %> is a validation error', async () => {
+    it('/PATCH partial update <%- entityApiUrl %> clearing <%- requiredField.fieldName %> is a validation error', async () => {
         const error = (await request(app.getHttpServer())
-            .patch(`/api/<%= entityApiUrl %>/${entityMock.<%= primaryKey.name %>}`)
-            .send({ <%= primaryKey.name %>: entityMock.<%= primaryKey.name %>, <%= requiredField.fieldName %>: null })
+            .patch(`/api/<%- entityApiUrl %>/${entityMock.<%- primaryKey.name %>}`)
+            .send({ <%- primaryKey.name %>: entityMock.<%- primaryKey.name %>, <%- requiredField.fieldName %>: null })
             .expect(400)).body;
 
         expect(error).toMatchObject({
             type: 'https://www.jhipster.tech/problem/constraint-violation',
             message: 'error.validation',
-            fieldErrors: [expect.objectContaining({ objectName: '<%= entityInstance %>', field: '<%= requiredField.fieldName %>' })],
+            fieldErrors: [expect.objectContaining({ objectName: '<%- entityInstance %>', field: '<%- requiredField.fieldName %>' })],
         });
     });
 
 <%_ } _%>
-    it('/PATCH partial update <%= entityApiUrl %> from another id', async () => {
+    it('/PATCH partial update <%- entityApiUrl %> from another id', async () => {
         const response = await request(app.getHttpServer())
-            .patch(`/api/<%= entityApiUrl %>/${anotherId}`)
-            .send({ <%= primaryKey.name %>: entityMock.<%= primaryKey.name %> })
+            .patch(`/api/<%- entityApiUrl %>/${anotherId}`)
+            .send({ <%- primaryKey.name %>: entityMock.<%- primaryKey.name %> })
             .expect(400);
 
         expect(alertHeader(response.headers, '-error')).toBe('error.idinvalid');
     });
 
-    it('/PATCH partial update an unknown <%= entityApiUrl %>', async () => {
+    it('/PATCH partial update an unknown <%- entityApiUrl %>', async () => {
         const response = await request(app.getHttpServer())
-            .patch(`/api/<%= entityApiUrl %>/${unknownId}`)
-            .send({ <%= primaryKey.name %>: unknownId })
+            .patch(`/api/<%- entityApiUrl %>/${unknownId}`)
+            .send({ <%- primaryKey.name %>: unknownId })
             .expect(400);
 
         expect(alertHeader(response.headers, '-error')).toBe('error.idnotfound');
     });
 <%_ if (numericId || primaryKey.typeUUID) { _%>
 
-    it('/PATCH partial update <%= entityApiUrl %> from an invalid id', async () => {
+    it('/PATCH partial update <%- entityApiUrl %> from an invalid id', async () => {
         await request(app.getHttpServer())
-            .patch('/api/<%= entityApiUrl %>/<%= invalidId %>')
-            .send({ <%= primaryKey.name %>: entityMock.<%= primaryKey.name %> })
+            .patch('/api/<%- entityApiUrl %>/<%- invalidId %>')
+            .send({ <%- primaryKey.name %>: entityMock.<%- primaryKey.name %> })
             .expect(400);
     });
 <%_ } _%>
 
-    it('/DELETE <%= entityApiUrl %>', async () => {
+    it('/DELETE <%- entityApiUrl %>', async () => {
 
 
-        const deletedEntity: <%= dtoClass %> = (await request(app.getHttpServer())
-            .delete(`/api/<%= entityApiUrl %>/${entityMock.<%= primaryKey.name %>}`)
+        const deletedEntity: <%- dtoClass %> = (await request(app.getHttpServer())
+            .delete(`/api/<%- entityApiUrl %>/${entityMock.<%- primaryKey.name %>}`)
             .expect(204)).body;
 
             expect(deletedEntity).toEqual({});
@@ -502,7 +502,7 @@ _%>
     });
 <%_ if (nodejsReadRoles) { _%>
 
-    describe('with the roles of <%= entityClass %>, like the @PreAuthorize of JHipster Spring Boot', () => {
+    describe('with the roles of <%- entityClass %>, like the @PreAuthorize of JHipster Spring Boot', () => {
         let rolesApp: INestApplication;
 
         /** The application with its RolesGuard, for a user of these roles. */
@@ -514,10 +514,10 @@ _%>
                 context.switchToHttp().getRequest().user = { login: 'user', authorities };
                 return true;
             } })
-            .overrideProvider(<%= entityClass %>Service)
+            .overrideProvider(<%- entityClass %>Service)
             .useValue(serviceMock)
             .compile();
-            serviceMock.metadata = moduleFixture.get(DataSource).getMetadata(<%= entityClass %>);
+            serviceMock.metadata = moduleFixture.get(DataSource).getMetadata(<%- entityClass %>);
             const rolesNestApp = moduleFixture.createNestApplication();
             configureApp(rolesNestApp);
             await rolesNestApp.init();
@@ -530,29 +530,29 @@ _%>
 
         it('refuses a user without its roles with 403', async () => {
             rolesApp = await appOfUser(['ROLE_OTHER']);
-            await request(rolesApp.getHttpServer()).get('/api/<%= entityApiUrl %>').expect(403);
-            await request(rolesApp.getHttpServer()).get(`/api/<%= entityApiUrl %>/${entityMock.<%= primaryKey.name %>}`).expect(403);
+            await request(rolesApp.getHttpServer()).get('/api/<%- entityApiUrl %>').expect(403);
+            await request(rolesApp.getHttpServer()).get(`/api/<%- entityApiUrl %>/${entityMock.<%- primaryKey.name %>}`).expect(403);
   <%_ if (nodejsWriteRoles) { _%>
-            await request(rolesApp.getHttpServer()).post('/api/<%= entityApiUrl %>').send(newEntity).expect(403);
-            await request(rolesApp.getHttpServer()).delete(`/api/<%= entityApiUrl %>/${entityMock.<%= primaryKey.name %>}`).expect(403);
+            await request(rolesApp.getHttpServer()).post('/api/<%- entityApiUrl %>').send(newEntity).expect(403);
+            await request(rolesApp.getHttpServer()).delete(`/api/<%- entityApiUrl %>/${entityMock.<%- primaryKey.name %>}`).expect(403);
   <%_ } _%>
         });
   <%_ if (nodejsWriteRoles) { _%>
 
         it('allows a user of its roles to read and to write', async () => {
             rolesApp = await appOfUser([<%- nodejsWriteRoles %>]);
-            await request(rolesApp.getHttpServer()).get('/api/<%= entityApiUrl %>').expect(200);
-            await request(rolesApp.getHttpServer()).post('/api/<%= entityApiUrl %>').send(newEntity).expect(201);
+            await request(rolesApp.getHttpServer()).get('/api/<%- entityApiUrl %>').expect(200);
+            await request(rolesApp.getHttpServer()).post('/api/<%- entityApiUrl %>').send(newEntity).expect(201);
         });
   <%_ } _%>
   <%_ if (nodejsReadOnlyRoles) { _%>
 
         it('allows a user of its read roles to read only', async () => {
             rolesApp = await appOfUser([<%- nodejsReadOnlyRoles %>]);
-            await request(rolesApp.getHttpServer()).get('/api/<%= entityApiUrl %>').expect(200);
+            await request(rolesApp.getHttpServer()).get('/api/<%- entityApiUrl %>').expect(200);
     <%_ if (nodejsWriteRoles) { _%>
-            await request(rolesApp.getHttpServer()).post('/api/<%= entityApiUrl %>').send(newEntity).expect(403);
-            await request(rolesApp.getHttpServer()).patch(`/api/<%= entityApiUrl %>/${validEntity.<%= primaryKey.name %>}`).send({ <%= primaryKey.name %>: validEntity.<%= primaryKey.name %> }).expect(403);
+            await request(rolesApp.getHttpServer()).post('/api/<%- entityApiUrl %>').send(newEntity).expect(403);
+            await request(rolesApp.getHttpServer()).patch(`/api/<%- entityApiUrl %>/${validEntity.<%- primaryKey.name %>}`).send({ <%- primaryKey.name %>: validEntity.<%- primaryKey.name %> }).expect(403);
     <%_ } _%>
         });
   <%_ } _%>

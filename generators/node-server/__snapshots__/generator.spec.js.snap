@@ -3,7 +3,11 @@
 exports[`SubGenerator node-server of nodejs JHipster blueprint > entity column types > with mssql > should generate column types valid on the prod database and on SQLite 1`] = `
 {
   "server/src/entities/sample/sample.entity.ts": {
-    "contents": "import {PrimaryGeneratedColumn, Entity, Column, JoinColumn, OneToOne, ManyToOne, OneToMany, ManyToMany, JoinTable, type Relation} from 'typeorm';
+    "contents": "import { 
+PrimaryGeneratedColumn 
+, Entity, Column 
+, JoinColumn, OneToOne, ManyToOne, OneToMany, ManyToMany, JoinTable, type Relation 
+} from 'typeorm';
 import { BaseEntity } from '../../common/database/base.entity.ts';
 import { numberTransformer } from '../../common/database/column-transformers.ts';
 
@@ -65,7 +69,11 @@ export class Sample extends BaseEntity  {
 exports[`SubGenerator node-server of nodejs JHipster blueprint > entity column types > with mysql > should generate column types valid on the prod database and on SQLite 1`] = `
 {
   "server/src/entities/sample/sample.entity.ts": {
-    "contents": "import {PrimaryGeneratedColumn, Entity, Column, JoinColumn, OneToOne, ManyToOne, OneToMany, ManyToMany, JoinTable, type Relation} from 'typeorm';
+    "contents": "import { 
+PrimaryGeneratedColumn 
+, Entity, Column 
+, JoinColumn, OneToOne, ManyToOne, OneToMany, ManyToMany, JoinTable, type Relation 
+} from 'typeorm';
 import { BaseEntity } from '../../common/database/base.entity.ts';
 import { numberTransformer, blobTransformer } from '../../common/database/column-transformers.ts';
 import { columnType } from '../../common/database/column-types.ts';
@@ -128,7 +136,11 @@ export class Sample extends BaseEntity  {
 exports[`SubGenerator node-server of nodejs JHipster blueprint > entity column types > with oracle > should generate column types valid on the prod database and on SQLite 1`] = `
 {
   "server/src/entities/sample/sample.entity.ts": {
-    "contents": "import {PrimaryGeneratedColumn, Entity, Column, JoinColumn, OneToOne, ManyToOne, OneToMany, ManyToMany, JoinTable, type Relation} from 'typeorm';
+    "contents": "import { 
+PrimaryGeneratedColumn 
+, Entity, Column 
+, JoinColumn, OneToOne, ManyToOne, OneToMany, ManyToMany, JoinTable, type Relation 
+} from 'typeorm';
 import { BaseEntity } from '../../common/database/base.entity.ts';
 import { numberTransformer, blobTransformer } from '../../common/database/column-transformers.ts';
 
@@ -190,7 +202,11 @@ export class Sample extends BaseEntity  {
 exports[`SubGenerator node-server of nodejs JHipster blueprint > entity column types > with postgresql > should generate column types valid on the prod database and on SQLite 1`] = `
 {
   "server/src/entities/sample/sample.entity.ts": {
-    "contents": "import {PrimaryGeneratedColumn, Entity, Column, JoinColumn, OneToOne, ManyToOne, OneToMany, ManyToMany, JoinTable, type Relation} from 'typeorm';
+    "contents": "import { 
+PrimaryGeneratedColumn 
+, Entity, Column 
+, JoinColumn, OneToOne, ManyToOne, OneToMany, ManyToMany, JoinTable, type Relation 
+} from 'typeorm';
 import { BaseEntity } from '../../common/database/base.entity.ts';
 import { numberTransformer } from '../../common/database/column-transformers.ts';
 
@@ -271,12 +287,12 @@ export class BookDTO extends BaseDTO {
 
             @IsNotEmpty()
     @MaxLength(50)
-            @ApiProperty({description: 'title field'})
+            @ApiProperty({ description: 'title field' })
         title!: string;
 
             @IsOptional()
     @Matches("^(?:^\\\\d{3}-[0-9]{6}$)$")
-            @ApiProperty({description: 'isbn field', required: false})
+            @ApiProperty({ description: 'isbn field', required: false })
         isbn?: string;
 
             @IsOptional()
@@ -284,21 +300,21 @@ export class BookDTO extends BaseDTO {
     @Max(5000)
     @Transform(numberFromString)
     @IsInt()
-            @ApiProperty({description: 'pages field', required: false})
+            @ApiProperty({ description: 'pages field', required: false })
         pages?: number;
 
             @IsOptional()
     @IsEnum(Genre)
-            @ApiProperty({ enum: Genre,description: 'genre enum field', required: false})
+            @ApiProperty({ enum: Genre, description: 'genre enum field', required: false })
         genre?: Genre;
 
             @IsNotEmpty()
     @IsEnum(BookFormat)
-            @ApiProperty({ enum: BookFormat,description: 'format enum field'})
+            @ApiProperty({ enum: BookFormat, description: 'format enum field' })
         format!: BookFormat;
 
             @IsNotEmpty()
-            @ApiProperty({description: 'cover field'})
+            @ApiProperty({ description: 'cover field' })
         cover!: string;
 
 
