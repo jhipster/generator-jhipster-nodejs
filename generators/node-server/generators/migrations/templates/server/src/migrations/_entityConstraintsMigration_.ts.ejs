@@ -11,7 +11,7 @@ export class <%= nodejsConstraintsMigration.className %> implements MigrationInt
 <%_ if (nodejsConstraintsMigration.foreignKeys.length > 0) { _%>
     await createForeignKeys(queryRunner, '<%= nodejsConstraintsMigration.tableName %>', [
   <%_ for (const foreignKey of nodejsConstraintsMigration.foreignKeys) { _%>
-      { columnName: '<%= foreignKey.columnName %>', referencedTableName: '<%= foreignKey.referencedTableName %>', referencedColumnName: '<%= foreignKey.referencedColumnName %>' },
+      { columnName: '<%= foreignKey.columnName %>', referencedTableName: '<%= foreignKey.referencedTableName %>', referencedColumnName: '<%= foreignKey.referencedColumnName %>'<% if (foreignKey.onDelete) { %>, onDelete: '<%= foreignKey.onDelete %>'<% } %><% if (foreignKey.onUpdate) { %>, onUpdate: '<%= foreignKey.onUpdate %>'<% } %> },
   <%_ } _%>
     ]);
 <%_ } _%>

@@ -9,6 +9,7 @@ import {
   constraintsMigration,
   entityMigration,
   fieldColumns,
+  foreignKeyActions,
   joinTable,
   migrationOfFile,
   primaryKeyColumn,
@@ -123,7 +124,59 @@ describe('fieldColumns', () => {
   });
 });
 
+describe('updatedConstraintsMigration', () => {
+  it('should replace the foreign key of a relationship changed in its onDelete, restoring it on the down', () => {
+    const owned = relationship({
+      relationshipType: 'many-to-one',
+      relationshipFieldName: 'region',
+      relationshipName: 'region',
+      otherEntity: region,
+      options: { onDelete: 'CASCADE' },
+    });
+    const owner = entity({ entityClass: 'Owner', entityTableName: 'owner', primaryKey, relationships: [owned] });
+    const changelog = { previousEntity: { fields: [], relationships: [{ relationshipName: 'region' }] }, recreatedRelationships: [] };
+    const changes = changelogChanges(
+      {
+        ...changelog,
+        addedFields: [],
+        removedFields: [],
+        addedRelationships: [],
+        removedRelationships: [],
+        optionsChangedRelationships: ['region'],
+      },
+      owner,
+      [],
+    );
+    const migration = updatedConstraintsMigration({ entity: owner, changelogDate: '20231215172715', ...changes });
+    expect(migration.changedForeignKeys).toEqual([expect.stringContaining("onDelete: 'CASCADE'")]);
+    expect(migration.previousForeignKeys[0]).not.toContain('onDelete');
+    expect(migration.schemaImports).toBe('replaceForeignKeys');
+  });
+});
+
 describe('entityMigration', () => {
+  it('should give a foreign key the onDelete and the onUpdate of its relationship, like the changelog of Liquibase', () => {
+    const owner = entity({
+      entityTableName: 'owner',
+      changelogDate: '20231215172715',
+      primaryKey,
+      relationships: [
+        relationship({
+          relationshipType: 'many-to-one',
+          relationshipFieldName: 'region',
+          otherEntity: region,
+          options: { onDelete: 'CASCADE', onUpdate: 'SET NULL' },
+        }),
+      ],
+    });
+    expect(constraintsMigration(owner).foreignKeys[0]).toMatchObject({ onDelete: 'CASCADE', onUpdate: 'SET NULL' });
+  });
+
+  it('should leave out another value of onDelete, like JHipster', () => {
+    expect(foreignKeyActions({ options: { onDelete: 'unknown' } })).toEqual({});
+    expect(foreignKeyActions({})).toEqual({});
+  });
+
   it('should add a primary key of an entity with a UUID, generated', () => {
     expect(entityMigration(gadget).columns[0]).toEqual({ name: 'id', type: "'uuid'", primary: true, generated: 'uuid' });
   });
