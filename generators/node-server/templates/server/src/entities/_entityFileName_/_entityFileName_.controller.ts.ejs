@@ -144,13 +144,23 @@ export class <%= entityClass %>Controller {
   @ApiResponse({ status: 400, description: 'The record already has an id.' })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
   async post(@Req() req: Request, @Body() <%= entityInstance %>DTO: <%= dtoClass %>): Promise<<%= dtoClass %>>  {
-    if (<%= entityInstance %>DTO.id !== undefined && <%= entityInstance %>DTO.id !== null) {
+<%_ if (primaryKey.autoGenerate) { _%>
+    if (<%= entityInstance %>DTO.<%= primaryKey.name %> !== undefined && <%= entityInstance %>DTO.<%= primaryKey.name %> !== null) {
       // Like JHipster Spring Boot, a new record cannot have an id: it would update an existing one.
       throw new BadRequestAlertException('A new <%= entityInstance %> cannot already have an ID', ENTITY_NAME, 'idexists');
     }
+<%_ } else { _%>
+    if (<%= entityInstance %>DTO.<%= primaryKey.name %> === undefined || <%= entityInstance %>DTO.<%= primaryKey.name %> === null) {
+      throw new BadRequestAlertException('Invalid id', ENTITY_NAME, 'idnull');
+    }
+    // Like JHipster Spring Boot, the client gives the id of a new record: not the one of an existing record, it would update it.
+    if (await this.<%= entityInstance %>Service.findById(<%= entityInstance %>DTO.<%= primaryKey.name %>)) {
+      throw new BadRequestAlertException('A new <%= entityInstance %> cannot already have an ID', ENTITY_NAME, 'idexists');
+    }
+<%_ } _%>
     const created = await this.<%= entityInstance %>Service.save(<%= entityInstance %>DTO, req.user?.login);
-    this.headerUtil.addEntityCreatedHeaders(req.res, ENTITY_NAME, created.id);
-    req.res.location(`/api/<%= entityApiUrl %>/${created.id}`);
+    this.headerUtil.addEntityCreatedHeaders(req.res, ENTITY_NAME, created.<%= primaryKey.name %>);
+    req.res.location(`/api/<%= entityApiUrl %>/${created.<%= primaryKey.name %>}`);
     return created;
   }
 
@@ -235,10 +245,10 @@ _%>
    * and the record must exist, otherwise answers 400.
    */
   private async validateIdForUpdate(req: Request, id: <%= pkType %>, <%= entityInstance %>DTO: Partial<<%= dtoClass %>> | undefined): Promise<<%= dtoClass %>> {
-    if (<%= entityInstance %>DTO?.id === undefined || <%= entityInstance %>DTO.id === null) {
+    if (<%= entityInstance %>DTO?.<%= primaryKey.name %> === undefined || <%= entityInstance %>DTO.<%= primaryKey.name %> === null) {
       throw new BadRequestAlertException('Invalid id', ENTITY_NAME, 'idnull');
     }
-    if (String(<%= entityInstance %>DTO.id) !== String(id)) {
+    if (String(<%= entityInstance %>DTO.<%= primaryKey.name %>) !== String(id)) {
       throw new BadRequestAlertException('Invalid ID', ENTITY_NAME, 'idinvalid');
     }
     const existing = await this.<%= entityInstance %>Service.findById(id);

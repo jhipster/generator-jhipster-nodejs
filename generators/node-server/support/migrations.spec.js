@@ -43,14 +43,14 @@ const relationship = ({ relationshipType, ownerSide = relationshipType === 'many
   ...properties,
 });
 
-const primaryKey = { name: 'id', typeUUID: false };
+const primaryKey = { name: 'id', typeUUID: false, autoGenerate: true };
 const region = entity({ name: 'Region', entityClass: 'Region', entityTableName: 'region', changelogDate: '20231215172515', primaryKey });
 const gadget = entity({
   name: 'Gadget',
   entityClass: 'Gadget',
   entityTableName: 'gadget',
   changelogDate: '20231215172915',
-  primaryKey: { name: 'id', typeUUID: true },
+  primaryKey: { name: 'id', typeUUID: true, autoGenerate: true },
 });
 const user = entity({ entityClass: 'User', entityTableName: 'jhi_user', builtIn: true, primaryKey });
 
@@ -138,6 +138,14 @@ describe('entityMigration', () => {
     });
     expect(entityMigration(venue).columns[0]).toEqual({ name: 'id', type: 'String', primary: true });
     expect(entityMigration(show).columns[1]).toEqual({ name: 'venueId', type: 'String', nullable: true });
+  });
+
+  it('should not generate a primary key the client gives', () => {
+    const column = primaryKeyOf =>
+      entityMigration(entity({ entityTableName: 'plan', changelogDate: '20231215172715', primaryKey: primaryKeyOf })).columns[0];
+    expect(column({ name: 'slug', typeString: true })).toEqual({ name: 'slug', type: 'String', primary: true });
+    expect(column({ name: 'code' })).toEqual({ name: 'code', type: 'Number', primary: true });
+    expect(column({ name: 'key', typeUUID: true })).toEqual({ name: 'key', type: "'uuid'", primary: true });
   });
 
   it('should keep the generated id of the built-in User, whose String id of OAuth2 the server does not store', () => {

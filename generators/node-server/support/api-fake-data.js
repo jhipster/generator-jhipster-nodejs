@@ -24,7 +24,8 @@ const contentTypeOf = field => (field.fieldTypeBlobContent === 'image' ? 'image/
  */
 export const apiFakeEntity = entity => {
   const values = {};
-  for (const field of entity.fields.filter(field => !field.id && !field.transient && !field.autoGenerate)) {
+  // A generated id is not sent, an id the client gives is.
+  for (const field of entity.fields.filter(field => !field.transient && !field.autoGenerate)) {
     const value = apiFakeValue(field);
     if (value === undefined || value === null) continue;
     values[field.fieldName] = value;

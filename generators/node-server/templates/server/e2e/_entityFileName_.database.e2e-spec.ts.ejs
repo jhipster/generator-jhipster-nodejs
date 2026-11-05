@@ -107,7 +107,7 @@ describe('<%= entityClass %> on the database', () => {
       .send({ ...updatedValues<%- spreads[entityInstance] ?? '' %>, <%= primaryKey.name %>: stored.<%= primaryKey.name %> })
       .expect(200);
     const { body: readUpdated } = await request(server).get(`/api/<%= entityApiUrl %>/${stored.<%= primaryKey.name %>}`).expect(200);
-    expect(readUpdated).toMatchObject(expected(updatedValues));
+    expect(readUpdated).toMatchObject(expected({ ...updatedValues, <%= primaryKey.name %>: stored.<%= primaryKey.name %> }));
 
     await request(server).delete(`/api/<%= entityApiUrl %>/${stored.<%= primaryKey.name %>}`).expect(204);
     await request(server).get(`/api/<%= entityApiUrl %>/${stored.<%= primaryKey.name %>}`).expect(404);
@@ -142,6 +142,19 @@ describe('<%= entityClass %> on the database', () => {
 
     await request(server).delete(`/api/<%= entityApiUrl %>/${stored.<%= primaryKey.name %>}`).expect(204);
   });
+<%_ if (!primaryKey.autoGenerate) { _%>
+
+  it('should refuse a new record with the <%= primaryKey.name %> of an existing one, like JHipster Spring Boot', async () => {
+    const server = app.getHttpServer();
+    const values = <%- spreads[entityInstance] ? `{ ...createdValues${spreads[entityInstance]} }` : 'createdValues' %>;
+    const { body: stored } = await request(server).post('/api/<%= entityApiUrl %>').send(values).expect(201);
+
+    expect(stored.<%= primaryKey.name %>).toEqual(createdValues.<%= primaryKey.name %>);
+    await request(server).post('/api/<%= entityApiUrl %>').send(values).expect(400);
+
+    await request(server).delete(`/api/<%= entityApiUrl %>/${stored.<%= primaryKey.name %>}`).expect(204);
+  });
+<%_ } _%>
 <%_ if (databaseTypeSql && primaryKey.typeString && primaryKey.autoGenerate) { _%>
 
   it('should give a new record a UUID as its String <%= primaryKey.name %>, like the @GeneratedValue of JHipster Spring Boot', async () => {
@@ -256,8 +269,8 @@ const pk = primaryKey.name;
 // The one-to-one relationships the other entity stores, whose records without one the controller lists (its is-null filter).
 const inverseOneToOnes = nodejsMappedByRelationships.filter(relationship => relationship.relationshipOneToOne);
 _%>
-<%_ // A generated id in the order of the records: not a UUID, nor a String id of SQL (a UUID the entity generates). _%>
-<%_ if (!primaryKey.typeUUID && !(databaseTypeSql && primaryKey.typeString)) { _%>
+<%_ // A generated id in the order of the records: not one the client gives, a UUID, nor a String id of SQL (a UUID the entity generates). _%>
+<%_ if (primaryKey.autoGenerate && !primaryKey.typeUUID && !(databaseTypeSql && primaryKey.typeString)) { _%>
 
   it('should sort the list by id, the newest first with id,desc, like Spring Data', async () => {
     const server = app.getHttpServer();

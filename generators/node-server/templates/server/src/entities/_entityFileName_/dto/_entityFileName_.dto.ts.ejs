@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Allow<% if (anyPropertyHasValidation || fields.some(field => field.fieldIsEnum || field.nodejsTypeValidators.length > 0)) { %>, IsNotEmpty, IsOptional, IsEnum, MinLength, MaxLength, Length, Min, Max, Matches, IsInt, IsNumber, IsBoolean, IsUUID, IsISO8601<% } %> } from 'class-validator';
-<%_ const anyFieldNumeric = fields.some(field => !field.id && field.fieldTypeNumeric); _%>
+<%_ const anyFieldNumeric = fields.some(field => (!field.id || !primaryKey.autoGenerate) && field.fieldTypeNumeric); _%>
 <%_ if (databaseTypeMongodb || anyFieldNumeric) { _%>
 import { Transform } from 'class-transformer';
 <%_ } _%>
@@ -17,7 +17,8 @@ for (idx in fields) {
             !uniqueEnums[fields[idx].fieldType] || (uniqueEnums[fields[idx].fieldType] && fields[idx].fieldValues.length !== 0))) {
         uniqueEnums[fields[idx].fieldType] = this._.kebabCase(fields[idx].fieldType);
     }
-    if (fields[idx].fieldName !== 'id') {
+    // An id the client gives is declared with its validations, like the other fields.
+    if (!fields[idx].id || !primaryKey.autoGenerate) {
         fieldsWithoutId.push(fields[idx]);
     }
 }
@@ -48,11 +49,13 @@ import { <%= user.dtoClass%> } from '../../../users/dto/user.dto.ts';
  * A <%= dtoClass %> object.
  */
 export class <%= dtoClass %> extends BaseDTO {
-<%_ if (databaseTypeMongodb) { _%>
+<%_ if (primaryKey.autoGenerate) { _%>
+<%_   if (databaseTypeMongodb) { _%>
   @Transform(({ value }) => value?.toHexString ? value?.toHexString() : value, {toPlainOnly: true})
-<%_ } _%>
+<%_   } _%>
   @Allow()
   <%= primaryKey.name %>?: <%= primaryKey.tsType %>;
+<%_ } _%>
 
     <%_ for (idx in fieldsWithoutId) {
         const field = fieldsWithoutId[idx];

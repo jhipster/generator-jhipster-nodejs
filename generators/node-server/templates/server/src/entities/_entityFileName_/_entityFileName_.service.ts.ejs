@@ -19,6 +19,7 @@ import { referenceById } from '../../common/reference-by-id.ts';
 // The relationships the entity stores (the persistableRelationships of JHipster), loaded with it.
 const eagerLoadRelations = persistableRelationships.map(relationship => relationship.propertyName);
 const pkType = primaryKey.tsType;
+const pk = primaryKey.name;
 _%>
 <%_ if (relationships.length > 0) { _%>
 /**
@@ -31,9 +32,9 @@ const toStored = (entity: <%= entityClass %>): <%= entityClass %> => {
     <%_ if (!relationship.ownerSide) { _%>
   delete entity.<%= property %>;
     <%_ } else if (relationship.collection) { _%>
-  entity.<%= property %> = entity.<%= property %>?.map(referenceById);
+  entity.<%= property %> = entity.<%= property %>?.map(related => referenceById(related, '<%= relationship.otherEntity.primaryKey.name %>'));
     <%_ } else { _%>
-  entity.<%= property %> = referenceById(entity.<%= property %>);
+  entity.<%= property %> = referenceById(entity.<%= property %>, '<%= relationship.otherEntity.primaryKey.name %>');
     <%_ } _%>
   <%_ } _%>
   return entity;
@@ -70,7 +71,7 @@ export class <%= entityClass %>Service {
 <%_ if (typeormRelationsSupport && eagerLoadRelations.length > 0) { _%>
           relations,
 <%_ } _%>
-          where: { id },
+          where: { <%- pk === 'id' ? 'id' : `${pk}: id` %> },
         });
         return <%= entityClass %>Mapper.fromEntityToDTO(result);
       }
@@ -117,7 +118,7 @@ export class <%= entityClass %>Service {
         const result = await this.<%= entityInstance %>Repository.save(entity);
 <%_ if (relationships.length > 0) { _%>
         // The stored entity, with its related records, rather than their ids.
-        return (await this.findById(result.id!))!;
+        return (await this.findById(result.<%= pk %>!))!;
 <%_ } else { _%>
         return <%= entityClass %>Mapper.fromEntityToDTO(result);
 <%_ } _%>
@@ -129,12 +130,12 @@ export class <%= entityClass %>Service {
             entity.lastModifiedBy = updater;
         }
       <%_ if (databaseType === 'mongodb') { _%>
-        await this.<%= entityInstance %>Repository.update(entity.id!, updatableProperties(this.<%= entityInstance %>Repository.metadata, entity));
+        await this.<%= entityInstance %>Repository.update(entity.<%= pk %>!, updatableProperties(this.<%= entityInstance %>Repository.metadata, entity));
       <%_ } else { _%>
         await this.<%= entityInstance %>Repository.save(entity);
       <%_ } _%>
         // The stored entity, with its relationships and audit fields, rather than the request.
-        const result = await this.findById(entity.id!);
+        const result = await this.findById(entity.<%= pk %>!);
         if (!result) {
           throw new HttpException('Entity not found', HttpStatus.NOT_FOUND);
         }

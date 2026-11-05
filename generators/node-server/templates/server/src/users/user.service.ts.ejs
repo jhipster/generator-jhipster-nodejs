@@ -10,7 +10,6 @@ import { UserMapper } from './user.mapper.ts';
 <%_ if (databaseTypeMongodb) { _%>
 import { documentOrder } from '../common/sortable-properties.ts';
 <%_ } _%>
-import { User } from './user.entity.ts';
 <%_ if (generateUserManagement) { _%>
 import { PasswordService } from '../auth/password.service.ts';
 <%_ } _%>
@@ -26,7 +25,7 @@ export class UserService {
 
 <%_ } _%>
     constructor(
-        @InjectRepository(User) private userRepository: Repository<User>,
+        @InjectRepository(<%= user.persistClass %>) private userRepository: Repository<<%= user.persistClass %>>,
 <%_ if (generateUserManagement) { _%>
         private readonly passwordService: PasswordService,
 <%_ } _%>

@@ -2,11 +2,13 @@
 // A String id of the JDL (autoGenerate), whose UUID the entity generates like the @GeneratedValue of JHipster Spring Boot:
 // the databases generate numbers and uuids only.
 const generatedStringId = databaseTypeSql && primaryKey.typeString && primaryKey.autoGenerate;
+// An id the database stores as given: a String, or one the client gives, like the @Id without @GeneratedValue of JHipster Spring Boot.
+const givenId = primaryKey.typeString || !primaryKey.autoGenerate;
 _%>
 <%_ if (generatedStringId) { _%>
 import { randomUUID } from 'node:crypto';
 <%_ } _%>
-import { <%_ if (databaseType === 'mongodb') { _%> ObjectIdColumn <%_ } else if (primaryKey.typeString) { _%> <% if (generatedStringId) { %>BeforeInsert, <% } %>PrimaryColumn <%_ } else { _%> PrimaryGeneratedColumn <%_ } _%>, Entity, Column <%_ if (databaseType !== 'mongodb') { _%>, JoinColumn, OneToOne, ManyToOne, OneToMany, ManyToMany, JoinTable, type Relation <%_ } _%> } from 'typeorm';
+import { <%_ if (databaseType === 'mongodb') { _%> ObjectIdColumn <%_ } else if (givenId) { _%> <% if (generatedStringId) { %>BeforeInsert, <% } %>PrimaryColumn <%_ } else { _%> PrimaryGeneratedColumn <%_ } _%>, Entity, Column <%_ if (databaseType !== 'mongodb') { _%>, JoinColumn, OneToOne, ManyToOne, OneToMany, ManyToMany, JoinTable, type Relation <%_ } _%> } from 'typeorm';
 import { BaseEntity } from '../../common/database/base.entity.ts';
 <%_ if (nodejsCriteria) { _%>
 import { Filterable } from '../../common/database/criteria.ts';
@@ -64,8 +66,10 @@ export class <%= persistClass %> extends BaseEntity  {
 
 <%_ if (databaseTypeMongodb) { _%>
   @ObjectIdColumn({ name: '_<%- primaryKey.name %>' })
-<%_ } else if (databaseTypeSql && primaryKey.typeString) { _%>
+<%_ } else if (databaseTypeSql && givenId) { _%>
+<%_   if (primaryKey.typeString) { _%>
   // A varchar, like the String id of the Liquibase changelog of JHipster Spring Boot.
+<%_   } _%>
   @PrimaryColumn()
 <%_ } else if (databaseTypeSql) { _%>
   @PrimaryGeneratedColumn(<%- primaryKey.typeUUID ? "'uuid'" : '' %>)
