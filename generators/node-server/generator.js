@@ -3,7 +3,7 @@ import { readFile } from 'node:fs/promises';
 import { TEMPLATES_WEBAPP_SOURCES_DIR } from 'generator-jhipster';
 import BaseApplicationGenerator from 'generator-jhipster/generators/base-application';
 import { createNeedleCallback } from 'generator-jhipster/generators/base-core/support';
-import { createKeyStore } from 'generator-jhipster/generators/java/support';
+import { createKeyStore, formatDocAsApiDescription, formatDocAsJavaDoc } from 'generator-jhipster/generators/java/support';
 import { createBase64Secret, createReproducibleBase64Secret, mutateData } from 'generator-jhipster/utils';
 
 import { SERVER_NODEJS_SRC_DIR } from '../generator-nodejs-constants.js';
@@ -12,8 +12,6 @@ import { entityFiles } from './entity-files.js';
 import { criteriaFiles, serverFiles } from './files.js';
 import {
   MIGRATION_TIMESTAMP_OFFSET,
-  apiFakeEntity,
-  apiFakeValue,
   columnTransformer,
   contentTypeColumnOptions,
   fieldColumnOptions,
@@ -378,6 +376,13 @@ export default class extends BaseApplicationGenerator {
         const layer = ({ builtInUser, builtInAuthority }) => !builtInUser && !builtInAuthority;
         entityDefaults({ __override__: false, entityDomainLayer: layer, entityPersistenceLayer: layer, entityRestLayer: layer });
       },
+      prepareEntityDocumentation({ entityDefaults }) {
+        // The documentation of the JDL, like JHipster Spring Boot.
+        entityDefaults({
+          __override__: false,
+          entityJavadoc: ({ documentation }) => (documentation ? formatDocAsJavaDoc(documentation) : ''),
+        });
+      },
       prepareMappedByRelationships({ entityDefaults }) {
         entityDefaults({
           // The relationships the other entity stores (its join column or its join table), never stored from this entity,
@@ -410,6 +415,13 @@ export default class extends BaseApplicationGenerator {
     return this.asPreparingEachEntityRelationshipTaskGroup({
       prepareRelationOptions({ relationshipDefaults }) {
         relationshipDefaults(mutateRelationOptions);
+      },
+      prepareRelationshipDocumentation({ relationshipDefaults }) {
+        relationshipDefaults({
+          __override__: false,
+          relationshipJavadoc: ({ documentation }) => (documentation ? formatDocAsJavaDoc(documentation, 2) : undefined),
+          relationshipApiDescription: ({ documentation }) => (documentation ? formatDocAsApiDescription(documentation) : undefined),
+        });
       },
       prepareRequiredReference({ relationshipDefaults }) {
         // The reference of a required relationship in the mocked controller tests (support/test-samples.js).
@@ -446,6 +458,8 @@ export default class extends BaseApplicationGenerator {
         }
         mutateData(field, {
           __override__: true,
+          // The documentation of the JDL, like JHipster Spring Boot.
+          fieldJavadoc: field.documentation ? formatDocAsJavaDoc(field.documentation, 2) : undefined,
           nodejsColumnOptions: fieldColumnOptions(field, application),
           nodejsColumnTypeImports: fieldColumnTypeImports(field, application),
           nodejsTypeValidators: fieldTypeValidators(field),
@@ -453,7 +467,6 @@ export default class extends BaseApplicationGenerator {
           nodejsContentTypeColumnOptions: contentTypeColumnOptions(field, application),
         });
         // The fake value of the field as the API exchanges it, generated when a template calls it (after its faker seed).
-        field.nodejsApiFakeValue = () => apiFakeValue(field);
       },
     });
   }
@@ -466,8 +479,6 @@ export default class extends BaseApplicationGenerator {
           entity.nodejsColumnTransformers = [...new Set(entity.fields.map(field => field.nodejsColumnTransformer).filter(Boolean))];
           // The helpers of the column types chosen at runtime the columns of an entity use.
           entity.nodejsColumnTypeImports = [...new Set(entity.fields.flatMap(field => field.nodejsColumnTypeImports ?? []))];
-          // The fake values of the fields as the API exchanges them, generated when a template calls it (after its faker seed).
-          entity.nodejsApiFakeEntity = () => apiFakeEntity(entity);
         }
       },
       prepareAuthorityAlertName({ application }) {

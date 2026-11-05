@@ -1,18 +1,6 @@
-<%_ // The fake data of this test, whatever the templates rendered before: the faker of the entity is seeded for it.
-    resetFakerSeed('nodejs-e2e-mock');
-    const numericId = primaryKey.tsType === 'number';
-    // The fake data of the fields, reproducible (the faker of the entity is seeded): distinct ids of the type of the primary
-    // key, as TypeScript literals, and a value for each field of the entity, as the API exchanges it.
+<%_ const numericId = primaryKey.tsType === 'number';
     const idField = primaryKey.fields[0];
-    const [entityId, unknownId, anotherId] = [idField.generateFakeData('ts'), idField.generateFakeData('ts'), idField.generateFakeData('ts')];
-    const fakeFields = fields
-      .filter(field => !field.id && !field.transient && !field.collection)
-      .map(field => [field.propertyName, field.nodejsApiFakeValue()])
-      .filter(([, value]) => value !== undefined && value !== null);
-    // An id the pipe of the path rejects: neither a number nor a UUID.
-    const invalidId = faker.lorem.word({ length: { min: 5, max: 10 } });
-    // The user a partial update sets as the last modifier.
-    const patcher = faker.internet.username();
+    const { entityId, unknownId, anotherId, fakeFields, invalidId, patcher, validatedFields, validValues } = nodejsMockE2e;
 _%>
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { Test, TestingModule } from '@nestjs/testing';
@@ -49,15 +37,7 @@ describe('<%- entityClass %> Controller', () => {
     }
     const unknownId = <%- unknownId %>;
     const anotherId = <%- anotherId %>;
-<%_ // The global ValidationPipe of configureApp validates the requests: a body with valid values of the validated fields.
-    resetFakerSeed('nodejs-e2e');
-    const validatedFields = fields.filter(field => !field.id && field.fieldValidate && field.fieldType !== 'byte[]');
-    const validValues = Object.fromEntries(
-      validatedFields
-        .map(field => [field.fieldName, field.nodejsApiFakeValue()])
-        .filter(([, value]) => value !== undefined && value !== null),
-    );
-    const requiredField = validatedFields.find(field => field.fieldValidationRequired);
+<%_ const requiredField = validatedFields.find(field => field.fieldValidationRequired);
     const enumField = fields.find(field => !field.id && field.fieldIsEnum);
     // A field whose type the DTO validates, with a value of another type.
     const typedField = fields.find(field => !field.id && !field.transient && field.nodejsInvalidTypeValue !== undefined);

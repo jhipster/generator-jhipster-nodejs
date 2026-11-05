@@ -1,6 +1,6 @@
 import { hasCyclicRequiredRelationship, isRequiredRelationship } from 'generator-jhipster/generators/base-application/support';
 
-import { apiFakeEntity } from './api-fake-data.js';
+import { apiFakeEntity, apiFakeValue } from './api-fake-data.js';
 
 /**
  * The test samples of the entities (e2e/samples), like the test samples of the Angular client of JHipster: a sample of a
@@ -62,6 +62,49 @@ export const mutateTestSamples = ({ databaseTypeSql }) => ({
       otherEntities: [...new Set(relationships.map(({ otherEntity }) => otherEntity).filter(otherEntity => !otherEntity.builtInUser))],
       user: relationships.some(({ otherEntity }) => otherEntity.builtInUser),
     };
+  },
+  // The fake data of the mocked end-to-end tests, reproducible (the faker of the entity is seeded): distinct ids of the type
+  // of the primary key, as TypeScript literals, a value for each field as the API exchanges it, an id the pipe of the path
+  // rejects (neither a number nor a UUID), the user a partial update sets as the last modifier, and the valid values of the
+  // validated fields, for the global ValidationPipe.
+  nodejsMockE2e: (entity, { delayMarker }) => {
+    if (delayMarker) return delayMarker;
+    if (!entity.entityRestLayer) return undefined;
+    const { faker, fields, primaryKey } = entity;
+    const definedValues = (items, name) =>
+      items.map(field => [field[name], apiFakeValue(field)]).filter(([, value]) => value !== undefined && value !== null);
+    entity.resetFakerSeed('nodejs-e2e-mock');
+    const [idField] = primaryKey.fields;
+    const [entityId, unknownId, anotherId] = [
+      idField.generateFakeData('ts'),
+      idField.generateFakeData('ts'),
+      idField.generateFakeData('ts'),
+    ];
+    const fakeFields = definedValues(
+      fields.filter(field => !field.id && !field.transient && !field.collection),
+      'propertyName',
+    );
+    const invalidId = faker.lorem.word({ length: { min: 5, max: 10 } });
+    const patcher = faker.internet.username();
+    entity.resetFakerSeed('nodejs-e2e');
+    const validatedFields = fields.filter(field => !field.id && field.fieldValidate && field.fieldType !== 'byte[]');
+    return {
+      entityId,
+      unknownId,
+      anotherId,
+      fakeFields,
+      invalidId,
+      patcher,
+      validatedFields,
+      validValues: Object.fromEntries(definedValues(validatedFields, 'fieldName')),
+    };
+  },
+  // The values of a creation and of an update of the database end-to-end tests, as the API exchanges them.
+  nodejsDatabaseE2e: (entity, { delayMarker }) => {
+    if (delayMarker) return delayMarker;
+    if (!entity.entityRestLayer) return undefined;
+    entity.resetFakerSeed('nodejs-database-e2e');
+    return { created: apiFakeEntity(entity), updated: apiFakeEntity(entity) };
   },
   // The samples the database end-to-end tests read the required references from: the entity, the related records of its
   // relationship tests (on a SQL database) and the owners of its mappedBy one-to-one relationships.

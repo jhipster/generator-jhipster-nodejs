@@ -26,14 +26,7 @@ export default defineConfig(
       prettierBlocklist: true,
       stylisticBlocklist: true,
       experimental: true,
-      allowedGlobals: [
-        'formatAsApiDescription',
-        'formatAsClassJavadoc',
-        'formatAsFieldJavadoc',
-        'nodejsApiFakeEntity',
-        'relativeDir',
-        'resetFakerSeed',
-      ],
+      allowedGlobals: ['relativeDir'],
     },
     js.configs.recommended,
     stylistic.configs.customize({

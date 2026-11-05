@@ -1,7 +1,4 @@
-<%_ // The values of the fields as the API exchanges them, reproducible: the faker of the entity is seeded for this test.
-    resetFakerSeed('nodejs-database-e2e');
-    const created = nodejsApiFakeEntity();
-    const updated = nodejsApiFakeEntity();
+<%_ const { created, updated } = nodejsDatabaseE2e;
     const { approximateFields } = created;
     // The relationships of the entity with a join column or a join table (the persistableRelationships of JHipster): stored
     // by the id of the related record.
@@ -294,7 +291,7 @@ _%>
 <%_ for (const relationship of inverseOneToOnes) { _%>
   <%_ const { otherEntity } = relationship;
       const ownerProperty = relationship.otherRelationship.propertyName;
-      const ownerValues = (otherEntity.resetFakerSeed('nodejs-database-e2e'), otherEntity.nodejsApiFakeEntity().values);
+      const ownerValues = relationship.nodejsRelatedValues;
   _%>
 
   it('should give the records without <%- relationship.propertyName %> to its is-null filter, like JHipster Spring Boot', async () => {

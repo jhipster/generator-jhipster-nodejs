@@ -58,12 +58,12 @@ import { <%- enumClass %> } from '../enumeration/<%- uniqueEnums[enumClass] %>.t
 import { <%- user.persistClass %> } from '../../users/user.entity.ts';
 <%_ } _%>
 
-<%_ if (typeof javadoc === 'undefined') { _%>
+<%_ if (entityJavadoc) { _%>
+<%- entityJavadoc %>
+<%_ } else { _%>
 /**
  * A <%- persistClass %>.
  */
-<%_ } else { _%>
-<%- formatAsClassJavadoc(javadoc) %>
 <%_ } _%>
 @Entity('<%- entityTableName %>')
 export class <%- persistClass %> extends BaseEntity  {
@@ -92,8 +92,8 @@ export class <%- persistClass %> extends BaseEntity  {
 <%_ } _%>
 
 <%_ for (const field of fields.filter(field => !field.id)) { _%>
-  <%_ if (typeof field.javadoc !== 'undefined') { _%>
-<%- formatAsFieldJavadoc(field.javadoc) %>
+  <%_ if (field.fieldJavadoc) { _%>
+<%- field.fieldJavadoc %>
   <%_ } _%>
   <%_ const { fieldType, fieldTypeBlobContent, fieldName } = field; _%>
     @Column({ <%- field.nodejsColumnOptions.join(', ') %> })

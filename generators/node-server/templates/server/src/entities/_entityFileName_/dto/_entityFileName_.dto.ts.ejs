@@ -58,8 +58,8 @@ export class <%- dtoClass %> extends BaseDTO {
 
 <%_ for (idx in fieldsWithoutId) { _%>
   <%_ const field = fieldsWithoutId[idx]; _%>
-  <%_ if (typeof field.javadoc !== 'undefined') { _%>
-    <%- formatAsFieldJavadoc(field.javadoc) %>
+  <%_ if (field.fieldJavadoc) { _%>
+    <%- field.fieldJavadoc %>
   <%_ } _%>
   <%_ const required = field.fieldValidationRequired;
       const { fieldValidate } = field;
@@ -72,7 +72,7 @@ export class <%- dtoClass %> extends BaseDTO {
   <%_ } else { _%>
             @Allow()
   <%_ } _%>
-            @ApiProperty({ <%- field.fieldIsEnum ? `enum: ${fieldType}, ` : '' %>description: '<%- typeof field.javadoc === 'undefined' ? `${fieldName} ${field.fieldIsEnum ? 'enum ' : ''}field` : formatAsApiDescription(field.javadoc) %>'<%- required ? '' : ', required: false' %> })
+            @ApiProperty({ <%- field.fieldIsEnum ? `enum: ${fieldType}, ` : '' %>description: "<%- field.fieldApiDescription ?? `${fieldName} ${field.fieldIsEnum ? 'enum ' : ''}field` %>"<%- required ? '' : ', required: false' %> })
         <%- fieldName %><%- field.fieldValidationRequired ? '!' : '?' %>: <%- field.nodejsFieldType %>;
 
   <%_ if ((fieldType === 'byte[]' || fieldType === 'ByteBuffer') && fieldTypeBlobContent !== 'text') { _%>
@@ -83,15 +83,15 @@ export class <%- dtoClass %> extends BaseDTO {
 <%_ } _%>
 
 <%_ for (const relationship of relationships) { _%>
-  <%_ if (typeof relationship.javadoc !== 'undefined') { _%>
-  <%- formatAsFieldJavadoc(relationship.javadoc) %>
+  <%_ if (relationship.relationshipJavadoc) { _%>
+  <%- relationship.relationshipJavadoc %>
   <%_ } _%>
   <%_ if (relationship.columnRequired) { _%>
   // Like the @NotNull relationships of JHipster Spring Boot.
   @IsNotEmpty()
   <%_ } _%>
   @Allow()
-  @ApiProperty({ type: () => <%- relationship.otherEntity.dtoClass %><%- relationship.collection ? ', isArray: true' : '' %>, description: '<%- typeof relationship.javadoc === 'undefined' ? `${relationship.propertyName} relationship` : formatAsApiDescription(relationship.javadoc) %>' })
+  @ApiProperty({ type: () => <%- relationship.otherEntity.dtoClass %><%- relationship.collection ? ', isArray: true' : '' %>, description: "<%- relationship.relationshipApiDescription ?? `${relationship.propertyName} relationship` %>" })
   <%- relationship.propertyName %><%- relationship.relationshipRequired ? '!' : '?' %>: RelatedDTO<<%- relationship.otherEntity.dtoClass %><%- relationship.collection ? '[]' : '' %>>;
 <%_ } _%>
 
