@@ -5,7 +5,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { MailerService } from '@nestjs-modules/mailer';
 
-import { <%= user.dtoClass %> } from '../users/dto/user.dto.ts';
+import { <%- user.dtoClass %> } from '../users/dto/user.dto.ts';
 
 /** A language tag of JHipster, like pt-br: the langKey of a user, which the user can change, read as a file name. */
 const LANGUAGE_TAG = /^[a-zA-Z0-9-]+$/;
@@ -53,17 +53,17 @@ export class MailService {
     this.defaultMessages = parseProperties(readFileSync(path.join(i18nFolder, 'messages.properties'), 'utf8'));
   }
 
-  async sendActivationEmail(user: <%= user.dtoClass %>): Promise<void> {
+  async sendActivationEmail(user: <%- user.dtoClass %>): Promise<void> {
     this.logger.debug(`Sending activation email to '${user.email}'`);
     await this.sendEmailFromTemplate(user, 'activationEmail', 'email.activation.title');
   }
 
-  async sendCreationEmail(user: <%= user.dtoClass %>): Promise<void> {
+  async sendCreationEmail(user: <%- user.dtoClass %>): Promise<void> {
     this.logger.debug(`Sending creation email to '${user.email}'`);
     await this.sendEmailFromTemplate(user, 'creationEmail', 'email.activation.title');
   }
 
-  async sendPasswordResetMail(user: <%= user.dtoClass %>): Promise<void> {
+  async sendPasswordResetMail(user: <%- user.dtoClass %>): Promise<void> {
     this.logger.debug(`Sending password reset email to '${user.email}'`);
     await this.sendEmailFromTemplate(user, 'passwordResetEmail', 'email.reset.title');
   }
@@ -72,7 +72,7 @@ export class MailService {
    * The mail of a template of templates/mail, like the sendEmailFromTemplate of JHipster Spring Boot: rendered with the
    * user, the base URL of the client and the messages of the language of the user (the message helper of the templates).
    */
-  async sendEmailFromTemplate(user: <%= user.dtoClass %>, template: string, titleKey: string): Promise<void> {
+  async sendEmailFromTemplate(user: <%- user.dtoClass %>, template: string, titleKey: string): Promise<void> {
     if (!user.email) {
       this.logger.debug(`Email doesn't exist for user '${user.login}'`);
       return;

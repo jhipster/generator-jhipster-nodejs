@@ -8,7 +8,7 @@ import cloudConfigClient from 'cloud-config-client';
 import { AppModule } from './app.module.ts';
 import { configureApp } from './app.config.ts';
 import { setupSwagger } from './swagger.ts';
-import { <% if (serviceDiscoveryEureka) { %>activeProfiles, <% } %>config, isProfileActive } from './config.ts';
+import { <%- serviceDiscoveryEureka ? 'activeProfiles, ' : '' %>config, isProfileActive } from './config.ts';
 import { httpsOptions } from './tls.ts';
 <%_ if (serviceDiscoveryEureka) { _%>
 import { EurekaService } from './registry/eureka.service.ts';
@@ -52,7 +52,7 @@ async function bootstrap(): Promise<void> {
   app.useBodyParser('json', { type: ['application/json', 'application/merge-patch+json'] });
   // Close the application (HTTP server, database connections) on SIGTERM, the signal docker stop sends.
   app.enableShutdownHooks();
-  // CORS, global validation<% if (authenticationUsesCsrf) { %>, HTTP settings and sessions<% } else { %> and HTTP settings<% } %>, shared with the e2e tests.
+  // CORS, global validation<%- authenticationUsesCsrf ? ', HTTP settings and sessions' : ' and HTTP settings' %>, shared with the e2e tests.
   configureApp(app);
 
 <%_ if (authenticationType === 'oauth2') { _%>
@@ -61,15 +61,15 @@ async function bootstrap(): Promise<void> {
   app.use(passport.session());
 <%_ } _%>
 
-<%_ if (!skipClient) { _%>
+<%_ if (skipClient) { _%>
+  logger.log(`The client is not been generated`);
+<%_ } else { _%>
   const staticClientPath = config.getClientPath();
   if (fs.existsSync(staticClientPath)) {
     logger.log(`Serving static client resources on ${staticClientPath}`);
   } else {
     logger.log(`No client it has been found`);
   }
-<%_ } else { _%>
-  logger.log(`The client is not been generated`);
 <%_ } _%>
   // The API documentation of the api-docs profile, like JHipster Spring Boot.
   if (isProfileActive('api-docs')) {

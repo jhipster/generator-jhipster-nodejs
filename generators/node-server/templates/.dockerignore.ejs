@@ -4,13 +4,13 @@ Dockerfile
 node_modules
 yarn.lock
 
-<%= nodeServerRootDir %>node_modules
-<%= nodeServerRootDir %>dist
-<%= nodeServerRootDir %>.env
-<%= nodeServerRootDir %>yarn.lock
+<%- nodeServerRootDir %>node_modules
+<%- nodeServerRootDir %>dist
+<%- nodeServerRootDir %>.env
+<%- nodeServerRootDir %>yarn.lock
 
-<%= clientRootDir %>node_modules
-<%= clientRootDir %>yarn.lock
+<%- clientRootDir %>node_modules
+<%- clientRootDir %>yarn.lock
 
-<%= temporaryDir %>
+<%- temporaryDir %>
 target

@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
 import { ForbiddenException } from '@nestjs/common';
-import { <% if (authenticationTypeSession) { %>checkLoginCsrfToken, <% } %>CsrfMiddleware } from './csrf.middleware.ts';
+import { <%- authenticationTypeSession ? 'checkLoginCsrfToken, ' : '' %>CsrfMiddleware } from './csrf.middleware.ts';
 
 const call = (method: string, session: any, headers: Record<string, string> = {}): { res: any; next: any } => {
   const res = { cookie: vi.fn() };

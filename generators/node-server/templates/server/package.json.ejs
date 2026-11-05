@@ -1,12 +1,12 @@
 {
-  "name": "<%= dasherizedBaseName %>-server",
+  "name": "<%- dasherizedBaseName %>-server",
   "version": "0.0.1",
   "description": "",
   "author": "",
   "license": "MIT",
   "type": "module",
   "scripts": {
-    "clean": "rimraf dist <%= relativeDir(nodeServerRootDir, temporaryDir) %>db/",
+    "clean": "rimraf dist <%- relativeDir(nodeServerRootDir, temporaryDir) %>db/",
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\"",
     "sonar:scanner": "sonar-scanner",
@@ -32,7 +32,7 @@
 <%_ } _%>
     "typeorm:migration:run": "npm run typeorm -- migration:run",
     "typeorm:migration:revert": "npm run typeorm -- migration:revert",
-    "typeorm:migration:show": "npm run typeorm -- migration:show"<% if (databaseTypeSql) { %>,<% } %>
+    "typeorm:migration:show": "npm run typeorm -- migration:show"<%- databaseTypeSql ? ',' : '' %>
 <%_ if (databaseTypeSql) { _%>
     "typeorm:schema:log": "npm run typeorm -- schema:log",
     "typeorm:schema:sync": "npm run typeorm -- schema:sync"
@@ -57,7 +57,7 @@
 <%_ } _%>
     "@nestjs/passport": "<%- nodeServerDependencies['@nestjs/passport'] %>",
     "@nestjs/platform-express": "<%- nodeServerDependencies['@nestjs/platform-express'] %>",
-    "express": "<%- nodeServerDependencies['express'] %>",
+    "express": "<%- nodeServerDependencies.express %>",
 <%_ if (generateUserManagement) { _%>
     "@nestjs/schedule": "<%- nodeServerDependencies['@nestjs/schedule'] %>",
 <%_ } _%>
@@ -68,7 +68,7 @@
     "@nestjs/terminus": "<%- nodeServerDependencies['@nestjs/terminus'] %>",
     "@nestjs/typeorm": "<%- nodeServerDependencies['@nestjs/typeorm'] %>",
 <%_ if (authenticationType === 'jwt' || generateUserManagement) { _%>
-    "bcrypt": "<%- nodeServerDependencies['bcrypt'] %>",
+    "bcrypt": "<%- nodeServerDependencies.bcrypt %>",
 <%_ } _%>
     "class-transformer": "<%- nodeServerDependencies['class-transformer'] %>",
     "class-validator": "<%- nodeServerDependencies['class-validator'] %>",
@@ -76,31 +76,31 @@
     "cloud-config-client": "<%- nodeServerDependencies['cloud-config-client'] %>",
 <%_ } _%>
 <%_ if (serviceDiscoveryConsul) { _%>
-    "consul": "<%- nodeServerDependencies['consul'] %>",
+    "consul": "<%- nodeServerDependencies.consul %>",
 <%_ } _%>
-    "dotenv": "<%- nodeServerDependencies['dotenv'] %>",
+    "dotenv": "<%- nodeServerDependencies.dotenv %>",
 <%_ if (serviceDiscoveryEureka) { _%>
     "@rocketsoftware/eureka-js-client": "<%- nodeServerDependencies['@rocketsoftware/eureka-js-client'] %>",
 <%_ } _%>
 <%_ if (generateUserManagement) { _%>
-    "handlebars": "<%- nodeServerDependencies['handlebars'] %>",
+    "handlebars": "<%- nodeServerDependencies.handlebars %>",
 <%_ } _%>
     "js-yaml": "<%- nodeServerDependencies['js-yaml'] %>",
 <%_ if (authenticationType === 'oauth2') { _%>
     "jwks-rsa": "<%- nodeServerDependencies['jwks-rsa'] %>",
     "jwt-decode": "<%- nodeServerDependencies['jwt-decode'] %>",
 <%_ } _%>
-    "passport": "<%- nodeServerDependencies['passport'] %>",
+    "passport": "<%- nodeServerDependencies.passport %>",
     "passport-jwt": "<%- nodeServerDependencies['passport-jwt'] %>",
 <%_ if (authenticationType === 'oauth2') { _%>
     "passport-oauth2": "<%- nodeServerDependencies['passport-oauth2'] %>",
 <%_ } _%>
     "prom-client": "<%- nodeServerDependencies['prom-client'] %>",
-    "qs": "<%- nodeServerDependencies['qs'] %>",
+    "qs": "<%- nodeServerDependencies.qs %>",
     "reflect-metadata": "<%- nodeServerDependencies['reflect-metadata'] %>",
-    "rxjs": "<%- nodeServerDependencies['rxjs'] %>",
+    "rxjs": "<%- nodeServerDependencies.rxjs %>",
     "swagger-ui-express": "<%- nodeServerDependencies['swagger-ui-express'] %>",
-    "typeorm": "<%- nodeServerDependencies['typeorm'] %>"
+    "typeorm": "<%- nodeServerDependencies.typeorm %>"
   },
   "devDependencies": {
     "@nestjs/cli": "<%- nodeServerDependencies['@nestjs/cli'] %>",
@@ -127,17 +127,17 @@
 <%_ if (databaseType !== 'mongodb' && nodeDevDatabaseDriver !== nodeProdDatabaseDriver) { _%>
     "<%- nodeDevDatabaseDriver %>": "<%- nodeServerDependencies[nodeDevDatabaseDriver] %>",
 <%_ } _%>
-    "eslint": "<%- nodeServerDependencies['eslint'] %>",
+    "eslint": "<%- nodeServerDependencies.eslint %>",
     "eslint-config-prettier": "<%- nodeServerDependencies['eslint-config-prettier'] %>",
     "eslint-plugin-prettier": "<%- nodeServerDependencies['eslint-plugin-prettier'] %>",
 <%_ if (databaseType === 'mongodb') { _%>
     "mongodb-memory-server": "<%- nodeServerDependencies['mongodb-memory-server'] %>",
 <%_ } _%>
-    "rimraf": "<%- nodeServerDependencies['rimraf'] %>",
+    "rimraf": "<%- nodeServerDependencies.rimraf %>",
     "sonarqube-scanner": "<%- nodeServerDependencies['sonarqube-scanner'] %>",
-    "supertest": "<%- nodeServerDependencies['supertest'] %>",
-    "typescript": "<%- nodeServerDependencies['typescript'] %>",
-    "vite": "<%- nodeServerDependencies['vite'] %>",
-    "vitest": "<%- nodeServerDependencies['vitest'] %>"
+    "supertest": "<%- nodeServerDependencies.supertest %>",
+    "typescript": "<%- nodeServerDependencies.typescript %>",
+    "vite": "<%- nodeServerDependencies.vite %>",
+    "vitest": "<%- nodeServerDependencies.vitest %>"
   }
 }

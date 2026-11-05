@@ -1,4 +1,4 @@
-import { isInt, isNotEmpty, isPort<% if (authenticationTypeOauth2 || serviceDiscoveryEureka) { %>, isURL<% } %> } from 'class-validator';
+import { isInt, isNotEmpty, isPort<%- (authenticationTypeOauth2 || serviceDiscoveryEureka) ? ', isURL' : '' %> } from 'class-validator';
 
 /**
  * The properties of the application the providers read with ConfigService<ApplicationConfig, true>, nested by the dotted
@@ -118,7 +118,7 @@ const rules: Rule[] = [
   ['jhipster.security.authentication.jwt.token-validity-in-seconds-for-remember-me', positiveInt, 'a positive number of seconds'],
 <%_ } _%>
 <%_ if (generateUserManagement) { _%>
-  ['<%= nodejsPasswordRoundsProperty %>', value => isInt(Number(value)) && Number(value) >= 4 && Number(value) <= 31, 'bcrypt rounds, from 4 to 31'],
+  ['<%- nodejsPasswordRoundsProperty %>', value => isInt(Number(value)) && Number(value) >= 4 && Number(value) <= 31, 'bcrypt rounds, from 4 to 31'],
 <%_ } _%>
   ['jhipster.cors.max-age', value => isInt(Number(value)) && Number(value) >= 0, 'a number of seconds'],
 <%_ if (generateUserManagement) { _%>

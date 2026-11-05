@@ -21,16 +21,16 @@
  EJS fragments will process % delimiter tags in template and & delimiter tags in the merge process.
 -%>
 <&_ if (fragment.introSection) { -&>
-This application was generated using the [NodeJS blueprint](https://github.com/jhipster/generator-jhipster-nodejs) of JHipster <%= jhipsterVersion %>, you can find documentation and help at [<%= documentationArchiveUrl %>](<%= documentationArchiveUrl %>). For any questions you can refer to the stream lead: [Angelo Manganiello](https://github.com/amanganiello90).
+This application was generated using the [NodeJS blueprint](https://github.com/jhipster/generator-jhipster-nodejs) of JHipster <%- jhipsterVersion %>, you can find documentation and help at [<%- documentationArchiveUrl %>](<%- documentationArchiveUrl %>). For any questions you can refer to the stream lead: [Angelo Manganiello](https://github.com/amanganiello90).
 <%_ if (applicationTypeGateway || applicationTypeMicroservice) { _%>
 
-This is a "<%= applicationType %>" application intended to be part of a microservice architecture, please refer to the [Doing microservices with JHipster][] page of the documentation for more information.
-<%_ if (serviceDiscoveryEureka) { _%>
+This is a "<%- applicationType %>" application intended to be part of a microservice architecture, please refer to the [Doing microservices with JHipster][] page of the documentation for more information.
+  <%_ if (serviceDiscoveryEureka) { _%>
 This application is configured for Service Discovery and Configuration with the JHipster-Registry, enabled with `EUREKA_CLIENT_ENABLED=true` (at `eureka.client.service-url.defaultZone`, [http://localhost:8761](http://localhost:8761) by default). Enabled, it refuses to start if it is not able to load its configuration from the JHipster-Registry, then registers once it listens and deregisters when it stops. For more information, read our documentation on [Service Discovery and Configuration with the JHipster-Registry][].
-<%_ } _%>
-<%_ if (serviceDiscoveryConsul) { _%>
+  <%_ } _%>
+  <%_ if (serviceDiscoveryConsul) { _%>
 This application is configured for Service Discovery with Consul, enabled with `CLOUD_CONSUL_ENABLED=true` (at `CLOUD_CONSUL_HOST` and `CLOUD_CONSUL_PORT`, [http://localhost:8500](http://localhost:8500) by default). Enabled, it registers once it listens, with the health check of `/management/health`, and deregisters when it stops; a failed registration is logged. For more information, read our documentation on [Service Discovery and Configuration with Consul][].
-<%_ } _%>
+  <%_ } _%>
 <%_ } _%>
 
 <&_ } -&>
@@ -82,7 +82,7 @@ If you'd like to configure things manually through the Okta developer console, s
 
 First, you'll need to create a free developer account at <https://developer.okta.com/signup/>. After doing so, you'll get your own Okta domain, that has a name like `https://dev-123456.okta.com`.
 
-Modify `<%= nodeServerRootDir %>src/config/application.yml` to use your Okta settings.
+Modify `<%- nodeServerRootDir %>src/config/application.yml` to use your Okta settings.
 
 ```yaml
   ...
@@ -100,7 +100,7 @@ Modify `<%= nodeServerRootDir %>src/config/application.yml` to use your Okta set
 
 Create an OIDC App in Okta to get a `{clientId}` and `{clientSecret}`. To do this, log in to your Okta Developer account and navigate to **Applications** > **Add Application**. Click **Web** and click the **Next** button. Give the app a name you’ll remember, specify `http://localhost:<%- serverPort %>` as a Base URI, and `http://localhost:<%- serverPort %>/login/oauth2/code/oidc` as a Login Redirect URI. Click **Done**, then Edit and add `http://localhost:<%- serverPort %>` as a Logout redirect URI. Copy and paste the client ID and secret into your `application.yml` file.
 
-Create a `ROLE_ADMIN` and `ROLE_USER` group and add users into them. Modify e2e tests to use this account when running integration tests. You'll need to change credentials in `<%= clientTestDir %>e2e/account/account.spec.ts` and `<%= clientTestDir %>e2e/admin/administration.spec.ts`.
+Create a `ROLE_ADMIN` and `ROLE_USER` group and add users into them. Modify e2e tests to use this account when running integration tests. You'll need to change credentials in `<%- clientTestDir %>e2e/account/account.spec.ts` and `<%- clientTestDir %>e2e/admin/administration.spec.ts`.
 
 Navigate to **API** > **Authorization Servers**, click the **Authorization Servers** tab and edit the default one. Click the **Claims** tab and **Add Claim**. Name it "groups", and include it in the ID Token. Set the value type to "Groups" and set the filter to be a Regex of `.*`.
 
@@ -112,7 +112,7 @@ After making these changes, you should be good to go! If you have any issues, pl
 
 Congratulations! You've selected an excellent way to secure your NHipster application. If you're not sure what JSON Web Token (JWT) is, please see [What the Heck is JWT?](https://jwt.io/introduction/)
 
-Your app uses, to get and use the token, the `<%= nodeServerRootDir %>src/config/application.yml` settings:
+Your app uses, to get and use the token, the `<%- nodeServerRootDir %>src/config/application.yml` settings:
 
 ```yaml
   ...
@@ -127,12 +127,12 @@ Your app uses, to get and use the token, the `<%= nodeServerRootDir %>src/config
 ```
 
 You can use the default secret created from the app, or change it.
-<%_ if (generateBuiltInUserEntity) { _%>
+  <%_ if (generateBuiltInUserEntity) { _%>
 So to get a token, you have to pass a POST request on the _api/authenticate_ url with **UserLoginDTO** as body.
 For this you can use the client login page (if you have generated it), or a client like curl.
-<%_ } else { _%>
+  <%_ } else { _%>
 This application has no users of its own: it validates the tokens issued by the application sharing this secret (like the gateway), and the user of a request is the one of its token.
-<%_ } _%>
+  <%_ } _%>
 <%_ } else if (authenticationTypeSession) { _%>
 
 ### Session authentication
@@ -149,9 +149,9 @@ sessions of the user, any of which it can end. Its unsafe requests, the login in
 
 ### Account mails
 
-Like JHipster Spring Boot, the server sends the account mails with [@nestjs-modules/mailer][] (Nodemailer): the activation mail of a registered user (who signs in once activated, with the link of the mail), the creation mail of a user created by an administrator and the password reset mail. Their HTML is the [Handlebars][] templates of `<%= nodeServerRootDir %>src/templates/mail/` (like the Thymeleaf templates of `templates/mail`; they interpolate values, escaped, and call the `message` helper of the server, they run no code), their texts the messages of `<%= nodeServerRootDir %>src/i18n/messages*.properties` in the language of the user, and their links open the client at `jhipster.mail.base-url`.
+Like JHipster Spring Boot, the server sends the account mails with [@nestjs-modules/mailer][] (Nodemailer): the activation mail of a registered user (who signs in once activated, with the link of the mail), the creation mail of a user created by an administrator and the password reset mail. Their HTML is the [Handlebars][] templates of `<%- nodeServerRootDir %>src/templates/mail/` (like the Thymeleaf templates of `templates/mail`; they interpolate values, escaped, and call the `message` helper of the server, they run no code), their texts the messages of `<%- nodeServerRootDir %>src/i18n/messages*.properties` in the language of the user, and their links open the client at `jhipster.mail.base-url`.
 
-The SMTP server is set by the `mail` settings of `<%= nodeServerRootDir %>src/config/application-dev.yml` and `application-prod.yml` (`localhost:25` by default), or by environment variables like `MAIL_HOST`, `MAIL_PORT`, `MAIL_USERNAME` and `MAIL_PASSWORD`. A mail that cannot be sent is logged as a warning, without failing the request.
+The SMTP server is set by the `mail` settings of `<%- nodeServerRootDir %>src/config/application-dev.yml` and `application-prod.yml` (`localhost:25` by default), or by environment variables like `MAIL_HOST`, `MAIL_PORT`, `MAIL_USERNAME` and `MAIL_PASSWORD`. A mail that cannot be sent is logged as a warning, without failing the request.
 <%_ } _%>
 
 ### Using NestJS CLI
@@ -164,7 +164,7 @@ For example, the following command:
 
 will generate the file:
 
-    create <%= nodeServerRootDir %>src/my-component/my-component.module.ts
+    create <%- nodeServerRootDir %>src/my-component/my-component.module.ts
 
 
 ### Building and running
@@ -172,18 +172,18 @@ will generate the file:
 #### Running
 
 ```bash
-<%= nodePackageManager %> run app:start
+<%- nodePackageManager %> run app:start
 ```
 
 #### Building
 
 ```bash
-<%= nodePackageManager %> run build:app
+<%- nodePackageManager %> run build:app
 ```
 
-The build folder with all compiled sources will be **<%= nodeServerRootDir %>dist**.
+The build folder with all compiled sources will be **<%- nodeServerRootDir %>dist**.
 
-> For more explanation about full stack server/client build refer to [<%= nodeServerRootDir %>README.md](<%= nodeServerRootDir %>README.md)
+> For more explanation about full stack server/client build refer to [<%- nodeServerRootDir %>README.md](<%- nodeServerRootDir %>README.md)
 
 <&_ } -&>
 
@@ -200,7 +200,7 @@ docker compose -f <%- dockerServicesDir %>sonar.yml up -d
 Note: we have turned off forced authentication redirect for UI in [<%- dockerServicesDir %>sonar.yml](<%- dockerServicesDir %>sonar.yml) for out of the box experience while trying out SonarQube, for real use cases turn it back on.
 
 You can run a Sonar analysis with using the [sonar-scanner](https://docs.sonarqube.org/display/SCAN/Analyzing+with+SonarQube+Scanner).
-Then, run a Sonar analysis in the <%= nodeServerRootDir %> folder:
+Then, run a Sonar analysis in the <%- nodeServerRootDir %> folder:
 
 ```sh
 npm run sonar:scanner

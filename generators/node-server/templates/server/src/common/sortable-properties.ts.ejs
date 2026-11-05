@@ -1,4 +1,4 @@
-import { EntityMetadata<% if (databaseTypeMongodb) { %>, FindOptionsOrder<% } %> } from 'typeorm';
+import { EntityMetadata<%- databaseTypeMongodb ? ', FindOptionsOrder' : '' %> } from 'typeorm';
 
 export interface SortableOptions {
   /** Columns of the entity no list can be sorted on, like the password of a user. */

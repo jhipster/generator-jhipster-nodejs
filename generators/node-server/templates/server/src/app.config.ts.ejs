@@ -68,9 +68,9 @@ export function corsOptions(configService: AppConfigService): CorsOptions | unde
 
 /**
  * A middleware writing the headers of every response, like the default headers of Spring Security and the headers of
- * the SecurityConfiguration of JHipster Spring Boot<% if (!skipClient) { %> (jhipster.security.content-security-policy)<% } %>.
+ * the SecurityConfiguration of JHipster Spring Boot<%- skipClient ? '' : ' (jhipster.security.content-security-policy)' %>.
  */
-function responseHeaders(<% if (!skipClient) { %>configService: AppConfigService<% } %>): (req: Request, res: Response, next: NextFunction) => void {
+function responseHeaders(<%- skipClient ? '' : 'configService: AppConfigService' %>): (req: Request, res: Response, next: NextFunction) => void {
 <%_ if (!skipClient) { _%>
   const contentSecurityPolicy = String(configService.get('jhipster.security.content-security-policy', { infer: true }) ?? '');
 <%_ } _%>
@@ -124,7 +124,7 @@ export function configureApp(app: INestApplication): INestApplication {
   app.getHttpAdapter().getInstance().disable('x-powered-by');
   const configService = app.get<AppConfigService>(ConfigService);
   (app as NestExpressApplication).set('trust proxy', trustProxy(configService.get('server.forward-headers-strategy', { infer: true })));
-  app.use(responseHeaders(<% if (!skipClient) { %>configService<% } %>));
+  app.use(responseHeaders(<%- skipClient ? '' : 'configService' %>));
   const cors = corsOptions(configService);
   if (cors) {
     app.enableCors((req: Request, callback: (error: Error | null, options: CorsOptions) => void) =>

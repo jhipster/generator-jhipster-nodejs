@@ -39,7 +39,7 @@ logging:
     ROOT: INFO
 
 server:
-  port: <%= serverPort %>
+  port: <%- serverPort %>
 
 # ===================================================================
 # JHipster specific properties
@@ -50,14 +50,14 @@ server:
 # The database, read by orm.config.ts (TypeORM options): environment variables override each property, like
 # DATABASE_HOST or DATABASE_PASSWORD.
 database:
-  type: <%= nodeProdDatabaseType %>
+  type: <%- nodeProdDatabaseType %>
 <%_ if (prodDatabaseTypeSqlite) { _%>
   # The file of the SQLite database, from the folder the server runs in: DATABASE_NAME sets another one.
   name: '<%- nodeProdSqliteDatabase %>'
 <%_ } else { _%>
   # The database of the host, like the datasource of JHipster Spring Boot: <%- dockerServicesDir %>app.yml sets the host of its service.
   host: localhost
-  port: <%= nodeDatabasePort %>
+  port: <%- nodeDatabasePort %>
   <%_ if (databaseTypeSql) { _%>
   # Samples of the username and the password are in the secret-samples profile: set them in production, with the
   # DATABASE_USERNAME and DATABASE_PASSWORD environment variables for example.
@@ -69,7 +69,7 @@ database:
   # DATABASE_PASSWORD environment variables for example.
   username: ''
   password: ''
-  name: <%= baseName %>
+  name: <%- baseName %>
   <%_ } _%>
 <%_ } _%>
   logging: false
@@ -87,7 +87,7 @@ mail:
 <%_ } _%>
 jhipster:
   mail: # specific JHipster mail property, for standard properties see MailProperties
-    from: <%= baseName %>@localhost
+    from: <%- baseName %>@localhost
     base-url: http://my-server-url-to-change # Modify according to your server's URL
 
 # ===================================================================

@@ -1,4 +1,7 @@
-import { Column, Entity, Index, <%_ if (databaseTypeMongodb) { _%>ObjectIdColumn<%_ } else { _%>PrimaryColumn<%_ } _%> } from 'typeorm';
+import { Column, Entity, Index, 
+<%_ if (databaseTypeMongodb) { _%>ObjectIdColumn
+<%_ } else { _%>PrimaryColumn
+<%_ } _%> } from 'typeorm';
 
 /**
  * A session of the server, kept in the database of the application by the SessionStore: the sessions outlive a restart

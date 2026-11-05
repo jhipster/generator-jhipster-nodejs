@@ -1,7 +1,8 @@
-<%_ const UserEntity = user.persistClass %>
+<%_ const UserEntity = user.persistClass; _%>
+
 import { MigrationInterface, QueryRunner } from 'typeorm';
 <%_ if (authenticationType !== 'oauth2') { _%>
-import { <%= UserEntity %> } from '../users/user.entity.ts';
+import { <%- UserEntity %> } from '../users/user.entity.ts';
 import { config } from '../config.ts';
 import { encodePassword } from '../auth/password-util.ts';
 <%_ } _%>
@@ -14,7 +15,7 @@ export class SeedUsersRoles1570200490072 implements MigrationInterface {
 
 <%_ if (authenticationType !== 'oauth2') { _%>
   // The users of JHipster Spring Boot: an administrator and a user, in the native language of the application.
-  user1: <%= UserEntity %> = {
+  user1: <%- UserEntity %> = {
     login: 'admin',
     password: 'admin',
     firstName: 'Administrator',
@@ -22,12 +23,12 @@ export class SeedUsersRoles1570200490072 implements MigrationInterface {
     email: 'admin@localhost',
     imageUrl: '',
     activated: true,
-    langKey: '<%= nativeLanguage %>',
+    langKey: '<%- nativeLanguage %>',
     createdBy: 'system',
     lastModifiedBy: 'system',
   };
 
-  user2: <%= UserEntity %> = {
+  user2: <%- UserEntity %> = {
     login: 'user',
     password: 'user',
     firstName: 'User',
@@ -35,7 +36,7 @@ export class SeedUsersRoles1570200490072 implements MigrationInterface {
     email: 'user@localhost',
     imageUrl: '',
     activated: true,
-    langKey: '<%= nativeLanguage %>',
+    langKey: '<%- nativeLanguage %>',
     createdBy: 'system',
     lastModifiedBy: 'system',
   };
@@ -60,7 +61,7 @@ export class SeedUsersRoles1570200490072 implements MigrationInterface {
     this.user2.authorities= [userRole];
 
     // The migrations run outside of the dependency injection: the rounds of the configuration, like the PasswordService.
-    const rounds = Number(config.get('<%= nodejsPasswordRoundsProperty %>'));
+    const rounds = Number(config.get('<%- nodejsPasswordRoundsProperty %>'));
     const users = await Promise.all(
       [this.user1, this.user2].map(async user => ({ ...user, password: await encodePassword(user.password, rounds) })),
     );

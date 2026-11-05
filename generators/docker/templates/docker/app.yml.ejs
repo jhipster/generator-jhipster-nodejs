@@ -18,8 +18,8 @@
 -%>
 # The image, its environment, its ports, its healthcheck and the services it depends on are the data of the docker
 # compose file of the application (generators/docker/generators/bootstrap), merged into this file and into the deployments.
-name: <%= lowercaseBaseName %>
+name: <%- lowercaseBaseName %>
 services:
   app:
-    image: <%= lowercaseBaseName %>
+    image: <%- lowercaseBaseName %>
     build: ..

@@ -14,13 +14,13 @@ export const PASSWORD_MAX_LENGTH = 100;
 /**
  * A user, with the constraints of the AdminUserDTO of JHipster Spring Boot.
  */
-export class <%= userLoginVmClass %> extends BaseDTO {
+export class <%- userLoginVmClass %> extends BaseDTO {
 <%_ if (user) { _%>
   <%_ if (databaseTypeMongodb) { _%>
   @Transform(({ value }) => value?.toHexString ? value?.toHexString() : value, {toPlainOnly: true})
   <%_ } _%>
   @Allow()
-  <%= user.primaryKey.name %>?: <%= user.primaryKey.tsType %>;
+  <%- user.primaryKey.name %>?: <%- user.primaryKey.tsType %>;
 <%_ } else { _%>
   @Allow()
   id?: string;
@@ -95,7 +95,7 @@ export class <%= userLoginVmClass %> extends BaseDTO {
 }
 
 /** A user registering, with a password, like the ManagedUserVM of JHipster Spring Boot. */
-export class Managed<%= userLoginVmClass %> extends <%= userLoginVmClass %> {
+export class Managed<%- userLoginVmClass %> extends <%- userLoginVmClass %> {
   @Exclude({ toPlainOnly: true })
   @ApiProperty({ example: 'myuser', description: 'User password', minLength: PASSWORD_MIN_LENGTH, maxLength: PASSWORD_MAX_LENGTH })
   @IsString()
@@ -108,7 +108,7 @@ export class Managed<%= userLoginVmClass %> extends <%= userLoginVmClass %> {
 /** A user of the public user list, like the UserDTO of JHipster Spring Boot: its id and login only. */
 export class PublicUserDTO {
   @ApiProperty({ description: 'User id' })
-  id!: <%= user.primaryKey.tsType %>;
+  id!: <%- user.primaryKey.tsType %>;
 
   @ApiProperty({ example: 'myuser', description: 'User login' })
   login!: string;

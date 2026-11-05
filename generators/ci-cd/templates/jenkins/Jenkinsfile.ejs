@@ -29,73 +29,72 @@ node {
     gitlabCommitStatus('build') {
 <%_ } _%>
 <%_ if (insideDocker) { _%>
-<%= gitLabIndent %>    docker.image('jhipster/jhipster:v<%= jhipsterVersion %>').inside('-u jhipster<% if (buildTool === 'maven') { %> -e MAVEN_OPTS="-Duser.home=./"<% } else if (buildTool === 'gradle') { %> -e GRADLE_USER_HOME=.gradle<% } %>') {
+<%- gitLabIndent %>    docker.image('jhipster/jhipster:v<%- jhipsterVersion %>').inside('-u jhipster<% if (buildTool === 'maven') { %> -e MAVEN_OPTS="-Duser.home=./"<% } else if (buildTool === 'gradle') { %> -e GRADLE_USER_HOME=.gradle<% } %>') {
 <%_ } _%>
 
-    <%_ if (!skipClient) { _%>
+<%_ if (!skipClient) { _%>
 
-<%= indent %>    stage('install frontend') {
-<%= indent %>        sh "<%= clientPackageManager %> install"
-<%= indent %>    }
+<%- indent %>    stage('install frontend') {
+<%- indent %>        sh "<%- clientPackageManager %> install"
+<%- indent %>    }
 
-    <%_ } _%>
+<%_ } _%>
 
-    <%_ if (!skipServer) { _%>
-<%= indent %>    stage('install server') {
-<%= indent %>        sh "cd server && <%= clientPackageManager %> install"
-<%= indent %>    }
+<%_ if (!skipServer) { _%>
+<%- indent %>    stage('install server') {
+<%- indent %>        sh "cd server && <%- clientPackageManager %> install"
+<%- indent %>    }
 
-<%= indent %>    stage('backend tests') {
-<%= indent %>        try {
-<%= indent %>            sh "cd server && <%= clientPackageManager %> run test"
-<%= indent %>        } catch(err) {
-<%= indent %>            throw err
-<%= indent %>        } finally {
-<%= indent %>            junit '**/server/coverage/**/*.xml'
-<%= indent %>        }
-<%= indent %>    }
-    <%_ } _%>
-    <%_ if (!skipClient) { _%>
-<%= indent %>    stage('frontend tests') {
-<%= indent %>        try {
-<%= indent %>            sh "<%= clientPackageManager %> run test"
-<%= indent %>        } catch(err) {
-<%= indent %>            throw err
-<%= indent %>        } finally {
-<%= indent %>            junit '**/target/test-results/**/TEST-*.xml'
-<%= indent %>        }
-<%= indent %>    }
+<%- indent %>    stage('backend tests') {
+<%- indent %>        try {
+<%- indent %>            sh "cd server && <%- clientPackageManager %> run test"
+<%- indent %>        } catch(err) {
+<%- indent %>            throw err
+<%- indent %>        } finally {
+<%- indent %>            junit '**/server/coverage/**/*.xml'
+<%- indent %>        }
+<%- indent %>    }
+<%_ } _%>
+<%_ if (!skipClient) { _%>
+<%- indent %>    stage('frontend tests') {
+<%- indent %>        try {
+<%- indent %>            sh "<%- clientPackageManager %> run test"
+<%- indent %>        } catch(err) {
+<%- indent %>            throw err
+<%- indent %>        } finally {
+<%- indent %>            junit '**/target/test-results/**/TEST-*.xml'
+<%- indent %>        }
+<%- indent %>    }
 
-    <%_ } _%>
-    <%_ if (cicdIntegrations.includes('heroku')) { _%>
-/*<%= indent %>    stage('package and deploy') {
-<%= indent %>        sh "./mvnw -ntp com.heroku.sdk:heroku-maven-plugin:2.0.5:deploy -DskipTests -Pprod -Dheroku.buildpacks=heroku/jvm -Dheroku.appName=<%= herokuAppName %>"
-    <%_ } else { _%>
-<%= indent %>    stage('packaging') {
-<%= indent %>        sh "./mvnw -ntp verify <% if (cicdIntegrations.includes('deploy')) { %>deploy <% } %>-Pprod -DskipTests"
-    <%_ } _%>
-<%= indent %>        archiveArtifacts artifacts: '**/target/*.jar', fingerprint: true
-<%= indent %>    }
+<%_ } _%>
+<%_ if (cicdIntegrations.includes('heroku')) { _%>
+/*<%- indent %>    stage('package and deploy') {
+<%- indent %>        sh "./mvnw -ntp com.heroku.sdk:heroku-maven-plugin:2.0.5:deploy -DskipTests -Pprod -Dheroku.buildpacks=heroku/jvm -Dheroku.appName=<%- herokuAppName %>"
+<%_ } else { _%>
+<%- indent %>    stage('packaging') {
+<%- indent %>        sh "./mvnw -ntp verify <%- cicdIntegrations.includes('deploy') ? 'deploy ' : '' %>-Pprod -DskipTests"
+<%_ } _%>
+<%- indent %>        archiveArtifacts artifacts: '**/target/*.jar', fingerprint: true
+<%- indent %>    }
 */
-%_ } _%>
 <%_ if (!skipServer && cicdIntegrations.includes('sonar')) { _%>
-<%= indent %>    stage('quality analysis') {
-<%= indent %>        withSonarQubeEnv('<%= sonarName %>') {
-<%= indent %>            sh "cd server && <%= clientPackageManager %> run sonar:scanner"
-<%= indent %>        }
-<%= indent %>    }
+<%- indent %>    stage('quality analysis') {
+<%- indent %>        withSonarQubeEnv('<%- sonarName %>') {
+<%- indent %>            sh "cd server && <%- clientPackageManager %> run sonar:scanner"
+<%- indent %>        }
+<%- indent %>    }
 <%_ } _%>
 <%_ if (insideDocker) { _%>
-<%= gitLabIndent %>    }
+<%- gitLabIndent %>    }
 <%_ } _%>
 <%_ if (cicdIntegrations.includes('publishDocker')) { _%>
 
-/*<%= gitLabIndent %>    def dockerImage
-<%= gitLabIndent %>    stage('publish docker') {
-<%= gitLabIndent %>        // A pre-requisite to this step is to setup authentication to the docker registry
-<%= gitLabIndent %>        // https://github.com/GoogleContainerTools/jib/tree/master/jib-maven-plugin#authentication-methods
-<%= gitLabIndent %>        sh "./mvnw -ntp jib:build"
-<%= gitLabIndent %>    }
+/*<%- gitLabIndent %>    def dockerImage
+<%- gitLabIndent %>    stage('publish docker') {
+<%- gitLabIndent %>        // A pre-requisite to this step is to setup authentication to the docker registry
+<%- gitLabIndent %>        // https://github.com/GoogleContainerTools/jib/tree/master/jib-maven-plugin#authentication-methods
+<%- gitLabIndent %>        sh "./mvnw -ntp jib:build"
+<%- gitLabIndent %>    }
 */
 <%_ } _%>
 <%_ if (sendBuildToGitlab) { _%>

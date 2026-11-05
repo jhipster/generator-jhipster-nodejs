@@ -1,6 +1,6 @@
 import { HttpException, HttpStatus, ValidationError } from '@nestjs/common';
 
-import { CONSTRAINT_VIOLATION_TYPE, DEFAULT_TYPE, ERR_VALIDATION<% if (generateUserManagement) { %>, EMAIL_ALREADY_USED_TYPE, INVALID_PASSWORD_TYPE, LOGIN_ALREADY_USED_TYPE<% } %> } from './error-constants.ts';
+import { CONSTRAINT_VIOLATION_TYPE, DEFAULT_TYPE, ERR_VALIDATION<%- generateUserManagement ? ', EMAIL_ALREADY_USED_TYPE, INVALID_PASSWORD_TYPE, LOGIN_ALREADY_USED_TYPE' : '' %> } from './error-constants.ts';
 
 /** An error of a field, like the FieldErrorVM of JHipster Spring Boot. */
 export interface FieldErrorVM {
@@ -33,12 +33,12 @@ export class ProblemException extends HttpException {
 
 /**
  * The errors of the validation of a request body, like the field errors of JHipster Spring Boot: the object (the class
- * of the body without its <%= dtoSuffix %> suffix), the field and the message of the first constraint it fails.
+ * of the body without its <%- dtoSuffix %> suffix), the field and the message of the first constraint it fails.
  */
 export const toFieldErrors = (errors: ValidationError[], parentPath = ''): FieldErrorVM[] =>
   errors.flatMap(error => {
     const field = `${parentPath}${error.property}`;
-    const objectName = (error.target?.constructor.name ?? '').replace(/^./, first => first.toLowerCase()).replace(/<%= dtoSuffix %>$/, '');
+    const objectName = (error.target?.constructor.name ?? '').replace(/^./, first => first.toLowerCase()).replace(/<%- dtoSuffix %>$/, '');
     return [
       ...Object.values(error.constraints ?? {})
         .slice(0, 1)
