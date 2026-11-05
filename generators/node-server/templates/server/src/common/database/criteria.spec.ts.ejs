@@ -37,7 +37,10 @@ describe('criteriaWhere', () => {
   });
 
   it('filters a related record by its id', () => {
-    expect(criteriaWhere({ 'countryId.equals': '1', 'name.equals': 'a' }, criteria)).toEqual({ country: { id: Equal(1) }, name: Equal('a') });
+    expect(criteriaWhere({ 'countryId.equals': '1', 'name.equals': 'a' }, criteria)).toEqual({
+      country: { id: Equal(1) },
+      name: Equal('a'),
+    });
   });
 
   it('converts the values to the type of their property', () => {
@@ -56,7 +59,10 @@ describe('criteriaWhere', () => {
 
   it('ignores the parameters of no property or operator of the criteria', () => {
     expect(
-      criteriaWhere({ page: '0', sort: 'id,asc', 'password.equals': 'a', 'name.greaterThan': 'a', 'active.contains': 'a', 'constructor.equals': 'a' }, criteria),
+      criteriaWhere(
+        { page: '0', sort: 'id,asc', 'password.equals': 'a', 'name.greaterThan': 'a', 'active.contains': 'a', 'constructor.equals': 'a' },
+        criteria,
+      ),
     ).toEqual({});
   });
 });

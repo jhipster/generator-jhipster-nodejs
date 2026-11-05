@@ -1,20 +1,19 @@
-<%_
-// The values of the fields as the API exchanges them, reproducible: the faker of the entity is seeded for this test.
-resetFakerSeed('nodejs-database-e2e');
-const created = nodejsApiFakeEntity();
-const updated = nodejsApiFakeEntity();
-const approximateFields = created.approximateFields;
-// The relationships of the entity with a join column or a join table (the persistableRelationships of JHipster): stored
-// by the id of the related record.
-const storedRelationships = databaseTypeSql ? persistableRelationships : [];
-const anyUserRelationship = storedRelationships.some(relationship => relationship.otherEntity.builtInUser);
-// The relationships the other entity stores (nodejsMappedByRelationships), with another entity of the application.
-const inverseRelationships = databaseTypeSql
-  ? nodejsMappedByRelationships.filter(relationship => relationship.otherEntity.entityRestLayer && relationship.otherRelationship?.propertyName)
-  : [];
-const literal = value => JSON.stringify(value);
-// The references of the required relationships from the test samples (e2e/samples), by entity instance name.
-const spreads = nodejsRequiredSamples.spreads;
+<%_ // The values of the fields as the API exchanges them, reproducible: the faker of the entity is seeded for this test.
+    resetFakerSeed('nodejs-database-e2e');
+    const created = nodejsApiFakeEntity();
+    const updated = nodejsApiFakeEntity();
+    const approximateFields = created.approximateFields;
+    // The relationships of the entity with a join column or a join table (the persistableRelationships of JHipster): stored
+    // by the id of the related record.
+    const storedRelationships = databaseTypeSql ? persistableRelationships : [];
+    const anyUserRelationship = storedRelationships.some(relationship => relationship.otherEntity.builtInUser);
+    // The relationships the other entity stores (nodejsMappedByRelationships), with another entity of the application.
+    const inverseRelationships = databaseTypeSql
+      ? nodejsMappedByRelationships.filter(relationship => relationship.otherEntity.entityRestLayer && relationship.otherRelationship?.propertyName)
+      : [];
+    const literal = value => JSON.stringify(value);
+    // The references of the required relationships from the test samples (e2e/samples), by entity instance name.
+    const spreads = nodejsRequiredSamples.spreads;
 _%>
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { ExecutionContext, INestApplication } from '@nestjs/common';
@@ -168,18 +167,18 @@ describe('<%= entityClass %> on the database', () => {
   });
 <%_ } _%>
 <%_ for (const relationship of storedRelationships) {
-    const otherEntity = relationship.otherEntity;
-    const otherId = otherEntity.primaryKey.name;
-    const collection = relationship.relationshipType === 'many-to-many';
-    const property = relationship.propertyName;
-    const otherValues = relationship.nodejsRelatedValues;
-    // A text field of the related record, sent changed with its id: the relationship does not store it (no cascade).
-    const otherTextField = otherValues && otherEntity.fields.find(field => !field.id && field.fieldType === 'String' && field.fieldName in otherValues);
+      const otherEntity = relationship.otherEntity;
+      const otherId = otherEntity.primaryKey.name;
+      const collection = relationship.relationshipType === 'many-to-many';
+      const property = relationship.propertyName;
+      const otherValues = relationship.nodejsRelatedValues;
+      // A text field of the related record, sent changed with its id: the relationship does not store it (no cascade).
+      const otherTextField = otherValues && otherEntity.fields.find(field => !field.id && field.fieldType === 'String' && field.fieldName in otherValues);
 _%>
 
   it('should store the <%= property %> relationship by the id of the related record, without changing it', async () => {
     const server = app.getHttpServer();
-<%_ if (otherEntity.builtInUser) { _%>
+  <%_ if (otherEntity.builtInUser) { _%>
     // A user of this test: the applications without seed users (OAuth2) have none.
     const users = app.get(DataSource).getRepository(<%= user.persistClass %>);
     const related = await users.save(
@@ -191,51 +190,51 @@ _%>
         resetKey: 'e2e-reset-key',
       }),
     );
-<%_ } else { _%>
+  <%_ } else { _%>
     const relatedValues: Record<string, any> = <%- literal(otherValues) %>;
     const { body: related } = await request(server).post('/api/<%= otherEntity.entityApiUrl %>').send(<%- spreads[otherEntity.entityInstance] ? `{ ...relatedValues${spreads[otherEntity.entityInstance]} }` : 'relatedValues' %>).expect(201);
-<%_ } _%>
-<%_ if (otherTextField) { _%>
+  <%_ } _%>
+  <%_ if (otherTextField) { _%>
     const reference = { <%= otherId %>: related.<%= otherId %>, <%= otherTextField.fieldName %>: 'not stored through the relationship' };
-<%_ } else { _%>
+  <%_ } else { _%>
     const reference = { <%= otherId %>: related.<%= otherId %> };
-<%_ } _%>
+  <%_ } _%>
     const { body: stored } = await request(server)
       .post('/api/<%= entityApiUrl %>')
       .send({ ...createdValues<%- spreads[entityInstance] ?? '' %>, <%= property %>: <%- collection ? '[reference]' : 'reference' %> })
       .expect(201);
 
     const { body: read } = await request(server).get(`/api/<%= entityApiUrl %>/${stored.<%= primaryKey.name %>}`).expect(200);
-<%_ if (collection) { _%>
+  <%_ if (collection) { _%>
     expect(read.<%= property %>).toEqual([expect.objectContaining({ <%= otherId %>: related.<%= otherId %> })]);
-<%_ } else { _%>
+  <%_ } else { _%>
     expect(read.<%= property %>).toMatchObject({ <%= otherId %>: related.<%= otherId %> });
-<%_ } _%>
-<%_ if (otherEntity.builtInUser) { _%>
+  <%_ } _%>
+  <%_ if (otherEntity.builtInUser) { _%>
     // The keys of the user never in a response, like the @JsonIgnore keys of JHipster Spring Boot.
     expect(JSON.stringify(read.<%= property %>)).not.toMatch(/e2e-(activation|reset)-key/);
-<%_ } _%>
-<%_ if (otherTextField) { _%>
+  <%_ } _%>
+  <%_ if (otherTextField) { _%>
     const { body: relatedRead } = await request(server).get(`/api/<%= otherEntity.entityApiUrl %>/${related.<%= otherId %>}`).expect(200);
     expect(relatedRead.<%= otherTextField.fieldName %>).toBe(relatedValues.<%= otherTextField.fieldName %>);
-<%_ } _%>
+  <%_ } _%>
 
     await request(server).delete(`/api/<%= entityApiUrl %>/${stored.<%= primaryKey.name %>}`).expect(204);
-<%_ if (otherEntity.builtInUser) { _%>
+  <%_ if (otherEntity.builtInUser) { _%>
     await users.remove(related);
-<%_ } else if (otherValues) { _%>
+  <%_ } else if (otherValues) { _%>
     await request(server).delete(`/api/<%= otherEntity.entityApiUrl %>/${related.<%= otherId %>}`).expect(204);
-<%_ } _%>
+  <%_ } _%>
   });
 <%_ } _%>
 <%_ for (const relationship of inverseRelationships) {
-    const otherEntity = relationship.otherEntity;
-    const otherId = otherEntity.primaryKey.name;
-    const property = relationship.propertyName;
-    const collection = relationship.relationshipType !== 'one-to-one';
-    const otherProperty = relationship.otherRelationship.propertyName;
-    const otherCollection = relationship.relationshipType === 'many-to-many';
-    const otherValues = relationship.nodejsRelatedValues;
+      const otherEntity = relationship.otherEntity;
+      const otherId = otherEntity.primaryKey.name;
+      const property = relationship.propertyName;
+      const collection = relationship.relationshipType !== 'one-to-one';
+      const otherProperty = relationship.otherRelationship.propertyName;
+      const otherCollection = relationship.relationshipType === 'many-to-many';
+      const otherValues = relationship.nodejsRelatedValues;
 _%>
 
   it('should not store the <%= property %> relationship from this side, like the mappedBy side of JHipster Spring Boot', async () => {
@@ -253,21 +252,20 @@ _%>
       .expect(200);
 
     const { body: relatedRead } = await request(server).get(`/api/<%= otherEntity.entityApiUrl %>/${related.<%= otherId %>}`).expect(200);
-<%_ if (otherCollection) { _%>
+  <%_ if (otherCollection) { _%>
     expect(relatedRead.<%= otherProperty %>).toEqual([expect.objectContaining(reference)]);
-<%_ } else { _%>
+  <%_ } else { _%>
     expect(relatedRead.<%= otherProperty %>).toMatchObject(reference);
-<%_ } _%>
+  <%_ } _%>
 
     await request(server).delete(`/api/<%= otherEntity.entityApiUrl %>/${related.<%= otherId %>}`).expect(204);
     await request(server).delete(`/api/<%= entityApiUrl %>/${stored.<%= primaryKey.name %>}`).expect(204);
   });
 <%_ } _%>
 
-<%_
-const pk = primaryKey.name;
-// The one-to-one relationships the other entity stores, whose records without one the controller lists (its is-null filter).
-const inverseOneToOnes = nodejsMappedByRelationships.filter(relationship => relationship.relationshipOneToOne);
+<%_ const pk = primaryKey.name;
+    // The one-to-one relationships the other entity stores, whose records without one the controller lists (its is-null filter).
+    const inverseOneToOnes = nodejsMappedByRelationships.filter(relationship => relationship.relationshipOneToOne);
 _%>
 <%_ // A generated id in the order of the records: not one the client gives, a UUID, nor a String id of SQL (a UUID the entity generates). _%>
 <%_ if (primaryKey.autoGenerate && !primaryKey.typeUUID && !(databaseTypeSql && primaryKey.typeString)) { _%>
@@ -294,9 +292,9 @@ _%>
   });
 <%_ } _%>
 <%_ for (const relationship of inverseOneToOnes) {
-    const otherEntity = relationship.otherEntity;
-    const ownerProperty = relationship.otherRelationship.propertyName;
-    const ownerValues = (otherEntity.resetFakerSeed('nodejs-database-e2e'), otherEntity.nodejsApiFakeEntity().values);
+      const otherEntity = relationship.otherEntity;
+      const ownerProperty = relationship.otherRelationship.propertyName;
+      const ownerValues = (otherEntity.resetFakerSeed('nodejs-database-e2e'), otherEntity.nodejsApiFakeEntity().values);
 _%>
 
   it('should give the records without <%= relationship.propertyName %> to its is-null filter, like JHipster Spring Boot', async () => {
@@ -366,10 +364,10 @@ _%>
         expect(await found(`${name}.doesNotContain`, value), `${name}.doesNotContain`).toBe(false);
       }
     }
-<%_ if (primaryKey.fields[0].fieldTypeNumeric) { _%>
+  <%_ if (primaryKey.fields[0].fieldTypeNumeric) { _%>
     // A value of another type is a bad request, like the binding of the criteria by Spring.
     await request(server).get('/api/<%= entityApiUrl %>?<%= primaryKey.name %>.equals=not-a-number').expect(400);
-<%_ } _%>
+  <%_ } _%>
 
     await request(server).delete(`/api/<%= entityApiUrl %>/${id}`).expect(204);
   });

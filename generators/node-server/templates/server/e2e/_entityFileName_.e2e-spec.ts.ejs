@@ -1,19 +1,18 @@
-<%_
-// The fake data of this test, whatever the templates rendered before: the faker of the entity is seeded for it.
-resetFakerSeed('nodejs-e2e-mock');
-const numericId = primaryKey.tsType === 'number';
-// The fake data of the fields, reproducible (the faker of the entity is seeded): distinct ids of the type of the primary
-// key, as TypeScript literals, and a value for each field of the entity, as the API exchanges it.
-const idField = primaryKey.fields[0];
-const [entityId, unknownId, anotherId] = [idField.generateFakeData('ts'), idField.generateFakeData('ts'), idField.generateFakeData('ts')];
-const fakeFields = fields
-  .filter(field => !field.id && !field.transient && !field.collection)
-  .map(field => [field.propertyName, field.nodejsApiFakeValue()])
-  .filter(([, value]) => value !== undefined && value !== null);
-// An id the pipe of the path rejects: neither a number nor a UUID.
-const invalidId = faker.lorem.word({ length: { min: 5, max: 10 } });
-// The user a partial update sets as the last modifier.
-const patcher = faker.internet.username();
+<%_ // The fake data of this test, whatever the templates rendered before: the faker of the entity is seeded for it.
+    resetFakerSeed('nodejs-e2e-mock');
+    const numericId = primaryKey.tsType === 'number';
+    // The fake data of the fields, reproducible (the faker of the entity is seeded): distinct ids of the type of the primary
+    // key, as TypeScript literals, and a value for each field of the entity, as the API exchanges it.
+    const idField = primaryKey.fields[0];
+    const [entityId, unknownId, anotherId] = [idField.generateFakeData('ts'), idField.generateFakeData('ts'), idField.generateFakeData('ts')];
+    const fakeFields = fields
+      .filter(field => !field.id && !field.transient && !field.collection)
+      .map(field => [field.propertyName, field.nodejsApiFakeValue()])
+      .filter(([, value]) => value !== undefined && value !== null);
+    // An id the pipe of the path rejects: neither a number nor a UUID.
+    const invalidId = faker.lorem.word({ length: { min: 5, max: 10 } });
+    // The user a partial update sets as the last modifier.
+    const patcher = faker.internet.username();
 _%>
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { Test, TestingModule } from '@nestjs/testing';
@@ -43,29 +42,28 @@ describe('<%= entityClass %> Controller', () => {
 <%_ } _%>
 <%_ // The required relationships in the stored record too: a partial update validates it with the patched fields. _%>
 <%_ for (const relationship of relationships) { _%>
-<%_   if (relationship.nodejsMockReference) { _%>
+  <%_ if (relationship.nodejsMockReference) { _%>
         <%= relationship.propertyName %>: <%- relationship.nodejsMockReference %>,
-<%_   } _%>
+  <%_ } _%>
 <%_ } _%>
     }
     const unknownId = <%- unknownId %>;
     const anotherId = <%- anotherId %>;
-<%_
-// The global ValidationPipe of configureApp validates the requests: a body with valid values of the validated fields.
-resetFakerSeed('nodejs-e2e');
-const validatedFields = fields.filter(field => !field.id && field.fieldValidate && field.fieldType !== 'byte[]');
-const validValues = Object.fromEntries(
-    validatedFields
+<%_ // The global ValidationPipe of configureApp validates the requests: a body with valid values of the validated fields.
+    resetFakerSeed('nodejs-e2e');
+    const validatedFields = fields.filter(field => !field.id && field.fieldValidate && field.fieldType !== 'byte[]');
+    const validValues = Object.fromEntries(
+      validatedFields
         .map(field => [field.fieldName, field.nodejsApiFakeValue()])
         .filter(([, value]) => value !== undefined && value !== null),
-);
-const requiredField = validatedFields.find(field => field.fieldValidationRequired);
-const enumField = fields.find(field => !field.id && field.fieldIsEnum);
-// A field whose type the DTO validates, with a value of another type.
-const typedField = fields.find(field => !field.id && !field.transient && field.nodejsInvalidTypeValue !== undefined);
-// A number field with a valid value, sent as a text.
-const validEntityValues = { ...Object.fromEntries(fakeFields), ...validValues };
-const numericField = fields.find(field => !field.id && field.fieldTypeNumeric && typeof validEntityValues[field.fieldName] === 'number');
+    );
+    const requiredField = validatedFields.find(field => field.fieldValidationRequired);
+    const enumField = fields.find(field => !field.id && field.fieldIsEnum);
+    // A field whose type the DTO validates, with a value of another type.
+    const typedField = fields.find(field => !field.id && !field.transient && field.nodejsInvalidTypeValue !== undefined);
+    // A number field with a valid value, sent as a text.
+    const validEntityValues = { ...Object.fromEntries(fakeFields), ...validValues };
+    const numericField = fields.find(field => !field.id && field.fieldTypeNumeric && typeof validEntityValues[field.fieldName] === 'number');
 _%>
     const validEntity: any = {
         ...entityMock,
@@ -120,9 +118,8 @@ _%>
     }
     );
 
-<%_
-const sortField = fields.find(field => !field.id && !field.transient);
-const sortRelationship = relationships.find(relationship => relationship.ownerSide && !relationship.collection);
+<%_ const sortField = fields.find(field => !field.id && !field.transient);
+    const sortRelationship = relationships.find(relationship => relationship.ownerSide && !relationship.collection);
 _%>
 
     it('/GET all <%= entityApiUrl %> sorted on a property of the entity', async () => {
@@ -339,7 +336,7 @@ _%>
 
 <%_ } _%>
 <%_ for (const relationship of relationships) { _%>
-<%_   if (relationship.nodejsMockReference) { _%>
+  <%_ if (relationship.nodejsMockReference) { _%>
     it('/POST create <%= entityApiUrl %> without its required <%= relationship.propertyName %> is a validation error, like JHipster Spring Boot', async () => {
         const { <%= relationship.propertyName %>: _<%= relationship.propertyName %>, ...invalidEntity } = newEntity;
 
@@ -351,7 +348,7 @@ _%>
         expect(error).toMatchObject({ message: 'error.validation', fieldErrors: [expect.objectContaining({ field: '<%= relationship.propertyName %>' })] });
     });
 
-<%_   } _%>
+  <%_ } _%>
 <%_ } _%>
 <%_ if (enumField) { _%>
     it('/POST create <%= entityApiUrl %> with a <%= enumField.fieldName %> out of its enum is a validation error', async () => {
@@ -535,30 +532,30 @@ _%>
             rolesApp = await appOfUser(['ROLE_OTHER']);
             await request(rolesApp.getHttpServer()).get('/api/<%= entityApiUrl %>').expect(403);
             await request(rolesApp.getHttpServer()).get(`/api/<%= entityApiUrl %>/${entityMock.<%= primaryKey.name %>}`).expect(403);
-<%_ if (nodejsWriteRoles) { _%>
+  <%_ if (nodejsWriteRoles) { _%>
             await request(rolesApp.getHttpServer()).post('/api/<%= entityApiUrl %>').send(newEntity).expect(403);
             await request(rolesApp.getHttpServer()).delete(`/api/<%= entityApiUrl %>/${entityMock.<%= primaryKey.name %>}`).expect(403);
-<%_ } _%>
+  <%_ } _%>
         });
-<%_ if (nodejsWriteRoles) { _%>
+  <%_ if (nodejsWriteRoles) { _%>
 
         it('allows a user of its roles to read and to write', async () => {
             rolesApp = await appOfUser([<%- nodejsWriteRoles %>]);
             await request(rolesApp.getHttpServer()).get('/api/<%= entityApiUrl %>').expect(200);
             await request(rolesApp.getHttpServer()).post('/api/<%= entityApiUrl %>').send(newEntity).expect(201);
         });
-<%_ } _%>
-<%_ if (nodejsReadOnlyRoles) { _%>
+  <%_ } _%>
+  <%_ if (nodejsReadOnlyRoles) { _%>
 
         it('allows a user of its read roles to read only', async () => {
             rolesApp = await appOfUser([<%- nodejsReadOnlyRoles %>]);
             await request(rolesApp.getHttpServer()).get('/api/<%= entityApiUrl %>').expect(200);
-<%_ if (nodejsWriteRoles) { _%>
+    <%_ if (nodejsWriteRoles) { _%>
             await request(rolesApp.getHttpServer()).post('/api/<%= entityApiUrl %>').send(newEntity).expect(403);
             await request(rolesApp.getHttpServer()).patch(`/api/<%= entityApiUrl %>/${validEntity.<%= primaryKey.name %>}`).send({ <%= primaryKey.name %>: validEntity.<%= primaryKey.name %> }).expect(403);
-<%_ } _%>
+    <%_ } _%>
         });
-<%_ } _%>
+  <%_ } _%>
     });
 <%_ } _%>
 });
