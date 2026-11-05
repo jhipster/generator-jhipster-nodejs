@@ -693,30 +693,6 @@ describe('SubGenerator node-server of nodejs JHipster blueprint', () => {
     });
   });
 
-  describe('with a relationship to the built-in Authority', () => {
-    const book = {
-      name: 'Book',
-      changelogDate: '20240101000000',
-      fields: [{ fieldName: 'title', fieldType: 'String' }],
-      relationships: [
-        { relationshipName: 'authority', otherEntityName: 'authority', relationshipType: 'many-to-many', otherEntityField: 'name' },
-      ],
-    };
-
-    beforeAll(async function () {
-      await helpers
-        .run(SUB_GENERATOR_NAMESPACE)
-        .withJHipsterConfig({ skipClient: true }, [book])
-        .withOptions({ ignoreNeedlesError: true })
-        .withJHipsterGenerators()
-        .withConfiguredBlueprint();
-    });
-
-    it('should store an authority of the test in the relationship test', () => {
-      result.assertFileContent('server/e2e/book.database.e2e-spec.ts', 'ROLE_BOOK_AUTHORIT');
-    });
-  });
-
   describe('with required relationships to an entity of a unique field', () => {
     const owner = {
       name: 'Owner',

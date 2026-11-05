@@ -223,7 +223,7 @@ _%>
     await request(server).delete(`/api/<%= entityApiUrl %>/${stored.<%= primaryKey.name %>}`).expect(204);
 <%_ if (otherEntity.builtInUser) { _%>
     await users.remove(related);
-<%_ } else if (otherValues) { _%>
+<%_ } else if (!otherEntity.builtIn) { _%>
     await request(server).delete(`/api/<%= otherEntity.entityApiUrl %>/${related.<%= otherId %>}`).expect(204);
 <%_ } _%>
   });
