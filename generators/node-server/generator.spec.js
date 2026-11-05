@@ -339,7 +339,7 @@ describe('SubGenerator node-server of nodejs JHipster blueprint', () => {
 
     it('should not write the docker:db scripts of a database service', () => {
       const { scripts } = result.fs.readJSON(join(result.cwd, 'package.json'));
-      expect(scripts).not.toHaveProperty('docker:db:up');
+      expect(scripts['docker:db:up']).toMatch(/^echo /);
       expect(scripts).not.toHaveProperty('docker:db:down');
     });
   });

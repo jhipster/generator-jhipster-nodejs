@@ -13,16 +13,4 @@ export default class extends BaseApplicationGenerator {
       },
     });
   }
-
-  get [BaseApplicationGenerator.POST_WRITING]() {
-    return this.asPostWritingTaskGroup({
-      sqliteDatabaseScripts({ application }) {
-        // The docker:db scripts JHipster writes for a SQL database: SQLite has no docker service, a file of the server.
-        if (application.prodDatabaseType !== 'sqlite') return;
-        const scripts = this.packageJson.createStorage('scripts');
-        scripts.delete('docker:db:up');
-        scripts.delete('docker:db:down');
-      },
-    });
-  }
 }
