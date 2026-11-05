@@ -13,9 +13,9 @@ export function setupSwagger(app: INestApplication): void {
     .setTitle(configService.getOrThrow<string>('jhipster.swagger.title'))
     .setDescription(configService.getOrThrow<string>('jhipster.swagger.description'))
     .setVersion(configService.getOrThrow<string>('jhipster.swagger.version'))
-    <%_ if (authenticationType === 'jwt') { _%>
+<%_ if (authenticationType === 'jwt') { _%>
     .addBearerAuth()
-    <%_ } _%>
+<%_ } _%>
     .build();
   // Served by ApiDocsController at /v3/api-docs, the path of springdoc, for the administrators.
   app.get(ApiDocsService).document = SwaggerModule.createDocument(app, options);

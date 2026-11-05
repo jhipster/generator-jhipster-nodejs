@@ -19,9 +19,9 @@ import { Authority } from '../users/authority.entity.ts';
 <%_ } _%>
 <%_ if (generateBuiltInUserEntity) { _%>
 import { UserService } from '../users/user.service.ts';
-<%_ if (generateUserManagement) { _%>
+  <%_ if (generateUserManagement) { _%>
 import { EmailAlreadyUsedException, InvalidPasswordException, LoginAlreadyUsedException } from '../common/errors/problem.exception.ts';
-<%_ } _%>
+  <%_ } _%>
 <%_ } _%>
 import { <%= userLoginVmClass %> } from '../users/dto/user.dto.ts';
 <%_ if (authenticationTypeOauth2) { _%>
@@ -31,9 +31,7 @@ import { OidcUser } from './oauth2.authorities.ts';
 import { ConfigService } from '@nestjs/config';
 <%_ } _%>
 
-<%_
-const userIdType = user?.primaryKey.tsType;
-_%>
+<%_ const userIdType = user?.primaryKey.tsType; _%>
 <%_ if (generateUserManagement) { _%>
 
 /** The length of a password, like the one of the ManagedUserVM of JHipster Spring Boot. */
@@ -50,22 +48,22 @@ function isPasswordLengthInvalid(password?: string): boolean {
 export class AuthService {
     logger = new Logger('AuthService');
   constructor(
-    <%_ if (authenticationType === 'jwt' && generateBuiltInUserEntity) { _%>
+<%_ if (authenticationType === 'jwt' && generateBuiltInUserEntity) { _%>
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
-    <%_ } _%>
-    <%_ if (generateUserManagement) { _%>
+<%_ } _%>
+<%_ if (generateUserManagement) { _%>
     private readonly passwordService: PasswordService,
-    <%_ } _%>
-    <%_ if (generateBuiltInAuthorityEntity) { _%>
+<%_ } _%>
+<%_ if (generateBuiltInAuthorityEntity) { _%>
     @InjectRepository(Authority) private authorityRepository: Repository<Authority>,
-    <%_ } _%>
-    <%_ if (generateBuiltInUserEntity) { _%>
+<%_ } _%>
+<%_ if (generateBuiltInUserEntity) { _%>
     private userService: UserService,
-    <%_ } _%>
+<%_ } _%>
   ) {}
 
-  <%_ if (generateUserManagement) { _%>
+<%_ if (generateUserManagement) { _%>
   /** The hash an unknown login is checked with, like the timing attack protection of the DaoAuthenticationProvider of Spring Security. */
   private unknownUserPasswordHash?: Promise<string>;
 
@@ -120,11 +118,11 @@ export class AuthService {
   <%_ } _%>
 
   async findUserWithAuthById(userId: <%= userIdType %>): Promise<<%= user.dtoClass %> | undefined> {
-    <%_ if (databaseType === 'mongodb') { _%>
+  <%_ if (databaseType === 'mongodb') { _%>
     const userDTO = await this.userService.findById(userId);
-    <%_ } else { _%>
+  <%_ } else { _%>
     const userDTO = await this.userService.findByFields({ where: { id: userId } });
-    <%_ } _%>
+  <%_ } _%>
     return userDTO;
   }
 
@@ -256,8 +254,8 @@ export class AuthService {
     return userFind;
   }
 
-  <%_ } else if (authenticationType === 'oauth2') { _%>
-    <%_ if (generateBuiltInUserEntity) { _%>
+<%_ } else if (authenticationType === 'oauth2') { _%>
+  <%_ if (generateBuiltInUserEntity) { _%>
     /**
      * The user of the identity provider in the database, like the user synchronization of JHipster Spring Boot: the
      * authorities the database misses saved first, then the user created, or updated with the names, the mail, the
@@ -265,13 +263,13 @@ export class AuthService {
      */
     async findUserOrSave(loginUser: <%= userLoginVmClass %>): Promise<<%= userLoginVmClass %> | undefined> {
         const authorities = loginUser.authorities ?? [];
-<%_ if (generateBuiltInAuthorityEntity) { _%>
+    <%_ if (generateBuiltInAuthorityEntity) { _%>
         for (const name of authorities) {
           if (!(await this.authorityRepository.findOne({ where: { name } }))) {
             await this.authorityRepository.save(this.authorityRepository.create({ name }));
           }
         }
-<%_ } _%>
+    <%_ } _%>
         const userFound = await this.userService.findByFields({ where: { login: loginUser.login } });
         const email = loginUser.email ?? userFound?.email ?? `${loginUser.login}@localhost`;
         // The values the identity provider gives, over the ones of the user found: not the undefined properties of the user of
@@ -281,7 +279,7 @@ export class AuthService {
         await this.userService.save({ ...userFound, ...claims, email, activated: true, authorities } as <%= userLoginVmClass %>, loginUser.login);
         return loginUser;
       }
-    <%_ } _%>
+  <%_ } _%>
 
   getAccount(userDTO: OidcUser): <%= userLoginVmClass %> | undefined {
     if (!userDTO) {
@@ -292,6 +290,6 @@ export class AuthService {
     return account;
   }
 
-  <%_ } _%>
+<%_ } _%>
 
 }

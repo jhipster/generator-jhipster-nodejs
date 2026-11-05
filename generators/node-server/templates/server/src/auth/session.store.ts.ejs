@@ -77,16 +77,25 @@ export class SessionStore extends session.Store implements OnModuleInit, OnModul
   }
 
   set(sid: string, data: session.SessionData, callback?: Callback): void {
-    this.track(this.save(sid, data)).then(() => callback?.(), error => callback?.(error));
+    this.track(this.save(sid, data)).then(
+      () => callback?.(),
+      error => callback?.(error),
+    );
   }
 
   touch(sid: string, data: session.SessionData, callback?: Callback): void {
     // The idle expiry of a session its request did not change.
-    this.track(this.repository.update({ sid }, { expires: expiresOf(data) })).then(() => callback?.(), error => callback?.(error));
+    this.track(this.repository.update({ sid }, { expires: expiresOf(data) })).then(
+      () => callback?.(),
+      error => callback?.(error),
+    );
   }
 
   destroy(sid: string, callback?: Callback): void {
-    this.track(this.repository.delete({ sid })).then(() => callback?.(), error => callback?.(error));
+    this.track(this.repository.delete({ sid })).then(
+      () => callback?.(),
+      error => callback?.(error),
+    );
   }
 
   all(callback: Callback<Record<string, session.SessionData>>): void {

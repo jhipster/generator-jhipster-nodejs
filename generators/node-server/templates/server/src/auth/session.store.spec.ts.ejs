@@ -27,7 +27,10 @@ const repository = (rows: Session[]): any => ({
 const allOf = (store: SessionStore): Promise<Record<string, unknown>> =>
   new Promise((resolve, reject) => store.all((error, sessions) => (error ? reject(error) : resolve(sessions ?? {}))));
 
-const sessionData = (login: string | undefined, expires: Date): any => ({ cookie: { expires: expires.toISOString() }, ...(login ? { user: { login } } : {}) });
+const sessionData = (login: string | undefined, expires: Date): any => ({
+  cookie: { expires: expires.toISOString() },
+  ...(login ? { user: { login } } : {}),
+});
 
 describe('SessionStore', () => {
   let rows: Session[];

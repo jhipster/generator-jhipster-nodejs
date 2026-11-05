@@ -64,7 +64,12 @@ describe('Health Controller', () => {
 
   it('is not ready, with the status 503, when the database is down', async () => {
     check.mockRejectedValue(
-      new ServiceUnavailableException({ status: 'error', info: {}, error: { db: { status: 'down' } }, details: { db: { status: 'down' } } }),
+      new ServiceUnavailableException({
+        status: 'error',
+        info: {},
+        error: { db: { status: 'down' } },
+        details: { db: { status: 'down' } },
+      }),
     );
     const response = { status: vi.fn() };
     await expect(controller.readiness(response as any)).resolves.toEqual({ status: 'DOWN' });

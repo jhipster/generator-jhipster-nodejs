@@ -134,18 +134,28 @@ export class MetricsService {
     }
     const percode = Object.fromEntries([...this.byStatus].map(([status, timer]) => [String(status), timer.maxMeanCount]));
     const services = Object.fromEntries(
-      [...this.byService].map(([uri, timers]) => [uri, Object.fromEntries([...timers].map(([method, timer]) => [method, timer.maxMeanCount]))]),
+      [...this.byService].map(([uri, timers]) => [
+        uri,
+        Object.fromEntries([...timers].map(([method, timer]) => [method, timer.maxMeanCount])),
+      ]),
     );
     return {
       jvm,
       'http.server.requests': { all: { count: [...this.byStatus.values()].reduce((count, timer) => count + timer.count, 0) }, percode },
       services,
-      processMetrics: { ...this.cpuUsage(), 'process.start.time': Date.now() - process.uptime() * 1000, 'process.uptime': process.uptime() * 1000 },
+      processMetrics: {
+        ...this.cpuUsage(),
+        'process.start.time': Date.now() - process.uptime() * 1000,
+        'process.uptime': process.uptime() * 1000,
+      },
     };
   }
 
   /** The processor use of the process and of the system since the previous call, between 0 and 1. */
-  private cpuUsage(): Pick<JHipsterMetrics['processMetrics'], 'system.cpu.usage' | 'system.cpu.count' | 'system.load.average.1m' | 'process.cpu.usage'> {
+  private cpuUsage(): Pick<
+    JHipsterMetrics['processMetrics'],
+    'system.cpu.usage' | 'system.cpu.count' | 'system.load.average.1m' | 'process.cpu.usage'
+  > {
     const now = { time: process.hrtime.bigint(), usage: process.cpuUsage(), system: cpuTimes() };
     const count = availableParallelism();
     const elapsedMicroseconds = Number(now.time - this.lastCpu.time) / 1000;
@@ -164,7 +174,10 @@ export class MetricsService {
 
 function cpuTimes(): { total: number; idle: number } {
   return cpus().reduce(
-    (times, { times: { user, nice, sys, idle, irq } }) => ({ total: times.total + user + nice + sys + idle + irq, idle: times.idle + idle }),
+    (times, { times: { user, nice, sys, idle, irq } }) => ({
+      total: times.total + user + nice + sys + idle + irq,
+      idle: times.idle + idle,
+    }),
     { total: 0, idle: 0 },
   );
 }

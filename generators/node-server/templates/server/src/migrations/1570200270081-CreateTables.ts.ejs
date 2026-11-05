@@ -10,7 +10,7 @@ export class CreateTables1570200270081 implements MigrationInterface {
     await queryRunner.dataSource.synchronize();
   }
 
-  public async down(_queryRunner: QueryRunner): Promise<void> { }
+  public async down(_queryRunner: QueryRunner): Promise<void> {}
 }
 <%_ } else { _%>
 import type { MigrationInterface, QueryRunner } from 'typeorm';
@@ -23,10 +23,10 @@ import { <% if (generateBuiltInUserEntity) { %>auditColumns, createJoinTable, <%
  */
 export class CreateTables1570200270081 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
-<%_ if (generateBuiltInAuthorityEntity) { _%>
+  <%_ if (generateBuiltInAuthorityEntity) { _%>
     await createTable(queryRunner, '<%= authority.entityTableName %>', [{ name: 'name', type: String, primary: true }]);
-<%_ } _%>
-<%_ if (generateBuiltInUserEntity) { _%>
+  <%_ } _%>
+  <%_ if (generateBuiltInUserEntity) { _%>
     await createTable(queryRunner, '<%= user.entityTableName %>', [
       ...auditColumns(queryRunner),
       { name: '<%= nodejsUserPrimaryKeyColumn.name %>', type: <%- nodejsUserPrimaryKeyColumn.type %>, primary: true, generated: '<%= nodejsUserPrimaryKeyColumn.generated %>' },
@@ -48,17 +48,17 @@ export class CreateTables1570200270081 implements MigrationInterface {
       { name: '<%= nodejsUserAuthorityJoinTable.joinColumn.name %>', type: <%- nodejsUserAuthorityJoinTable.joinColumn.type %>, referencedTableName: '<%= nodejsUserAuthorityJoinTable.joinColumn.referencedTableName %>', referencedColumnName: '<%= nodejsUserAuthorityJoinTable.joinColumn.referencedColumnName %>' },
       { name: '<%= nodejsUserAuthorityJoinTable.inverseJoinColumn.name %>', type: <%- nodejsUserAuthorityJoinTable.inverseJoinColumn.type %>, referencedTableName: '<%= nodejsUserAuthorityJoinTable.inverseJoinColumn.referencedTableName %>', referencedColumnName: '<%= nodejsUserAuthorityJoinTable.inverseJoinColumn.referencedColumnName %>' },
     );
-<%_ } _%>
+  <%_ } _%>
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-<%_ if (generateBuiltInUserEntity) { _%>
+  <%_ if (generateBuiltInUserEntity) { _%>
     await queryRunner.dropTable('<%= nodejsUserAuthorityJoinTable.name %>', true);
     await queryRunner.dropTable('<%= user.entityTableName %>', true);
-<%_ } _%>
-<%_ if (generateBuiltInAuthorityEntity) { _%>
+  <%_ } _%>
+  <%_ if (generateBuiltInAuthorityEntity) { _%>
     await queryRunner.dropTable('<%= authority.entityTableName %>', true);
-<%_ } _%>
+  <%_ } _%>
   }
 }
 <%_ } _%>

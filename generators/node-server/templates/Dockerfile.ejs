@@ -1,6 +1,5 @@
-<%_
-const serverDir = nodeServerRootDir.replace(/\/$/, '');
-const clientDir = clientRootDir.replace(/\/$/, '');
+<%_ const serverDir = nodeServerRootDir.replace(/\/$/, '');
+    const clientDir = clientRootDir.replace(/\/$/, '');
 _%>
 # Build stage: installs every dependency and builds the application.
 FROM node:<%- nodeVersion %>-alpine AS build

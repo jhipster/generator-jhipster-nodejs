@@ -7,16 +7,16 @@ import { BaseEntity } from '../common/database/base.entity.ts';
 @Entity('<%- jhiTablePrefix %>_authority')
 <%_ if (databaseTypeMongodb) { _%>
 export class Authority extends BaseEntity {
-    @ObjectIdColumn({ name: '_id' })
-    id?: string;
+  @ObjectIdColumn({ name: '_id' })
+  id?: string;
 <%_ } else { _%>
 export class Authority {
 <%_ } _%>
   @ApiProperty({ example: 'ROLE_USER', description: 'User role' })
-  <%_ if (databaseTypeMongodb) { _%>
+<%_ if (databaseTypeMongodb) { _%>
   @Column({ unique: true })
-  <%_ } else { _%>
+<%_ } else { _%>
   @PrimaryColumn()
-  <%_ } _%>
+<%_ } _%>
   name!: string;
 }

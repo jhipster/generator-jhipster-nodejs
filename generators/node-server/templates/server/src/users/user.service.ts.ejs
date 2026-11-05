@@ -5,7 +5,7 @@ import { Cron } from '@nestjs/schedule';
 import { InjectRepository } from '@nestjs/typeorm';
 import { EntityMetadata, FindManyOptions, FindOneOptions, <% if (generateUserManagement && !typeormRelationsSupport) { %>FindOptionsWhere, <% } %><% if (generateUserManagement && typeormRelationsSupport) { %>IsNull, LessThan, Not, <% } %>Repository } from 'typeorm';
 import { <%= user.persistClass %> } from './user.entity.ts';
-import { PublicUserDTO, <%= user.dtoClass%> } from './dto/user.dto.ts';
+import { PublicUserDTO, <%= user.dtoClass %> } from './dto/user.dto.ts';
 import { UserMapper } from './user.mapper.ts';
 <%_ if (databaseTypeMongodb) { _%>
 import { documentOrder } from '../common/sortable-properties.ts';
@@ -37,12 +37,12 @@ export class UserService {
         return this.userRepository.metadata;
     }
 
-    async findById(id: <%= user.primaryKey.tsType %>): Promise<<%= user.dtoClass%> | undefined> {
+    async findById(id: <%= user.primaryKey.tsType %>): Promise<<%= user.dtoClass %> | undefined> {
         const result = await this.userRepository.findOneBy({ id });
         return UserMapper.fromEntityToDTO(result)
     }
 
-    async findByFields(options: FindOneOptions<<%= user.persistClass %>>): Promise<<%= user.dtoClass%> | undefined> {
+    async findByFields(options: FindOneOptions<<%= user.persistClass %>>): Promise<<%= user.dtoClass %> | undefined> {
         const result = await this.userRepository.findOne(
 <%_ if (typeormRelationsSupport) { _%>
           { ...options, relations },
@@ -53,12 +53,12 @@ export class UserService {
         return UserMapper.fromEntityToDTO(result);
     }
 
-    async find(options: FindManyOptions<<%= user.persistClass %>>): Promise<<%= user.dtoClass%> | undefined> {
+    async find(options: FindManyOptions<<%= user.persistClass %>>): Promise<<%= user.dtoClass %> | undefined> {
         const result = await this.userRepository.findOne(options);
         return UserMapper.fromEntityToDTO(result);
     }
 
-    async findAndCount(options: FindManyOptions<<%= user.persistClass %>>): Promise<[<%= user.dtoClass%>[], number]> {
+    async findAndCount(options: FindManyOptions<<%= user.persistClass %>>): Promise<[<%= user.dtoClass %>[], number]> {
         const [users, count] = await this.userRepository.findAndCount(
 <%_ if (typeormRelationsSupport) { _%>
           { ...options, relations },
@@ -81,7 +81,7 @@ export class UserService {
         return [users.map(user => ({ id: user.<%- user.primaryKey.name %>!, login: user.login })), count];
     }
 
-    async save(userDTO: <%= user.dtoClass%>, creator?: string<% if (generateUserManagement) { %>, updatePassword = false<% } %>): Promise<<%= user.dtoClass%>> {
+    async save(userDTO: <%= user.dtoClass %>, creator?: string<% if (generateUserManagement) { %>, updatePassword = false<% } %>): Promise<<%= user.dtoClass %>> {
         const user = UserMapper.fromDTOtoEntity(userDTO);
 <%_ if (generateUserManagement) { _%>
         if (updatePassword) {
@@ -98,11 +98,11 @@ export class UserService {
         return UserMapper.fromEntityToDTO(result);
     }
 
-    async update(userDTO: <%= user.dtoClass%>, updater?: string): Promise<<%= user.dtoClass%>> {
+    async update(userDTO: <%= user.dtoClass %>, updater?: string): Promise<<%= user.dtoClass %>> {
         return this.save(userDTO, updater);
     }
 
-    async delete(userDTO: <%= user.dtoClass%>): Promise<<%= user.dtoClass%> | undefined> {
+    async delete(userDTO: <%= user.dtoClass %>): Promise<<%= user.dtoClass %> | undefined> {
         const user = UserMapper.fromDTOtoEntity(userDTO);
         const result = await this.userRepository.remove(user)
         return UserMapper.fromEntityToDTO(result);
@@ -117,12 +117,12 @@ export class UserService {
     async removeNotActivatedUsers(): Promise<void> {
         const registeredBefore = new Date(Date.now() - 3 * 24 * 60 * 60 * 1000);
         const users = await this.userRepository.find({
-<%_ if (typeormRelationsSupport) { _%>
+  <%_ if (typeormRelationsSupport) { _%>
             where: { activated: false, activationKey: Not(IsNull()), createdDate: LessThan(registeredBefore) },
-<%_ } else { _%>
+  <%_ } else { _%>
             // The operators of MongoDB: TypeORM does not translate its find operators (LessThan) for it.
             where: { activated: false, activationKey: { $ne: null }, createdDate: { $lt: registeredBefore } } as unknown as FindOptionsWhere<<%= user.persistClass %>>,
-<%_ } _%>
+  <%_ } _%>
         });
         for (const user of users) {
             this.logger.debug(`Deleting not activated user ${user.login}`);

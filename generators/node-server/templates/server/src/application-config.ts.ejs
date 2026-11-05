@@ -139,7 +139,12 @@ const rules: Rule[] = [
 ];
 
 const valueOf = (configuration: Record<string, unknown>, path: string): unknown =>
-  path.split('.').reduce<unknown>((value, name) => (typeof value === 'object' && value !== null ? (value as Record<string, unknown>)[name] : undefined), configuration);
+  path
+    .split('.')
+    .reduce<unknown>(
+      (value, name) => (typeof value === 'object' && value !== null ? (value as Record<string, unknown>)[name] : undefined),
+      configuration,
+    );
 
 /** Validates the configuration, nested by the dotted names of the properties: throws an error telling the invalid ones. */
 export function validateConfiguration<T extends Record<string, unknown>>(configuration: T): T {

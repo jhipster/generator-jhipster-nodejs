@@ -6,7 +6,7 @@ import { configureApp } from '../src/app.config.ts';
 import { INestApplication } from '@nestjs/common';
 import { AuthGuard } from '../src/auth/guards/auth.guard.ts';
 import { RolesGuard } from '../src/auth/guards/roles.guard.ts';
-import { <%= user.dtoClass%> } from '../src/users/dto/user.dto.ts';
+import { <%= user.dtoClass %> } from '../src/users/dto/user.dto.ts';
 import { UserService } from '../src/users/user.service.ts';
 import { MailService } from '../src/mail/mail.service.ts';
 import { comparePassword } from '../src/auth/password-util.ts';
@@ -34,7 +34,7 @@ describe('User', () => {
         email: 'usertest@localhost.it'
     };
 
-    const testUserDTO: <%= user.dtoClass%> = {
+    const testUserDTO: <%= user.dtoClass %> = {
         login: 'userTestLogin',
         firstName: 'UserTest',
         lastName: 'UserTest',
@@ -44,7 +44,7 @@ describe('User', () => {
 
 <%_ if (databaseType !== 'mongodb') { _%>
     // The user as the API gives it: without the keys the mails send.
-    const withoutKeys = ({ activationKey: _activationKey, resetKey: _resetKey, resetDate: _resetDate, ...user }: Partial<<%= user.dtoClass%>>): Partial<<%= user.dtoClass%>> => user;
+    const withoutKeys = ({ activationKey: _activationKey, resetKey: _resetKey, resetDate: _resetDate, ...user }: Partial<<%= user.dtoClass %>>): Partial<<%= user.dtoClass %>> => user;
 
 <%_ } _%>
     beforeEach(async () => {
@@ -73,7 +73,7 @@ describe('User', () => {
             .post('/api/admin/users')
             .send(testUserRequestObject)
             .expect(201);
-        const createdUser: <%= user.dtoClass%> = response.body;
+        const createdUser: <%= user.dtoClass %> = response.body;
 
         // Like JHipster Spring Boot, the login in lower case, and the location of the user by its login.
         expect(createdUser.login).toEqual(testUserRequestObject.login.toLowerCase());
@@ -100,7 +100,7 @@ describe('User', () => {
     });
 
     it('/POST create user keeps the fields of the user only: activated, its own keys and audit', async () => {
-        const createdUser: <%= user.dtoClass%> = (
+        const createdUser: <%= user.dtoClass %> = (
             await request(app.getHttpServer())
                 .post('/api/admin/users')
                 .send({ ...testUserRequestObject, activated: false, password: 'chosenPassword', activationKey: 'chosenKey', resetKey: 'chosenKey', createdBy: 'someone' })
@@ -217,14 +217,14 @@ describe('User', () => {
                 .expect(200)
         ).body;
 
-        <%_ if (databaseType !== 'mongodb') { _%>
+<%_ if (databaseType !== 'mongodb') { _%>
         // Like JHipster Spring Boot, the login in lower case.
         expect(updatedUser).toEqual(JSON.parse(JSON.stringify(withoutKeys({ ...savedUser, login: savedUser.login.toLowerCase() }))));
-        <%_ } else { _%>
+<%_ } else { _%>
         expect(updatedUser.firstName).toEqual(savedUser.firstName);
-        <%_ } _%>
+<%_ } _%>
 
-        await service.delete(savedUser as <%= user.dtoClass%>);
+        await service.delete(savedUser as <%= user.dtoClass %>);
     });
 
     it('/PUT update user with a login name', async () => {
@@ -239,14 +239,14 @@ describe('User', () => {
                 .expect(200)
         ).body;
 
-        <%_ if (databaseType !== 'mongodb') { _%>
+<%_ if (databaseType !== 'mongodb') { _%>
         // Like JHipster Spring Boot, the login in lower case.
         expect(updatedUser).toEqual(JSON.parse(JSON.stringify(withoutKeys({ ...savedUser, login: savedUser.login.toLowerCase() }))));
-        <%_ } else { _%>
+<%_ } else { _%>
         expect(updatedUser.firstName).toEqual(savedUser.firstName);
-        <%_ } _%>
+<%_ } _%>
 
-        await service.delete(savedUser as <%= user.dtoClass%>);
+        await service.delete(savedUser as <%= user.dtoClass %>);
     });
 
     it('/PUT update user keeps the password and the keys of the user', async () => {
@@ -301,7 +301,7 @@ describe('User', () => {
         testUserDTO.login = 'testusergetauthorities';
         const savedUser = await service.save({ ...testUserDTO, authorities: ['ROLE_USER'] });
 
-        const getUser: <%= user.dtoClass%> = (await request(app.getHttpServer()).get('/api/admin/users/testusergetauthorities').expect(200)).body;
+        const getUser: <%= user.dtoClass %> = (await request(app.getHttpServer()).get('/api/admin/users/testusergetauthorities').expect(200)).body;
 
         expect(getUser.authorities).toEqual(['ROLE_USER']);
         await service.delete(savedUser);
@@ -309,22 +309,22 @@ describe('User', () => {
 
     it('/GET user with a login name', async () => {
         testUserDTO.login = 'TestUserGet';
-        const savedUser: <%= user.dtoClass%> = await service.save(testUserDTO);
-        <%_ if (databaseType !== 'mongodb') { _%>
+        const savedUser: <%= user.dtoClass %> = await service.save(testUserDTO);
+<%_ if (databaseType !== 'mongodb') { _%>
         const { password: _password, ...savedUserWithoutPassword } = savedUser;
-        <%_ } _%>
+<%_ } _%>
 
-        const getUser: <%= user.dtoClass%> = (
+        const getUser: <%= user.dtoClass %> = (
             await request(app.getHttpServer())
                 .get('/api/admin/users/' + savedUser.login)
                 .expect(200)
         ).body;
 
-        <%_ if (databaseType !== 'mongodb') { _%>
+<%_ if (databaseType !== 'mongodb') { _%>
         expect(getUser).toEqual(JSON.parse(JSON.stringify({ ...withoutKeys(savedUserWithoutPassword), authorities: [] })));
-        <%_ } else { _%>
+<%_ } else { _%>
         expect(getUser.login).toEqual(savedUser.login);
-        <%_ } _%>
+<%_ } _%>
 
         await service.delete(savedUser);
     });
@@ -334,7 +334,7 @@ describe('User', () => {
 
     it('/DELETE user', async () => {
         testUserDTO.login = 'TestUserDelete';
-        const savedUser: <%= user.dtoClass%> = await service.save(testUserDTO);
+        const savedUser: <%= user.dtoClass %> = await service.save(testUserDTO);
 
         await request(app.getHttpServer())
             .delete('/api/admin/users/' + savedUser.login)

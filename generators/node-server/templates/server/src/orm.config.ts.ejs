@@ -39,14 +39,14 @@ function pgDriver(): unknown {
 <%_ } _%>
 const drivers: Record<string, () => unknown> = {
 <%_ if (databaseTypeSql) { _%>
-<%_ if (prodDatabaseTypePostgresql) { _%>
+  <%_ if (prodDatabaseTypePostgresql) { _%>
   '<%= nodeProdDatabaseType %>': pgDriver,
-<%_ } else { _%>
+  <%_ } else { _%>
   '<%= nodeProdDatabaseType %>': () => require('<%= nodeProdDatabaseDriver %>'),
-<%_ } _%>
-<%_ if (!prodDatabaseTypeSqlite) { _%>
+  <%_ } _%>
+  <%_ if (!prodDatabaseTypeSqlite) { _%>
   'better-sqlite3': () => require('better-sqlite3'),
-<%_ } _%>
+  <%_ } _%>
 <%_ } else { _%>
   mongodb: () => require('mongodb'),
 <%_ } _%>

@@ -57,13 +57,13 @@ database:
   type: <%= nodeDevDatabaseType %>
   host: 127.0.0.1
   port: <%= nodeDatabasePort %>
-<%_ if (databaseTypeSql) { _%>
+  <%_ if (databaseTypeSql) { _%>
   username: <%- devDatabaseUsername %>
   password: '<%- devDatabasePassword %>'
   name: <%- devDatabaseName %>
-<%_ } else { _%>
+  <%_ } else { _%>
   name: <%= baseName %>
-<%_ } _%>
+  <%_ } _%>
   logging: false
 <%_ } _%>
 

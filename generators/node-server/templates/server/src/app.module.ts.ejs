@@ -31,24 +31,23 @@ import { ServeStaticModule } from '@nestjs/serve-static';
     // The configuration of the application*.yml files, read with ConfigService. main.ts loads the .env file.
     ConfigModule.forRoot({ isGlobal: true, ignoreEnvFile: true, cache: true, load: [configuration] }),
     CommonModule,
-  // The database of the active profiles, from the configuration (their application-{profile}.yml files and the environment).
-  TypeOrmModule.forRootAsync({
-    inject: [ConfigService],
-    useFactory: (configService: ConfigService) => ormConfig(key => configService.get(key)),
-  }),
-    <%_ if (!skipClient) { _%>
-<%_
-const spaExcludedPrefixes = ['api', 'management', 'v3/api-docs'];
-if (authenticationTypeOauth2 && (applicationTypeGateway || applicationTypeMonolith)) spaExcludedPrefixes.push('login', 'oauth2');
-if (applicationTypeGateway) spaExcludedPrefixes.push('services');
-_%>
+    // The database of the active profiles, from the configuration (their application-{profile}.yml files and the environment).
+    TypeOrmModule.forRootAsync({
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => ormConfig(key => configService.get(key)),
+    }),
+<%_ if (!skipClient) { _%>
+  <%_ const spaExcludedPrefixes = ['api', 'management', 'v3/api-docs'];
+      if (authenticationTypeOauth2 && (applicationTypeGateway || applicationTypeMonolith)) spaExcludedPrefixes.push('login', 'oauth2');
+      if (applicationTypeGateway) spaExcludedPrefixes.push('services');
+  _%>
     ServeStaticModule.forRoot({
         rootPath: config.getClientPath(),
         // The index.html of the client for the paths of its routes only, like the SpaWebFilter of JHipster Spring Boot: an
         // unknown path of the API, or a missing file (a path with a period), is not found.
         exclude: /^\/(?:<%- spaExcludedPrefixes.map(prefix => prefix.replace('/', '\\/')).join('|') %>)|\./,
       }),
-    <%_ } _%>
+<%_ } _%>
 <%_ if (generateUserManagement) { _%>
     // The scheduled tasks, like the removal of the users not activated (@Cron of UserService).
     ScheduleModule.forRoot(),
@@ -56,10 +55,10 @@ _%>
     AuthModule,
     HealthModule,
     ManagementModule,
-  // jhipster-needle-add-entity-module-to-main - JHipster will add entity modules here, do not remove
+    // jhipster-needle-add-entity-module-to-main - JHipster will add entity modules here, do not remove
   ],
   controllers: [
-  // jhipster-needle-add-controller-module-to-main - JHipster will add controller modules here, do not remove
+    // jhipster-needle-add-controller-module-to-main - JHipster will add controller modules here, do not remove
   ],
   providers: [
     // Logs the requests of every controller, opt out with @SkipLogging().

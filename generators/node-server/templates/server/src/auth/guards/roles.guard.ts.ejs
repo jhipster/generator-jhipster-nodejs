@@ -1,6 +1,6 @@
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { <%= userLoginVmClass%> } from '../../users/dto/user.dto.ts';
+import { <%= userLoginVmClass %> } from '../../users/dto/user.dto.ts';
 
 /**
  * Allows a request when its user has one of the roles of the route, the @Roles of the handler, else the ones of its
@@ -18,7 +18,7 @@ export class RolesGuard implements CanActivate {
     }
 
     const request = context.switchToHttp().getRequest();
-    const user = request.user as <%= userLoginVmClass%>;
+    const user = request.user as <%= userLoginVmClass %>;
 
     return !!user?.authorities?.some(role => roles.includes(role));
   }

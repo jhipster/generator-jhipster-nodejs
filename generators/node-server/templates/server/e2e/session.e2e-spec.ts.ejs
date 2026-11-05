@@ -44,7 +44,11 @@ describe('Session authentication', () => {
     service = moduleFixture.get<UserService>(UserService);
     users = [
       await service.save({ login: 'session-user', email: 'session-user@localhost', password, activated: true }, 'session-user', true),
-      await service.save({ login: 'session-inactive', email: 'session-inactive@localhost', password, activated: false }, 'session-inactive', true),
+      await service.save(
+        { login: 'session-inactive', email: 'session-inactive@localhost', password, activated: false },
+        'session-inactive',
+        true,
+      ),
     ];
     // An agent keeps the cookies of the responses, like a browser: the session and the XSRF-TOKEN cookie.
     agent = request.agent(app.getHttpServer());
@@ -87,7 +91,11 @@ describe('Session authentication', () => {
 
   it('refuses a form of other values than texts with 401', async () => {
     const token = await anonymousToken();
-    await agent.post('/api/authentication').set('X-XSRF-TOKEN', token).send({ username: ['session-user'], password: { value: password } }).expect(401);
+    await agent
+      .post('/api/authentication')
+      .set('X-XSRF-TOKEN', token)
+      .send({ username: ['session-user'], password: { value: password } })
+      .expect(401);
   });
 
   it('checks the password of an unknown login too, answering in the time of a known one', async () => {
@@ -196,13 +204,24 @@ describe('Session authentication', () => {
     // Another session of the same user, in another browser.
     const other = request.agent(app.getHttpServer());
     const otherToken = cookieValue(await other.get('/api/account').expect(401), 'XSRF-TOKEN')!;
-    await other.post('/api/authentication').set('X-XSRF-TOKEN', otherToken).set('User-Agent', 'other-browser').type('form').send({ username: 'session-user', password }).expect(200);
+    await other
+      .post('/api/authentication')
+      .set('X-XSRF-TOKEN', otherToken)
+      .set('User-Agent', 'other-browser')
+      .type('form')
+      .send({ username: 'session-user', password })
+      .expect(200);
 
     const { body: sessions } = await agent.get('/api/account/sessions').expect(200);
     expect(sessions).toHaveLength(2);
     expect(sessions).toEqual(
       expect.arrayContaining([
-        { series: expect.any(String), tokenDate: new Date().toISOString().slice(0, 10), ipAddress: expect.any(String), userAgent: 'other-browser' },
+        {
+          series: expect.any(String),
+          tokenDate: new Date().toISOString().slice(0, 10),
+          ipAddress: expect.any(String),
+          userAgent: 'other-browser',
+        },
       ]),
     );
     const otherSeries = sessions.find((session: any) => session.userAgent === 'other-browser').series;
@@ -217,9 +236,16 @@ describe('Session authentication', () => {
   it('neither lists nor ends the sessions of another user', async () => {
     await login({ username: 'session-user', password });
     const admin = request.agent(app.getHttpServer());
-    users.push(await service.save({ login: 'session-other', email: 'session-other@localhost', password, activated: true }, 'session-other', true));
+    users.push(
+      await service.save({ login: 'session-other', email: 'session-other@localhost', password, activated: true }, 'session-other', true),
+    );
     const adminToken = cookieValue(await admin.get('/api/account').expect(401), 'XSRF-TOKEN')!;
-    await admin.post('/api/authentication').set('X-XSRF-TOKEN', adminToken).type('form').send({ username: 'session-other', password }).expect(200);
+    await admin
+      .post('/api/authentication')
+      .set('X-XSRF-TOKEN', adminToken)
+      .type('form')
+      .send({ username: 'session-other', password })
+      .expect(200);
     const { body: otherSessions } = await admin.get('/api/account/sessions').expect(200);
     const { body: sessions } = await agent.get('/api/account/sessions').expect(200);
     expect(sessions).toHaveLength(1);

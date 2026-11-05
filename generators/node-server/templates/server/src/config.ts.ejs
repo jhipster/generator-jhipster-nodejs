@@ -116,11 +116,11 @@ export class Config {
     return value === undefined || value === null ? undefined : String(value);
   }
 
-  <%_ if (!skipClient) { _%>
+<%_ if (!skipClient) { _%>
   public getClientPath(): string {
     return path.join(import.meta.dirname, '../dist/static');
   }
-  <%_ } _%>
+<%_ } _%>
   public addAll(properties: Properties): void {
     for (const [property, value] of Object.entries(objectToArray(properties))) {
       this[property] = value;
@@ -171,7 +171,10 @@ const yamlConfig = yaml.load(fs.readFileSync(path.join(configFolder, 'applicatio
  * default profile without it), each followed by the profiles of its group (profiles.group of application.yml), like dev
  * that activates secret-samples and api-docs.
  */
-export const activeProfiles: string[] = expandProfiles((process.env.BACKEND_ENV || 'default').split(','), yamlConfig?.profiles?.group ?? {});
+export const activeProfiles: string[] = expandProfiles(
+  (process.env.BACKEND_ENV || 'default').split(','),
+  yamlConfig?.profiles?.group ?? {},
+);
 
 /** Whether one of the profiles is active, like Environment.acceptsProfiles of Spring. */
 export function isProfileActive(...profiles: string[]): boolean {

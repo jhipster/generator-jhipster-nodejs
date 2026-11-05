@@ -42,19 +42,20 @@ export class PageRequest {
 
   constructor(
     page?: number | PaginationQueryType,
-    size?: number | PaginationQueryType
-    ,sort?: PaginationQueryType,
+    size?: number | PaginationQueryType,
+    sort?: PaginationQueryType,
     /**
      * The properties a request can sort on: a list, like the allowed ordered properties of JHipster's UserResource, or a
      * check of a property, any when not given.
      */
-    sortProperties?: string[] | ((property: string) => boolean)
+    sortProperties?: string[] | ((property: string) => boolean),
   ) {
     this.page = Math.max(PageRequest.handleNumberTypes(page, this.page), 0);
     const requestedSize = PageRequest.handleNumberTypes(size, this.size);
     this.size = requestedSize < 1 ? this.size : Math.min(requestedSize, PageRequest.MAX_SIZE);
     const sorts = PageRequest.handleQueryTypes(sort).map(value => new Sort(value));
-    const isSortable = typeof sortProperties === 'function' ? sortProperties : (property: string): boolean => sortProperties?.includes(property) ?? true;
+    const isSortable =
+      typeof sortProperties === 'function' ? sortProperties : (property: string): boolean => sortProperties?.includes(property) ?? true;
     const invalid = sorts.find(each => !isSortable(each.property));
     if (invalid) {
       throw new BadRequestException(`Invalid sort property: ${invalid.property}`);
@@ -108,5 +109,9 @@ export class PageRequest {
 
 /** A page of a list: its records (entities, or the users of the public user list), the total and the page request. */
 export class Page<T> {
-  constructor(public content: T[], public total: number, public pageable: PageRequest) {}
+  constructor(
+    public content: T[],
+    public total: number,
+    public pageable: PageRequest,
+  ) {}
 }
