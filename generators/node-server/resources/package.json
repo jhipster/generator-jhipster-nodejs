@@ -63,7 +63,7 @@
     "eslint": "10.14.0",
     "eslint-config-prettier": "10.1.8",
     "eslint-plugin-prettier": "5.5.7",
-    "globals": "17.13.0",
+    "globals": "17.14.0",
     "rimraf": "5.0.10",
     "sonarqube-scanner": "5.0.2",
     "supertest": "7.3.1",
