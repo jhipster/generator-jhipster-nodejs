@@ -38,9 +38,24 @@ export const requiredReferences = async (app: INestApplication): Promise<Record<
 });
 <%_ } _%>
 
+<%_ if (nodejsTestSample.variations.length > 0) { _%>
+let samples = 0;
+
+/** The values of a new <%- entityClass %> of the sample, with an id and unique values of its own. */
+const newSample = (): Record<string, any> => {
+  samples++;
+  return {
+    ...sampleWithNewData,
+  <%_ for (const { fieldName, value } of nodejsTestSample.variations) { _%>
+    <%- fieldName %>: <%- value %>,
+  <%_ } _%>
+  };
+};
+
+<%_ } _%>
 /** A new <%- entityClass %> of the sample, stored through the REST API with its required relationships. */
 export const storeSample = async (app: INestApplication): Promise<Record<string, any>> => {
-  const values = { ...sampleWithNewData, ...(await requiredReferences(app)) };
+  const values = { ...<%- nodejsTestSample.variations.length > 0 ? 'newSample()' : 'sampleWithNewData' %>, ...(await requiredReferences(app)) };
   return (await request(app.getHttpServer()).post('/api/<%- entityApiUrl %>').send(values).expect(201)).body;
 };
 
