@@ -6,20 +6,19 @@ import { <%= dtoClass %> }  from './dto/<%= entityFileName %>.dto.ts';
 import { <%= entityClass %>Mapper }  from './<%= entityFileName %>.mapper.ts';
 <%_ if (databaseType === 'mongodb') { _%>
 import { updatableProperties } from '../../common/updatable-properties.ts';
-<%_ if (databaseTypeMongodb) { _%>
+  <%_ if (databaseTypeMongodb) { _%>
 import { ObjectId } from 'mongodb';
 import { documentOrder } from '../../common/sortable-properties.ts';
-<%_ } _%>
+  <%_ } _%>
 <%_ } _%>
 <%_ if (relationships.some(relationship => relationship.ownerSide)) { _%>
 import { referenceById } from '../../common/reference-by-id.ts';
 <%_ } _%>
 
-<%_
-// The relationships the entity stores (the persistableRelationships of JHipster), loaded with it.
-const eagerLoadRelations = persistableRelationships.map(relationship => relationship.propertyName);
-const pkType = primaryKey.tsType;
-const pk = primaryKey.name;
+<%_ // The relationships the entity stores (the persistableRelationships of JHipster), loaded with it.
+    const eagerLoadRelations = persistableRelationships.map(relationship => relationship.propertyName);
+    const pkType = primaryKey.tsType;
+    const pk = primaryKey.name;
 _%>
 <%_ if (relationships.length > 0) { _%>
 /**
@@ -129,11 +128,11 @@ export class <%= entityClass %>Service {
         if (updater) {
             entity.lastModifiedBy = updater;
         }
-      <%_ if (databaseType === 'mongodb') { _%>
+<%_ if (databaseType === 'mongodb') { _%>
         await this.<%= entityInstance %>Repository.update(entity.<%= pk %>!, updatableProperties(this.<%= entityInstance %>Repository.metadata, entity));
-      <%_ } else { _%>
+<%_ } else { _%>
         await this.<%= entityInstance %>Repository.save(entity);
-      <%_ } _%>
+<%_ } _%>
         // The stored entity, with its relationships and audit fields, rather than the request.
         const result = await this.findById(entity.<%= pk %>!);
         if (!result) {
