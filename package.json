@@ -54,7 +54,7 @@
   },
   "dependencies": {
     "chalk": "^5.3.0",
-    "generator-jhipster": "github:jhipster/generator-jhipster#bdbb4a9dc8186b9aaa57e964e911cd80d78db51c"
+    "generator-jhipster": "github:mshima/generator-jhipster#e75c7a6c41"
   },
   "devDependencies": {
     "@eslint/js": "10.0.1",
@@ -77,6 +77,6 @@
     "node": "^22.18.0 || >=24.11.0"
   },
   "allowScripts": {
-    "github:jhipster/generator-jhipster#bdbb4a9dc8186b9aaa57e964e911cd80d78db51c": true
+    "github:mshima/generator-jhipster#e75c7a6c41": true
   }
 }
