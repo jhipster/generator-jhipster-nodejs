@@ -1,33 +1,56 @@
 import { describe, expect, it } from 'vitest';
 
-import { sampleVariations } from './test-samples.js';
+import { uniqueSamples } from './test-samples.js';
 
-describe('sampleVariations', () => {
-  const variations = (fields, values) => sampleVariations({ fields }, values);
+/** A field of a prepared entity, giving the values in turn and undefined after them. */
+const fakeField = (field, values) => {
+  const left = [...values];
+  return { propertyName: field.fieldName, generateFakeData: () => left.shift(), ...field };
+};
+const samples = (fields, count) =>
+  uniqueSamples(
+    { fields, resetFakerSeed: () => undefined },
+    Object.fromEntries(fields.map(({ fieldName }) => [fieldName, 'sampled'])),
+    count,
+  );
 
-  it('should vary the id the client gives, keeping the length of a text', () => {
-    expect(variations([{ fieldName: 'slug', id: true }], { slug: 'main' })).toEqual([
-      { fieldName: 'slug', value: '`${sampleWithNewData.slug.slice(`${samples}`.length)}${samples}`' },
+describe('uniqueSamples', () => {
+  it('should give each sample the id the client gives and the unique fields', () => {
+    const fields = [
+      fakeField({ fieldName: 'slug', id: true }, ['a', 'b']),
+      fakeField({ fieldName: 'rank', fieldValidateRules: ['unique'], unique: true }, [1, 2]),
+      fakeField({ fieldName: 'name' }, ['x', 'y']),
+    ];
+    expect(samples(fields, 2)).toEqual([
+      { slug: 'a', rank: 1 },
+      { slug: 'b', rank: 2 },
     ]);
   });
 
-  it('should vary the unique fields, a number under its maximum', () => {
+  it('should give the values as the API exchanges them', () => {
     const fields = [
-      { fieldName: 'rank', fieldValidateRules: ['unique'] },
-      { fieldName: 'level', fieldValidateRules: ['unique', 'max'], fieldValidateRulesMax: 10 },
+      fakeField({ fieldName: 'since', fieldValidateRules: ['unique'], unique: true }, [new Date('2026-01-02T03:04:05.678Z')]),
     ];
-    expect(variations(fields, { rank: 1, level: 5 })).toEqual([
-      { fieldName: 'rank', value: 'sampleWithNewData.rank + samples' },
-      { fieldName: 'level', value: 'sampleWithNewData.level - samples' },
+    expect(samples(fields, 1)).toEqual([{ since: '2026-01-02T03:04:05.000Z' }]);
+  });
+
+  it('should clear a unique field without a value left', () => {
+    const fields = [
+      fakeField({ fieldName: 'slug', id: true }, ['a', 'b']),
+      fakeField({ fieldName: 'level', fieldValidateRules: ['unique'], unique: true }, [1]),
+    ];
+    expect(samples(fields, 2)).toEqual([
+      { slug: 'a', level: 1 },
+      { slug: 'b', level: null },
     ]);
   });
 
-  it('should leave the other fields, a generated id and a value of a pattern', () => {
-    const fields = [
-      { fieldName: 'id', id: true },
-      { fieldName: 'name' },
-      { fieldName: 'isbn', fieldValidateRules: ['unique', 'pattern'], fieldValidateRulesPattern: '[0-9]+' },
-    ];
-    expect(variations(fields, { name: 'a', isbn: '1' })).toEqual([]);
+  it('should have nothing for an entity without such fields', () => {
+    expect(samples([fakeField({ fieldName: 'name' }, ['x'])], 1)).toBeUndefined();
+  });
+
+  it('should leave out a field the values of the sample do not have', () => {
+    const fields = [fakeField({ fieldName: 'slug', id: true }, ['a'])];
+    expect(uniqueSamples({ fields, resetFakerSeed: () => undefined }, {}, 1)).toBeUndefined();
   });
 });

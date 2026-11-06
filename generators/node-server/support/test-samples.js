@@ -1,6 +1,16 @@
-import { hasCyclicRequiredRelationship, isRequiredRelationship } from 'generator-jhipster/generators/base-application/support';
+import {
+  generateEntitySamples,
+  hasCyclicRequiredRelationship,
+  isRequiredRelationship,
+} from 'generator-jhipster/generators/base-application/support';
 
-import { apiFakeEntity, apiFakeValue } from './api-fake-data.js';
+import { apiFakeEntity, apiFakeValue, apiValue } from './api-fake-data.js';
+
+/**
+ * The samples of an entity with values no two records share: a spec stores one for each of its tests through a required
+ * one-to-one relationship, about seven of them.
+ */
+const UNIQUE_SAMPLES = 30;
 
 /**
  * The test samples of the entities (e2e/samples), like the test samples of the Angular client of JHipster: a sample of a
@@ -22,22 +32,20 @@ const isSampleRelationship = relationship =>
   (relationship.otherEntity.builtInUser || relationship.otherEntity.entityRestLayer);
 
 /**
- * The value of a field in the sample number `samples`, for the fields no two records share: the id the client gives and
- * the unique fields. A text keeps its length, a number stays under its maximum, and a value of a pattern is left as it is.
+ * The values no two records of the sample share, the id the client gives and the unique fields, for each new record. A
+ * unique field without a value left is null, which records can share.
  */
-const sampleVariation = (field, value) => {
-  const sample = `sampleWithNewData.${field.fieldName}`;
-  if (field.fieldValidateRulesPattern) return undefined;
-  if (typeof value === 'number') return `${sample} ${field.fieldValidateRulesMax === undefined ? '+' : '-'} samples`;
-  return typeof value === 'string' ? `\`\${${sample}.slice(\`\${samples}\`.length)}\${samples}\`` : undefined;
+export const uniqueSamples = (entity, values, count = UNIQUE_SAMPLES) => {
+  const fields = entity.fields.filter(field => field.fieldName in values && (field.id || field.fieldValidateRules?.includes('unique')));
+  if (fields.length === 0) return undefined;
+  const [samples] = generateEntitySamples(entity, {
+    seed: 'nodejs-unique-samples',
+    batches: [{ fields, format: 'json-serializable', count }],
+  });
+  return samples.map(sample =>
+    Object.fromEntries(fields.map(field => [field.fieldName, apiValue(field, sample[field.fieldName]) ?? null])),
+  );
 };
-
-/** The fields of a new record of the sample that differ from the records stored before, with their values. */
-export const sampleVariations = (entity, values) =>
-  entity.fields
-    .filter(field => field.fieldName in values && (field.id || field.fieldValidateRules?.includes('unique')))
-    .map(field => ({ fieldName: field.fieldName, value: sampleVariation(field, values[field.fieldName]) }))
-    .filter(({ value }) => value);
 
 /** The mutations of a relationship. */
 export const mutateRequiredReference = {
@@ -70,7 +78,7 @@ export const mutateTestSamples = ({ databaseTypeSql }) => ({
     const { values } = apiFakeEntity(entity);
     return {
       values: JSON.stringify(values),
-      variations: sampleVariations(entity, values),
+      uniqueSamples: JSON.stringify(uniqueSamples(entity, values)),
       references: relationships.map(({ propertyName, collection, relationshipOneToOne, otherEntity }) => {
         const id = otherEntity.primaryKey.name;
         const record = otherEntity.builtInUser
