@@ -660,6 +660,27 @@ describe('SubGenerator node-server of nodejs JHipster blueprint', () => {
     });
   });
 
+  describe.each([
+    ['angular', false],
+    ['react', false],
+    ['vue', false],
+    ['no', true],
+  ])('with the client %s', (clientFramework, skipClient) => {
+    beforeAll(async function () {
+      await helpers
+        .run(SUB_GENERATOR_NAMESPACE)
+        .withJHipsterConfig({ clientFramework })
+        .withOptions({ ignoreNeedlesError: true })
+        .withJHipsterGenerators()
+        .withConfiguredBlueprint()
+        .withBlueprintConfig({});
+    });
+
+    it('should give the built-in Authority the screens of a client of JHipster, which its user management uses', () => {
+      expect(result.entities.Authority.skipClient).toBe(skipClient);
+    });
+  });
+
   describe('with many relationships to an entity of a unique field', () => {
     // JHipster keeps the unique values of a field for the whole generation: the relationship tests draw their own.
     const owner = {

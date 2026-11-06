@@ -76,7 +76,7 @@ export default class extends BaseApplicationGenerator {
       postPreparing({ application }) {
         if (application.authority) {
           // The clients of JHipster with the screens of the built-in Authority, which their user management uses.
-          application.authority.skipClient = !application.clientFrameworkAngular && !application.clientFrameworkVue;
+          application.authority.skipClient = !application.clientFrameworkBuiltIn;
         }
       },
     });
