@@ -1,8 +1,5 @@
-<%_ // The values of the fields as the API exchanges them, reproducible: the faker of the entity is seeded for this test.
-    resetFakerSeed('nodejs-database-e2e');
-    const created = nodejsApiFakeEntity();
-    const updated = nodejsApiFakeEntity();
-    const approximateFields = created.approximateFields;
+<%_ const { created, updated } = nodejsDatabaseE2e;
+    const { approximateFields } = created;
     // The relationships of the entity with a join column or a join table (the persistableRelationships of JHipster): stored
     // by the id of the related record.
     const storedRelationships = databaseTypeSql ? persistableRelationships : [];
@@ -13,7 +10,7 @@
       : [];
     const literal = value => JSON.stringify(value);
     // The references of the required relationships from the test samples (e2e/samples), by entity instance name.
-    const spreads = nodejsRequiredSamples.spreads;
+    const { spreads } = nodejsRequiredSamples;
 _%>
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { ExecutionContext, INestApplication } from '@nestjs/common';
@@ -26,32 +23,32 @@ import { DataSource } from 'typeorm';
 import { AppModule } from '../src/app.module.ts';
 import { configureApp } from '../src/app.config.ts';
 <%_ if (anyUserRelationship) { _%>
-import { <%= user.persistClass %> } from '../src/users/user.entity.ts';
+import { <%- user.persistClass %> } from '../src/users/user.entity.ts';
 <%_ } _%>
 import { AuthGuard } from '../src/auth/guards/auth.guard.ts';
 import { RolesGuard } from '../src/auth/guards/roles.guard.ts';
 <%_ for (const sampleEntity of nodejsRequiredSamples.entities) { _%>
-import * as <%= sampleEntity.entityInstance %>Samples from './samples/<%= sampleEntity.entityFileName %>.test-samples.ts';
+import * as <%- sampleEntity.entityInstance %>Samples from './samples/<%- sampleEntity.entityFileName %>.test-samples.ts';
 <%_ } _%>
 
 /**
- * <%= entityClass %> stored in the database and read back through the REST API, like the resource tests of JHipster
+ * <%- entityClass %> stored in the database and read back through the REST API, like the resource tests of JHipster
  * Spring Boot: the values of every field as the API exchanges them<% if (storedRelationships.length > 0) { %>, and the relationships stored by the id of the related
  * record, without changing it<% } %>.
  */
-describe('<%= entityClass %> on the database', () => {
+describe('<%- entityClass %> on the database', () => {
   let app: INestApplication;
   const AUDITOR = 'database-e2e';
 
   // The values of the fields, of a creation then of an update.
   const createdValues: Record<string, any> = {
 <%_ for (const [name, value] of Object.entries(created.values)) { _%>
-    <%= name %>: <%- literal(value) %>,
+    <%- name %>: <%- literal(value) %>,
 <%_ } _%>
   };
   const updatedValues: Record<string, any> = {
 <%_ for (const [name, value] of Object.entries(updated.values)) { _%>
-    <%= name %>: <%- literal(value) %>,
+    <%- name %>: <%- literal(value) %>,
 <%_ } _%>
   };
 
@@ -59,7 +56,7 @@ describe('<%= entityClass %> on the database', () => {
   const expected = (values: Record<string, any>): Record<string, any> => ({
     ...values,
 <%_ for (const name of approximateFields) { _%>
-    <%= name %>: expect.closeTo(values.<%= name %>, 1),
+    <%- name %>: expect.closeTo(values.<%- name %>, 1),
 <%_ } _%>
   });
 
@@ -95,96 +92,96 @@ describe('<%= entityClass %> on the database', () => {
 
   it('should store every field and read it back, then update and delete it', async () => {
     const server = app.getHttpServer();
-    const { body: stored } = await request(server).post('/api/<%= entityApiUrl %>').send(<%- spreads[entityInstance] ? `{ ...createdValues${spreads[entityInstance]} }` : 'createdValues' %>).expect(201);
-    const { body: read } = await request(server).get(`/api/<%= entityApiUrl %>/${stored.<%= primaryKey.name %>}`).expect(200);
+    const { body: stored } = await request(server).post('/api/<%- entityApiUrl %>').send(<%- spreads[entityInstance] ? `{ ...createdValues${spreads[entityInstance]} }` : 'createdValues' %>).expect(201);
+    const { body: read } = await request(server).get(`/api/<%- entityApiUrl %>/${stored.<%- primaryKey.name %>}`).expect(200);
     expect(read).toMatchObject(expected(createdValues));
     // The audit fields, of the user of the creation.
     expect(read).toMatchObject({ createdBy: AUDITOR, lastModifiedBy: AUDITOR });
 
     await request(server)
-      .put(`/api/<%= entityApiUrl %>/${stored.<%= primaryKey.name %>}`)
-      .send({ ...updatedValues<%- spreads[entityInstance] ?? '' %>, <%= primaryKey.name %>: stored.<%= primaryKey.name %> })
+      .put(`/api/<%- entityApiUrl %>/${stored.<%- primaryKey.name %>}`)
+      .send({ ...updatedValues<%- spreads[entityInstance] ?? '' %>, <%- primaryKey.name %>: stored.<%- primaryKey.name %> })
       .expect(200);
-    const { body: readUpdated } = await request(server).get(`/api/<%= entityApiUrl %>/${stored.<%= primaryKey.name %>}`).expect(200);
-    expect(readUpdated).toMatchObject(expected({ ...updatedValues, <%= primaryKey.name %>: stored.<%= primaryKey.name %> }));
+    const { body: readUpdated } = await request(server).get(`/api/<%- entityApiUrl %>/${stored.<%- primaryKey.name %>}`).expect(200);
+    expect(readUpdated).toMatchObject(expected({ ...updatedValues, <%- primaryKey.name %>: stored.<%- primaryKey.name %> }));
 
-    await request(server).delete(`/api/<%= entityApiUrl %>/${stored.<%= primaryKey.name %>}`).expect(204);
-    await request(server).get(`/api/<%= entityApiUrl %>/${stored.<%= primaryKey.name %>}`).expect(404);
+    await request(server).delete(`/api/<%- entityApiUrl %>/${stored.<%- primaryKey.name %>}`).expect(204);
+    await request(server).get(`/api/<%- entityApiUrl %>/${stored.<%- primaryKey.name %>}`).expect(404);
   });
 <%_ const optionalField = fields.find(field => !field.id && !field.transient && !field.fieldValidationRequired && field.fieldName in created.values); _%>
 <%_ if (optionalField) { _%>
 
-  it('should clear the <%= optionalField.fieldName %> a PUT does not give, like JHipster Spring Boot replacing the record', async () => {
+  it('should clear the <%- optionalField.fieldName %> a PUT does not give, like JHipster Spring Boot replacing the record', async () => {
     const server = app.getHttpServer();
-    const { body: stored } = await request(server).post('/api/<%= entityApiUrl %>').send(<%- spreads[entityInstance] ? `{ ...createdValues${spreads[entityInstance]} }` : 'createdValues' %>).expect(201);
-    const { <%= optionalField.fieldName %>: _<%= optionalField.fieldName %>, ...withoutField } = stored;
+    const { body: stored } = await request(server).post('/api/<%- entityApiUrl %>').send(<%- spreads[entityInstance] ? `{ ...createdValues${spreads[entityInstance]} }` : 'createdValues' %>).expect(201);
+    const { <%- optionalField.fieldName %>: _<%- optionalField.fieldName %>, ...withoutField } = stored;
 
-    const { body: updated } = await request(server).put(`/api/<%= entityApiUrl %>/${stored.<%= primaryKey.name %>}`).send(withoutField).expect(200);
-    expect(updated.<%= optionalField.fieldName %>).toBeNull();
-    const { body: read } = await request(server).get(`/api/<%= entityApiUrl %>/${stored.<%= primaryKey.name %>}`).expect(200);
-    expect(read.<%= optionalField.fieldName %>).toBeNull();
+    const { body: updated } = await request(server).put(`/api/<%- entityApiUrl %>/${stored.<%- primaryKey.name %>}`).send(withoutField).expect(200);
+    expect(updated.<%- optionalField.fieldName %>).toBeNull();
+    const { body: read } = await request(server).get(`/api/<%- entityApiUrl %>/${stored.<%- primaryKey.name %>}`).expect(200);
+    expect(read.<%- optionalField.fieldName %>).toBeNull();
 
-    await request(server).delete(`/api/<%= entityApiUrl %>/${stored.<%= primaryKey.name %>}`).expect(204);
+    await request(server).delete(`/api/<%- entityApiUrl %>/${stored.<%- primaryKey.name %>}`).expect(204);
   });
 <%_ } _%>
 
-  it('should list the stored records<% if (pagination !== 'no') { %>, with the pagination headers of JHipster Spring Boot<% } %>', async () => {
+  it('should list the stored records<%- pagination === 'no' ? '' : ', with the pagination headers of JHipster Spring Boot' %>', async () => {
     const server = app.getHttpServer();
-    const { body: stored } = await request(server).post('/api/<%= entityApiUrl %>').send(<%- spreads[entityInstance] ? `{ ...createdValues${spreads[entityInstance]} }` : 'createdValues' %>).expect(201);
+    const { body: stored } = await request(server).post('/api/<%- entityApiUrl %>').send(<%- spreads[entityInstance] ? `{ ...createdValues${spreads[entityInstance]} }` : 'createdValues' %>).expect(201);
 
-    const response = await request(server).get('/api/<%= entityApiUrl %>?size=2000').expect(200);
-    expect(response.body.map((record: Record<string, unknown>) => record.<%= primaryKey.name %>)).toContain(stored.<%= primaryKey.name %>);
+    const response = await request(server).get('/api/<%- entityApiUrl %>?size=2000').expect(200);
+    expect(response.body.map((record: Record<string, unknown>) => record.<%- primaryKey.name %>)).toContain(stored.<%- primaryKey.name %>);
 <%_ if (pagination !== 'no') { _%>
     expect(Number(response.headers['x-total-count'])).toBe(response.body.length);
     expect(response.headers.link).toContain('rel="first"');
 <%_ } _%>
 
-    await request(server).delete(`/api/<%= entityApiUrl %>/${stored.<%= primaryKey.name %>}`).expect(204);
+    await request(server).delete(`/api/<%- entityApiUrl %>/${stored.<%- primaryKey.name %>}`).expect(204);
   });
 <%_ if (!primaryKey.autoGenerate) { _%>
 
-  it('should refuse a new record with the <%= primaryKey.name %> of an existing one, like JHipster Spring Boot', async () => {
+  it('should refuse a new record with the <%- primaryKey.name %> of an existing one, like JHipster Spring Boot', async () => {
     const server = app.getHttpServer();
     const values = <%- spreads[entityInstance] ? `{ ...createdValues${spreads[entityInstance]} }` : 'createdValues' %>;
-    const { body: stored } = await request(server).post('/api/<%= entityApiUrl %>').send(values).expect(201);
+    const { body: stored } = await request(server).post('/api/<%- entityApiUrl %>').send(values).expect(201);
 
-    expect(stored.<%= primaryKey.name %>).toEqual(createdValues.<%= primaryKey.name %>);
-    await request(server).post('/api/<%= entityApiUrl %>').send(values).expect(400);
+    expect(stored.<%- primaryKey.name %>).toEqual(createdValues.<%- primaryKey.name %>);
+    await request(server).post('/api/<%- entityApiUrl %>').send(values).expect(400);
 
-    await request(server).delete(`/api/<%= entityApiUrl %>/${stored.<%= primaryKey.name %>}`).expect(204);
+    await request(server).delete(`/api/<%- entityApiUrl %>/${stored.<%- primaryKey.name %>}`).expect(204);
   });
 <%_ } _%>
 <%_ if (databaseTypeSql && primaryKey.typeString && primaryKey.autoGenerate) { _%>
 
-  it('should give a new record a UUID as its String <%= primaryKey.name %>, like the @GeneratedValue of JHipster Spring Boot', async () => {
+  it('should give a new record a UUID as its String <%- primaryKey.name %>, like the @GeneratedValue of JHipster Spring Boot', async () => {
     const server = app.getHttpServer();
-    const { body: stored } = await request(server).post('/api/<%= entityApiUrl %>').send(<%- spreads[entityInstance] ? `{ ...createdValues${spreads[entityInstance]} }` : 'createdValues' %>).expect(201);
+    const { body: stored } = await request(server).post('/api/<%- entityApiUrl %>').send(<%- spreads[entityInstance] ? `{ ...createdValues${spreads[entityInstance]} }` : 'createdValues' %>).expect(201);
 
-    expect(stored.<%= primaryKey.name %>).toMatch(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/);
-    await request(server).get(`/api/<%= entityApiUrl %>/${stored.<%= primaryKey.name %>}`).expect(200);
+    expect(stored.<%- primaryKey.name %>).toMatch(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/);
+    await request(server).get(`/api/<%- entityApiUrl %>/${stored.<%- primaryKey.name %>}`).expect(200);
 
-    await request(server).delete(`/api/<%= entityApiUrl %>/${stored.<%= primaryKey.name %>}`).expect(204);
+    await request(server).delete(`/api/<%- entityApiUrl %>/${stored.<%- primaryKey.name %>}`).expect(204);
   });
 <%_ } _%>
-<%_ for (const relationship of storedRelationships) {
-      const otherEntity = relationship.otherEntity;
+<%_ for (const relationship of storedRelationships) { _%>
+  <%_ const { otherEntity } = relationship;
       const otherId = otherEntity.primaryKey.name;
       const collection = relationship.relationshipType === 'many-to-many';
       const property = relationship.propertyName;
       const otherValues = relationship.nodejsRelatedValues;
       // A text field of the related record, sent changed with its id: the relationship does not store it (no cascade).
       const otherTextField = otherValues && otherEntity.fields.find(field => !field.id && field.fieldType === 'String' && field.fieldName in otherValues);
-_%>
+  _%>
 
-  it('should store the <%= property %> relationship by the id of the related record, without changing it', async () => {
+  it('should store the <%- property %> relationship by the id of the related record, without changing it', async () => {
     const server = app.getHttpServer();
   <%_ if (otherEntity.builtInUser) { _%>
     // A user of this test: the applications without seed users (OAuth2) have none.
-    const users = app.get(DataSource).getRepository(<%= user.persistClass %>);
+    const users = app.get(DataSource).getRepository(<%- user.persistClass %>);
     const related = await users.save(
       users.create({
-        login: '<%= entityInstance.toLowerCase() %>-<%= property.toLowerCase() %>-e2e',
-        email: '<%= entityInstance.toLowerCase() %>-<%= property.toLowerCase() %>-e2e@localhost',
+        login: '<%- entityInstance.toLowerCase() %>-<%- property.toLowerCase() %>-e2e',
+        email: '<%- entityInstance.toLowerCase() %>-<%- property.toLowerCase() %>-e2e@localhost',
         password: '',
         activationKey: 'e2e-activation-key',
         resetKey: 'e2e-reset-key',
@@ -192,74 +189,74 @@ _%>
     );
   <%_ } else { _%>
     const relatedValues: Record<string, any> = <%- literal(otherValues) %>;
-    const { body: related } = await request(server).post('/api/<%= otherEntity.entityApiUrl %>').send(<%- spreads[otherEntity.entityInstance] ? `{ ...relatedValues${spreads[otherEntity.entityInstance]} }` : 'relatedValues' %>).expect(201);
+    const { body: related } = await request(server).post('/api/<%- otherEntity.entityApiUrl %>').send(<%- spreads[otherEntity.entityInstance] ? `{ ...relatedValues${spreads[otherEntity.entityInstance]} }` : 'relatedValues' %>).expect(201);
   <%_ } _%>
   <%_ if (otherTextField) { _%>
-    const reference = { <%= otherId %>: related.<%= otherId %>, <%= otherTextField.fieldName %>: 'not stored through the relationship' };
+    const reference = { <%- otherId %>: related.<%- otherId %>, <%- otherTextField.fieldName %>: 'not stored through the relationship' };
   <%_ } else { _%>
-    const reference = { <%= otherId %>: related.<%= otherId %> };
+    const reference = { <%- otherId %>: related.<%- otherId %> };
   <%_ } _%>
     const { body: stored } = await request(server)
-      .post('/api/<%= entityApiUrl %>')
-      .send({ ...createdValues<%- spreads[entityInstance] ?? '' %>, <%= property %>: <%- collection ? '[reference]' : 'reference' %> })
+      .post('/api/<%- entityApiUrl %>')
+      .send({ ...createdValues<%- spreads[entityInstance] ?? '' %>, <%- property %>: <%- collection ? '[reference]' : 'reference' %> })
       .expect(201);
 
-    const { body: read } = await request(server).get(`/api/<%= entityApiUrl %>/${stored.<%= primaryKey.name %>}`).expect(200);
+    const { body: read } = await request(server).get(`/api/<%- entityApiUrl %>/${stored.<%- primaryKey.name %>}`).expect(200);
   <%_ if (collection) { _%>
-    expect(read.<%= property %>).toEqual([expect.objectContaining({ <%= otherId %>: related.<%= otherId %> })]);
+    expect(read.<%- property %>).toEqual([expect.objectContaining({ <%- otherId %>: related.<%- otherId %> })]);
   <%_ } else { _%>
-    expect(read.<%= property %>).toMatchObject({ <%= otherId %>: related.<%= otherId %> });
+    expect(read.<%- property %>).toMatchObject({ <%- otherId %>: related.<%- otherId %> });
   <%_ } _%>
   <%_ if (otherEntity.builtInUser) { _%>
     // The keys of the user never in a response, like the @JsonIgnore keys of JHipster Spring Boot.
-    expect(JSON.stringify(read.<%= property %>)).not.toMatch(/e2e-(activation|reset)-key/);
+    expect(JSON.stringify(read.<%- property %>)).not.toMatch(/e2e-(activation|reset)-key/);
   <%_ } _%>
   <%_ if (otherTextField) { _%>
-    const { body: relatedRead } = await request(server).get(`/api/<%= otherEntity.entityApiUrl %>/${related.<%= otherId %>}`).expect(200);
-    expect(relatedRead.<%= otherTextField.fieldName %>).toBe(relatedValues.<%= otherTextField.fieldName %>);
+    const { body: relatedRead } = await request(server).get(`/api/<%- otherEntity.entityApiUrl %>/${related.<%- otherId %>}`).expect(200);
+    expect(relatedRead.<%- otherTextField.fieldName %>).toBe(relatedValues.<%- otherTextField.fieldName %>);
   <%_ } _%>
 
-    await request(server).delete(`/api/<%= entityApiUrl %>/${stored.<%= primaryKey.name %>}`).expect(204);
+    await request(server).delete(`/api/<%- entityApiUrl %>/${stored.<%- primaryKey.name %>}`).expect(204);
   <%_ if (otherEntity.builtInUser) { _%>
     await users.remove(related);
   <%_ } else if (otherValues) { _%>
-    await request(server).delete(`/api/<%= otherEntity.entityApiUrl %>/${related.<%= otherId %>}`).expect(204);
+    await request(server).delete(`/api/<%- otherEntity.entityApiUrl %>/${related.<%- otherId %>}`).expect(204);
   <%_ } _%>
   });
 <%_ } _%>
-<%_ for (const relationship of inverseRelationships) {
-      const otherEntity = relationship.otherEntity;
+<%_ for (const relationship of inverseRelationships) { _%>
+  <%_ const { otherEntity } = relationship;
       const otherId = otherEntity.primaryKey.name;
       const property = relationship.propertyName;
       const collection = relationship.relationshipType !== 'one-to-one';
       const otherProperty = relationship.otherRelationship.propertyName;
       const otherCollection = relationship.relationshipType === 'many-to-many';
       const otherValues = relationship.nodejsRelatedValues;
-_%>
+  _%>
 
-  it('should not store the <%= property %> relationship from this side, like the mappedBy side of JHipster Spring Boot', async () => {
+  it('should not store the <%- property %> relationship from this side, like the mappedBy side of JHipster Spring Boot', async () => {
     const server = app.getHttpServer();
-    const { body: stored } = await request(server).post('/api/<%= entityApiUrl %>').send(<%- spreads[entityInstance] ? `{ ...createdValues${spreads[entityInstance]} }` : 'createdValues' %>).expect(201);
-    const reference = { <%= primaryKey.name %>: stored.<%= primaryKey.name %> };
+    const { body: stored } = await request(server).post('/api/<%- entityApiUrl %>').send(<%- spreads[entityInstance] ? `{ ...createdValues${spreads[entityInstance]} }` : 'createdValues' %>).expect(201);
+    const reference = { <%- primaryKey.name %>: stored.<%- primaryKey.name %> };
     const { body: related } = await request(server)
-      .post('/api/<%= otherEntity.entityApiUrl %>')
-      .send({ ...<%- literal(otherValues) %><%- spreads[otherEntity.entityInstance] ?? '' %>, <%= otherProperty %>: <%- otherCollection ? '[reference]' : 'reference' %> })
+      .post('/api/<%- otherEntity.entityApiUrl %>')
+      .send({ ...<%- literal(otherValues) %><%- spreads[otherEntity.entityInstance] ?? '' %>, <%- otherProperty %>: <%- otherCollection ? '[reference]' : 'reference' %> })
       .expect(201);
 
     await request(server)
-      .put(`/api/<%= entityApiUrl %>/${stored.<%= primaryKey.name %>}`)
-      .send({ ...stored, <%= property %>: <%- collection ? '[]' : 'null' %> })
+      .put(`/api/<%- entityApiUrl %>/${stored.<%- primaryKey.name %>}`)
+      .send({ ...stored, <%- property %>: <%- collection ? '[]' : 'null' %> })
       .expect(200);
 
-    const { body: relatedRead } = await request(server).get(`/api/<%= otherEntity.entityApiUrl %>/${related.<%= otherId %>}`).expect(200);
+    const { body: relatedRead } = await request(server).get(`/api/<%- otherEntity.entityApiUrl %>/${related.<%- otherId %>}`).expect(200);
   <%_ if (otherCollection) { _%>
-    expect(relatedRead.<%= otherProperty %>).toEqual([expect.objectContaining(reference)]);
+    expect(relatedRead.<%- otherProperty %>).toEqual([expect.objectContaining(reference)]);
   <%_ } else { _%>
-    expect(relatedRead.<%= otherProperty %>).toMatchObject(reference);
+    expect(relatedRead.<%- otherProperty %>).toMatchObject(reference);
   <%_ } _%>
 
-    await request(server).delete(`/api/<%= otherEntity.entityApiUrl %>/${related.<%= otherId %>}`).expect(204);
-    await request(server).delete(`/api/<%= entityApiUrl %>/${stored.<%= primaryKey.name %>}`).expect(204);
+    await request(server).delete(`/api/<%- otherEntity.entityApiUrl %>/${related.<%- otherId %>}`).expect(204);
+    await request(server).delete(`/api/<%- entityApiUrl %>/${stored.<%- primaryKey.name %>}`).expect(204);
   });
 <%_ } _%>
 
@@ -272,66 +269,66 @@ _%>
 
   it('should sort the list by id, the newest first with id,desc, like Spring Data', async () => {
     const server = app.getHttpServer();
-    const { body: first } = await request(server).post('/api/<%= entityApiUrl %>').send(<%- spreads[entityInstance] ? `{ ...createdValues${spreads[entityInstance]} }` : 'createdValues' %>).expect(201);
-    const { body: second } = await request(server).post('/api/<%= entityApiUrl %>').send(<%- spreads[entityInstance] ? `{ ...updatedValues${spreads[entityInstance]} }` : 'updatedValues' %>).expect(201);
+    const { body: first } = await request(server).post('/api/<%- entityApiUrl %>').send(<%- spreads[entityInstance] ? `{ ...createdValues${spreads[entityInstance]} }` : 'createdValues' %>).expect(201);
+    const { body: second } = await request(server).post('/api/<%- entityApiUrl %>').send(<%- spreads[entityInstance] ? `{ ...updatedValues${spreads[entityInstance]} }` : 'updatedValues' %>).expect(201);
 
-    const { body: list } = await request(server).get('/api/<%= entityApiUrl %>?sort=<%= pk %>,desc&size=100').expect(200);
-    const ids = list.map((record: any) => String(record.<%= pk %>));
-    expect(ids.indexOf(String(second.<%= pk %>))).toBeLessThan(ids.indexOf(String(first.<%= pk %>)));
+    const { body: list } = await request(server).get('/api/<%- entityApiUrl %>?sort=<%- pk %>,desc&size=100').expect(200);
+    const ids = list.map((record: any) => String(record.<%- pk %>));
+    expect(ids.indexOf(String(second.<%- pk %>))).toBeLessThan(ids.indexOf(String(first.<%- pk %>)));
 
-    await request(server).delete(`/api/<%= entityApiUrl %>/${first.<%= pk %>}`).expect(204);
-    await request(server).delete(`/api/<%= entityApiUrl %>/${second.<%= pk %>}`).expect(204);
+    await request(server).delete(`/api/<%- entityApiUrl %>/${first.<%- pk %>}`).expect(204);
+    await request(server).delete(`/api/<%- entityApiUrl %>/${second.<%- pk %>}`).expect(204);
   });
 <%_ } _%>
 <%_ if (databaseTypeMongodb) { _%>
 
   it('should answer an id that is not an ObjectId as an unknown one, like JHipster Spring Boot', async () => {
     const server = app.getHttpServer();
-    await request(server).get('/api/<%= entityApiUrl %>/not-an-id').expect(404);
-    await request(server).delete('/api/<%= entityApiUrl %>/not-an-id').expect(204);
+    await request(server).get('/api/<%- entityApiUrl %>/not-an-id').expect(404);
+    await request(server).delete('/api/<%- entityApiUrl %>/not-an-id').expect(204);
   });
 <%_ } _%>
-<%_ for (const relationship of inverseOneToOnes) {
-      const otherEntity = relationship.otherEntity;
+<%_ for (const relationship of inverseOneToOnes) { _%>
+  <%_ const { otherEntity } = relationship;
       const ownerProperty = relationship.otherRelationship.propertyName;
-      const ownerValues = (otherEntity.resetFakerSeed('nodejs-database-e2e'), otherEntity.nodejsApiFakeEntity().values);
-_%>
+      const ownerValues = relationship.nodejsRelatedValues;
+  _%>
 
-  it('should give the records without <%= relationship.propertyName %> to its is-null filter, like JHipster Spring Boot', async () => {
+  it('should give the records without <%- relationship.propertyName %> to its is-null filter, like JHipster Spring Boot', async () => {
     const server = app.getHttpServer();
-    const { body: free } = await request(server).post('/api/<%= entityApiUrl %>').send(<%- spreads[entityInstance] ? `{ ...createdValues${spreads[entityInstance]} }` : 'createdValues' %>).expect(201);
-    const { body: linked } = await request(server).post('/api/<%= entityApiUrl %>').send(<%- spreads[entityInstance] ? `{ ...updatedValues${spreads[entityInstance]} }` : 'updatedValues' %>).expect(201);
+    const { body: free } = await request(server).post('/api/<%- entityApiUrl %>').send(<%- spreads[entityInstance] ? `{ ...createdValues${spreads[entityInstance]} }` : 'createdValues' %>).expect(201);
+    const { body: linked } = await request(server).post('/api/<%- entityApiUrl %>').send(<%- spreads[entityInstance] ? `{ ...updatedValues${spreads[entityInstance]} }` : 'updatedValues' %>).expect(201);
     const { body: owner } = await request(server)
-      .post('/api/<%= otherEntity.entityApiUrl %>')
-      .send({ ...<%- literal(ownerValues) %><%- spreads[otherEntity.entityInstance] ?? '' %>, <%= ownerProperty %>: { <%= pk %>: linked.<%= pk %> } })
+      .post('/api/<%- otherEntity.entityApiUrl %>')
+      .send({ ...<%- literal(ownerValues) %><%- spreads[otherEntity.entityInstance] ?? '' %>, <%- ownerProperty %>: { <%- pk %>: linked.<%- pk %> } })
       .expect(201);
 
-    const { body: list } = await request(server).get('/api/<%= entityApiUrl %>?filter=<%- relationship.relationshipName.toLowerCase() %>-is-null').expect(200);
-    const ids = list.map((record: any) => record.<%= pk %>);
-    expect(ids).toContain(free.<%= pk %>);
-    expect(ids).not.toContain(linked.<%= pk %>);
+    const { body: list } = await request(server).get('/api/<%- entityApiUrl %>?filter=<%- relationship.relationshipName.toLowerCase() %>-is-null').expect(200);
+    const ids = list.map((record: any) => record.<%- pk %>);
+    expect(ids).toContain(free.<%- pk %>);
+    expect(ids).not.toContain(linked.<%- pk %>);
 
-    await request(server).delete(`/api/<%= otherEntity.entityApiUrl %>/${owner.<%= otherEntity.primaryKey.name %>}`).expect(204);
-    await request(server).delete(`/api/<%= entityApiUrl %>/${free.<%= pk %>}`).expect(204);
-    await request(server).delete(`/api/<%= entityApiUrl %>/${linked.<%= pk %>}`).expect(204);
+    await request(server).delete(`/api/<%- otherEntity.entityApiUrl %>/${owner.<%- otherEntity.primaryKey.name %>}`).expect(204);
+    await request(server).delete(`/api/<%- entityApiUrl %>/${free.<%- pk %>}`).expect(204);
+    await request(server).delete(`/api/<%- entityApiUrl %>/${linked.<%- pk %>}`).expect(204);
   });
 <%_ } _%>
 <%_ if (nodejsCriteria) { _%>
 
-  /** The properties of the criteria, like the <%= entityClass %>Criteria of JHipster Spring Boot, by their kind. */
+  /** The properties of the criteria, like the <%- entityClass %>Criteria of JHipster Spring Boot, by their kind. */
   const criteria: { name: string; property: string; kind: 'equality' | 'range' | 'string'; approximate?: boolean }[] = <%- nodejsCriteria.tests %>;
 
   it('should filter the list and its count by the criteria of every property, like the filtering of JHipster Spring Boot', async () => {
     const server = app.getHttpServer();
-    const { body: stored } = await request(server).post('/api/<%= entityApiUrl %>').send(<%- spreads[entityInstance] ? `{ ...createdValues${spreads[entityInstance]} }` : 'createdValues' %>).expect(201);
-    const id = stored.<%= primaryKey.name %>;
+    const { body: stored } = await request(server).post('/api/<%- entityApiUrl %>').send(<%- spreads[entityInstance] ? `{ ...createdValues${spreads[entityInstance]} }` : 'createdValues' %>).expect(201);
+    const id = stored.<%- primaryKey.name %>;
     /** Whether the record stored is among the ones of the criteria, the other records of the database left out. */
     const found = async (criterion: string, value: unknown): Promise<boolean> => {
-      const query = `${criterion}=${encodeURIComponent(String(value))}&<%= primaryKey.name %>.in=${encodeURIComponent(String(id))}`;
-      const { body } = await request(server).get(`/api/<%= entityApiUrl %>?${query}`).expect(200);
-      const { body: count } = await request(server).get(`/api/<%= entityApiUrl %>/count?${query}`).expect(200);
+      const query = `${criterion}=${encodeURIComponent(String(value))}&<%- primaryKey.name %>.in=${encodeURIComponent(String(id))}`;
+      const { body } = await request(server).get(`/api/<%- entityApiUrl %>?${query}`).expect(200);
+      const { body: count } = await request(server).get(`/api/<%- entityApiUrl %>/count?${query}`).expect(200);
       expect(count).toBe(body.length);
-      return body.some((record: any) => record.<%= primaryKey.name %> === id);
+      return body.some((record: any) => record.<%- primaryKey.name %> === id);
     };
 
     for (const { name, property, kind, approximate } of criteria) {
@@ -366,10 +363,10 @@ _%>
     }
   <%_ if (primaryKey.fields[0].fieldTypeNumeric) { _%>
     // A value of another type is a bad request, like the binding of the criteria by Spring.
-    await request(server).get('/api/<%= entityApiUrl %>?<%= primaryKey.name %>.equals=not-a-number').expect(400);
+    await request(server).get('/api/<%- entityApiUrl %>?<%- primaryKey.name %>.equals=not-a-number').expect(400);
   <%_ } _%>
 
-    await request(server).delete(`/api/<%= entityApiUrl %>/${id}`).expect(204);
+    await request(server).delete(`/api/<%- entityApiUrl %>/${id}`).expect(204);
   });
 <%_ } _%>
 });
