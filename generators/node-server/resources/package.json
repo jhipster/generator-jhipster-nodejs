@@ -59,7 +59,7 @@
     "@types/qs": "6.15.1",
     "@types/superagent": "8.1.11",
     "@types/supertest": "7.2.1",
-    "@vitest/coverage-v8": "5.0.5",
+    "@vitest/coverage-v8": "5.1.0",
     "eslint": "10.14.0",
     "eslint-config-prettier": "10.1.8",
     "eslint-plugin-prettier": "5.5.7",
@@ -70,7 +70,7 @@
     "typescript": "6.0.3",
     "typescript-eslint": "8.72.1",
     "vite": "8.3.5",
-    "vitest": "5.0.5"
+    "vitest": "5.1.0"
   },
   "packageManager": "npm@11"
 }
