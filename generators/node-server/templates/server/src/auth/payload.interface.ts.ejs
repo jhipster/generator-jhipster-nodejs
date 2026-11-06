@@ -5,7 +5,7 @@
 export interface Payload {
   sub: string;
   auth: string;
-  userId?: <%= databaseType === 'sql' ? 'number' : 'string' %>;
+  userId?: <%- databaseType === 'sql' ? 'number' : 'string' %>;
 }
 
 /** The authorities of the `auth` claim. */

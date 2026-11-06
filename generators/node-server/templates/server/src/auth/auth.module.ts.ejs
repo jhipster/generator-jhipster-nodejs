@@ -1,7 +1,7 @@
 <%_ if (authenticationType === 'oauth2') { _%>
 import { HttpModule } from '@nestjs/axios';
 <%_ } _%>
-import { <% if (authenticationUsesCsrf) { %>MiddlewareConsumer, NestModule, <% } %>Module } from '@nestjs/common';
+import { <%- authenticationUsesCsrf ? 'MiddlewareConsumer, NestModule, ' : '' %>Module } from '@nestjs/common';
 import { AuthService } from './auth.service.ts';
 <%_ if (generateBuiltInUserEntity) { _%>
 import { UserModule } from '../users/user.module.ts';
@@ -96,7 +96,7 @@ import { AccountController } from './account.controller.ts';
 <%_ if (authenticationUsesCsrf) { _%>
 export class AuthModule implements NestModule {
   configure(consumer: MiddlewareConsumer): void {
-    consumer.apply(<% if (authenticationTypeSession) { %>SessionUserMiddleware, <% } %>CsrfMiddleware).forRoutes('*');
+    consumer.apply(<%- authenticationTypeSession ? 'SessionUserMiddleware, ' : '' %>CsrfMiddleware).forRoutes('*');
   }
 }
 <%_ } else { _%>

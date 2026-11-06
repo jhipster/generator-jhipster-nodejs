@@ -1,13 +1,13 @@
 import { Injectable, NestMiddleware } from '@nestjs/common';
 import { NextFunction, Request, Response } from 'express';
-import { <%= user.dtoClass %> } from '../users/dto/user.dto.ts';
+import { <%- user.dtoClass %> } from '../users/dto/user.dto.ts';
 import { UserService } from '../users/user.service.ts';
 
 /** The user a session keeps: without its secrets, which stay in the database. */
-export type SessionUser = Omit<<%= user.dtoClass %>, 'password' | 'activationKey' | 'resetKey'>;
+export type SessionUser = Omit<<%- user.dtoClass %>, 'password' | 'activationKey' | 'resetKey'>;
 
 /** The user of a session, without its secrets. */
-export function sessionUser(user: <%= user.dtoClass %>): SessionUser {
+export function sessionUser(user: <%- user.dtoClass %>): SessionUser {
   const { password: _password, activationKey: _activationKey, resetKey: _resetKey, ...kept } = user;
   return kept;
 }

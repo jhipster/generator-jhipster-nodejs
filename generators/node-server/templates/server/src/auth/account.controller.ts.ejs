@@ -1,4 +1,6 @@
-import { <%_ if (generateUserManagement) { _%> Body, Post, Query, <%_ } _%>UseGuards, Controller, Get, HttpCode, Logger, Req, UseInterceptors, ClassSerializerInterceptor, InternalServerErrorException } from '@nestjs/common';
+import { 
+<%_ if (generateUserManagement) { _%> Body, Post, Query, 
+<%_ } _%>UseGuards, Controller, Get, HttpCode, Logger, Req, UseInterceptors, ClassSerializerInterceptor, InternalServerErrorException } from '@nestjs/common';
 import { AuthGuard } from './index.ts';
 <%_ if (generateUserManagement) { _%>
 import { PasswordChangeDTO } from './dto/password-change.dto.ts';

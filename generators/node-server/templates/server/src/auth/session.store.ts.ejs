@@ -1,7 +1,7 @@
 import { Injectable, Logger, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import session from 'express-session';
-import { <% if (databaseTypeSql) { %>LessThan<% } else { %>FindOptionsWhere<% } %>, Repository } from 'typeorm';
+import { <%- databaseTypeSql ? 'LessThan' : 'FindOptionsWhere' %>, Repository } from 'typeorm';
 import { Session } from './session.entity.ts';
 import { SESSION_MAX_AGE } from './csrf.middleware.ts';
 <%_ if (authenticationTypeOauth2) { _%>
@@ -14,7 +14,7 @@ declare module 'express-session' {
   /** The data of a session of the application. */
   interface SessionData {
     /** The logged user. */
-    user: <%= authenticationTypeOauth2 ? 'OidcUser' : 'SessionUser' %>;
+    user: <%- authenticationTypeOauth2 ? 'OidcUser' : 'SessionUser' %>;
     /** The CSRF token the clients send back as X-XSRF-TOKEN. */
     csrfToken: string;
 <%_ if (authenticationTypeSession) { _%>

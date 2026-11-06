@@ -40,9 +40,9 @@ function pgDriver(): unknown {
 const drivers: Record<string, () => unknown> = {
 <%_ if (databaseTypeSql) { _%>
   <%_ if (prodDatabaseTypePostgresql) { _%>
-  '<%= nodeProdDatabaseType %>': pgDriver,
+  '<%- nodeProdDatabaseType %>': pgDriver,
   <%_ } else { _%>
-  '<%= nodeProdDatabaseType %>': () => require('<%= nodeProdDatabaseDriver %>'),
+  '<%- nodeProdDatabaseType %>': () => require('<%- nodeProdDatabaseDriver %>'),
   <%_ } _%>
   <%_ if (!prodDatabaseTypeSqlite) { _%>
   'better-sqlite3': () => require('better-sqlite3'),
@@ -86,9 +86,9 @@ function ormConfig(read: ConfigReader = key => config.get(key)): TypeOrmModuleOp
   if (!driver) {
     throw new Error(`The database.type '${type}' of the ${activeProfiles.join(',')} profiles is not supported`);
   }
-  <%= databaseTypeMongodb ? 'let' : 'const' %> host = text(read('database.host'));
-  <%= databaseTypeMongodb ? 'let' : 'const' %> port = read('database.port') ? Number(read('database.port')) : undefined;
-  <%= databaseTypeMongodb ? 'let' : 'const' %> database = text(read('database.name'));
+  <%- databaseTypeMongodb ? 'let' : 'const' %> host = text(read('database.host'));
+  <%- databaseTypeMongodb ? 'let' : 'const' %> port = read('database.port') ? Number(read('database.port')) : undefined;
+  <%- databaseTypeMongodb ? 'let' : 'const' %> database = text(read('database.name'));
 <%_ if (databaseTypeMongodb) { _%>
   if (read('database.embedded')) {
     // An in-memory MongoDB server, mongodb-memory-server is a dev dependency only loaded for it (test profile).

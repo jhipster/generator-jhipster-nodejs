@@ -17,7 +17,7 @@
  limitations under the License.
 -%>
 <%_ if (insideDocker) { _%>
-image: jhipster/jhipster:v<%= jhipsterVersion %>
+image: jhipster/jhipster:v<%- jhipsterVersion %>
 <%_ } _%>
 
 # NHipster ci-cd
@@ -30,14 +30,14 @@ stages:
 <%_ } _%>
 
 before_script:
-    <%_ if (clientFramework === ANGULAR) { _%>
+<%_ if (clientFramework === ANGULAR) { _%>
     - export NG_CLI_ANALYTICS="false"
-    <%_ } _%>
+<%_ } _%>
 
 server-compile:
     stage: build
     script:
-        - cd server && <%= clientPackageManager %> install
+        - cd server && <%- clientPackageManager %> install
     artifacts:
         paths:
             - server/node_modules
@@ -45,7 +45,7 @@ server-compile:
 server-test:
     stage: test
     script:
-        - cd server && <%= clientPackageManager %> run test
+        - cd server && <%- clientPackageManager %> run test
     artifacts:
         reports:
             junit: server/coverage/clover.xml
@@ -57,7 +57,7 @@ server-test:
 frontend-test:
     stage: test
     script:
-        - <%= clientPackageManager %> run test:client
+        - <%- clientPackageManager %> run test:client
     artifacts:
         reports:
             junit: build/test-results/TESTS-results-jest.xml
@@ -71,18 +71,20 @@ frontend-test:
 #    stage: analyze
 #    dependencies:
 #        - maven-test
-#        <%_ if (!skipClient) { _%>
+#        
+  <%_ if (!skipClient) { _%>
 #       - frontend-test
-#        <%_ } _%>
+#        
+  <%_ } _%>
 #    script:
-#        - cd server && <%= clientPackageManager %> run sonar:scanner
+#        - cd server && <%- clientPackageManager %> run sonar:scanner
 #    allow_failure: true
 <%_ } _%>
 
 server-package:
     stage: package
     script:
-        - <%= clientPackageManager %> run build:app
+        - <%- clientPackageManager %> run build:app
     artifacts:
         paths:
             - server/dist
@@ -92,7 +94,7 @@ server-package:
 #deploy-to-production:
 #    stage: deploy
 #    script:
-#      - ./mvnw -ntp com.heroku.sdk:heroku-maven-plugin:2.0.5:deploy -DskipTests -Pprod -Dheroku.buildpacks=heroku/jvm -Dheroku.appName=<%= herokuAppName %> -Dmaven.repo.local=$MAVEN_USER_HOME
+#      - ./mvnw -ntp com.heroku.sdk:heroku-maven-plugin:2.0.5:deploy -DskipTests -Pprod -Dheroku.buildpacks=heroku/jvm -Dheroku.appName=<%- herokuAppName %> -Dmaven.repo.local=$MAVEN_USER_HOME
 #    environment:
 #        name: production
 #    when: manual
@@ -109,8 +111,8 @@ stages:
 client-build:
     stage: build
     script:
-        - <%= clientPackageManager %> install
-        - <%= clientPackageManager %> run webapp:build
+        - <%- clientPackageManager %> install
+        - <%- clientPackageManager %> run webapp:build
     artifacts:
         paths:
             - build/
@@ -119,7 +121,7 @@ client-test:
     dependencies:
         - client-build
     script:
-        - <%= clientPackageManager %> run test
+        - <%- clientPackageManager %> run test
     artifacts:
         reports:
             junit: build/test-results/TESTS-results-jest.xml
@@ -129,7 +131,7 @@ client-test:
 client-prod:
     stage: packaging
     script:
-        - <%= clientPackageManager %> run webapp:prod
+        - <%- clientPackageManager %> run webapp:prod
         # - add cmd to zip the app folder build/resources/main/static
     artifacts:
         paths:

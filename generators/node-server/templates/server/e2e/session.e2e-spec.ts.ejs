@@ -4,7 +4,7 @@ import { INestApplication } from '@nestjs/common';
 import request from 'supertest';
 import { AppModule } from '../src/app.module.ts';
 import { configureApp } from '../src/app.config.ts';
-import { <%= user.dtoClass %> } from '../src/users/dto/user.dto.ts';
+import { <%- user.dtoClass %> } from '../src/users/dto/user.dto.ts';
 import { UserService } from '../src/users/user.service.ts';
 import { PasswordService } from '../src/auth/password.service.ts';
 import { getRepositoryToken } from '@nestjs/typeorm';
@@ -29,7 +29,7 @@ describe('Session authentication', () => {
   let app: INestApplication;
   let agent: ReturnType<typeof request.agent>;
   let service: UserService;
-  let users: <%= user.dtoClass %>[];
+  let users: <%- user.dtoClass %>[];
 
   const password = 'sessionPassword';
 

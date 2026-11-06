@@ -4,7 +4,7 @@ import { PassportStrategy } from '@nestjs/passport';
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { AuthService } from './auth.service.ts';
-import { <%= userLoginVmClass %> } from '../users/dto/user.dto.ts';
+import { <%- userLoginVmClass %> } from '../users/dto/user.dto.ts';
 import { OAuth2Config } from './oauth2.config.ts';
 import { OidcUser, oidcUserOfClaims } from './oauth2.authorities.ts';
 

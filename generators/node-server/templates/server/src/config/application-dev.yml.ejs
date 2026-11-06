@@ -34,7 +34,7 @@ logging:
     ROOT: DEBUG
 
 server:
-  port: <%= serverPort %>
+  port: <%- serverPort %>
   # make sure requests the proxy uri instead of the server one, like JHipster Spring Boot (the proxies of the local networks)
   forward-headers-strategy: native
 
@@ -53,16 +53,16 @@ database:
   name: '<%- nodeDevSqliteDatabase %>'
   logging: true
 <%_ } else { _%>
-  # The database of docker/<%= databaseTypeSql ? prodDatabaseType : 'mongodb' %>.yml (npm run docker:db:up).
-  type: <%= nodeDevDatabaseType %>
+  # The database of docker/<%- databaseTypeSql ? prodDatabaseType : 'mongodb' %>.yml (npm run docker:db:up).
+  type: <%- nodeDevDatabaseType %>
   host: 127.0.0.1
-  port: <%= nodeDatabasePort %>
+  port: <%- nodeDatabasePort %>
   <%_ if (databaseTypeSql) { _%>
   username: <%- devDatabaseUsername %>
   password: '<%- devDatabasePassword %>'
   name: <%- devDatabaseName %>
   <%_ } else { _%>
-  name: <%= baseName %>
+  name: <%- baseName %>
   <%_ } _%>
   logging: false
 <%_ } _%>
@@ -103,8 +103,8 @@ jhipster:
     max-age: 1800
 <%_ } _%>
   mail: # specific JHipster mail property, for standard properties see MailProperties
-    from: <%= baseName %>@localhost
-    base-url: http://127.0.0.1:<%= serverPort %>
+    from: <%- baseName %>@localhost
+    base-url: http://127.0.0.1:<%- serverPort %>
 
 # ===================================================================
 # Application specific properties

@@ -23,7 +23,7 @@ machine:
     java:
         version: oraclejdk8
     node:
-        version: <%= nodeVersion %>
+        version: <%- nodeVersion %>
 dependencies:
     cache_directories:
         - node
@@ -46,14 +46,14 @@ dependencies:
 test:
     override:
         - cd server
-        - <%= clientPackageManager %> install
-        - <%= clientPackageManager %> test
+        - <%- clientPackageManager %> install
+        - <%- clientPackageManager %> test
 <%_ if (!skipClient) { _%>
-        - <%= clientPackageManager %> run <%= frontTestCommand %>
+        - <%- clientPackageManager %> run <%- frontTestCommand %>
 <%_ } _%>
-    <%_ if (cicdIntegrations.includes('circle')) { _%>
-      #  - ./mvnw -ntp com.heroku.sdk:heroku-maven-plugin:2.0.5:deploy -DskipTests -Pprod -Dheroku.buildpacks=heroku/jvm -Dheroku.appName=<%= herokuAppName %>
-    <%_ } else { _%>
+<%_ if (cicdIntegrations.includes('circle')) { _%>
+      #  - ./mvnw -ntp com.heroku.sdk:heroku-maven-plugin:2.0.5:deploy -DskipTests -Pprod -Dheroku.buildpacks=heroku/jvm -Dheroku.appName=<%- herokuAppName %>
+<%_ } else { _%>
         - cd server && npm run build
-    <%_ } _%>
+<%_ } _%>
 

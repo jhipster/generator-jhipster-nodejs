@@ -17,9 +17,9 @@
  limitations under the License.
 -%>
 {
-  "name": "<%= dasherizedBaseName %>",
+  "name": "<%- dasherizedBaseName %>",
   "version": "0.0.0",
-  "description": "Description for <%= baseName %>",
+  "description": "Description for <%- baseName %>",
   "private": true,
   "license": "UNLICENSED",
   "cacheDirectories": [
@@ -27,56 +27,56 @@
   ],
   "devDependencies": {
     "@eslint/js": "<%- nodeServerDependencies['@eslint/js'] %>",
-    "concurrently": "<%= nodeDependencies['concurrently'] %>",
-    "eslint": "<%- nodeServerDependencies['eslint'] %>",
+    "concurrently": "<%- nodeDependencies.concurrently %>",
+    "eslint": "<%- nodeServerDependencies.eslint %>",
     "eslint-config-prettier": "<%- nodeServerDependencies['eslint-config-prettier'] %>",
-    "globals": "<%- nodeServerDependencies['globals'] %>",
-    "prettier": "<%= nodeDependencies['prettier'] %>",
-    "prettier-plugin-packagejson": "<%= nodeDependencies['prettier-plugin-packagejson'] %>",
+    "globals": "<%- nodeServerDependencies.globals %>",
+    "prettier": "<%- nodeDependencies.prettier %>",
+    "prettier-plugin-packagejson": "<%- nodeDependencies['prettier-plugin-packagejson'] %>",
     "typescript-eslint": "<%- nodeServerDependencies['typescript-eslint'] %>"<% if (clientFrameworkAny) { %>,
-    "wait-on": "<%= nodeDependencies['wait-on'] %>"<% } %>
+    "wait-on": "<%- nodeDependencies['wait-on'] %>"<% } %>
   },
   "engines": {
-    "node": ">=<%= nodeVersion %>"
+    "node": ">=<%- nodeVersion %>"
   },
 <%_ if (clientFrameworkAny) { _%>
   "config": {
-    "backend_port": <%= serverPort %>
+    "backend_port": <%- serverPort %>
   },
 <%_ } _%>
   "workspaces": [
       "server"
   ],
   "scripts": {
-    "backend:start": "<%= clientPackageManager %> run start:server",
+    "backend:start": "<%- clientPackageManager %> run start:server",
 <%_ if (clientFrameworkAny) { _%>
-    "app:start": "<%= clientPackageManager %> run build && BACKEND_ENV=dev <%= clientPackageManager %> run start:prod -w server",
-    "ci:e2e:package": "<%= clientPackageManager %> run build",
-<%_ if ((testFrameworks ?? []).some(testFramework => ['cypress', 'playwright'].includes(testFramework))) { _%>
-    "e2e": "<%= clientPackageManager %> run e2e -w client",
-<%_ } _%>
-    "ci:e2e:server:start": "BACKEND_ENV=test <%= clientPackageManager %> run start:prod -w server",
-    "build": "<%= clientPackageManager %> run build -w server && <%= clientPackageManager %> run build -w client",
+    "app:start": "<%- clientPackageManager %> run build && BACKEND_ENV=dev <%- clientPackageManager %> run start:prod -w server",
+    "ci:e2e:package": "<%- clientPackageManager %> run build",
+  <%_ if ((testFrameworks ?? []).some(testFramework => ['cypress', 'playwright'].includes(testFramework))) { _%>
+    "e2e": "<%- clientPackageManager %> run e2e -w client",
+  <%_ } _%>
+    "ci:e2e:server:start": "BACKEND_ENV=test <%- clientPackageManager %> run start:prod -w server",
+    "build": "<%- clientPackageManager %> run build -w server && <%- clientPackageManager %> run build -w client",
 <%_ } else { _%>
-    "build": "<%= clientPackageManager %> run build -w server",
+    "build": "<%- clientPackageManager %> run build -w server",
 <%_ } _%>
-    "build:app": "<%= clientPackageManager %> run build -w server",
-    "ci:docker:build": "<%= clientPackageManager %> run docker:build",
-    "docker:build": "docker build -t <%= baseName.toLowerCase() %> .",
-    "lint": "<%= clientPackageManager %> run lint --workspaces",
-    "lint:fix": "<%= clientPackageManager %> run lint:fix --workspaces",
+    "build:app": "<%- clientPackageManager %> run build -w server",
+    "ci:docker:build": "<%- clientPackageManager %> run docker:build",
+    "docker:build": "docker build -t <%- baseName.toLowerCase() %> .",
+    "lint": "<%- clientPackageManager %> run lint --workspaces",
+    "lint:fix": "<%- clientPackageManager %> run lint:fix --workspaces",
 <%_ if (clientFrameworkAny) { _%>
     "start": "concurrently -k -s first -n application,client -c red,green npm:start:server npm:start:client",
 <%_ } else { _%>
-    "start": "<%= clientPackageManager %> run start:server",
+    "start": "<%- clientPackageManager %> run start:server",
 <%_ } _%>
-    "start:server": "<%= clientPackageManager %> run start -w server",
+    "start:server": "<%- clientPackageManager %> run start -w server",
 <%_ if (clientFrameworkAny) { _%>
-    "start:client": "<%= clientPackageManager %> run start -w client",
-    "test:client": "<%= clientPackageManager %> test -w client",
+    "start:client": "<%- clientPackageManager %> run start -w client",
+    "test:client": "<%- clientPackageManager %> test -w client",
 <%_ } _%>
-    "test:server": "<%= clientPackageManager %> test -w server",
-    "test:server:e2e": "<%= clientPackageManager %> run test:e2e -w server",
-    "test": "<%= clientPackageManager %> test --workspaces"
+    "test:server": "<%- clientPackageManager %> test -w server",
+    "test:server:e2e": "<%- clientPackageManager %> run test:e2e -w server",
+    "test": "<%- clientPackageManager %> test --workspaces"
   }
 }

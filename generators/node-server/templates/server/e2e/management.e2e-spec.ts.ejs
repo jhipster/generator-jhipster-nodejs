@@ -139,7 +139,7 @@ describe('Management', () => {
             const { body } = await request(app.getHttpServer()).get('/v3/api-docs').expect(200);
 
             expect(body.openapi).toEqual(expect.any(String));
-            expect(body.info.title).toBe('<%= baseName %> API');
+            expect(body.info.title).toBe('<%- baseName %> API');
             expect(Object.keys(body.paths)).toContainEqual(expect.stringMatching(/^\/api\//));
             // The controller of the document itself is left out.
             expect(Object.keys(body.paths)).not.toContain('/v3/api-docs');

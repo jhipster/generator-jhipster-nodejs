@@ -17,65 +17,63 @@
  limitations under the License.
 -%>
 <%# Returns a string of all validator annotations for the entity field. -%>
-<%
+<%_ let result = '';
+    const validators = [];
 
-let result = '';
-const validators = [];
-
-if (field.fieldValidate === true) {
-    const rules = field.fieldValidateRules;
-    const MAX_VALUE = 2147483647;
-    // A required blob too: without a validator, the whitelist of the ValidationPipe strips it from the request.
-    if (rules.includes('required')) {
+    if (field.fieldValidate === true) {
+      const rules = field.fieldValidateRules;
+      // A required blob too: without a validator, the whitelist of the ValidationPipe strips it from the request.
+      if (rules.includes('required')) {
         validators.push('@IsNotEmpty()');
-    } else if (!rules.includes('required')) {
+      } else if (!rules.includes('required')) {
         // Like Bean Validation, the other rules accept a missing (null or undefined) value.
         validators.push('@IsOptional()');
-    }
-    if (rules.includes('minlength') && !rules.includes('maxlength')) {
-        validators.push('@MinLength(' + field.fieldValidateRulesMinlength + ')');
-    }
-    if (rules.includes('maxlength') && !rules.includes('minlength')) {
-        validators.push('@MaxLength(' + field.fieldValidateRulesMaxlength + ')');
-    }
-    if (rules.includes('minlength') && rules.includes('maxlength')) {
-        validators.push('@Length(' + field.fieldValidateRulesMinlength + ', ' + field.fieldValidateRulesMaxlength + ')');
-    }
-    // Not supported anymore because the server can't check the size of the blob before downloading it completely.
-    // if (rules.includes('minbytes') && !rules.includes('maxbytes')) {
-    //     validators.push('@Size(min = ' + field.fieldValidateRulesMinbytes + ')');
-    // }
-    // if (rules.includes('maxbytes') && !rules.includes('minbytes')) {
-    //     validators.push('@Size(max = ' + field.fieldValidateRulesMaxbytes + ')');
-    // }
-    // if (rules.includes('minbytes') && rules.includes('maxbytes')) {
-    //     validators.push('@Size(min = ' + field.fieldValidateRulesMinbytes + ', max = ' + field.fieldValidateRulesMaxbytes + ')');
-    // }
-    if (rules.includes('min')) {
-        validators.push('@Min(' + field.fieldValidateRulesMin + ')');
-    }
-    if (rules.includes('max')) {
-        validators.push('@Max(' + field.fieldValidateRulesMax + ')');
-    }
-    if (rules.includes('pattern')) {
+      }
+      if (rules.includes('minlength') && !rules.includes('maxlength')) {
+        validators.push(`@MinLength(${field.fieldValidateRulesMinlength})`);
+      }
+      if (rules.includes('maxlength') && !rules.includes('minlength')) {
+        validators.push(`@MaxLength(${field.fieldValidateRulesMaxlength})`);
+      }
+      if (rules.includes('minlength') && rules.includes('maxlength')) {
+        validators.push(`@Length(${field.fieldValidateRulesMinlength}, ${field.fieldValidateRulesMaxlength})`);
+      }
+      // Not supported anymore because the server can't check the size of the blob before downloading it completely.
+      // if (rules.includes('minbytes') && !rules.includes('maxbytes')) {
+      //     validators.push('@Size(min = ' + field.fieldValidateRulesMinbytes + ')');
+      // }
+      // if (rules.includes('maxbytes') && !rules.includes('minbytes')) {
+      //     validators.push('@Size(max = ' + field.fieldValidateRulesMaxbytes + ')');
+      // }
+      // if (rules.includes('minbytes') && rules.includes('maxbytes')) {
+      //     validators.push('@Size(min = ' + field.fieldValidateRulesMinbytes + ', max = ' + field.fieldValidateRulesMaxbytes + ')');
+      // }
+      if (rules.includes('min')) {
+        validators.push(`@Min(${field.fieldValidateRulesMin})`);
+      }
+      if (rules.includes('max')) {
+        validators.push(`@Max(${field.fieldValidateRulesMax})`);
+      }
+      if (rules.includes('pattern')) {
         // Like Bean Validation @Pattern, the whole value matches the pattern.
-        validators.push('@Matches(' + JSON.stringify('^(?:' + field.fieldValidateRulesPattern + ')$') + ')');
+        validators.push(`@Matches(${JSON.stringify(`^(?:${field.fieldValidateRulesPattern})$`)})`);
+      }
+    } else if (field.fieldIsEnum || field.nodejsTypeValidators.length > 0) {
+      validators.push('@IsOptional()');
     }
-} else if (field.fieldIsEnum || field.nodejsTypeValidators.length > 0) {
-    validators.push('@IsOptional()');
-}
-// Like the JSON deserialization of JHipster Spring Boot, a value of another type is a bad request (400), but a number
-// given as a text is the number.
-if (field.fieldTypeNumeric) {
-    validators.push('@Transform(numberFromString)');
-}
-validators.push(...field.nodejsTypeValidators);
-if (field.fieldIsEnum) {
+    // Like the JSON deserialization of JHipster Spring Boot, a value of another type is a bad request (400), but a number
+    // given as a text is the number.
+    if (field.fieldTypeNumeric) {
+      validators.push('@Transform(numberFromString)');
+    }
+    validators.push(...field.nodejsTypeValidators);
+    if (field.fieldIsEnum) {
     // Like the JSON deserialization of JHipster Spring Boot, a value out of the enum is a bad request (400), not a database error.
-    validators.push('@IsEnum(' + field.fieldType + ')');
-}
-if (validators.length > 0) {
-    result = validators.join('\n    ');
-    result += '\n';
-} -%>
+      validators.push(`@IsEnum(${field.fieldType})`);
+    }
+    if (validators.length > 0) {
+      result = validators.join('\n    ');
+      result += '\n';
+    }
+-%>
 <%- result -%>

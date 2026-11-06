@@ -1,4 +1,6 @@
-import { Injectable, <%_ if (generateUserManagement) { _%> HttpException, HttpStatus, InternalServerErrorException, <%_ } _%> Logger } from '@nestjs/common';
+import { Injectable, 
+<%_ if (generateUserManagement) { _%> HttpException, HttpStatus, InternalServerErrorException, 
+<%_ } _%> Logger } from '@nestjs/common';
 <%_ if (generateUserManagement) { _%>
 import { randomBytes } from 'crypto';
 <%_ } _%>
@@ -23,7 +25,7 @@ import { UserService } from '../users/user.service.ts';
 import { EmailAlreadyUsedException, InvalidPasswordException, LoginAlreadyUsedException } from '../common/errors/problem.exception.ts';
   <%_ } _%>
 <%_ } _%>
-import { <%= userLoginVmClass %> } from '../users/dto/user.dto.ts';
+import { <%- userLoginVmClass %> } from '../users/dto/user.dto.ts';
 <%_ if (authenticationTypeOauth2) { _%>
 import { OidcUser } from './oauth2.authorities.ts';
 <%_ } _%>
@@ -68,7 +70,7 @@ export class AuthService {
   private unknownUserPasswordHash?: Promise<string>;
 
   /** The activated user of a login and its password, with its authorities, else 401, like the login of JHipster Spring Boot. */
-  async authenticate(loginUserName: string, loginPassword: string): Promise<<%= user.dtoClass %>> {
+  async authenticate(loginUserName: string, loginPassword: string): Promise<<%- user.dtoClass %>> {
     // The logins are in lower case, like the ones of JHipster Spring Boot.
     const userFind = await this.userService.findByFields({ where: { login: loginUserName.toLowerCase() } });
     // An unknown login checks the password with a hash too: it answers in the time of a known one, which does not tell
@@ -111,13 +113,13 @@ export class AuthService {
     };
   }
 
-  async validateUser(payload: Payload): Promise<<%= user.dtoClass %> | undefined> {
+  async validateUser(payload: Payload): Promise<<%- user.dtoClass %> | undefined> {
     // The user of the token subject, like the login of JHipster Spring Boot tokens.
     return await this.userService.findByFields({ where: { login: payload.sub } });
   }
   <%_ } _%>
 
-  async findUserWithAuthById(userId: <%= userIdType %>): Promise<<%= user.dtoClass %> | undefined> {
+  async findUserWithAuthById(userId: <%- userIdType %>): Promise<<%- user.dtoClass %> | undefined> {
   <%_ if (databaseType === 'mongodb') { _%>
     const userDTO = await this.userService.findById(userId);
   <%_ } else { _%>
@@ -126,7 +128,7 @@ export class AuthService {
     return userDTO;
   }
 
-  async getAccount(userId: <%= userIdType %>): Promise<<%= user.dtoClass %> | undefined> {
+  async getAccount(userId: <%- userIdType %>): Promise<<%- user.dtoClass %> | undefined> {
     const userDTO = await this.findUserWithAuthById(userId);
     if (!userDTO) {
       return;
@@ -156,7 +158,7 @@ export class AuthService {
    * Like JHipster Spring Boot, gives a reset key, valid one day, to the activated user of the mail: the user returned
    * is the one the mail with the key is for, undefined for another mail.
    */
-  async requestPasswordReset(mail: string): Promise<<%= user.dtoClass %> | undefined> {
+  async requestPasswordReset(mail: string): Promise<<%- user.dtoClass %> | undefined> {
     const userFind = await this.userService.findByFields({ where: { email: mail.trim().toLowerCase() } });
     if (!userFind?.activated) {
       return undefined;
@@ -183,7 +185,7 @@ export class AuthService {
    * mail in lower case, and an activation key (sent by mail): the not activated user of the same login or mail, if any,
    * is removed first.
    */
-  async registerNewUser(newUser: <%= user.dtoClass %>): Promise<<%= user.dtoClass %>> {
+  async registerNewUser(newUser: <%- user.dtoClass %>): Promise<<%- user.dtoClass %>> {
     if (isPasswordLengthInvalid(newUser.password)) {
       throw new InvalidPasswordException();
     }
@@ -197,7 +199,7 @@ export class AuthService {
     if (userOfEmail && !(await this.removeNonActivatedUser(userOfEmail))) {
       throw new EmailAlreadyUsedException();
     }
-    const user: <%= user.dtoClass %> = {
+    const user: <%- user.dtoClass %> = {
       login,
       password: newUser.password,
       firstName: newUser.firstName,
@@ -215,7 +217,7 @@ export class AuthService {
   }
 
   /** Like JHipster Spring Boot, activates the user of an activation key, undefined for an unknown key. */
-  async activateRegistration(key: string): Promise<<%= user.dtoClass %> | undefined> {
+  async activateRegistration(key: string): Promise<<%- user.dtoClass %> | undefined> {
     const userFind = key ? await this.userService.findByFields({ where: { activationKey: key } }) : undefined;
     if (!userFind) {
       return undefined;
@@ -226,7 +228,7 @@ export class AuthService {
     return await this.userService.save(userFind, userFind.login);
   }
 
-  private async removeNonActivatedUser(existingUser: <%= user.dtoClass %>): Promise<boolean> {
+  private async removeNonActivatedUser(existingUser: <%- user.dtoClass %>): Promise<boolean> {
     if (existingUser.activated) {
       return false;
     }
@@ -234,7 +236,7 @@ export class AuthService {
     return true;
   }
 
-  async updateUserSettings(userLogin: string, newUserInfo: <%= user.dtoClass %>) : Promise<<%= user.dtoClass %>> {
+  async updateUserSettings(userLogin: string, newUserInfo: <%- user.dtoClass %>) : Promise<<%- user.dtoClass %>> {
     const userFind = await this.userService.findByFields({ where: { login: userLogin } });
     if (!userFind) {
       throw new HttpException('Invalid login name!', HttpStatus.BAD_REQUEST);
@@ -261,7 +263,7 @@ export class AuthService {
      * authorities the database misses saved first, then the user created, or updated with the names, the mail, the
      * language and the authorities of the identity provider.
      */
-    async findUserOrSave(loginUser: <%= userLoginVmClass %>): Promise<<%= userLoginVmClass %> | undefined> {
+    async findUserOrSave(loginUser: <%- userLoginVmClass %>): Promise<<%- userLoginVmClass %> | undefined> {
         const authorities = loginUser.authorities ?? [];
     <%_ if (generateBuiltInAuthorityEntity) { _%>
         for (const name of authorities) {
@@ -276,12 +278,12 @@ export class AuthService {
         // the claims (its id among them), which would make another user.
         const claims = Object.fromEntries(Object.entries(loginUser).filter(([, value]) => value !== undefined));
         // Activated, like the users of JHipster Spring Boot synchronized from the identity provider, without a password.
-        await this.userService.save({ ...userFound, ...claims, email, activated: true, authorities } as <%= userLoginVmClass %>, loginUser.login);
+        await this.userService.save({ ...userFound, ...claims, email, activated: true, authorities } as <%- userLoginVmClass %>, loginUser.login);
         return loginUser;
       }
   <%_ } _%>
 
-  getAccount(userDTO: OidcUser): <%= userLoginVmClass %> | undefined {
+  getAccount(userDTO: OidcUser): <%- userLoginVmClass %> | undefined {
     if (!userDTO) {
       return;
     }

@@ -65,8 +65,8 @@ The database of each profile is the `database` section of its configuration file
 [src/orm.config.ts](src/orm.config.ts) (the TypeORM options):
 
 - [src/config/application-dev.yml](src/config/application-dev.yml): the database of development, the one of the
-  `docker` folder<% if (databaseTypeSql) { %> (or a SQLite file)<% } %>;
-- [src/config/application-test.yml](src/config/application-test.yml): <%= databaseTypeSql ? 'an in-memory SQLite database' : 'an in-memory MongoDB server' %> for the tests;
+  `docker` folder<%- databaseTypeSql ? ' (or a SQLite file)' : '' %>;
+- [src/config/application-test.yml](src/config/application-test.yml): <%- databaseTypeSql ? 'an in-memory SQLite database' : 'an in-memory MongoDB server' %> for the tests;
 <%_ if (prodDatabaseTypeSqlite) { _%>
 - [src/config/application-prod.yml](src/config/application-prod.yml): the production database, a SQLite file, without
   a database server.
@@ -85,7 +85,7 @@ Like every property, an environment variable overrides them: `DATABASE_NAME` set
 
 ```yaml
 database:
-  type: <%= nodeProdDatabaseType %>
+  type: <%- nodeProdDatabaseType %>
   host: localhost
   port: 5432
   username: YOUR_USER
@@ -122,7 +122,7 @@ path, are in the order of the changelogs. A database the application ran them
 on already is not changed by a regeneration of a migration.
 
 Like the incremental changelogs of Liquibase, a regeneration keeps the migrations of an entity and generates the ones of
-its changes since, run after the others (their timestamp plus <%= nodejsMigrationTimestampOffset %>):
+its changes since, run after the others (their timestamp plus <%- nodejsMigrationTimestampOffset %>):
 `<changelogDate>-UpdatedEntity<Entity>.ts` adds the columns of the added fields and drops the ones of the removed fields,
 then `<changelogDate>-UpdatedEntityConstraints<Entity>.ts` adds and drops the join columns, their foreign keys and the join
 tables of the relationships, and `<changelogDate>-RemovedEntity<Entity>.ts` drops the join tables and the table of a removed
@@ -138,7 +138,7 @@ your own and add it to `migrations`, so the application runs it at startup, like
 `typeorm:migration:run` script runs every migration of the `src/migrations` folder (built in `dist/migrations`).
 
 TypeORM runs the migrations in the order of the timestamp ending their class name. The `typeorm:migration:create` and
-`typeorm:migration:generate` scripts give a migration of your own its time plus <%= nodejsMigrationTimestampOffset %>
+`typeorm:migration:generate` scripts give a migration of your own its time plus <%- nodejsMigrationTimestampOffset %>
 (see [typeorm-migration.ts](typeorm-migration.ts)), so it runs after the migrations JHipster generates for the entities,
 on an empty database too, like the changelogs added at the end of the `master.xml` of Liquibase.
 <%_ } _%>
@@ -207,10 +207,10 @@ there is one, in the order of the list (the last one wins), and the profiles of 
 `secret-samples`. The standard profiles are:
 
 - `dev`, `prod` and `test`: the database and the settings of each environment;
-- `api-docs`: the OpenAPI document of the API at `/v3/api-docs`, for the administrators like JHipster Spring Boot<%= skipClient ? '' : ', read by the API page of the client' %>;
-- `secret-samples`: samples of the secrets (<%= authenticationType === 'oauth2' ? 'the session secret and the OAuth2 client' : authenticationType === 'session' ? 'the session secret' : 'the JWT secret' %><%= databaseTypeSql ? ', the username and the password of the database' : '' %>) for development and CI, in
+- `api-docs`: the OpenAPI document of the API at `/v3/api-docs`, for the administrators like JHipster Spring Boot<%- skipClient ? '' : ', read by the API page of the client' %>;
+- `secret-samples`: samples of the secrets (<%- ({ oauth2: 'the session secret and the OAuth2 client', session: 'the session secret' })[authenticationType] ?? 'the JWT secret' %><%- databaseTypeSql ? ', the username and the password of the database' : '' %>) for development and CI, in
   [application-secret-samples.yml](src/config/application-secret-samples.yml). In production, set them with environment
-  variables instead, like `<%= authenticationType === 'oauth2' ? 'JHIPSTER_SECURITY_OAUTH2_CLIENT_REGISTRATION_OIDC_CLIENTSECRET' : authenticationType === 'session' ? 'JHIPSTER_SECURITY_SESSION_SECRET' : 'JHIPSTER_SECURITY_AUTHENTICATION_JWT_BASE64SECRET' %>`;
+  variables instead, like `<%- ({ oauth2: 'JHIPSTER_SECURITY_OAUTH2_CLIENT_REGISTRATION_OIDC_CLIENTSECRET', session: 'JHIPSTER_SECURITY_SESSION_SECRET' })[authenticationType] ?? 'JHIPSTER_SECURITY_AUTHENTICATION_JWT_BASE64SECRET' %>`;
 - `tls`: HTTPS, with your PKCS#12 keystore (`SERVER_SSL_KEY_STORE` and `SERVER_SSL_KEY_STORE_PASSWORD`);
 - `tls-samples`: with `tls`, the self-signed sample keystore of [src/config/tls](src/config/tls), for development only.
 

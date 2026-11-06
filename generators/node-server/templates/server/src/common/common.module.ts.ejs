@@ -8,11 +8,11 @@ import { OAuth2Config } from '../auth/oauth2.config.ts';
 import { PasswordService } from '../auth/password.service.ts';
 <%_ } _%>
 
-const providers = [HeaderUtil<% if (authenticationTypeOauth2) { %>, OAuth2Config<% } %><% if (generateUserManagement) { %>, PasswordService<% } %>];
+const providers = [HeaderUtil<%- authenticationTypeOauth2 ? ', OAuth2Config' : '' %><%- generateUserManagement ? ', PasswordService' : '' %>];
 
 /**
  * The providers every module of the application uses, reading the configuration with ConfigService, like the beans of
- * JHipster Spring Boot: the headers of the responses<% if (authenticationTypeOauth2) { %>, the endpoints of the OpenID Connect provider<% } %><% if (generateUserManagement) { %>, the passwords of the users<% } %>.
+ * JHipster Spring Boot: the headers of the responses<%- authenticationTypeOauth2 ? ', the endpoints of the OpenID Connect provider' : '' %><%- generateUserManagement ? ', the passwords of the users' : '' %>.
  */
 @Global()
 @Module({ providers, exports: providers })

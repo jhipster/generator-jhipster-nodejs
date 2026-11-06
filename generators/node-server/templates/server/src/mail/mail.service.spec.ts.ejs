@@ -31,7 +31,7 @@ describe('MailService', () => {
         ConfigModule.forRoot({
           isGlobal: true,
           ignoreEnvFile: true,
-          load: [() => ({ mail: { host: 'localhost', port: 25 }, jhipster: { mail: { from: '<%= baseName %>@localhost', 'base-url': 'http://127.0.0.1:<%= serverPort %>' } } })],
+          load: [() => ({ mail: { host: 'localhost', port: 25 }, jhipster: { mail: { from: '<%- baseName %>@localhost', 'base-url': 'http://127.0.0.1:<%- serverPort %>' } } })],
         }),
         MailModule,
       ],
@@ -54,9 +54,9 @@ describe('MailService', () => {
     await mailService.sendActivationEmail(user);
 
     const mail = await sentMail();
-    expect(mail.from.address).toBe('<%= baseName %>@localhost');
+    expect(mail.from.address).toBe('<%- baseName %>@localhost');
     expect(mail.subject).toBe('<%- baseName %> account activation');
-    expect(mail.html).toContain('<a href="http://127.0.0.1:<%= serverPort %>/account/activate?key=activationKey">');
+    expect(mail.html).toContain('<a href="http://127.0.0.1:<%- serverPort %>/account/activate?key=activationKey">');
     expect(mail.html).toContain('<p>Dear mailuser</p>');
   });
 
@@ -65,7 +65,7 @@ describe('MailService', () => {
 
     const mail = await sentMail();
     expect(mail.subject).toBe('<%- baseName %> account activation');
-    expect(mail.html).toContain('<a href="http://127.0.0.1:<%= serverPort %>/account/reset/finish?key=resetKey">');
+    expect(mail.html).toContain('<a href="http://127.0.0.1:<%- serverPort %>/account/reset/finish?key=resetKey">');
   });
 
   it('should send the password reset mail with the reset link', async () => {
@@ -73,7 +73,7 @@ describe('MailService', () => {
 
     const mail = await sentMail();
     expect(mail.subject).toBe('<%- baseName %> password reset');
-    expect(mail.html).toContain('<a href="http://127.0.0.1:<%= serverPort %>/account/reset/finish?key=resetKey">');
+    expect(mail.html).toContain('<a href="http://127.0.0.1:<%- serverPort %>/account/reset/finish?key=resetKey">');
   });
 
   it('should escape the user values in the mail', async () => {

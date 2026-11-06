@@ -3,7 +3,7 @@ import { PassportStrategy } from '@nestjs/passport';
 import { passportJwtSecret } from 'jwks-rsa';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 
-import { <%= userLoginVmClass %> } from '../users/dto/user.dto.ts';
+import { <%- userLoginVmClass %> } from '../users/dto/user.dto.ts';
 import { oidcUserOfClaims } from './oauth2.authorities.ts';
 import { OAuth2Config } from './oauth2.config.ts';
 
@@ -26,7 +26,7 @@ export class Oauth2BearerStrategy extends PassportStrategy(Strategy, 'oauth2-bea
     });
   }
 
-  validate(claims: Record<string, unknown>): <%= userLoginVmClass %> {
+  validate(claims: Record<string, unknown>): <%- userLoginVmClass %> {
     return oidcUserOfClaims(claims);
   }
 }

@@ -23,7 +23,7 @@ services:
   - docker
 language: node_js
 node_js:
-  - "<%= NODE_VERSION %>"
+  - "<%- NODE_VERSION %>"
 cache:
   directories:
     - node
@@ -33,41 +33,41 @@ cache:
 <%_ } _%>
 env:
   global:
-    - nodeVersion=<%= nodeVersion %>
+    - nodeVersion=<%- nodeVersion %>
     - NG_CLI_ANALYTICS="false"
 before_install:
   - sudo /etc/init.d/mysql stop
   - sudo /etc/init.d/postgresql stop
-  <%_ if (clientPackageManager === 'npm') { _%>
+<%_ if (clientPackageManager === 'npm') { _%>
   - nvm install $NODE_VERSION
   - npm install -g npm
   - node -v
   - npm -v
-  <%_ } _%>
-  <%_ if (clientPackageManager === 'yarn') { _%>
+<%_ } _%>
+<%_ if (clientPackageManager === 'yarn') { _%>
   # Repo for Yarn
   - curl -o- -L https://yarnpkg.com/install.sh | bash
   - export PATH=$HOME/.yarn/bin:$PATH
-  <%_ } _%>
+<%_ } _%>
 install:
-  - <%= clientPackageManager %> install
+  - <%- clientPackageManager %> install
 <%_ if (!skipServer) { _%>
-    - cd server && <%= clientPackageManager %> install
+    - cd server && <%- clientPackageManager %> install
 script:
-  - cd server && <%= clientPackageManager %> run test
-  - cd server && <%= clientPackageManager %> run build
+  - cd server && <%- clientPackageManager %> run test
+  - cd server && <%- clientPackageManager %> run build
 <%_ } _%>
 <%_ if (!skipClient) { _%>
-    - <%= clientPackageManager %> run test
-    - <%= clientPackageManager %> run build
+    - <%- clientPackageManager %> run test
+    - <%- clientPackageManager %> run build
 <%_ } _%>
-  <%_ if (cicdIntegrations.includes('sonar')) { _%>
-#  - if [ $TRAVIS_PULL_REQUEST == "false" ]; then ./mvnw -ntp org.jacoco:jacoco-maven-plugin:prepare-agent initialize sonar:sonar <% if (sonarOrga) { %>-Dsonar.organization=<%= sonarOrga %> <% } %>-Dsonar.host.url=<%= sonarUrl %> -Dsonar.login=$SONAR_TOKEN; fi
-  <%_ } _%>
+<%_ if (cicdIntegrations.includes('sonar')) { _%>
+#  - if [ $TRAVIS_PULL_REQUEST == "false" ]; then ./mvnw -ntp org.jacoco:jacoco-maven-plugin:prepare-agent initialize sonar:sonar <% if (sonarOrga) { %>-Dsonar.organization=<%- sonarOrga %> <% } %>-Dsonar.host.url=<%- sonarUrl %> -Dsonar.login=$SONAR_TOKEN; fi
+<%_ } _%>
   - ./mvnw -ntp verify -Pprod -DskipTests
-  <%_ if (cicdIntegrations.includes('heroku')) { _%>
- # - ./mvnw -ntp com.heroku.sdk:heroku-maven-plugin:2.0.5:deploy -DskipTests -Pprod -Dheroku.buildpacks=heroku/jvm -Dheroku.appName=<%= herokuAppName %>
-  <%_ } _%>
+<%_ if (cicdIntegrations.includes('heroku')) { _%>
+ # - ./mvnw -ntp com.heroku.sdk:heroku-maven-plugin:2.0.5:deploy -DskipTests -Pprod -Dheroku.buildpacks=heroku/jvm -Dheroku.appName=<%- herokuAppName %>
+<%_ } _%>
 notifications:
   webhooks:
     on_success: change  # options: [always|never|change] default: always
