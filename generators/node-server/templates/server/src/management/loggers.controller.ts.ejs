@@ -1,4 +1,4 @@
-import { BadRequestException, Body, Controller, Get, HttpCode, Param, Post, UseGuards } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Get, HttpCode, NotFoundException, Param, Post, UseGuards } from '@nestjs/common';
 import { ApiExcludeController } from '@nestjs/swagger';
 
 import { LEVELS, Level, LoggerLevel, isLevel, loggerLevels } from '../common/logging.ts';
@@ -25,6 +25,9 @@ export class LoggersController {
 
   @Get('/:name')
   logger(@Param('name') name: string): LoggerLevel {
+    if (!loggerLevels.has(name)) {
+      throw new NotFoundException();
+    }
     return loggerLevels.getLevel(name);
   }
 

@@ -179,14 +179,13 @@ export class UserController {
   @ApiResponse({
       status: 204,
       description: 'The record has been successfully deleted.',
-      type: <%- user.dtoClass %>
   })
-  async deleteUser(@Req() req: Request, @Param('login') loginValue: string): Promise<<%- user.dtoClass %> | undefined> {
+  async deleteUser(@Req() req: Request, @Param('login') loginValue: string): Promise<void> {
+      // Like JHipster Spring Boot, the same answer for a login without a user.
       const userToDelete = await this.userService.find({ where: { login: loginValue } });
-      if (!userToDelete) {
-        throw new NotFoundException();
+      if (userToDelete) {
+        await this.userService.delete(userToDelete);
       }
       this.headerUtil.addUserManagementHeaders(req.res, 'deleted', loginValue);
-      return await this.userService.delete(userToDelete);
   }
 }

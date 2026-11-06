@@ -64,6 +64,9 @@ describe('Management', () => {
             expect(body).toEqual({ configuredLevel: null, effectiveLevel: loggerLevels.getLevel('ROOT').effectiveLevel });
         });
 
+        it('/GET an unknown logger is not found, like Spring Boot Actuator', () =>
+            request(app.getHttpServer()).get('/management/loggers/unknown.logger').expect(404));
+
         it('/POST loggers with an unknown level is a bad request', () =>
             request(app.getHttpServer()).post('/management/loggers/ManagementTest').send({ configuredLevel: 'LOUD' }).expect(400));
 
