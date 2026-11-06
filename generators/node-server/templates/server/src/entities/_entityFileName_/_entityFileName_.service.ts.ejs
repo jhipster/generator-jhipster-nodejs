@@ -147,7 +147,18 @@ export class <%- entityClass %>Service {
           return;
         }
 <%_ } _%>
+<%_ if (databaseTypeSql && nodejsJoinTableProperties) { _%>
+        await this.<%- entityInstance %>Repository.manager.transaction(async manager => {
+          // Like Hibernate, the rows of the join tables this entity owns go with it, the ones of the other side stay.
+          for (const property of [<%- nodejsJoinTableProperties %>]) {
+            const relation = manager.createQueryBuilder().relation(<%- entityClass %>, property).of(id);
+            await relation.remove(await relation.loadMany());
+          }
+          await manager.delete(<%- entityClass %>, id);
+        });
+<%_ } else { _%>
         await this.<%- entityInstance %>Repository.delete(id);
+<%_ } _%>
       }
 
 }

@@ -23,6 +23,9 @@ export interface MigrationColumn {
   enum?: string[];
 }
 
+/** A column of a join table: its foreign key referencing the primary key of a table, with its actions. */
+export type MigrationJoinColumn = Omit<MigrationColumn, 'onUpdate'> & Omit<MigrationForeignKey, 'columnName'>;
+
 /** A foreign key of a migration: the column of the table referencing the primary key of another table. */
 export interface MigrationForeignKey {
   columnName: string;
@@ -254,8 +257,8 @@ export const replaceForeignKeys = async (
 export const createJoinTable = async (
   queryRunner: QueryRunner,
   name: string,
-  joinColumn: MigrationColumn & { referencedTableName: string; referencedColumnName: string },
-  inverseJoinColumn: MigrationColumn & { referencedTableName: string; referencedColumnName: string },
+  joinColumn: MigrationJoinColumn,
+  inverseJoinColumn: MigrationJoinColumn,
 ): Promise<void> => {
   const exists = await queryRunner.hasTable(name);
   if (exists) return;
@@ -263,7 +266,7 @@ export const createJoinTable = async (
   await queryRunner.createTable(
     new Table({
       name,
-      columns: columns.map(({ referencedTableName: _table, referencedColumnName: _column, ...column }) =>
+      columns: columns.map(({ referencedTableName: _table, referencedColumnName: _column, onDelete: _delete, onUpdate: _update, ...column }) =>
         tableColumn(queryRunner, { ...column, primary: true }),
       ),
       indices: columns.map(column => ({ columnNames: [column.name] })),
@@ -271,8 +274,9 @@ export const createJoinTable = async (
         columnNames: [column.name],
         referencedTableName: column.referencedTableName,
         referencedColumnNames: [column.referencedColumnName],
-        onDelete: 'CASCADE',
-        onUpdate: 'CASCADE',
+        // Like the changelog of Liquibase, nothing declared is no action: a record in a join table stays in place.
+        onDelete: column.onDelete ?? 'NO ACTION',
+        onUpdate: column.onUpdate ?? 'NO ACTION',
       })),
     }),
   );

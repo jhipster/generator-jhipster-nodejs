@@ -48,7 +48,7 @@ export class <%- nodejsUpdatedConstraintsMigration.className %> implements Migra
       queryRunner,
       '<%- joinTable.name %>',
   <%_ for (const column of [joinTable.joinColumn, joinTable.inverseJoinColumn]) { _%>
-      { name: '<%- column.name %>', type: <%- column.type %>, referencedTableName: '<%- column.referencedTableName %>', referencedColumnName: '<%- column.referencedColumnName %>' },
+      <%- column.code %>,
   <%_ } _%>
     );
 <%_ } _%>

@@ -2,11 +2,17 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { INestApplication } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import request from 'supertest';
+<%_ if (databaseTypeSql) { _%>
+import { DataSource } from 'typeorm';
+<%_ } _%>
 
 import { configureApp } from '../src/app.config.ts';
 import { AppModule } from '../src/app.module.ts';
 import { AuthGuard } from '../src/auth/guards/auth.guard.ts';
 import { RolesGuard } from '../src/auth/guards/roles.guard.ts';
+<%_ if (databaseTypeSql) { _%>
+import { <%- user.persistClass %> } from '../src/users/user.entity.ts';
+<%_ } _%>
 
 describe('Authority Controller', () => {
   let app: INestApplication;
@@ -47,4 +53,20 @@ describe('Authority Controller', () => {
     await request(app.getHttpServer()).delete('/api/authorities/ROLE_E2E').expect(204);
     await request(app.getHttpServer()).get('/api/authorities/ROLE_E2E').expect(404);
   });
+<%_ if (databaseTypeSql) { _%>
+
+  it('should keep an authority a user has, like the foreign key of JHipster Spring Boot', async () => {
+    await request(app.getHttpServer()).post('/api/authorities').send({ name: 'ROLE_E2E_USED' }).expect(201);
+    const users = app.get(DataSource).getRepository(<%- user.persistClass %>);
+    const user = await users.save(
+      users.create({ login: 'authority-e2e', email: 'authority-e2e@localhost', password: '', authorities: [{ name: 'ROLE_E2E_USED' }] }),
+    );
+
+    await request(app.getHttpServer()).delete('/api/authorities/ROLE_E2E_USED').expect(500);
+    await request(app.getHttpServer()).get('/api/authorities/ROLE_E2E_USED').expect(200);
+
+    await users.remove(user);
+    await request(app.getHttpServer()).delete('/api/authorities/ROLE_E2E_USED').expect(204);
+  });
+<%_ } _%>
 });

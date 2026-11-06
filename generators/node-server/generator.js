@@ -500,9 +500,14 @@ export default class extends BaseApplicationGenerator {
         // The migrations of the entities are the ones of their changelogs (the migrations generator).
         for (const entity of entities.filter(entity => !entity.skipServer && entity.entityDomainLayer)) {
           // The join tables of the entity, its @JoinTable the same as its constraints migration.
-          for (const relationship of entity.relationships.filter(relationship => relationship.shouldWriteJoinTable)) {
+          const relationships = entity.relationships.filter(relationship => relationship.shouldWriteJoinTable);
+          for (const relationship of relationships) {
             relationship.nodejsJoinTable = joinTable(entity, relationship);
           }
+          // The relationships whose rows of the join table go with a deleted record, like Hibernate does on the owner side.
+          entity.nodejsJoinTableProperties = relationships
+            .map(({ relationshipFieldNamePlural }) => `'${relationshipFieldNamePlural}'`)
+            .join(', ');
         }
       },
     });
