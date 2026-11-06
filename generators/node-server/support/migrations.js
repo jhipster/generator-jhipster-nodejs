@@ -1,3 +1,5 @@
+import { isDeepStrictEqual } from 'node:util';
+
 import { bigDecimalPrecision } from './columns.js';
 import { serverEnumInfo } from './enums.js';
 
@@ -229,12 +231,55 @@ export const constraintsMigration = (entity, changelogDate = entity.changelogDat
   };
 };
 
-/** The foreign key of the join column of a relationship. */
+const FOREIGN_KEY_ACTIONS = new Set(['NO ACTION', 'RESTRICT', 'CASCADE', 'SET NULL', 'SET DEFAULT']);
+
+/**
+ * The onDelete and the onUpdate of a relationship, the ones of a foreign key: in its options, or declared by itself like a
+ * changelog records them. Like JHipster, any other value is left out.
+ */
+export const foreignKeyActions = relationship =>
+  Object.fromEntries(
+    ['onDelete', 'onUpdate']
+      .map(action => [action, relationship[action] ?? relationship.options?.[action]])
+      .filter(([, value]) => FOREIGN_KEY_ACTIONS.has(value)),
+  );
+
+/** The name of the action of a foreign key in the options of a TypeORM relationship. */
+const typeormAction = action => (action === 'SET DEFAULT' ? 'DEFAULT' : action);
+
+/** The mutations of a relationship: the options of its @ManyToOne or its @OneToOne, with the ones of its foreign key. */
+export const mutateRelationOptions = {
+  __override__: false,
+  nodejsRelationOptions: relationship => {
+    const { onDelete, onUpdate } = foreignKeyActions(relationship);
+    const options = [
+      relationship.columnRequired && 'nullable: false',
+      onDelete && `onDelete: '${typeormAction(onDelete)}'`,
+      onUpdate && `onUpdate: '${typeormAction(onUpdate)}'`,
+    ].filter(Boolean);
+    return options.length > 0 ? `, { ${options.join(', ')} }` : '';
+  },
+};
+
+/** The foreign key of the join column of a relationship, with its onDelete and onUpdate like the changelog of Liquibase. */
 const foreignKey = relationship => ({
   columnName: joinColumnName(relationship),
   referencedTableName: relationship.otherEntity.entityTableName,
   referencedColumnName: relationship.otherEntity.primaryKey.name,
+  ...foreignKeyActions(relationship),
 });
+
+/** The TypeScript of a foreign key of a migration. */
+const foreignKeyCode = ({ columnName, referencedTableName, referencedColumnName, onDelete, onUpdate }) =>
+  [
+    `columnName: ${literal(columnName)}`,
+    `referencedTableName: ${literal(referencedTableName)}`,
+    `referencedColumnName: ${literal(referencedColumnName)}`,
+    onDelete && `onDelete: ${literal(onDelete)}`,
+    onUpdate && `onUpdate: ${literal(onUpdate)}`,
+  ]
+    .filter(Boolean)
+    .join(', ');
 
 /**
  * The migrations of a changelog of an entity, of this generation: for its creation the table of the entity at its date
@@ -295,8 +340,8 @@ export const migrationOfFile = fileName => {
  * The fields and the relationships an update changelog of an entity adds and removes: the added ones the entity has,
  * prepared; the removed ones the entity before the changelog has (its previousEntity, of this generation only), by the
  * names of their columns. A relationship changed in its type, its other entity, its side or its join column
- * (recreatedRelationships) is removed and added again; one changed in its options only (onDelete, onUpdate), which the
- * foreign keys of the server do not declare, is left alone. A field changed (its type, its validations) is not migrated.
+ * (recreatedRelationships) is removed and added again; the foreign key of one changed in its onDelete or its onUpdate only
+ * (optionsChangedRelationships, with the actions it had) is replaced, like the Liquibase changelog of JHipster Spring Boot. A field changed (its type, its validations) is not migrated.
  * @param {any} changelog the update changelog of this generation
  * @param {any} entity the entity, prepared
  * @param {any[]} entities the entities of the application, prepared
@@ -313,6 +358,15 @@ export const changelogChanges = (changelog, entity, entities) => {
       [...changelog.removedRelationships, ...recreatedRelationships],
       'relationshipName',
     ).map(relationship => removedRelationship(relationship, entities)),
+    changedActionsRelationships: named(entity.relationships, changelog.optionsChangedRelationships ?? [], 'relationshipName')
+      .filter(hasJoinColumn)
+      .map(relationship => ({
+        relationship,
+        previousActions: foreignKeyActions(
+          previousEntity.relationships.find(each => each.relationshipName === relationship.relationshipName),
+        ),
+      }))
+      .filter(({ relationship, previousActions }) => !isDeepStrictEqual(foreignKeyActions(relationship), previousActions)),
   };
 };
 
@@ -368,7 +422,13 @@ const hasJoinTable = ({ relationshipType, ownerSide }) => relationshipType === '
  * the removed relationships dropped. None without a join column or a join table added or removed.
  * @param {{ entity: any, changelogDate: string, addedRelationships: any[], removedRelationships: any[] }} changes the changes of the changelog (changelogChanges)
  */
-export const updatedConstraintsMigration = ({ entity, changelogDate, addedRelationships, removedRelationships }) => {
+export const updatedConstraintsMigration = ({
+  entity,
+  changelogDate,
+  addedRelationships,
+  removedRelationships,
+  changedActionsRelationships = [],
+}) => {
   const addedJoinColumns = addedRelationships.filter(hasJoinColumn);
   const changes = {
     addedJoinColumns: addedJoinColumns.map(relationship => ({
@@ -379,6 +439,11 @@ export const updatedConstraintsMigration = ({ entity, changelogDate, addedRelati
     addedJoinTables: addedRelationships.filter(hasJoinTable).map(relationship => joinTable(entity, relationship)),
     removedJoinColumns: removedRelationships.filter(hasJoinColumn).map(joinColumnName),
     removedJoinTables: removedRelationships.filter(hasJoinTable).map(relationship => relationship.joinTable.name),
+    // The foreign keys replaced, with their new actions and, for the down, the actions they had.
+    changedForeignKeys: changedActionsRelationships.map(({ relationship }) => foreignKeyCode(foreignKey(relationship))),
+    previousForeignKeys: changedActionsRelationships.map(({ relationship, previousActions }) =>
+      foreignKeyCode({ ...foreignKey(relationship), onDelete: undefined, onUpdate: undefined, ...previousActions }),
+    ),
   };
   if (Object.values(changes).every(list => list.length === 0)) return undefined;
   return {
@@ -396,6 +461,7 @@ export const updatedConstraintsMigration = ({ entity, changelogDate, addedRelati
       addedJoinColumns.length > 0 && 'addColumns, createForeignKeys',
       changes.addedJoinTables.length > 0 && 'createJoinTable',
       (addedJoinColumns.length > 0 || changes.removedJoinColumns.length > 0) && 'dropColumns',
+      changes.changedForeignKeys.length > 0 && 'replaceForeignKeys',
     ]
       .filter(Boolean)
       .join(', '),

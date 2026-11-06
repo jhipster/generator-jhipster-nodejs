@@ -29,6 +29,7 @@ import {
   mutateEntityAuthorities,
   mutateEntityPaths,
   mutateRelatedValues,
+  mutateRelationOptions,
   mutateRequiredReference,
   mutateTestSamples,
   primaryKeyColumn,
@@ -407,6 +408,9 @@ export default class extends BaseApplicationGenerator {
 
   get [BaseApplicationGenerator.PREPARING_EACH_ENTITY_RELATIONSHIP]() {
     return this.asPreparingEachEntityRelationshipTaskGroup({
+      prepareRelationOptions({ relationshipDefaults }) {
+        relationshipDefaults(mutateRelationOptions);
+      },
       prepareRequiredReference({ relationshipDefaults }) {
         // The reference of a required relationship in the mocked controller tests (support/test-samples.js).
         relationshipDefaults(mutateRequiredReference);

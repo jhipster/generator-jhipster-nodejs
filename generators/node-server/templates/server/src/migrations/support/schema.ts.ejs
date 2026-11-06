@@ -231,6 +231,22 @@ export const createForeignKeys = async (queryRunner: QueryRunner, tableName: str
   }
 };
 
+/** Replaces the foreign keys of columns of a table, for a change of their onDelete or their onUpdate. */
+export const replaceForeignKeys = async (
+  queryRunner: QueryRunner,
+  tableName: string,
+  foreignKeys: MigrationForeignKey[],
+): Promise<void> => {
+  const table = await existingTable(queryRunner, tableName);
+  const replaced = table.foreignKeys.filter(existing =>
+    foreignKeys.some(foreignKey => existing.columnNames.length === 1 && existing.columnNames[0] === foreignKey.columnName),
+  );
+  if (replaced.length > 0) {
+    await queryRunner.dropForeignKeys(table, replaced);
+  }
+  await createForeignKeys(queryRunner, tableName, foreignKeys);
+};
+
 /**
  * Creates the join table of a many-to-many relationship, with its indices and its foreign keys, unless it exists, like
  * TypeORM creates the junction table of a @JoinTable.

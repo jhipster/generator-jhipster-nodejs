@@ -87,7 +87,7 @@ skipClient Campus, Building
 relationship ManyToOne {
     Activity {demetrauser required} to DemetraUser
     SingleCourse {classroom(name)} to Classroom
-    Building {campus(name)} to Campus
+    Building {campus(name)} to @OnDelete("CASCADE") Campus
 }
 
 relationship ManyToMany {
