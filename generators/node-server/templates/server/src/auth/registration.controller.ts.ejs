@@ -1,7 +1,8 @@
-import { Body, ClassSerializerInterceptor, Controller, Get, InternalServerErrorException, Post, Query, UseInterceptors } from '@nestjs/common';
+import { Body, ClassSerializerInterceptor, Controller, Get, Post, Query, UseInterceptors } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { AccountResourceException } from '../common/errors/problem.exception.ts';
 import { MailService } from '../mail/mail.service.ts';
-import { Managed<%- userLoginVmClass %>, <%- user.dtoClass %> } from '../users/dto/user.dto.ts';
+import { Managed<%- userLoginVmClass %> } from '../users/dto/user.dto.ts';
 import { RegistrationService } from './registration.service.ts';
 
 /**
@@ -22,12 +23,11 @@ export class RegistrationController {
   @ApiResponse({
     status: 201,
     description: 'Registered user',
-    type: <%- user.dtoClass %>,
   })
-  async registerAccount(@Body() userDTO: Managed<%- userLoginVmClass %>): Promise<<%- user.dtoClass %>> {
+  async registerAccount(@Body() userDTO: Managed<%- userLoginVmClass %>): Promise<void> {
+    // Like JHipster Spring Boot, nothing in the answer.
     const user = await this.registrationService.registerUser(userDTO);
     void this.mailService.sendActivationEmail(user);
-    return user;
   }
 
   @Get('/activate')
@@ -36,11 +36,11 @@ export class RegistrationController {
     status: 200,
     description: 'activated',
   })
-  @ApiResponse({ status: 500, description: 'No user was found for this activation key' })
+  @ApiResponse({ status: 400, description: 'No user was found for this activation key' })
   async activateAccount(@Query('key') key: string): Promise<void> {
     const user = await this.registrationService.activateRegistration(key);
     if (!user) {
-      throw new InternalServerErrorException('No user was found for this activation key');
+      throw new AccountResourceException('No user was found for this activation key');
     }
   }
 }

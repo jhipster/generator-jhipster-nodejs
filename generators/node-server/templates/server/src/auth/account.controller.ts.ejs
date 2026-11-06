@@ -29,16 +29,16 @@ export class AccountController {
 <%_ if (generateUserManagement) { _%>
 
   @Get('/authenticate')
+  @HttpCode(204)
   @ApiBearerAuth()
   @UseGuards(AuthGuard)
   @ApiOperation({ summary: 'Check if the user is authenticated' })
   @ApiResponse({
-    status: 200,
-    description: 'login authenticated',
+    status: 204,
+    description: 'authenticated',
   })
-  isAuthenticated(@Req() req: { user: <%- userLoginVmClass %> }): string {
-    const { user } = req;
-    return (user).login;
+  isAuthenticated(): void {
+    // The guard answers 401 to a request without a user.
   }
 
   @Get('/account')
@@ -71,11 +71,10 @@ export class AccountController {
   @ApiResponse({
     status: 200,
     description: 'user info updated',
-    type: <%- user.dtoClass %>,
   })
-  async saveAccount(@Req() req: { user: <%- userLoginVmClass %> }, @Body() newUserInfo: <%- user.dtoClass %>): Promise<<%- user.dtoClass %>> {
+  async saveAccount(@Req() req: { user: <%- userLoginVmClass %> }, @Body() newUserInfo: <%- user.dtoClass %>): Promise<void> {
     const { user } = req;
-    return await this.authService.updateUserSettings(user.login, newUserInfo);
+    await this.authService.updateUserSettings(user.login, newUserInfo);
   }
 
   @Post('/account/change-password')

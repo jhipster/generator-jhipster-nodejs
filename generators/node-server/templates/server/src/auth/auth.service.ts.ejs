@@ -1,5 +1,5 @@
 import { Injectable, 
-<%_ if (generateUserManagement) { _%> HttpException, HttpStatus, InternalServerErrorException, 
+<%_ if (generateUserManagement) { _%> HttpException, HttpStatus, 
 <%_ } _%> Logger } from '@nestjs/common';
 <%_ if (generateUserManagement) { _%>
 import { randomBytes } from 'crypto';
@@ -22,7 +22,7 @@ import { Authority } from '../users/authority.entity.ts';
 <%_ if (generateBuiltInUserEntity) { _%>
 import { UserService } from '../users/user.service.ts';
   <%_ if (generateUserManagement) { _%>
-import { EmailAlreadyUsedException, InvalidPasswordException } from '../common/errors/problem.exception.ts';
+import { AccountResourceException, EmailAlreadyUsedException, InvalidPasswordException } from '../common/errors/problem.exception.ts';
   <%_ } _%>
 <%_ } _%>
 import { <%- userLoginVmClass %> } from '../users/dto/user.dto.ts';
@@ -178,7 +178,7 @@ export class AuthService {
   async completePasswordReset(newPassword: string, key: string): Promise<void> {
     const userFind = await this.userService.findByFields({ where: { resetKey: key } });
     if (!userFind?.resetDate || new Date(userFind.resetDate).getTime() < Date.now() - 24 * 60 * 60 * 1000) {
-      throw new InternalServerErrorException('No user was found for this reset key');
+      throw new AccountResourceException('No user was found for this reset key');
     }
     userFind.password = newPassword;
     // null clears the columns (TypeORM leaves the undefined properties unchanged).

@@ -74,17 +74,14 @@ describe('Registration', () => {
     });
 
     it('/POST register new user', async () => {
-        const createdUser: <%- user.dtoClass %> = (
-            await request(app.getHttpServer())
-                .post('/api/register')
-                .send({ ...testUserDTO, activated: true })
-                .expect(201)
-        ).body;
+        // Like JHipster Spring Boot, nothing in the answer: the activation key goes by mail only.
+        const { text } = await request(app.getHttpServer())
+            .post('/api/register')
+            .send({ ...testUserDTO, activated: true })
+            .expect(201);
+        expect(text).toBe('');
 
         // Like JHipster Spring Boot, the login in lower case, and a user not activated whatever the request.
-        expect(createdUser.login).toEqual(testUserDTO.login.toLowerCase());
-        // The activation key goes by mail only.
-        expect(createdUser.activationKey).toBeUndefined();
         const registeredUser = (await service.findByFields({ where: { login: testUserDTO.login.toLowerCase() } }))!;
         expect(registeredUser.activated).toBe(false);
         expect(registeredUser.activationKey).toBeTruthy();
@@ -186,13 +183,13 @@ describe('Registration', () => {
         await request(app.getHttpServer())
             .get('/api/activate')
             .query({ key: 'unknownKey' })
-            .expect(500);
+            .expect(400);
     });
 
     it('/GET activate account without key', async () => {
         await request(app.getHttpServer())
             .get('/api/activate')
-            .expect(500);
+            .expect(400);
     });
 
 
