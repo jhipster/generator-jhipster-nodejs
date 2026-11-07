@@ -21,6 +21,24 @@ const isSampleRelationship = relationship =>
   !hasCyclicRequiredRelationship(relationship.otherEntity) &&
   (relationship.otherEntity.builtInUser || relationship.otherEntity.entityRestLayer);
 
+/**
+ * The value of a field in the sample number `samples`, for the fields no two records share: the id the client gives and
+ * the unique fields. A text keeps its length, a number stays under its maximum, and a value of a pattern is left as it is.
+ */
+const sampleVariation = (field, value) => {
+  const sample = `sampleWithNewData.${field.fieldName}`;
+  if (field.fieldValidateRulesPattern) return undefined;
+  if (typeof value === 'number') return `${sample} ${field.fieldValidateRulesMax === undefined ? '+' : '-'} samples`;
+  return typeof value === 'string' ? `\`\${${sample}.slice(\`\${samples}\`.length)}\${samples}\`` : undefined;
+};
+
+/** The fields of a new record of the sample that differ from the records stored before, with their values. */
+export const sampleVariations = (entity, values) =>
+  entity.fields
+    .filter(field => field.fieldName in values && (field.id || field.fieldValidateRules?.includes('unique')))
+    .map(field => ({ fieldName: field.fieldName, value: sampleVariation(field, values[field.fieldName]) }))
+    .filter(({ value }) => value);
+
 /** The mutations of a relationship. */
 export const mutateRequiredReference = {
   __override__: false,
@@ -49,8 +67,10 @@ export const mutateTestSamples = ({ databaseTypeSql }) => ({
     if (delayMarker) return delayMarker;
     entity.resetFakerSeed('nodejs-test-samples');
     const relationships = entity.relationships.filter(isSampleRelationship);
+    const { values } = apiFakeEntity(entity);
     return {
-      values: JSON.stringify(apiFakeEntity(entity).values),
+      values: JSON.stringify(values),
+      variations: sampleVariations(entity, values),
       references: relationships.map(({ propertyName, collection, relationshipOneToOne, otherEntity }) => {
         const id = otherEntity.primaryKey.name;
         const record = otherEntity.builtInUser
