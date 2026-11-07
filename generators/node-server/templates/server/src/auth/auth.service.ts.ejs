@@ -40,6 +40,12 @@ import { ConfigService } from '@nestjs/config';
 const PASSWORD_MIN_LENGTH = 4;
 const PASSWORD_MAX_LENGTH = 100;
 
+/**
+ * The auditor of the account actions done without an authenticated user (register, activate, reset the password), like
+ * the Constants.SYSTEM of JHipster Spring Boot.
+ */
+const SYSTEM_AUDITOR = 'system';
+
 function isPasswordLengthInvalid(password?: string): boolean {
   return !password || password.length < PASSWORD_MIN_LENGTH || password.length > PASSWORD_MAX_LENGTH;
 }
@@ -165,7 +171,7 @@ export class AuthService {
     }
     userFind.resetKey = randomBytes(15).toString('base64url');
     userFind.resetDate = new Date();
-    return this.userService.save(userFind, userFind.login);
+    return this.userService.save(userFind, SYSTEM_AUDITOR);
   }
 
   /** Like JHipster Spring Boot, sets the new password of the user of a reset key given less than one day ago. */
@@ -177,7 +183,7 @@ export class AuthService {
     userFind.password = newPassword;
     // null clears the columns (TypeORM leaves the undefined properties unchanged).
     Object.assign(userFind, { resetKey: null, resetDate: null });
-    await this.userService.save(userFind, userFind.login, true);
+    await this.userService.save(userFind, SYSTEM_AUDITOR, true);
   }
 
   /**
@@ -213,7 +219,7 @@ export class AuthService {
       activationKey: randomBytes(15).toString('base64url'),
       authorities: ['ROLE_USER'],
     };
-    return await this.userService.save(user, login, true);
+    return await this.userService.save(user, SYSTEM_AUDITOR, true);
   }
 
   /** Like JHipster Spring Boot, activates the user of an activation key, undefined for an unknown key. */
@@ -225,7 +231,7 @@ export class AuthService {
     userFind.activated = true;
     // null clears the column (TypeORM leaves the undefined properties unchanged).
     Object.assign(userFind, { activationKey: null });
-    return await this.userService.save(userFind, userFind.login);
+    return await this.userService.save(userFind, SYSTEM_AUDITOR);
   }
 
   private async removeNonActivatedUser(existingUser: <%- user.dtoClass %>): Promise<boolean> {

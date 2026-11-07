@@ -87,6 +87,8 @@ describe('Account', () => {
         const registeredUser = (await service.findByFields({ where: { login: testUserDTO.login.toLowerCase() } }))!;
         expect(registeredUser.activated).toBe(false);
         expect(registeredUser.activationKey).toBeTruthy();
+        // Like JHipster Spring Boot, the auditor of an action without an authenticated user is system.
+        expect(registeredUser).toMatchObject({ createdBy: 'system', lastModifiedBy: 'system' });
         expect(sendActivationEmail).toHaveBeenCalledWith(expect.objectContaining({ login: registeredUser.login, activationKey: registeredUser.activationKey }));
         await service.delete(registeredUser);
     });
@@ -175,6 +177,7 @@ describe('Account', () => {
         const activatedUser = (await service.findByFields({ where: { login: testUserDTO.login.toLowerCase() } }))!;
         expect(activatedUser.activated).toBe(true);
         expect(activatedUser.activationKey).toBeFalsy();
+        expect(activatedUser).toMatchObject({ createdBy: 'system', lastModifiedBy: 'system' });
         await service.delete(activatedUser);
     });
 
@@ -275,6 +278,8 @@ describe('Account', () => {
             .then(() => true, () => false);
 
         expect(successFullyLoggedInWithNewPassword).toEqual(true);
+        // The authenticated user is the auditor of its own change.
+        expect((await service.findByFields({ where: { login: testUserAuthenticated.login } }))?.lastModifiedBy).toEqual(testUserAuthenticated.login);
     });
 
     it<%- databaseTypeMongodb ? '.skip' : '' %>('logs in with the login in another case', async () => {
@@ -303,8 +308,10 @@ describe('Account', () => {
             .send(testUserAuthenticated.email)
             .expect(200);
 
-        const { resetKey } = (await service.findByFields({ where: { login: testUserAuthenticated.login } }))!;
+        const { resetKey, createdBy, lastModifiedBy } = (await service.findByFields({ where: { login: testUserAuthenticated.login } }))!;
         expect(resetKey).toBeTruthy();
+        // Like JHipster Spring Boot, system modifies the user, its creator kept.
+        expect({ createdBy, lastModifiedBy }).toEqual({ createdBy: testUserAuthenticated.login, lastModifiedBy: 'system' });
         expect(sendPasswordResetMail).toHaveBeenCalledWith(expect.objectContaining({ login: testUserAuthenticated.login, resetKey }));
 
         await request(app.getHttpServer())
@@ -312,7 +319,9 @@ describe('Account', () => {
             .send({ key: resetKey, newPassword: 'resetPassword' })
             .expect(200);
 
-        expect((await service.findByFields({ where: { login: testUserAuthenticated.login } }))?.resetKey).toBeFalsy();
+        const resetUser = (await service.findByFields({ where: { login: testUserAuthenticated.login } }))!;
+        expect(resetUser.resetKey).toBeFalsy();
+        expect(resetUser).toMatchObject({ createdBy: testUserAuthenticated.login, lastModifiedBy: 'system' });
         const loggedInWithNewPassword = await authService
             .authenticate(testUserAuthenticated.login, 'resetPassword')
             .then(() => true, () => false);
