@@ -5,6 +5,16 @@ export default class extends BaseApplicationGenerator {
     super(args, opts, { ...features, sbsBlueprint: true });
   }
 
+  get [BaseApplicationGenerator.POST_PREPARING]() {
+    return this.asPostPreparingTaskGroup({
+      async composeNodejsClient({ application }) {
+        if (application.clientFrameworkBuiltIn) {
+          await this.composeWithJHipster('jhipster-nodejs:client:nodejs');
+        }
+      },
+    });
+  }
+
   get [BaseApplicationGenerator.POST_WRITING]() {
     return this.asPostWritingTaskGroup({
       async postWritingTemplateTask({ application }) {

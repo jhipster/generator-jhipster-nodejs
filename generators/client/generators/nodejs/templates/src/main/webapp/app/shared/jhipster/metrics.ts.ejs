@@ -1,0 +1,206 @@
+import { type MetricCell, type MetricColumn, type MetricDetailFilter, type MetricDetailItem, type MetricDetails, type MetricGauge, type MetricItem, type MetricStatus, type MetricsBlock, type MetricsSection } from './metrics.model';
+import { type Label } from './label';
+
+export interface MemoryMetrics {
+  committed: number;
+  max: number;
+  used: number;
+}
+
+export interface MaxMeanCount {
+  max: number;
+  mean: number;
+  count: number;
+}
+
+export interface RequestsMetrics {
+  all: { count: number };
+  percode: Record<string, MaxMeanCount>;
+}
+
+export interface ProcessMetrics {
+  cpuUsage: number;
+  systemCpuUsage: number;
+  cpuCount: number;
+  loadAverage: number;
+  startTime: number;
+  uptime: number;
+}
+
+/** The response of the metrics endpoint of the NodeJS server: its V8 heap and spaces, its requests and its process. */
+export interface MetricsResponse {
+  memory: { heap: MemoryMetrics } & Record<string, MemoryMetrics>;
+  requests: RequestsMetrics;
+  endpoints: Record<string, Record<string, MaxMeanCount>>;
+  process: ProcessMetrics;
+}
+
+/** The endpoints of the metrics page, their responses given to toMetrics in this order. */
+export const metricsEndpoints = ['management/metrics'];
+
+const labels = {
+<%_ if (enableTranslation) { _%>
+  memory: { text: 'Memory', translationKey: 'metrics.jvm.memory.title' },
+  requests: { text: 'HTTP requests (time in milliseconds)', translationKey: 'metrics.jvm.http.title' },
+  code: { text: 'Code', translationKey: 'metrics.jvm.http.table.code' },
+  count: { text: 'Count', translationKey: 'metrics.jvm.http.table.count' },
+  mean: { text: 'Mean', translationKey: 'metrics.jvm.http.table.mean' },
+  max: { text: 'Max', translationKey: 'metrics.jvm.http.table.max' },
+<%_ } else { _%>
+  memory: { text: __jhiTransformTranslateStringify__('metrics.jvm.memory.title') },
+  requests: { text: __jhiTransformTranslateStringify__('metrics.jvm.http.title') },
+  code: { text: __jhiTransformTranslateStringify__('metrics.jvm.http.table.code') },
+  count: { text: __jhiTransformTranslateStringify__('metrics.jvm.http.table.count') },
+  mean: { text: __jhiTransformTranslateStringify__('metrics.jvm.http.table.mean') },
+  max: { text: __jhiTransformTranslateStringify__('metrics.jvm.http.table.max') },
+<%_ } _%>
+} satisfies Record<string, Label>;
+
+const BYTES_PER_MEGABYTE = 1048576;
+
+const MILLISECONDS_PER_UNIT = {
+  day: 86400000,
+  hour: 3600000,
+  minute: 60000,
+  second: 1000,
+};
+
+/** The language of the page, which is not always the one of the browser. */
+const pageLocale = (): string | undefined => {
+  try {
+    return Intl.getCanonicalLocales(document.documentElement.lang)[0];
+  } catch {
+    return undefined;
+  }
+};
+
+const formatNumber = (value: number, maximumFractionDigits = 0): string =>
+  new Intl.NumberFormat(pageLocale(), { maximumFractionDigits }).format(value);
+
+const formatMegabytes = (bytes: number): string => `${formatNumber(bytes / BYTES_PER_MEGABYTE)}M`;
+
+const formatDuration = (milliseconds: number): string => {
+  const durations: string[] = [];
+  let remaining = milliseconds;
+  for (const [unit, millisecondsPerUnit] of Object.entries(MILLISECONDS_PER_UNIT)) {
+    const count = Math.floor(remaining / millisecondsPerUnit);
+    if (count > 0) {
+      durations.push(`${count} ${unit}${count > 1 ? 's' : ''}`);
+      remaining %= millisecondsPerUnit;
+    }
+  }
+  return durations.join(' ');
+};
+
+const formatDate = (milliseconds: number): string =>
+  new Intl.DateTimeFormat(pageLocale(), { dateStyle: 'full', timeStyle: 'medium' }).format(milliseconds);
+
+const toGauge = (value: number, max: number): MetricGauge => {
+  const percent = max > 0 ? (100 * value) / max : 0;
+  return { percent, text: `${formatNumber(percent)}%`, status: 'success' };
+};
+
+const sortedEntries = <T>(values: Record<string, T>): [string, T][] => Object.entries(values).sort(([a], [b]) => a.localeCompare(b));
+
+const toMemoryItem = ([name, { used, max, committed }]: [string, MemoryMetrics]): MetricItem => ({
+  label: { text: name },
+  value: `${formatMegabytes(used)} / ${formatMegabytes(max)}`,
+  note: `Committed: ${formatMegabytes(committed)}`,
+  gauge: toGauge(used, max),
+});
+
+const toSpacesDetails = (spaces: Record<string, MemoryMetrics>): MetricDetails => ({
+  label: { text: 'V8 heap spaces' },
+  showLines: { text: 'Show' },
+  hideLines: { text: 'Hide' },
+  columns: [{ text: 'Used' }, { text: 'Committed' }, { text: 'Max' }],
+  filters: [],
+  items: sortedEntries(spaces).map(([name, { used, committed, max }]) => ({
+    title: name,
+    value: toGauge(used, max).text,
+    status: 'success',
+    lines: [],
+    cells: [used, committed, max].map(formatMegabytes),
+  })),
+});
+
+const toCpuItem = (text: string, usage: number): MetricItem => ({
+  label: { text },
+  value: `${formatNumber(100 * usage, 2)} %`,
+  gauge: toGauge(usage, 1),
+});
+
+const toProcessBlock = (process: ProcessMetrics): MetricsBlock => ({
+  label: { text: 'Process' },
+  items: [
+    { label: { text: 'Uptime' }, value: formatDuration(process.uptime) },
+    { label: { text: 'Start time' }, value: formatDate(process.startTime) },
+    toCpuItem('Process CPU usage', process.cpuUsage),
+    toCpuItem('System CPU usage', process.systemCpuUsage),
+    { label: { text: 'System CPU count' }, value: formatNumber(process.cpuCount) },
+    { label: { text: 'System 1m Load average' }, value: formatNumber(process.loadAverage, 2) },
+  ],
+});
+
+const toRuntimeSection = ({ memory: { heap, ...spaces }, process }: MetricsResponse): MetricsSection => ({
+  id: 'nodeMetrics',
+  label: { text: 'Node.js metrics' },
+  blocks: [{ label: labels.memory, items: [toMemoryItem(['heap', heap])], details: toSpacesDetails(spaces) }, toProcessBlock(process)],
+  tables: [],
+});
+
+const toRequestsSection = ({ all, percode }: RequestsMetrics): MetricsSection => ({
+  id: 'requestMetrics',
+  label: labels.requests,
+  blocks: [],
+  tables: [
+    {
+      columns: [
+        { label: labels.code },
+        { label: labels.count },
+        { label: labels.mean, numeric: true },
+        { label: labels.max, numeric: true },
+      ],
+      rows: sortedEntries(percode).map(([code, { count, mean, max }]) => [
+        { text: code },
+        { gauge: { ...toGauge(count, all.count), text: formatNumber(count) } },
+        { text: formatNumber(mean, 2) },
+        { text: formatNumber(max, 2) },
+      ]),
+    },
+  ],
+});
+
+const toEndpointsSection = (endpoints: MetricsResponse['endpoints']): MetricsSection => ({
+  id: 'endpointsRequestsMetrics',
+  label: { text: 'Endpoints requests (time in milliseconds)' },
+  blocks: [],
+  tables: [
+    {
+      columns: [
+        { label: { text: 'Method' } },
+        { label: { text: 'Endpoint url' } },
+        { label: { text: 'Count' }, numeric: true },
+        { label: { text: 'Mean' }, numeric: true },
+      ],
+      rows: sortedEntries(endpoints).flatMap(([url, methods]) =>
+        sortedEntries(methods).map(([method, { count, mean }]) => [
+          { text: method },
+          { text: url },
+          { text: formatNumber(count) },
+          { text: formatNumber(mean, 3) },
+        ]),
+      ),
+    },
+  ],
+});
+
+/** Converts the responses of the metrics endpoints to the sections of the metrics page. */
+export const toMetrics = (responses: unknown[]): MetricsSection[] => {
+  const [metrics] = responses as [MetricsResponse];
+  return [
+    toRuntimeSection(metrics),
+    ...(Object.keys(metrics.requests.percode).length > 0 ? [toRequestsSection(metrics.requests)] : []),
+    ...(Object.keys(metrics.endpoints).length > 0 ? [toEndpointsSection(metrics.endpoints)] : []),
+  ];
+};

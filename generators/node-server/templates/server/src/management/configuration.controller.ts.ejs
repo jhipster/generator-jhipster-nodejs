@@ -7,25 +7,25 @@ import { AuthGuard, Roles, RolesGuard, RoleType } from '../auth/index.ts';
 
 const MASK = '******';
 
-export interface PropertySource {
+export interface ConfigurationSource {
   name: string;
-  properties: Record<string, { value: unknown }>;
+  properties: Record<string, unknown>;
 }
 
 export interface Env {
   activeProfiles: string[];
-  propertySources: PropertySource[];
+  sources: ConfigurationSource[];
 }
 
 export interface ConfigProps {
-  contexts: Record<string, { beans: Record<string, { prefix: string; properties: Record<string, unknown> }> }>;
+  prefixes: Record<string, Record<string, unknown>>;
 }
 
 /**
- * The env and configprops endpoints of Spring Boot Actuator the configuration page of the JHipster clients reads, for
- * the administrators: the sources of the configuration (the environment variables, then the files of the active
- * profiles and application.yml, the highest precedence first) and the properties of the application by prefix. Their
- * values are shown as ****** unless management.endpoint.<endpoint>.show-values is always, like Spring Boot.
+ * The env and configprops endpoints the configuration page of the JHipster clients calls, for the administrators: the
+ * sources of the configuration (the environment variables, then the files of the active profiles and application.yml,
+ * the highest precedence first) and the properties of the application by prefix. Their values are shown as ****** unless
+ * management.endpoint.<endpoint>.show-values is always, like Spring Boot.
  */
 @ApiExcludeController()
 @Controller('management')
@@ -37,29 +37,29 @@ export class ConfigurationController {
   @Get('/env')
   env(): Env {
     const value = this.valueFor('env');
-    const source = (name: string, properties: Record<string, unknown>): PropertySource => ({
+    const source = (name: string, properties: Record<string, unknown>): ConfigurationSource => ({
       name,
-      properties: Object.fromEntries(Object.entries(properties).map(([key, property]) => [key, { value: value(property) }])),
+      properties: Object.fromEntries(Object.entries(properties).map(([key, property]) => [key, value(property)])),
     });
     return {
       activeProfiles,
-      propertySources: [source('systemEnvironment', process.env), ...configFiles.map(({ name, properties }) => source(name, properties))],
+      sources: [source('systemEnvironment', process.env), ...configFiles.map(({ name, properties }) => source(name, properties))],
     };
   }
 
   @Get('/configprops')
   configprops(): ConfigProps {
     const value = this.valueFor('configprops');
-    const beans: ConfigProps['contexts'][string]['beans'] = {};
+    const prefixes: ConfigProps['prefixes'] = {};
     for (const [key, property] of Object.entries(config)) {
       const separator = key.indexOf('.');
       if (separator > 0 && typeof property !== 'function') {
         const prefix = key.substring(0, separator);
-        beans[prefix] ??= { prefix, properties: {} };
-        setNested(beans[prefix].properties, key.substring(separator + 1).split('.'), value(property));
+        prefixes[prefix] ??= {};
+        setNested(prefixes[prefix], key.substring(separator + 1).split('.'), value(property));
       }
     }
-    return { contexts: { [this.configService.get<string>('jhipster.clientApp.name') ?? 'application']: { beans } } };
+    return { prefixes };
   }
 
   private valueFor(endpoint: 'env' | 'configprops'): (property: unknown) => unknown {

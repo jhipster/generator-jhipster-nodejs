@@ -56,6 +56,9 @@ exports[`SubGenerator client of nodejs JHipster blueprint > run > should succeed
   "client/src/WEB-INF/web.xml": {
     "stateCleared": "modified",
   },
+  "client/src/app/account/account-screens.spec.ts": {
+    "stateCleared": "modified",
+  },
   "client/src/app/account/account.route.ts": {
     "stateCleared": "modified",
   },
@@ -176,13 +179,13 @@ exports[`SubGenerator client of nodejs JHipster blueprint > run > should succeed
   "client/src/app/account/settings/settings.ts": {
     "stateCleared": "modified",
   },
+  "client/src/app/admin/admin.routes.spec.ts": {
+    "stateCleared": "modified",
+  },
   "client/src/app/admin/admin.routes.ts": {
     "stateCleared": "modified",
   },
   "client/src/app/admin/configuration/configuration.html": {
-    "stateCleared": "modified",
-  },
-  "client/src/app/admin/configuration/configuration.model.ts": {
     "stateCleared": "modified",
   },
   "client/src/app/admin/configuration/configuration.service.spec.ts": {
@@ -203,13 +206,13 @@ exports[`SubGenerator client of nodejs JHipster blueprint > run > should succeed
   "client/src/app/admin/docs/docs.scss": {
     "stateCleared": "modified",
   },
+  "client/src/app/admin/docs/docs.spec.ts": {
+    "stateCleared": "modified",
+  },
   "client/src/app/admin/docs/docs.ts": {
     "stateCleared": "modified",
   },
   "client/src/app/admin/health/health.html": {
-    "stateCleared": "modified",
-  },
-  "client/src/app/admin/health/health.model.ts": {
     "stateCleared": "modified",
   },
   "client/src/app/admin/health/health.service.spec.ts": {
@@ -233,9 +236,6 @@ exports[`SubGenerator client of nodejs JHipster blueprint > run > should succeed
   "client/src/app/admin/health/modal/health-modal.ts": {
     "stateCleared": "modified",
   },
-  "client/src/app/admin/logs/log.model.ts": {
-    "stateCleared": "modified",
-  },
   "client/src/app/admin/logs/logs.html": {
     "stateCleared": "modified",
   },
@@ -251,67 +251,16 @@ exports[`SubGenerator client of nodejs JHipster blueprint > run > should succeed
   "client/src/app/admin/logs/logs.ts": {
     "stateCleared": "modified",
   },
-  "client/src/app/admin/metrics/blocks/jvm-memory/jvm-memory.html": {
+  "client/src/app/admin/metrics/metrics-details-modal.html": {
     "stateCleared": "modified",
   },
-  "client/src/app/admin/metrics/blocks/jvm-memory/jvm-memory.ts": {
+  "client/src/app/admin/metrics/metrics-details-modal.spec.ts": {
     "stateCleared": "modified",
   },
-  "client/src/app/admin/metrics/blocks/jvm-threads/jvm-threads.html": {
-    "stateCleared": "modified",
-  },
-  "client/src/app/admin/metrics/blocks/jvm-threads/jvm-threads.ts": {
-    "stateCleared": "modified",
-  },
-  "client/src/app/admin/metrics/blocks/metrics-cache/metrics-cache.html": {
-    "stateCleared": "modified",
-  },
-  "client/src/app/admin/metrics/blocks/metrics-cache/metrics-cache.ts": {
-    "stateCleared": "modified",
-  },
-  "client/src/app/admin/metrics/blocks/metrics-datasource/metrics-datasource.html": {
-    "stateCleared": "modified",
-  },
-  "client/src/app/admin/metrics/blocks/metrics-datasource/metrics-datasource.ts": {
-    "stateCleared": "modified",
-  },
-  "client/src/app/admin/metrics/blocks/metrics-endpoints-requests/metrics-endpoints-requests.html": {
-    "stateCleared": "modified",
-  },
-  "client/src/app/admin/metrics/blocks/metrics-endpoints-requests/metrics-endpoints-requests.ts": {
-    "stateCleared": "modified",
-  },
-  "client/src/app/admin/metrics/blocks/metrics-garbagecollector/metrics-garbagecollector.html": {
-    "stateCleared": "modified",
-  },
-  "client/src/app/admin/metrics/blocks/metrics-garbagecollector/metrics-garbagecollector.ts": {
-    "stateCleared": "modified",
-  },
-  "client/src/app/admin/metrics/blocks/metrics-modal-threads/metrics-modal-threads.html": {
-    "stateCleared": "modified",
-  },
-  "client/src/app/admin/metrics/blocks/metrics-modal-threads/metrics-modal-threads.spec.ts": {
-    "stateCleared": "modified",
-  },
-  "client/src/app/admin/metrics/blocks/metrics-modal-threads/metrics-modal-threads.ts": {
-    "stateCleared": "modified",
-  },
-  "client/src/app/admin/metrics/blocks/metrics-request/metrics-request.html": {
-    "stateCleared": "modified",
-  },
-  "client/src/app/admin/metrics/blocks/metrics-request/metrics-request.ts": {
-    "stateCleared": "modified",
-  },
-  "client/src/app/admin/metrics/blocks/metrics-system/metrics-system.html": {
-    "stateCleared": "modified",
-  },
-  "client/src/app/admin/metrics/blocks/metrics-system/metrics-system.ts": {
+  "client/src/app/admin/metrics/metrics-details-modal.ts": {
     "stateCleared": "modified",
   },
   "client/src/app/admin/metrics/metrics.html": {
-    "stateCleared": "modified",
-  },
-  "client/src/app/admin/metrics/metrics.model.ts": {
     "stateCleared": "modified",
   },
   "client/src/app/admin/metrics/metrics.service.spec.ts": {
@@ -389,6 +338,9 @@ exports[`SubGenerator client of nodejs JHipster blueprint > run > should succeed
   "client/src/app/core/auth/login.model.ts": {
     "stateCleared": "modified",
   },
+  "client/src/app/core/auth/state-storage.service.spec.ts": {
+    "stateCleared": "modified",
+  },
   "client/src/app/core/auth/state-storage.service.ts": {
     "stateCleared": "modified",
   },
@@ -447,6 +399,9 @@ exports[`SubGenerator client of nodejs JHipster blueprint > run > should succeed
     "stateCleared": "modified",
   },
   "client/src/app/core/util/parse-links.service.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/entities/admin/authority/authority-screens.spec.ts": {
     "stateCleared": "modified",
   },
   "client/src/app/entities/admin/authority/authority.model.ts": {
@@ -566,6 +521,9 @@ exports[`SubGenerator client of nodejs JHipster blueprint > run > should succeed
   "client/src/app/entities/admin/user-management/update/user-management-update.ts": {
     "stateCleared": "modified",
   },
+  "client/src/app/entities/admin/user-management/user-management-screens.spec.ts": {
+    "stateCleared": "modified",
+  },
   "client/src/app/entities/admin/user-management/user-management.model.ts": {
     "stateCleared": "modified",
   },
@@ -617,6 +575,9 @@ exports[`SubGenerator client of nodejs JHipster blueprint > run > should succeed
   "client/src/app/layouts/footer/footer.ts": {
     "stateCleared": "modified",
   },
+  "client/src/app/layouts/layout-screens.spec.ts": {
+    "stateCleared": "modified",
+  },
   "client/src/app/layouts/main/main.html": {
     "stateCleared": "modified",
   },
@@ -654,6 +615,9 @@ exports[`SubGenerator client of nodejs JHipster blueprint > run > should succeed
     "stateCleared": "modified",
   },
   "client/src/app/layouts/profiles/profile-info.model.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/layouts/profiles/profile.service.spec.ts": {
     "stateCleared": "modified",
   },
   "client/src/app/layouts/profiles/profile.service.ts": {
@@ -722,6 +686,9 @@ exports[`SubGenerator client of nodejs JHipster blueprint > run > should succeed
   "client/src/app/shared/date/index.ts": {
     "stateCleared": "modified",
   },
+  "client/src/app/shared/filter/filter-screens.spec.ts": {
+    "stateCleared": "modified",
+  },
   "client/src/app/shared/filter/filter.html": {
     "stateCleared": "modified",
   },
@@ -737,6 +704,18 @@ exports[`SubGenerator client of nodejs JHipster blueprint > run > should succeed
   "client/src/app/shared/filter/index.ts": {
     "stateCleared": "modified",
   },
+  "client/src/app/shared/jhipster/admin.samples.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/shared/jhipster/configuration.model.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/shared/jhipster/configuration.spec.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/shared/jhipster/configuration.ts": {
+    "stateCleared": "modified",
+  },
   "client/src/app/shared/jhipster/constants.ts": {
     "stateCleared": "modified",
   },
@@ -749,7 +728,37 @@ exports[`SubGenerator client of nodejs JHipster blueprint > run > should succeed
   "client/src/app/shared/jhipster/headers.ts": {
     "stateCleared": "modified",
   },
+  "client/src/app/shared/jhipster/health.model.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/shared/jhipster/health.spec.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/shared/jhipster/health.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/shared/jhipster/label.ts": {
+    "stateCleared": "modified",
+  },
   "client/src/app/shared/jhipster/link-header.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/shared/jhipster/logs.model.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/shared/jhipster/logs.spec.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/shared/jhipster/logs.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/shared/jhipster/metrics.model.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/shared/jhipster/metrics.spec.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/shared/jhipster/metrics.ts": {
     "stateCleared": "modified",
   },
   "client/src/app/shared/jhipster/pagination.spec.ts": {
@@ -765,6 +774,12 @@ exports[`SubGenerator client of nodejs JHipster blueprint > run > should succeed
     "stateCleared": "modified",
   },
   "client/src/app/shared/language/index.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/shared/language/label.pipe.spec.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/shared/language/label.pipe.ts": {
     "stateCleared": "modified",
   },
   "client/src/app/shared/language/translate.directive.spec.ts": {
@@ -783,6 +798,9 @@ exports[`SubGenerator client of nodejs JHipster blueprint > run > should succeed
     "stateCleared": "modified",
   },
   "client/src/app/shared/pagination/item-count.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/shared/shared-utilities.spec.ts": {
     "stateCleared": "modified",
   },
   "client/src/app/shared/sort/index.ts": {

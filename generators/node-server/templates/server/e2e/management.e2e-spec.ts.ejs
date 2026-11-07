@@ -67,42 +67,34 @@ describe('Management', () => {
         it('/POST loggers with an unknown level is a bad request', () =>
             request(app.getHttpServer()).post('/management/loggers/ManagementTest').send({ configuredLevel: 'LOUD' }).expect(400));
 
-        it('/GET jhimetrics gives the memory, the processor and the requests by endpoint', async () => {
+        it('/GET metrics gives the memory, the processor and the requests by endpoint', async () => {
             await request(app.getHttpServer()).get('/management/info').expect(200);
-            const { body } = await request(app.getHttpServer()).get('/management/jhimetrics').expect(200);
+            const { body } = await request(app.getHttpServer()).get('/management/metrics').expect(200);
 
-            expect(body.jvm.heap).toEqual({ used: expect.any(Number), committed: expect.any(Number), max: expect.any(Number) });
-            expect(body.processMetrics['system.cpu.count']).toBeGreaterThan(0);
-            expect(body['http.server.requests'].percode['200'].count).toBeGreaterThan(0);
-            expect(body.services['/management/info'].GET.count).toBe(1);
+            expect(body.memory.heap).toEqual({ used: expect.any(Number), committed: expect.any(Number), max: expect.any(Number) });
+            expect(body.process.cpuCount).toBeGreaterThan(0);
+            expect(body.requests.percode['200'].count).toBeGreaterThan(0);
+            expect(body.endpoints['/management/info'].GET.count).toBe(1);
         });
 
         it('/GET env gives the sources of the configuration, their values hidden like Spring Boot', async () => {
             const { body } = await request(app.getHttpServer()).get('/management/env').expect(200);
 
             expect(body.activeProfiles).toContain('test');
-            expect(body.propertySources.map((source: { name: string }) => source.name)).toEqual([
+            expect(body.sources.map((source: { name: string }) => source.name)).toEqual([
                 'systemEnvironment',
                 "Config resource 'config/application-secret-samples.yml'",
                 "Config resource 'config/application-test.yml'",
                 "Config resource 'config/application.yml'",
             ]);
-            const applicationYml = body.propertySources[3];
-            expect(applicationYml.properties['management.endpoint.env.show-values']).toEqual({ value: '******' });
+            const applicationYml = body.sources[3];
+            expect(applicationYml.properties['management.endpoint.env.show-values']).toBe('******');
         });
 
         it('/GET configprops gives the properties of the application by prefix, their values hidden like Spring Boot', async () => {
             const { body } = await request(app.getHttpServer()).get('/management/configprops').expect(200);
 
-            const [context] = Object.values<{ beans: Record<string, { prefix: string; properties: any }> }>(body.contexts);
-            expect(context.beans.jhipster.prefix).toBe('jhipster');
-            expect(context.beans.jhipster.properties.mail.from).toBe('******');
-        });
-
-        it('/GET threaddump gives the thread of the event loop', async () => {
-            const { body } = await request(app.getHttpServer()).get('/management/threaddump').expect(200);
-
-            expect(body.threads).toEqual([expect.objectContaining({ threadName: 'main', threadState: 'RUNNABLE' })]);
+            expect(body.prefixes.jhipster.mail.from).toBe('******');
         });
     });
 
@@ -117,7 +109,7 @@ describe('Management', () => {
             expect(loggerLevels.getLevel('ManagementTest').configuredLevel).toBeNull();
         });
 
-        it('/GET jhimetrics is forbidden', () => request(app.getHttpServer()).get('/management/jhimetrics').expect(403));
+        it('/GET metrics is forbidden', () => request(app.getHttpServer()).get('/management/metrics').expect(403));
 
         it('/GET v3/api-docs is forbidden, like JHipster Spring Boot', async () => {
             setupSwagger(app);

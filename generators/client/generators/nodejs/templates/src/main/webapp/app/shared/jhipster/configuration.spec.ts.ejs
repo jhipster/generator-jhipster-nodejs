@@ -1,0 +1,22 @@
+import { describe, expect, it } from 'vitest';
+
+import { toConfiguration } from './configuration';
+
+describe('configuration', () => {
+  it('should give a table of the prefixes, sorted, and one of each source', () => {
+    const [prefixes, source] = toConfiguration([
+      { prefixes: { server: { port: 8081 }, jhipster: { clientApp: { name: 'app' } } } },
+      { activeProfiles: ['dev'], sources: [{ name: 'application.yml', properties: { 'server.port': 8081, name: 'app' } }] },
+    ]);
+
+    expect(prefixes.rows).toEqual([
+      { key: 'jhipster', properties: [{ key: 'clientApp', value: '{"name":"app"}' }] },
+      { key: 'server', properties: [{ key: 'port', value: '8081' }] },
+    ]);
+    expect(source.label.text).toBe('application.yml');
+    expect(source.rows).toEqual([
+      { key: 'server.port', value: '8081' },
+      { key: 'name', value: 'app' },
+    ]);
+  });
+});
