@@ -38,9 +38,19 @@ export const requiredReferences = async (app: INestApplication): Promise<Record<
 });
 <%_ } _%>
 
+<%_ if (nodejsTestSample.uniqueSamples) { _%>
+/** The id and the unique values of each new <%- entityClass %> of the sample, no two records sharing them. */
+const uniqueSamples: Record<string, any>[] = <%- nodejsTestSample.uniqueSamples %>;
+
+let samples = 0;
+
+/** The values of a new <%- entityClass %> of the sample, with an id and unique values of its own. */
+const newSample = (): Record<string, any> => ({ ...sampleWithNewData, ...uniqueSamples[samples++] });
+
+<%_ } _%>
 /** A new <%- entityClass %> of the sample, stored through the REST API with its required relationships. */
 export const storeSample = async (app: INestApplication): Promise<Record<string, any>> => {
-  const values = { ...sampleWithNewData, ...(await requiredReferences(app)) };
+  const values = { ...<%- nodejsTestSample.uniqueSamples ? 'newSample()' : 'sampleWithNewData' %>, ...(await requiredReferences(app)) };
   return (await request(app.getHttpServer()).post('/api/<%- entityApiUrl %>').send(values).expect(201)).body;
 };
 
