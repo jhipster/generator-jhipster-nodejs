@@ -251,6 +251,37 @@ describe('entityMigration', () => {
 });
 
 describe('constraintsMigration', () => {
+  it('should give the foreign keys of a join table the actions of each side, like the changelog of Liquibase', () => {
+    const tag = entity({ ...region, entityClass: 'Tag', entityTableName: 'tag' });
+    const book = entity({ ...region, entityClass: 'Book', entityTableName: 'book' });
+    const tags = relationship({
+      relationshipType: 'many-to-many',
+      ownerSide: true,
+      columnName: 'tag',
+      joinTable: { name: 'rel_book__tag' },
+      otherEntity: tag,
+      options: { onDelete: 'CASCADE' },
+      otherRelationship: { options: { onUpdate: 'SET NULL' } },
+    });
+    const { joinColumn, inverseJoinColumn } = joinTable(book, tags);
+    expect(joinColumn.code).toContain("onDelete: 'CASCADE'");
+    expect(inverseJoinColumn.code).toContain("onUpdate: 'SET NULL'");
+    expect(inverseJoinColumn.code).not.toContain('onDelete');
+  });
+
+  it('should leave the actions of a join table out when no relationship declares them', () => {
+    const tag = entity({ ...region, entityClass: 'Tag', entityTableName: 'tag' });
+    const tags = relationship({
+      relationshipType: 'many-to-many',
+      ownerSide: true,
+      columnName: 'tag',
+      joinTable: { name: 'rel_book__tag' },
+      otherEntity: tag,
+    });
+    const { joinColumn, inverseJoinColumn } = joinTable(entity({ ...region, entityTableName: 'book' }), tags);
+    expect(`${joinColumn.code}${inverseJoinColumn.code}`).not.toMatch(/onDelete|onUpdate/);
+  });
+
   it('should be none for an entity without join column nor join table', () => {
     expect(constraintsMigration(region)).toBeUndefined();
   });
@@ -293,7 +324,7 @@ describe('constraintsMigration', () => {
       ],
     });
     const timestamp = changelogDateToTimestamp(country.changelogDate) + CONSTRAINTS_TIMESTAMP_OFFSET;
-    expect(constraintsMigration(country)).toEqual({
+    expect(constraintsMigration(country)).toMatchObject({
       timestamp,
       className: `AddedEntityConstraintsCountry${timestamp}`,
       fileName: '20231215172615-AddedEntityConstraintsCountry',
@@ -336,7 +367,7 @@ describe('constraintsMigration', () => {
 
 describe('userAuthorityJoinTable', () => {
   it('should name the join table of the authorities like TypeORM names the one of @JoinTable()', () => {
-    expect(userAuthorityJoinTable({ user, authority: { entityTableName: 'jhi_authority' } })).toEqual({
+    expect(userAuthorityJoinTable({ user, authority: { entityTableName: 'jhi_authority' } })).toMatchObject({
       name: 'jhi_user_authorities_jhi_authority',
       joinColumn: { name: 'jhiUserId', type: 'Number', referencedTableName: 'jhi_user', referencedColumnName: 'id' },
       inverseJoinColumn: { name: 'jhiAuthorityName', type: 'String', referencedTableName: 'jhi_authority', referencedColumnName: 'name' },

@@ -173,6 +173,22 @@ const junctionColumnNames = (joinColumnName, inverseJoinColumnName) =>
 /** The relationships of an entity with a join table, the many-to-many ones on their owner side (shouldWriteJoinTable of JHipster). */
 const joinTableRelationships = entity => entity.relationships.filter(relationship => relationship.shouldWriteJoinTable);
 
+/** A column of a join table, with its TypeScript in a migration. */
+const joinColumn = column => {
+  const { name, type, referencedTableName, referencedColumnName, onDelete, onUpdate } = column;
+  const code = [
+    `name: ${literal(name)}`,
+    `type: ${type}`,
+    `referencedTableName: ${literal(referencedTableName)}`,
+    `referencedColumnName: ${literal(referencedColumnName)}`,
+    onDelete && `onDelete: ${literal(onDelete)}`,
+    onUpdate && `onUpdate: ${literal(onUpdate)}`,
+  ]
+    .filter(Boolean)
+    .join(', ');
+  return { ...column, code: `{ ${code} }` };
+};
+
 /**
  * The join table of a many-to-many relationship on its owner side, the one of its @JoinTable and of its constraints
  * migration: the joinTable of JHipster, its columns named by the table of the entity and the relationship.
@@ -181,16 +197,19 @@ export const joinTable = (entity, relationship) => {
   const [joinColumnName, inverseJoinColumnName] = junctionColumnNames(`${entity.entityTableName}_id`, `${relationship.columnName}_id`);
   return {
     name: relationship.joinTable.name,
-    joinColumn: {
+    joinColumn: joinColumn({
       ...referenceColumn(joinColumnName, entity),
       referencedTableName: entity.entityTableName,
       referencedColumnName: entity.primaryKey.name,
-    },
-    inverseJoinColumn: {
+      ...foreignKeyActions(relationship),
+    }),
+    // Like the changelog of Liquibase, the foreign key of the other side has the actions of the other relationship.
+    inverseJoinColumn: joinColumn({
       ...referenceColumn(inverseJoinColumnName, relationship.otherEntity),
       referencedTableName: relationship.otherEntity.entityTableName,
       referencedColumnName: relationship.otherEntity.primaryKey.name,
-    },
+      ...foreignKeyActions(relationship.otherRelationship ?? {}),
+    }),
   };
 };
 
@@ -474,15 +493,15 @@ export const updatedConstraintsMigration = ({
  */
 export const userAuthorityJoinTable = ({ user, authority }) => ({
   name: `${user.entityTableName}_authorities_${authority.entityTableName}`,
-  joinColumn: {
+  joinColumn: joinColumn({
     ...referenceColumn(typeormCamelCase(`${user.entityTableName}_${user.primaryKey.name}`), user),
     referencedTableName: user.entityTableName,
     referencedColumnName: user.primaryKey.name,
-  },
-  inverseJoinColumn: {
+  }),
+  inverseJoinColumn: joinColumn({
     name: typeormCamelCase(`${authority.entityTableName}_name`),
     type: 'String',
     referencedTableName: authority.entityTableName,
     referencedColumnName: 'name',
-  },
+  }),
 });

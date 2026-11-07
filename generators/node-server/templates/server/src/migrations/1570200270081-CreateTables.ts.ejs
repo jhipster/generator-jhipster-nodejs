@@ -45,8 +45,8 @@ export class CreateTables1570200270081 implements MigrationInterface {
     await createJoinTable(
       queryRunner,
       '<%- nodejsUserAuthorityJoinTable.name %>',
-      { name: '<%- nodejsUserAuthorityJoinTable.joinColumn.name %>', type: <%- nodejsUserAuthorityJoinTable.joinColumn.type %>, referencedTableName: '<%- nodejsUserAuthorityJoinTable.joinColumn.referencedTableName %>', referencedColumnName: '<%- nodejsUserAuthorityJoinTable.joinColumn.referencedColumnName %>' },
-      { name: '<%- nodejsUserAuthorityJoinTable.inverseJoinColumn.name %>', type: <%- nodejsUserAuthorityJoinTable.inverseJoinColumn.type %>, referencedTableName: '<%- nodejsUserAuthorityJoinTable.inverseJoinColumn.referencedTableName %>', referencedColumnName: '<%- nodejsUserAuthorityJoinTable.inverseJoinColumn.referencedColumnName %>' },
+      <%- nodejsUserAuthorityJoinTable.joinColumn.code %>,
+      <%- nodejsUserAuthorityJoinTable.inverseJoinColumn.code %>,
     );
   <%_ } _%>
   }
