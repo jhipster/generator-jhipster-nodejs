@@ -91,7 +91,7 @@ export const serverFiles = {
         'src/config/application.yml',
         'src/common/database/pagination.entity.ts',
         'src/common/database/pagination.entity.spec.ts',
-        'src/common/database/base.entity.ts',
+        'src/common/database/abstract-auditing.entity.ts',
         'src/auth/guards/roles.guard.ts',
         'src/auth/guards/auth.guard.ts',
         'src/auth/role-type.ts',
@@ -105,7 +105,7 @@ export const serverFiles = {
         'src/common/errors/problem-details.filter.ts',
         'src/common/reference-by-id.ts',
         'src/auth/auth.service.ts',
-        'src/common/dto/base.dto.ts',
+        'src/common/dto/dto-support.ts',
         'src/main.ts',
         'src/app.config.ts',
         'src/application-config.ts',
@@ -152,12 +152,6 @@ export const serverFiles = {
       path: SERVER_NODEJS_DIR,
       condition: ctx => ctx.serviceDiscoveryConsul,
       templates: ['src/registry/consul.service.ts'],
-    },
-    {
-      path: SERVER_NODEJS_DIR,
-      // Helper of the MongoDB updates: the MongoDB driver of TypeORM ignores the update: false option.
-      condition: ctx => ctx.databaseTypeMongodb,
-      templates: ['src/common/updatable-properties.ts'],
     },
     {
       path: SERVER_NODEJS_DIR,

@@ -132,6 +132,14 @@ _%>
 
         expect(response.body.detail).toBe('Invalid sort property: unknownProperty');
     });
+
+    it('/GET all <%- entityApiUrl %> sorted on an audit field, not a property of the entity like JHipster Spring Boot', async () => {
+        const response = await request(app.getHttpServer())
+            .get('/api/<%- entityApiUrl %>?sort=createdDate,asc')
+            .expect(400);
+
+        expect(response.body.detail).toBe('Invalid sort property: createdDate');
+    });
 <%_ if (nodejsCriteria) { _%>
 
     it('/GET the count of <%- entityApiUrl %> matching the criteria, as JSON like JHipster Spring Boot', async () => {
@@ -412,14 +420,15 @@ _%>
         expect(response.body).toMatchObject({ message: 'error.idnotfound', params: '<%- entityAlertName %>' });
     });
 
+<%_ const clearedField = fields.find(field => !field.id && !field.transient && !field.fieldValidationRequired && field.fieldType !== 'byte[]' && fakeFields.some(([propertyName]) => propertyName === field.propertyName)); _%>
     it('/PATCH partial update <%- entityApiUrl %> from id', async () => {
         const response = await request(app.getHttpServer())
             .patch(`/api/<%- entityApiUrl %>/${entityMock.<%- primaryKey.name %>}`)
-            .send({ <%- primaryKey.name %>: entityMock.<%- primaryKey.name %>, lastModifiedBy: '<%- patcher %>', createdBy: null })
+            .send({ <%- primaryKey.name %>: entityMock.<%- primaryKey.name %>,<% if (clearedField) { %> <%- clearedField.propertyName %>: null,<% } %> lastModifiedBy: '<%- patcher %>' })
             .expect(200);
 
-        // The absent fields are kept, a null clears one.
-        expect(response.body).toEqual({ ...entityMock, lastModifiedBy: '<%- patcher %>', createdBy: null });
+        // The absent fields are kept<%- clearedField ? ', a null clears one' : '' %>, and a property the DTO does not declare (an audit field) is ignored.
+        expect(response.body).toEqual(<%- clearedField ? `{ ...entityMock, ${clearedField.propertyName}: null }` : 'entityMock' %>);
         expect(alertHeader(response.headers, '-alert')).toMatch(<%- enableTranslation ? `/^${frontendAppName}\\.${entityAlertName}\\.updated$/` : `/^A ${entityAlertName} is updated with identifier /` %>);
         expect(alertHeader(response.headers, '-params')).toBe(String(entityMock.<%- primaryKey.name %>));
     });
