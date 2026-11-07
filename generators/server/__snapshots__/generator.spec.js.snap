@@ -179,7 +179,7 @@ exports[`SubGenerator server of nodejs JHipster blueprint > run > should succeed
   "server/src/common/common.module.ts": {
     "stateCleared": "modified",
   },
-  "server/src/common/database/base.entity.ts": {
+  "server/src/common/database/abstract-auditing.entity.ts": {
     "stateCleared": "modified",
   },
   "server/src/common/database/column-transformers.spec.ts": {
@@ -200,7 +200,7 @@ exports[`SubGenerator server of nodejs JHipster blueprint > run > should succeed
   "server/src/common/database/pagination.entity.ts": {
     "stateCleared": "modified",
   },
-  "server/src/common/dto/base.dto.ts": {
+  "server/src/common/dto/dto-support.ts": {
     "stateCleared": "modified",
   },
   "server/src/common/errors/error-constants.ts": {

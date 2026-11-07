@@ -65,7 +65,7 @@ describe('<%- entityClass %> on the database', () => {
       imports: [AppModule],
     })
       .overrideGuard(AuthGuard)
-      // The user of the requests, which the audit fields record.
+      // The user of the requests.
       .useValue({
         canActivate: (context: ExecutionContext) => {
           context.switchToHttp().getRequest().user = { login: AUDITOR };
@@ -95,8 +95,8 @@ describe('<%- entityClass %> on the database', () => {
     const { body: stored } = await request(server).post('/api/<%- entityApiUrl %>').send(<%- spreads[entityInstance] ? `{ ...createdValues${spreads[entityInstance]} }` : 'createdValues' %>).expect(201);
     const { body: read } = await request(server).get(`/api/<%- entityApiUrl %>/${stored.<%- primaryKey.name %>}`).expect(200);
     expect(read).toMatchObject(expected(createdValues));
-    // The audit fields, of the user of the creation.
-    expect(read).toMatchObject({ createdBy: AUDITOR, lastModifiedBy: AUDITOR });
+    // Like JHipster Spring Boot, the entity is not audited: no audit field, of a related record neither.
+    expect(JSON.stringify(read)).not.toMatch(/"(createdBy|createdDate|lastModifiedBy|lastModifiedDate)"/);
 
     await request(server)
       .put(`/api/<%- entityApiUrl %>/${stored.<%- primaryKey.name %>}`)

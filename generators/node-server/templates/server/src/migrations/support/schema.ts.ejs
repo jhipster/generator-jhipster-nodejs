@@ -71,7 +71,7 @@ const tableColumn = (queryRunner: QueryRunner, migrationColumn: MigrationColumn)
   };
 };
 
-/** The audit columns of the entities extending BaseEntity: createdBy, createdDate, lastModifiedBy, lastModifiedDate. */
+/** The audit columns of the user, which extends AbstractAuditingEntity: createdBy, createdDate, lastModifiedBy, lastModifiedDate. */
 export const auditColumns = (queryRunner: QueryRunner): MigrationColumn[] => {
   const { mappedDataTypes } = queryRunner.connection.driver;
   return [

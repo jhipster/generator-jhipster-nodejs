@@ -159,7 +159,7 @@ export class <%- entityClass %>Controller {
       throw new BadRequestAlertException('A new <%- entityInstance %> cannot already have an ID', ENTITY_NAME, 'idexists');
     }
 <%_ } _%>
-    const created = await this.<%- entityInstance %>Service.save(<%- entityInstance %>DTO, req.user?.login);
+    const created = await this.<%- entityInstance %>Service.save(<%- entityInstance %>DTO);
     this.headerUtil.addEntityCreatedHeaders(req.res, ENTITY_NAME, created.<%- primaryKey.name %>);
     req.res.location(`/api/<%- entityApiUrl %>/${created.<%- primaryKey.name %>}`);
     return created;
@@ -195,7 +195,7 @@ _%>
   <%_ } _%>
     });
 <%_ } _%>
-    const updated = await this.<%- entityInstance %>Service.update(<%- entityInstance %>DTO, req.user?.login);
+    const updated = await this.<%- entityInstance %>Service.update(<%- entityInstance %>DTO);
     this.headerUtil.addEntityUpdatedHeaders(req.res, ENTITY_NAME, id);
     return updated;
   }
@@ -216,12 +216,13 @@ _%>
     // Like JHipster Spring Boot, a JSON merge patch: the given fields replace the ones of the record, a null clears
     // one, and the record is transformed and validated as the global ValidationPipe does for a PUT.
     const patched = plainToInstance(<%- dtoClass %>, { ...existing, ...<%- entityInstance %>DTO });
-    const errors = await validate(patched, { forbidUnknownValues: false });
+    // Without the properties the DTO does not declare, like the whitelist of the ValidationPipe.
+    const errors = await validate(patched, { whitelist: true, forbidUnknownValues: false });
     if (errors.length > 0) {
       // The errors of the fields, like the ValidationPipe of a PUT.
       throw new ValidationException(errors);
     }
-    const updated = await this.<%- entityInstance %>Service.update(patched, req.user?.login);
+    const updated = await this.<%- entityInstance %>Service.update(patched);
     this.headerUtil.addEntityUpdatedHeaders(req.res, ENTITY_NAME, id);
     return updated;
   }

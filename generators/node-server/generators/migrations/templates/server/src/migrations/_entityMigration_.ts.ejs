@@ -1,6 +1,6 @@
 import type { MigrationInterface, QueryRunner } from 'typeorm';
 
-import { auditColumns, createTable } from './support/schema.ts';
+import { createTable } from './support/schema.ts';
 
 /** Added the entity <%- entityClass %>. */
 export class <%- nodejsMigration.className %> implements MigrationInterface {
@@ -9,7 +9,6 @@ export class <%- nodejsMigration.className %> implements MigrationInterface {
       queryRunner,
       '<%- nodejsMigration.tableName %>',
       [
-        ...auditColumns(queryRunner),
 <%_ for (const column of nodejsMigration.columns) { _%>
         { name: '<%- column.name %>', type: <%- column.type %><% if (column.enum) { %>, enum: <%- column.enum %><% } %><% if (column.length) { %>, length: <%- column.length %><% } %><% if (column.precision) { %>, precision: <%- column.precision %>, scale: <%- column.scale %><% } %><%- column.primary ? ', primary: true' : '' %><% if (column.generated) { %>, generated: '<%- column.generated %>'<% } %><%- column.nullable ? ', nullable: true' : '' %><%- column.unique ? ', unique: true' : '' %> },
 <%_ } _%>

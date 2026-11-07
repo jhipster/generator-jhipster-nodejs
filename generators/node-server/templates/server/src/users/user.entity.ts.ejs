@@ -5,11 +5,11 @@ import {
 <%_ } _%>, Entity, Column
 <%_ if (databaseType !== 'mongodb') { _%>, ManyToMany, JoinTable 
 <%_ } _%> } from 'typeorm';
-import { BaseEntity } from '../common/database/base.entity.ts';
+import { AbstractAuditingEntity } from '../common/database/abstract-auditing.entity.ts';
 import { Exclude } from 'class-transformer';
 
 @Entity('<%- jhiTablePrefix %>_user')
-export class <%- user.persistClass %> extends BaseEntity {
+export class <%- user.persistClass %> extends AbstractAuditingEntity {
 
 <%_ if (databaseTypeMongodb) { _%>
   @ObjectIdColumn({ name: '_<%- user.primaryKey.name %>' })
