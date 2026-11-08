@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it } from 'expect-node';
 
 import { uniqueSamples } from './test-samples.js';
 

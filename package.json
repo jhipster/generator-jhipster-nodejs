@@ -48,9 +48,8 @@
     "prettier-format": "prettier --write \"{,**/}*.{md,json,yml,html,cjs,mjs,js,cts,mts,ts,tsx,css,scss,vue,java}\"",
     "sonar:scanner": "sonar-scanner",
     "pretest": "npm run prettier-check && npm run lint",
-    "test": "vitest run",
-    "update-snapshot": "vitest run --update",
-    "vitest": "vitest"
+    "test": "exnode --forbid-only",
+    "update-snapshot": "exnode --update-snapshot"
   },
   "dependencies": {
     "chalk": "^5.3.0",
@@ -64,12 +63,12 @@
     "eslint-config-prettier": "10.1.8",
     "eslint-plugin-ejs-templates": "0.6.1",
     "eslint-plugin-prettier": "5.5.6",
+    "expect-node": "0.6.0",
     "globals": "17.12.0",
     "jiti": "2.7.0",
     "prettier": "3.9.6",
     "prettier-plugin-packagejson": "3.0.2",
     "sonarqube-scanner": "5.0.1",
-    "vitest": "5.0.5",
     "yeoman-test": ">=10"
   },
   "engines": {

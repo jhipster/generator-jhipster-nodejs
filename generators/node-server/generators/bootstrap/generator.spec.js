@@ -1,4 +1,4 @@
-import { beforeAll, describe, expect, it } from 'vitest';
+import { beforeAll, describe, expect, it } from 'expect-node';
 
 import { defaultHelpers as helpers, result } from 'generator-jhipster/testing';
 
