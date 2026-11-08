@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { TypeOrmModule } from '@nestjs/typeorm';
-<%_ if (generateUserManagement) { _%>
+<%_ if (generateUserRegistration) { _%>
 import { ScheduleModule } from '@nestjs/schedule';
 <%_ } _%>
 import { AuthModule } from './auth/auth.module.ts';
@@ -48,7 +48,7 @@ import { ServeStaticModule } from '@nestjs/serve-static';
         exclude: /^\/(?:<%- spaExcludedPrefixes.map(prefix => prefix.replace('/', '\\/')).join('|') %>)|\./,
       }),
 <%_ } _%>
-<%_ if (generateUserManagement) { _%>
+<%_ if (generateUserRegistration) { _%>
     // The scheduled tasks, like the removal of the users not activated (@Cron of UserService).
     ScheduleModule.forRoot(),
 <%_ } _%>

@@ -22,7 +22,7 @@ import { Authority } from '../users/authority.entity.ts';
 <%_ if (generateBuiltInUserEntity) { _%>
 import { UserService } from '../users/user.service.ts';
   <%_ if (generateUserManagement) { _%>
-import { EmailAlreadyUsedException, InvalidPasswordException, LoginAlreadyUsedException } from '../common/errors/problem.exception.ts';
+import { EmailAlreadyUsedException, InvalidPasswordException<%- generateUserRegistration ? ', LoginAlreadyUsedException' : '' %> } from '../common/errors/problem.exception.ts';
   <%_ } _%>
 <%_ } _%>
 import { <%- userLoginVmClass %> } from '../users/dto/user.dto.ts';
@@ -186,6 +186,7 @@ export class AuthService {
     await this.userService.save(userFind, SYSTEM_AUDITOR, true);
   }
 
+  <%_ if (generateUserRegistration) { _%>
   /**
    * Like JHipster Spring Boot, registers a user not activated, with the fields of the registration only, its login and
    * mail in lower case, and an activation key (sent by mail): the not activated user of the same login or mail, if any,
@@ -241,6 +242,7 @@ export class AuthService {
     await this.userService.delete(existingUser);
     return true;
   }
+  <%_ } _%>
 
   async updateUserSettings(userLogin: string, newUserInfo: <%- user.dtoClass %>) : Promise<<%- user.dtoClass %>> {
     const userFind = await this.userService.findByFields({ where: { login: userLogin } });

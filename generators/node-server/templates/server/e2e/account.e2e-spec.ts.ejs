@@ -16,7 +16,9 @@ describe('Account', () => {
     let app: INestApplication;
     let service: UserService;
     let authService: AuthService;
+<%_ if (generateUserRegistration) { _%>
     let sendActivationEmail: MockInstance<MailService['sendActivationEmail']>;
+<%_ } _%>
     let sendPasswordResetMail: MockInstance<MailService['sendPasswordResetMail']>;
 
     const testUserDTO: <%- user.dtoClass %> = {
@@ -67,11 +69,14 @@ describe('Account', () => {
         authService = moduleFixture.get<AuthService>(AuthService);
         // The mails are not sent, the tests check the users they are for.
         const mailService = moduleFixture.get<MailService>(MailService);
+<%_ if (generateUserRegistration) { _%>
         sendActivationEmail = vi.spyOn(mailService, 'sendActivationEmail').mockResolvedValue();
+<%_ } _%>
         sendPasswordResetMail = vi.spyOn(mailService, 'sendPasswordResetMail').mockResolvedValue();
         userAuthenticated = await service.save(testUserAuthenticated, testUserAuthenticated.login, true);
     });
 
+<%_ if (generateUserRegistration) { _%>
     it('/POST register new user', async () => {
         const createdUser: <%- user.dtoClass %> = (
             await request(app.getHttpServer())
@@ -193,7 +198,16 @@ describe('Account', () => {
             .get('/api/activate')
             .expect(500);
     });
+<%_ } else { _%>
+    it('/POST register is not found without the registration of the users', async () => {
+        await request(app.getHttpServer()).post('/api/register').send(testUserDTO).expect(404);
+        expect(await service.findByFields({ where: { login: testUserDTO.login.toLowerCase() } })).toBeFalsy();
+    });
 
+    it('/GET activate is not found', async () => {
+        await request(app.getHttpServer()).get('/api/activate').query({ key: 'key' }).expect(404);
+    });
+<%_ } _%>
 
     it('/GET authenticate', async () => {
         const loginValue: any = (await request(app.getHttpServer())

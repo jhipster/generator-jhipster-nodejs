@@ -1,9 +1,9 @@
-import { Injectable<%- generateUserManagement ? ', Logger' : '' %> } from '@nestjs/common';
-<%_ if (generateUserManagement) { _%>
+import { Injectable<%- generateUserRegistration ? ', Logger' : '' %> } from '@nestjs/common';
+<%_ if (generateUserRegistration) { _%>
 import { Cron } from '@nestjs/schedule';
 <%_ } _%>
 import { InjectRepository } from '@nestjs/typeorm';
-import { EntityMetadata, FindManyOptions, FindOneOptions, <%- (generateUserManagement && !typeormRelationsSupport) ? 'FindOptionsWhere, ' : '' %><%- (generateUserManagement && typeormRelationsSupport) ? 'IsNull, LessThan, Not, ' : '' %>Repository } from 'typeorm';
+import { EntityMetadata, FindManyOptions, FindOneOptions, <%- (generateUserRegistration && !typeormRelationsSupport) ? 'FindOptionsWhere, ' : '' %><%- (generateUserRegistration && typeormRelationsSupport) ? 'IsNull, LessThan, Not, ' : '' %>Repository } from 'typeorm';
 import { <%- user.persistClass %> } from './user.entity.ts';
 import { PublicUserDTO, <%- user.dtoClass %> } from './dto/user.dto.ts';
 import { UserMapper } from './user.mapper.ts';
@@ -20,7 +20,7 @@ const relations = { authorities: true } as const;
 <%_ } _%>
 @Injectable()
 export class UserService {
-<%_ if (generateUserManagement) { _%>
+<%_ if (generateUserRegistration) { _%>
     logger = new Logger('UserService');
 
 <%_ } _%>
@@ -107,7 +107,7 @@ export class UserService {
         return UserMapper.fromEntityToDTO(result);
     }
 
-<%_ if (generateUserManagement) { _%>
+<%_ if (generateUserRegistration) { _%>
     /**
      * Like JHipster Spring Boot, removes every day, at 01:00, the users registered more than 3 days ago and still not
      * activated: their login and mail are free again.

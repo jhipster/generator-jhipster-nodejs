@@ -624,7 +624,11 @@ export default class extends BaseApplicationGenerator {
       async writingMailTemplates({ application }) {
         if (!application.generateUserManagement) return;
         // The mail templates of JHipster Spring Boot (Thymeleaf) converted to the Handlebars templates of the mail module.
-        for (const template of ['activationEmail', 'creationEmail', 'passwordResetEmail']) {
+        const templates = ['creationEmail', 'passwordResetEmail'];
+        if (application.generateUserRegistration) {
+          templates.unshift('activationEmail');
+        }
+        for (const template of templates) {
           const destination = `${SERVER_NODEJS_SRC_DIR}/src/templates/mail/${template}.hbs`;
           await this.writeFile(
             this.fetchFromInstalledJHipster(`spring-boot/templates/src/main/resources/templates/mail/${template}.html.ejs`),

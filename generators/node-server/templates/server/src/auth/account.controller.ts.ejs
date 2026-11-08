@@ -1,13 +1,13 @@
 import { 
-<%_ if (generateUserManagement) { _%> Body, Post, Query, 
-<%_ } _%>UseGuards, Controller, Get, HttpCode, Logger, Req, UseInterceptors, ClassSerializerInterceptor, InternalServerErrorException } from '@nestjs/common';
+<%_ if (generateUserManagement) { _%> Body, Post, <%- generateUserRegistration ? 'Query, ' : '' %>
+<%_ } _%>UseGuards, Controller, Get, HttpCode, Logger, Req, UseInterceptors, ClassSerializerInterceptor<%- generateUserRegistration ? ', InternalServerErrorException' : '' %> } from '@nestjs/common';
 import { AuthGuard } from './index.ts';
 <%_ if (generateUserManagement) { _%>
 import { PasswordChangeDTO } from './dto/password-change.dto.ts';
 import { KeyAndPasswordDTO } from './dto/key-and-password.dto.ts';
 import { MailService } from '../mail/mail.service.ts';
 <%_ } _%>
-import { <% if (generateUserManagement) { %>Managed<%- userLoginVmClass %>, <% } %><%- userLoginVmClass %> } from '../users/dto/user.dto.ts';
+import { <% if (generateUserRegistration) { %>Managed<%- userLoginVmClass %>, <% } %><%- userLoginVmClass %> } from '../users/dto/user.dto.ts';
 import { ApiBearerAuth, ApiTags, ApiResponse, ApiOperation } from '@nestjs/swagger';
 import { AuthService } from './auth.service.ts';
 <%_ if (authenticationTypeOauth2) { _%>
@@ -26,7 +26,7 @@ export class AccountController {
     private readonly mailService: MailService,
 <%_ } _%>
   ) {}
-<%_ if (generateUserManagement) { _%>
+<%_ if (generateUserRegistration) { _%>
 
   @Post('/register')
   @ApiOperation({ summary: 'Register user' })
@@ -54,6 +54,8 @@ export class AccountController {
       throw new InternalServerErrorException('No user was found for this activation key');
     }
   }
+<%_ } _%>
+<%_ if (generateUserManagement) { _%>
 
   @Get('/authenticate')
   @ApiBearerAuth()

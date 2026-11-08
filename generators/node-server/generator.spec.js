@@ -222,6 +222,41 @@ describe('SubGenerator node-server of nodejs JHipster blueprint', () => {
     });
   });
 
+  describe('with skipUserRegistration', () => {
+    beforeAll(async function () {
+      await helpers
+        .run(SUB_GENERATOR_NAMESPACE)
+        .withJHipsterConfig({ skipClient: true, skipUserRegistration: true })
+        .withOptions({
+          ignoreNeedlesError: true,
+        })
+        .withJHipsterGenerators()
+        .withConfiguredBlueprint()
+        .withBlueprintConfig({});
+    });
+
+    it('should not write the registration nor the activation of an account, like JHipster Spring Boot', () => {
+      result.assertNoFileContent('server/src/auth/account.controller.ts', "@Post('/register')");
+      result.assertNoFileContent('server/src/auth/account.controller.ts', "@Get('/activate')");
+      result.assertNoFileContent('server/src/auth/auth.service.ts', 'registerNewUser');
+      result.assertNoFileContent('server/src/auth/auth.service.ts', 'activateRegistration');
+      result.assertNoFileContent('server/src/mail/mail.service.ts', 'sendActivationEmail');
+      result.assertNoFile('server/src/templates/mail/activationEmail.hbs');
+    });
+
+    it('should not remove the users not activated, with no scheduled task', () => {
+      result.assertNoFileContent('server/src/users/user.service.ts', 'removeNotActivatedUsers');
+      result.assertNoFileContent('server/src/app.module.ts', 'ScheduleModule');
+      const { dependencies } = result.fs.readJSON(join(result.cwd, 'server/package.json'));
+      expect(dependencies).not.toHaveProperty('@nestjs/schedule');
+    });
+
+    it('should keep the other mails and pages of an account', () => {
+      result.assertFile(['server/src/templates/mail/creationEmail.hbs', 'server/src/templates/mail/passwordResetEmail.hbs']);
+      result.assertFileContent('server/src/auth/account.controller.ts', "@Post('/account/reset-password/init')");
+    });
+  });
+
   describe('without client', () => {
     beforeAll(async function () {
       await helpers
