@@ -23,6 +23,10 @@ export default class extends BaseApplicationGenerator {
           clientDistDir: `${SERVER_NODEJS_SRC_DIR}/dist/static/`,
         });
       },
+      adminUi({ applicationDefaults }) {
+        // JHipster writes the admin screens with a converter of the backend, which client:nodejs gives.
+        applicationDefaults({ withAdminUi: ({ applicationTypeMicroservice }) => !applicationTypeMicroservice });
+      },
     });
   }
 }

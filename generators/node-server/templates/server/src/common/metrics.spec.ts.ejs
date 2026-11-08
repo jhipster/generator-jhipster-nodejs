@@ -8,26 +8,26 @@ describe('MetricsService', () => {
     metricsService.recordRequest('GET', '/api/regions/:id', 200, 30);
     metricsService.recordRequest('POST', '/api/regions', 400, 5);
 
-    const metrics = metricsService.jhipsterMetrics();
+    const metrics = metricsService.nodeMetrics();
 
-    expect(metrics['http.server.requests']).toEqual({
+    expect(metrics.requests).toEqual({
       all: { count: 3 },
       percode: { '200': { max: 30, mean: 20, count: 2 }, '400': { max: 5, mean: 5, count: 1 } },
     });
-    expect(metrics.services).toEqual({
+    expect(metrics.endpoints).toEqual({
       '/api/regions/:id': { GET: { max: 30, mean: 20, count: 2 } },
       '/api/regions': { POST: { max: 5, mean: 5, count: 1 } },
     });
   });
 
   it('should give the memory of the heap and the processor use', () => {
-    const metrics = new MetricsService().jhipsterMetrics();
+    const metrics = new MetricsService().nodeMetrics();
 
-    expect(metrics.jvm.heap.used).toBeGreaterThan(0);
-    expect(metrics.jvm.heap.max).toBeGreaterThanOrEqual(metrics.jvm.heap.used);
-    expect(metrics.processMetrics['system.cpu.count']).toBeGreaterThan(0);
-    expect(metrics.processMetrics['process.cpu.usage']).toBeGreaterThanOrEqual(0);
-    expect(metrics.processMetrics['process.start.time']).toBeLessThanOrEqual(Date.now());
+    expect(metrics.memory.heap.used).toBeGreaterThan(0);
+    expect(metrics.memory.heap.max).toBeGreaterThanOrEqual(metrics.memory.heap.used);
+    expect(metrics.process.cpuCount).toBeGreaterThan(0);
+    expect(metrics.process.cpuUsage).toBeGreaterThanOrEqual(0);
+    expect(metrics.process.startTime).toBeLessThanOrEqual(Date.now());
   });
 
   it('should give the requests in the format of Prometheus, like the timer of Micrometer', async () => {

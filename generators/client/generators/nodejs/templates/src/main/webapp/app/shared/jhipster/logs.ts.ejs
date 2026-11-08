@@ -1,0 +1,32 @@
+import { type Level, type Log } from './logs.model';
+
+/** A logger of the loggers endpoint of the NodeJS server. */
+export interface Logger {
+  configuredLevel: Level | null;
+  effectiveLevel: Level;
+}
+
+/** The response of the loggers endpoint of the NodeJS server. */
+export interface LoggersResponse {
+  levels: Level[];
+  loggers: Record<string, Logger>;
+}
+
+/** The endpoint of the logs page, the level of a logger is changed by a POST to its name under it. */
+export const loggersEndpoint = 'management/loggers';
+
+/** A request to the backend, its url is relative to the one of the API. */
+export interface BackendRequest {
+  url: string;
+  body: unknown;
+}
+
+/** The request that changes the level of a logger. */
+export const toLevelChange = (name: string, level: Level): BackendRequest => ({
+  url: `${loggersEndpoint}/${name}`,
+  body: { configuredLevel: level },
+});
+
+/** Converts the response of the loggers endpoint to the rows of the logs page. */
+export const toLogs = (response: unknown): Log[] =>
+  Object.entries((response as LoggersResponse).loggers).map(([name, { effectiveLevel }]) => ({ name, level: effectiveLevel }));

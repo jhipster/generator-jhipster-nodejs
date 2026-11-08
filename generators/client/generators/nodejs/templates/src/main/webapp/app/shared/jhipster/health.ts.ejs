@@ -1,0 +1,36 @@
+import { type HealthCheck } from './health.model';
+import { type Label } from './label';
+
+/** A component of the response of the health endpoint of the NodeJS server, a check of @nestjs/terminus. */
+export interface HealthComponent {
+  status: string;
+}
+
+/** The response of the health endpoint of the NodeJS server. */
+export interface HealthResponse {
+  status: string;
+  components?: Record<string, HealthComponent>;
+}
+
+/** The endpoint of the health page. */
+export const healthEndpoint = 'management/health';
+
+<%_ if (enableTranslation) { _%>
+const toIndicatorLabel = (text: string): Label => ({ text, translationKey: `health.indicator.${text}` });
+const toStatusLabel = (text: string): Label => ({ text, translationKey: `health.status.${text}` });
+<%_ } else { _%>
+const indicatorTexts: Record<string, string> = __jhiTransformTranslateStringify__('health.indicator');
+const statusTexts: Record<string, string> = __jhiTransformTranslateStringify__('health.status');
+
+const toIndicatorLabel = (text: string): Label => ({ text: indicatorTexts[text] ?? text });
+const toStatusLabel = (text: string): Label => ({ text: statusTexts[text] ?? text });
+<%_ } _%>
+
+/** Converts the response of the health endpoint to the rows of the health page. */
+export const toHealthChecks = (response: unknown): HealthCheck[] =>
+  Object.entries((response as HealthResponse).components ?? {}).map(([id, { status }]) => ({
+    id,
+    label: toIndicatorLabel(id),
+    status: toStatusLabel(status),
+    healthy: status === 'UP',
+  }));

@@ -1,0 +1,25 @@
+import { describe, expect, it } from 'vitest';
+
+import { toLevelChange, toLogs } from './logs';
+
+describe('logs', () => {
+  describe('toLogs', () => {
+    it('should give the name and the effective level of each logger', () => {
+      const logs = toLogs({
+        levels: ['INFO', 'DEBUG'],
+        loggers: { ROOT: { configuredLevel: null, effectiveLevel: 'INFO' }, app: { configuredLevel: 'DEBUG', effectiveLevel: 'DEBUG' } },
+      });
+
+      expect(logs).toEqual([
+        { name: 'ROOT', level: 'INFO' },
+        { name: 'app', level: 'DEBUG' },
+      ]);
+    });
+  });
+
+  describe('toLevelChange', () => {
+    it('should post the configured level to the logger, like the loggers endpoint of the NodeJS server takes it', () => {
+      expect(toLevelChange('app', 'ERROR')).toEqual({ url: 'management/loggers/app', body: { configuredLevel: 'ERROR' } });
+    });
+  });
+});

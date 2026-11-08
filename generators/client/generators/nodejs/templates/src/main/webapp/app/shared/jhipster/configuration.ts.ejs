@@ -1,0 +1,51 @@
+import { type ConfigurationSection } from './configuration.model';
+
+/** The response of the configprops endpoint of the NodeJS server: the properties of the application by prefix. */
+export interface ConfigProps {
+  prefixes: Record<string, Record<string, unknown>>;
+}
+
+/** The response of the env endpoint of the NodeJS server: its sources of configuration, the highest precedence first. */
+export interface Env {
+  activeProfiles: string[];
+  sources: { name: string; properties: Record<string, unknown> }[];
+}
+
+/** The endpoints of the configuration page, their responses given to toConfiguration in this order. */
+export const configurationEndpoints = ['management/configprops', 'management/env'];
+
+const readableValue = (value: unknown): string => (typeof value === 'string' ? value : JSON.stringify(value));
+
+const toPrefixesSection = ({ prefixes }: ConfigProps): ConfigurationSection => ({
+  label: { text: 'Application configuration' },
+<%_ if (enableTranslation) { _%>
+  columns: [
+    { text: 'Prefix', translationKey: 'configuration.table.prefix' },
+    { text: 'Properties', translationKey: 'configuration.table.properties' },
+  ],
+<%_ } else { _%>
+  columns: [
+    { text: __jhiTransformTranslateStringify__('configuration.table.prefix') },
+    { text: __jhiTransformTranslateStringify__('configuration.table.properties') },
+  ],
+<%_ } _%>
+  rows: Object.entries(prefixes)
+    .map(([key, properties]) => ({
+      key,
+      properties: Object.entries(properties).map(([name, value]) => ({ key: name, value: readableValue(value) })),
+    }))
+    .sort((a, b) => a.key.localeCompare(b.key)),
+});
+
+/** Converts the responses of the configprops and env endpoints to the tables of the configuration page. */
+export const toConfiguration = (responses: unknown[]): ConfigurationSection[] => {
+  const [configProps, { sources }] = responses as [ConfigProps, Env];
+  return [
+    toPrefixesSection(configProps),
+    ...sources.map(({ name, properties }): ConfigurationSection => ({
+      label: { text: name },
+      columns: [{ text: 'Property' }, { text: 'Value' }],
+      rows: Object.entries(properties).map(([key, value]) => ({ key, value: readableValue(value) })),
+    })),
+  ];
+};

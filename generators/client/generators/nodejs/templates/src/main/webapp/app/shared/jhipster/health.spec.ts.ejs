@@ -1,0 +1,16 @@
+import { describe, expect, it } from 'vitest';
+
+import { toHealthChecks } from './health';
+
+describe('health', () => {
+  it('should give no check for a response without components', () => {
+    expect(toHealthChecks({ status: 'UP' })).toEqual([]);
+  });
+
+  it('should give a row for each component', () => {
+    const checks = toHealthChecks({ status: 'DOWN', components: { db: { status: 'DOWN' } } });
+
+    expect(checks).toHaveLength(1);
+    expect(checks[0]).toMatchObject({ id: 'db', healthy: false });
+  });
+});

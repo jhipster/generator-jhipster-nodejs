@@ -1,0 +1,39 @@
+import { describe, expect, it } from 'vitest';
+
+import { type MetricsResponse, toMetrics } from './metrics';
+
+const metrics: MetricsResponse = {
+  memory: {
+    heap: { used: 1048576, committed: 2097152, max: 4194304 },
+    old_space: { used: 1048576, committed: 2097152, max: 2097152 },
+  },
+  requests: { all: { count: 2 }, percode: { '200': { max: 12, mean: 5, count: 2 } } },
+  endpoints: { '/api/things': { GET: { max: 12, mean: 5, count: 2 } } },
+  process: { cpuUsage: 0.5, systemCpuUsage: 0.25, cpuCount: 8, loadAverage: 1.5, startTime: 0, uptime: 90000 },
+};
+
+describe('metrics', () => {
+  it('should give the sections of the runtime, the requests and the endpoints', () => {
+    expect(toMetrics([metrics]).map(section => section.id)).toEqual(['nodeMetrics', 'requestMetrics', 'endpointsRequestsMetrics']);
+  });
+
+  it('should leave out the requests and the endpoints while there are none', () => {
+    const sections = toMetrics([{ ...metrics, requests: { all: { count: 0 }, percode: {} }, endpoints: {} }]);
+
+    expect(sections.map(section => section.id)).toEqual(['nodeMetrics']);
+  });
+
+  it('should give the heap, with the spaces of V8 in its details', () => {
+    const [{ items, details }] = toMetrics([metrics])[0].blocks;
+
+    expect(items.map(item => item.label.text)).toEqual(['heap']);
+    expect(details?.items).toEqual([{ title: 'old_space', value: '50%', status: 'success', lines: [], cells: ['1M', '2M', '2M'] }]);
+  });
+
+  it('should show the memory and the process', () => {
+    const [memory, process] = toMetrics([metrics])[0].blocks;
+
+    expect(memory.items[0]).toMatchObject({ value: '1M / 4M', note: 'Committed: 2M', gauge: { percent: 25 } });
+    expect(process.items[0]).toMatchObject({ label: { text: 'Uptime' }, value: '1 minute 30 seconds' });
+  });
+});
