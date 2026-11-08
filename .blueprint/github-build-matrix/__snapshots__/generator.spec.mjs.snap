@@ -240,6 +240,7 @@ exports[`generator - github-build-matrix > with react > should match matrix valu
       "generatorOptions": {
         "authenticationType": "jwt",
         "clientFramework": "react",
+        "skipUserRegistration": true,
       },
       "java-version": "21",
       "job-name": "monolith-react-jwt-jdl",
@@ -349,6 +350,7 @@ exports[`generator - github-build-matrix > with react > should match matrix valu
       "generatorOptions": {
         "clientFramework": "react",
         "prodDatabaseType": "mongodb",
+        "skipUserRegistration": true,
       },
       "java-version": "21",
       "job-name": "monolith-react-mongodb-prod-jdl",

@@ -63,9 +63,10 @@ export const prepareSampleEntry = sampleData => {
       'sample-file': sampleFile,
       'sample-folder': 'samples/',
       'sample-type': 'jdl',
-      generatorOptions,
       ...(databaseType === 'mongodb' ? { os: MONGODB_RUNNER_OS } : {}),
       ...data,
+      // The options of the sample over the ones of its name.
+      generatorOptions: { ...generatorOptions, ...data.generatorOptions },
     },
   ];
 };
