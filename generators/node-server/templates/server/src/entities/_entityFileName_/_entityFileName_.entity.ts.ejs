@@ -17,6 +17,9 @@ import {
 <%_ if (nodejsCriteria) { _%>
 import { Filterable } from '../../common/database/criteria.ts';
 <%_ } _%>
+<%_ if (nodejsAnyNotSortableField) { _%>
+import { NotSortable } from '../../common/sortable-properties.ts';
+<%_ } _%>
 <%_ if (nodejsColumnTransformers.length > 0) { _%>
 import { <%- nodejsColumnTransformers.map(name => `${name}Transformer`).join(', ') %> } from '../../common/database/column-transformers.ts';
 <%_ } _%>
@@ -99,6 +102,9 @@ export class <%- persistClass %> {
   <%_ if (nodejsCriteria?.decorators[fieldName]) { _%>
     <%- nodejsCriteria.decorators[fieldName] %>
   <%_ } _%>
+  <%_ if (!field.fieldSupportsSortBy) { _%>
+    @NotSortable()
+  <%_ } _%>
     <%- fieldName %><%- field.fieldValidationRequired ? '!' : '?' %>: <%- field.nodejsFieldType %>;
 
   <%_ if ((fieldType === 'byte[]' || fieldType === 'ByteBuffer') && fieldTypeBlobContent !== 'text') { _%>
@@ -124,6 +130,9 @@ export class <%- persistClass %> {
     <%_ if (nodejsCriteria?.decorators[relationshipFieldName]) { _%>
     <%- nodejsCriteria.decorators[relationshipFieldName] %>
     <%_ } _%>
+    <%_ if (relationship.notSortable) { _%>
+    @NotSortable()
+    <%_ } _%>
     <%- relationshipFieldName %><%- relationship.relationshipRequired ? '!' : '?' %>: Relation<<%- otherEntityClass %>>;
 
   <%_ } else if (relationship.relationshipManyToMany) { _%>
@@ -146,6 +155,9 @@ export class <%- persistClass %> {
     <%_ } _%>
     <%_ if (nodejsCriteria?.decorators[relationshipFieldName]) { _%>
     <%- nodejsCriteria.decorators[relationshipFieldName] %>
+    <%_ } _%>
+    <%_ if (relationship.notSortable) { _%>
+    @NotSortable()
     <%_ } _%>
     <%- relationshipFieldName %><%- relationship.relationshipRequired ? '!' : '?' %>: Relation<<%- otherEntityClass %>>;
 

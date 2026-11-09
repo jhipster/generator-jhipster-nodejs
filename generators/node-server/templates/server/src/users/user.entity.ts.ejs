@@ -7,6 +7,7 @@ import {
 <%_ } _%> } from 'typeorm';
 import { AbstractAuditingEntity } from '../common/database/abstract-auditing.entity.ts';
 import { Exclude } from 'class-transformer';
+import { NotSortable } from '../common/sortable-properties.ts';
 
 @Entity('<%- jhiTablePrefix %>_user')
 export class <%- user.persistClass %> extends AbstractAuditingEntity {
@@ -46,11 +47,13 @@ export class <%- user.persistClass %> extends AbstractAuditingEntity {
     type: "varchar"
   })
   @Exclude()
+  @NotSortable()
   password!: string;
 <%_ } else { _%>
   // The identity provider authenticates the users: no password of their own, like JHipster Spring Boot with OAuth2.
   @Column({ type: 'varchar', nullable: true })
   @Exclude()
+  @NotSortable()
   password?: string;
 <%_ } _%>
   @Column({ nullable: true })
@@ -59,10 +62,13 @@ export class <%- user.persistClass %> extends AbstractAuditingEntity {
   // with this class (the password-reset key would let anyone set its password).
   @Column({ nullable: true })
   @Exclude()
+  @NotSortable()
   activationKey?: string;
   @Column({ nullable: true })
   @Exclude()
+  @NotSortable()
   resetKey?: string;
   @Column({ nullable: true })
+  @NotSortable()
   resetDate?: Date;
 }

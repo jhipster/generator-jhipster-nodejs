@@ -33,6 +33,7 @@ import {
   primaryKeyColumn,
   serverEnumInfo,
   thymeleafMailToHandlebars,
+  toOneSortExample,
   userAuthorityJoinTable,
 } from './support/index.js';
 
@@ -473,12 +474,18 @@ export default class extends BaseApplicationGenerator {
 
   get [BaseApplicationGenerator.DEFAULT]() {
     return this.asDefaultTaskGroup({
-      prepareColumnTransformers({ entities }) {
+      prepareColumnTransformers({ application, entities }) {
         // The transformers the columns of an entity use, imported by its entity.
         for (const entity of entities.filter(entity => !entity.skipServer)) {
           entity.nodejsColumnTransformers = [...new Set(entity.fields.map(field => field.nodejsColumnTransformer).filter(Boolean))];
           // The helpers of the column types chosen at runtime the columns of an entity use.
           entity.nodejsColumnTypeImports = [...new Set(entity.fields.flatMap(field => field.nodejsColumnTypeImports ?? []))];
+          entity.nodejsAnyNotSortableField =
+            // The columns the lists of JHipster do not sort by (fieldSupportsSortBy), marked @NotSortable.
+            entity.fields.some(field => !field.id && !field.fieldSupportsSortBy) ||
+            entity.relationships.some(relationship => relationship.notSortable && !relationship.collection);
+          // The sort by a column of a relationship to one the tests make.
+          entity.nodejsSortExample = application.databaseTypeSql ? toOneSortExample(entity) : undefined;
         }
       },
       prepareAuthorityAlertName({ application }) {

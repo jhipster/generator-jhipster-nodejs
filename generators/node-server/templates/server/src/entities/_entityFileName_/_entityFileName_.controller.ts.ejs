@@ -27,12 +27,6 @@ import { Request } from '../../common/request.ts';
 import { BadRequestAlertException, ValidationException } from '../../common/errors/problem.exception.ts';
 
 const ENTITY_NAME = '<%- entityAlertName %>';
-<%_ const sortLabels = relationships
-      .filter(relationship => relationship.ownerSide && !relationship.collection && relationship.otherEntityField)
-      .map(relationship => `${relationship.propertyName}: '${relationship.otherEntityField}'`);
-_%>
-/** The label of each relationship to one, the other field a list can be sorted on besides the id. */
-const SORT_LABELS: Record<string, string> = { <%- sortLabels.join(', ') %> };
 
 @Controller('api/<%- entityApiUrl %>')
 @UseGuards(AuthGuard, RolesGuard)
@@ -73,7 +67,7 @@ export class <%- entityClass %>Controller {
       req.query.page,
       req.query.size,
       req.query.sort ?? '<%- primaryKey.name %>,ASC',
-      property => isSortableProperty(this.<%- entityInstance %>Service.metadata, property, { labels: SORT_LABELS }),
+      property => isSortableProperty(this.<%- entityInstance %>Service.metadata, property),
     );
 <%_ if (pagination === 'no') { _%>
     // Like JHipster Spring Boot, an entity without pagination lists all its records, without the pagination headers.
