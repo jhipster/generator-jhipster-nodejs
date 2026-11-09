@@ -83,6 +83,9 @@ exports[`SubGenerator server of nodejs JHipster blueprint > run > should succeed
   "server/e2e/management.e2e-spec.ts": {
     "stateCleared": "modified",
   },
+  "server/e2e/registration.e2e-spec.ts": {
+    "stateCleared": "modified",
+  },
   "server/e2e/samples/foo.test-samples.ts": {
     "stateCleared": "modified",
   },
@@ -168,6 +171,12 @@ exports[`SubGenerator server of nodejs JHipster blueprint > run > should succeed
     "stateCleared": "modified",
   },
   "server/src/auth/payload.interface.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/auth/registration.controller.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/auth/registration.service.ts": {
     "stateCleared": "modified",
   },
   "server/src/auth/role-type.ts": {

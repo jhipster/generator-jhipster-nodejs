@@ -53,11 +53,13 @@ export class MailService {
     this.defaultMessages = parseProperties(readFileSync(path.join(i18nFolder, 'messages.properties'), 'utf8'));
   }
 
+<%_ if (generateUserRegistration) { _%>
   async sendActivationEmail(user: <%- user.dtoClass %>): Promise<void> {
     this.logger.debug(`Sending activation email to '${user.email}'`);
     await this.sendEmailFromTemplate(user, 'activationEmail', 'email.activation.title');
   }
 
+<%_ } _%>
   async sendCreationEmail(user: <%- user.dtoClass %>): Promise<void> {
     this.logger.debug(`Sending creation email to '${user.email}'`);
     await this.sendEmailFromTemplate(user, 'creationEmail', 'email.activation.title');

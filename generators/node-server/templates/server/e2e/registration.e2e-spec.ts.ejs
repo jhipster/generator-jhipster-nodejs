@@ -1,0 +1,219 @@
+import { afterEach, beforeEach, describe, expect, it, type MockInstance, vi } from 'vitest';
+import { Test, TestingModule } from '@nestjs/testing';
+import request from 'supertest';
+import { AppModule } from '../src/app.module.ts';
+import { configureApp } from '../src/app.config.ts';
+import { ExecutionContext, INestApplication } from '@nestjs/common';
+<%_ if (databaseTypeMongodb) { _%>
+import { getRepositoryToken } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { User } from '../src/users/user.entity.ts';
+<%_ } _%>
+import { AuthGuard } from '../src/auth/guards/auth.guard.ts';
+import { RolesGuard } from '../src/auth/guards/roles.guard.ts';
+import { RegistrationService } from '../src/auth/registration.service.ts';
+import { <%- user.dtoClass %> } from '../src/users/dto/user.dto.ts';
+import { UserService } from '../src/users/user.service.ts';
+import { MailService } from '../src/mail/mail.service.ts';
+
+describe('Registration', () => {
+    let app: INestApplication;
+    let service: UserService;
+    let registrationService: RegistrationService;
+    let sendActivationEmail: MockInstance<MailService['sendActivationEmail']>;
+<%_ if (databaseTypeMongodb) { _%>
+    let userRepository: Repository<User>;
+<%_ } _%>
+
+    const testUserDTO: <%- user.dtoClass %> = {
+        login: 'userTestLogin',
+        email: 'usertest@localhost.it',
+        password: 'testPassword',
+    };
+
+    // Saved before each test, with the id the database gives it: the user whose login and mail are already used.
+    const testUserAuthenticated: any = {
+        login: 'userlogged',
+        email: 'userlogged@localhost.it',
+        password: 'userloggedPassword',
+        activated: true
+    };
+
+    let userAuthenticated: <%- user.dtoClass %>;
+
+    const authGuardMock = { canActivate: (context: ExecutionContext): any => {
+        const req = context.switchToHttp().getRequest();
+        req.user = userAuthenticated;
+        return true;
+    },
+    };
+
+    const rolesGuardMock = { canActivate: (): any => true };
+
+    beforeEach(async () => {
+        const moduleFixture: TestingModule = await Test.createTestingModule({
+            imports: [AppModule],
+        })
+            .overrideGuard(AuthGuard)
+            .useValue(authGuardMock)
+            .overrideGuard(RolesGuard)
+            .useValue(rolesGuardMock)
+            .compile();
+
+        app = moduleFixture.createNestApplication();
+        configureApp(app);
+        await app.init();
+        service = moduleFixture.get<UserService>(UserService);
+        registrationService = moduleFixture.get<RegistrationService>(RegistrationService);
+        // The mails are not sent, the tests check the users they are for.
+        sendActivationEmail = vi.spyOn(moduleFixture.get<MailService>(MailService), 'sendActivationEmail').mockResolvedValue();
+<%_ if (databaseTypeMongodb) { _%>
+        userRepository = moduleFixture.get<Repository<User>>(getRepositoryToken(User));
+<%_ } _%>
+        userAuthenticated = await service.save(testUserAuthenticated, testUserAuthenticated.login, true);
+    });
+
+    it('/POST register new user', async () => {
+        const createdUser: <%- user.dtoClass %> = (
+            await request(app.getHttpServer())
+                .post('/api/register')
+                .send({ ...testUserDTO, activated: true })
+                .expect(201)
+        ).body;
+
+        // Like JHipster Spring Boot, the login in lower case, and a user not activated whatever the request.
+        expect(createdUser.login).toEqual(testUserDTO.login.toLowerCase());
+        // The activation key goes by mail only.
+        expect(createdUser.activationKey).toBeUndefined();
+        const registeredUser = (await service.findByFields({ where: { login: testUserDTO.login.toLowerCase() } }))!;
+        expect(registeredUser.activated).toBe(false);
+        expect(registeredUser.activationKey).toBeTruthy();
+        // Like JHipster Spring Boot, the auditor of an action without an authenticated user is system.
+        expect(registeredUser).toMatchObject({ createdBy: 'system', lastModifiedBy: 'system' });
+        expect(sendActivationEmail).toHaveBeenCalledWith(expect.objectContaining({ login: registeredUser.login, activationKey: registeredUser.activationKey }));
+        await service.delete(registeredUser);
+    });
+
+    it('/POST register with the login of a not activated user replaces it', async () => {
+        await request(app.getHttpServer()).post('/api/register').send(testUserDTO).expect(201);
+        await request(app.getHttpServer())
+            .post('/api/register')
+            .send({ ...testUserDTO, email: 'usertest2@localhost.it' })
+            .expect(201);
+
+        const registeredUser = (await service.findByFields({ where: { login: testUserDTO.login.toLowerCase() } }))!;
+        expect(registeredUser.email).toEqual('usertest2@localhost.it');
+        await service.delete(registeredUser);
+    });
+
+    it('/POST register with a too short password is a validation error, like the ManagedUserVM of JHipster Spring Boot', async () => {
+        const problem = (
+            await request(app.getHttpServer())
+                .post('/api/register')
+                .send({ ...testUserDTO, password: 'abc' })
+                .expect(400)
+        ).body;
+
+        expect(problem).toMatchObject({
+            type: 'https://www.jhipster.tech/problem/constraint-violation',
+            fieldErrors: [expect.objectContaining({ field: 'password' })],
+        });
+        expect(await service.findByFields({ where: { login: testUserDTO.login.toLowerCase() } })).toBeFalsy();
+    });
+
+    it('/POST register with a mail of a domain without a top level domain, like the seed users', async () => {
+        await request(app.getHttpServer())
+            .post('/api/register')
+            .send({ ...testUserDTO, email: 'usertest@localhost' })
+            .expect(201);
+        const registeredUser = (await service.findByFields({ where: { login: testUserDTO.login.toLowerCase() } }))!;
+        expect(registeredUser.email).toBe('usertest@localhost');
+        await service.delete(registeredUser);
+    });
+
+    it('/POST register with an invalid login or email is a validation error', async () => {
+        const problem = (
+            await request(app.getHttpServer())
+                .post('/api/register')
+                .send({ ...testUserDTO, login: 'user name!', email: 'not an email' })
+                .expect(400)
+        ).body;
+
+        expect(problem).toMatchObject({ type: 'https://www.jhipster.tech/problem/constraint-violation' });
+        expect(problem.fieldErrors.map(({ field }: { field: string }) => field).sort()).toEqual(['email', 'login']);
+    });
+
+    it('/POST register with the login of another user is a login already used problem', async () => {
+        const problem = (
+            await request(app.getHttpServer())
+                .post('/api/register')
+                .send({ ...testUserDTO, login: testUserAuthenticated.login })
+                .expect(400)
+        ).body;
+
+        // The type the registration page of the JHipster clients reads.
+        expect(problem).toMatchObject({ type: 'https://www.jhipster.tech/problem/login-already-used', message: 'error.userexists' });
+    });
+
+    it('/POST register with the email of another user is an email already used problem', async () => {
+        const problem = (
+            await request(app.getHttpServer())
+                .post('/api/register')
+                .send({ ...testUserDTO, email: testUserAuthenticated.email })
+                .expect(400)
+        ).body;
+
+        expect(problem).toMatchObject({ type: 'https://www.jhipster.tech/problem/email-already-used', message: 'error.emailexists' });
+    });
+
+    it('/GET activate account', async () => {
+        await request(app.getHttpServer()).post('/api/register').send(testUserDTO).expect(201);
+        const { activationKey } = (await service.findByFields({ where: { login: testUserDTO.login.toLowerCase() } }))!;
+
+        await request(app.getHttpServer())
+            .get('/api/activate')
+            .query({ key: activationKey })
+            .expect(200);
+
+        const activatedUser = (await service.findByFields({ where: { login: testUserDTO.login.toLowerCase() } }))!;
+        expect(activatedUser.activated).toBe(true);
+        expect(activatedUser.activationKey).toBeFalsy();
+        expect(activatedUser).toMatchObject({ createdBy: 'system', lastModifiedBy: 'system' });
+        await service.delete(activatedUser);
+    });
+
+    it('/GET activate account with an unknown key', async () => {
+        await request(app.getHttpServer())
+            .get('/api/activate')
+            .query({ key: 'unknownKey' })
+            .expect(500);
+    });
+
+    it('/GET activate account without key', async () => {
+        await request(app.getHttpServer())
+            .get('/api/activate')
+            .expect(500);
+    });
+
+
+    it('removes the users not activated 3 days after their registration', async () => {
+        const registeredDate = new Date(Date.now() - 4 * 24 * 60 * 60 * 1000);
+        const notActivatedUser = await service.save({ ...testUserDTO, login: 'notactivated', email: 'notactivated@localhost.it', activated: false, activationKey: 'notActivatedKey', createdDate: registeredDate });
+        const recentUser = await service.save({ ...testUserDTO, login: 'recentuser', email: 'recentuser@localhost.it', activated: false, activationKey: 'recentKey' });
+
+<%_ if (databaseTypeMongodb) { _%>
+        // MongoDB gives the date of the creation whatever the saved user has.
+        await userRepository.update(notActivatedUser.id!, { createdDate: registeredDate });
+<%_ } _%>
+        await registrationService.removeNotActivatedUsers();
+
+        expect(await service.findByFields({ where: { login: notActivatedUser.login } })).toBeFalsy();
+        expect(await service.findByFields({ where: { login: recentUser.login } })).toBeTruthy();
+        await service.delete(recentUser);
+    });
+
+    afterEach(async () => {
+        await service.delete(userAuthenticated);
+        await app?.close();
+    });
+});

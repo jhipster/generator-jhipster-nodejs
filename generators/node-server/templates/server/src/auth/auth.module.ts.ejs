@@ -43,6 +43,10 @@ import { PublicUserController } from '../users/public.user.controller.ts';
 import { ManagementController } from '../management/management.controller.ts';
 <%_ } _%>
 import { AccountController } from './account.controller.ts';
+<%_ if (generateUserRegistration) { _%>
+import { RegistrationController } from './registration.controller.ts';
+import { RegistrationService } from './registration.service.ts';
+<%_ } _%>
 
 @Module({
   imports: [
@@ -79,8 +83,11 @@ import { AccountController } from './account.controller.ts';
 <%_ if (generateBuiltInAuthorityEntity) { _%>
   AuthorityController,
 <%_ } _%>
-  <%- generateBuiltInUserEntity ? 'PublicUserController' : 'ManagementController' %>, AccountController ],
+  <%- generateBuiltInUserEntity ? 'PublicUserController' : 'ManagementController' %>, AccountController<%- generateUserRegistration ? ', RegistrationController' : '' %> ],
   providers: [AuthService,
+<%_ if (generateUserRegistration) { _%>
+  RegistrationService,
+<%_ } _%>
 <%_ if (authenticationUsesCsrf) { _%>
   SessionStore,
 <%_ } _%>

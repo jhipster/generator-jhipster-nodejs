@@ -10,19 +10,11 @@ import { <%- user.dtoClass %> } from '../src/users/dto/user.dto.ts';
 import { UserService } from '../src/users/user.service.ts';
 import { MailService } from '../src/mail/mail.service.ts';
 import { comparePassword } from '../src/auth/password-util.ts';
-<%_ if (databaseTypeMongodb) { _%>
-import { getRepositoryToken } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { User } from '../src/users/user.entity.ts';
-<%_ } _%>
 
 describe('User', () => {
     let app: INestApplication;
     let service: UserService;
     let sendCreationEmail: MockInstance<MailService['sendCreationEmail']>;
-<%_ if (databaseTypeMongodb) { _%>
-    let userRepository: Repository<User>;
-<%_ } _%>
 
     const authGuardMock = { canActivate: (): any => true };
     const rolesGuardMock = { canActivate: (): any => true };
@@ -63,9 +55,6 @@ describe('User', () => {
         service = moduleFixture.get<UserService>(UserService);
         // The mails are not sent, the tests check the users they are for.
         sendCreationEmail = vi.spyOn(moduleFixture.get<MailService>(MailService), 'sendCreationEmail').mockResolvedValue();
-<%_ if (databaseTypeMongodb) { _%>
-        userRepository = moduleFixture.get<Repository<User>>(getRepositoryToken(User));
-<%_ } _%>
     });
 
     it('/POST create user', async () => {
@@ -144,22 +133,6 @@ describe('User', () => {
         expect(problem).toMatchObject({ type: 'https://www.jhipster.tech/problem/email-already-used', message: 'error.emailexists' });
         expect(await service.findByFields({ where: { login: testUserRequestObject.login.toLowerCase() } })).toBeFalsy();
         await service.delete(savedUser);
-    });
-
-    it('removes the users not activated 3 days after their registration', async () => {
-        const registeredDate = new Date(Date.now() - 4 * 24 * 60 * 60 * 1000);
-        const notActivatedUser = await service.save({ ...testUserDTO, login: 'notactivated', email: 'notactivated@localhost.it', activated: false, activationKey: 'notActivatedKey', createdDate: registeredDate });
-        const recentUser = await service.save({ ...testUserDTO, login: 'recentuser', email: 'recentuser@localhost.it', activated: false, activationKey: 'recentKey' });
-
-<%_ if (databaseTypeMongodb) { _%>
-        // MongoDB gives the date of the creation whatever the saved user has.
-        await userRepository.update(notActivatedUser.id!, { createdDate: registeredDate });
-<%_ } _%>
-        await service.removeNotActivatedUsers();
-
-        expect(await service.findByFields({ where: { login: notActivatedUser.login } })).toBeFalsy();
-        expect(await service.findByFields({ where: { login: recentUser.login } })).toBeTruthy();
-        await service.delete(recentUser);
     });
 
     it('/GET public users gives the activated users by their id and login only, like JHipster Spring Boot', async () => {

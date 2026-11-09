@@ -1,0 +1,46 @@
+import { Body, ClassSerializerInterceptor, Controller, Get, InternalServerErrorException, Post, Query, UseInterceptors } from '@nestjs/common';
+import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { MailService } from '../mail/mail.service.ts';
+import { Managed<%- userLoginVmClass %>, <%- user.dtoClass %> } from '../users/dto/user.dto.ts';
+import { RegistrationService } from './registration.service.ts';
+
+/**
+ * The registration and the activation of an account by its user, like the AccountResource of JHipster Spring Boot. Not
+ * written with skipUserRegistration.
+ */
+@Controller('api')
+@UseInterceptors(ClassSerializerInterceptor)
+@ApiTags('account-resource')
+export class RegistrationController {
+  constructor(
+    private readonly registrationService: RegistrationService,
+    private readonly mailService: MailService,
+  ) {}
+
+  @Post('/register')
+  @ApiOperation({ summary: 'Register user' })
+  @ApiResponse({
+    status: 201,
+    description: 'Registered user',
+    type: <%- user.dtoClass %>,
+  })
+  async registerAccount(@Body() userDTO: Managed<%- userLoginVmClass %>): Promise<<%- user.dtoClass %>> {
+    const user = await this.registrationService.registerUser(userDTO);
+    void this.mailService.sendActivationEmail(user);
+    return user;
+  }
+
+  @Get('/activate')
+  @ApiOperation({ summary: 'Activate the registered user' })
+  @ApiResponse({
+    status: 200,
+    description: 'activated',
+  })
+  @ApiResponse({ status: 500, description: 'No user was found for this activation key' })
+  async activateAccount(@Query('key') key: string): Promise<void> {
+    const user = await this.registrationService.activateRegistration(key);
+    if (!user) {
+      throw new InternalServerErrorException('No user was found for this activation key');
+    }
+  }
+}

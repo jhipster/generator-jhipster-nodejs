@@ -50,6 +50,7 @@ describe('MailService', () => {
     await moduleRef.close();
   });
 
+<%_ if (generateUserRegistration) { _%>
   it('should send the activation mail with the activation link', async () => {
     await mailService.sendActivationEmail(user);
 
@@ -60,6 +61,7 @@ describe('MailService', () => {
     expect(mail.html).toContain('<p>Dear mailuser</p>');
   });
 
+<%_ } _%>
   it('should send the creation mail with the link to set the password', async () => {
     await mailService.sendCreationEmail(user);
 
@@ -77,7 +79,7 @@ describe('MailService', () => {
   });
 
   it('should escape the user values in the mail', async () => {
-    await mailService.sendActivationEmail({ ...user, login: '<b>mailuser</b>' });
+    await mailService.sendCreationEmail({ ...user, login: '<b>mailuser</b>' });
 
     expect((await sentMail()).html).toContain('<p>Dear &lt;b&gt;mailuser&lt;/b&gt;</p>');
   });
@@ -95,7 +97,7 @@ describe('MailService', () => {
   });
 
   it('should not send a mail to a user without email', async () => {
-    await mailService.sendActivationEmail({ ...user, email: '' });
+    await mailService.sendCreationEmail({ ...user, email: '' });
 
     expect(sendMail).not.toHaveBeenCalled();
   });
@@ -103,7 +105,7 @@ describe('MailService', () => {
   it('should not fail when the mail could not be sent', async () => {
     sendMail.mockRejectedValue(new Error('Connection refused'));
 
-    await expect(mailService.sendActivationEmail(user)).resolves.toBeUndefined();
+    await expect(mailService.sendCreationEmail(user)).resolves.toBeUndefined();
   });
 
   it('should parse the messages of a properties file', () => {

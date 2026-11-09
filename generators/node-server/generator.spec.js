@@ -222,6 +222,42 @@ describe('SubGenerator node-server of nodejs JHipster blueprint', () => {
     });
   });
 
+  describe('with skipUserRegistration', () => {
+    beforeAll(async function () {
+      await helpers
+        .run(SUB_GENERATOR_NAMESPACE)
+        .withJHipsterConfig({ skipClient: true, skipUserRegistration: true })
+        .withOptions({
+          ignoreNeedlesError: true,
+        })
+        .withJHipsterGenerators()
+        .withConfiguredBlueprint()
+        .withBlueprintConfig({});
+    });
+
+    it('should not write the registration nor the activation of an account, like JHipster Spring Boot', () => {
+      result.assertNoFile([
+        'server/src/auth/registration.service.ts',
+        'server/src/auth/registration.controller.ts',
+        'server/e2e/registration.e2e-spec.ts',
+      ]);
+      result.assertNoFileContent('server/src/auth/auth.module.ts', 'Registration');
+      result.assertNoFileContent('server/src/mail/mail.service.ts', 'sendActivationEmail');
+      result.assertNoFile('server/src/templates/mail/activationEmail.hbs');
+    });
+
+    it('should not remove the users not activated, with no scheduled task', () => {
+      result.assertNoFileContent('server/src/app.module.ts', 'ScheduleModule');
+      const { dependencies } = result.fs.readJSON(join(result.cwd, 'server/package.json'));
+      expect(dependencies).not.toHaveProperty('@nestjs/schedule');
+    });
+
+    it('should keep the other mails and pages of an account', () => {
+      result.assertFile(['server/src/templates/mail/creationEmail.hbs', 'server/src/templates/mail/passwordResetEmail.hbs']);
+      result.assertFileContent('server/src/auth/account.controller.ts', "@Post('/account/reset-password/init')");
+    });
+  });
+
   describe('without client', () => {
     beforeAll(async function () {
       await helpers
