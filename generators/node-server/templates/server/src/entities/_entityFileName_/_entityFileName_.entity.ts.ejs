@@ -102,7 +102,7 @@ export class <%- persistClass %> {
   <%_ if (nodejsCriteria?.decorators[fieldName]) { _%>
     <%- nodejsCriteria.decorators[fieldName] %>
   <%_ } _%>
-  <%_ if (field.nodejsNotSortable) { _%>
+  <%_ if (!field.fieldSupportsSortBy) { _%>
     @NotSortable()
   <%_ } _%>
     <%- fieldName %><%- field.fieldValidationRequired ? '!' : '?' %>: <%- field.nodejsFieldType %>;

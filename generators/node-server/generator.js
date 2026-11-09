@@ -22,7 +22,6 @@ import {
   hasRuntimeColumnTypes,
   insertSortedImport,
   invalidTypeValue,
-  isSortableField,
   joinTable,
   mutateCriteria,
   mutateEntityAuthorities,
@@ -467,8 +466,6 @@ export default class extends BaseApplicationGenerator {
           nodejsTypeValidators: fieldTypeValidators(field),
           nodejsInvalidTypeValue: invalidTypeValue(field),
           nodejsContentTypeColumnOptions: contentTypeColumnOptions(field, application),
-          // A column no list can be sorted by (@NotSortable): one the JDL marks, or a binary blob like the byte[] of JHipster Spring Boot.
-          nodejsNotSortable: !field.transient && !isSortableField(field),
         });
         // The fake value of the field as the API exchanges it, generated when a template calls it (after its faker seed).
       },
@@ -484,7 +481,8 @@ export default class extends BaseApplicationGenerator {
           // The helpers of the column types chosen at runtime the columns of an entity use.
           entity.nodejsColumnTypeImports = [...new Set(entity.fields.flatMap(field => field.nodejsColumnTypeImports ?? []))];
           entity.nodejsAnyNotSortableField =
-            entity.fields.some(field => field.nodejsNotSortable) ||
+            // The columns the lists of JHipster do not sort by (fieldSupportsSortBy), marked @NotSortable.
+            entity.fields.some(field => !field.id && !field.fieldSupportsSortBy) ||
             entity.relationships.some(relationship => relationship.notSortable && !relationship.collection);
           // The sort by a column of a relationship to one the tests make.
           entity.nodejsSortExample = application.databaseTypeSql ? toOneSortExample(entity) : undefined;

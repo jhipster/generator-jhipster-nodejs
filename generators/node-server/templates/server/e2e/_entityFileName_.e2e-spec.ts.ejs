@@ -98,8 +98,8 @@ _%>
     }
     );
 
-<%_ const sortField = fields.find(field => !field.id && !field.transient && !field.nodejsNotSortable);
-    const notSortableField = fields.find(field => field.nodejsNotSortable);
+<%_ const sortField = fields.find(field => !field.id && field.fieldSupportsSortBy);
+    const notSortableField = fields.find(field => !field.id && !field.transient && !field.fieldSupportsSortBy);
     const inverseOneToOne = databaseTypeSql && nodejsMappedByRelationships.find(relationship => relationship.relationshipOneToOne);
 _%>
 
