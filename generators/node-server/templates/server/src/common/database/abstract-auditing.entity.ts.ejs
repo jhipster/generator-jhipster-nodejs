@@ -1,0 +1,21 @@
+import { Exclude } from 'class-transformer';
+import { Column, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+
+/** The audit columns of the user, like the AbstractAuditingEntity of JHipster Spring Boot. */
+export abstract class AbstractAuditingEntity {
+  // The creation audit columns are readable but never updated, like the updatable = false columns of JHipster Spring Boot.
+  // Excluded from the serialization of the user related to an entity, which shows its id and login like the UserDTO of
+  // JHipster Spring Boot; the user management shows them through its DTO.
+  @Column({ nullable: true, update: false })
+  @Exclude({ toPlainOnly: true })
+  createdBy?: string;
+  @CreateDateColumn({ nullable: true, update: false })
+  @Exclude({ toPlainOnly: true })
+  createdDate?: Date;
+  @Column({ nullable: true })
+  @Exclude({ toPlainOnly: true })
+  lastModifiedBy?: string;
+  @UpdateDateColumn({ nullable: true })
+  @Exclude({ toPlainOnly: true })
+  lastModifiedDate?: Date;
+}

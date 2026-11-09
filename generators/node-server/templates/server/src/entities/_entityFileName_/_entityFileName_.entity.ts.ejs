@@ -14,7 +14,6 @@ import {
 <%_ } _%>, Entity, Column 
 <%_ if (databaseType !== 'mongodb') { _%>, JoinColumn, OneToOne, ManyToOne, OneToMany, ManyToMany, JoinTable, type Relation 
 <%_ } _%> } from 'typeorm';
-import { BaseEntity } from '../../common/database/base.entity.ts';
 <%_ if (nodejsCriteria) { _%>
 import { Filterable } from '../../common/database/criteria.ts';
 <%_ } _%>
@@ -66,7 +65,7 @@ import { <%- user.persistClass %> } from '../../users/user.entity.ts';
  */
 <%_ } _%>
 @Entity('<%- entityTableName %>')
-export class <%- persistClass %> extends BaseEntity  {
+export class <%- persistClass %> {
 
 <%_ if (databaseTypeMongodb) { _%>
   @ObjectIdColumn({ name: '_<%- primaryKey.name %>' })

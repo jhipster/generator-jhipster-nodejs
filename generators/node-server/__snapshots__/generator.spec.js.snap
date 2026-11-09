@@ -8,7 +8,6 @@ PrimaryGeneratedColumn
 , Entity, Column 
 , JoinColumn, OneToOne, ManyToOne, OneToMany, ManyToMany, JoinTable, type Relation 
 } from 'typeorm';
-import { BaseEntity } from '../../common/database/base.entity.ts';
 import { numberTransformer } from '../../common/database/column-transformers.ts';
 
 
@@ -19,7 +18,7 @@ import { Level } from '../enumeration/level.ts';
  * A Sample.
  */
 @Entity('sample')
-export class Sample extends BaseEntity  {
+export class Sample {
 
   @PrimaryGeneratedColumn()
   id?: number;
@@ -74,7 +73,6 @@ PrimaryGeneratedColumn
 , Entity, Column 
 , JoinColumn, OneToOne, ManyToOne, OneToMany, ManyToMany, JoinTable, type Relation 
 } from 'typeorm';
-import { BaseEntity } from '../../common/database/base.entity.ts';
 import { numberTransformer, blobTransformer } from '../../common/database/column-transformers.ts';
 import { columnType } from '../../common/database/column-types.ts';
 
@@ -86,7 +84,7 @@ import { Level } from '../enumeration/level.ts';
  * A Sample.
  */
 @Entity('sample')
-export class Sample extends BaseEntity  {
+export class Sample {
 
   @PrimaryGeneratedColumn()
   id?: number;
@@ -141,7 +139,6 @@ PrimaryGeneratedColumn
 , Entity, Column 
 , JoinColumn, OneToOne, ManyToOne, OneToMany, ManyToMany, JoinTable, type Relation 
 } from 'typeorm';
-import { BaseEntity } from '../../common/database/base.entity.ts';
 import { numberTransformer, blobTransformer } from '../../common/database/column-transformers.ts';
 
 
@@ -152,7 +149,7 @@ import { Level } from '../enumeration/level.ts';
  * A Sample.
  */
 @Entity('sample')
-export class Sample extends BaseEntity  {
+export class Sample {
 
   @PrimaryGeneratedColumn()
   id?: number;
@@ -207,7 +204,6 @@ PrimaryGeneratedColumn
 , Entity, Column 
 , JoinColumn, OneToOne, ManyToOne, OneToMany, ManyToMany, JoinTable, type Relation 
 } from 'typeorm';
-import { BaseEntity } from '../../common/database/base.entity.ts';
 import { numberTransformer } from '../../common/database/column-transformers.ts';
 
 
@@ -218,7 +214,7 @@ import { Level } from '../enumeration/level.ts';
  * A Sample.
  */
 @Entity('sample')
-export class Sample extends BaseEntity  {
+export class Sample {
 
   @PrimaryGeneratedColumn()
   id?: number;
@@ -271,7 +267,7 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > entity validato
     "contents": "import { ApiProperty } from '@nestjs/swagger';
 import { Allow, IsNotEmpty, IsOptional, IsEnum, MinLength, MaxLength, Length, Min, Max, Matches, IsInt, IsNumber, IsBoolean, IsUUID, IsISO8601 } from 'class-validator';
 import { Transform } from 'class-transformer';
-import { BaseDTO, numberFromString } from '../../../common/dto/base.dto.ts';
+import { numberFromString } from '../../../common/dto/dto-support.ts';
 
 
 import { Genre } from '../../enumeration/genre.ts';
@@ -281,7 +277,7 @@ import { BookFormat } from '../../enumeration/book-format.ts';
 /**
  * A BookDTO object.
  */
-export class BookDTO extends BaseDTO {
+export class BookDTO {
   @Allow()
   id?: number;
 
@@ -488,7 +484,7 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > jwt microservic
   "server/src/common/common.module.ts": {
     "stateCleared": "modified",
   },
-  "server/src/common/database/base.entity.ts": {
+  "server/src/common/database/abstract-auditing.entity.ts": {
     "stateCleared": "modified",
   },
   "server/src/common/database/column-transformers.spec.ts": {
@@ -509,7 +505,7 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > jwt microservic
   "server/src/common/database/pagination.entity.ts": {
     "stateCleared": "modified",
   },
-  "server/src/common/dto/base.dto.ts": {
+  "server/src/common/dto/dto-support.ts": {
     "stateCleared": "modified",
   },
   "server/src/common/errors/error-constants.ts": {
@@ -826,7 +822,7 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > run > should su
   "server/src/common/common.module.ts": {
     "stateCleared": "modified",
   },
-  "server/src/common/database/base.entity.ts": {
+  "server/src/common/database/abstract-auditing.entity.ts": {
     "stateCleared": "modified",
   },
   "server/src/common/database/column-transformers.spec.ts": {
@@ -847,7 +843,7 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > run > should su
   "server/src/common/database/pagination.entity.ts": {
     "stateCleared": "modified",
   },
-  "server/src/common/dto/base.dto.ts": {
+  "server/src/common/dto/dto-support.ts": {
     "stateCleared": "modified",
   },
   "server/src/common/errors/error-constants.ts": {
@@ -1233,7 +1229,7 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > with oauth2 > s
   "server/src/common/common.module.ts": {
     "stateCleared": "modified",
   },
-  "server/src/common/database/base.entity.ts": {
+  "server/src/common/database/abstract-auditing.entity.ts": {
     "stateCleared": "modified",
   },
   "server/src/common/database/column-transformers.spec.ts": {
@@ -1254,7 +1250,7 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > with oauth2 > s
   "server/src/common/database/pagination.entity.ts": {
     "stateCleared": "modified",
   },
-  "server/src/common/dto/base.dto.ts": {
+  "server/src/common/dto/dto-support.ts": {
     "stateCleared": "modified",
   },
   "server/src/common/errors/error-constants.ts": {
@@ -1589,7 +1585,7 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > with oauth2 and
   "server/src/common/common.module.ts": {
     "stateCleared": "modified",
   },
-  "server/src/common/database/base.entity.ts": {
+  "server/src/common/database/abstract-auditing.entity.ts": {
     "stateCleared": "modified",
   },
   "server/src/common/database/column-transformers.spec.ts": {
@@ -1610,7 +1606,7 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > with oauth2 and
   "server/src/common/database/pagination.entity.ts": {
     "stateCleared": "modified",
   },
-  "server/src/common/dto/base.dto.ts": {
+  "server/src/common/dto/dto-support.ts": {
     "stateCleared": "modified",
   },
   "server/src/common/errors/error-constants.ts": {
@@ -1976,8 +1972,8 @@ they test, the end-to-end tests in \`e2e\`.
 - \`src/auth/\`: the authentication, its guards, its decorators, its strategies and the account API.
 - \`src/mail/\`: the emails of the user management.
 - \`src/management/\`: the management endpoints (health, metrics, loggers, configuration, API documentation).
-- \`src/common/\`: the helpers of every feature: the errors, the HTTP helpers, the base entity and the column types
-  (\`database/\`), the base DTO.
+- \`src/common/\`: the helpers of every feature: the errors, the HTTP helpers, the audit columns of the user and the column types
+  (\`database/\`), the helpers of the DTOs.
 - \`src/config/\`: the configuration of each profile; \`src/migrations/\`: the migrations of the database schema.
 
 ## TypeORM configuration
@@ -2361,7 +2357,7 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > without client 
   "server/src/common/common.module.ts": {
     "stateCleared": "modified",
   },
-  "server/src/common/database/base.entity.ts": {
+  "server/src/common/database/abstract-auditing.entity.ts": {
     "stateCleared": "modified",
   },
   "server/src/common/database/column-transformers.spec.ts": {
@@ -2382,7 +2378,7 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > without client 
   "server/src/common/database/pagination.entity.ts": {
     "stateCleared": "modified",
   },
-  "server/src/common/dto/base.dto.ts": {
+  "server/src/common/dto/dto-support.ts": {
     "stateCleared": "modified",
   },
   "server/src/common/errors/error-constants.ts": {

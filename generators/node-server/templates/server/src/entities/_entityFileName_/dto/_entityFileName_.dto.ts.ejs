@@ -4,7 +4,10 @@ import { Allow<%- (anyPropertyHasValidation || fields.some(field => field.fieldI
 <%_ if (databaseTypeMongodb || anyFieldNumeric) { _%>
 import { Transform } from 'class-transformer';
 <%_ } _%>
-import { <%- ['BaseDTO', anyFieldNumeric && 'numberFromString', relationships.length > 0 && 'type RelatedDTO'].filter(Boolean).join(', ') %> } from '../../../common/dto/base.dto.ts';
+<%_ const baseImports = [anyFieldNumeric && 'numberFromString', relationships.length > 0 && 'type RelatedDTO'].filter(Boolean); _%>
+<%_ if (baseImports.length > 0) { _%>
+import { <%- baseImports.join(', ') %> } from '../../../common/dto/dto-support.ts';
+<%_ } _%>
 
 <%_ let isUserRelationship = false;
     const uniqueEntities = {};
@@ -47,7 +50,7 @@ import { <%- user.dtoClass %> } from '../../../users/dto/user.dto.ts';
 /**
  * A <%- dtoClass %> object.
  */
-export class <%- dtoClass %> extends BaseDTO {
+export class <%- dtoClass %> {
 <%_ if (primaryKey.autoGenerate) { _%>
   <%_ if (databaseTypeMongodb) { _%>
   @Transform(({ value }) => value?.toHexString ? value?.toHexString() : value, {toPlainOnly: true})
