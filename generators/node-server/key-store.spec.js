@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it } from 'expect-node';
 import { createSecureContext } from 'node:tls';
 
 import { createKeyStore } from 'generator-jhipster/generators/java/support';
