@@ -1,6 +1,16 @@
-import { hasCyclicRequiredRelationship, isRequiredRelationship } from 'generator-jhipster/generators/base-application/support';
+import {
+  generateEntitySamples,
+  hasCyclicRequiredRelationship,
+  isRequiredRelationship,
+} from 'generator-jhipster/generators/base-application/support';
 
-import { apiFakeEntity, apiFakeValue } from './api-fake-data.js';
+import { apiFakeEntity, apiFakeValue, apiValue } from './api-fake-data.js';
+
+/**
+ * The samples of an entity with values no two records share: a spec stores one for each of its tests through a required
+ * one-to-one relationship, about seven of them.
+ */
+const UNIQUE_SAMPLES = 30;
 
 /**
  * The test samples of the entities (e2e/samples), like the test samples of the Angular client of JHipster: a sample of a
@@ -20,6 +30,22 @@ const isSampleRelationship = relationship =>
   isStoredRequired(relationship) &&
   !hasCyclicRequiredRelationship(relationship.otherEntity) &&
   (relationship.otherEntity.builtInUser || relationship.otherEntity.entityRestLayer);
+
+/**
+ * The values no two records of the sample share, the id the client gives and the unique fields, for each new record. A
+ * unique field without a value left is null, which records can share.
+ */
+export const uniqueSamples = (entity, values, count = UNIQUE_SAMPLES) => {
+  const fields = entity.fields.filter(field => field.fieldName in values && (field.id || field.fieldValidateRules?.includes('unique')));
+  if (fields.length === 0) return undefined;
+  const [samples] = generateEntitySamples(entity, {
+    seed: 'nodejs-unique-samples',
+    batches: [{ fields, format: 'json-serializable', count }],
+  });
+  return samples.map(sample =>
+    Object.fromEntries(fields.map(field => [field.fieldName, apiValue(field, sample[field.fieldName]) ?? null])),
+  );
+};
 
 /** The mutations of a relationship. */
 export const mutateRequiredReference = {
@@ -49,8 +75,10 @@ export const mutateTestSamples = ({ databaseTypeSql }) => ({
     if (delayMarker) return delayMarker;
     entity.resetFakerSeed('nodejs-test-samples');
     const relationships = entity.relationships.filter(isSampleRelationship);
+    const { values } = apiFakeEntity(entity);
     return {
-      values: JSON.stringify(apiFakeEntity(entity).values),
+      values: JSON.stringify(values),
+      uniqueSamples: JSON.stringify(uniqueSamples(entity, values)),
       references: relationships.map(({ propertyName, collection, relationshipOneToOne, otherEntity }) => {
         const id = otherEntity.primaryKey.name;
         const record = otherEntity.builtInUser
