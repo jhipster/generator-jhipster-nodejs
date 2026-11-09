@@ -98,8 +98,9 @@ _%>
     }
     );
 
-<%_ const sortField = fields.find(field => !field.id && !field.transient);
-    const sortRelationship = relationships.find(relationship => relationship.ownerSide && !relationship.collection);
+<%_ const sortField = fields.find(field => !field.id && !field.transient && !field.nodejsNotSortable);
+    const notSortableField = fields.find(field => field.nodejsNotSortable);
+    const inverseOneToOne = databaseTypeSql && nodejsMappedByRelationships.find(relationship => relationship.relationshipOneToOne);
 _%>
 
     it('/GET all <%- entityApiUrl %> sorted on a property of the entity', async () => {
@@ -107,24 +108,54 @@ _%>
             .get('/api/<%- entityApiUrl %>?sort=<%- sortField ? sortField.fieldName : primaryKey.name %>,desc')
             .expect(200);
     });
-<%_ if (sortRelationship) { _%>
+<%_ if (notSortableField) { _%>
 
-    it('/GET all <%- entityApiUrl %> sorted on the id and the label of a relationship', async () => {
-        await request(app.getHttpServer())
-            .get('/api/<%- entityApiUrl %>?sort=<%- sortRelationship.propertyName %>.<%- sortRelationship.otherEntity.primaryKey.name %>,asc')
-            .expect(200);
-        await request(app.getHttpServer())
-            .get('/api/<%- entityApiUrl %>?sort=<%- sortRelationship.propertyName %>.<%- sortRelationship.otherEntityField %>,desc')
-            .expect(200);
-    });
-
-    it('/GET all <%- entityApiUrl %> sorted on a deeper property of a relationship', async () => {
-        await request(app.getHttpServer())
-            .get('/api/<%- entityApiUrl %>?sort=<%- sortRelationship.propertyName %>.<%- sortRelationship.otherEntity.primaryKey.name %>.unknown,asc')
+    it('/GET all <%- entityApiUrl %> sorted on a field marked @NotSortable, like JHipster Spring Boot', async () => {
+        const response = await request(app.getHttpServer())
+            .get('/api/<%- entityApiUrl %>?sort=<%- notSortableField.fieldName %>,asc')
             .expect(400);
+
+        expect(response.body.detail).toBe('Invalid sort property: <%- notSortableField.fieldName %>');
     });
 <%_ } _%>
+<%_ if (nodejsSortExample) { _%>
 
+    it('/GET all <%- entityApiUrl %> sorted on a column of a relationship to one, like JHipster Spring Boot', async () => {
+        await request(app.getHttpServer())
+            .get('/api/<%- entityApiUrl %>?sort=<%- nodejsSortExample.property %>.<%- nodejsSortExample.column %>,desc')
+            .expect(200);
+    });
+
+    it('/GET all <%- entityApiUrl %> sorted on what is not a column of a relationship', async () => {
+        await request(app.getHttpServer())
+            .get('/api/<%- entityApiUrl %>?sort=<%- nodejsSortExample.property %>.doesNotExist,asc')
+            .expect(400);
+    });
+
+    it('/GET all <%- entityApiUrl %> sorted on a relationship itself or a deeper property of it', async () => {
+        await request(app.getHttpServer()).get('/api/<%- entityApiUrl %>?sort=<%- nodejsSortExample.property %>,asc').expect(400);
+        await request(app.getHttpServer())
+            .get('/api/<%- entityApiUrl %>?sort=<%- nodejsSortExample.property %>.<%- nodejsSortExample.column %>.unknown,asc')
+            .expect(400);
+    });
+  <%_ if (nodejsSortExample.builtInUser) { _%>
+
+    it('/GET all <%- entityApiUrl %> sorted on the password of the related user, marked @NotSortable', async () => {
+        await request(app.getHttpServer())
+            .get('/api/<%- entityApiUrl %>?sort=<%- nodejsSortExample.property %>.password,asc')
+            .expect(400);
+    });
+  <%_ } _%>
+<%_ } _%>
+
+<%_ if (inverseOneToOne) { _%>
+    it('/GET all <%- entityApiUrl %> sorted on a column of the inverse side of a one-to-one, which the list does not load', async () => {
+        await request(app.getHttpServer())
+            .get('/api/<%- entityApiUrl %>?sort=<%- inverseOneToOne.propertyName %>.<%- inverseOneToOne.otherEntity.primaryKey.name %>,asc')
+            .expect(400);
+    });
+
+<%_ } _%>
     it('/GET all <%- entityApiUrl %> sorted on an unknown property', async () => {
         const response = await request(app.getHttpServer())
             .get('/api/<%- entityApiUrl %>?sort=unknownProperty,asc')

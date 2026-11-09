@@ -883,6 +883,52 @@ describe('SubGenerator node-server of nodejs JHipster blueprint', () => {
     });
   });
 
+  describe('with the @NotSortable annotation of the JDL, like JHipster Spring Boot', () => {
+    const country = { name: 'Country', changelogDate: '20240101000000', fields: [{ fieldName: 'name', fieldType: 'String' }] };
+    const region = {
+      name: 'Region',
+      changelogDate: '20240101000001',
+      fields: [
+        { fieldName: 'name', fieldType: 'String' },
+        { fieldName: 'secret', fieldType: 'String', options: { notSortable: true } },
+        { fieldName: 'flag', fieldType: 'byte[]', fieldTypeBlobContent: 'image' },
+        { fieldName: 'description', fieldType: 'TextBlob' },
+      ],
+      relationships: [
+        { relationshipName: 'country', otherEntityName: 'country', relationshipType: 'many-to-one' },
+        { relationshipName: 'capital', otherEntityName: 'country', relationshipType: 'one-to-one', options: { notSortable: true } },
+      ],
+    };
+
+    beforeAll(async function () {
+      await helpers
+        .run(SUB_GENERATOR_NAMESPACE)
+        .withJHipsterConfig({ skipClient: true }, [country, region])
+        .withOptions({ ignoreNeedlesError: true })
+        .withJHipsterGenerators()
+        .withConfiguredBlueprint();
+    });
+
+    it('should mark @NotSortable the fields and the relationships the JDL marks, and a binary blob', () => {
+      const entity = 'server/src/entities/region/region.entity.ts';
+      result.assertFileContent(entity, "import { NotSortable } from '../../common/sortable-properties.ts';");
+      result.assertFileContent(entity, /@NotSortable\(\)\n\s+secret\?: string;/);
+      result.assertFileContent(entity, /@NotSortable\(\)\n\s+flag\?: /);
+      result.assertFileContent(entity, /@NotSortable\(\)\n\s+capital\?: Relation<Country>;/);
+      // A TextBlob is a text, and the relationship the JDL does not mark stays sortable.
+      result.assertNoFileContent(entity, /@NotSortable\(\)\n\s+description\?/);
+      result.assertNoFileContent(entity, /@NotSortable\(\)\n\s+country\?/);
+    });
+
+    it('should not mark an entity without what cannot be sorted by', () => {
+      result.assertNoFileContent('server/src/entities/country/country.entity.ts', 'NotSortable');
+    });
+
+    it('should test the sort by a relationship the JDL does not mark', () => {
+      result.assertFileContent('server/e2e/region.e2e-spec.ts', '/api/regions?sort=country.name,desc');
+    });
+  });
+
   describe('with filter on MongoDB', () => {
     beforeAll(async function () {
       await helpers

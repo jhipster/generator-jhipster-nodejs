@@ -8,6 +8,7 @@ PrimaryGeneratedColumn
 , Entity, Column 
 , JoinColumn, OneToOne, ManyToOne, OneToMany, ManyToMany, JoinTable, type Relation 
 } from 'typeorm';
+import { NotSortable } from '../../common/sortable-properties.ts';
 import { numberTransformer } from '../../common/database/column-transformers.ts';
 
 
@@ -48,6 +49,7 @@ export class Sample {
     level?: Level;
 
     @Column({ type: 'text', name: 'photo', nullable: true })
+    @NotSortable()
     photo?: string;
 
     @Column({ name: 'photo_content_type', nullable: true })
@@ -73,6 +75,7 @@ PrimaryGeneratedColumn
 , Entity, Column 
 , JoinColumn, OneToOne, ManyToOne, OneToMany, ManyToMany, JoinTable, type Relation 
 } from 'typeorm';
+import { NotSortable } from '../../common/sortable-properties.ts';
 import { numberTransformer, blobTransformer } from '../../common/database/column-transformers.ts';
 import { columnType } from '../../common/database/column-types.ts';
 
@@ -114,6 +117,7 @@ export class Sample {
     level?: Level;
 
     @Column({ type: columnType('blob'), name: 'photo', nullable: true, transformer: blobTransformer })
+    @NotSortable()
     photo?: string;
 
     @Column({ name: 'photo_content_type', nullable: true })
@@ -139,6 +143,7 @@ PrimaryGeneratedColumn
 , Entity, Column 
 , JoinColumn, OneToOne, ManyToOne, OneToMany, ManyToMany, JoinTable, type Relation 
 } from 'typeorm';
+import { NotSortable } from '../../common/sortable-properties.ts';
 import { numberTransformer, blobTransformer } from '../../common/database/column-transformers.ts';
 
 
@@ -179,6 +184,7 @@ export class Sample {
     level?: Level;
 
     @Column({ type: 'blob', name: 'photo', nullable: true, transformer: blobTransformer })
+    @NotSortable()
     photo?: string;
 
     @Column({ name: 'photo_content_type', nullable: true })
@@ -204,6 +210,7 @@ PrimaryGeneratedColumn
 , Entity, Column 
 , JoinColumn, OneToOne, ManyToOne, OneToMany, ManyToMany, JoinTable, type Relation 
 } from 'typeorm';
+import { NotSortable } from '../../common/sortable-properties.ts';
 import { numberTransformer } from '../../common/database/column-transformers.ts';
 
 
@@ -244,6 +251,7 @@ export class Sample {
     level?: Level;
 
     @Column({ type: 'text', name: 'photo', nullable: true })
+    @NotSortable()
     photo?: string;
 
     @Column({ name: 'photo_content_type', nullable: true })

@@ -14,9 +14,6 @@ import { randomBytes } from 'crypto';
 import { BadRequestAlertException, EmailAlreadyUsedException, LoginAlreadyUsedException } from '../common/errors/problem.exception.ts';
 import { isSortableProperty } from '../common/sortable-properties.ts';
 
-// The columns of a user no list can be sorted on: its password, its activation and reset keys and the date of its reset.
-const UNSORTABLE_PROPERTIES = ['password', 'activationKey', 'resetKey', 'resetDate'];
-
 @Controller('api/admin/users')
 @UseGuards(AuthGuard, RolesGuard)
 @UseInterceptors(ClassSerializerInterceptor)
@@ -49,7 +46,8 @@ export class UserController {
         req.query.page,
         req.query.size,
         req.query.sort ?? '<%- user.primaryKey.name %>,ASC',
-        property => isSortableProperty(this.userService.metadata, property, { unsortable: UNSORTABLE_PROPERTIES }),
+        // Like JHipster Spring Boot, a column of the user but the ones marked @NotSortable (its password and its keys).
+        property => isSortableProperty(this.userService.metadata, property),
       );
       const [results, count] = await this.userService.findAndCount({
           skip: +pageRequest.page * pageRequest.size,

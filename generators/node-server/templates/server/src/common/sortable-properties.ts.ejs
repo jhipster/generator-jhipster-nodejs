@@ -1,34 +1,55 @@
 import { EntityMetadata<%- databaseTypeMongodb ? ', FindOptionsOrder' : '' %> } from 'typeorm';
 
-export interface SortableOptions {
-  /** Columns of the entity no list can be sorted on, like the password of a user. */
-  unsortable?: string[];
-  /** The label of each relationship, the field of the other entity a list of the entity displays, like `name`. */
-  labels?: Record<string, string>;
-}
+/** The properties marked by @NotSortable, by the prototype of the class declaring them. */
+const notSortableProperties = new WeakMap<object, Set<string>>();
 
 /**
- * Whether a list of the entity can be sorted on a property, found by introspection of its TypeORM metadata like Spring
- * Data validates the sort of a pageable: a column of the entity, or, for a relationship to one it owns, the id or the label of
- * the other entity (`region.id`, `region.name`). A relationship itself, a collection, another column of the other
- * entity or a deeper path cannot be sorted on.
+ * Marks a property no list of the entity can be sorted by, like the NotSortable annotation of JHipster Spring Boot: a
+ * secret of the user, or a binary blob. On a relationship, no property of the related entity can be sorted by.
  */
-export function isSortableProperty(
-  metadata: EntityMetadata,
-  property: string,
-  { unsortable = [], labels = {} }: SortableOptions = {},
-): boolean {
-  const [name, otherProperty, ...deeper] = property.split('.');
-  const relation = metadata.findRelationWithPropertyPath(name);
-  if (otherProperty === undefined) {
-    return relation === undefined && !unsortable.includes(name) && metadata.findColumnWithPropertyPath(name) !== undefined;
+export function NotSortable(): PropertyDecorator {
+  return (target, propertyKey) => {
+    const properties = notSortableProperties.get(target) ?? new Set<string>();
+    properties.add(String(propertyKey));
+    notSortableProperties.set(target, properties);
+  };
+}
+
+/** Whether a property of the entity, or of a class it extends, is marked by @NotSortable. */
+const isNotSortable = (metadata: EntityMetadata, property: string): boolean => {
+  // The target of an entity class is the class; the one of an entity schema, a name without properties marked.
+  const target = typeof metadata.target === 'function' ? (metadata.target.prototype as object) : undefined;
+  for (let prototype = target; prototype; prototype = Object.getPrototypeOf(prototype) as object | undefined) {
+    if (notSortableProperties.get(prototype)?.has(property)) {
+      return true;
+    }
   }
-  if (relation === undefined || !relation.isOwning || relation.isOneToMany || relation.isManyToMany || deeper.length > 0) {
+  return false;
+};
+
+/** Whether a property is a column of the entity a list can be sorted by. */
+const isSortableColumn = (metadata: EntityMetadata, property: string): boolean =>
+  metadata.findRelationWithPropertyPath(property) === undefined &&
+  metadata.findColumnWithPropertyPath(property) !== undefined &&
+  !isNotSortable(metadata, property);
+
+/**
+ * Whether a list of the entity can be sorted by a property, found by introspection of its TypeORM metadata like the
+ * SortValidator of JHipster Spring Boot: a column of the entity, or a column of an entity it relates to by a relationship
+ * to one it owns, one level (`region.name`), but not a property marked by @NotSortable. A relationship itself, a
+ * collection, a deeper path or what is not a column cannot be sorted by, nor the inverse side of a one-to-one, which the
+ * lists do not load (JHipster Spring Boot sorts by it).
+ */
+export function isSortableProperty(metadata: EntityMetadata, property: string): boolean {
+  const [name, otherProperty, ...deeper] = property.split('.');
+  if (otherProperty === undefined) {
+    return isSortableColumn(metadata, name);
+  }
+  const relation = metadata.findRelationWithPropertyPath(name);
+  if (relation === undefined || !relation.isOwning || relation.isManyToMany || deeper.length > 0 || isNotSortable(metadata, name)) {
     return false;
   }
-  const otherMetadata = relation.inverseEntityMetadata;
-  const isId = otherMetadata.primaryColumns.some(column => column.propertyName === otherProperty);
-  return (isId || labels[name] === otherProperty) && otherMetadata.findColumnWithPropertyPath(otherProperty) !== undefined;
+  return isSortableColumn(relation.inverseEntityMetadata, otherProperty);
 }
 <%_ if (databaseTypeMongodb) { _%>
 

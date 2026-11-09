@@ -286,6 +286,14 @@ _%>
     await request(server).delete(`/api/<%- entityApiUrl %>/${second.<%- pk %>}`).expect(204);
   });
 <%_ } _%>
+<%_ if (nodejsSortExample) { _%>
+
+  it('should sort the list by a column of a relationship to one, like JHipster Spring Boot', async () => {
+    await request(app.getHttpServer())
+      .get('/api/<%- entityApiUrl %>?sort=<%- nodejsSortExample.property %>.<%- nodejsSortExample.column %>,asc&sort=<%- pk %>,asc')
+      .expect(200);
+  });
+<%_ } _%>
 <%_ if (databaseTypeMongodb) { _%>
 
   it('should answer an id that is not an ObjectId as an unknown one, like JHipster Spring Boot', async () => {

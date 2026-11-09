@@ -22,6 +22,7 @@ import {
   hasRuntimeColumnTypes,
   insertSortedImport,
   invalidTypeValue,
+  isSortableField,
   joinTable,
   mutateCriteria,
   mutateEntityAuthorities,
@@ -33,6 +34,7 @@ import {
   primaryKeyColumn,
   serverEnumInfo,
   thymeleafMailToHandlebars,
+  toOneSortExample,
   userAuthorityJoinTable,
 } from './support/index.js';
 
@@ -465,6 +467,8 @@ export default class extends BaseApplicationGenerator {
           nodejsTypeValidators: fieldTypeValidators(field),
           nodejsInvalidTypeValue: invalidTypeValue(field),
           nodejsContentTypeColumnOptions: contentTypeColumnOptions(field, application),
+          // A column no list can be sorted by (@NotSortable): one the JDL marks, or a binary blob like the byte[] of JHipster Spring Boot.
+          nodejsNotSortable: !field.transient && !isSortableField(field),
         });
         // The fake value of the field as the API exchanges it, generated when a template calls it (after its faker seed).
       },
@@ -473,12 +477,17 @@ export default class extends BaseApplicationGenerator {
 
   get [BaseApplicationGenerator.DEFAULT]() {
     return this.asDefaultTaskGroup({
-      prepareColumnTransformers({ entities }) {
+      prepareColumnTransformers({ application, entities }) {
         // The transformers the columns of an entity use, imported by its entity.
         for (const entity of entities.filter(entity => !entity.skipServer)) {
           entity.nodejsColumnTransformers = [...new Set(entity.fields.map(field => field.nodejsColumnTransformer).filter(Boolean))];
           // The helpers of the column types chosen at runtime the columns of an entity use.
           entity.nodejsColumnTypeImports = [...new Set(entity.fields.flatMap(field => field.nodejsColumnTypeImports ?? []))];
+          entity.nodejsAnyNotSortableField =
+            entity.fields.some(field => field.nodejsNotSortable) ||
+            entity.relationships.some(relationship => relationship.notSortable && !relationship.collection);
+          // The sort by a column of a relationship to one the tests make.
+          entity.nodejsSortExample = application.databaseTypeSql ? toOneSortExample(entity) : undefined;
         }
       },
       prepareAuthorityAlertName({ application }) {

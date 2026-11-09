@@ -62,6 +62,7 @@ exports[`generator - github-build-matrix > with angular > should match matrix va
       "generatorOptions": {
         "authenticationType": "session",
         "clientFramework": "angular",
+        "skipUserRegistration": true,
       },
       "java-version": "21",
       "job-name": "monolith-angular-session-jdl",
