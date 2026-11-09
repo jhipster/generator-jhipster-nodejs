@@ -175,6 +175,11 @@ export const serverFiles = {
       condition: generator => generator.generateUserManagement,
       templates: ['e2e/account.e2e-spec.ts'],
     },
+    {
+      path: SERVER_NODEJS_DIR,
+      condition: generator => generator.generateUserRegistration,
+      templates: ['src/auth/registration.service.ts', 'src/auth/registration.controller.ts', 'e2e/registration.e2e-spec.ts'],
+    },
   ],
   other: [
     {

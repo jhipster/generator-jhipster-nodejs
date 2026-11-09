@@ -733,6 +733,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > run > should su
   "server/e2e/management.e2e-spec.ts": {
     "stateCleared": "modified",
   },
+  "server/e2e/registration.e2e-spec.ts": {
+    "stateCleared": "modified",
+  },
   "server/e2e/setup.test.js": {
     "stateCleared": "modified",
   },
@@ -815,6 +818,12 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > run > should su
     "stateCleared": "modified",
   },
   "server/src/auth/payload.interface.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/auth/registration.controller.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/auth/registration.service.ts": {
     "stateCleared": "modified",
   },
   "server/src/auth/role-type.ts": {
@@ -2268,6 +2277,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > without client 
   "server/e2e/management.e2e-spec.ts": {
     "stateCleared": "modified",
   },
+  "server/e2e/registration.e2e-spec.ts": {
+    "stateCleared": "modified",
+  },
   "server/e2e/setup.test.js": {
     "stateCleared": "modified",
   },
@@ -2350,6 +2362,12 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > without client 
     "stateCleared": "modified",
   },
   "server/src/auth/payload.interface.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/auth/registration.controller.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/auth/registration.service.ts": {
     "stateCleared": "modified",
   },
   "server/src/auth/role-type.ts": {

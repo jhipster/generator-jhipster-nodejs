@@ -1,0 +1,102 @@
+import { Injectable, Logger } from '@nestjs/common';
+import { Cron } from '@nestjs/schedule';
+import { randomBytes } from 'crypto';
+import { <%- typeormRelationsSupport ? 'IsNull, LessThan, Not' : 'FindOptionsWhere' %> } from 'typeorm';
+import { EmailAlreadyUsedException, InvalidPasswordException, LoginAlreadyUsedException } from '../common/errors/problem.exception.ts';
+import { <%- user.dtoClass %> } from '../users/dto/user.dto.ts';
+<%_ if (!typeormRelationsSupport) { _%>
+import { <%- user.persistClass %> } from '../users/user.entity.ts';
+<%_ } _%>
+import { UserService } from '../users/user.service.ts';
+import { isPasswordLengthInvalid, SYSTEM_AUDITOR } from './auth.service.ts';
+
+/** The days a registered user has to activate its account, like JHipster Spring Boot. */
+const ACTIVATION_DAYS = 3;
+
+/**
+ * The registration of the users by themselves, like the UserService of JHipster Spring Boot: a registered user is not
+ * activated until it opens the link of its activation mail. Not written with skipUserRegistration.
+ */
+@Injectable()
+export class RegistrationService {
+  logger = new Logger('RegistrationService');
+
+  constructor(private readonly userService: UserService) {}
+
+  /**
+   * Like JHipster Spring Boot, registers a user not activated, with the fields of the registration only, its login and
+   * mail in lower case, and an activation key (sent by mail): the not activated user of the same login or mail, if any,
+   * is removed first.
+   */
+  async registerUser(newUser: <%- user.dtoClass %>): Promise<<%- user.dtoClass %>> {
+    if (isPasswordLengthInvalid(newUser.password)) {
+      throw new InvalidPasswordException();
+    }
+    const login = newUser.login.toLowerCase();
+    const email = newUser.email.toLowerCase();
+    const userOfLogin = await this.userService.findByFields({ where: { login } });
+    if (userOfLogin && !(await this.removeNonActivatedUser(userOfLogin))) {
+      throw new LoginAlreadyUsedException();
+    }
+    const userOfEmail = await this.userService.findByFields({ where: { email } });
+    if (userOfEmail && !(await this.removeNonActivatedUser(userOfEmail))) {
+      throw new EmailAlreadyUsedException();
+    }
+    const user: <%- user.dtoClass %> = {
+      login,
+      password: newUser.password,
+      firstName: newUser.firstName,
+      lastName: newUser.lastName,
+      email,
+      imageUrl: newUser.imageUrl,
+      langKey: newUser.langKey,
+      // new user is not active
+      activated: false,
+      // new user gets registration key
+      activationKey: randomBytes(15).toString('base64url'),
+      authorities: ['ROLE_USER'],
+    };
+    return await this.userService.save(user, SYSTEM_AUDITOR, true);
+  }
+
+  /** Like JHipster Spring Boot, activates the user of an activation key, undefined for an unknown key. */
+  async activateRegistration(key: string): Promise<<%- user.dtoClass %> | undefined> {
+    const userFind = key ? await this.userService.findByFields({ where: { activationKey: key } }) : undefined;
+    if (!userFind) {
+      return undefined;
+    }
+    userFind.activated = true;
+    // null clears the column (TypeORM leaves the undefined properties unchanged).
+    Object.assign(userFind, { activationKey: null });
+    return await this.userService.save(userFind, SYSTEM_AUDITOR);
+  }
+
+  /**
+   * Like JHipster Spring Boot, removes every day, at 01:00, the users registered more than 3 days ago and still not
+   * activated: their login and mail are free again.
+   */
+  @Cron('0 0 1 * * *')
+  async removeNotActivatedUsers(): Promise<void> {
+    const registeredBefore = new Date(Date.now() - ACTIVATION_DAYS * 24 * 60 * 60 * 1000);
+    const [users] = await this.userService.findAndCount({
+<%_ if (typeormRelationsSupport) { _%>
+      where: { activated: false, activationKey: Not(IsNull()), createdDate: LessThan(registeredBefore) },
+<%_ } else { _%>
+      // The operators of MongoDB: TypeORM does not translate its find operators (LessThan) for it.
+      where: { activated: false, activationKey: { $ne: null }, createdDate: { $lt: registeredBefore } } as unknown as FindOptionsWhere<<%- user.persistClass %>>,
+<%_ } _%>
+    });
+    for (const user of users) {
+      this.logger.debug(`Deleting not activated user ${user.login}`);
+      await this.userService.delete(user);
+    }
+  }
+
+  private async removeNonActivatedUser(existingUser: <%- user.dtoClass %>): Promise<boolean> {
+    if (existingUser.activated) {
+      return false;
+    }
+    await this.userService.delete(existingUser);
+    return true;
+  }
+}

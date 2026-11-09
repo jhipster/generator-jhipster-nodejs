@@ -622,21 +622,23 @@ export default class extends BaseApplicationGenerator {
         }
       },
       async writingMailTemplates({ application }) {
-        if (!application.generateUserManagement) return;
         // The mail templates of JHipster Spring Boot (Thymeleaf) converted to the Handlebars templates of the mail module.
-        const templates = ['creationEmail', 'passwordResetEmail'];
-        if (application.generateUserRegistration) {
-          templates.unshift('activationEmail');
-        }
-        for (const template of templates) {
-          const destination = `${SERVER_NODEJS_SRC_DIR}/src/templates/mail/${template}.hbs`;
-          await this.writeFile(
-            this.fetchFromInstalledJHipster(`spring-boot/templates/src/main/resources/templates/mail/${template}.html.ejs`),
-            destination,
-            application,
-          );
-          this.editFile(destination, thymeleafMailToHandlebars);
-        }
+        await this.writeFiles({
+          rootTemplatesPath: this.fetchFromInstalledJHipster('spring-boot/templates/src/main/resources/templates/mail'),
+          blocks: [
+            {
+              condition: ctx => ctx.generateUserManagement,
+              renameTo: (_ctx, file) => `${SERVER_NODEJS_SRC_DIR}/src/templates/mail/${file.replace(/\.html$/, '.hbs')}`,
+              transform: [thymeleafMailToHandlebars],
+              templates: [
+                { sourceFile: 'activationEmail.html', condition: ctx => ctx.generateUserRegistration },
+                'creationEmail.html',
+                'passwordResetEmail.html',
+              ],
+            },
+          ],
+          context: application,
+        });
       },
     });
   }

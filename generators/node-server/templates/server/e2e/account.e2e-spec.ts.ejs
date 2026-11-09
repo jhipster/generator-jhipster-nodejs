@@ -16,16 +16,16 @@ describe('Account', () => {
     let app: INestApplication;
     let service: UserService;
     let authService: AuthService;
-<%_ if (generateUserRegistration) { _%>
-    let sendActivationEmail: MockInstance<MailService['sendActivationEmail']>;
-<%_ } _%>
     let sendPasswordResetMail: MockInstance<MailService['sendPasswordResetMail']>;
 
+<%_ if (!generateUserRegistration) { _%>
+    // The user the registration would create.
     const testUserDTO: <%- user.dtoClass %> = {
         login: 'userTestLogin',
         email: 'usertest@localhost.it',
         password: 'testPassword',
     };
+<%_ } _%>
 
     // Saved before each test, with the id the database gives it: the authenticated user of the requests.
     const testUserAuthenticated: any = {
@@ -69,136 +69,11 @@ describe('Account', () => {
         authService = moduleFixture.get<AuthService>(AuthService);
         // The mails are not sent, the tests check the users they are for.
         const mailService = moduleFixture.get<MailService>(MailService);
-<%_ if (generateUserRegistration) { _%>
-        sendActivationEmail = vi.spyOn(mailService, 'sendActivationEmail').mockResolvedValue();
-<%_ } _%>
         sendPasswordResetMail = vi.spyOn(mailService, 'sendPasswordResetMail').mockResolvedValue();
         userAuthenticated = await service.save(testUserAuthenticated, testUserAuthenticated.login, true);
     });
 
-<%_ if (generateUserRegistration) { _%>
-    it('/POST register new user', async () => {
-        const createdUser: <%- user.dtoClass %> = (
-            await request(app.getHttpServer())
-                .post('/api/register')
-                .send({ ...testUserDTO, activated: true })
-                .expect(201)
-        ).body;
-
-        // Like JHipster Spring Boot, the login in lower case, and a user not activated whatever the request.
-        expect(createdUser.login).toEqual(testUserDTO.login.toLowerCase());
-        // The activation key goes by mail only.
-        expect(createdUser.activationKey).toBeUndefined();
-        const registeredUser = (await service.findByFields({ where: { login: testUserDTO.login.toLowerCase() } }))!;
-        expect(registeredUser.activated).toBe(false);
-        expect(registeredUser.activationKey).toBeTruthy();
-        // Like JHipster Spring Boot, the auditor of an action without an authenticated user is system.
-        expect(registeredUser).toMatchObject({ createdBy: 'system', lastModifiedBy: 'system' });
-        expect(sendActivationEmail).toHaveBeenCalledWith(expect.objectContaining({ login: registeredUser.login, activationKey: registeredUser.activationKey }));
-        await service.delete(registeredUser);
-    });
-
-    it('/POST register with the login of a not activated user replaces it', async () => {
-        await request(app.getHttpServer()).post('/api/register').send(testUserDTO).expect(201);
-        await request(app.getHttpServer())
-            .post('/api/register')
-            .send({ ...testUserDTO, email: 'usertest2@localhost.it' })
-            .expect(201);
-
-        const registeredUser = (await service.findByFields({ where: { login: testUserDTO.login.toLowerCase() } }))!;
-        expect(registeredUser.email).toEqual('usertest2@localhost.it');
-        await service.delete(registeredUser);
-    });
-
-    it('/POST register with a too short password is a validation error, like the ManagedUserVM of JHipster Spring Boot', async () => {
-        const problem = (
-            await request(app.getHttpServer())
-                .post('/api/register')
-                .send({ ...testUserDTO, password: 'abc' })
-                .expect(400)
-        ).body;
-
-        expect(problem).toMatchObject({
-            type: 'https://www.jhipster.tech/problem/constraint-violation',
-            fieldErrors: [expect.objectContaining({ field: 'password' })],
-        });
-        expect(await service.findByFields({ where: { login: testUserDTO.login.toLowerCase() } })).toBeFalsy();
-    });
-
-    it('/POST register with a mail of a domain without a top level domain, like the seed users', async () => {
-        await request(app.getHttpServer())
-            .post('/api/register')
-            .send({ ...testUserDTO, email: 'usertest@localhost' })
-            .expect(201);
-        const registeredUser = (await service.findByFields({ where: { login: testUserDTO.login.toLowerCase() } }))!;
-        expect(registeredUser.email).toBe('usertest@localhost');
-        await service.delete(registeredUser);
-    });
-
-    it('/POST register with an invalid login or email is a validation error', async () => {
-        const problem = (
-            await request(app.getHttpServer())
-                .post('/api/register')
-                .send({ ...testUserDTO, login: 'user name!', email: 'not an email' })
-                .expect(400)
-        ).body;
-
-        expect(problem).toMatchObject({ type: 'https://www.jhipster.tech/problem/constraint-violation' });
-        expect(problem.fieldErrors.map(({ field }: { field: string }) => field).sort()).toEqual(['email', 'login']);
-    });
-
-    it('/POST register with the login of another user is a login already used problem', async () => {
-        const problem = (
-            await request(app.getHttpServer())
-                .post('/api/register')
-                .send({ ...testUserDTO, login: testUserAuthenticated.login })
-                .expect(400)
-        ).body;
-
-        // The type the registration page of the JHipster clients reads.
-        expect(problem).toMatchObject({ type: 'https://www.jhipster.tech/problem/login-already-used', message: 'error.userexists' });
-    });
-
-    it('/POST register with the email of another user is an email already used problem', async () => {
-        const problem = (
-            await request(app.getHttpServer())
-                .post('/api/register')
-                .send({ ...testUserDTO, email: testUserAuthenticated.email })
-                .expect(400)
-        ).body;
-
-        expect(problem).toMatchObject({ type: 'https://www.jhipster.tech/problem/email-already-used', message: 'error.emailexists' });
-    });
-
-    it('/GET activate account', async () => {
-        await request(app.getHttpServer()).post('/api/register').send(testUserDTO).expect(201);
-        const { activationKey } = (await service.findByFields({ where: { login: testUserDTO.login.toLowerCase() } }))!;
-
-        await request(app.getHttpServer())
-            .get('/api/activate')
-            .query({ key: activationKey })
-            .expect(200);
-
-        const activatedUser = (await service.findByFields({ where: { login: testUserDTO.login.toLowerCase() } }))!;
-        expect(activatedUser.activated).toBe(true);
-        expect(activatedUser.activationKey).toBeFalsy();
-        expect(activatedUser).toMatchObject({ createdBy: 'system', lastModifiedBy: 'system' });
-        await service.delete(activatedUser);
-    });
-
-    it('/GET activate account with an unknown key', async () => {
-        await request(app.getHttpServer())
-            .get('/api/activate')
-            .query({ key: 'unknownKey' })
-            .expect(500);
-    });
-
-    it('/GET activate account without key', async () => {
-        await request(app.getHttpServer())
-            .get('/api/activate')
-            .expect(500);
-    });
-<%_ } else { _%>
+<%_ if (!generateUserRegistration) { _%>
     it('/POST register is not found without the registration of the users', async () => {
         await request(app.getHttpServer()).post('/api/register').send(testUserDTO).expect(404);
         expect(await service.findByFields({ where: { login: testUserDTO.login.toLowerCase() } })).toBeFalsy();
@@ -207,8 +82,8 @@ describe('Account', () => {
     it('/GET activate is not found', async () => {
         await request(app.getHttpServer()).get('/api/activate').query({ key: 'key' }).expect(404);
     });
-<%_ } _%>
 
+<%_ } _%>
     it('/GET authenticate', async () => {
         const loginValue: any = (await request(app.getHttpServer())
             .get('/api/authenticate')
