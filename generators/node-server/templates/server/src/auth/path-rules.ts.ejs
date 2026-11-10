@@ -1,0 +1,32 @@
+/** The access of a path: public, of an authenticated user, or of an administrator. */
+export type PathAccess = 'permitAll' | 'authenticated' | 'admin';
+
+export interface PathRule {
+  /** The methods of the rule, all of them when not given. */
+  methods?: string[];
+  /** The path pattern of Spring Security. */
+  pattern: string;
+  /** The paths of the pattern, case insensitive like the routes of Express. */
+  path: RegExp;
+  access: PathAccess;
+}
+
+/**
+ * The access rules of the paths, like the SecurityConfiguration of JHipster Spring Boot: in their order, the first one
+ * matching a request decides. A route a guard protects has its rule here too, the guard checking it again.
+ */
+export const PATH_RULES: PathRule[] = [
+<%_ for (const rule of nodejsPathRules) { _%>
+  { <%- rule.methods ? `methods: [${rule.methods.map(method => `'${method}'`).join(', ')}], ` : '' %>pattern: '<%- rule.pattern %>', path: <%- rule.regExp %>, access: '<%- rule.access %>' },
+<%_ } _%>
+];
+
+/** The path of a request URL, as Express routes it: without its query, and without the origin of an absolute URL. */
+export function requestPath(url: string): string {
+  return url.replace(/^[a-z][a-z\d+.-]*:\/\/[^/?#]*/i, '').split('?', 1)[0] || '/';
+}
+
+/** The access of a request, by the first rule matching it, undefined when none does. */
+export function pathAccess(method: string, path: string): PathAccess | undefined {
+  return PATH_RULES.find(rule => (!rule.methods || rule.methods.includes(method)) && rule.path.test(path))?.access;
+}

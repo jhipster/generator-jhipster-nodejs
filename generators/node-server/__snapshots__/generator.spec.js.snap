@@ -420,6 +420,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > jwt microservic
   "server/e2e/management.e2e-spec.ts": {
     "stateCleared": "modified",
   },
+  "server/e2e/path-rules.e2e-spec.ts": {
+    "stateCleared": "modified",
+  },
   "server/e2e/setup.test.js": {
     "stateCleared": "modified",
   },
@@ -480,7 +483,16 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > jwt microservic
   "server/src/auth/passport.jwt.strategy.ts": {
     "stateCleared": "modified",
   },
+  "server/src/auth/path-rules.middleware.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/auth/path-rules.ts": {
+    "stateCleared": "modified",
+  },
   "server/src/auth/payload.interface.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/auth/request-authenticator.ts": {
     "stateCleared": "modified",
   },
   "server/src/auth/role-type.ts": {
@@ -734,6 +746,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > run > should ma
   "server/e2e/management.e2e-spec.ts": {
     "stateCleared": "modified",
   },
+  "server/e2e/path-rules.e2e-spec.ts": {
+    "stateCleared": "modified",
+  },
   "server/e2e/registration.e2e-spec.ts": {
     "stateCleared": "modified",
   },
@@ -818,6 +833,12 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > run > should ma
   "server/src/auth/password.service.ts": {
     "stateCleared": "modified",
   },
+  "server/src/auth/path-rules.middleware.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/auth/path-rules.ts": {
+    "stateCleared": "modified",
+  },
   "server/src/auth/payload.interface.ts": {
     "stateCleared": "modified",
   },
@@ -825,6 +846,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > run > should ma
     "stateCleared": "modified",
   },
   "server/src/auth/registration.service.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/auth/request-authenticator.ts": {
     "stateCleared": "modified",
   },
   "server/src/auth/role-type.ts": {
@@ -1144,6 +1168,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > with oauth2 > s
   "server/e2e/oauth2-login.e2e-spec.ts": {
     "stateCleared": "modified",
   },
+  "server/e2e/path-rules.e2e-spec.ts": {
+    "stateCleared": "modified",
+  },
   "server/e2e/setup.test.js": {
     "stateCleared": "modified",
   },
@@ -1223,6 +1250,15 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > with oauth2 > s
     "stateCleared": "modified",
   },
   "server/src/auth/passport.oauth2.strategy.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/auth/path-rules.middleware.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/auth/path-rules.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/auth/request-authenticator.ts": {
     "stateCleared": "modified",
   },
   "server/src/auth/role-type.ts": {
@@ -1500,6 +1536,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > with oauth2 and
   "server/e2e/oauth2-login.e2e-spec.ts": {
     "stateCleared": "modified",
   },
+  "server/e2e/path-rules.e2e-spec.ts": {
+    "stateCleared": "modified",
+  },
   "server/e2e/setup.test.js": {
     "stateCleared": "modified",
   },
@@ -1579,6 +1618,15 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > with oauth2 and
     "stateCleared": "modified",
   },
   "server/src/auth/passport.oauth2.strategy.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/auth/path-rules.middleware.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/auth/path-rules.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/auth/request-authenticator.ts": {
     "stateCleared": "modified",
   },
   "server/src/auth/role-type.ts": {
@@ -1847,6 +1895,14 @@ Your app uses, to get and use the token, the \`server/src/config/application.yml
 You can use the default secret created from the app, or change it.
 So to get a token, you have to pass a POST request on the _api/authenticate_ url with **UserLoginDTO** as body.
 For this you can use the client login page (if you have generated it), or a client like curl.
+
+### Authorization of the paths
+
+Like the \`SecurityConfiguration\` of JHipster Spring Boot, the server checks the path of every request before its routes,
+by the rules of \`server/src/auth/path-rules.ts\`, the first one matching the request deciding: a public path passes, else a
+request without authentication gets 401 and a user without the authority of the path 403, whether the route exists or
+not. A path no rule matches is denied too. A route is protected again by its guards (\`AuthGuard\`, \`RolesGuard\`): a new public
+route needs both, no guard and a \`permitAll\` rule before the rule of its path.
 
 ### Account mails
 
@@ -2278,6 +2334,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > without client 
   "server/e2e/management.e2e-spec.ts": {
     "stateCleared": "modified",
   },
+  "server/e2e/path-rules.e2e-spec.ts": {
+    "stateCleared": "modified",
+  },
   "server/e2e/registration.e2e-spec.ts": {
     "stateCleared": "modified",
   },
@@ -2362,6 +2421,12 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > without client 
   "server/src/auth/password.service.ts": {
     "stateCleared": "modified",
   },
+  "server/src/auth/path-rules.middleware.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/auth/path-rules.ts": {
+    "stateCleared": "modified",
+  },
   "server/src/auth/payload.interface.ts": {
     "stateCleared": "modified",
   },
@@ -2369,6 +2434,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > without client 
     "stateCleared": "modified",
   },
   "server/src/auth/registration.service.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/auth/request-authenticator.ts": {
     "stateCleared": "modified",
   },
   "server/src/auth/role-type.ts": {

@@ -93,6 +93,9 @@ export const serverFiles = {
         'src/common/database/abstract-auditing.entity.ts',
         'src/auth/guards/roles.guard.ts',
         'src/auth/guards/auth.guard.ts',
+        'src/auth/path-rules.ts',
+        'src/auth/path-rules.middleware.ts',
+        'src/auth/request-authenticator.ts',
         'src/auth/role-type.ts',
         'src/auth/decorators/roles.decorator.ts',
         'src/auth/index.ts',
@@ -169,7 +172,13 @@ export const serverFiles = {
   e2e: [
     {
       path: SERVER_NODEJS_DIR,
-      templates: ['e2e/app.e2e-spec.ts', 'e2e/cors.e2e-spec.ts', 'e2e/management.e2e-spec.ts', 'e2e/setup.test.js'],
+      templates: [
+        'e2e/app.e2e-spec.ts',
+        'e2e/cors.e2e-spec.ts',
+        'e2e/management.e2e-spec.ts',
+        'e2e/path-rules.e2e-spec.ts',
+        'e2e/setup.test.js',
+      ],
     },
     {
       path: SERVER_NODEJS_DIR,

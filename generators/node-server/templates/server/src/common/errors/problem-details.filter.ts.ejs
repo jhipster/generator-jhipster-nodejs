@@ -43,7 +43,8 @@ export class ProblemDetailsFilter implements ExceptionFilter {
         status,
         detail: exception instanceof HttpException ? detailOf(exception, request) : undefined,
         message: `error.http.${status}`,
-        path: request.path,
+        // The path of the request, not the one left of it by a middleware answering before the routes.
+        path: request.originalUrl.split('?')[0],
         ...(exception instanceof ProblemException ? exception.problem : {}),
       });
   }

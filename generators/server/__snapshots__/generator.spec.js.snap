@@ -83,6 +83,9 @@ exports[`SubGenerator server of nodejs JHipster blueprint > run > should match t
   "server/e2e/management.e2e-spec.ts": {
     "stateCleared": "modified",
   },
+  "server/e2e/path-rules.e2e-spec.ts": {
+    "stateCleared": "modified",
+  },
   "server/e2e/registration.e2e-spec.ts": {
     "stateCleared": "modified",
   },
@@ -170,6 +173,12 @@ exports[`SubGenerator server of nodejs JHipster blueprint > run > should match t
   "server/src/auth/password.service.ts": {
     "stateCleared": "modified",
   },
+  "server/src/auth/path-rules.middleware.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/auth/path-rules.ts": {
+    "stateCleared": "modified",
+  },
   "server/src/auth/payload.interface.ts": {
     "stateCleared": "modified",
   },
@@ -177,6 +186,9 @@ exports[`SubGenerator server of nodejs JHipster blueprint > run > should match t
     "stateCleared": "modified",
   },
   "server/src/auth/registration.service.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/auth/request-authenticator.ts": {
     "stateCleared": "modified",
   },
   "server/src/auth/role-type.ts": {

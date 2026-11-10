@@ -1,8 +1,10 @@
 <%_ if (authenticationType === 'oauth2') { _%>
 import { HttpModule } from '@nestjs/axios';
 <%_ } _%>
-import { <%- authenticationUsesCsrf && generateAuthenticationApi ? 'MiddlewareConsumer, NestModule, ' : '' %>Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { AuthService } from './auth.service.ts';
+import { PathRulesMiddleware } from './path-rules.middleware.ts';
+import { RequestAuthenticator } from './request-authenticator.ts';
 <%_ if (generateBuiltInUserEntity) { _%>
 import { UserModule } from '../users/user.module.ts';
 <%_ } _%>
@@ -91,6 +93,7 @@ import { RegistrationService } from './registration.service.ts';
 <%_ } _%>
   <%- generateBuiltInUserEntity ? 'PublicUserController' : 'ManagementController' %><%- generateAuthenticationApi ? ', AccountController' : '' %><%- generateUserRegistration ? ', RegistrationController' : '' %> ],
   providers: [AuthService,
+  RequestAuthenticator,
 <%_ if (generateUserRegistration) { _%>
   RegistrationService,
 <%_ } _%>
@@ -108,12 +111,8 @@ import { RegistrationService } from './registration.service.ts';
   ],
   exports: [AuthService],
 })
-<%_ if (authenticationUsesCsrf && generateAuthenticationApi) { _%>
 export class AuthModule implements NestModule {
   configure(consumer: MiddlewareConsumer): void {
-    consumer.apply(<%- authenticationTypeSession ? 'SessionUserMiddleware, ' : '' %>CsrfMiddleware).forRoutes('*');
+    consumer.apply(<%- [authenticationTypeSession && 'SessionUserMiddleware', authenticationUsesCsrf && generateAuthenticationApi && 'CsrfMiddleware', 'PathRulesMiddleware'].filter(Boolean).join(', ') %>).forRoutes('*');
   }
 }
-<%_ } else { _%>
-export class AuthModule {}
-<%_ } _%>

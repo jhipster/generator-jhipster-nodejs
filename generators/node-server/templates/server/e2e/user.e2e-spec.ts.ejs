@@ -4,7 +4,7 @@ import request from 'supertest';
 import { AppModule } from '../src/app.module.ts';
 import { configureApp } from '../src/app.config.ts';
 import { INestApplication } from '@nestjs/common';
-import { AuthGuard } from '../src/auth/guards/auth.guard.ts';
+import { RequestAuthenticator } from '../src/auth/request-authenticator.ts';
 import { RolesGuard } from '../src/auth/guards/roles.guard.ts';
 import { <%- user.dtoClass %> } from '../src/users/dto/user.dto.ts';
 import { UserService } from '../src/users/user.service.ts';
@@ -16,7 +16,8 @@ describe('User', () => {
     let service: UserService;
     let sendCreationEmail: MockInstance<MailService['sendCreationEmail']>;
 
-    const authGuardMock = { canActivate: (): any => true };
+    // An administrator, which the PathRulesMiddleware authenticates.
+    const authenticatorMock = { authenticate: (): Promise<any> => Promise.resolve({ login: 'admin', authorities: ['ROLE_ADMIN', 'ROLE_USER'] }) };
     const rolesGuardMock = { canActivate: (): any => true };
 
     const testUserRequestObject: any = {
@@ -43,8 +44,8 @@ describe('User', () => {
         const moduleFixture: TestingModule = await Test.createTestingModule({
             imports: [AppModule],
         })
-            .overrideGuard(AuthGuard)
-            .useValue(authGuardMock)
+            .overrideProvider(RequestAuthenticator)
+            .useValue(authenticatorMock)
             .overrideGuard(RolesGuard)
             .useValue(rolesGuardMock)
             .compile();
@@ -180,7 +181,7 @@ describe('User', () => {
 
     it('/PUT update user', async () => {
         testUserDTO.login = 'TestUserUpdate';
-        const { password: _savedPassword, lastModifiedDate: _savedLastModifiedDate, ...savedUser } = await service.save(testUserDTO);
+        const { password: _savedPassword, lastModifiedDate: _savedLastModifiedDate, ...savedUser } = await service.save(testUserDTO, 'creator');
         savedUser.firstName = 'Updated Name';
 
         const { password: _updatedPassword, lastModifiedDate: _updatedLastModifiedDate, ...updatedUser } = (
@@ -193,8 +194,10 @@ describe('User', () => {
 <%_ if (databaseType === 'mongodb') { _%>
         expect(updatedUser.firstName).toEqual(savedUser.firstName);
 <%_ } else { _%>
-        // Like JHipster Spring Boot, the login in lower case.
-        expect(updatedUser).toEqual(JSON.parse(JSON.stringify(withoutKeys({ ...savedUser, login: savedUser.login.toLowerCase() }))));
+        // Like JHipster Spring Boot, the login in lower case, modified by the administrator of the request.
+        expect(updatedUser).toEqual(
+            JSON.parse(JSON.stringify(withoutKeys({ ...savedUser, login: savedUser.login.toLowerCase(), lastModifiedBy: 'admin' }))),
+        );
 <%_ } _%>
 
         await service.delete(savedUser as <%- user.dtoClass %>);
@@ -202,7 +205,7 @@ describe('User', () => {
 
     it('/PUT update user with a login name', async () => {
         testUserDTO.login = 'TestUserUpdateLogin';
-        const { password: _savedPassword, lastModifiedDate: _savedLastModifiedDate, ...savedUser } = await service.save(testUserDTO);
+        const { password: _savedPassword, lastModifiedDate: _savedLastModifiedDate, ...savedUser } = await service.save(testUserDTO, 'creator');
         savedUser.firstName = 'Updated Name';
 
         const { password: _updatedPassword, lastModifiedDate: _updatedLastModifiedDate, ...updatedUser } = (
@@ -215,8 +218,10 @@ describe('User', () => {
 <%_ if (databaseType === 'mongodb') { _%>
         expect(updatedUser.firstName).toEqual(savedUser.firstName);
 <%_ } else { _%>
-        // Like JHipster Spring Boot, the login in lower case.
-        expect(updatedUser).toEqual(JSON.parse(JSON.stringify(withoutKeys({ ...savedUser, login: savedUser.login.toLowerCase() }))));
+        // Like JHipster Spring Boot, the login in lower case, modified by the administrator of the request.
+        expect(updatedUser).toEqual(
+            JSON.parse(JSON.stringify(withoutKeys({ ...savedUser, login: savedUser.login.toLowerCase(), lastModifiedBy: 'admin' }))),
+        );
 <%_ } _%>
 
         await service.delete(savedUser as <%- user.dtoClass %>);

@@ -1,0 +1,53 @@
+import { Injectable<%- authenticationTypeSession ? '' : ', UnauthorizedException' %> } from '@nestjs/common';
+<%_ if (!authenticationTypeSession) { _%>
+import passport from 'passport';
+<%_ } _%>
+import { Request } from '../common/request.ts';
+<%_ if (!authenticationTypeSession) { _%>
+
+/** The bearer scheme of the Authorization header, case insensitive like HTTP gives it. */
+const BEARER_SCHEME = /^bearer(?:\s|$)/i;
+<%_ } _%>
+
+/** The user of an authenticated request. */
+export type AuthenticatedUser = NonNullable<Request['user']>;
+
+/**
+ * The authentication of a request, once for the path rules and the guards (PathRulesMiddleware), like the authentication
+ * filters of Spring Security:
+<%_ if (authenticationTypeSession) { _%>
+ * the user of the session of the login, else none.
+<%_ } else if (authenticationTypeOauth2) { _%>
+ * the user of the session of the login, else the one of the access token of the identity provider given as bearer token
+ * (an invalid one is 401, whatever the path), else none.
+<%_ } else { _%>
+ * the user of the token given as bearer token (an invalid one is 401, whatever the path), else none.
+<%_ } _%>
+ */
+@Injectable()
+export class RequestAuthenticator {
+<%_ if (authenticationTypeSession) { _%>
+  authenticate(req: Request): Promise<AuthenticatedUser | undefined> {
+    return Promise.resolve(req.session?.user as AuthenticatedUser | undefined);
+<%_ } else { _%>
+  async authenticate(req: Request): Promise<AuthenticatedUser | undefined> {
+  <%_ if (authenticationUsesCsrf && generateAuthenticationApi) { _%>
+    if (req.session?.user) {
+      return req.session.user;
+    }
+  <%_ } _%>
+    if (!BEARER_SCHEME.test(req.headers.authorization ?? '')) {
+      return undefined;
+    }
+    return new Promise((resolve, reject) => {
+      passport.authenticate('<%- authenticationTypeOauth2 ? 'oauth2-bearer' : 'jwt' %>', { session: false }, (error: unknown, user: AuthenticatedUser | false) => {
+        if (error || !user) {
+          reject(error instanceof Error ? error : new UnauthorizedException());
+        } else {
+          resolve(user);
+        }
+      })(req, req.res, reject);
+    });
+<%_ } _%>
+  }
+}

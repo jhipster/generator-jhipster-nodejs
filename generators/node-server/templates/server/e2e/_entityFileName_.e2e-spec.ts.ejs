@@ -8,7 +8,7 @@ import request from 'supertest';
 import { AppModule } from '../src/app.module.ts';
 import { configureApp } from '../src/app.config.ts';
 import { INestApplication } from '@nestjs/common';
-import { AuthGuard } from '../src/auth/guards/auth.guard.ts';
+import { RequestAuthenticator } from '../src/auth/request-authenticator.ts';
 import { RolesGuard } from '../src/auth/guards/roles.guard.ts';
 import { <%- dtoClass %> } from '../src/entities/<%- entityFileName %>/dto/<%- entityFileName %>.dto.ts';
 import { <%- entityClass %>Service } from '../src/entities/<%- entityFileName %>/<%- entityFileName %>.service.ts';
@@ -21,7 +21,8 @@ const alertHeader = (headers: Record<string, unknown>, suffix: string): unknown 
 describe('<%- entityClass %> Controller', () => {
     let app: INestApplication;
 
-    const authGuardMock = { canActivate: (): any => true };
+    // The user of the requests, which the PathRulesMiddleware authenticates.
+    const authenticatorMock = { authenticate: (): Promise<any> => Promise.resolve({ login: 'admin', authorities: ['ROLE_ADMIN', 'ROLE_USER'] }) };
     const rolesGuardMock = { canActivate: (): any => true };
     const entityMock: any = {
         <%- primaryKey.name %>: <%- entityId %>,
@@ -72,8 +73,8 @@ _%>
     beforeEach(async () => {
         const moduleFixture: TestingModule = await Test.createTestingModule({
             imports: [AppModule],
-        }).overrideGuard(AuthGuard)
-        .useValue(authGuardMock)
+        }).overrideProvider(RequestAuthenticator)
+        .useValue(authenticatorMock)
         .overrideGuard(RolesGuard)
         .useValue(rolesGuardMock)
         .overrideProvider(<%- entityClass %>Service)
@@ -529,11 +530,8 @@ _%>
         const appOfUser = async (authorities: string[]): Promise<INestApplication> => {
             const moduleFixture: TestingModule = await Test.createTestingModule({
                 imports: [AppModule],
-            }).overrideGuard(AuthGuard)
-            .useValue({ canActivate: (context: any): boolean => {
-                context.switchToHttp().getRequest().user = { login: 'user', authorities };
-                return true;
-            } })
+            }).overrideProvider(RequestAuthenticator)
+            .useValue({ authenticate: (): Promise<any> => Promise.resolve({ login: 'user', authorities }) })
             .overrideProvider(<%- entityClass %>Service)
             .useValue(serviceMock)
             .compile();
