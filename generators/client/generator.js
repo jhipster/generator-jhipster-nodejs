@@ -26,6 +26,13 @@ export default class extends BaseApplicationGenerator {
           }
         }
       },
+      nodejsAxios({ application }) {
+        // The npm workspaces hoist to the root the axios of the tools of the root (wait-on), at its latest version, which
+        // axios-mock-adapter of the client then reads: the root gets the axios of the client, so there is one copy.
+        if (application.clientFrameworkBuiltIn && application.nodeDependencies.axios) {
+          this.packageJson.merge({ devDependencies: { axios: application.nodeDependencies.axios } });
+        }
+      },
     });
   }
 }

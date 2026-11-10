@@ -24,6 +24,23 @@ describe('SubGenerator client of nodejs JHipster blueprint', () => {
     });
   });
 
+  describe('with Vue', () => {
+    beforeAll(async function () {
+      await helpers
+        .run(BLUEPRINT_NAMESPACE)
+        .withJHipsterConfig({ clientFramework: 'vue' })
+        .withOptions({ ignoreNeedlesError: true, useVersionPlaceholders: false })
+        .withJHipsterGenerators()
+        .withConfiguredBlueprint()
+        .withBlueprintConfig({});
+    });
+
+    it('should give the root the axios of the client, the one npm hoists to the root of the workspaces', () => {
+      const { dependencies } = result.fs.readJSON(`${result.cwd}/client/package.json`);
+      result.assertJsonFileContent('package.json', { devDependencies: { axios: dependencies.axios } });
+    });
+  });
+
   describe('admin screens', () => {
     const run = config =>
       helpers
