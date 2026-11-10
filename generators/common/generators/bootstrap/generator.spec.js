@@ -19,7 +19,7 @@ describe('SubGenerator common:bootstrap of nodejs JHipster blueprint', () => {
         .withBlueprintConfig({});
     });
 
-    it('should succeed', () => {
+    it('should match the files snapshot', () => {
       expect(result.getStateSnapshot()).toMatchSnapshot();
     });
   });

@@ -1,6 +1,6 @@
-// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+// expect-node Snapshot v1, https://github.com/mshima/expect-node#snapshots
 
-exports[`generator - github-build-matrix > with angular > should match matrix value 1`] = `
+exports[`generator - github-build-matrix > with angular > should match the matrix value snapshot 1`] = `
 {
   "include": [
     {
@@ -170,7 +170,7 @@ exports[`generator - github-build-matrix > with angular > should match matrix va
 }
 `;
 
-exports[`generator - github-build-matrix > with microservice > should match matrix value 1`] = `
+exports[`generator - github-build-matrix > with microservice > should match the matrix value snapshot 1`] = `
 {
   "include": [
     {
@@ -190,7 +190,7 @@ exports[`generator - github-build-matrix > with microservice > should match matr
 }
 `;
 
-exports[`generator - github-build-matrix > with microservice-stack > should match matrix value 1`] = `
+exports[`generator - github-build-matrix > with microservice-stack > should match the matrix value snapshot 1`] = `
 {
   "include": [
     {
@@ -233,7 +233,7 @@ exports[`generator - github-build-matrix > with microservice-stack > should matc
 }
 `;
 
-exports[`generator - github-build-matrix > with react > should match matrix value 1`] = `
+exports[`generator - github-build-matrix > with react > should match the matrix value snapshot 1`] = `
 {
   "include": [
     {
@@ -383,7 +383,7 @@ exports[`generator - github-build-matrix > with react > should match matrix valu
 }
 `;
 
-exports[`generator - github-build-matrix > with samples > should match matrix value 1`] = `
+exports[`generator - github-build-matrix > with samples > should match the matrix value snapshot 1`] = `
 {
   "include": [
     {
@@ -486,7 +486,7 @@ exports[`generator - github-build-matrix > with samples > should match matrix va
 }
 `;
 
-exports[`generator - github-build-matrix > with vue > should match matrix value 1`] = `
+exports[`generator - github-build-matrix > with vue > should match the matrix value snapshot 1`] = `
 {
   "include": [
     {

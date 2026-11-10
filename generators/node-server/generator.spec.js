@@ -23,7 +23,7 @@ describe('SubGenerator node-server of nodejs JHipster blueprint', () => {
         .withBlueprintConfig({});
     });
 
-    it('should succeed', () => {
+    it('should match the files snapshot', () => {
       expect(result.getStateSnapshot()).toMatchSnapshot();
     });
 
@@ -273,7 +273,7 @@ describe('SubGenerator node-server of nodejs JHipster blueprint', () => {
         .withBlueprintConfig({});
     });
 
-    it('should succeed', () => {
+    it('should match the files snapshot', () => {
       expect(result.getStateSnapshot()).toMatchSnapshot();
     });
 
@@ -458,7 +458,7 @@ describe('SubGenerator node-server of nodejs JHipster blueprint', () => {
         .withBlueprintConfig({});
     });
 
-    it('should succeed', () => {
+    it('should match the files snapshot', () => {
       expect(result.getStateSnapshot()).toMatchSnapshot();
     });
 
@@ -588,7 +588,7 @@ describe('SubGenerator node-server of nodejs JHipster blueprint', () => {
         .withBlueprintConfig({});
     });
 
-    it('should succeed', () => {
+    it('should match the files snapshot', () => {
       expect(result.getStateSnapshot()).toMatchSnapshot();
     });
 
@@ -648,7 +648,7 @@ describe('SubGenerator node-server of nodejs JHipster blueprint', () => {
         .withBlueprintConfig({});
     });
 
-    it('should succeed', () => {
+    it('should match the files snapshot', () => {
       expect(result.getStateSnapshot()).toMatchSnapshot();
     });
 
