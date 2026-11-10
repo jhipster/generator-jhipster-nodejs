@@ -23,10 +23,18 @@ describe('OAuth2 bearer tokens', () => {
     const unsigned = `${base64url({ alg: 'RS256', typ: 'JWT', kid })}.${base64url(payload)}`;
     return `${unsigned}.${base64url(sign('RSA-SHA256', Buffer.from(unsigned), key))}`;
   };
+<%_ if (generateAuthenticationApi) { _%>
   const account = (authorization?: string): request.Test => {
     const test = request(app.getHttpServer()).get('/api/account');
     return authorization ? test.set('Authorization', authorization) : test;
   };
+<%_ } else { _%>
+  // A microservice has no account API, like JHipster Spring Boot: a route of an administrator instead.
+  const account = (authorization?: string): request.Test => {
+    const test = request(app.getHttpServer()).get('/management/env');
+    return authorization ? test.set('Authorization', authorization) : test;
+  };
+<%_ } _%>
 
   beforeAll(async () => {
     jwks = createServer((_req, res) => {
@@ -53,6 +61,7 @@ describe('OAuth2 bearer tokens', () => {
 
   it('answers 401 without a session nor a bearer token, like JHipster Spring Boot', () => account().expect(401));
 
+<%_ if (generateAuthenticationApi) { _%>
   it('accepts an access token of the identity provider, its user from its claims', async () => {
     const { body } = await account(
       `Bearer ${token({ preferred_username: 'Bearer-User', email: 'Bearer@Example.com', groups: ['ROLE_USER'] })}`,
@@ -61,6 +70,15 @@ describe('OAuth2 bearer tokens', () => {
   });
 
   it('reads the authentication scheme case insensitively', () => account(`bearer ${token({ preferred_username: 'user' })}`).expect(200));
+<%_ } else { _%>
+  it('accepts an access token of the identity provider, its authorities from its claims', async () => {
+    await account(`Bearer ${token({ preferred_username: 'bearer-user', groups: ['ROLE_ADMIN'] })}`).expect(200);
+    await account(`Bearer ${token({ preferred_username: 'bearer-user', groups: ['ROLE_USER'] })}`).expect(403);
+  });
+
+  it('reads the authentication scheme case insensitively', () =>
+    account(`bearer ${token({ preferred_username: 'user', groups: ['ROLE_ADMIN'] })}`).expect(200));
+<%_ } _%>
 
   it('refuses a token signed by another key', () => account(`Bearer ${token({}, otherKey)}`).expect(401));
 

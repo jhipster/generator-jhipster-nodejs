@@ -46,7 +46,7 @@
 <%_ if (authenticationType === 'oauth2') { _%>
     "@nestjs/axios": "<%- nodeServerDependencies['@nestjs/axios'] %>",
 <%_ } _%>
-<%_ if (authenticationUsesCsrf) { _%>
+<%_ if (authenticationUsesCsrf && generateAuthenticationApi) { _%>
     "express-session": "<%- nodeServerDependencies['express-session'] %>",
 <%_ } _%>
     "@nestjs/common": "<%- nodeServerDependencies['@nestjs/common'] %>",
@@ -88,11 +88,13 @@
     "js-yaml": "<%- nodeServerDependencies['js-yaml'] %>",
 <%_ if (authenticationType === 'oauth2') { _%>
     "jwks-rsa": "<%- nodeServerDependencies['jwks-rsa'] %>",
+  <%_ if (authenticationUsesCsrf && generateAuthenticationApi) { _%>
     "jwt-decode": "<%- nodeServerDependencies['jwt-decode'] %>",
+  <%_ } _%>
 <%_ } _%>
     "passport": "<%- nodeServerDependencies.passport %>",
     "passport-jwt": "<%- nodeServerDependencies['passport-jwt'] %>",
-<%_ if (authenticationType === 'oauth2') { _%>
+<%_ if (authenticationType === 'oauth2' && authenticationUsesCsrf && generateAuthenticationApi) { _%>
     "passport-oauth2": "<%- nodeServerDependencies['passport-oauth2'] %>",
 <%_ } _%>
     "prom-client": "<%- nodeServerDependencies['prom-client'] %>",
@@ -110,7 +112,7 @@
     "@types/express": "<%- nodeServerDependencies['@types/express'] %>",
     "@types/express-serve-static-core": "<%- nodeServerDependencies['@types/express-serve-static-core'] %>",
     "@types/superagent": "<%- nodeServerDependencies['@types/superagent'] %>",
-<%_ if (authenticationUsesCsrf) { _%>
+<%_ if (authenticationUsesCsrf && generateAuthenticationApi) { _%>
     "@types/express-session": "<%- nodeServerDependencies['@types/express-session'] %>",
 <%_ } _%>
     "@types/node": "<%- nodeServerDependencies['@types/node'] %>",
@@ -118,7 +120,7 @@
     "@types/passport": "<%- nodeServerDependencies['@types/passport'] %>",
 <%_ } _%>
     "@types/passport-jwt": "<%- nodeServerDependencies['@types/passport-jwt'] %>",
-<%_ if (authenticationType === 'oauth2') { _%>
+<%_ if (authenticationType === 'oauth2' && authenticationUsesCsrf && generateAuthenticationApi) { _%>
     "@types/passport-oauth2": "<%- nodeServerDependencies['@types/passport-oauth2'] %>",
 <%_ } _%>
     "@types/qs": "<%- nodeServerDependencies['@types/qs'] %>",

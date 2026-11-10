@@ -65,7 +65,6 @@ export const serverFiles = {
       path: SERVER_NODEJS_DIR,
       templates: [
         'src/users/dto/user.dto.ts',
-        'src/auth/account.controller.ts',
         'src/management/management.controller.ts',
         'src/management/health.controller.ts',
         'src/management/health.module.ts',
@@ -159,6 +158,14 @@ export const serverFiles = {
       templates: ['src/common/sortable-properties.ts'],
     },
   ],
+  account: [
+    {
+      path: SERVER_NODEJS_DIR,
+      // The account API, but in a microservice, which only validates the tokens, like JHipster Spring Boot.
+      condition: ctx => ctx.generateAuthenticationApi,
+      templates: ['src/auth/account.controller.ts'],
+    },
+  ],
   e2e: [
     {
       path: SERVER_NODEJS_DIR,
@@ -215,7 +222,7 @@ export const serverFiles = {
     {
       path: SERVER_NODEJS_DIR,
       // The sessions of the server, of the session login and of the OAuth2 login, protected from CSRF.
-      condition: ctx => ctx.authenticationUsesCsrf,
+      condition: ctx => ctx.authenticationUsesCsrf && ctx.generateAuthenticationApi,
       templates: [
         'src/auth/csrf.middleware.ts',
         'src/auth/csrf.middleware.spec.ts',
@@ -226,7 +233,7 @@ export const serverFiles = {
     },
     {
       path: SERVER_NODEJS_DIR,
-      condition: ctx => ctx.authenticationUsesCsrf && ctx.databaseTypeSql,
+      condition: ctx => ctx.authenticationUsesCsrf && ctx.generateAuthenticationApi && ctx.databaseTypeSql,
       templates: ['src/migrations/1570200270082-CreateSessions.ts'],
     },
     {
@@ -240,22 +247,24 @@ export const serverFiles = {
       path: SERVER_NODEJS_DIR,
       condition: generator => generator.authenticationTypeOauth2,
       templates: [
-        'src/auth/user.oauth2.controller.ts',
-        'src/auth/passport.oauth2.strategy.ts',
         'src/auth/oauth2.config.ts',
         'src/auth/oauth2.authorities.ts',
         'src/auth/passport.oauth2-bearer.strategy.ts',
-        'src/auth/guards/oauth2-login.guard.ts',
         'src/auth/oauth2.authorities.spec.ts',
-        'src/auth/passport.oauth2.strategy.spec.ts',
         'e2e/oauth2-bearer.e2e-spec.ts',
       ],
     },
     {
       path: SERVER_NODEJS_DIR,
       // The login with the identity provider, in a session.
-      condition: generator => generator.authenticationTypeOauth2 && generator.authenticationUsesCsrf,
-      templates: ['e2e/oauth2-login.e2e-spec.ts'],
+      condition: generator => generator.authenticationTypeOauth2 && generator.authenticationUsesCsrf && generator.generateAuthenticationApi,
+      templates: [
+        'src/auth/user.oauth2.controller.ts',
+        'src/auth/passport.oauth2.strategy.ts',
+        'src/auth/guards/oauth2-login.guard.ts',
+        'src/auth/passport.oauth2.strategy.spec.ts',
+        'e2e/oauth2-login.e2e-spec.ts',
+      ],
     },
   ],
 };

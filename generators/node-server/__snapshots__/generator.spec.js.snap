@@ -450,9 +450,6 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > jwt microservic
   "server/src/application-config.ts": {
     "stateCleared": "modified",
   },
-  "server/src/auth/account.controller.ts": {
-    "stateCleared": "modified",
-  },
   "server/src/auth/auth.module.ts": {
     "stateCleared": "modified",
   },
