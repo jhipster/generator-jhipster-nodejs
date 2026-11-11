@@ -1,0 +1,126 @@
+import { request as httpRequest } from 'node:http';
+import { AddressInfo } from 'node:net';
+import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+import { INestApplication } from '@nestjs/common';
+import { Test } from '@nestjs/testing';
+import request from 'supertest';
+import { AppModule } from '../src/app.module.ts';
+import { configureApp } from '../src/app.config.ts';
+import { RequestAuthenticator } from '../src/auth/request-authenticator.ts';
+
+/**
+ * The authorization of the paths, like JHipster Spring Boot: 401 without user and 403 without the authority of the path,
+ * whether its route exists or not.
+ */
+describe('Path rules', () => {
+  let app: INestApplication;
+
+  /** The application, the user of its requests of these authorities when given, which RequestAuthenticator gives. */
+  const createApp = async (authorities?: string[]): Promise<INestApplication> => {
+    let builder = Test.createTestingModule({ imports: [AppModule] });
+    if (authorities) {
+      builder = builder
+        .overrideProvider(RequestAuthenticator)
+        .useValue({ authenticate: () => Promise.resolve({ login: 'pathrules', authorities }) });
+    }
+    const nestApp = (await builder.compile()).createNestApplication();
+    configureApp(nestApp);
+    await nestApp.init();
+    return nestApp;
+  };
+
+  const get = (path: string): request.Test => request(app.getHttpServer()).get(path);
+
+  afterEach(async () => {
+    await app?.close();
+  });
+
+  describe('without user', () => {
+    beforeEach(async () => {
+      app = await createApp();
+    });
+
+    it('answers 401 to a path of the API, whether its route exists or not', async () => {
+<%_ if (authenticationTypeJwt || (authenticationTypeOauth2 && applicationTypeMicroservice)) { _%>
+      await get('/api/nothing').expect(401).expect('WWW-Authenticate', 'Bearer');
+<%_ } else { _%>
+      await get('/api/nothing').expect(401);
+<%_ } _%>
+      await get('/API/Nothing/').expect(401);
+      expect((await get('/api/nothing?x=1')).body).toMatchObject({ status: 401, path: '/api/nothing' });
+      await request(app.getHttpServer()).delete('/api/nothing').expect(401);
+      await get('/api/account').expect(401);
+    });
+
+    it('answers 401 to the paths of an administrator', async () => {
+      await get('/api/admin/nothing').expect(401);
+      await get('/management/env').expect(401);
+      await get('/v3/api-docs').expect(401);
+    });
+<%_ if (skipClient) { _%>
+
+    it('answers 401 to a path no rule permits, like Spring Security', async () => {
+      await get('/').expect(401);
+      await get('/nothing').expect(401);
+      await get('/index.html').expect(401);
+    });
+<%_ } _%>
+<%_ if (generateUserManagement && !generateUserRegistration) { _%>
+
+    it('answers 401 to the registration, the users created by an administrator only', () =>
+      request(app.getHttpServer()).post('/api/register').send({}).expect(401));
+<%_ } _%>
+
+    it('answers a public path', () => get('/management/info').expect(200));
+  });
+
+  describe('with an administrator', () => {
+    beforeEach(async () => {
+      app = await createApp(['ROLE_USER', 'ROLE_ADMIN']);
+      await app.listen(0, '127.0.0.1');
+    });
+
+    /** The status of a request whose target is sent as it is written. */
+    const statusOf = (target: string): Promise<number | undefined> => {
+      const { port } = app.getHttpServer().address() as AddressInfo;
+      return new Promise((resolve, reject) => {
+        httpRequest({ host: '127.0.0.1', port, path: target }, response => {
+          response.resume();
+          resolve(response.statusCode);
+        })
+          .on('error', reject)
+          .end();
+      });
+    };
+
+    it('refuses a URL Express reads another way than its text, like the firewall of Spring Security', async () => {
+      expect(await statusOf('/management/env')).toBe(200);
+      expect(await statusOf('/management\\env#x')).toBe(400);
+    });
+  });
+
+  describe('with a user', () => {
+    beforeEach(async () => {
+      app = await createApp(['ROLE_USER']);
+    });
+
+    it('answers 403 to the paths of an administrator, whether their routes exist or not', async () => {
+      await get('/api/admin/nothing').expect(403);
+<%_ if (generateUserManagement) { _%>
+      await get('/api/admin/users').expect(403);
+<%_ } _%>
+      await get('/management/env').expect(403);
+      await get('/management/nothing').expect(403);
+      await get('/v3/api-docs').expect(403);
+    });
+
+    it('answers 404 to a path of the API without route, its detail telling nothing of the server', async () => {
+      const { body } = await get('/api/nothing?x=1').expect(404);
+      expect(body).toMatchObject({ title: 'Not Found', detail: 'Not Found', message: 'error.http.404', path: '/api/nothing' });
+    });
+<%_ if (skipClient) { _%>
+
+    it('answers 403 to a path no rule permits, like Spring Security', () => get('/nothing').expect(403));
+<%_ } _%>
+  });
+});

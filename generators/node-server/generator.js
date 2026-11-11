@@ -30,6 +30,7 @@ import {
   mutateRelationOptions,
   mutateRequiredReference,
   mutateTestSamples,
+  nodejsPathRules,
   primaryKeyColumn,
   serverEnumInfo,
   thymeleafMailToHandlebars,
@@ -266,6 +267,13 @@ export default class extends BaseApplicationGenerator {
           __override__: false,
           // The offset of the timestamps of the migrations of the developers (see support/migrations.js).
           nodejsMigrationTimestampOffset: MIGRATION_TIMESTAMP_OFFSET,
+        });
+      },
+      pathRules({ applicationDefaults }) {
+        applicationDefaults({
+          __override__: false,
+          // The access rules of the paths, like the SecurityConfiguration of JHipster Spring Boot (see support/path-rules.js).
+          nodejsPathRules,
         });
       },
       passwords({ applicationDefaults }) {

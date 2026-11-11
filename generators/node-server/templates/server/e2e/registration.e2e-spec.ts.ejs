@@ -3,13 +3,13 @@ import { Test, TestingModule } from '@nestjs/testing';
 import request from 'supertest';
 import { AppModule } from '../src/app.module.ts';
 import { configureApp } from '../src/app.config.ts';
-import { ExecutionContext, INestApplication } from '@nestjs/common';
+import { INestApplication } from '@nestjs/common';
 <%_ if (databaseTypeMongodb) { _%>
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from '../src/users/user.entity.ts';
 <%_ } _%>
-import { AuthGuard } from '../src/auth/guards/auth.guard.ts';
+import { RequestAuthenticator } from '../src/auth/request-authenticator.ts';
 import { RolesGuard } from '../src/auth/guards/roles.guard.ts';
 import { RegistrationService } from '../src/auth/registration.service.ts';
 import { <%- user.dtoClass %> } from '../src/users/dto/user.dto.ts';
@@ -41,12 +41,8 @@ describe('Registration', () => {
 
     let userAuthenticated: <%- user.dtoClass %>;
 
-    const authGuardMock = { canActivate: (context: ExecutionContext): any => {
-        const req = context.switchToHttp().getRequest();
-        req.user = userAuthenticated;
-        return true;
-    },
-    };
+    // The user of the requests, which the PathRulesMiddleware authenticates.
+    const authenticatorMock = { authenticate: (): Promise<any> => Promise.resolve(userAuthenticated) };
 
     const rolesGuardMock = { canActivate: (): any => true };
 
@@ -54,8 +50,8 @@ describe('Registration', () => {
         const moduleFixture: TestingModule = await Test.createTestingModule({
             imports: [AppModule],
         })
-            .overrideGuard(AuthGuard)
-            .useValue(authGuardMock)
+            .overrideProvider(RequestAuthenticator)
+            .useValue(authenticatorMock)
             .overrideGuard(RolesGuard)
             .useValue(rolesGuardMock)
             .compile();

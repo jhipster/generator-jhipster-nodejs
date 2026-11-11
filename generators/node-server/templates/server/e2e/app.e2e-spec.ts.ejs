@@ -32,9 +32,6 @@ describe('App', () => {
         password: 'admin',
         rememberMe: true
     };
-<%_ } else if (authenticationType === 'oauth2' && authenticationUsesCsrf && generateAuthenticationApi) { _%>
-
-    const testRequest: any = {};
 <%_ } _%>
 
     beforeEach(async () => {
@@ -79,10 +76,9 @@ describe('App', () => {
         .expect(200)
         .expect('Cache-Control', 'no-cache, no-store, max-age=0, must-revalidate'));
 
-    it('/GET an unknown path of the API is not found, not the client, its detail telling nothing of the server', async () => {
-        const { body } = await request(app.getHttpServer()).get('/api/unknown-resource?x=1').expect(404);
-        expect(body).toMatchObject({ title: 'Not Found', detail: 'Not Found', message: 'error.http.404', path: '/api/unknown-resource' });
-    });
+    it('/GET an unknown path of the API is unauthorized without authentication, like JHipster Spring Boot, not the client', () => request(app.getHttpServer())
+        .get('/api/unknown-resource')
+        .expect(401));
 
     it('/GET health is UP without authentication', () => request(app.getHttpServer())
         .get('/management/health')
@@ -123,7 +119,16 @@ describe('App', () => {
             .set('Authorization', `Bearer ${expiredToken}`)
             .expect(401);
     });
-<%_ } else if (authenticationType === 'jwt') { _%>
+<%_ } _%>
+<%_ if (authenticationType === 'jwt') { _%>
+
+    it('/GET a public path with an invalid jwt is unauthorized, like the bearer token filter of Spring Security', () => request(app.getHttpServer())
+        .get('/management/info')
+        .set('Authorization', 'Bearer invalid')
+        .expect(401)
+        .expect('WWW-Authenticate', 'Bearer error="invalid_token"'));
+<%_ } _%>
+<%_ if (authenticationType === 'jwt' && !generateUserManagement) { _%>
     describe('with a token of the gateway', () => {
         // Signed like a JHipster Spring Boot gateway: HS512 with the base64 decoded secret, login as subject, authorities in auth.
         const gatewayJwtService = (): JwtService =>
@@ -170,13 +175,10 @@ describe('App', () => {
         });
     });
 <%_ } else if (authenticationType === 'oauth2') { _%>
-  <%_ if (authenticationUsesCsrf && generateAuthenticationApi) { _%>
-    it('/POST security oauth2 does not perform logout', () => request(app.getHttpServer())
+    it('/POST logout without authentication is unauthorized, like JHipster Spring Boot', () => request(app.getHttpServer())
         .post('/api/logout')
-        .send(testRequest)
-        .expect({})
-        .expect(201));
-  <%_ } _%>
+        .send({})
+        .expect(401));
 
   <%_ if (generateAuthenticationApi) { _%>
     it('/GET account not logged', () => request(app.getHttpServer())

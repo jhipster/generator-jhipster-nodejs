@@ -1,30 +1,26 @@
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { Test, TestingModule } from '@nestjs/testing';
 import request from 'supertest';
-import { ExecutionContext, INestApplication } from '@nestjs/common';
+import { INestApplication } from '@nestjs/common';
 import { AppModule } from '../src/app.module.ts';
 import { configureApp } from '../src/app.config.ts';
 import { loggerLevels } from '../src/common/logging.ts';
 import { setupSwagger } from '../src/swagger.ts';
-import { AuthGuard } from '../src/auth/guards/auth.guard.ts';
-import { RolesGuard } from '../src/auth/guards/roles.guard.ts';
+import { RequestAuthenticator } from '../src/auth/request-authenticator.ts';
 
 describe('Management', () => {
     let app: INestApplication;
 
-    /** The application with its guards, without them (an administrator), or with an authenticated user of some roles. */
+    /** The application without user, with an administrator (false), or with an authenticated user of some roles. */
     const createApp = async (guards: boolean | string[]): Promise<INestApplication> => {
         let builder = Test.createTestingModule({ imports: [AppModule] });
         if (guards === false) {
             // An administrator.
-            builder = builder.overrideGuard(AuthGuard).useValue({ canActivate: () => true }).overrideGuard(RolesGuard).useValue({ canActivate: () => true });
+            builder = builder.overrideProvider(RequestAuthenticator).useValue({ authenticate: () => Promise.resolve({ login: 'admin', authorities: ['ROLE_ADMIN', 'ROLE_USER'] }) });
         } else if (Array.isArray(guards)) {
-            // A user of these roles, checked by the RolesGuard of the application.
-            builder = builder.overrideGuard(AuthGuard).useValue({
-                canActivate: (context: ExecutionContext) => {
-                    context.switchToHttp().getRequest().user = { login: 'managementtest', authorities: guards };
-                    return true;
-                },
+            // A user of these roles, checked by the PathRulesMiddleware and the RolesGuard of the application.
+            builder = builder.overrideProvider(RequestAuthenticator).useValue({
+                authenticate: () => Promise.resolve({ login: 'managementtest', authorities: guards }),
             });
         }
         const moduleFixture: TestingModule = await builder.compile();

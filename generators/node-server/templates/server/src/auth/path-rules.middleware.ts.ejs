@@ -1,0 +1,57 @@
+import { BadRequestException, ForbiddenException, Injectable, NestMiddleware, UnauthorizedException } from '@nestjs/common';
+import { NextFunction, Response } from 'express';
+import { Request } from '../common/request.ts';
+import { isRejectedUrl, pathAccess, requestPath } from './path-rules.ts';
+import { RequestAuthenticator } from './request-authenticator.ts';
+import { RoleType } from './role-type.ts';
+
+/**
+ * The authorization of the paths, before the routes, like the one of Spring Security in JHipster Spring Boot: the request
+ * authenticated, its user set for the guards, then its path checked by the first rule matching it (PATH_RULES): a public
+ * path passes, else a request without user is 401 and a user lacking the authority of the rule 403, whether the route
+ * exists or not, so that the responses tell nothing of the routes of the server.
+ * A URL Express reads another way than its text is refused first (400).
+<%_ if (skipClient) { _%>
+ * A path no rule matches is denied, like Spring Security.
+<%_ } else { _%>
+ * A path no rule matches goes on to the client (its files, else its index for the routes of the client).
+<%_ } _%>
+ */
+@Injectable()
+export class PathRulesMiddleware implements NestMiddleware {
+  constructor(private readonly authenticator: RequestAuthenticator) {}
+
+  async use(req: Request, res: Response, next: NextFunction): Promise<void> {
+    if (isRejectedUrl(req.originalUrl)) {
+      throw new BadRequestException();
+    }
+<%_ if (authenticationTypeSession) { _%>
+    req.user = await this.authenticator.authenticate(req);
+<%_ } else { _%>
+    try {
+      req.user = await this.authenticator.authenticate(req);
+    } catch (error) {
+      if (error instanceof UnauthorizedException) {
+        // Like the BearerTokenAuthenticationEntryPoint of Spring Security.
+        res.setHeader('WWW-Authenticate', 'Bearer error="invalid_token"');
+      }
+      throw error;
+    }
+<%_ } _%>
+    const access = pathAccess(req.method, requestPath(req.originalUrl));
+    if (access === 'permitAll'<%- skipClient ? '' : ' || access === undefined' %>) {
+      next();
+      return;
+    }
+    if (!req.user) {
+<%_ if (authenticationTypeJwt || (authenticationTypeOauth2 && applicationTypeMicroservice)) { _%>
+      res.setHeader('WWW-Authenticate', 'Bearer');
+<%_ } _%>
+      throw new UnauthorizedException();
+    }
+    if (access !== 'authenticated' && !(access === 'admin' && req.user.authorities?.includes(RoleType.ADMIN))) {
+      throw new ForbiddenException();
+    }
+    next();
+  }
+}

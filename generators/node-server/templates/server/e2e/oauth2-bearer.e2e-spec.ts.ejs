@@ -89,4 +89,17 @@ describe('OAuth2 bearer tokens', () => {
 
   it('refuses a token for another audience, like the audience validator of JHipster Spring Boot', () =>
     account(`Bearer ${token({ aud: 'another-api' })}`).expect(401));
+
+  it('refuses an invalid token on a public path too, like the bearer token filter of Spring Security', () =>
+    request(app.getHttpServer())
+      .get('/management/info')
+      .set('Authorization', `Bearer ${token({}, otherKey)}`)
+      .expect(401)
+      .expect('WWW-Authenticate', 'Bearer error="invalid_token"'));
+
+  it('refuses a user without the authority of a path of an administrator with 403, whether its route exists or not', async () => {
+    const authorization = `Bearer ${token({ preferred_username: 'user', groups: ['ROLE_USER'] })}`;
+    await request(app.getHttpServer()).get('/management/env').set('Authorization', authorization).expect(403);
+    await request(app.getHttpServer()).get('/api/admin/nothing').set('Authorization', authorization).expect(403);
+  });
 });

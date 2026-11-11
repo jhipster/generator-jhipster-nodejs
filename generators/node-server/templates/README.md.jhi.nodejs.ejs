@@ -145,6 +145,14 @@ sessions of the user, any of which it can end. Its unsafe requests, the login in
 `XSRF-TOKEN` cookie as the `X-XSRF-TOKEN` header, as the JHipster clients do. The secret of the sessions is
 `jhipster.security.session.secret`, set it in production with the `JHIPSTER_SECURITY_SESSION_SECRET` environment variable.
 <%_ } _%>
+
+### Authorization of the paths
+
+Like the `SecurityConfiguration` of JHipster Spring Boot, the server checks the path of every request before its routes,
+by the rules of `<%- nodeServerRootDir %>src/auth/path-rules.ts`, the first one matching the request deciding: a public path passes, else a
+request without authentication gets 401 and a user without the authority of the path 403, whether the route exists or
+not. <%- skipClient ? 'A path no rule matches is denied too.' : 'A path no rule matches goes on to the client.' %> A route is protected again by its guards (`AuthGuard`, `RolesGuard`): a new public
+route needs both, no guard and a `permitAll` rule before the rule of its path.
 <%_ if (generateUserManagement) { _%>
 
 ### Account mails

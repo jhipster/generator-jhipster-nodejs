@@ -8,7 +8,7 @@ import { DataSource } from 'typeorm';
 
 import { configureApp } from '../src/app.config.ts';
 import { AppModule } from '../src/app.module.ts';
-import { AuthGuard } from '../src/auth/guards/auth.guard.ts';
+import { RequestAuthenticator } from '../src/auth/request-authenticator.ts';
 import { RolesGuard } from '../src/auth/guards/roles.guard.ts';
 <%_ if (databaseTypeSql) { _%>
 import { <%- user.persistClass %> } from '../src/users/user.entity.ts';
@@ -21,8 +21,9 @@ describe('Authority Controller', () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [AppModule],
     })
-      .overrideGuard(AuthGuard)
-      .useValue({ canActivate: (): any => true })
+      .overrideProvider(RequestAuthenticator)
+      // An administrator.
+      .useValue({ authenticate: (): Promise<any> => Promise.resolve({ login: 'admin', authorities: ['ROLE_ADMIN', 'ROLE_USER'] }) })
       .overrideGuard(RolesGuard)
       .useValue({ canActivate: (): any => true })
       .compile();
