@@ -134,6 +134,12 @@ exports[`SubGenerator server of nodejs JHipster blueprint > run > should match t
   "server/src/auth/auth.service.ts": {
     "stateCleared": "modified",
   },
+  "server/src/auth/bearer-challenge.spec.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/auth/bearer-challenge.ts": {
+    "stateCleared": "modified",
+  },
   "server/src/auth/decorators/auth-user.decorator.ts": {
     "stateCleared": "modified",
   },

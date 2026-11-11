@@ -459,6 +459,12 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > jwt microservic
   "server/src/auth/auth.service.ts": {
     "stateCleared": "modified",
   },
+  "server/src/auth/bearer-challenge.spec.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/auth/bearer-challenge.ts": {
+    "stateCleared": "modified",
+  },
   "server/src/auth/decorators/auth-user.decorator.ts": {
     "stateCleared": "modified",
   },
@@ -795,6 +801,12 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > run > should ma
     "stateCleared": "modified",
   },
   "server/src/auth/auth.service.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/auth/bearer-challenge.spec.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/auth/bearer-challenge.ts": {
     "stateCleared": "modified",
   },
   "server/src/auth/decorators/auth-user.decorator.ts": {
@@ -1216,6 +1228,12 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > with oauth2 > s
   "server/src/auth/auth.service.ts": {
     "stateCleared": "modified",
   },
+  "server/src/auth/bearer-challenge.spec.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/auth/bearer-challenge.ts": {
+    "stateCleared": "modified",
+  },
   "server/src/auth/csrf.middleware.spec.ts": {
     "stateCleared": "modified",
   },
@@ -1587,6 +1605,12 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > with oauth2 and
   "server/src/auth/auth.service.ts": {
     "stateCleared": "modified",
   },
+  "server/src/auth/bearer-challenge.spec.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/auth/bearer-challenge.ts": {
+    "stateCleared": "modified",
+  },
   "server/src/auth/csrf.middleware.spec.ts": {
     "stateCleared": "modified",
   },
@@ -1915,6 +1939,8 @@ by the rules of \`server/src/auth/path-rules.ts\`, the first one matching the re
 request without authentication gets 401 and a user without the authority of the path 403, whether the route exists or
 not. A path no rule matches is denied too. A route is protected again by its guards (\`AuthGuard\`, \`RolesGuard\`): a new public
 route needs both, no guard and a \`permitAll\` rule before the rule of its path.
+
+Like JHipster Spring Boot, the responses to a bearer token tell their reason in \`WWW-Authenticate\` ([RFC 6750](https://www.rfc-editor.org/rfc/rfc6750)): \`invalid_token\` with a 401, \`insufficient_scope\` with a 403. A 401 also tells where the metadata of the server as a protected resource are ([RFC 9728](https://www.rfc-editor.org/rfc/rfc9728)), \`/.well-known/oauth-protected-resource\`, which answers without authentication.
 
 ### Account mails
 
@@ -2392,6 +2418,12 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > without client 
     "stateCleared": "modified",
   },
   "server/src/auth/auth.service.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/auth/bearer-challenge.spec.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/auth/bearer-challenge.ts": {
     "stateCleared": "modified",
   },
   "server/src/auth/decorators/auth-user.decorator.ts": {

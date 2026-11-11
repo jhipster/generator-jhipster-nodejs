@@ -1,0 +1,59 @@
+import { UnauthorizedException } from '@nestjs/common';
+import { Request } from '../common/request.ts';
+
+/** The path of the metadata of the server as a protected resource (RFC 9728), and of the ones of its paths. */
+export const RESOURCE_METADATA_PATH = '/.well-known/oauth-protected-resource';
+
+const RESOURCE_METADATA_PATHS = /^\/\.well-known\/oauth-protected-resource(\/.*)?$/i;
+
+const ERROR_URI = 'https://tools.ietf.org/html/rfc6750#section-3.1';
+
+/** A bearer token refused, with the reason the challenge of its response tells. */
+export class InvalidBearerTokenException extends UnauthorizedException {
+  constructor(readonly description: string) {
+    super();
+  }
+}
+
+/** The origin the request was sent to. */
+const origin = (req: Request): string => `${req.protocol}://${req.get('host') ?? 'localhost'}`;
+
+/** A value of a challenge, without what its quotes cannot hold. */
+const quoted = (value: string): string => `"${value.replace(/[^\x20-\x7e]|["\\]/g, '')}"`;
+
+const challenge = (parameters: Record<string, string>): string =>
+  `Bearer ${Object.entries(parameters)
+    .map(([name, value]) => `${name}=${quoted(value)}`)
+    .join(', ')}`;
+
+/**
+ * The WWW-Authenticate of a request without token, like the BearerTokenAuthenticationEntryPoint of Spring Security: where
+ * the metadata of the resource are.
+ */
+export const missingTokenChallenge = (req: Request): string => challenge({ resource_metadata: `${origin(req)}${RESOURCE_METADATA_PATH}` });
+
+/** The WWW-Authenticate of a token refused (RFC 6750), like the BearerTokenAuthenticationEntryPoint of Spring Security. */
+export const invalidTokenChallenge = (req: Request, description: string): string =>
+  challenge({
+    error: 'invalid_token',
+    error_description: description,
+    error_uri: ERROR_URI,
+    resource_metadata: `${origin(req)}${RESOURCE_METADATA_PATH}`,
+  });
+
+/** The WWW-Authenticate of a token without the authority of the path, like the BearerTokenAccessDeniedHandler of Spring Security. */
+export const insufficientScopeChallenge = (): string =>
+  challenge({
+    error: 'insufficient_scope',
+    error_description: 'The request requires higher privileges than provided by the access token.',
+    error_uri: ERROR_URI,
+  });
+
+/**
+ * The metadata of the server as a protected resource (RFC 9728) when the path is the one of the metadata, of the server
+ * or of one of its paths: the resource and how its tokens are sent.
+ */
+export const resourceMetadata = (req: Request, path: string): { resource: string; bearer_methods_supported: string[] } | undefined => {
+  const match = RESOURCE_METADATA_PATHS.exec(path);
+  return match ? { resource: `${origin(req)}${match[1] ?? ''}`, bearer_methods_supported: ['header'] } : undefined;
+};

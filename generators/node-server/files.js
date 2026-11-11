@@ -197,6 +197,13 @@ export const serverFiles = {
       templates: ['package.json'],
     },
   ],
+  bearer: [
+    {
+      path: SERVER_NODEJS_DIR,
+      condition: ctx => !ctx.authenticationTypeSession,
+      templates: ['src/auth/bearer-challenge.ts', 'src/auth/bearer-challenge.spec.ts'],
+    },
+  ],
   jwt: [
     {
       path: SERVER_NODEJS_DIR,

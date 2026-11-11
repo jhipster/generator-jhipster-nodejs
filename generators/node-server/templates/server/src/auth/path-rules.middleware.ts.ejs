@@ -1,9 +1,25 @@
 import { BadRequestException, ForbiddenException, Injectable, NestMiddleware, UnauthorizedException } from '@nestjs/common';
 import { NextFunction, Response } from 'express';
 import { Request } from '../common/request.ts';
+<%_ if (!authenticationTypeSession) { _%>
+import {
+  InvalidBearerTokenException,
+  insufficientScopeChallenge,
+  invalidTokenChallenge,
+  <%_ if (authenticationTypeJwt || (authenticationTypeOauth2 && applicationTypeMicroservice)) { _%>
+  missingTokenChallenge,
+  <%_ } _%>
+  resourceMetadata,
+} from './bearer-challenge.ts';
+<%_ } _%>
 import { isRejectedUrl, pathAccess, requestPath } from './path-rules.ts';
 import { RequestAuthenticator } from './request-authenticator.ts';
 import { RoleType } from './role-type.ts';
+<%_ if (!authenticationTypeSession) { _%>
+
+/** The bearer scheme of the Authorization header, case insensitive like HTTP gives it. */
+const BEARER_SCHEME = /^bearer(?:\s|$)/i;
+<%_ } _%>
 
 /**
  * The authorization of the paths, before the routes, like the one of Spring Security in JHipster Spring Boot: the request
@@ -11,6 +27,10 @@ import { RoleType } from './role-type.ts';
  * path passes, else a request without user is 401 and a user lacking the authority of the rule 403, whether the route
  * exists or not, so that the responses tell nothing of the routes of the server.
  * A URL Express reads another way than its text is refused first (400).
+<%_ if (!authenticationTypeSession) { _%>
+ * The responses to a bearer token tell their reason in WWW-Authenticate (RFC 6750), and the metadata of the server as a
+ * protected resource (RFC 9728) are answered before the authentication.
+<%_ } _%>
 <%_ if (skipClient) { _%>
  * A path no rule matches is denied, like Spring Security.
 <%_ } else { _%>
@@ -28,28 +48,39 @@ export class PathRulesMiddleware implements NestMiddleware {
 <%_ if (authenticationTypeSession) { _%>
     req.user = await this.authenticator.authenticate(req);
 <%_ } else { _%>
+    const path = requestPath(req.originalUrl);
+    const metadata = req.method === 'GET' ? resourceMetadata(req, path) : undefined;
+    if (metadata) {
+      // Like the filter of Spring Security, before the authentication.
+      res.json(metadata);
+      return;
+    }
     try {
       req.user = await this.authenticator.authenticate(req);
     } catch (error) {
-      if (error instanceof UnauthorizedException) {
-        // Like the BearerTokenAuthenticationEntryPoint of Spring Security.
-        res.setHeader('WWW-Authenticate', 'Bearer error="invalid_token"');
+      if (error instanceof InvalidBearerTokenException) {
+        res.setHeader('WWW-Authenticate', invalidTokenChallenge(req, error.description));
       }
       throw error;
     }
 <%_ } _%>
-    const access = pathAccess(req.method, requestPath(req.originalUrl));
+    const access = pathAccess(req.method, <%- authenticationTypeSession ? 'requestPath(req.originalUrl)' : 'path' %>);
     if (access === 'permitAll'<%- skipClient ? '' : ' || access === undefined' %>) {
       next();
       return;
     }
     if (!req.user) {
 <%_ if (authenticationTypeJwt || (authenticationTypeOauth2 && applicationTypeMicroservice)) { _%>
-      res.setHeader('WWW-Authenticate', 'Bearer');
+      res.setHeader('WWW-Authenticate', missingTokenChallenge(req));
 <%_ } _%>
       throw new UnauthorizedException();
     }
     if (access !== 'authenticated' && !(access === 'admin' && req.user.authorities?.includes(RoleType.ADMIN))) {
+<%_ if (!authenticationTypeSession) { _%>
+      if (BEARER_SCHEME.test(req.headers.authorization ?? '')) {
+        res.setHeader('WWW-Authenticate', insufficientScopeChallenge());
+      }
+<%_ } _%>
       throw new ForbiddenException();
     }
     next();
