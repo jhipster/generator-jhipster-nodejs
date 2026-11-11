@@ -81,11 +81,10 @@ describe('Account', () => {
 
 <%_ } _%>
     it('/GET authenticate', async () => {
-        const loginValue: any = (await request(app.getHttpServer())
+        // Like JHipster Spring Boot, nothing in the answer.
+        await request(app.getHttpServer())
             .get('/api/authenticate')
-            .expect(200)).text;
-
-        expect(loginValue).toEqual(testUserAuthenticated.login);
+            .expect(204);
     });
 
     it('/GET account', async () => {
@@ -107,10 +106,12 @@ describe('Account', () => {
             lastName: 'updateLastName',
             ...testUserAuthenticated,
         };
-        await request(app.getHttpServer())
+        // Like JHipster Spring Boot, nothing in the answer.
+        const { text } = await request(app.getHttpServer())
             .post('/api/account')
             .send(savedTestUser)
             .expect(200);
+        expect(text).toBe('');
 
         const updatedUserSettings = await service.findByFields({ where: { login: testUserAuthenticated.login } });
         expect(updatedUserSettings?.firstName).toEqual(savedTestUser.firstName);
@@ -223,10 +224,11 @@ describe('Account', () => {
     });
 
     it('/POST reset password finish with an unknown key', async () => {
-        await request(app.getHttpServer())
+        const { body: problem } = await request(app.getHttpServer())
             .post('/api/account/reset-password/finish')
             .send({ key: 'unknownKey', newPassword: 'resetPassword' })
-            .expect(500);
+            .expect(400);
+        expect(problem).toMatchObject({ title: 'Account resource request invalid', status: 400 });
     });
 
     it('/POST reset password finish with a too short password is a validation error', async () => {

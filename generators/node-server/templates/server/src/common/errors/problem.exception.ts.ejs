@@ -89,4 +89,11 @@ export class InvalidPasswordException extends ProblemException {
     super(HttpStatus.BAD_REQUEST, { type: INVALID_PASSWORD_TYPE, title: 'Incorrect password' });
   }
 }
+
+/** A request of an account no user answers, like the AccountResourceException of JHipster Spring Boot. */
+export class AccountResourceException extends ProblemException {
+  constructor(detail: string) {
+    super(HttpStatus.BAD_REQUEST, { title: 'Account resource request invalid', detail });
+  }
+}
 <%_ } _%>
