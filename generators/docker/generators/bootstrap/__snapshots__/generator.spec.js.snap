@@ -1,6 +1,6 @@
-// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+// expect-node Snapshot v1, https://github.com/mshima/expect-node#snapshots
 
-exports[`SubGenerator docker:bootstrap of nodejs JHipster blueprint > deployed with a NodeJS microservice > should match the docker-compose.yml 1`] = `
+exports[`SubGenerator docker:bootstrap of nodejs JHipster blueprint > deployed with a NodeJS microservice > should match the docker-compose.yml snapshot 1`] = `
 "services:
   gateway:
     image: gateway

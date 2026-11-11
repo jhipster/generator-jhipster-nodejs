@@ -15,7 +15,7 @@ describe(`generator - ${generator}`, () => {
         await helpers.runJHipster(join(import.meta.dirname, 'index.mjs'), { prepareEnvironment: true }).withArguments(workflow);
       });
 
-      it('should match matrix value', () => {
+      it('should match the matrix value snapshot', () => {
         const { matrix } = runResult.generator;
         // The node and npm versions are the ones generator-jhipster recommends, they change with generator-jhipster.
         expect({

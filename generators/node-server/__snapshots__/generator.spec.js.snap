@@ -1,4 +1,4 @@
-// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+// expect-node Snapshot v1, https://github.com/mshima/expect-node#snapshots
 
 exports[`SubGenerator node-server of nodejs JHipster blueprint > entity column types > with mssql > should generate column types valid on the prod database and on SQLite 1`] = `
 {
@@ -334,7 +334,7 @@ export class BookDTO {
 }
 `;
 
-exports[`SubGenerator node-server of nodejs JHipster blueprint > jwt microservice > should succeed 1`] = `
+exports[`SubGenerator node-server of nodejs JHipster blueprint > jwt microservice > should match the files snapshot 1`] = `
 {
   ".dockerignore": {
     "stateCleared": "modified",
@@ -663,7 +663,7 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > jwt microservic
 }
 `;
 
-exports[`SubGenerator node-server of nodejs JHipster blueprint > run > should succeed 1`] = `
+exports[`SubGenerator node-server of nodejs JHipster blueprint > run > should match the files snapshot 1`] = `
 {
   ".dockerignore": {
     "stateCleared": "modified",
@@ -1064,7 +1064,7 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > run > should su
 }
 `;
 
-exports[`SubGenerator node-server of nodejs JHipster blueprint > with oauth2 > should succeed 1`] = `
+exports[`SubGenerator node-server of nodejs JHipster blueprint > with oauth2 > should match the files snapshot 1`] = `
 {
   ".dockerignore": {
     "stateCleared": "modified",
@@ -1417,7 +1417,7 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > with oauth2 > s
 }
 `;
 
-exports[`SubGenerator node-server of nodejs JHipster blueprint > with oauth2 and syncUserWithIdp > should succeed 1`] = `
+exports[`SubGenerator node-server of nodejs JHipster blueprint > with oauth2 and syncUserWithIdp > should match the files snapshot 1`] = `
 {
   ".dockerignore": {
     "stateCleared": "modified",
@@ -2207,7 +2207,7 @@ Nest is [MIT licensed](LICENSE).
 }
 `;
 
-exports[`SubGenerator node-server of nodejs JHipster blueprint > without client > should succeed 1`] = `
+exports[`SubGenerator node-server of nodejs JHipster blueprint > without client > should match the files snapshot 1`] = `
 {
   ".dockerignore": {
     "stateCleared": "modified",

@@ -39,7 +39,7 @@ describe('SubGenerator docker:bootstrap of nodejs JHipster blueprint', () => {
         .withConfiguredBlueprint();
     });
 
-    it('should match the docker-compose.yml', () => {
+    it('should match the docker-compose.yml snapshot', () => {
       expect(result.fs.read(join(result.cwd, 'docker-compose/docker-compose.yml'))).toMatchSnapshot();
     });
 
