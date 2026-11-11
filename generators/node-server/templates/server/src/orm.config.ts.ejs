@@ -6,7 +6,7 @@ import { activeProfiles, config } from './config.ts';
 <%_ if (databaseTypeMongodb || generateBuiltInUserEntity || generateBuiltInAuthorityEntity) { _%>
 import { CreateTables1570200270081 } from './migrations/1570200270081-CreateTables.ts';
 <%_ } _%>
-<%_ if (authenticationUsesCsrf && databaseTypeSql) { _%>
+<%_ if (authenticationUsesCsrf && generateAuthenticationApi && databaseTypeSql) { _%>
 import { CreateSessions1570200270082 } from './migrations/1570200270082-CreateSessions.ts';
 <%_ } _%>
 <%_ if (generateBuiltInAuthorityEntity) { _%>
@@ -128,7 +128,7 @@ function ormConfig(read: ConfigReader = key => config.get(key)): TypeOrmModuleOp
 <%_ if (databaseTypeMongodb || generateBuiltInUserEntity || generateBuiltInAuthorityEntity) { _%>
       CreateTables1570200270081,
 <%_ } _%>
-<%_ if (authenticationUsesCsrf && databaseTypeSql) { _%>
+<%_ if (authenticationUsesCsrf && generateAuthenticationApi && databaseTypeSql) { _%>
       CreateSessions1570200270082,
 <%_ } _%>
 <%_ if (generateBuiltInAuthorityEntity) { _%>

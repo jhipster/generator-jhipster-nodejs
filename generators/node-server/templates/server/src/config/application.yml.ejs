@@ -99,7 +99,7 @@ jhipster:
         token-validity-in-seconds: 86400
         token-validity-in-seconds-for-remember-me: 2592000
 <%_ } else if (authenticationType === 'oauth2') { _%>
-    # The session secret and the OAuth2 client, samples of the secret-samples profile: set them in production, with
+    # <%- authenticationUsesCsrf && generateAuthenticationApi ? 'The session secret and the OAuth2 client' : 'The OAuth2 client' %>, samples of the secret-samples profile: set them in production, with
     # environment variables like JHIPSTER_SECURITY_OAUTH2_CLIENT_REGISTRATION_OIDC_CLIENTSECRET.
     oauth2:
       # The audiences of the access tokens the API accepts as bearer tokens, comma separated, like JHipster Spring Boot:

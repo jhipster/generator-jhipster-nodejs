@@ -592,9 +592,10 @@ describe('SubGenerator node-server of nodejs JHipster blueprint', () => {
       expect(result.getStateSnapshot()).toMatchSnapshot();
     });
 
-    it('should only validate the tokens, without users nor authentication API', () => {
-      result.assertFile(['server/src/auth/passport.jwt.strategy.ts', 'server/src/auth/account.controller.ts']);
+    it('should only validate the tokens, without users, authentication API nor account API', () => {
+      result.assertFile(['server/src/auth/passport.jwt.strategy.ts']);
       result.assertNoFile([
+        'server/src/auth/account.controller.ts',
         'server/src/users/user.entity.ts',
         'server/src/users/user.service.ts',
         'server/src/auth/user.jwt.controller.ts',

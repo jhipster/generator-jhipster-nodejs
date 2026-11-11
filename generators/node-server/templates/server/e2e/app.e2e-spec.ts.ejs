@@ -32,7 +32,7 @@ describe('App', () => {
         password: 'admin',
         rememberMe: true
     };
-<%_ } else if (authenticationType === 'oauth2') { _%>
+<%_ } else if (authenticationType === 'oauth2' && authenticationUsesCsrf && generateAuthenticationApi) { _%>
 
     const testRequest: any = {};
 <%_ } _%>
@@ -128,6 +128,7 @@ describe('App', () => {
         const gatewayJwtService = (): JwtService =>
             new JwtService({ secret: jwtSecretKey(app.get(ConfigService)), signOptions: { algorithm: JWT_ALGORITHM } });
 
+  <%_ if (generateAuthenticationApi) { _%>
         it('/GET account is the user of the token', () => {
             const token = gatewayJwtService().sign({ sub: 'gateway-user', auth: 'ROLE_USER ROLE_ADMIN', userId: 1 });
             return request(app.getHttpServer())
@@ -136,39 +137,52 @@ describe('App', () => {
                 .expect(200)
                 .expect(res => expect(res.body).toMatchObject({ login: 'gateway-user', authorities: ['ROLE_USER', 'ROLE_ADMIN'] }));
         });
+  <%_ } else { _%>
+        // A microservice has no account API, like JHipster Spring Boot: a route of an administrator instead.
+        it('/GET a route of an administrator is for the authorities of the token', async () => {
+            const admin = gatewayJwtService().sign({ sub: 'gateway-user', auth: 'ROLE_USER ROLE_ADMIN', userId: 1 });
+            await request(app.getHttpServer()).get('/management/env').set('Authorization', `Bearer ${admin}`).expect(200);
+            const user = gatewayJwtService().sign({ sub: 'gateway-user', auth: 'ROLE_USER', userId: 1 });
+            await request(app.getHttpServer()).get('/management/env').set('Authorization', `Bearer ${user}`).expect(403);
+        });
+  <%_ } _%>
 
-        it('/GET account without a token is unauthorized', () => request(app.getHttpServer())
-            .get('/api/account')
+        it('/GET a protected route without a token is unauthorized', () => request(app.getHttpServer())
+            .get('<%- generateAuthenticationApi ? '/api/account' : '/management/env' %>')
             .expect(401));
 
-        it('/GET account with an expired token is unauthorized', () => {
+        it('/GET a protected route with an expired token is unauthorized', () => {
             const expiredToken = gatewayJwtService().sign({ sub: 'gateway-user', auth: '' }, { expiresIn: -10 });
             return request(app.getHttpServer())
-                .get('/api/account')
+                .get('<%- generateAuthenticationApi ? '/api/account' : '/management/env' %>')
                 .set('Authorization', `Bearer ${expiredToken}`)
                 .expect(401);
         });
 
-        it('/GET account with a token signed with the encoded secret is unauthorized', () => {
+        it('/GET a protected route with a token signed with the encoded secret is unauthorized', () => {
             const encodedSecret = app.get(ConfigService).getOrThrow<string>('jhipster.security.authentication.jwt.base64-secret');
             const token = new JwtService({ secret: encodedSecret }).sign({ sub: 'gateway-user', auth: 'ROLE_USER' });
             return request(app.getHttpServer())
-                .get('/api/account')
+                .get('<%- generateAuthenticationApi ? '/api/account' : '/management/env' %>')
                 .set('Authorization', `Bearer ${token}`)
                 .expect(401);
         });
     });
 <%_ } else if (authenticationType === 'oauth2') { _%>
+  <%_ if (authenticationUsesCsrf && generateAuthenticationApi) { _%>
     it('/POST security oauth2 does not perform logout', () => request(app.getHttpServer())
         .post('/api/logout')
         .send(testRequest)
         .expect({})
         .expect(201));
+  <%_ } _%>
 
+  <%_ if (generateAuthenticationApi) { _%>
     it('/GET account not logged', () => request(app.getHttpServer())
         .get('/api/account')
         // Like JHipster Spring Boot, the clients take a 401 for not logged.
         .expect(401));
+  <%_ } _%>
   <%_ if (generateBuiltInUserEntity) { _%>
 
     it('saves the user of the identity provider at its logins, without a password, like JHipster Spring Boot', async () => {

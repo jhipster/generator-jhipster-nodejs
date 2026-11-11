@@ -132,7 +132,9 @@ describe('Management', () => {
 
             expect(body.openapi).toEqual(expect.any(String));
             expect(body.info.title).toBe('<%- baseName %> API');
+<%_ if (generateAuthenticationApi) { _%>
             expect(Object.keys(body.paths)).toContainEqual(expect.stringMatching(/^\/api\//));
+<%_ } _%>
             // The controller of the document itself is left out.
             expect(Object.keys(body.paths)).not.toContain('/v3/api-docs');
         });

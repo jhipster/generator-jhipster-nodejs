@@ -3,7 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { CorsOptions } from '@nestjs/common/interfaces/external/cors-options.interface';
 import { NextFunction, Request, Response } from 'express';
 import { NestExpressApplication } from '@nestjs/platform-express';
-<%_ if (authenticationUsesCsrf) { _%>
+<%_ if (authenticationUsesCsrf && generateAuthenticationApi) { _%>
 import session from 'express-session';
 <%_ } _%>
 
@@ -11,7 +11,7 @@ import type { ApplicationConfig } from './application-config.ts';
 import { HeaderUtil } from './common/header-util.ts';
 import { ProblemDetailsFilter } from './common/errors/problem-details.filter.ts';
 import { ValidationException } from './common/errors/problem.exception.ts';
-<%_ if (authenticationUsesCsrf) { _%>
+<%_ if (authenticationUsesCsrf && generateAuthenticationApi) { _%>
 import { SessionStore } from './auth/session.store.ts';
 <%_ } _%>
 
@@ -112,7 +112,7 @@ function responseHeaders(<%- skipClient ? '' : 'configService: AppConfigService'
 /**
  * The proxies whose X-Forwarded-* headers (the protocol, the host and the address of the client) the application trusts, the
  * trust proxy setting of Express, like the server.forward-headers-strategy of Spring Boot: none, or native, the proxies of
- * the local networks like the internal proxies of the RemoteIpValve of Tomcat.<% if (authenticationUsesCsrf) { %> Behind a proxy of HTTPS, the session cookie is then
+ * the local networks like the internal proxies of the RemoteIpValve of Tomcat.<% if (authenticationUsesCsrf && generateAuthenticationApi) { %> Behind a proxy of HTTPS, the session cookie is then
  * secure.<% } %>
  */
 export function trustProxy(strategy: string | undefined): string | false {
@@ -131,7 +131,7 @@ export function configureApp(app: INestApplication): INestApplication {
       callback(null, CORS_PATHS.some(path => path.test(req.url)) ? cors : { origin: false }),
     );
   }
-<%_ if (authenticationUsesCsrf) { _%>
+<%_ if (authenticationUsesCsrf && generateAuthenticationApi) { _%>
   app.use(
     session({
       // The session cookie of JHipster Spring Boot.
