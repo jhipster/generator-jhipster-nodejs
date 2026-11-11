@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable<%- authenticationTypeSession ? '' : ', UnauthorizedException' %> } from '@nestjs/common';
 <%_ if (!authenticationTypeSession) { _%>
 import passport from 'passport';
 <%_ } _%>
@@ -12,6 +12,20 @@ import { InvalidBearerTokenException } from './bearer-challenge.ts';
 const BEARER_SCHEME = /^bearer(?:\s|$)/i;
 <%_ } _%>
 
+<%_ if (!authenticationTypeSession) { _%>
+/** The errors of the verification of a token, whose messages tell of the token only. */
+const TOKEN_ERRORS = ['JsonWebTokenError', 'TokenExpiredError', 'NotBeforeError'];
+
+/**
+ * The description of a token refused, like the one of Spring Security: the reason of its verification, nothing of another
+ * failure, like the keys of the identity provider not read.
+ */
+const tokenErrorDescription = (info: unknown): string =>
+  info instanceof Error && TOKEN_ERRORS.includes(info.name)
+    ? `An error occurred while attempting to decode the Jwt: ${info.message}`
+    : 'Invalid token';
+
+<%_ } _%>
 /** The user of an authenticated request. */
 export type AuthenticatedUser = NonNullable<Request['user']>;
 
@@ -43,11 +57,12 @@ export class RequestAuthenticator {
       return undefined;
     }
     return new Promise((resolve, reject) => {
-      passport.authenticate('<%- authenticationTypeOauth2 ? 'oauth2-bearer' : 'jwt' %>', { session: false }, (error: unknown, user: AuthenticatedUser | false, info?: { message?: string }) => {
-        if (error || !user) {
-          // Like the description of Spring Security, the reason the token was refused for.
-          const reason = (error instanceof Error ? error.message : info?.message) ?? 'Invalid token';
-          reject(new InvalidBearerTokenException(`An error occurred while attempting to decode the Jwt: ${reason}`));
+      passport.authenticate('<%- authenticationTypeOauth2 ? 'oauth2-bearer' : 'jwt' %>', { session: false }, (error: unknown, user: AuthenticatedUser | false, info?: unknown) => {
+        if (error && !(error instanceof UnauthorizedException)) {
+          // Not about the token, like its user not read from the database: the error of the server it is.
+          reject(error instanceof Error ? error : new Error('The authentication failed', { cause: error }));
+        } else if (error || !user) {
+          reject(new InvalidBearerTokenException(tokenErrorDescription(info)));
         } else {
           resolve(user);
         }

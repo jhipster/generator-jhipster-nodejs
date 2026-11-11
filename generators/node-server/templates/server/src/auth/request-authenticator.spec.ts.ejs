@@ -1,0 +1,45 @@
+import { UnauthorizedException } from '@nestjs/common';
+import passport from 'passport';
+import { afterEach, describe, expect, it, vi } from 'vitest';
+import { Request } from '../common/request.ts';
+import { InvalidBearerTokenException } from './bearer-challenge.ts';
+import { RequestAuthenticator } from './request-authenticator.ts';
+
+type Callback = (error: unknown, user: unknown, info?: unknown) => void;
+
+/** A request with a bearer token, its authentication ending as passport tells its callback. */
+const authenticate = (...result: Parameters<Callback>): Promise<unknown> => {
+  vi.spyOn(passport, 'authenticate').mockImplementation(((_strategy: unknown, _options: unknown, callback: Callback) => () => {
+    callback(...result);
+  }) as never);
+  return new RequestAuthenticator().authenticate({ headers: { authorization: 'Bearer token' } } as Request);
+};
+
+const namedError = (name: string, message: string): Error => Object.assign(new Error(message), { name });
+
+describe('RequestAuthenticator', () => {
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  it('gives the user of a valid token, none without bearer token', async () => {
+    await expect(authenticate(null, { login: 'user' })).resolves.toEqual({ login: 'user' });
+    await expect(new RequestAuthenticator().authenticate({ headers: {} } as Request)).resolves.toBeUndefined();
+  });
+
+  it('refuses a token with the reason of its verification', async () => {
+    const refused = authenticate(null, false, namedError('JsonWebTokenError', 'jwt malformed'));
+    await expect(refused).rejects.toBeInstanceOf(InvalidBearerTokenException);
+    await expect(refused).rejects.toMatchObject({ description: 'An error occurred while attempting to decode the Jwt: jwt malformed' });
+  });
+
+  it('tells nothing of a failure that is not of the token', async () => {
+    await expect(authenticate(null, false, new Error('connect ECONNREFUSED idp.internal:443'))).rejects.toMatchObject({ description: 'Invalid token' });
+    await expect(authenticate(new UnauthorizedException('user does not exist'), false)).rejects.toMatchObject({ description: 'Invalid token' });
+  });
+
+  it('fails with the error of the server, not as a token refused', async () => {
+    const error = new Error('connect ECONNREFUSED 127.0.0.1:5432');
+    await expect(authenticate(error, false)).rejects.toBe(error);
+  });
+});

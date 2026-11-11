@@ -4,7 +4,7 @@ import { Request } from '../common/request.ts';
 /** The path of the metadata of the server as a protected resource (RFC 9728), and of the ones of its paths. */
 export const RESOURCE_METADATA_PATH = '/.well-known/oauth-protected-resource';
 
-const RESOURCE_METADATA_PATHS = /^\/\.well-known\/oauth-protected-resource(\/.*)?$/i;
+const RESOURCE_METADATA_PATHS = /^\/\.well-known\/oauth-protected-resource(\/.*)?$/;
 
 const ERROR_URI = 'https://tools.ietf.org/html/rfc6750#section-3.1';
 
@@ -15,8 +15,8 @@ export class InvalidBearerTokenException extends UnauthorizedException {
   }
 }
 
-/** The origin the request was sent to. */
-const origin = (req: Request): string => `${req.protocol}://${req.get('host') ?? 'localhost'}`;
+/** The origin the request was sent to, the one a trusted proxy forwards (X-Forwarded-Proto, X-Forwarded-Host). */
+const origin = (req: Request): string => `${req.protocol}://${req.host}`;
 
 /** A value of a challenge, without what its quotes cannot hold. */
 const quoted = (value: string): string => `"${value.replace(/[^\x20-\x7e]|["\\]/g, '')}"`;

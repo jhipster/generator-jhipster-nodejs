@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { Request } from '../common/request.ts';
 import { insufficientScopeChallenge, invalidTokenChallenge, missingTokenChallenge, resourceMetadata } from './bearer-challenge.ts';
 
-const req = { protocol: 'https', get: () => 'api.example.com' } as unknown as Request;
+const req = { protocol: 'https', host: 'api.example.com' } as unknown as Request;
 
 describe('bearer challenge', () => {
   it('tells where the metadata of the resource are to a request without token', () => {
@@ -29,5 +29,6 @@ describe('bearer challenge', () => {
     expect(resourceMetadata(req, '/.well-known/oauth-protected-resource/api/notes')?.resource).toBe('https://api.example.com/api/notes');
     expect(resourceMetadata(req, '/.well-known/oauth-protected-resources')).toBeUndefined();
     expect(resourceMetadata(req, '/.well-known/nothing')).toBeUndefined();
+    expect(resourceMetadata(req, '/.WELL-KNOWN/oauth-protected-resource')).toBeUndefined();
   });
 });

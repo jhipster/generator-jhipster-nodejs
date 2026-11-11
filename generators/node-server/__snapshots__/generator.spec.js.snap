@@ -501,6 +501,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > jwt microservic
   "server/src/auth/payload.interface.ts": {
     "stateCleared": "modified",
   },
+  "server/src/auth/request-authenticator.spec.ts": {
+    "stateCleared": "modified",
+  },
   "server/src/auth/request-authenticator.ts": {
     "stateCleared": "modified",
   },
@@ -864,6 +867,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > run > should ma
     "stateCleared": "modified",
   },
   "server/src/auth/registration.service.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/auth/request-authenticator.spec.ts": {
     "stateCleared": "modified",
   },
   "server/src/auth/request-authenticator.ts": {
@@ -1285,6 +1291,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > with oauth2 > s
   "server/src/auth/path-rules.ts": {
     "stateCleared": "modified",
   },
+  "server/src/auth/request-authenticator.spec.ts": {
+    "stateCleared": "modified",
+  },
   "server/src/auth/request-authenticator.ts": {
     "stateCleared": "modified",
   },
@@ -1660,6 +1669,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > with oauth2 and
     "stateCleared": "modified",
   },
   "server/src/auth/path-rules.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/auth/request-authenticator.spec.ts": {
     "stateCleared": "modified",
   },
   "server/src/auth/request-authenticator.ts": {
@@ -2481,6 +2493,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > without client 
     "stateCleared": "modified",
   },
   "server/src/auth/registration.service.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/auth/request-authenticator.spec.ts": {
     "stateCleared": "modified",
   },
   "server/src/auth/request-authenticator.ts": {
