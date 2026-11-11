@@ -1,26 +1,7 @@
 /**
  * @typedef {'permitAll' | 'authenticated' | 'admin'} PathAccess
- * @typedef {{ methods?: string[]; pattern: string; access: PathAccess; regExp: string }} PathRule
+ * @typedef {{ methods?: string[]; pattern: string; access: PathAccess }} PathRule
  */
-
-/** Escapes the characters of a regular expression literal, its slashes included. */
-const escapeRegExp = text => text.replace(/[.*+?^${}()|[\]\\/]/g, '\\$&');
-
-/**
- * The regular expression literal of a path pattern of Spring (PathPattern), case insensitive like the routes of Express:
- * `**` as the last segment any number of segments, none included, `*` any characters of a segment. A trailing slash is
- * allowed, as Express routes a path with one to the route without it.
- * @param {string} pattern a pattern like `/api/admin/**` or `/*.js`
- * @returns {string}
- */
-export const pathPatternRegExp = pattern => {
-  const segments = pattern.split('/').slice(1);
-  const anySegments = segments.at(-1) === '**';
-  const path = (anySegments ? segments.slice(0, -1) : segments)
-    .map(segment => `\\/${segment.split('*').map(escapeRegExp).join('[^/]*')}`)
-    .join('');
-  return `/^${path}${anySegments ? '(?:\\/.*)?' : '\\/?'}$/i`;
-};
 
 /**
  * The access rules of the paths of the server, in their order, the first one matching a request deciding: the rules of
@@ -46,7 +27,7 @@ export const nodejsPathRules = ({
   generateUserManagement,
   generateUserRegistration,
 }) => {
-  /** @type {Omit<PathRule, 'regExp'>[]} */
+  /** @type {PathRule[]} */
   const rules = [];
   const permitAll = (...patterns) => rules.push(...patterns.map(pattern => ({ pattern, access: 'permitAll' })));
 
@@ -104,5 +85,5 @@ export const nodejsPathRules = ({
   permitAll('/management/health', '/management/health/**', '/management/info', '/management/prometheus');
   rules.push({ pattern: '/management/**', access: 'admin' });
 
-  return rules.map(rule => ({ ...rule, regExp: pathPatternRegExp(rule.pattern) }));
+  return rules;
 };

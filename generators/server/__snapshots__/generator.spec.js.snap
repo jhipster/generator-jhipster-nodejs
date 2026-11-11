@@ -176,6 +176,9 @@ exports[`SubGenerator server of nodejs JHipster blueprint > run > should match t
   "server/src/auth/path-rules.middleware.ts": {
     "stateCleared": "modified",
   },
+  "server/src/auth/path-rules.spec.ts": {
+    "stateCleared": "modified",
+  },
   "server/src/auth/path-rules.ts": {
     "stateCleared": "modified",
   },

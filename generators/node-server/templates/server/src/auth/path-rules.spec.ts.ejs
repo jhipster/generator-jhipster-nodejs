@@ -1,0 +1,34 @@
+import { describe, expect, it } from 'vitest';
+import { pathAccess, pathPatternRegExp, requestPath } from './path-rules.ts';
+
+describe('path rules', () => {
+  it('matches the paths under a ** pattern, its own path included, whatever their case', () => {
+    const paths = pathPatternRegExp('/api/admin/**');
+    expect(['/api/admin', '/api/admin/', '/api/admin/users/x', '/API/Admin/users'].map(path => paths.test(path))).toEqual([true, true, true, true]);
+    expect(['/api/administration', '/api', '/x/api/admin'].map(path => paths.test(path))).toEqual([false, false, false]);
+  });
+
+  it('matches one path with a trailing slash, like the routes of Express', () => {
+    const paths = pathPatternRegExp('/management/info');
+    expect(['/management/info', '/management/info/', '/management/info/x', '/management/infos'].map(path => paths.test(path))).toEqual([true, true, false, false]);
+  });
+
+  it('matches a * within a segment only, and the dots literally', () => {
+    const paths = pathPatternRegExp('/services/*/*.js');
+    expect(['/services/app/main.js', '/services/app/x/main.js', '/services/app/mainxjs'].map(path => paths.test(path))).toEqual([true, false, false]);
+  });
+
+  it('reads the path of a request without its query nor its origin', () => {
+    expect(['/api/x?y=1', 'http://localhost:8080/api/x?y=1', '?y=1'].map(requestPath)).toEqual(['/api/x', '/api/x', '/']);
+  });
+
+  it('gives the access of the first rule matching a request', () => {
+    expect(pathAccess('GET', '/management/health')).toBe('permitAll');
+    expect(pathAccess('GET', '/management/env')).toBe('admin');
+    expect(pathAccess('GET', '/api/admin/nothing')).toBe('admin');
+    expect(pathAccess('GET', '/api/nothing')).toBe('authenticated');
+<%_ if (skipClient) { _%>
+    expect(pathAccess('GET', '/nothing')).toBeUndefined();
+<%_ } _%>
+  });
+});

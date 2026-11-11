@@ -94,6 +94,7 @@ export const serverFiles = {
         'src/auth/guards/roles.guard.ts',
         'src/auth/guards/auth.guard.ts',
         'src/auth/path-rules.ts',
+        'src/auth/path-rules.spec.ts',
         'src/auth/path-rules.middleware.ts',
         'src/auth/request-authenticator.ts',
         'src/auth/role-type.ts',

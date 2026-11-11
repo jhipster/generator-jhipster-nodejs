@@ -6,9 +6,24 @@ export interface PathRule {
   methods?: string[];
   /** The path pattern of Spring Security. */
   pattern: string;
-  /** The paths of the pattern, case insensitive like the routes of Express. */
-  path: RegExp;
   access: PathAccess;
+}
+
+/** Escapes the characters of a regular expression. */
+const escapeRegExp = (text: string): string => text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
+/**
+ * The paths of a path pattern of Spring (PathPattern), case insensitive like the routes of Express: `**` as the last
+ * segment any number of segments, none included, `*` any characters of a segment. A trailing slash is allowed, as Express
+ * routes a path with one to the route without it.
+ */
+export function pathPatternRegExp(pattern: string): RegExp {
+  const segments = pattern.split('/').slice(1);
+  const anySegments = segments.at(-1) === '**';
+  const path = (anySegments ? segments.slice(0, -1) : segments)
+    .map(segment => `/${segment.split('*').map(escapeRegExp).join('[^/]*')}`)
+    .join('');
+  return new RegExp(`^${path}${anySegments ? '(?:/.*)?' : '/?'}$`, 'i');
 }
 
 /**
@@ -17,9 +32,12 @@ export interface PathRule {
  */
 export const PATH_RULES: PathRule[] = [
 <%_ for (const rule of nodejsPathRules) { _%>
-  { <%- rule.methods ? `methods: [${rule.methods.map(method => `'${method}'`).join(', ')}], ` : '' %>pattern: '<%- rule.pattern %>', path: <%- rule.regExp %>, access: '<%- rule.access %>' },
+  { <%- rule.methods ? `methods: [${rule.methods.map(method => `'${method}'`).join(', ')}], ` : '' %>pattern: '<%- rule.pattern %>', access: '<%- rule.access %>' },
 <%_ } _%>
 ];
+
+/** The rules with the paths of their patterns. */
+const PATH_MATCHERS = PATH_RULES.map(rule => ({ ...rule, path: pathPatternRegExp(rule.pattern) }));
 
 /** The path of a request URL, as Express routes it: without its query, and without the origin of an absolute URL. */
 export function requestPath(url: string): string {
@@ -28,5 +46,5 @@ export function requestPath(url: string): string {
 
 /** The access of a request, by the first rule matching it, undefined when none does. */
 export function pathAccess(method: string, path: string): PathAccess | undefined {
-  return PATH_RULES.find(rule => (!rule.methods || rule.methods.includes(method)) && rule.path.test(path))?.access;
+  return PATH_MATCHERS.find(rule => (!rule.methods || rule.methods.includes(method)) && rule.path.test(path))?.access;
 }

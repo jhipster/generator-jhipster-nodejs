@@ -1,107 +1,65 @@
 import { describe, expect, it } from 'expect-node';
 
-import { nodejsPathRules, pathPatternRegExp } from './path-rules.js';
+import { nodejsPathRules } from './path-rules.js';
 
-/** The regular expression of a literal, as the template renders it. */
-const literalRegExp = literal => new Function(`return ${literal};`)();
-
-const regExpOf = pattern => literalRegExp(pathPatternRegExp(pattern));
-
-/** The access the first rule matching a request gives, undefined when none matches. */
-const accessOf = (rules, method, path) =>
-  rules.find(({ methods, regExp }) => (!methods || methods.includes(method)) && literalRegExp(regExp).test(path))?.access;
-
-describe('pathPatternRegExp', () => {
-  it('should match the paths under a ** pattern, its own path included, whatever their case', () => {
-    const regExp = regExpOf('/api/admin/**');
-    expect(['/api/admin', '/api/admin/', '/api/admin/users/x', '/API/Admin/users'].map(path => regExp.test(path))).toEqual([
-      true,
-      true,
-      true,
-      true,
-    ]);
-    expect(['/api/administration', '/api', '/x/api/admin'].map(path => regExp.test(path))).toEqual([false, false, false]);
-  });
-
-  it('should match one path with a trailing slash, like the routes of Express', () => {
-    const regExp = regExpOf('/management/info');
-    expect(['/management/info', '/management/info/', '/management/info/x', '/management/infos'].map(path => regExp.test(path))).toEqual([
-      true,
-      true,
-      false,
-      false,
-    ]);
-  });
-
-  it('should match a * within a segment only, and the dots literally', () => {
-    const regExp = regExpOf('/services/*/*.js');
-    expect(['/services/app/main.js', '/services/app/x/main.js', '/services/app/mainxjs'].map(path => regExp.test(path))).toEqual([
-      true,
-      false,
-      false,
-    ]);
-  });
-});
+/** The rules as `METHODS pattern access`, in their order. */
+const rulesOf = application =>
+  nodejsPathRules(application).map(({ methods, pattern, access }) => `${methods ? `${methods.join(',')} ` : ''}${pattern} ${access}`);
 
 describe('nodejsPathRules', () => {
   const jwtBackend = { skipClient: true, authenticationTypeJwt: true, generateUserManagement: true, generateUserRegistration: true };
 
-  it('should give the access of JHipster Spring Boot to the paths of a JWT application without client', () => {
-    const rules = nodejsPathRules(jwtBackend);
-    expect(
-      [
-        ['POST', '/api/authenticate'],
-        ['DELETE', '/api/authenticate'],
-        ['POST', '/api/register'],
-        ['GET', '/api/admin/users'],
-        ['GET', '/api/nothing'],
-        ['GET', '/management/health/readiness'],
-        ['GET', '/management/env'],
-        ['GET', '/v3/api-docs'],
-        ['GET', '/index.html'],
-        ['GET', '/nothing'],
-      ].map(([method, path]) => accessOf(rules, method, path)),
-    ).toEqual(['permitAll', 'authenticated', 'permitAll', 'admin', 'authenticated', 'permitAll', 'admin', 'admin', undefined, undefined]);
+  it('should give the rules of JHipster Spring Boot, in their order, to a JWT application without client', () => {
+    expect(rulesOf(jwtBackend)).toEqual([
+      'POST,GET /api/authenticate permitAll',
+      '/api/register permitAll',
+      '/api/activate permitAll',
+      '/api/account/reset-password/init permitAll',
+      '/api/account/reset-password/finish permitAll',
+      '/api/admin/** admin',
+      '/api/** authenticated',
+      '/v3/api-docs/** admin',
+      '/management/health permitAll',
+      '/management/health/** permitAll',
+      '/management/info permitAll',
+      '/management/prometheus permitAll',
+      '/management/** admin',
+    ]);
   });
 
   it('should not permit the registration when the users are created by an administrator only', () => {
-    const rules = nodejsPathRules({ ...jwtBackend, generateUserRegistration: false });
-    expect(['/api/register', '/api/activate', '/api/account/reset-password/init'].map(path => accessOf(rules, 'POST', path))).toEqual([
-      'authenticated',
-      'authenticated',
-      'permitAll',
-    ]);
+    const rules = rulesOf({ ...jwtBackend, generateUserRegistration: false });
+    expect(rules).not.toContain('/api/register permitAll');
+    expect(rules).not.toContain('/api/activate permitAll');
+    expect(rules).toContain('/api/account/reset-password/init permitAll');
   });
 
-  it('should permit the files of the client of its bundler', () => {
-    const rules = nodejsPathRules({ ...jwtBackend, skipClient: false, clientBundlerVite: true });
-    expect(['/index.html', '/main.js', '/assets/x.css', '/content/x.css'].map(path => accessOf(rules, 'GET', path))).toEqual([
-      'permitAll',
-      'permitAll',
-      'permitAll',
-      undefined,
-    ]);
+  it('should permit the files of the client of its bundler, before the API', () => {
+    const rules = rulesOf({ ...jwtBackend, skipClient: false, clientBundlerVite: true });
+    expect(rules.slice(0, 3)).toEqual(['/index.html permitAll', '/*.js permitAll', '/*.txt permitAll']);
+    expect(rules).toContain('/assets/** permitAll');
+    expect(rules).not.toContain('/content/** permitAll');
+    expect(rules.indexOf('/swagger-ui/** permitAll')).toBeLessThan(rules.indexOf('/api/** authenticated'));
   });
 
-  it('should permit the login and the logout of the sessions before the API', () => {
-    const rules = nodejsPathRules({ skipClient: true, authenticationTypeSession: true, generateUserManagement: true });
-    expect(
-      [
-        ['POST', '/api/authentication'],
-        ['POST', '/api/logout'],
-        ['GET', '/api/logout'],
-      ].map(([method, path]) => accessOf(rules, method, path)),
-    ).toEqual(['permitAll', 'permitAll', 'authenticated']);
+  it('should permit the login and the logout of the sessions first, by POST only', () => {
+    const rules = rulesOf({ skipClient: true, authenticationTypeSession: true, generateUserManagement: true });
+    expect(rules.slice(0, 2)).toEqual(['POST /api/authentication permitAll', 'POST /api/logout permitAll']);
   });
 
   it('should permit the OAuth2 login of the applications with the login only', () => {
-    const paths = ['/oauth2/authorization/oidc', '/login/oauth2/code/oidc', '/api/auth-info'];
-    const accessesOf = application => paths.map(path => accessOf(nodejsPathRules({ skipClient: true, ...application }), 'GET', path));
-    expect(accessesOf({ authenticationTypeOauth2: true, authenticationUsesCsrf: true, generateAuthenticationApi: true })).toEqual([
-      'permitAll',
-      'permitAll',
-      'permitAll',
-    ]);
-    expect(accessesOf({ authenticationTypeOauth2: true, authenticationUsesCsrf: true })).toEqual([undefined, undefined, 'permitAll']);
+    const login = ['/oauth2/authorization/** permitAll', '/login/oauth2/code/** permitAll'];
+    const oauth2 = { skipClient: true, authenticationTypeOauth2: true, authenticationUsesCsrf: true };
+    expect(rulesOf({ ...oauth2, generateAuthenticationApi: true }).slice(0, 2)).toEqual(login);
+    const microservice = rulesOf(oauth2);
+    expect(microservice).not.toContain(login[0]);
+    expect(microservice).not.toContain(login[1]);
+    expect(microservice).toContain('/api/auth-info permitAll');
+  });
+
+  it('should protect the paths of the microservices of a gateway', () => {
+    const rules = rulesOf({ ...jwtBackend, applicationTypeGateway: true });
+    expect(rules).toContain('/services/*/management/health/readiness permitAll');
+    expect(rules.indexOf('/services/*/v3/api-docs admin')).toBeLessThan(rules.indexOf('/services/** authenticated'));
   });
 });

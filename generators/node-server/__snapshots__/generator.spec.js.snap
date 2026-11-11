@@ -486,6 +486,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > jwt microservic
   "server/src/auth/path-rules.middleware.ts": {
     "stateCleared": "modified",
   },
+  "server/src/auth/path-rules.spec.ts": {
+    "stateCleared": "modified",
+  },
   "server/src/auth/path-rules.ts": {
     "stateCleared": "modified",
   },
@@ -834,6 +837,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > run > should ma
     "stateCleared": "modified",
   },
   "server/src/auth/path-rules.middleware.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/auth/path-rules.spec.ts": {
     "stateCleared": "modified",
   },
   "server/src/auth/path-rules.ts": {
@@ -1255,6 +1261,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > with oauth2 > s
   "server/src/auth/path-rules.middleware.ts": {
     "stateCleared": "modified",
   },
+  "server/src/auth/path-rules.spec.ts": {
+    "stateCleared": "modified",
+  },
   "server/src/auth/path-rules.ts": {
     "stateCleared": "modified",
   },
@@ -1621,6 +1630,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > with oauth2 and
     "stateCleared": "modified",
   },
   "server/src/auth/path-rules.middleware.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/auth/path-rules.spec.ts": {
     "stateCleared": "modified",
   },
   "server/src/auth/path-rules.ts": {
@@ -2422,6 +2434,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > without client 
     "stateCleared": "modified",
   },
   "server/src/auth/path-rules.middleware.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/auth/path-rules.spec.ts": {
     "stateCleared": "modified",
   },
   "server/src/auth/path-rules.ts": {
