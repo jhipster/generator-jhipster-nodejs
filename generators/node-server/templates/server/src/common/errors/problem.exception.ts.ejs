@@ -59,15 +59,18 @@ export class ValidationException extends ProblemException {
   }
 }
 
-/** A bad request of an entity, like the BadRequestAlertException of JHipster Spring Boot. */
+/**
+ * A bad request of an entity, like the BadRequestAlertException of JHipster Spring Boot: the translation key of the error
+ * and its parameter tell it to the clients, its default message stays out of the response.
+ */
 export class BadRequestAlertException extends ProblemException {
   constructor(
-    defaultMessage: string,
+    readonly defaultMessage: string,
     readonly entityName: string,
     readonly errorKey: string,
     type = DEFAULT_TYPE,
   ) {
-    super(HttpStatus.BAD_REQUEST, { type, title: defaultMessage, message: `error.${errorKey}`, params: entityName });
+    super(HttpStatus.BAD_REQUEST, { type, message: `error.${errorKey}`, params: entityName });
   }
 }
 <%_ if (generateUserManagement) { _%>
@@ -86,7 +89,7 @@ export class EmailAlreadyUsedException extends BadRequestAlertException {
 
 export class InvalidPasswordException extends ProblemException {
   constructor() {
-    super(HttpStatus.BAD_REQUEST, { type: INVALID_PASSWORD_TYPE, title: 'Incorrect password' });
+    super(HttpStatus.BAD_REQUEST, { type: INVALID_PASSWORD_TYPE, detail: 'Incorrect password' });
   }
 }
 

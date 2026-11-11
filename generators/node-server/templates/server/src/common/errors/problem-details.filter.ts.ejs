@@ -11,7 +11,9 @@ import { BadRequestAlertException, ProblemException } from './problem.exception.
 /**
  * Answers the errors as the problem details (RFC 9457, application/problem+json) of JHipster Spring Boot, which the
  * JHipster clients read: the type of the problem, the translation key of the error (message), the path of the request
- * and the errors of the fields. An unexpected error is logged, and answered without its message.
+ * (path, and instance, the member of the RFC) and the errors of the fields. The title is the text of the status, the
+ * validation and the account apart, like the one of JHipster Spring Boot. An unexpected error is logged, and answered
+ * without its message.
  */
 @Catch()
 export class ProblemDetailsFilter implements ExceptionFilter {
@@ -34,6 +36,8 @@ export class ProblemDetailsFilter implements ExceptionFilter {
       // Like the ExceptionTranslator of JHipster Spring Boot, the alert headers the JHipster clients read first.
       this.headerUtil.addFailureAlertHeaders(response, exception.entityName, exception.errorKey);
     }
+    // The path of the request, not the one left of it by a middleware answering before the routes.
+    const path = request.originalUrl.split('?')[0];
     response
       .status(status)
       .type('application/problem+json')
@@ -42,9 +46,9 @@ export class ProblemDetailsFilter implements ExceptionFilter {
         title: STATUS_CODES[status],
         status,
         detail: exception instanceof HttpException ? detailOf(exception, request) : undefined,
+        instance: path,
         message: `error.http.${status}`,
-        // The path of the request, not the one left of it by a middleware answering before the routes.
-        path: request.originalUrl.split('?')[0],
+        path,
         ...(exception instanceof ProblemException ? exception.problem : {}),
       });
   }
