@@ -116,7 +116,7 @@ _%>
             .get('/api/<%- entityApiUrl %>?sort=<%- notSortableField.fieldName %>,asc')
             .expect(400);
 
-        expect(response.body.detail).toBe('Invalid sort property: <%- notSortableField.fieldName %>');
+        expect(response.body).toMatchObject({ message: 'error.notsortable', params: '<%- entityAlertName %>' });
     });
 <%_ } _%>
 <%_ if (nodejsSortExample) { _%>
@@ -162,7 +162,10 @@ _%>
             .get('/api/<%- entityApiUrl %>?sort=unknownProperty,asc')
             .expect(400);
 
-        expect(response.body.detail).toBe('Invalid sort property: unknownProperty');
+        // Like JHipster Spring Boot, the error of the sort, with the alert headers the clients read.
+        expect(response.body).toMatchObject({ message: 'error.notsortable', params: '<%- entityAlertName %>' });
+        expect(alertHeader(response.headers, '-error')).toBe('error.notsortable');
+        expect(alertHeader(response.headers, '-params')).toBe('<%- entityAlertName %>');
     });
 
     it('/GET all <%- entityApiUrl %> sorted on an audit field, not a property of the entity like JHipster Spring Boot', async () => {
@@ -170,7 +173,7 @@ _%>
             .get('/api/<%- entityApiUrl %>?sort=createdDate,asc')
             .expect(400);
 
-        expect(response.body.detail).toBe('Invalid sort property: createdDate');
+        expect(response.body).toMatchObject({ message: 'error.notsortable', params: '<%- entityAlertName %>' });
     });
 <%_ if (nodejsCriteria) { _%>
 

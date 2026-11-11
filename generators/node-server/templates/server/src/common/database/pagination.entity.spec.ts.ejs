@@ -58,6 +58,12 @@ describe('PageRequest', () => {
     expect(new PageRequest(0, 20, 'name,asc', ['id', 'name']).asOrder()).toEqual({ name: 'ASC' });
   });
 
+  it('rejects a property of a named entity with the error of the sort, like JHipster Spring Boot', () => {
+    expect(() => new PageRequest(0, 20, 'password,asc', ['id', 'name'], 'author')).toThrow(
+      expect.objectContaining({ errorKey: 'notsortable', entityName: 'author' }),
+    );
+  });
+
   it('rejects a property the sort check refuses', () => {
     const isSortable = (property: string): boolean => property !== 'password';
     expect(() => new PageRequest(0, 20, 'password,asc', isSortable)).toThrow('Invalid sort property: password');

@@ -3,6 +3,8 @@ import { Type, Expose as JsonProperty } from 'class-transformer';
 import type { ParsedQs } from 'qs';
 import type { FindOptionsOrder } from 'typeorm';
 
+import { BadRequestAlertException } from '../errors/problem.exception.ts';
+
 export type SortDirection = 'ASC' | 'DESC';
 
 export class Sort {
@@ -49,6 +51,8 @@ export class PageRequest {
      * check of a property, any when not given.
      */
     sortProperties?: string[] | ((property: string) => boolean),
+    /** The name of the entity sorted, the parameter of the error of a property that is not sortable. */
+    entityName?: string,
   ) {
     this.page = Math.max(PageRequest.handleNumberTypes(page, this.page), 0);
     const requestedSize = PageRequest.handleNumberTypes(size, this.size);
@@ -57,6 +61,10 @@ export class PageRequest {
     const isSortable =
       typeof sortProperties === 'function' ? sortProperties : (property: string): boolean => sortProperties?.includes(property) ?? true;
     const invalid = sorts.find(each => !isSortable(each.property));
+    if (invalid && entityName) {
+      // Like the SortValidator of JHipster Spring Boot, the error the clients translate.
+      throw new BadRequestAlertException(`A ${entityName} cannot be sorted by ${invalid.property}`, entityName, 'notsortable');
+    }
     if (invalid) {
       throw new BadRequestException(`Invalid sort property: ${invalid.property}`);
     }
