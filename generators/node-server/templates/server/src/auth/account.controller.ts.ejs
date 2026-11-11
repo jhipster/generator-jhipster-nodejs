@@ -99,8 +99,10 @@ export class AccountController {
     status: 200,
     description: 'Reset key given to the activated user of the mail, if any',
   })
-  async requestPasswordReset(@Body() mail: unknown): Promise<void> {
-    // Like JHipster Spring Boot, the mail is the body of the request, a text: 400 without it.
+  async requestPasswordReset(@Body() body: string): Promise<void> {
+    // Like JHipster Spring Boot, the mail is the body of the request, a text: 400 without it, which Nest gives as an
+    // empty object.
+    const mail: unknown = body;
     if (typeof mail !== 'string' || !mail) {
       throw new BadRequestException('Failed to read request');
     }
