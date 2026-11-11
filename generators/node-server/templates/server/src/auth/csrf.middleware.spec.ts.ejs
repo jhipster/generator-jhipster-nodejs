@@ -11,11 +11,23 @@ const call = (method: string, session: any, headers: Record<string, string> = {}
 
 describe('CsrfMiddleware', () => {
 <%_ if (authenticationTypeSession) { _%>
-  it('lets the requests without a logged session pass, giving a token cookie to a client without one', () => {
-    const { res, next } = call('POST', {});
+  it('lets the safe requests without a logged session pass, giving a token cookie to a client without one', () => {
+    const { res, next } = call('GET', {});
     expect(next).toHaveBeenCalled();
     expect(res.cookie).toHaveBeenCalledWith('XSRF-TOKEN', expect.any(String), expect.objectContaining({ path: '/' }));
-    expect(call('POST', {}, { cookie: 'XSRF-TOKEN=t0k' }).res.cookie).not.toHaveBeenCalled();
+    expect(call('GET', {}, { cookie: 'XSRF-TOKEN=t0k' }).res.cookie).not.toHaveBeenCalled();
+  });
+
+  it('refuses an unsafe request without a logged session and without the token of its cookie', () => {
+    expect(() => call('POST', {})).toThrow(ForbiddenException);
+    expect(() => call('POST', {}, { 'x-xsrf-token': 't0k' })).toThrow(ForbiddenException);
+    expect(() => call('DELETE', {}, { cookie: 'XSRF-TOKEN=t0k', 'x-xsrf-token': 'other' })).toThrow(ForbiddenException);
+  });
+
+  it('accepts an unsafe request without a logged session with the token of its cookie', () => {
+    const { res, next } = call('POST', {}, { cookie: 'XSRF-TOKEN=t0k', 'x-xsrf-token': 't0k' });
+    expect(next).toHaveBeenCalled();
+    expect(res.cookie).not.toHaveBeenCalled();
   });
 
   it('refuses a login without the token of its cookie, like Spring Security', () => {

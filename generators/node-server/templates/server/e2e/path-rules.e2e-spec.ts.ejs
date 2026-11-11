@@ -3,7 +3,7 @@ import { AddressInfo } from 'node:net';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { INestApplication } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
-import request from 'supertest';
+import request from '<%- authenticationTypeSession ? './csrf-request.ts' : 'supertest' %>';
 import { AppModule } from '../src/app.module.ts';
 import { configureApp } from '../src/app.config.ts';
 import { RequestAuthenticator } from '../src/auth/request-authenticator.ts';
@@ -29,7 +29,7 @@ describe('Path rules', () => {
     return nestApp;
   };
 
-  const get = (path: string): request.Test => request(app.getHttpServer()).get(path);
+  const get = (path: string) => request(app.getHttpServer()).get(path);
 
   afterEach(async () => {
     await app?.close();

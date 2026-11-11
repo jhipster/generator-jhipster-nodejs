@@ -4,7 +4,7 @@
 _%>
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { Test, TestingModule } from '@nestjs/testing';
-import request from 'supertest';
+import request from '<%- authenticationTypeSession ? './csrf-request.ts' : 'supertest' %>';
 import { AppModule } from '../src/app.module.ts';
 import { configureApp } from '../src/app.config.ts';
 import { INestApplication } from '@nestjs/common';

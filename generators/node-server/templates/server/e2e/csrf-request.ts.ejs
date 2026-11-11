@@ -1,0 +1,26 @@
+import supertest from 'supertest';
+
+/** The token the unsafe requests give, the same as the XSRF-TOKEN cookie and the X-XSRF-TOKEN header. */
+const CSRF_TOKEN = 'e2e-csrf-token';
+
+/** The unsafe methods of supertest, which the CsrfMiddleware checks. */
+const UNSAFE_METHODS = new Set<PropertyKey>(['post', 'put', 'patch', 'delete']);
+
+/**
+ * The request of supertest, its unsafe requests sending the CSRF token of a client without a logged session (the XSRF-TOKEN
+ * cookie and the X-XSRF-TOKEN header), like the csrf() of the MockMvc tests of JHipster Spring Boot: the tests of the other
+ * resources pass the CSRF protection, which session.e2e-spec.ts tests.
+ */
+export default function request(app: Parameters<typeof supertest>[0]): ReturnType<typeof supertest> {
+  const test = supertest(app);
+  return new Proxy(test, {
+    get(target, property, receiver) {
+      const value = Reflect.get(target, property, receiver);
+      if (!UNSAFE_METHODS.has(property) || typeof value !== 'function') {
+        return value;
+      }
+      return (url: string) =>
+        value.call(target, url).set('Cookie', `XSRF-TOKEN=${CSRF_TOKEN}`).set('X-XSRF-TOKEN', CSRF_TOKEN);
+    },
+  });
+}

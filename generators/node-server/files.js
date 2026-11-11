@@ -256,7 +256,12 @@ export const serverFiles = {
     {
       path: SERVER_NODEJS_DIR,
       condition: ctx => ctx.authenticationTypeSession,
-      templates: ['src/auth/user.session.controller.ts', 'src/auth/session-user.middleware.ts', 'e2e/session.e2e-spec.ts'],
+      templates: [
+        'src/auth/user.session.controller.ts',
+        'src/auth/session-user.middleware.ts',
+        'e2e/session.e2e-spec.ts',
+        'e2e/csrf-request.ts',
+      ],
     },
   ],
   oauth2: [
