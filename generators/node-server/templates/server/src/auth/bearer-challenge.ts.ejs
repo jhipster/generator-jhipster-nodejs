@@ -8,6 +8,9 @@ const RESOURCE_METADATA_PATHS = /^\/\.well-known\/oauth-protected-resource(\/.*)
 
 const ERROR_URI = 'https://tools.ietf.org/html/rfc6750#section-3.1';
 
+/** Whether the request has the bearer scheme in its Authorization header, case insensitive like HTTP gives it. */
+export const hasBearerScheme = (req: Request): boolean => /^bearer(?:\s|$)/i.test(req.headers.authorization ?? '');
+
 /** A bearer token refused, expired or invalid another way. */
 export class InvalidBearerTokenException extends UnauthorizedException {
   constructor(readonly expired = false) {

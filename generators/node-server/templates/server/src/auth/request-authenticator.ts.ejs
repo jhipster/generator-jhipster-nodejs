@@ -4,12 +4,7 @@ import passport from 'passport';
 <%_ } _%>
 import { Request } from '../common/request.ts';
 <%_ if (!authenticationTypeSession) { _%>
-import { InvalidBearerTokenException } from './bearer-challenge.ts';
-<%_ } _%>
-<%_ if (!authenticationTypeSession) { _%>
-
-/** The bearer scheme of the Authorization header, case insensitive like HTTP gives it. */
-const BEARER_SCHEME = /^bearer(?:\s|$)/i;
+import { InvalidBearerTokenException, hasBearerScheme } from './bearer-challenge.ts';
 <%_ } _%>
 
 /** The user of an authenticated request. */
@@ -39,7 +34,7 @@ export class RequestAuthenticator {
       return req.session.user;
     }
   <%_ } _%>
-    if (!BEARER_SCHEME.test(req.headers.authorization ?? '')) {
+    if (!hasBearerScheme(req)) {
       return undefined;
     }
     return new Promise((resolve, reject) => {

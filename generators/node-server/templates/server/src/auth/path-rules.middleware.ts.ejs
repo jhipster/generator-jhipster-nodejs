@@ -4,6 +4,7 @@ import { Request } from '../common/request.ts';
 <%_ if (!authenticationTypeSession) { _%>
 import {
   InvalidBearerTokenException,
+  hasBearerScheme,
   insufficientScopeChallenge,
   invalidTokenChallenge,
   <%_ if (authenticationTypeJwt || (authenticationTypeOauth2 && applicationTypeMicroservice)) { _%>
@@ -15,11 +16,6 @@ import {
 import { isRejectedUrl, pathAccess, requestPath } from './path-rules.ts';
 import { RequestAuthenticator } from './request-authenticator.ts';
 import { RoleType } from './role-type.ts';
-<%_ if (!authenticationTypeSession) { _%>
-
-/** The bearer scheme of the Authorization header, case insensitive like HTTP gives it. */
-const BEARER_SCHEME = /^bearer(?:\s|$)/i;
-<%_ } _%>
 
 /**
  * The authorization of the paths, before the routes, like the one of Spring Security in JHipster Spring Boot: the request
@@ -77,7 +73,7 @@ export class PathRulesMiddleware implements NestMiddleware {
     }
     if (access !== 'authenticated' && !(access === 'admin' && req.user.authorities?.includes(RoleType.ADMIN))) {
 <%_ if (!authenticationTypeSession) { _%>
-      if (BEARER_SCHEME.test(req.headers.authorization ?? '')) {
+      if (hasBearerScheme(req)) {
         res.setHeader('WWW-Authenticate', insufficientScopeChallenge());
       }
 <%_ } _%>
