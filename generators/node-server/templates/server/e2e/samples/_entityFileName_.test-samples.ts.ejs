@@ -1,5 +1,5 @@
 import { INestApplication } from '@nestjs/common';
-import request from 'supertest';
+import request from '<%- authenticationTypeSession ? '../csrf-request.ts' : 'supertest' %>';
 <%_ if (nodejsTestSample.user) { _%>
 import { DataSource } from 'typeorm';
 import { <%- user.persistClass %> } from '../../src/users/user.entity.ts';

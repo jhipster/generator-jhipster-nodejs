@@ -1,7 +1,7 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { INestApplication } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
-import request from 'supertest';
+import request from '<%- authenticationTypeSession ? './csrf-request.ts' : 'supertest' %>';
 <%_ if (databaseTypeSql) { _%>
 import { DataSource } from 'typeorm';
 <%_ } _%>

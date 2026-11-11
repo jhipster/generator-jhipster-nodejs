@@ -37,9 +37,11 @@ function csrfCookie(req: Request): string | undefined {
 <%_ if (authenticationTypeSession) { _%>
 
 /**
- * The CSRF check of the session login, like the CookieCsrfTokenRepository of Spring Security: the X-XSRF-TOKEN header is
- * the token of the XSRF-TOKEN cookie of the client, else 403, so another site cannot log the browser of a user into another
- * account. Called by the login itself, whatever the path Express routes to it (its case, a trailing slash).
+ * The CSRF check of the unsafe requests of a client without a logged session, like the CookieCsrfTokenRepository of Spring
+ * Security: the X-XSRF-TOKEN header is the token of the XSRF-TOKEN cookie of the client, else 403 (401 in Spring Security,
+ * its answer to an anonymous client), so another site cannot log the browser of a user into another account, nor register
+ * or reset a password from it. Called by the login itself too, whatever the path Express routes to it (its case, a
+ * trailing slash).
  */
 export function checkLoginCsrfToken(req: Request): void {
   const token = csrfCookie(req);
@@ -54,7 +56,8 @@ export function checkLoginCsrfToken(req: Request): void {
  * Boot: a logged session gives its token as the XSRF-TOKEN cookie to a client without it, and every unsafe request of it,
  * the logout included, must send it as X-XSRF-TOKEN, else 403. A request with a bearer token has no session to protect.
 <%_ if (authenticationTypeSession) { _%>
- * A client without a logged session gets a token cookie, which its login must send back (checkLoginCsrfToken).
+ * A client without a logged session gets a token cookie, which its unsafe requests, the login included, must send back
+ * (checkLoginCsrfToken), else 403.
 <%_ } _%>
  */
 @Injectable()
@@ -63,7 +66,9 @@ export class CsrfMiddleware implements NestMiddleware {
     const session = req.session;
     if (!session?.user) {
 <%_ if (authenticationTypeSession) { _%>
-      if (!csrfCookie(req)) {
+      if (!SAFE_METHODS.includes(req.method)) {
+        checkLoginCsrfToken(req);
+      } else if (!csrfCookie(req)) {
         setCsrfCookie(res, randomUUID());
       }
 <%_ } _%>
@@ -77,6 +82,8 @@ export class CsrfMiddleware implements NestMiddleware {
       // of the ended session back.
       setCsrfCookie(res, session.csrfToken);
     }
+    // The token of the session is the one checked (the synchronizer token of OWASP): unlike the CookieCsrfTokenRepository of
+    // Spring Security, which has the cookie only to compare with, the header is enough.
     if (!SAFE_METHODS.includes(req.method) && req.headers['x-xsrf-token'] !== session.csrfToken) {
       throw new ForbiddenException('Invalid CSRF token');
     }
