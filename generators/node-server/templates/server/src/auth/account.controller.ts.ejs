@@ -1,5 +1,5 @@
 import { 
-<%_ if (generateUserManagement) { _%> Body, Post, 
+<%_ if (generateUserManagement) { _%> BadRequestException, Body, Post, 
 <%_ } _%>UseGuards, Controller, Get, HttpCode, Logger, Req, UseInterceptors, ClassSerializerInterceptor } from '@nestjs/common';
 import { AuthGuard } from './index.ts';
 <%_ if (generateUserManagement) { _%>
@@ -99,8 +99,12 @@ export class AccountController {
     status: 200,
     description: 'Reset key given to the activated user of the mail, if any',
   })
-  async requestPasswordReset(@Body() mail: string): Promise<void> {
-    const user = await this.authService.requestPasswordReset(String(mail));
+  async requestPasswordReset(@Body() mail: unknown): Promise<void> {
+    // Like JHipster Spring Boot, the mail is the body of the request, a text: 400 without it.
+    if (typeof mail !== 'string' || !mail) {
+      throw new BadRequestException('Failed to read request');
+    }
+    const user = await this.authService.requestPasswordReset(mail);
     if (user) {
       void this.mailService.sendPasswordResetMail(user);
     } else {
