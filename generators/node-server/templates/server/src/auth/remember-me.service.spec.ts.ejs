@@ -1,0 +1,107 @@
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { PersistentToken } from './persistent-token.entity.ts';
+import { REPLACED_TOKEN_VALIDITY, RememberMeService, TOKEN_VALIDITY } from './remember-me.service.ts';
+
+/** A repository of tokens in memory. */
+const repository = (rows: PersistentToken[]): any => ({
+  find: ({ where }: any) => Promise.resolve(rows.filter(row => row.login === where.login)),
+  findOne: ({ where }: any) => Promise.resolve(rows.find(row => row.series === where.series) ?? null),
+  save: (token: PersistentToken) => {
+    const index = rows.findIndex(row => row.series === token.series);
+    rows.splice(index < 0 ? rows.length : index, 1, { ...token });
+    return Promise.resolve(token);
+  },
+  delete: ({ series }: any) => {
+    const index = rows.findIndex(row => row.series === series);
+    if (index >= 0) rows.splice(index, 1);
+    return Promise.resolve();
+  },
+});
+
+const request = (cookie?: string, secure = false): any => ({
+  headers: { cookie },
+  secure,
+  ip: '127.0.0.1',
+  get: () => undefined,
+});
+
+const response = (): any => ({ cookie: vi.fn(), clearCookie: vi.fn() });
+
+/** The cookie a response gives, as a request sends it back. */
+const cookieOf = (res: any): string => `remember-me=${res.cookie.mock.calls[0][1]}`;
+
+describe('RememberMeService', () => {
+  let rows: PersistentToken[];
+  let service: RememberMeService;
+
+  beforeEach(() => {
+    vi.useRealTimers();
+    rows = [];
+    service = new RememberMeService(repository(rows));
+  });
+
+  it('gives a cookie not read by scripts, secure over HTTPS only, and keeps the hash of its token', async () => {
+    const res = response();
+    await service.remember(request(undefined, true), res, 'user');
+    expect(res.cookie).toHaveBeenCalledWith(
+      'remember-me',
+      expect.any(String),
+      expect.objectContaining({ httpOnly: true, secure: true, maxAge: TOKEN_VALIDITY }),
+    );
+    const [series, token] = Buffer.from(res.cookie.mock.calls[0][1], 'base64url').toString().split(':');
+    expect(rows).toEqual([expect.objectContaining({ series, login: 'user', ipAddress: '127.0.0.1', userAgent: undefined })]);
+    expect(rows[0].tokenValue).not.toContain(token);
+  });
+
+  it('logs in by the cookie, replacing its token, the one replaced logging in a moment more', async () => {
+    const first = response();
+    await service.remember(request(), first, 'user');
+    const { tokenValue } = rows[0];
+    const second = response();
+    expect(await service.autoLogin(request(cookieOf(first)), second)).toBe('user');
+    expect(rows[0].tokenValue).not.toEqual(tokenValue);
+
+    const together = response();
+    expect(await service.autoLogin(request(cookieOf(first)), together)).toBe('user');
+    expect(together.cookie).not.toHaveBeenCalled();
+    expect(await service.autoLogin(request(cookieOf(second)), response())).toBe('user');
+    expect(rows).toHaveLength(1);
+  });
+
+  it('ends the series of a token replaced more than a moment ago, a stolen cookie', async () => {
+    const first = response();
+    await service.remember(request(), first, 'user');
+    await service.autoLogin(request(cookieOf(first)), response());
+    vi.useFakeTimers({ now: Date.now() + REPLACED_TOKEN_VALIDITY + 1 });
+    const res = response();
+    expect(await service.autoLogin(request(cookieOf(first)), res)).toBeUndefined();
+    expect(res.clearCookie).toHaveBeenCalled();
+    expect(rows).toHaveLength(0);
+  });
+
+  it('logs nobody in without a cookie, with an unknown series or after 31 days', async () => {
+    expect(await service.autoLogin(request(), response())).toBeUndefined();
+    expect(await service.autoLogin(request('remember-me=unknown'), response())).toBeUndefined();
+    const res = response();
+    await service.remember(request(), res, 'user');
+    rows[0].tokenDate = new Date(Date.now() - TOKEN_VALIDITY - 1000);
+    expect(await service.autoLogin(request(cookieOf(res)), response())).toBeUndefined();
+    expect(rows).toHaveLength(0);
+  });
+
+  it('ends the login of the cookie at the logout, the ones of a user, and a series of the user only', async () => {
+    const res = response();
+    await service.remember(request(), res, 'user');
+    await service.remember(request(), response(), 'user');
+    await service.remember(request(), response(), 'other');
+    const logout = response();
+    await service.forget(request(cookieOf(res)), logout);
+    expect(logout.clearCookie).toHaveBeenCalled();
+    expect(await service.tokensOf('user')).toHaveLength(1);
+
+    await service.removeSeries('user', rows.find(row => row.login === 'other')!.series);
+    expect(await service.tokensOf('other')).toHaveLength(1);
+    await service.removeOf('user');
+    expect(rows.map(row => row.login)).toEqual(['other']);
+  });
+});

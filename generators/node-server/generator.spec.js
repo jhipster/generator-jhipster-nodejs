@@ -501,6 +501,9 @@ describe('SubGenerator node-server of nodejs JHipster blueprint', () => {
         'server/src/auth/session.entity.ts',
         'server/src/auth/session.store.ts',
         'server/src/migrations/1570200270082-CreateSessions.ts',
+        'server/src/auth/persistent-token.entity.ts',
+        'server/src/auth/remember-me.service.ts',
+        'server/src/migrations/1570200270083-CreatePersistentTokens.ts',
       ]);
       result.assertNoFile([
         'server/src/auth/user.jwt.controller.ts',

@@ -17,13 +17,6 @@ declare module 'express-session' {
     user: <%- authenticationTypeOauth2 ? 'OidcUser' : 'SessionUser' %>;
     /** The CSRF token the clients send back as X-XSRF-TOKEN. */
     csrfToken: string;
-<%_ if (authenticationTypeSession) { _%>
-    /** The session as the sessions page shows it: its series, the date, the address and the browser of its login. */
-    series: string;
-    tokenDate: string;
-    ipAddress?: string;
-    userAgent?: string;
-<%_ } _%>
   }
 }
 
@@ -31,12 +24,6 @@ declare module 'express-session' {
 export const PRUNE_INTERVAL = 60 * 60 * 1000;
 
 type Callback<T = unknown> = (error?: Error | null, value?: T) => void;
-
-/** A session of a user, its id and its data. */
-export interface StoredSession {
-  sid: string;
-  data: session.SessionData;
-}
 
 /**
  * The sessions of the server in the database of the application, the store of express-session: a session outlives a
@@ -105,11 +92,6 @@ export class SessionStore extends session.Store implements OnModuleInit, OnModul
     );
   }
 
-  /** The sessions of a user, not expired. */
-  async sessionsOf(login: string): Promise<StoredSession[]> {
-    return alive(await this.repository.find({ where: { login } }));
-  }
-
   /** Removes the expired sessions. */
   async prune(): Promise<void> {
 <%_ if (databaseTypeSql) { _%>
@@ -136,13 +118,13 @@ export class SessionStore extends session.Store implements OnModuleInit, OnModul
   }
 }
 
-/** The end of a session: the expiry of its cookie with remember-me, else 30 minutes after its last request. */
+/** The end of a session: the expiry of its cookie when it has one, else 30 minutes after its last request. */
 function expiresOf(data: session.SessionData): Date {
   return data.cookie?.expires ? new Date(data.cookie.expires) : new Date(Date.now() + SESSION_MAX_AGE);
 }
 
 /** The sessions not expired, with their data. */
-function alive(sessions: Session[]): StoredSession[] {
+function alive(sessions: Session[]): { sid: string; data: session.SessionData }[] {
   const now = Date.now();
   return sessions.filter(stored => stored.expires.getTime() > now).map(({ sid, data }) => ({ sid, data: JSON.parse(data) }));
 }

@@ -1,13 +1,13 @@
-import { randomBytes, randomUUID } from 'node:crypto';
+import { randomUUID } from 'node:crypto';
 
 import { Body, Controller, Delete, Get, HttpCode, Logger, Param, Post, Req, Res, UnauthorizedException, UseGuards } from '@nestjs/common';
 import { ApiConsumes, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Request, Response } from 'express';
 import { AuthService } from './auth.service.ts';
-import { checkLoginCsrfToken, REMEMBER_ME_MAX_AGE, setCsrfCookie } from './csrf.middleware.ts';
+import { checkLoginCsrfToken, setCsrfCookie } from './csrf.middleware.ts';
 import { sessionUser } from './session-user.middleware.ts';
 import { AuthGuard } from './guards/auth.guard.ts';
-import { SessionStore } from './session.store.ts';
+import { RememberMeService } from './remember-me.service.ts';
 
 /** The form of the session login, the one the JHipster clients post, like the formLogin of JHipster Spring Boot. */
 interface LoginForm {
@@ -19,12 +19,12 @@ interface LoginForm {
 /** The values of the remember-me parameter that ask for it, like the ones of the RememberMeServices of Spring Security. */
 const REMEMBER_ME_VALUES = ['true', 'on', 'yes', '1'];
 
-/** A session of the user, as the sessions page of the clients shows it, like the PersistentToken of JHipster Spring Boot. */
+/** A remember-me login of the user, as the sessions page of the clients shows it, like the PersistentToken of JHipster Spring Boot. */
 interface SessionDTO {
   series: string;
   tokenDate: string;
-  ipAddress?: string;
-  userAgent?: string;
+  ipAddress: string | null;
+  userAgent: string | null;
 }
 
 @Controller('api')
@@ -34,7 +34,7 @@ export class UserSessionController {
 
   constructor(
     private readonly authService: AuthService,
-    private readonly sessionStore: SessionStore,
+    private readonly rememberMeService: RememberMeService,
   ) {}
 
   @Post('/authentication')
@@ -56,16 +56,9 @@ export class UserSessionController {
     const session = req.session;
     session.user = user;
     session.csrfToken = randomUUID();
-    // The session as the sessions page shows it, like the PersistentToken of JHipster Spring Boot: its series (random,
-    // not its id), the date, the address and the browser of its login.
-    session.series = randomBytes(16).toString('base64url');
-    session.tokenDate = new Date().toISOString().slice(0, 10);
-    session.ipAddress = req.ip;
-    session.userAgent = req.get('user-agent');
     if (REMEMBER_ME_VALUES.includes(String(form['remember-me']).toLowerCase())) {
-      // Like the remember-me of JHipster Spring Boot, the login is kept after the browser is closed, until the session
-      // is unused for 31 days (its cookie expires 31 days after the login).
-      session.cookie.maxAge = REMEMBER_ME_MAX_AGE;
+      // Like the remember-me of JHipster Spring Boot, a cookie of its own logs the user in after the session ended.
+      await this.rememberMeService.remember(req, res, user.login);
     }
     setCsrfCookie(res, session.csrfToken);
     await new Promise<void>((resolve, reject) => session.save((error?: Error) => (error ? reject(error) : resolve())));
@@ -73,31 +66,33 @@ export class UserSessionController {
 
   @Post('/logout')
   @HttpCode(200)
-  @ApiOperation({ summary: 'Log out, ending the session' })
+  @ApiOperation({ summary: 'Log out, ending the session and its remember-me login' })
   @ApiResponse({ status: 200, description: 'Logged out' })
-  async logout(@Req() req: Request): Promise<void> {
+  async logout(@Req() req: Request, @Res({ passthrough: true }) res: Response): Promise<void> {
+    await this.rememberMeService.forget(req, res);
     await new Promise<void>(resolve => req.session.destroy(() => resolve()));
   }
 
   @Get('/account/sessions')
   @UseGuards(AuthGuard)
-  @ApiOperation({ summary: 'The sessions of the current user, like the persistent tokens of JHipster Spring Boot' })
-  @ApiResponse({ status: 200, description: 'The sessions of the user' })
+  @ApiOperation({ summary: 'The remember-me logins of the current user, like the persistent tokens of JHipster Spring Boot' })
+  @ApiResponse({ status: 200, description: 'The remember-me logins of the user' })
   async getCurrentSessions(@Req() req: Request): Promise<SessionDTO[]> {
     const { login } = req.session.user!;
-    return (await this.sessionStore.sessionsOf(login))
-      .filter(({ data }) => data.series)
-      .map(({ data: { series, tokenDate, ipAddress, userAgent } }) => ({ series, tokenDate, ipAddress, userAgent }));
+    return (await this.rememberMeService.tokensOf(login)).map(({ series, tokenDate, ipAddress, userAgent }) => ({
+      series,
+      tokenDate: tokenDate.toISOString().slice(0, 10),
+      ipAddress: ipAddress ?? null,
+      userAgent: userAgent ?? null,
+    }));
   }
 
   @Delete('/account/sessions/:series')
   @UseGuards(AuthGuard)
-  @ApiOperation({ summary: 'Ends a session of the current user, like the invalidation of a persistent token of JHipster Spring Boot' })
-  @ApiResponse({ status: 200, description: 'The session of the series, if any, ended' })
+  @ApiOperation({ summary: 'Ends a remember-me login of the current user, like the invalidation of a persistent token of JHipster Spring Boot' })
+  @ApiResponse({ status: 200, description: 'The remember-me login of the series, if it is one of the user, ended' })
   async invalidateSession(@Req() req: Request, @Param('series') series: string): Promise<void> {
     const { login } = req.session.user!;
-    for (const { sid } of (await this.sessionStore.sessionsOf(login)).filter(({ data }) => data.series === series)) {
-      await new Promise<void>((resolve, reject) => this.sessionStore.destroy(sid, error => (error ? reject(error) : resolve())));
-    }
+    await this.rememberMeService.removeSeries(login, series);
   }
 }

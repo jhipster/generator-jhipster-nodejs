@@ -1,7 +1,10 @@
+import { randomUUID } from 'node:crypto';
 import { Injectable, NestMiddleware } from '@nestjs/common';
 import { NextFunction, Request, Response } from 'express';
 import { <%- user.dtoClass %> } from '../users/dto/user.dto.ts';
 import { UserService } from '../users/user.service.ts';
+import { cookieOf } from './csrf.middleware.ts';
+import { RememberMeService } from './remember-me.service.ts';
 
 /** The user a session keeps: without its secrets, which stay in the database. */
 export type SessionUser = Omit<<%- user.dtoClass %>, 'password' | 'activationKey' | 'resetKey'>;
@@ -14,12 +17,16 @@ export function sessionUser(user: <%- user.dtoClass %>): SessionUser {
 
 /**
  * The user of a logged session, read again from the database at every request, like the user of a JWT token and the
- * remember-me login of JHipster Spring Boot: a user removed or deactivated is logged out at its next request (its session
- * lasting up to 31 days with remember-me), the authorities given or removed apply at once.
+ * remember-me login of JHipster Spring Boot: a user removed or deactivated is logged out at its next request, the
+ * authorities given or removed apply at once. A request without a logged session is logged in by its remember-me
+ * cookie, in a new session, like the RememberMeAuthenticationFilter of Spring Security.
  */
 @Injectable()
 export class SessionUserMiddleware implements NestMiddleware {
-  constructor(private readonly userService: UserService) {}
+  constructor(
+    private readonly userService: UserService,
+    private readonly rememberMeService: RememberMeService,
+  ) {}
 
   async use(req: Request, res: Response, next: NextFunction): Promise<void> {
     const session = req.session;
@@ -29,6 +36,16 @@ export class SessionUserMiddleware implements NestMiddleware {
         session.user = sessionUser(user);
       } else {
         await new Promise<void>(resolve => session.destroy(() => resolve()));
+      }
+    } else if (session) {
+      const login = await this.rememberMeService.autoLogin(req, res);
+      const user = login ? await this.userService.findByFields({ where: { login } }) : undefined;
+      if (user?.activated) {
+        session.user = sessionUser(user);
+        // The token of the cookie of the client, if it has one, so that its request passes like in JHipster Spring Boot.
+        session.csrfToken = cookieOf(req, 'XSRF-TOKEN') ?? randomUUID();
+      } else if (login) {
+        await this.rememberMeService.removeOf(login);
       }
     }
     next();

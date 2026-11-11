@@ -10,6 +10,7 @@ import { PasswordService } from '../src/auth/password.service.ts';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Session } from '../src/auth/session.entity.ts';
+import { PersistentToken } from '../src/auth/persistent-token.entity.ts';
 
 /** A cookie of the Set-Cookie headers of a response, with its attributes. */
 const setCookie = (response: request.Response, name: string): string | undefined =>
@@ -69,6 +70,12 @@ describe('Session authentication', () => {
     return csrfToken!;
   };
 
+  /** The remember-me logins of the database. */
+  const tokens = (): Repository<PersistentToken> => app.get<Repository<PersistentToken>>(getRepositoryToken(PersistentToken));
+
+  /** The remember-me cookie of a response, as a client sends it back. */
+  const rememberMe = (response: request.Response): string => setCookie(response, 'remember-me')!.split(';')[0];
+
   /** The login of the form the JHipster clients post, with the token of the XSRF-TOKEN cookie. */
   const login = async (form: Record<string, string>): Promise<request.Response> => {
     const token = await anonymousToken();
@@ -114,7 +121,7 @@ describe('Session authentication', () => {
   });
 
   it('logs out a user deactivated or removed at its next request, like JHipster Spring Boot reads the user again', async () => {
-    await login({ username: 'session-user', password, 'remember-me': 'true' });
+    await login({ username: 'session-user', password });
     await agent.get('/api/account').expect(200);
     const user = (await service.findByFields({ where: { login: 'session-user' } }))!;
     await service.save({ ...user, activated: false }, 'admin');
@@ -176,15 +183,110 @@ describe('Session authentication', () => {
     expect(setCookie(response, 'JSESSIONID')).not.toContain('Secure');
   });
 
-  it('keeps a remember-me login 31 days without requests, like the remember-me of JHipster Spring Boot', async () => {
+  it('gives a remember-me cookie of its own, the session ending when the browser is closed, like JHipster Spring Boot', async () => {
     const response = await login({ username: 'session-user', password, 'remember-me': 'true' });
     expect(response.status).toBe(200);
-    expect(cookieExpiry(response, 'JSESSIONID')).toBeGreaterThan(Date.now() + 30 * 24 * 60 * 60 * 1000);
-    // The CSRF cookie lasts until the browser is closed, the next response giving the token of the session again.
-    expect(setCookie(response, 'XSRF-TOKEN')).not.toMatch(/Expires|Max-Age/);
-    const token = cookieValue(response, 'XSRF-TOKEN');
-    const reopened = request(app.getHttpServer()).get('/api/account').set('Cookie', setCookie(response, 'JSESSIONID')!.split(';')[0]);
-    expect(cookieValue(await reopened.expect(200), 'XSRF-TOKEN')).toEqual(token);
+    expect(setCookie(response, 'JSESSIONID')).not.toMatch(/Expires|Max-Age/);
+    expect(setCookie(response, 'remember-me')).toMatch(/HttpOnly/);
+    expect(setCookie(response, 'remember-me')).not.toContain('Secure');
+    expect(cookieExpiry(response, 'remember-me')).toBeGreaterThan(Date.now() + 30 * 24 * 60 * 60 * 1000);
+    // The database has the hash of the token, not the token.
+    const [, token] = Buffer.from(cookieValue(response, 'remember-me')!, 'base64url').toString().split(':');
+    const [stored] = await tokens().find({ where: { login: 'session-user' } });
+    expect(stored.tokenValue).not.toEqual(token);
+    expect(stored.tokenValue).toHaveLength(64);
+  });
+
+  it('gives no remember-me cookie to a login without it', async () => {
+    const response = await login({ username: 'session-user', password });
+    expect(setCookie(response, 'remember-me')).toBeUndefined();
+    expect(await tokens().find({ where: { login: 'session-user' } })).toHaveLength(0);
+  });
+
+  it('logs in by the remember-me cookie alone, in a new session, replacing its token', async () => {
+    const cookie = rememberMe(await login({ username: 'session-user', password, 'remember-me': 'true' }));
+    const response = await request(app.getHttpServer()).get('/api/account').set('Cookie', cookie).expect(200);
+    expect(response.body).toMatchObject({ login: 'session-user' });
+    expect(setCookie(response, 'JSESSIONID')).toEqual(expect.any(String));
+    const replaced = rememberMe(response);
+    expect(replaced).not.toEqual(cookie);
+    // The cookie replaced still logs in for a moment, for the requests sent together, without another cookie.
+    const together = await request(app.getHttpServer()).get('/api/account').set('Cookie', cookie).expect(200);
+    expect(setCookie(together, 'remember-me')).toBeUndefined();
+    await request(app.getHttpServer()).get('/api/account').set('Cookie', replaced).expect(200);
+    expect(await tokens().find({ where: { login: 'session-user' } })).toHaveLength(1);
+  });
+
+  it('logs in once the requests sent together with the same remember-me cookie', async () => {
+    const cookie = rememberMe(await login({ username: 'session-user', password, 'remember-me': 'true' }));
+    const responses = await Promise.all([1, 2, 3].map(() => request(app.getHttpServer()).get('/api/account').set('Cookie', cookie)));
+    expect(responses.map(({ status }) => status)).toEqual([200, 200, 200]);
+    expect(responses.filter(response => setCookie(response, 'remember-me'))).toHaveLength(1);
+  });
+
+  it('passes an unsafe request of a remember-me login with the CSRF token of the cookie of the client', async () => {
+    const cookie = rememberMe(await login({ username: 'session-user', password, 'remember-me': 'true' }));
+    await request(app.getHttpServer())
+      .post('/api/account/change-password')
+      .set('Cookie', `${cookie}; XSRF-TOKEN=reopened`)
+      .set('X-XSRF-TOKEN', 'reopened')
+      .send({ currentPassword: 'wrong', newPassword: 'otherPassword' })
+      .expect(400);
+    await request(app.getHttpServer()).post('/api/account/change-password').set('Cookie', cookie).send({}).expect(403);
+  });
+
+  it('ends a remember-me series given with another token than its own, a stolen cookie, removing the cookie', async () => {
+    const cookie = rememberMe(await login({ username: 'session-user', password, 'remember-me': 'true' }));
+    const [series] = Buffer.from(cookie.slice('remember-me='.length), 'base64url').toString().split(':');
+    const forged = `remember-me=${Buffer.from(`${series}:other`).toString('base64url')}`;
+    const response = await request(app.getHttpServer()).get('/api/account').set('Cookie', forged).expect(401);
+    expect(setCookie(response, 'remember-me')).toMatch(/^remember-me=;/);
+    await request(app.getHttpServer()).get('/api/account').set('Cookie', cookie).expect(401);
+    for (const value of ['remember-me=unknown', 'remember-me=%E0%A4%A', `remember-me=${Buffer.from('a:b:c').toString('base64url')}`]) {
+      await request(app.getHttpServer()).get('/api/account').set('Cookie', value).expect(401);
+    }
+  });
+
+  it('ends a remember-me login 31 days after its last use', async () => {
+    const cookie = rememberMe(await login({ username: 'session-user', password, 'remember-me': 'true' }));
+    const [stored] = await tokens().find({ where: { login: 'session-user' } });
+    await tokens().save({ ...stored, tokenDate: new Date(Date.now() - 32 * 24 * 60 * 60 * 1000) });
+    await request(app.getHttpServer()).get('/api/account').set('Cookie', cookie).expect(401);
+    expect(await tokens().find({ where: { login: 'session-user' } })).toHaveLength(0);
+  });
+
+  it('ends the remember-me login at the logout, its cookie removed and refused after', async () => {
+    const response = await login({ username: 'session-user', password, 'remember-me': 'true' });
+    const cookie = rememberMe(response);
+    const logout = await agent.post('/api/logout').set('X-XSRF-TOKEN', cookieValue(response, 'XSRF-TOKEN')!).expect(200);
+    expect(setCookie(logout, 'remember-me')).toMatch(/^remember-me=;/);
+    await request(app.getHttpServer()).get('/api/account').set('Cookie', cookie).expect(401);
+    expect(await tokens().find({ where: { login: 'session-user' } })).toHaveLength(0);
+  });
+
+  it('ends the remember-me logins of a user with a new password or deactivated', async () => {
+    const response = await login({ username: 'session-user', password, 'remember-me': 'true' });
+    const cookie = rememberMe(response);
+    await agent
+      .post('/api/account/change-password')
+      .set('X-XSRF-TOKEN', cookieValue(response, 'XSRF-TOKEN')!)
+      .send({ currentPassword: password, newPassword: 'otherPassword' })
+      .expect(200);
+    await request(app.getHttpServer()).get('/api/account').set('Cookie', cookie).expect(401);
+
+    const other = rememberMe(
+      await request(app.getHttpServer())
+        .post('/api/authentication')
+        .set('Cookie', 'XSRF-TOKEN=other')
+        .set('X-XSRF-TOKEN', 'other')
+        .type('form')
+        .send({ username: 'session-user', password: 'otherPassword', 'remember-me': 'true' })
+        .expect(200),
+    );
+    const user = (await service.findByFields({ where: { login: 'session-user' } }))!;
+    await service.save({ ...user, activated: false }, 'admin');
+    expect(await tokens().find({ where: { login: 'session-user' } })).toHaveLength(0);
+    await request(app.getHttpServer()).get('/api/account').set('Cookie', other).expect(401);
   });
 
   it('sets no cookie in the responses of a logged session: a response of a session ended by a login meanwhile puts nothing back', async () => {
@@ -207,43 +309,41 @@ describe('Session authentication', () => {
     await agent.get('/api/account').expect(401);
   });
 
-  it('lists the sessions of the user and ends one of them, like the sessions page of JHipster Spring Boot', async () => {
+  it('lists the remember-me logins of the user and ends one of them, like the sessions page of JHipster Spring Boot', async () => {
     await request(app.getHttpServer()).get('/api/account/sessions').expect(401);
-    const token = cookieValue(await login({ username: 'session-user', password }), 'XSRF-TOKEN')!;
-    // Another session of the same user, in another browser.
-    const other = request.agent(app.getHttpServer());
-    const otherToken = cookieValue(await other.get('/api/account').expect(401), 'XSRF-TOKEN')!;
-    await other
-      .post('/api/authentication')
-      .set('X-XSRF-TOKEN', otherToken)
-      .set('User-Agent', 'other-browser')
-      .type('form')
-      .send({ username: 'session-user', password })
-      .expect(200);
+    const token = cookieValue(await login({ username: 'session-user', password, 'remember-me': 'true' }), 'XSRF-TOKEN')!;
+    // Another remember-me login of the same user, by a client that tells no browser.
+    const otherToken = cookieValue(await request(app.getHttpServer()).get('/api/account').expect(401), 'XSRF-TOKEN')!;
+    const other = rememberMe(
+      await request(app.getHttpServer())
+        .post('/api/authentication')
+        .set('Cookie', `XSRF-TOKEN=${otherToken}`)
+        .set('X-XSRF-TOKEN', otherToken)
+        .unset('User-Agent')
+        .type('form')
+        .send({ username: 'session-user', password, 'remember-me': 'true' })
+        .expect(200),
+    );
 
     const { body: sessions } = await agent.get('/api/account/sessions').expect(200);
     expect(sessions).toHaveLength(2);
     expect(sessions).toEqual(
       expect.arrayContaining([
-        {
-          series: expect.any(String),
-          tokenDate: new Date().toISOString().slice(0, 10),
-          ipAddress: expect.any(String),
-          userAgent: 'other-browser',
-        },
+        { series: expect.any(String), tokenDate: new Date().toISOString().slice(0, 10), ipAddress: expect.any(String), userAgent: null },
       ]),
     );
-    const otherSeries = sessions.find((session: any) => session.userAgent === 'other-browser').series;
+    const [otherSeries] = Buffer.from(other.slice('remember-me='.length), 'base64url').toString().split(':');
+    expect(sessions.map((session: any) => session.series)).toContain(otherSeries);
 
     await agent.delete(`/api/account/sessions/${otherSeries}`).expect(403);
     await agent.delete(`/api/account/sessions/${otherSeries}`).set('X-XSRF-TOKEN', token).expect(200);
-    await other.get('/api/account').expect(401);
+    await request(app.getHttpServer()).get('/api/account').set('Cookie', other).expect(401);
     await agent.get('/api/account').expect(200);
     expect((await agent.get('/api/account/sessions').expect(200)).body).toHaveLength(1);
   });
 
-  it('neither lists nor ends the sessions of another user', async () => {
-    await login({ username: 'session-user', password });
+  it('neither lists nor ends the remember-me logins of another user', async () => {
+    const token = cookieValue(await login({ username: 'session-user', password, 'remember-me': 'true' }), 'XSRF-TOKEN')!;
     const admin = request.agent(app.getHttpServer());
     users.push(
       await service.save({ login: 'session-other', email: 'session-other@localhost', password, activated: true }, 'session-other', true),
@@ -253,13 +353,16 @@ describe('Session authentication', () => {
       .post('/api/authentication')
       .set('X-XSRF-TOKEN', adminToken)
       .type('form')
-      .send({ username: 'session-other', password })
+      .send({ username: 'session-other', password, 'remember-me': 'true' })
       .expect(200);
     const { body: otherSessions } = await admin.get('/api/account/sessions').expect(200);
     const { body: sessions } = await agent.get('/api/account/sessions').expect(200);
     expect(sessions).toHaveLength(1);
     expect(otherSessions).toHaveLength(1);
     expect(otherSessions[0].series).not.toEqual(sessions[0].series);
+    // Like JHipster Spring Boot, 200 for the series of another user, which is kept.
+    await agent.delete(`/api/account/sessions/${otherSessions[0].series}`).set('X-XSRF-TOKEN', token).expect(200);
+    expect((await admin.get('/api/account/sessions').expect(200)).body).toHaveLength(1);
   });
 
   it('refuses the administration to a user without ROLE_ADMIN', async () => {

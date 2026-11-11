@@ -1,0 +1,42 @@
+import { Column, Entity, Index, 
+<%_ if (databaseTypeMongodb) { _%>ObjectIdColumn
+<%_ } else { _%>PrimaryColumn
+<%_ } _%> } from 'typeorm';
+
+/**
+ * A remember-me login of a user, like the PersistentToken of JHipster Spring Boot: the series its cookie keeps, and the
+ * token the cookie gives with it, replaced at every login it does. The token is kept hashed: the database does not log
+ * a user in.
+ */
+@Entity('<%- jhiTablePrefix %>_persistent_token')
+export class PersistentToken {
+<%_ if (databaseTypeMongodb) { _%>
+  @ObjectIdColumn({ name: '_id' })
+  _id?: string;
+
+  @Column({ unique: true })
+  series!: string;
+<%_ } else { _%>
+  @PrimaryColumn()
+  series!: string;
+<%_ } _%>
+
+  /** The login of the user, its tokens listed by the sessions page. */
+  @Index()
+  @Column()
+  login!: string;
+
+  /** The SHA-256 of the token of the cookie. */
+  @Column()
+  tokenValue!: string;
+
+  /** The last login of the token, which lasts 31 days after it. */
+  @Column()
+  tokenDate!: Date;
+
+  @Column({ nullable: true })
+  ipAddress?: string;
+
+  @Column({ nullable: true })
+  userAgent?: string;
+}

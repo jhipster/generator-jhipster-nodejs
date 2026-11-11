@@ -45,10 +45,10 @@ describe('SessionStore', () => {
 
   it('saves a session with the login of its user and the expiry of its cookie, and gives it back', async () => {
     await promisify(store.set.bind(store))('s1', sessionData('user', inOneHour));
-    await promisify(store.set.bind(store))('s1', { ...sessionData('user', inOneHour), series: 'a' });
+    await promisify(store.set.bind(store))('s1', { ...sessionData('user', inOneHour), csrfToken: 'a' });
     expect(rows).toHaveLength(1);
     expect(rows[0]).toMatchObject({ sid: 's1', login: 'user', expires: inOneHour });
-    expect(await promisify(store.get.bind(store))('s1')).toMatchObject({ user: { login: 'user' }, series: 'a' });
+    expect(await promisify(store.get.bind(store))('s1')).toMatchObject({ user: { login: 'user' }, csrfToken: 'a' });
   });
 
   it('gives no session for an expired or unknown id', async () => {
@@ -76,7 +76,6 @@ describe('SessionStore', () => {
       { sid: 's3', login: 'user', expires: anHourAgo, data: '{}' },
     );
     expect(Object.keys(await allOf(store))).toEqual(['s1', 's2']);
-    expect(await store.sessionsOf('user')).toEqual([{ sid: 's1', data: { a: 1 } }]);
   });
 
   it('waits for the operations in progress before the database is closed, like a touch ending a response', async () => {

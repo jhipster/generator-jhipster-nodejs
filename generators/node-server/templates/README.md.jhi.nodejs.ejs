@@ -140,8 +140,10 @@ This application has no users of its own: it validates the tokens issued by the 
 Like JHipster Spring Boot with HTTP sessions, the client logs in by posting the `username`, `password` and `remember-me`
 form to `api/authentication`, and logs out by posting to `api/logout`. The sessions are kept in the database of the
 application (the `<%- jhiTablePrefix %>_session` table or collection): they outlive a restart and are shared by the instances of a
-cluster. A session ends after 30 minutes without requests, 31 days with remember-me, and the account page lists the
-sessions of the user, any of which it can end. Every unsafe request, the login included, sends the token of the
+cluster. A session ends after 30 minutes without requests. With remember-me, a `remember-me` cookie of its own logs the
+user in again for 31 days after its last use, its token replaced each time and kept hashed in the database (the
+`<%- jhiTablePrefix %>_persistent_token` table or collection); the account page lists the remember-me logins of the user, any of
+which it can end, and a logout, a new password or the deactivation of the user end them. Every unsafe request, the login included, sends the token of the
 `XSRF-TOKEN` cookie as the `X-XSRF-TOKEN` header, as the JHipster clients do: without a session the cookie goes with it,
 and with one the header is the token of the session, else 403. The secret of the sessions is
 `jhipster.security.session.secret`, set it in production with the `JHIPSTER_SECURITY_SESSION_SECRET` environment variable.

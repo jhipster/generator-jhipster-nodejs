@@ -9,6 +9,9 @@ import { CreateTables1570200270081 } from './migrations/1570200270081-CreateTabl
 <%_ if (authenticationUsesCsrf && generateAuthenticationApi && databaseTypeSql) { _%>
 import { CreateSessions1570200270082 } from './migrations/1570200270082-CreateSessions.ts';
 <%_ } _%>
+<%_ if (authenticationTypeSession && databaseTypeSql) { _%>
+import { CreatePersistentTokens1570200270083 } from './migrations/1570200270083-CreatePersistentTokens.ts';
+<%_ } _%>
 <%_ if (generateBuiltInAuthorityEntity) { _%>
 import { SeedUsersRoles1570200490072 } from './migrations/1570200490072-SeedUsersRoles.ts';
 <%_ } _%>
@@ -130,6 +133,9 @@ function ormConfig(read: ConfigReader = key => config.get(key)): TypeOrmModuleOp
 <%_ } _%>
 <%_ if (authenticationUsesCsrf && generateAuthenticationApi && databaseTypeSql) { _%>
       CreateSessions1570200270082,
+<%_ } _%>
+<%_ if (authenticationTypeSession && databaseTypeSql) { _%>
+      CreatePersistentTokens1570200270083,
 <%_ } _%>
 <%_ if (generateBuiltInAuthorityEntity) { _%>
       SeedUsersRoles1570200490072,

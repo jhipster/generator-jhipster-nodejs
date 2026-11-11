@@ -1,0 +1,26 @@
+import { type MigrationInterface, type QueryRunner, TableIndex } from 'typeorm';
+
+import { createTable } from './support/schema.ts';
+
+const TOKEN_TABLE = '<%- jhiTablePrefix %>_persistent_token';
+
+/** The table of the remember-me logins (the PersistentToken entity), with the index of its login. */
+export class CreatePersistentTokens1570200270083 implements MigrationInterface {
+  public async up(queryRunner: QueryRunner): Promise<void> {
+    if (await queryRunner.hasTable(TOKEN_TABLE)) return;
+    await createTable(queryRunner, TOKEN_TABLE, [
+      { name: 'series', type: String, primary: true },
+      { name: 'login', type: String },
+      { name: 'tokenValue', type: String },
+      { name: 'tokenDate', type: Date },
+      { name: 'ipAddress', type: String, nullable: true },
+      { name: 'userAgent', type: String, nullable: true },
+    ]);
+    const { namingStrategy } = queryRunner.connection;
+    await queryRunner.createIndex(TOKEN_TABLE, new TableIndex({ name: namingStrategy.indexName(TOKEN_TABLE, ['login']), columnNames: ['login'] }));
+  }
+
+  public async down(queryRunner: QueryRunner): Promise<void> {
+    await queryRunner.dropTable(TOKEN_TABLE, true);
+  }
+}

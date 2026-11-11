@@ -10,6 +10,9 @@ import { documentOrder } from '../common/sortable-properties.ts';
 <%_ if (generateUserManagement) { _%>
 import { PasswordService } from '../auth/password.service.ts';
 <%_ } _%>
+<%_ if (authenticationTypeSession) { _%>
+import { RememberMeService } from '../auth/remember-me.service.ts';
+<%_ } _%>
 
 <%_ if (typeormRelationsSupport) { _%>
 const relations = { authorities: true } as const;
@@ -21,6 +24,9 @@ export class UserService {
         @InjectRepository(<%- user.persistClass %>) private userRepository: Repository<<%- user.persistClass %>>,
 <%_ if (generateUserManagement) { _%>
         private readonly passwordService: PasswordService,
+<%_ } _%>
+<%_ if (authenticationTypeSession) { _%>
+        private readonly rememberMeService: RememberMeService,
 <%_ } _%>
     ) {}
 
@@ -87,6 +93,12 @@ export class UserService {
             user.lastModifiedBy = creator;
         }
         const result = await this.userRepository.save(user);
+<%_ if (authenticationTypeSession) { _%>
+        if (<%- generateUserManagement ? 'updatePassword || ' : '' %>!result.activated) {
+            // A new password or a deactivated user ends its remember-me logins.
+            await this.rememberMeService.removeOf(result.login);
+        }
+<%_ } _%>
         return UserMapper.fromEntityToDTO(result);
     }
 
@@ -97,6 +109,9 @@ export class UserService {
     async delete(userDTO: <%- user.dtoClass %>): Promise<<%- user.dtoClass %> | undefined> {
         const user = UserMapper.fromDTOtoEntity(userDTO);
         const result = await this.userRepository.remove(user)
+<%_ if (authenticationTypeSession) { _%>
+        await this.rememberMeService.removeOf(userDTO.login);
+<%_ } _%>
         return UserMapper.fromEntityToDTO(result);
     }
 }

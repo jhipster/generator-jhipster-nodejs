@@ -6,14 +6,18 @@ import { UserController } from './user.controller.ts';
 import { ManagementController } from '../management/management.controller.ts';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserService } from './user.service.ts';
+<%_ if (authenticationTypeSession) { _%>
+import { PersistentToken } from '../auth/persistent-token.entity.ts';
+import { RememberMeService } from '../auth/remember-me.service.ts';
+<%_ } _%>
 <%_ if (generateUserManagement) { _%>
 import { MailModule } from '../mail/mail.module.ts';
 <%_ } _%>
 
 @Module({
-  imports: [TypeOrmModule.forFeature([User])<%- generateUserManagement ? ', MailModule' : '' %>],
+  imports: [TypeOrmModule.forFeature([User<%- authenticationTypeSession ? ', PersistentToken' : '' %>])<%- generateUserManagement ? ', MailModule' : '' %>],
   controllers: [<%- generateUserManagement ? 'UserController, ' : '' %>ManagementController],
-  providers: [UserService],
-  exports: [UserService<%- generateUserManagement ? ', MailModule' : '' %>],
+  providers: [UserService<%- authenticationTypeSession ? ', RememberMeService' : '' %>],
+  exports: [UserService<%- authenticationTypeSession ? ', RememberMeService' : '' %><%- generateUserManagement ? ', MailModule' : '' %>],
 })
 export class UserModule {}
