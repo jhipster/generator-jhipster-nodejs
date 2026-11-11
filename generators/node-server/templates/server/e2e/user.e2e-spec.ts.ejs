@@ -322,6 +322,10 @@ describe('User', () => {
         expect(userUndefined).toBeUndefined();
     });
 
+    it('/DELETE an unknown user answers 204 too, like JHipster Spring Boot', async () => {
+        await request(app.getHttpServer()).delete('/api/admin/users/unknownUser').expect(204);
+    });
+
     it('/GET users sorted on a property of the user', async () => {
         await request(app.getHttpServer()).get('/api/admin/users?sort=login,desc').expect(200);
         await request(app.getHttpServer()).get('/api/admin/users?sort=createdDate,asc').expect(200);

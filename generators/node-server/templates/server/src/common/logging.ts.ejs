@@ -57,6 +57,11 @@ export class LoggerLevels {
     }
   }
 
+  /** Whether a logger printed something or has a level of its own. */
+  has(name: string): boolean {
+    return this.known.has(name);
+  }
+
   getLevel(name: string): LoggerLevel {
     return { configuredLevel: this.configured.get(name) ?? null, effectiveLevel: this.effectiveLevel(name) };
   }
