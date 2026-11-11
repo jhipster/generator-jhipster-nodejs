@@ -42,7 +42,9 @@ describe('Path rules', () => {
 
     it('answers 401 to a path of the API, whether its route exists or not', async () => {
 <%_ if (authenticationTypeJwt || (authenticationTypeOauth2 && applicationTypeMicroservice)) { _%>
-      await get('/api/nothing').expect(401).expect('WWW-Authenticate', 'Bearer');
+      await get('/api/nothing')
+        .expect(401)
+        .expect('WWW-Authenticate', /^Bearer resource_metadata="http:\/\/127\.0\.0\.1:\d+\/\.well-known\/oauth-protected-resource"$/);
 <%_ } else { _%>
       await get('/api/nothing').expect(401);
 <%_ } _%>
@@ -72,6 +74,15 @@ describe('Path rules', () => {
 <%_ } _%>
 
     it('answers a public path', () => get('/management/info').expect(200));
+<%_ if (!authenticationTypeSession) { _%>
+
+    it('answers the metadata of the server as a protected resource, like Spring Security', async () => {
+      const { body } = await get('/.well-known/oauth-protected-resource').expect(200).expect('Content-Type', /^application\/json/);
+      expect(body).toEqual({ resource: expect.stringMatching(/^http:\/\/127\.0\.0\.1:\d+$/), bearer_methods_supported: ['header'] });
+      expect((await get('/.well-known/oauth-protected-resource/api/x').expect(200)).body.resource).toMatch(/:\d+\/api\/x$/);
+      await get('/.well-known/oauth-protected-resource').set('Authorization', 'Bearer invalid').expect(200);
+    });
+<%_ } _%>
   });
 
   describe('with an administrator', () => {
@@ -113,6 +124,17 @@ describe('Path rules', () => {
       await get('/management/nothing').expect(403);
       await get('/v3/api-docs').expect(403);
     });
+
+<%_ if (!authenticationTypeSession) { _%>
+
+    it('tells a bearer token lacks the authority of the path, like Spring Security', async () => {
+      const response = await get('/management/env').set('Authorization', 'Bearer token').expect(403);
+      expect(response.headers['www-authenticate']).toBe(
+        'Bearer error="insufficient_scope", error_description="The request requires higher privileges than provided by the access token.", error_uri="https://tools.ietf.org/html/rfc6750#section-3.1"',
+      );
+      expect((await get('/management/env').expect(403)).headers['www-authenticate']).toBeUndefined();
+    });
+<%_ } _%>
 
     it('answers 404 to a path of the API without route, its detail telling nothing of the server', async () => {
       const { body } = await get('/api/nothing?x=1').expect(404);
