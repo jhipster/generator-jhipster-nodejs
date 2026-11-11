@@ -363,19 +363,28 @@ _%>
 
 <%_ } _%>
 <%_ if (typedField) { _%>
-    it('/POST create <%- entityApiUrl %> with a <%- typedField.fieldName %> of another type is a validation error, like the JSON deserialization of JHipster Spring Boot', async () => {
+    it('/POST create <%- entityApiUrl %> with a <%- typedField.fieldName %> of another type is a body that is not read, like the JSON deserialization of JHipster Spring Boot', async () => {
         const error = (await request(app.getHttpServer())
             .post('/api/<%- entityApiUrl %>')
             .send({ ...newEntity, <%- typedField.fieldName %>: <%- JSON.stringify(typedField.nodejsInvalidTypeValue) %> })
             .expect(400)).body;
 
-        expect(error).toMatchObject({
-            message: 'error.validation',
-            fieldErrors: expect.arrayContaining([expect.objectContaining({ objectName: '<%- entityInstance %>', field: '<%- typedField.fieldName %>' })]),
-        });
+        // Not a validation error: the clients show the errors of the fields of one.
+        expect(error).toMatchObject({ message: 'error.http.400', detail: 'Failed to read request' });
+        expect(error.fieldErrors).toBeUndefined();
     });
 
 <%_ } _%>
+    it('/POST create <%- entityApiUrl %> with a list is a body that is not read, like JHipster Spring Boot', async () => {
+        const error = (await request(app.getHttpServer())
+            .post('/api/<%- entityApiUrl %>')
+            .send([])
+            .expect(400)).body;
+
+        expect(error).toMatchObject({ message: 'error.http.400', detail: 'Failed to read request' });
+        expect(error.fieldErrors).toBeUndefined();
+    });
+
 <%_ for (const relationship of relationships) { _%>
   <%_ if (relationship.nodejsMockReference) { _%>
     it('/POST create <%- entityApiUrl %> without its required <%- relationship.propertyName %> is a validation error, like JHipster Spring Boot', async () => {
@@ -392,13 +401,14 @@ _%>
   <%_ } _%>
 <%_ } _%>
 <%_ if (enumField) { _%>
-    it('/POST create <%- entityApiUrl %> with a <%- enumField.fieldName %> out of its enum is a validation error', async () => {
+    it('/POST create <%- entityApiUrl %> with a <%- enumField.fieldName %> out of its enum is a body that is not read, like JHipster Spring Boot', async () => {
         const error = (await request(app.getHttpServer())
             .post('/api/<%- entityApiUrl %>')
             .send({ ...validEntity, <%- enumField.fieldName %>: 'NOT_A_<%- enumField.fieldType.toUpperCase() %>' })
             .expect(400)).body;
 
-        expect(error).toMatchObject({ message: 'error.validation', fieldErrors: [expect.objectContaining({ field: '<%- enumField.fieldName %>' })] });
+        expect(error).toMatchObject({ message: 'error.http.400', detail: 'Failed to read request' });
+        expect(error.fieldErrors).toBeUndefined();
     });
 
 <%_ } _%>

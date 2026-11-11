@@ -537,10 +537,16 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > jwt microservic
   "server/src/common/dto/dto-support.ts": {
     "stateCleared": "modified",
   },
+  "server/src/common/errors/body-validation.pipe.ts": {
+    "stateCleared": "modified",
+  },
   "server/src/common/errors/error-constants.ts": {
     "stateCleared": "modified",
   },
   "server/src/common/errors/problem-details.filter.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/common/errors/problem.exception.spec.ts": {
     "stateCleared": "modified",
   },
   "server/src/common/errors/problem.exception.ts": {
@@ -908,10 +914,16 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > run > should ma
   "server/src/common/dto/dto-support.ts": {
     "stateCleared": "modified",
   },
+  "server/src/common/errors/body-validation.pipe.ts": {
+    "stateCleared": "modified",
+  },
   "server/src/common/errors/error-constants.ts": {
     "stateCleared": "modified",
   },
   "server/src/common/errors/problem-details.filter.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/common/errors/problem.exception.spec.ts": {
     "stateCleared": "modified",
   },
   "server/src/common/errors/problem.exception.ts": {
@@ -1339,10 +1351,16 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > with oauth2 > s
   "server/src/common/dto/dto-support.ts": {
     "stateCleared": "modified",
   },
+  "server/src/common/errors/body-validation.pipe.ts": {
+    "stateCleared": "modified",
+  },
   "server/src/common/errors/error-constants.ts": {
     "stateCleared": "modified",
   },
   "server/src/common/errors/problem-details.filter.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/common/errors/problem.exception.spec.ts": {
     "stateCleared": "modified",
   },
   "server/src/common/errors/problem.exception.ts": {
@@ -1719,10 +1737,16 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > with oauth2 and
   "server/src/common/dto/dto-support.ts": {
     "stateCleared": "modified",
   },
+  "server/src/common/errors/body-validation.pipe.ts": {
+    "stateCleared": "modified",
+  },
   "server/src/common/errors/error-constants.ts": {
     "stateCleared": "modified",
   },
   "server/src/common/errors/problem-details.filter.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/common/errors/problem.exception.spec.ts": {
     "stateCleared": "modified",
   },
   "server/src/common/errors/problem.exception.ts": {
@@ -2534,10 +2558,16 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > without client 
   "server/src/common/dto/dto-support.ts": {
     "stateCleared": "modified",
   },
+  "server/src/common/errors/body-validation.pipe.ts": {
+    "stateCleared": "modified",
+  },
   "server/src/common/errors/error-constants.ts": {
     "stateCleared": "modified",
   },
   "server/src/common/errors/problem-details.filter.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/common/errors/problem.exception.spec.ts": {
     "stateCleared": "modified",
   },
   "server/src/common/errors/problem.exception.ts": {

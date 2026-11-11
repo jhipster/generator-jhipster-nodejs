@@ -24,7 +24,7 @@ import { criteriaOf, criteriaWhere } from '../../common/database/criteria.ts';
 <%_ } _%>
 import { Request } from '../../common/request.ts';
 
-import { BadRequestAlertException, ValidationException } from '../../common/errors/problem.exception.ts';
+import { BadRequestAlertException, validationException } from '../../common/errors/problem.exception.ts';
 
 const ENTITY_NAME = '<%- entityAlertName %>';
 
@@ -214,8 +214,8 @@ _%>
     // Without the properties the DTO does not declare, like the whitelist of the ValidationPipe.
     const errors = await validate(patched, { whitelist: true, forbidUnknownValues: false });
     if (errors.length > 0) {
-      // The errors of the fields, like the ValidationPipe of a PUT.
-      throw new ValidationException(errors);
+      // The errors of the fields, or a value of another type, like the ValidationPipe of a PUT.
+      throw validationException(errors);
     }
     const updated = await this.<%- entityInstance %>Service.update(patched);
     this.headerUtil.addEntityUpdatedHeaders(req.res, ENTITY_NAME, id);

@@ -1,0 +1,51 @@
+import { describe, expect, it } from 'vitest';
+import { BadRequestException } from '@nestjs/common';
+import { IsEnum, IsInt, IsNotEmpty, IsOptional, Length, Matches, Min, validate } from 'class-validator';
+
+import { UNREADABLE, ValidationException, validationException } from './problem.exception.ts';
+
+enum Level {
+  LOW = 'LOW',
+}
+
+class SampleDTO {
+  @IsNotEmpty()
+  @Length(2, 20)
+  name?: unknown;
+
+  @IsOptional()
+  @Min(18)
+  @IsInt()
+  age?: unknown;
+
+  @IsOptional()
+  @IsEnum(Level)
+  level?: unknown;
+
+  @IsOptional()
+  @Matches(/^P/, UNREADABLE)
+  span?: unknown;
+
+  @IsOptional()
+  @Matches(/^[a-z]+$/)
+  code?: unknown;
+}
+
+const exceptionOf = async (values: Partial<SampleDTO>): Promise<unknown> =>
+  validationException(await validate(Object.assign(new SampleDTO(), { name: 'Ana', ...values })));
+
+describe('validationException', () => {
+  it('is the validation of the fields for a missing value, a rule or a pattern of the entity', async () => {
+    for (const values of [{ name: undefined }, { name: 'A' }, { age: 3 }, { age: 20.5 }, { code: 'A1' }, { level: null }]) {
+      expect(await exceptionOf(values)).toBeInstanceOf(ValidationException);
+    }
+  });
+
+  it('is a body that is not read for a value of another type, like the JSON deserialization of JHipster Spring Boot', async () => {
+    for (const values of [{ age: 'x' }, { level: 'NOPE' }, { span: 'zzz' }, { name: { a: 1 } }, { name: 'A', age: 'x' }]) {
+      const exception = await exceptionOf(values);
+      expect(exception).toBeInstanceOf(BadRequestException);
+      expect((exception as BadRequestException).message).toBe('Failed to read request');
+    }
+  });
+});

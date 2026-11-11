@@ -8,6 +8,9 @@ import { Transform } from 'class-transformer';
 <%_ if (baseImports.length > 0) { _%>
 import { <%- baseImports.join(', ') %> } from '../../../common/dto/dto-support.ts';
 <%_ } _%>
+<%_ if (fields.some(field => field.nodejsTypeValidators.some(validator => validator.includes('UNREADABLE')))) { _%>
+import { UNREADABLE } from '../../../common/errors/problem.exception.ts';
+<%_ } _%>
 
 <%_ let isUserRelationship = false;
     const uniqueEntities = {};

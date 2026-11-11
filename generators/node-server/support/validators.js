@@ -4,7 +4,9 @@ const ISO_DURATION = String.raw`/^([-+]?)P(?:([-+]?\d+)D)?(?:T(?:([-+]?\d+)H)?(?
 /**
  * The class-validator decorators of the type of each field type, like the JSON deserialization of JHipster Spring Boot refuses
  * a value of another type (400), instead of the error of the database or of a column transformer (500): a number, a
- * boolean, a UUID, an ISO-8601 instant, a yyyy-MM-dd date, a HH:mm:ss time or an ISO-8601 duration.
+ * boolean, a UUID, an ISO-8601 instant, a yyyy-MM-dd date, a HH:mm:ss time or an ISO-8601 duration. A pattern of a type
+ * tells it by its context (UNREADABLE), a pattern of the JDL being a validation: a value of another type is a body that
+ * is not read, not a validation error (validationException of src/common/errors/problem.exception.ts).
  */
 const typeValidators = {
   Integer: ['@IsInt()'],
@@ -16,9 +18,9 @@ const typeValidators = {
   UUID: ['@IsUUID()'],
   Instant: ['@IsISO8601()'],
   ZonedDateTime: ['@IsISO8601()'],
-  LocalDate: [String.raw`@Matches(/^\d{4}-\d{2}-\d{2}$/)`, '@IsISO8601({ strict: true })'],
-  LocalTime: [String.raw`@Matches(/^\d{2}:\d{2}(?::\d{2}(?:\.\d{1,9})?)?$/)`],
-  Duration: [`@Matches(${ISO_DURATION})`],
+  LocalDate: [String.raw`@Matches(/^\d{4}-\d{2}-\d{2}$/, UNREADABLE)`, '@IsISO8601({ strict: true })'],
+  LocalTime: [String.raw`@Matches(/^\d{2}:\d{2}(?::\d{2}(?:\.\d{1,9})?)?$/, UNREADABLE)`],
+  Duration: [`@Matches(${ISO_DURATION}, UNREADABLE)`],
 };
 
 /** The class-validator decorators of the type of a field: none for a text, a blob or an enum (@IsEnum). */
