@@ -59,7 +59,7 @@ export class PathRulesMiddleware implements NestMiddleware {
       req.user = await this.authenticator.authenticate(req);
     } catch (error) {
       if (error instanceof InvalidBearerTokenException) {
-        res.setHeader('WWW-Authenticate', invalidTokenChallenge(req, error.description));
+        res.setHeader('WWW-Authenticate', invalidTokenChallenge(req, error.expired));
       }
       throw error;
     }

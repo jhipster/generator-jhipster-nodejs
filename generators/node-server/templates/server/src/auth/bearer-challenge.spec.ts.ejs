@@ -9,10 +9,16 @@ describe('bearer challenge', () => {
     expect(missingTokenChallenge(req)).toBe('Bearer resource_metadata="https://api.example.com/.well-known/oauth-protected-resource"');
   });
 
-  it('tells the reason an invalid token was refused for, without what its quotes cannot hold', () => {
-    expect(invalidTokenChallenge(req, 'a "bad"\\ token\n')).toBe(
-      'Bearer error="invalid_token", error_description="a bad token", error_uri="https://tools.ietf.org/html/rfc6750#section-3.1", resource_metadata="https://api.example.com/.well-known/oauth-protected-resource"',
+  it('keeps out of a challenge what its quotes cannot hold', () => {
+    const forged = { protocol: 'https', host: 'x", error="y\\' } as unknown as Request;
+    expect(missingTokenChallenge(forged)).toBe('Bearer resource_metadata="https://x, error=y/.well-known/oauth-protected-resource"');
+  });
+
+  it('tells a token is invalid, or expired', () => {
+    expect(invalidTokenChallenge(req)).toBe(
+      'Bearer error="invalid_token", error_description="The access token is invalid", error_uri="https://tools.ietf.org/html/rfc6750#section-3.1", resource_metadata="https://api.example.com/.well-known/oauth-protected-resource"',
     );
+    expect(invalidTokenChallenge(req, true)).toContain('error="invalid_token", error_description="The access token expired", error_uri=');
   });
 
   it('tells a token lacks the authority of the path', () => {

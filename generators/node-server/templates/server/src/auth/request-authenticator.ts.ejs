@@ -12,20 +12,6 @@ import { InvalidBearerTokenException } from './bearer-challenge.ts';
 const BEARER_SCHEME = /^bearer(?:\s|$)/i;
 <%_ } _%>
 
-<%_ if (!authenticationTypeSession) { _%>
-/** The errors of the verification of a token, whose messages tell of the token only. */
-const TOKEN_ERRORS = ['JsonWebTokenError', 'TokenExpiredError', 'NotBeforeError'];
-
-/**
- * The description of a token refused, like the one of Spring Security: the reason of its verification, nothing of another
- * failure, like the keys of the identity provider not read.
- */
-const tokenErrorDescription = (info: unknown): string =>
-  info instanceof Error && TOKEN_ERRORS.includes(info.name)
-    ? `An error occurred while attempting to decode the Jwt: ${info.message}`
-    : 'Invalid token';
-
-<%_ } _%>
 /** The user of an authenticated request. */
 export type AuthenticatedUser = NonNullable<Request['user']>;
 
@@ -62,7 +48,7 @@ export class RequestAuthenticator {
           // Not about the token, like its user not read from the database: the error of the server it is.
           reject(error instanceof Error ? error : new Error('The authentication failed', { cause: error }));
         } else if (error || !user) {
-          reject(new InvalidBearerTokenException(tokenErrorDescription(info)));
+          reject(new InvalidBearerTokenException(info instanceof Error && info.name === 'TokenExpiredError'));
         } else {
           resolve(user);
         }

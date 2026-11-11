@@ -27,15 +27,11 @@ describe('RequestAuthenticator', () => {
     await expect(new RequestAuthenticator().authenticate({ headers: {} } as Request)).resolves.toBeUndefined();
   });
 
-  it('refuses a token with the reason of its verification', async () => {
-    const refused = authenticate(null, false, namedError('JsonWebTokenError', 'jwt malformed'));
-    await expect(refused).rejects.toBeInstanceOf(InvalidBearerTokenException);
-    await expect(refused).rejects.toMatchObject({ description: 'An error occurred while attempting to decode the Jwt: jwt malformed' });
-  });
-
-  it('tells nothing of a failure that is not of the token', async () => {
-    await expect(authenticate(null, false, new Error('connect ECONNREFUSED idp.internal:443'))).rejects.toMatchObject({ description: 'Invalid token' });
-    await expect(authenticate(new UnauthorizedException('user does not exist'), false)).rejects.toMatchObject({ description: 'Invalid token' });
+  it('refuses an invalid token, and the token of a user that no longer exists', async () => {
+    await expect(authenticate(null, false, namedError('JsonWebTokenError', 'jwt malformed'))).rejects.toBeInstanceOf(InvalidBearerTokenException);
+    await expect(authenticate(null, false, namedError('JsonWebTokenError', 'jwt malformed'))).rejects.toMatchObject({ expired: false });
+    await expect(authenticate(null, false, namedError('TokenExpiredError', 'jwt expired'))).rejects.toMatchObject({ expired: true });
+    await expect(authenticate(new UnauthorizedException('user does not exist'), false)).rejects.toBeInstanceOf(InvalidBearerTokenException);
   });
 
   it('fails with the error of the server, not as a token refused', async () => {

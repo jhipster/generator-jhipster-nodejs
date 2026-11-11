@@ -82,7 +82,10 @@ describe('OAuth2 bearer tokens', () => {
 
   it('refuses a token signed by another key', () => account(`Bearer ${token({}, otherKey)}`).expect(401));
 
-  it('refuses an expired token', () => account(`Bearer ${token({ exp: 1 })}`).expect(401));
+  it('refuses an expired token, telling it expired', () =>
+    account(`Bearer ${token({ exp: 1 })}`)
+      .expect(401)
+      .expect('WWW-Authenticate', /^Bearer error="invalid_token", error_description="The access token expired", /));
 
   it('refuses a token of another issuer, like the issuer validator of JHipster Spring Boot', () =>
     account(`Bearer ${token({ iss: 'http://127.0.0.1:1/realms/other' })}`).expect(401));
@@ -95,7 +98,7 @@ describe('OAuth2 bearer tokens', () => {
       .get('/management/info')
       .set('Authorization', `Bearer ${token({}, otherKey)}`)
       .expect(401)
-      .expect('WWW-Authenticate', /^Bearer error="invalid_token", error_description="An error occurred while attempting to decode the Jwt: [^"]+", error_uri="https:\/\/tools\.ietf\.org\/html\/rfc6750#section-3\.1", resource_metadata="http:\/\/127\.0\.0\.1:\d+\/\.well-known\/oauth-protected-resource"$/));
+      .expect('WWW-Authenticate', /^Bearer error="invalid_token", error_description="The access token is invalid", error_uri="https:\/\/tools\.ietf\.org\/html\/rfc6750#section-3\.1", resource_metadata="http:\/\/127\.0\.0\.1:\d+\/\.well-known\/oauth-protected-resource"$/));
 
   it('refuses a user without the authority of a path of an administrator with 403, whether its route exists or not', async () => {
     const authorization = `Bearer ${token({ preferred_username: 'user', groups: ['ROLE_USER'] })}`;

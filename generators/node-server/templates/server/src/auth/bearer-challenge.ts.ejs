@@ -8,9 +8,9 @@ const RESOURCE_METADATA_PATHS = /^\/\.well-known\/oauth-protected-resource(\/.*)
 
 const ERROR_URI = 'https://tools.ietf.org/html/rfc6750#section-3.1';
 
-/** A bearer token refused, with the reason the challenge of its response tells. */
+/** A bearer token refused, expired or invalid another way. */
 export class InvalidBearerTokenException extends UnauthorizedException {
-  constructor(readonly description: string) {
+  constructor(readonly expired = false) {
     super();
   }
 }
@@ -33,10 +33,11 @@ const challenge = (parameters: Record<string, string>): string =>
 export const missingTokenChallenge = (req: Request): string => challenge({ resource_metadata: `${origin(req)}${RESOURCE_METADATA_PATH}` });
 
 /** The WWW-Authenticate of a token refused (RFC 6750), like the BearerTokenAuthenticationEntryPoint of Spring Security. */
-export const invalidTokenChallenge = (req: Request, description: string): string =>
+export const invalidTokenChallenge = (req: Request, expired = false): string =>
   challenge({
     error: 'invalid_token',
-    error_description: description,
+    // The same texts as JHipster Spring Boot, which tell nothing of how the token is verified.
+    error_description: expired ? 'The access token expired' : 'The access token is invalid',
     error_uri: ERROR_URI,
     resource_metadata: `${origin(req)}${RESOURCE_METADATA_PATH}`,
   });
