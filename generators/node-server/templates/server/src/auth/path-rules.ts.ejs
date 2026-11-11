@@ -44,6 +44,14 @@ export function requestPath(url: string): string {
   return url.replace(/^[a-z][a-z\d+.-]*:\/\/[^/?#]*/i, '').split('?', 1)[0] || '/';
 }
 
+/**
+ * A request URL whose path Express reads another way than its text, a backslash taken for a slash once it has a fragment:
+ * refused, like the firewall of Spring Security, so that the rules and the routes read the same path.
+ */
+export function isRejectedUrl(url: string): boolean {
+  return /[\\#]/.test(url);
+}
+
 /** The access of a request, by the first rule matching it, undefined when none does. */
 export function pathAccess(method: string, path: string): PathAccess | undefined {
   return PATH_MATCHERS.find(rule => (!rule.methods || rule.methods.includes(method)) && rule.path.test(path))?.access;

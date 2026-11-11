@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { pathAccess, pathPatternRegExp, requestPath } from './path-rules.ts';
+import { isRejectedUrl, pathAccess, pathPatternRegExp, requestPath } from './path-rules.ts';
 
 describe('path rules', () => {
   it('matches the paths under a ** pattern, its own path included, whatever their case', () => {
@@ -20,6 +20,10 @@ describe('path rules', () => {
 
   it('reads the path of a request without its query nor its origin', () => {
     expect(['/api/x?y=1', 'http://localhost:8080/api/x?y=1', '?y=1'].map(requestPath)).toEqual(['/api/x', '/api/x', '/']);
+  });
+
+  it('refuses a URL with a backslash or a fragment, which Express reads another way', () => {
+    expect(['/management\\env#x', '/api\\admin/users', '/api/x#y', '/api/x?y=%23'].map(isRejectedUrl)).toEqual([true, true, true, false]);
   });
 
   it('gives the access of the first rule matching a request', () => {

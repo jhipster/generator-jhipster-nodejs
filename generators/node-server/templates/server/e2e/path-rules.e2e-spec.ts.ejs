@@ -1,3 +1,5 @@
+import { request as httpRequest } from 'node:http';
+import { AddressInfo } from 'node:net';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { INestApplication } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
@@ -70,6 +72,31 @@ describe('Path rules', () => {
 <%_ } _%>
 
     it('answers a public path', () => get('/management/info').expect(200));
+  });
+
+  describe('with an administrator', () => {
+    beforeEach(async () => {
+      app = await createApp(['ROLE_USER', 'ROLE_ADMIN']);
+      await app.listen(0, '127.0.0.1');
+    });
+
+    /** The status of a request whose target is sent as it is written. */
+    const statusOf = (target: string): Promise<number | undefined> => {
+      const { port } = app.getHttpServer().address() as AddressInfo;
+      return new Promise((resolve, reject) => {
+        httpRequest({ host: '127.0.0.1', port, path: target }, response => {
+          response.resume();
+          resolve(response.statusCode);
+        })
+          .on('error', reject)
+          .end();
+      });
+    };
+
+    it('refuses a URL Express reads another way than its text, like the firewall of Spring Security', async () => {
+      expect(await statusOf('/management/env')).toBe(200);
+      expect(await statusOf('/management\\env#x')).toBe(400);
+    });
   });
 
   describe('with a user', () => {
