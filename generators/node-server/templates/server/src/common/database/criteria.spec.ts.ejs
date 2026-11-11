@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'vitest';
 
-import { BadRequestException } from '@nestjs/common';
 import { And, EntityMetadata, Equal, ILike, In, IsNull, LessThan, LessThanOrEqual, MoreThan, MoreThanOrEqual, Not } from 'typeorm';
 
+import { ProblemException } from '../errors/problem.exception.ts';
 import { criteriaOf, criteriaWhere, CriteriaProperty, Filterable } from './criteria.ts';
 
 const criteria: Record<string, CriteriaProperty> = {
@@ -11,6 +11,14 @@ const criteria: Record<string, CriteriaProperty> = {
   active: { property: 'active', kind: 'equality', type: 'boolean' },
   createdAt: { property: 'createdAt', kind: 'range', type: 'date' },
   countryId: { property: 'country.id', kind: 'range', type: 'number' },
+};
+
+/** The criteria with the other types of values. */
+const typed: Record<string, CriteriaProperty> = {
+  ...criteria,
+  born: { property: 'born', kind: 'range', type: 'localDate' },
+  token: { property: 'token', kind: 'equality', type: 'uuid' },
+  level: { property: 'level', kind: 'equality', type: 'string', values: ['LOW', 'HIGH'] },
 };
 
 describe('criteriaWhere', () => {
@@ -50,11 +58,26 @@ describe('criteriaWhere', () => {
     });
   });
 
-  it('refuses a value of another type, like the binding of Spring', () => {
-    expect(() => criteriaWhere({ 'id.equals': 'a' }, criteria)).toThrow(BadRequestException);
-    expect(() => criteriaWhere({ 'active.equals': 'yes' }, criteria)).toThrow(BadRequestException);
-    expect(() => criteriaWhere({ 'createdAt.equals': 'today' }, criteria)).toThrow(BadRequestException);
-    expect(() => criteriaWhere({ 'name.specified': 'yes' }, criteria)).toThrow(BadRequestException);
+  it('refuses a value of another type with the validation error of the binding of Spring', () => {
+    const mismatches = (query: Record<string, string>): string[] => {
+      try {
+        criteriaWhere(query, typed);
+        return [];
+      } catch (error) {
+        const { problem } = error as ProblemException;
+        expect(problem).toMatchObject({ message: 'error.validation', title: 'Method argument not valid' });
+        return problem.fieldErrors!.map(({ field, message }) => `${field} ${message}`);
+      }
+    };
+    expect(mismatches({ 'id.equals': 'a' })).toEqual(['id.equals typeMismatch']);
+    expect(mismatches({ 'active.equals': 'yes' })).toEqual(['active.equals typeMismatch']);
+    expect(mismatches({ 'createdAt.equals': 'today' })).toEqual(['createdAt.equals typeMismatch']);
+    expect(mismatches({ 'name.specified': 'yes' })).toEqual(['name.specified typeMismatch']);
+    expect(mismatches({ 'born.equals': '2020-13-45' })).toEqual(['born.equals typeMismatch']);
+    expect(mismatches({ 'token.equals': 'zzz' })).toEqual(['token.equals typeMismatch']);
+    expect(mismatches({ 'level.in': 'LOW,NOPE' })).toEqual(['level.in typeMismatch']);
+    expect(mismatches({ distinct: 'zzz', 'id.in': '1,a' })).toEqual(['distinct typeMismatch', 'id.in typeMismatch']);
+    expect(mismatches({ distinct: 'true', 'born.equals': '2020-01-02', 'level.equals': 'LOW' })).toEqual([]);
   });
 
   it('ignores the parameters of no property or operator of the criteria', () => {
@@ -82,6 +105,7 @@ describe('criteriaOf', () => {
   }
   // The TypeORM metadata of the entity, its relationship to the country.
   const metadata = {
+    name: 'Sample',
     target: Sample,
     relations: [{ propertyName: 'country', inverseEntityMetadata: { primaryColumns: [{ propertyName: 'id' }] } }],
   } as unknown as EntityMetadata;
@@ -92,5 +116,11 @@ describe('criteriaOf', () => {
       name: { property: 'name', kind: 'string', type: 'string' },
       countryId: { property: 'country.id', kind: 'range', type: 'number' },
     });
+  });
+
+  it('names the criteria of the entity in the errors of its values, like the criteria class of JHipster Spring Boot', () => {
+    expect(() => criteriaWhere({ 'id.equals': 'a' }, criteriaOf(metadata))).toThrow(
+      expect.objectContaining({ problem: expect.objectContaining({ fieldErrors: [{ objectName: 'sampleCriteria', field: 'id.equals', message: 'typeMismatch' }] }) }),
+    );
   });
 });
