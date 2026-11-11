@@ -1,6 +1,6 @@
 import { STATUS_CODES } from 'http';
 
-import { ArgumentsHost, Catch, ExceptionFilter, HttpException, HttpStatus, Logger } from '@nestjs/common';
+import { ArgumentsHost, Catch, ExceptionFilter, HttpException, HttpStatus, Logger, NotFoundException } from '@nestjs/common';
 import { Request, Response } from 'express';
 
 import { HeaderUtil } from '../header-util.ts';
@@ -41,7 +41,7 @@ export class ProblemDetailsFilter implements ExceptionFilter {
         type: DEFAULT_TYPE,
         title: STATUS_CODES[status],
         status,
-        detail: exception instanceof HttpException ? detailOf(exception) : undefined,
+        detail: exception instanceof HttpException ? detailOf(exception, request) : undefined,
         message: `error.http.${status}`,
         path: request.path,
         ...(exception instanceof ProblemException ? exception.problem : {}),
@@ -49,10 +49,16 @@ export class ProblemDetailsFilter implements ExceptionFilter {
   }
 }
 
-/** The message of an HttpException of Nest: the string it was created with, or the message of its response body. */
-const detailOf = (exception: HttpException): string | undefined => {
+/**
+ * The message of an HttpException of Nest: the string it was created with, or the message of its response body. A path
+ * without route answers its status text, like JHipster Spring Boot, instead of the message of the router.
+ */
+const detailOf = (exception: HttpException, request: Request): string | undefined => {
   if (exception instanceof ProblemException) {
     return exception.problem.detail;
+  }
+  if (exception instanceof NotFoundException && exception.message === `Cannot ${request.method} ${request.originalUrl}`) {
+    return STATUS_CODES[exception.getStatus()];
   }
   const body = exception.getResponse();
   if (typeof body === 'string') {
