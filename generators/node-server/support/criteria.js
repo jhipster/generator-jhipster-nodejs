@@ -24,12 +24,14 @@ const kindOf = ({
   return 'equality';
 };
 
-/** The type of the values of a property in the request, converted for the query. */
-const valueTypeOf = ({ fieldTypeNumeric, fieldTypeBoolean, fieldTypeTimed }) => {
+/** The type of the values of a property in the request, validated and converted for the query. */
+const valueTypeOf = ({ fieldType, fieldTypeNumeric, fieldTypeBoolean, fieldTypeTimed }) => {
   if (fieldTypeNumeric) return 'number';
   if (fieldTypeBoolean) return 'boolean';
   // An Instant or a ZonedDateTime, a Date of the entity.
   if (fieldTypeTimed) return 'date';
+  if (fieldType === 'LocalDate') return 'localDate';
+  if (fieldType === 'UUID') return 'uuid';
   return 'string';
 };
 
@@ -44,7 +46,15 @@ const isFilterableField = field => !field.transient && (!field.fieldTypeBinary |
  * decorator), the property the query filters (the id of the related record for a relationship), its kind and the type of
  * its values.
  */
-const criteriaProperty = (name, { key, property, kind, type, approximate }) => ({ name, key, property, kind, type, approximate });
+const criteriaProperty = (name, { key, property, kind, type, values, approximate }) => ({
+  name,
+  key,
+  property,
+  kind,
+  type,
+  values,
+  approximate,
+});
 
 /**
  * The properties of the criteria of an entity: its fields, its id and its relationships to one record by the id of the
@@ -64,6 +74,8 @@ const criteriaProperties = entity => {
           property: field.fieldName,
           kind: field.fieldValues ? 'equality' : kindOf(field),
           type: field.fieldValues ? 'string' : valueTypeOf(field),
+          // The values of an enum, the ones of its class: another one is a value of another type.
+          values: field.fieldValues ? `Object.values(${field.fieldType})` : undefined,
           // A Float is approximate on the databases keeping it in single precision: its tests read no equal value.
           approximate: field.fieldType === 'Float' || undefined,
         }),
@@ -97,7 +109,12 @@ export const mutateCriteria = ({ databaseTypeSql }) => ({
     const properties = criteriaProperties(entity);
     return {
       // The @Filterable decorator of each property of the entity, by its name.
-      decorators: Object.fromEntries(properties.map(({ key, kind, type }) => [key, `@Filterable({ kind: '${kind}', type: '${type}' })`])),
+      decorators: Object.fromEntries(
+        properties.map(({ key, kind, type, values }) => [
+          key,
+          `@Filterable({ kind: '${kind}', type: '${type}'${values ? `, values: ${values}` : ''} })`,
+        ]),
+      ),
       // The properties the end-to-end tests filter on, by their kind.
       tests: JSON.stringify(
         properties.map(({ name, property, kind, approximate }) => ({ name, property, kind, ...(approximate ? { approximate } : {}) })),

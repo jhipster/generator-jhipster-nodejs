@@ -856,7 +856,7 @@ describe('SubGenerator node-server of nodejs JHipster blueprint', () => {
       result.assertFileContent(entity, /@Filterable\(\{ kind: 'range', type: 'date' \}\)\n\s+founded\?: Date;/);
       result.assertFileContent(entity, /@Filterable\(\{ kind: 'equality', type: 'boolean' \}\)\n\s+coastal\?: boolean;/);
       // A UUID, which the lists of JHipster do not sort by.
-      result.assertFileContent(entity, /@Filterable\(\{ kind: 'equality', type: 'string' \}\)\n\s+@NotSortable\(\)\n\s+code\?: string;/);
+      result.assertFileContent(entity, /@Filterable\(\{ kind: 'equality', type: 'uuid' \}\)\n\s+@NotSortable\(\)\n\s+code\?: string;/);
       result.assertFileContent(entity, /@Filterable\(\{ kind: 'range', type: 'number' \}\)\n\s+country\?: Relation<Country>;/);
       // Like JHipster Spring Boot, no filter of a binary blob; the relationships to many records are left out.
       result.assertNoFileContent(entity, /@Filterable\([^)]*\)\n\s+flag\?/);

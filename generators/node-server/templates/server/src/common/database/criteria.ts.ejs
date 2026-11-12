@@ -1,4 +1,4 @@
-import { BadRequestException } from '@nestjs/common';
+import { HttpStatus } from '@nestjs/common';
 import type { ParsedQs } from 'qs';
 import {
   And,
@@ -16,6 +16,9 @@ import {
   Not,
 } from 'typeorm';
 
+import { CONSTRAINT_VIOLATION_TYPE, ERR_VALIDATION } from '../errors/error-constants.ts';
+import { ProblemException } from '../errors/problem.exception.ts';
+
 /**
  * The kind of a property of the criteria, its operators like the filters of JHipster Spring Boot
  * (tech.jhipster.service.filter): a Filter, a RangeFilter or a StringFilter.
@@ -26,42 +29,52 @@ export type CriteriaKind = 'equality' | 'range' | 'string';
  * A property of the criteria of an entity: the property it filters (`country.id` for `countryId`, the id of the related
  * record), its kind and the type of its values in the request.
  */
-export type CriteriaProperty = { property: string; kind: CriteriaKind; type: CriteriaType };
+export type CriteriaProperty = { property: string; kind: CriteriaKind; type: CriteriaType; values?: string[] };
 
-/** The type of the values of a property of the criteria in the request, converted for the query. */
-export type CriteriaType = 'string' | 'number' | 'boolean' | 'date';
+/**
+ * The type of the values of a property of the criteria in the request, converted for the query: a text, of the values of
+ * an enum when it has them, a number, a boolean, an instant (date), a yyyy-MM-dd date (localDate) or a UUID.
+ */
+export type CriteriaType = 'string' | 'number' | 'boolean' | 'date' | 'localDate' | 'uuid';
+
+/** The options of a @Filterable property: its kind, the type of its values, and the values of an enum. */
+type FilterableOptions = { kind: CriteriaKind; type: CriteriaType; values?: string[] };
 
 /** The filterable properties of the entities, by their class: the ones of their @Filterable decorators. */
-const filterables = new WeakMap<object, Map<string, { kind: CriteriaKind; type: CriteriaType }>>();
+const filterables = new WeakMap<object, Map<string, FilterableOptions>>();
 
 /**
  * A property of an entity its lists filter on, like a filter of the Criteria of JHipster Spring Boot: a column, or a
  * relationship to one record, filtered by the id of the related record (`countryId` for `country`).
  */
 export const Filterable =
-  ({ kind, type }: { kind: CriteriaKind; type: CriteriaType }): PropertyDecorator =>
+  (options: FilterableOptions): PropertyDecorator =>
   (target, propertyKey) => {
-    const properties = filterables.get(target.constructor) ?? new Map();
-    properties.set(String(propertyKey), { kind, type });
+    const properties = filterables.get(target.constructor) ?? new Map<string, FilterableOptions>();
+    properties.set(String(propertyKey), options);
     filterables.set(target.constructor, properties);
   };
 
 const criteriaOfEntities = new WeakMap<EntityMetadata, Record<string, CriteriaProperty>>();
+
+/** The name of the criteria of an entity in the errors of its values, like the AuthorCriteria of JHipster Spring Boot. */
+const criteriaNames = new WeakMap<Record<string, CriteriaProperty>, string>();
 
 /** The criteria of an entity, from its @Filterable properties and the TypeORM metadata of its relationships. */
 export const criteriaOf = (metadata: EntityMetadata): Record<string, CriteriaProperty> => {
   let criteria = criteriaOfEntities.get(metadata);
   if (!criteria) {
     criteria = {};
-    for (const [propertyName, { kind, type }] of filterables.get(metadata.target as object) ?? []) {
+    for (const [propertyName, { kind, type, values }] of filterables.get(metadata.target as object) ?? []) {
       const relation = metadata.relations.find(each => each.propertyName === propertyName);
       if (relation) {
         const id = relation.inverseEntityMetadata.primaryColumns[0].propertyName;
         criteria[`${propertyName}Id`] = { property: `${propertyName}.${id}`, kind, type };
       } else {
-        criteria[propertyName] = { property: propertyName, kind, type };
+        criteria[propertyName] = { property: propertyName, kind, type, values };
       }
     }
+    criteriaNames.set(criteria, `${metadata.name.charAt(0).toLowerCase()}${metadata.name.slice(1)}Criteria`);
     criteriaOfEntities.set(metadata, criteria);
   }
   return criteria;
@@ -75,21 +88,36 @@ const operatorsOf: Record<CriteriaKind, string[]> = {
   string: [...equalityOperators, 'contains', 'doesNotContain'],
 };
 
+/** A value of another type than the property of its parameter. */
+class TypeMismatch extends Error {}
+
+const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+const booleanOf = (value: string): boolean => {
+  if (value !== 'true' && value !== 'false') throw new TypeMismatch();
+  return value === 'true';
+};
+
 /** The value of a request parameter of the criteria, converted to the type of its property. */
-const valueOf = (key: string, value: string, { type }: CriteriaProperty): unknown => {
+const valueOf = (value: string, { type, values }: CriteriaProperty): unknown => {
   if (type === 'number') {
     const number = Number(value);
-    if (value.trim() === '' || Number.isNaN(number)) throw new BadRequestException(`Invalid value of ${key}: ${value}`);
+    if (value.trim() === '' || Number.isNaN(number)) throw new TypeMismatch();
     return number;
   }
   if (type === 'boolean') {
-    if (value !== 'true' && value !== 'false') throw new BadRequestException(`Invalid value of ${key}: ${value}`);
-    return value === 'true';
+    return booleanOf(value);
   }
   if (type === 'date') {
     const date = new Date(value);
-    if (Number.isNaN(date.getTime())) throw new BadRequestException(`Invalid value of ${key}: ${value}`);
+    if (Number.isNaN(date.getTime())) throw new TypeMismatch();
     return date;
+  }
+  if (type === 'localDate' && (!/^\d{4}-\d{2}-\d{2}$/.test(value) || Number.isNaN(Date.parse(value)))) {
+    throw new TypeMismatch();
+  }
+  if ((type === 'uuid' && !UUID.test(value)) || (values && !values.includes(value))) {
+    throw new TypeMismatch();
   }
   return value;
 };
@@ -99,29 +127,28 @@ const valuesOf = (value: ParsedQs[string]): string[] =>
   (Array.isArray(value) ? value : [value]).filter((each): each is string => typeof each === 'string');
 
 /** The TypeORM operator of an operator of the criteria and its value. */
-const operatorOf = (key: string, operator: string, value: string, property: CriteriaProperty): FindOperator<unknown> => {
+const operatorOf = (operator: string, value: string, property: CriteriaProperty): FindOperator<unknown> => {
   switch (operator) {
     case 'equals':
-      return Equal(valueOf(key, value, property));
+      return Equal(valueOf(value, property));
     case 'notEquals':
-      return Not(Equal(valueOf(key, value, property)));
+      return Not(Equal(valueOf(value, property)));
     case 'in':
     case 'notIn': {
       // A list separated by commas, like the binding of a list by Spring.
-      const values = In(value.split(',').map(each => valueOf(key, each, property)));
+      const values = In(value.split(',').map(each => valueOf(each, property)));
       return operator === 'in' ? values : Not(values);
     }
     case 'specified':
-      if (value !== 'true' && value !== 'false') throw new BadRequestException(`Invalid value of ${key}: ${value}`);
-      return value === 'true' ? Not(IsNull()) : IsNull();
+      return booleanOf(value) ? Not(IsNull()) : IsNull();
     case 'greaterThan':
-      return MoreThan(valueOf(key, value, property));
+      return MoreThan(valueOf(value, property));
     case 'lessThan':
-      return LessThan(valueOf(key, value, property));
+      return LessThan(valueOf(value, property));
     case 'greaterThanOrEqual':
-      return MoreThanOrEqual(valueOf(key, value, property));
+      return MoreThanOrEqual(valueOf(value, property));
     case 'lessThanOrEqual':
-      return LessThanOrEqual(valueOf(key, value, property));
+      return LessThanOrEqual(valueOf(value, property));
     case 'contains':
       // Case insensitive, like the contains of JHipster Spring Boot.
       return ILike(`%${value}%`);
@@ -134,10 +161,15 @@ const operatorOf = (key: string, operator: string, value: string, property: Crit
  * The TypeORM where of the criteria of a request, like the QueryService of JHipster Spring Boot:
  * `name.contains=a&countryId.in=1,2&id.greaterThan=5`, every condition met. The parameters of no property of the criteria,
  * like the page and the sort, are ignored, like the ones Spring binds to no field of the criteria; the values are given
- * to the query as parameters, the properties are the ones of the criteria.
+ * to the query as parameters, the properties are the ones of the criteria. A value of another type than its property, and
+ * a `distinct` that is no boolean, are the validation error of Spring: a typeMismatch of each parameter.
  */
 export const criteriaWhere = <T>(query: ParsedQs, criteria: Record<string, CriteriaProperty>): FindOptionsWhere<T> => {
   const conditions = new Map<string, FindOperator<unknown>[]>();
+  const mismatches: string[] = [];
+  if (typeof query.distinct === 'string' && query.distinct !== 'true' && query.distinct !== 'false') {
+    mismatches.push('distinct');
+  }
   for (const [key, value] of Object.entries(query)) {
     const separator = key.lastIndexOf('.');
     if (separator < 0) continue;
@@ -148,8 +180,22 @@ export const criteriaWhere = <T>(query: ParsedQs, criteria: Record<string, Crite
     const operators = conditions.get(property.property) ?? [];
     // in and notIn: given once separated by commas or repeated.
     const values = ['in', 'notIn'].includes(operator) ? [valuesOf(value).join(',')] : valuesOf(value);
-    operators.push(...values.map(each => operatorOf(key, operator, each, property)));
+    try {
+      operators.push(...values.map(each => operatorOf(operator, each, property)));
+    } catch (error) {
+      if (!(error instanceof TypeMismatch)) throw error;
+      mismatches.push(key);
+    }
     conditions.set(property.property, operators);
+  }
+  if (mismatches.length > 0) {
+    const objectName = criteriaNames.get(criteria) ?? 'criteria';
+    throw new ProblemException(HttpStatus.BAD_REQUEST, {
+      type: CONSTRAINT_VIOLATION_TYPE,
+      title: 'Method argument not valid',
+      message: ERR_VALIDATION,
+      fieldErrors: mismatches.map(field => ({ objectName, field, message: 'typeMismatch' })),
+    });
   }
   const where: Record<string, unknown> = {};
   for (const [path, operators] of conditions) {

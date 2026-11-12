@@ -196,6 +196,18 @@ _%>
             delete serviceMock.count;
         }
     });
+
+    it('/GET all <%- entityApiUrl %> with criteria values of another type is a validation error, like the binding of JHipster Spring Boot', async () => {
+        const { body } = await request(app.getHttpServer())
+            .get('/api/<%- entityApiUrl %>?<%- primaryKey.name %>.specified=maybe&distinct=zzz')
+            .expect(400);
+
+        expect(body).toMatchObject({ message: 'error.validation' });
+        expect(body.fieldErrors).toEqual([
+            { objectName: '<%- entityInstance %>Criteria', field: 'distinct', message: 'typeMismatch' },
+            { objectName: '<%- entityInstance %>Criteria', field: '<%- primaryKey.name %>.specified', message: 'typeMismatch' },
+        ]);
+    });
 <%_ } _%>
 
 <%_ if (pagination === 'no') { _%>
