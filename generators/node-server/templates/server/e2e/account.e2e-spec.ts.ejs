@@ -183,7 +183,12 @@ describe('Account', () => {
                 .expect(400)
         ).body;
 
-        expect(problem).toMatchObject({ type: 'https://www.jhipster.tech/problem/invalid-password', title: 'Incorrect password' });
+        expect(problem).toMatchObject({
+            type: 'https://www.jhipster.tech/problem/invalid-password',
+            title: 'Bad Request',
+            detail: 'Incorrect password',
+            instance: '/api/account/change-password',
+        });
     });
 
     it('/POST reset password init and finish', async () => {

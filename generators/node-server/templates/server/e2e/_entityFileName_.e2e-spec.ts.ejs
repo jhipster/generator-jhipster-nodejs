@@ -320,7 +320,13 @@ _%>
             .expect(400);
 
         expect(alertHeader(response.headers, '-error')).toBe('error.idexists');
-        expect(response.body).toMatchObject({ message: 'error.idexists', params: '<%- entityAlertName %>' });
+        // Like JHipster Spring Boot, the title is the text of the status, and the instance the path of the request.
+        expect(response.body).toMatchObject({
+            title: 'Bad Request',
+            instance: '/api/<%- entityApiUrl %>',
+            message: 'error.idexists',
+            params: '<%- entityAlertName %>',
+        });
         expect(alertHeader(response.headers, '-params')).toBe('<%- entityAlertName %>');
     });
 
