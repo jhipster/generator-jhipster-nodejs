@@ -1,4 +1,4 @@
-import { INestApplication, ValidationPipe } from '@nestjs/common';
+import { INestApplication } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { CorsOptions } from '@nestjs/common/interfaces/external/cors-options.interface';
 import { NextFunction, Request, Response } from 'express';
@@ -10,7 +10,8 @@ import session from 'express-session';
 import type { ApplicationConfig } from './application-config.ts';
 import { HeaderUtil } from './common/header-util.ts';
 import { ProblemDetailsFilter } from './common/errors/problem-details.filter.ts';
-import { ValidationException } from './common/errors/problem.exception.ts';
+import { BodyValidationPipe } from './common/errors/body-validation.pipe.ts';
+import { validationException } from './common/errors/problem.exception.ts';
 <%_ if (authenticationUsesCsrf && generateAuthenticationApi) { _%>
 import { SessionStore } from './auth/session.store.ts';
 <%_ } _%>
@@ -149,9 +150,9 @@ export function configureApp(app: INestApplication): INestApplication {
   );
 <%_ } _%>
   app.useGlobalPipes(
-    new ValidationPipe({
+    new BodyValidationPipe({
       // The errors of the fields, like JHipster Spring Boot.
-      exceptionFactory: errors => new ValidationException(errors),
+      exceptionFactory: validationException,
       // The body is an instance of its DTO without the properties the DTO does not declare, like JHipster Spring Boot
       // binds a request to its DTO and ignores the unknown properties: the declared properties without validation are
       // @Allow(). The instance keeps the properties excluded from the responses only (the password of a registration).

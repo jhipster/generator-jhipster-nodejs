@@ -105,6 +105,8 @@ export const serverFiles = {
         'src/common/request.ts',
         'src/common/errors/error-constants.ts',
         'src/common/errors/problem.exception.ts',
+        'src/common/errors/body-validation.pipe.ts',
+        'src/common/errors/problem.exception.spec.ts',
         'src/common/errors/problem-details.filter.ts',
         'src/common/reference-by-id.ts',
         'src/auth/auth.service.ts',

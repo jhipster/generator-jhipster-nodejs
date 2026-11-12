@@ -1,0 +1,24 @@
+import { ArgumentMetadata, Injectable, ValidationPipe } from '@nestjs/common';
+
+import { unreadableBodyException } from './problem.exception.ts';
+
+/** The types of a body that is not an object: a text (a mail), a number, a boolean, a list. */
+const NOT_OBJECTS: unknown[] = [String, Number, Boolean, Array];
+
+/**
+ * The ValidationPipe of the application, which refuses first a body that is not the object its route reads (a list, a
+ * text, a number), like the unreadable body of JHipster Spring Boot: 400, not the validation errors of an empty object.
+ * A request without a body gets here as an empty object, and is validated as one.
+ */
+@Injectable()
+export class BodyValidationPipe extends ValidationPipe {
+  override async transform(value: unknown, metadata: ArgumentMetadata): Promise<unknown> {
+    // The whole body only (@Body()), not one of its properties (@Body('name')).
+    if (metadata.type === 'body' && metadata.data === undefined && !NOT_OBJECTS.includes(metadata.metatype)) {
+      if (value === null || typeof value !== 'object' || Array.isArray(value)) {
+        throw unreadableBodyException();
+      }
+    }
+    return super.transform(value, metadata);
+  }
+}

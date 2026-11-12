@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, ValidationError } from '@nestjs/common';
+import { BadRequestException, HttpException, HttpStatus, ValidationError } from '@nestjs/common';
 
 import { CONSTRAINT_VIOLATION_TYPE, DEFAULT_TYPE, ERR_VALIDATION<%- generateUserManagement ? ', EMAIL_ALREADY_USED_TYPE, INVALID_PASSWORD_TYPE, LOGIN_ALREADY_USED_TYPE' : '' %> } from './error-constants.ts';
 
@@ -58,6 +58,39 @@ export class ValidationException extends ProblemException {
     });
   }
 }
+
+/** The validation option of a pattern that tells the type of a value (a date, a time, a duration), not a rule of the entity. */
+export const UNREADABLE = { context: { unreadable: true } };
+
+/** The constraints of the type of a value. */
+const TYPE_CONSTRAINTS = ['isEnum', 'isInt', 'isNumber', 'isBoolean', 'isUuid', 'isIso8601', 'isString'];
+
+/**
+ * Whether a value is of another type than its property: one a JSON deserializer refuses before any validation, like
+ * Jackson in JHipster Spring Boot. A number out of its rules (a decimal for an integer) is a validation error.
+ */
+const isUnreadable = ({ value, constraints = {}, contexts = {}, children = [] }: ValidationError): boolean => {
+  if (value === undefined || value === null) {
+    return false;
+  }
+  const failed = Object.keys(constraints);
+  return (
+    (typeof value !== 'number' && failed.some(constraint => TYPE_CONSTRAINTS.includes(constraint))) ||
+    failed.some(constraint => (contexts[constraint] as { unreadable?: boolean } | undefined)?.unreadable) ||
+    (typeof value === 'object' && failed.length > 0 && children.length === 0) ||
+    children.some(isUnreadable)
+  );
+};
+
+/** A request body that is not read: not an object, or a value of another type than its property. */
+export const unreadableBodyException = (): BadRequestException => new BadRequestException('Failed to read request');
+
+/**
+ * The exception of the errors of a request body, like JHipster Spring Boot: a value of another type is a body that is
+ * not read (error.http.400, without the errors of the fields), else the errors of the validation of its fields.
+ */
+export const validationException = (errors: ValidationError[]): HttpException =>
+  errors.some(isUnreadable) ? unreadableBodyException() : new ValidationException(errors);
 
 /**
  * A bad request of an entity, like the BadRequestAlertException of JHipster Spring Boot: the translation key of the error
