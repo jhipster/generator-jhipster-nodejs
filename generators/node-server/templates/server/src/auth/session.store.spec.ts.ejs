@@ -76,6 +76,7 @@ describe('SessionStore', () => {
       { sid: 's3', login: 'user', expires: anHourAgo, data: '{}' },
     );
     expect(Object.keys(await allOf(store))).toEqual(['s1', 's2']);
+    expect(await store.sessionsOf('user')).toEqual([{ sid: 's1', data: { a: 1 } }]);
   });
 
   it('waits for the operations in progress before the database is closed, like a touch ending a response', async () => {

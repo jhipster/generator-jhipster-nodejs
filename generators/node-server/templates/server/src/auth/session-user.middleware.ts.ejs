@@ -4,7 +4,7 @@ import { NextFunction, Request, Response } from 'express';
 import { <%- user.dtoClass %> } from '../users/dto/user.dto.ts';
 import { UserService } from '../users/user.service.ts';
 import { cookieOf } from './csrf.middleware.ts';
-import { RememberMeService } from './remember-me.service.ts';
+import { describeSession, rememberedSeries, RememberMeService } from './remember-me.service.ts';
 
 /** The user a session keeps: without its secrets, which stay in the database. */
 export type SessionUser = Omit<<%- user.dtoClass %>, 'password' | 'activationKey' | 'resetKey'>;
@@ -42,6 +42,8 @@ export class SessionUserMiddleware implements NestMiddleware {
       const user = login ? await this.userService.findByFields({ where: { login } }) : undefined;
       if (user?.activated) {
         session.user = sessionUser(user);
+        // The session of a remember-me login is the same line of the sessions page, by its series.
+        describeSession(req, rememberedSeries(req));
         // The token of the cookie of the client, if it has one, so that its request passes like in JHipster Spring Boot.
         session.csrfToken = cookieOf(req, 'XSRF-TOKEN') ?? randomUUID();
       } else if (login) {

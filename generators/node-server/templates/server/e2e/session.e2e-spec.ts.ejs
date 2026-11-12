@@ -345,7 +345,7 @@ describe('Session authentication', () => {
     await agent.get('/api/account').expect(401);
   });
 
-  it('lists the remember-me logins of the user and ends one of them, like the sessions page of JHipster Spring Boot', async () => {
+  it('lists the remember-me logins of the user, each once with its open session, and ends one of them', async () => {
     await request(app.getHttpServer()).get('/api/account/sessions').expect(401);
     const token = cookieValue(await login({ username: 'session-user', password, 'remember-me': 'true' }), 'XSRF-TOKEN')!;
     // Another remember-me login of the same user, by a client that tells no browser.
@@ -374,6 +374,30 @@ describe('Session authentication', () => {
     await agent.delete(`/api/account/sessions/${otherSeries}`).expect(403);
     await agent.delete(`/api/account/sessions/${otherSeries}`).set('X-XSRF-TOKEN', token).expect(200);
     await request(app.getHttpServer()).get('/api/account').set('Cookie', other).expect(401);
+    await agent.get('/api/account').expect(200);
+    expect((await agent.get('/api/account/sessions').expect(200)).body).toHaveLength(1);
+  });
+
+  it('lists the open sessions without remember-me too, and ends one of them at once', async () => {
+    const token = cookieValue(await login({ username: 'session-user', password }), 'XSRF-TOKEN')!;
+    const other = request.agent(app.getHttpServer());
+    const otherToken = cookieValue(await other.get('/api/account').expect(401), 'XSRF-TOKEN')!;
+    await other
+      .post('/api/authentication')
+      .set('X-XSRF-TOKEN', otherToken)
+      .set('User-Agent', 'other-browser')
+      .type('form')
+      .send({ username: 'session-user', password })
+      .expect(200);
+    expect(await tokens().find({ where: { login: 'session-user' } })).toHaveLength(0);
+
+    const { body: sessions } = await agent.get('/api/account/sessions').expect(200);
+    expect(sessions).toHaveLength(2);
+    const { series } = sessions.find((session: any) => session.userAgent === 'other-browser');
+    expect(series).toEqual(expect.any(String));
+
+    await agent.delete(`/api/account/sessions/${series}`).set('X-XSRF-TOKEN', token).expect(200);
+    await other.get('/api/account').expect(401);
     await agent.get('/api/account').expect(200);
     expect((await agent.get('/api/account/sessions').expect(200)).body).toHaveLength(1);
   });
