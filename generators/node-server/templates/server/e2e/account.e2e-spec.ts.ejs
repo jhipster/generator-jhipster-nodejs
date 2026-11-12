@@ -153,6 +153,17 @@ describe('Account', () => {
         expect(problem).toMatchObject({ type: 'https://www.jhipster.tech/problem/invalid-password' });
     });
 
+    it('/POST change password with a new password of more than 72 bytes is an invalid password problem, like JHipster Spring Boot', async () => {
+        // 37 characters of two bytes each.
+        for (const newPassword of ['p'.repeat(73), 'é'.repeat(37)]) {
+            const { body } = await request(app.getHttpServer())
+                .post('/api/account/change-password')
+                .send({ currentPassword: testUserAuthenticated.password, newPassword })
+                .expect(400);
+            expect(body).toMatchObject({ type: 'https://www.jhipster.tech/problem/invalid-password' });
+        }
+    });
+
     it<%- databaseTypeMongodb ? '.skip' : '' %>('/POST change password', async () => {
         await request(app.getHttpServer())
             .post('/api/account/change-password')
@@ -236,11 +247,20 @@ describe('Account', () => {
         expect(problem).toMatchObject({ title: 'Account resource request invalid', status: 400 });
     });
 
-    it('/POST reset password finish with a too short password is a validation error', async () => {
-        await request(app.getHttpServer())
-            .post('/api/account/reset-password/finish')
-            .send({ key: 'unknownKey', newPassword: 'a' })
-            .expect(400);
+    it('/POST reset password finish with a too short or too long password is an invalid password problem, like JHipster Spring Boot', async () => {
+        for (const newPassword of ['a', 'p'.repeat(73)]) {
+            const { body: invalid } = await request(app.getHttpServer())
+                .post('/api/account/reset-password/finish')
+                .send({ key: 'unknownKey', newPassword })
+                .expect(400);
+            expect(invalid).toMatchObject({ type: 'https://www.jhipster.tech/problem/invalid-password', message: 'error.http.400' });
+        }
+    });
+
+    it('/POST reset password init without the mail is a bad request', async () => {
+        await request(app.getHttpServer()).post('/api/account/reset-password/init').expect(400);
+        await request(app.getHttpServer()).post('/api/account/reset-password/init').set('Content-Type', 'text/plain').send('').expect(400);
+        expect(sendPasswordResetMail).not.toHaveBeenCalled();
     });
 
     afterEach(async () => {

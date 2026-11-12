@@ -1,13 +1,14 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Allow, IsString } from 'class-validator';
+import { Allow, IsString, Length } from 'class-validator';
 
 /**
- * A DTO representing a login user.
+ * A DTO representing a login user, with the lengths of the LoginVM of JHipster Spring Boot.
  */
 export class UserLoginDTO {
 
   @ApiProperty({ description: 'User password' })
   @IsString()
+  @Length(4, 100)
   readonly password!: string;
 
   @ApiProperty({ description: 'User remember login', required: false })
@@ -16,6 +17,7 @@ export class UserLoginDTO {
 
   @ApiProperty({ description: 'User login name' })
   @IsString()
+  @Length(1, 254)
   readonly username!: string;
 
 }

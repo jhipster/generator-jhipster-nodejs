@@ -99,18 +99,18 @@ describe('Registration', () => {
         await service.delete(registeredUser);
     });
 
-    it('/POST register with a too short password is a validation error, like the ManagedUserVM of JHipster Spring Boot', async () => {
-        const problem = (
-            await request(app.getHttpServer())
+    it('/POST register with a too short or too long password is a validation error, like the ManagedUserVM of JHipster Spring Boot', async () => {
+        for (const password of ['abc', 'p'.repeat(73)]) {
+            const { body: problem } = await request(app.getHttpServer())
                 .post('/api/register')
-                .send({ ...testUserDTO, password: 'abc' })
-                .expect(400)
-        ).body;
+                .send({ ...testUserDTO, password })
+                .expect(400);
 
-        expect(problem).toMatchObject({
-            type: 'https://www.jhipster.tech/problem/constraint-violation',
-            fieldErrors: [expect.objectContaining({ field: 'password' })],
-        });
+            expect(problem).toMatchObject({
+                type: 'https://www.jhipster.tech/problem/constraint-violation',
+                fieldErrors: [expect.objectContaining({ field: 'password' })],
+            });
+        }
         expect(await service.findByFields({ where: { login: testUserDTO.login.toLowerCase() } })).toBeFalsy();
     });
 
