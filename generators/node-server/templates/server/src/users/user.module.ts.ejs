@@ -9,13 +9,14 @@ import { UserService } from './user.service.ts';
 <%_ if (authenticationTypeSession) { _%>
 import { PersistentToken } from '../auth/persistent-token.entity.ts';
 import { RememberMeService } from '../auth/remember-me.service.ts';
+import { Session } from '../auth/session.entity.ts';
 <%_ } _%>
 <%_ if (generateUserManagement) { _%>
 import { MailModule } from '../mail/mail.module.ts';
 <%_ } _%>
 
 @Module({
-  imports: [TypeOrmModule.forFeature([User<%- authenticationTypeSession ? ', PersistentToken' : '' %>])<%- generateUserManagement ? ', MailModule' : '' %>],
+  imports: [TypeOrmModule.forFeature([User<%- authenticationTypeSession ? ', PersistentToken, Session' : '' %>])<%- generateUserManagement ? ', MailModule' : '' %>],
   controllers: [<%- generateUserManagement ? 'UserController, ' : '' %>ManagementController],
   providers: [UserService<%- authenticationTypeSession ? ', RememberMeService' : '' %>],
   exports: [UserService<%- authenticationTypeSession ? ', RememberMeService' : '' %><%- generateUserManagement ? ', MailModule' : '' %>],

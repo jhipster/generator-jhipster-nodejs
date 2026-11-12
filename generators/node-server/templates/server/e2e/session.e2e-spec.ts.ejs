@@ -264,6 +264,42 @@ describe('Session authentication', () => {
     expect(await tokens().find({ where: { login: 'session-user' } })).toHaveLength(0);
   });
 
+  it('ends the other open sessions of a user with a new password, and all of them once deactivated or removed', async () => {
+    const sessions = app.get<Repository<Session>>(getRepositoryToken(Session));
+    const other = request.agent(app.getHttpServer());
+    const otherToken = cookieValue(await other.get('/api/account').expect(401), 'XSRF-TOKEN')!;
+    await other.post('/api/authentication').set('X-XSRF-TOKEN', otherToken).type('form').send({ username: 'session-user', password }).expect(200);
+    const response = await login({ username: 'session-user', password });
+    expect(await sessions.find({ where: { login: 'session-user' } })).toHaveLength(2);
+
+    await agent
+      .post('/api/account/change-password')
+      .set('X-XSRF-TOKEN', cookieValue(response, 'XSRF-TOKEN')!)
+      .send({ currentPassword: password, newPassword: 'otherPassword' })
+      .expect(200);
+    // The session of the request of the new password is kept, the other one ended.
+    expect(await sessions.find({ where: { login: 'session-user' } })).toHaveLength(1);
+    await agent.get('/api/account').expect(200);
+    await other.get('/api/account').expect(401);
+
+    const user = (await service.findByFields({ where: { login: 'session-user' } }))!;
+    await service.save({ ...user, activated: false }, 'admin');
+    expect(await sessions.find({ where: { login: 'session-user' } })).toHaveLength(0);
+
+    await service.save({ ...user, activated: true }, 'admin');
+    await request(app.getHttpServer())
+      .post('/api/authentication')
+      .set('Cookie', 'XSRF-TOKEN=other')
+      .set('X-XSRF-TOKEN', 'other')
+      .type('form')
+      .send({ username: 'session-user', password: 'otherPassword' })
+      .expect(200);
+    expect(await sessions.find({ where: { login: 'session-user' } })).toHaveLength(1);
+    await service.delete(user);
+    expect(await sessions.find({ where: { login: 'session-user' } })).toHaveLength(0);
+    users = users.filter(({ login }) => login !== 'session-user');
+  });
+
   it('ends the remember-me logins of a user with a new password or deactivated', async () => {
     const response = await login({ username: 'session-user', password, 'remember-me': 'true' });
     const cookie = rememberMe(response);

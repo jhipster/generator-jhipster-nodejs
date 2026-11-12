@@ -12,6 +12,7 @@ import { PasswordService } from '../auth/password.service.ts';
 <%_ } _%>
 <%_ if (authenticationTypeSession) { _%>
 import { RememberMeService } from '../auth/remember-me.service.ts';
+import { Session } from '../auth/session.entity.ts';
 <%_ } _%>
 
 <%_ if (typeormRelationsSupport) { _%>
@@ -27,6 +28,7 @@ export class UserService {
 <%_ } _%>
 <%_ if (authenticationTypeSession) { _%>
         private readonly rememberMeService: RememberMeService,
+        @InjectRepository(Session) private readonly sessionRepository: Repository<Session>,
 <%_ } _%>
     ) {}
 
@@ -95,8 +97,7 @@ export class UserService {
         const result = await this.userRepository.save(user);
 <%_ if (authenticationTypeSession) { _%>
         if (<%- generateUserManagement ? 'updatePassword || ' : '' %>!result.activated) {
-            // A new password or a deactivated user ends its remember-me logins.
-            await this.rememberMeService.removeOf(result.login);
+            await this.endLoginsOf(result.login);
         }
 <%_ } _%>
         return UserMapper.fromEntityToDTO(result);
@@ -110,8 +111,16 @@ export class UserService {
         const user = UserMapper.fromDTOtoEntity(userDTO);
         const result = await this.userRepository.remove(user)
 <%_ if (authenticationTypeSession) { _%>
-        await this.rememberMeService.removeOf(userDTO.login);
+        await this.endLoginsOf(userDTO.login);
 <%_ } _%>
         return UserMapper.fromEntityToDTO(result);
     }
+<%_ if (authenticationTypeSession) { _%>
+
+    /** A new password, a deactivated or a removed user ends its open sessions and its remember-me logins. */
+    private async endLoginsOf(login: string): Promise<void> {
+        await this.sessionRepository.delete({ login });
+        await this.rememberMeService.removeOf(login);
+    }
+<%_ } _%>
 }
