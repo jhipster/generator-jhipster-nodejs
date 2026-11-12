@@ -334,7 +334,7 @@ describe('User', () => {
     it('/GET users sorted on the password or a key of the user', async () => {
         for (const property of ['password', 'activationKey', 'resetKey']) {
             const response = await request(app.getHttpServer()).get(`/api/admin/users?sort=${property},asc`).expect(400);
-            expect(response.body.detail).toBe(`Invalid sort property: ${property}`);
+            expect(response.body).toMatchObject({ message: 'error.notsortable', params: 'userManagement' });
         }
     });
 

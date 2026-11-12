@@ -68,6 +68,7 @@ export class <%- entityClass %>Controller {
       req.query.size,
       req.query.sort ?? '<%- primaryKey.name %>,ASC',
       property => isSortableProperty(this.<%- entityInstance %>Service.metadata, property),
+      ENTITY_NAME,
     );
 <%_ if (pagination === 'no') { _%>
     // Like JHipster Spring Boot, an entity without pagination lists all its records, without the pagination headers.

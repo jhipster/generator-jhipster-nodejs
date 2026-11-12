@@ -48,6 +48,7 @@ export class UserController {
         req.query.sort ?? '<%- user.primaryKey.name %>,ASC',
         // Like JHipster Spring Boot, a column of the user but the ones marked @NotSortable (its password and its keys).
         property => isSortableProperty(this.userService.metadata, property),
+        'userManagement',
       );
       const [results, count] = await this.userService.findAndCount({
           skip: +pageRequest.page * pageRequest.size,

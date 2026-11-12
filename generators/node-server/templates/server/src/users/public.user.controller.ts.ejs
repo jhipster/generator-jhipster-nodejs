@@ -38,6 +38,7 @@ export class PublicUserController {
         req.query.size,
         req.query.sort ?? '<%- user.primaryKey.name %>,ASC',
         property => ALLOWED_ORDERED_PROPERTIES.includes(property),
+        'user',
       );
       const [results, count] = await this.userService.findPublicUsers({
           skip: +pageRequest.page * pageRequest.size,
