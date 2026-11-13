@@ -516,6 +516,28 @@ describe('SubGenerator node-server of nodejs JHipster blueprint', () => {
       result.assertFileContent('server/src/config/application-secret-samples.yml', /session:\n\s+secret:/);
     });
   });
+  describe('with skipUserManagement', () => {
+    beforeAll(async function () {
+      await helpers
+        .run(SUB_GENERATOR_NAMESPACE)
+        .withJHipsterConfig({
+          skipUserManagement: true,
+          skipClient: true,
+        })
+        .withOptions({
+          ignoreNeedlesError: true,
+        })
+        .withJHipsterGenerators()
+        .withConfiguredBlueprint()
+        .withBlueprintConfig({});
+    });
+
+    it('should not depend on bcrypt, which only the passwords of the user management use', () => {
+      result.assertNoFile(['server/src/auth/password.service.ts', 'server/src/auth/password-util.ts']);
+      result.assertNoJsonFileContent('server/package.json', { dependencies: { bcrypt: /./ } });
+      result.assertNoJsonFileContent('server/package.json', { devDependencies: { '@types/bcrypt': /./ } });
+    });
+  });
   describe('microservice with eureka', () => {
     beforeAll(async function () {
       await helpers
