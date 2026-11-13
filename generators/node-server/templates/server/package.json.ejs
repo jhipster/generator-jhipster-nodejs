@@ -67,7 +67,7 @@
     "@nestjs/swagger": "<%- nodeServerDependencies['@nestjs/swagger'] %>",
     "@nestjs/terminus": "<%- nodeServerDependencies['@nestjs/terminus'] %>",
     "@nestjs/typeorm": "<%- nodeServerDependencies['@nestjs/typeorm'] %>",
-<%_ if (authenticationType === 'jwt' || generateUserManagement) { _%>
+<%_ if (generateUserManagement) { _%>
     "bcrypt": "<%- nodeServerDependencies.bcrypt %>",
 <%_ } _%>
     "class-transformer": "<%- nodeServerDependencies['class-transformer'] %>",
@@ -108,7 +108,9 @@
     "@nestjs/cli": "<%- nodeServerDependencies['@nestjs/cli'] %>",
     "@nestjs/schematics": "<%- nodeServerDependencies['@nestjs/schematics'] %>",
     "@nestjs/testing": "<%- nodeServerDependencies['@nestjs/testing'] %>",
+<%_ if (generateUserManagement) { _%>
     "@types/bcrypt": "<%- nodeServerDependencies['@types/bcrypt'] %>",
+<%_ } _%>
     "@types/express": "<%- nodeServerDependencies['@types/express'] %>",
     "@types/express-serve-static-core": "<%- nodeServerDependencies['@types/express-serve-static-core'] %>",
     "@types/superagent": "<%- nodeServerDependencies['@types/superagent'] %>",
