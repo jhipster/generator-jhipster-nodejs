@@ -79,6 +79,10 @@ const detailOf = (exception: HttpException, request: Request): string | undefine
   if (exception instanceof ProblemException) {
     return exception.problem.detail;
   }
+  if (exception.cause instanceof SyntaxError) {
+    // Malformed JSON, which the body parser of Express refuses: like JHipster Spring Boot, without the message of the parser.
+    return 'Failed to read request';
+  }
   if (isWithoutRoute(exception, request)) {
     return STATUS_CODES[exception.getStatus()];
   }

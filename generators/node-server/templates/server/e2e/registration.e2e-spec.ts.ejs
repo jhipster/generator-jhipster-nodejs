@@ -114,6 +114,13 @@ describe('Registration', () => {
         expect(await service.findByFields({ where: { login: testUserDTO.login.toLowerCase() } })).toBeFalsy();
     });
 
+    it('/POST register without password is an invalid password problem, like JHipster Spring Boot', async () => {
+        const { password: _password, ...withoutPassword } = testUserDTO;
+        const { body: problem } = await request(app.getHttpServer()).post('/api/register').send(withoutPassword).expect(400);
+        expect(problem).toMatchObject({ type: 'https://www.jhipster.tech/problem/invalid-password', message: 'error.http.400' });
+        expect(problem.fieldErrors).toBeUndefined();
+    });
+
     it('/POST register with a mail of a domain without a top level domain, like the seed users', async () => {
         await request(app.getHttpServer())
             .post('/api/register')
@@ -145,7 +152,11 @@ describe('Registration', () => {
         ).body;
 
         // The type the registration page of the JHipster clients reads.
-        expect(problem).toMatchObject({ type: 'https://www.jhipster.tech/problem/login-already-used', message: 'error.userexists' });
+        expect(problem).toMatchObject({
+            type: 'https://www.jhipster.tech/problem/login-already-used',
+            message: 'error.userexists',
+            detail: 'Login name already used!',
+        });
     });
 
     it('/POST register with the email of another user is an email already used problem', async () => {
@@ -156,7 +167,11 @@ describe('Registration', () => {
                 .expect(400)
         ).body;
 
-        expect(problem).toMatchObject({ type: 'https://www.jhipster.tech/problem/email-already-used', message: 'error.emailexists' });
+        expect(problem).toMatchObject({
+            type: 'https://www.jhipster.tech/problem/email-already-used',
+            message: 'error.emailexists',
+            detail: 'Email is already in use!',
+        });
     });
 
     it('/GET activate account', async () => {

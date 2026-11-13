@@ -8,11 +8,15 @@ const NOT_OBJECTS: unknown[] = [String, Number, Boolean, Array];
 /**
  * The ValidationPipe of the application, which refuses first a body that is not the object its route reads (a list, a
  * text, a number), like the unreadable body of JHipster Spring Boot: 400, not the validation errors of an empty object.
- * A request without a body gets here as an empty object, and is validated as one.
+ * A request without a body gets here as an empty object, and is validated as one. A parameter of the path is left as its
+ * text: the pipe of its route converts it (ParseLongPipe), and tells the value it got when it is not of its type.
  */
 @Injectable()
 export class BodyValidationPipe extends ValidationPipe {
   override async transform(value: unknown, metadata: ArgumentMetadata): Promise<unknown> {
+    if (metadata.type === 'param') {
+      return value;
+    }
     // The whole body only (@Body()), not one of its properties (@Body('name')).
     if (metadata.type === 'body' && metadata.data === undefined && !NOT_OBJECTS.includes(metadata.metatype)) {
       if (value === null || typeof value !== 'object' || Array.isArray(value)) {

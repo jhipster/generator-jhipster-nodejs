@@ -111,6 +111,7 @@ export const serverFiles = {
         'src/common/errors/problem-details.filter.ts',
         'src/common/errors/route-methods.ts',
         'src/common/reference-by-id.ts',
+        'src/common/parse-id.pipe.ts',
         'src/auth/auth.service.ts',
         'src/common/dto/dto-support.ts',
         'src/main.ts',

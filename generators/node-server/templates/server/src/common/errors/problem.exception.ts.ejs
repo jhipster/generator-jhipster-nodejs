@@ -1,6 +1,6 @@
 import { BadRequestException, HttpException, HttpStatus, ValidationError } from '@nestjs/common';
 
-import { CONSTRAINT_VIOLATION_TYPE, DEFAULT_TYPE, ERR_VALIDATION<%- generateUserManagement ? ', EMAIL_ALREADY_USED_TYPE, INVALID_PASSWORD_TYPE, LOGIN_ALREADY_USED_TYPE' : '' %> } from './error-constants.ts';
+import { CONSTRAINT_VIOLATION_TYPE, DEFAULT_TYPE, ERR_VALIDATION, VALIDATION_DETAIL<%- generateUserManagement ? ', EMAIL_ALREADY_USED_TYPE, INVALID_PASSWORD_TYPE, LOGIN_ALREADY_USED_TYPE' : '' %> } from './error-constants.ts';
 
 /** An error of a field, like the FieldErrorVM of JHipster Spring Boot. */
 export interface FieldErrorVM {
@@ -53,6 +53,7 @@ export class ValidationException extends ProblemException {
     super(HttpStatus.BAD_REQUEST, {
       type: CONSTRAINT_VIOLATION_TYPE,
       title: 'Method argument not valid',
+      detail: VALIDATION_DETAIL,
       message: ERR_VALIDATION,
       fieldErrors: toFieldErrors(errors),
     });
@@ -102,27 +103,37 @@ export class BadRequestAlertException extends ProblemException {
     readonly entityName: string,
     readonly errorKey: string,
     type = DEFAULT_TYPE,
+    detail?: string,
   ) {
-    super(HttpStatus.BAD_REQUEST, { type, message: `error.${errorKey}`, params: entityName });
+    super(HttpStatus.BAD_REQUEST, { type, detail, message: `error.${errorKey}`, params: entityName });
   }
 }
 <%_ if (generateUserManagement) { _%>
 
+/**
+ * A login of another user. Like JHipster Spring Boot, the registration tells it in the detail too (the exception of its
+ * service), the user management by its key only.
+ */
 export class LoginAlreadyUsedException extends BadRequestAlertException {
-  constructor() {
-    super('Login name already used!', 'userManagement', 'userexists', LOGIN_ALREADY_USED_TYPE);
+  constructor(inDetail = false) {
+    super('Login name already used!', 'userManagement', 'userexists', LOGIN_ALREADY_USED_TYPE, inDetail ? 'Login name already used!' : undefined);
   }
 }
 
+/** A mail of another user, told in the detail by the registration like the login. */
 export class EmailAlreadyUsedException extends BadRequestAlertException {
-  constructor() {
-    super('Email is already in use!', 'userManagement', 'emailexists', EMAIL_ALREADY_USED_TYPE);
+  constructor(inDetail = false) {
+    super('Email is already in use!', 'userManagement', 'emailexists', EMAIL_ALREADY_USED_TYPE, inDetail ? 'Email is already in use!' : undefined);
   }
 }
 
+/**
+ * An invalid password, like JHipster Spring Boot: a new password of an invalid length without detail, a wrong current
+ * password with the detail `Incorrect password`.
+ */
 export class InvalidPasswordException extends ProblemException {
-  constructor() {
-    super(HttpStatus.BAD_REQUEST, { type: INVALID_PASSWORD_TYPE, detail: 'Incorrect password' });
+  constructor(detail?: string) {
+    super(HttpStatus.BAD_REQUEST, { type: INVALID_PASSWORD_TYPE, detail });
   }
 }
 

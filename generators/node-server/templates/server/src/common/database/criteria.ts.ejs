@@ -16,7 +16,7 @@ import {
   Not,
 } from 'typeorm';
 
-import { CONSTRAINT_VIOLATION_TYPE, ERR_VALIDATION } from '../errors/error-constants.ts';
+import { CONSTRAINT_VIOLATION_TYPE, ERR_VALIDATION, VALIDATION_DETAIL } from '../errors/error-constants.ts';
 import { ProblemException } from '../errors/problem.exception.ts';
 
 /**
@@ -193,6 +193,7 @@ export const criteriaWhere = <T>(query: ParsedQs, criteria: Record<string, Crite
     throw new ProblemException(HttpStatus.BAD_REQUEST, {
       type: CONSTRAINT_VIOLATION_TYPE,
       title: 'Method argument not valid',
+      detail: VALIDATION_DETAIL,
       message: ERR_VALIDATION,
       fieldErrors: mismatches.map(field => ({ objectName, field, message: 'typeMismatch' })),
     });
