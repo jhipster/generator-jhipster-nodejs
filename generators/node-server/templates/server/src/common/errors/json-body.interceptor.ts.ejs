@@ -1,0 +1,68 @@
+import { CallHandler, ExecutionContext, HttpException, HttpStatus, Injectable, NestInterceptor, SetMetadata } from '@nestjs/common';
+import { ROUTE_ARGS_METADATA } from '@nestjs/common/constants';
+import { RouteParamtypes } from '@nestjs/common/enums/route-paramtypes.enum';
+import { Request } from 'express';
+import { Observable } from 'rxjs';
+
+import { unreadableBodyException } from './problem.exception.ts';
+
+/** The content types of a JSON body: application/json and the ones of its suffix, like application/merge-patch+json. */
+const JSON_TYPE = /^application\/(?:[\w.-]+\+)?json$/i;
+
+/** The types of a body that is not an object: a text (a mail), a number, a boolean, a list. */
+const NOT_OBJECTS: unknown[] = [String, Number, Boolean, Array];
+
+const FORM_BODY = 'jhipster:formBody';
+
+/** A route whose body is a form (application/x-www-form-urlencoded), not JSON. */
+export const FormBody = (): MethodDecorator => SetMetadata(FORM_BODY, true);
+
+/** The @Body() parameters of a route handler, by their kind and index. */
+type RouteArguments = Record<string, { index: number; data?: unknown }>;
+
+/**
+ * Refuses the body of another content type than JSON of a route that reads an object, like JHipster Spring Boot: 415, and
+ * 400 without a body. A route of a form (@FormBody()) reads its own. Its place is after the guards, the authorization of the route first, and before the validation.
+ */
+@Injectable()
+export class JsonBodyInterceptor implements NestInterceptor {
+  /** Whether a route handler reads a JSON object as its body. */
+  private readonly handlers = new WeakMap<object, boolean>();
+
+  intercept(context: ExecutionContext, next: CallHandler): Observable<unknown> {
+    if (context.getType() === 'http' && this.readsJson(context)) {
+      const { headers } = context.switchToHttp().getRequest<Request>();
+      const contentType = headers['content-type'];
+      const hasBody = headers['transfer-encoding'] !== undefined || Number(headers['content-length'] ?? 0) > 0;
+      // A body without content type is of an unknown one.
+      if (contentType === undefined ? hasBody : !JSON_TYPE.test(contentType.split(';')[0].trim())) {
+        throw new HttpException(
+          `Content-Type '${contentType ?? 'application/octet-stream'}' is not supported`,
+          HttpStatus.UNSUPPORTED_MEDIA_TYPE,
+        );
+      }
+      if (!hasBody) {
+        throw unreadableBodyException();
+      }
+    }
+    return next.handle();
+  }
+
+  private readsJson(context: ExecutionContext): boolean {
+    const handler = context.getHandler();
+    let reads = this.handlers.get(handler);
+    if (reads === undefined) {
+      const controller = context.getClass();
+      const routeArguments: RouteArguments = Reflect.getMetadata(ROUTE_ARGS_METADATA, controller, handler.name) ?? {};
+      const types: unknown[] = Reflect.getMetadata('design:paramtypes', controller.prototype, handler.name) ?? [];
+      // The whole body only (@Body()), not one of its properties (@Body('name')).
+      reads =
+        !Reflect.getMetadata(FORM_BODY, handler) &&
+        Object.entries(routeArguments).some(
+          ([key, { index, data }]) => key.startsWith(`${RouteParamtypes.BODY}:`) && data === undefined && !NOT_OBJECTS.includes(types[index]),
+        );
+      this.handlers.set(handler, reads);
+    }
+    return reads;
+  }
+}

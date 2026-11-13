@@ -140,6 +140,25 @@ describe('Path rules', () => {
       const { body } = await get('/api/nothing?x=1').expect(404);
       expect(body).toMatchObject({ title: 'Not Found', detail: 'Not Found', message: 'error.http.404', path: '/api/nothing' });
     });
+
+    it('answers 405 to a path whose routes are of other methods, with the methods it allows', async () => {
+      const response = await request(app.getHttpServer()).post('/management/info?x=1').expect(405);
+      expect(response.headers.allow).toBe('GET');
+      expect(response.body).toMatchObject({
+        title: 'Method Not Allowed',
+        detail: "Request method 'POST' is not supported",
+        message: 'error.http.405',
+        path: '/management/info',
+      });
+      expect((await request(app.getHttpServer()).post('/api/nothing').expect(404)).headers.allow).toBeUndefined();
+    });
+
+    it('answers the methods of a path to its OPTIONS, without body', async () => {
+      const response = await request(app.getHttpServer()).options('/management/info').expect(200);
+      expect(response.headers.allow).toBe('GET,HEAD,OPTIONS');
+      expect(response.text).toBe('');
+      await request(app.getHttpServer()).options('/api/nothing').expect(404);
+    });
 <%_ if (skipClient) { _%>
 
     it('answers 403 to a path no rule permits, like Spring Security', () => get('/nothing').expect(403));

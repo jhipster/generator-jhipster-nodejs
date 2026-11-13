@@ -48,8 +48,6 @@ async function bootstrap(): Promise<void> {
     logger: appLogger,
     httpsOptions: tlsOptions,
   });
-  // Like JHipster Spring Boot, partial updates (PATCH) accept application/json and application/merge-patch+json
-  app.useBodyParser('json', { type: ['application/json', 'application/merge-patch+json'] });
   // Close the application (HTTP server, database connections) on SIGTERM, the signal docker stop sends.
   app.enableShutdownHooks();
   // CORS, global validation<%- authenticationUsesCsrf && generateAuthenticationApi ? ', HTTP settings and sessions' : ' and HTTP settings' %>, shared with the e2e tests.

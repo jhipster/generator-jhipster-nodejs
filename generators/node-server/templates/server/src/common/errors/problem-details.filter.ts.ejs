@@ -13,18 +13,37 @@ import { BadRequestAlertException, ProblemException } from './problem.exception.
  * JHipster clients read: the type of the problem, the translation key of the error (message), the path of the request
  * (path, and instance, the member of the RFC) and the errors of the fields. The title is the text of the status, the
  * validation and the account apart, like the one of JHipster Spring Boot. An unexpected error is logged, and answered
- * without its message.
+ * without its message. A path whose routes are of other methods answers 405 with the Allow header (RFC 9110), and its
+ * OPTIONS the methods alone, like JHipster Spring Boot.
  */
 @Catch()
 export class ProblemDetailsFilter implements ExceptionFilter {
   private readonly logger = new Logger('ProblemDetailsFilter');
 
-  constructor(private readonly headerUtil: HeaderUtil) {}
+  constructor(
+    private readonly headerUtil: HeaderUtil,
+    /** The methods of the routes of a path. */
+    private readonly routeMethods: (path: string) => string[] = () => [],
+  ) {}
 
-  catch(exception: unknown, host: ArgumentsHost): void {
+  catch(thrown: unknown, host: ArgumentsHost): void {
     const http = host.switchToHttp();
     const request = http.getRequest<Request>();
     const response = http.getResponse<Response>();
+    // The path of the request, not the one left of it by a middleware answering before the routes.
+    const path = request.originalUrl.split('?')[0];
+    const methods = !response.headersSent && isWithoutRoute(thrown, request) ? this.routeMethods(path) : [];
+    if (methods.length > 0 && request.method === 'OPTIONS') {
+      // A GET route answers HEAD too.
+      const allowed = [...methods, ...(methods.includes('GET') ? ['HEAD'] : []), 'OPTIONS'];
+      response.status(HttpStatus.OK).setHeader('Allow', allowed.join(',')).end();
+      return;
+    }
+    if (methods.length > 0) {
+      response.setHeader('Allow', methods.join(', '));
+    }
+    const exception =
+      methods.length > 0 ? new HttpException(`Request method '${request.method}' is not supported`, HttpStatus.METHOD_NOT_ALLOWED) : thrown;
     const status = exception instanceof HttpException ? exception.getStatus() : HttpStatus.INTERNAL_SERVER_ERROR;
     if (!(exception instanceof HttpException)) {
       this.logger.error(`${request.method} ${request.originalUrl}`, exception instanceof Error ? exception.stack : String(exception));
@@ -36,8 +55,6 @@ export class ProblemDetailsFilter implements ExceptionFilter {
       // Like the ExceptionTranslator of JHipster Spring Boot, the alert headers the JHipster clients read first.
       this.headerUtil.addFailureAlertHeaders(response, exception.entityName, exception.errorKey);
     }
-    // The path of the request, not the one left of it by a middleware answering before the routes.
-    const path = request.originalUrl.split('?')[0];
     response
       .status(status)
       .type('application/problem+json')
@@ -62,7 +79,7 @@ const detailOf = (exception: HttpException, request: Request): string | undefine
   if (exception instanceof ProblemException) {
     return exception.problem.detail;
   }
-  if (exception instanceof NotFoundException && exception.message === `Cannot ${request.method} ${request.originalUrl}`) {
+  if (isWithoutRoute(exception, request)) {
     return STATUS_CODES[exception.getStatus()];
   }
   const body = exception.getResponse();
@@ -72,3 +89,7 @@ const detailOf = (exception: HttpException, request: Request): string | undefine
   const { message } = body as { message?: string | string[] };
   return Array.isArray(message) ? message.join(', ') : message;
 };
+
+/** The error of the router of Nest for a request no route answers. */
+const isWithoutRoute = (exception: unknown, request: Request): boolean =>
+  exception instanceof NotFoundException && exception.message === `Cannot ${request.method} ${request.originalUrl}`;

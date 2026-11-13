@@ -451,6 +451,39 @@ _%>
     }
     );
 
+    it('/POST create <%- entityApiUrl %> with another content type than JSON is a media type not supported, like JHipster Spring Boot', async () => {
+        const json = JSON.stringify(newEntity);
+        const response = await request(app.getHttpServer()).post('/api/<%- entityApiUrl %>').type('text/plain').send(json).expect(415);
+        expect(response.body).toMatchObject({
+            title: 'Unsupported Media Type',
+            detail: "Content-Type 'text/plain' is not supported",
+            message: 'error.http.415',
+        });
+        await request(app.getHttpServer()).post('/api/<%- entityApiUrl %>').type('form').send({ a: 'b' }).expect(415);
+        await request(app.getHttpServer()).post('/api/<%- entityApiUrl %>').type('text/plain').expect(415);
+        await request(app.getHttpServer()).post('/api/<%- entityApiUrl %>').type('application/octet-stream').send(Buffer.from(json)).expect(415);
+    });
+
+    it('/POST create <%- entityApiUrl %> without body is a body that is not read, like JHipster Spring Boot', async () => {
+        const response = await request(app.getHttpServer()).post('/api/<%- entityApiUrl %>').expect(400);
+        expect(response.body).toMatchObject({ message: 'error.http.400', detail: 'Failed to read request' });
+        expect(response.body.fieldErrors).toBeUndefined();
+    });
+
+    it('/PATCH partial update <%- entityApiUrl %> reads a merge patch, not another content type, like JHipster Spring Boot', async () => {
+        const patch = JSON.stringify({ <%- primaryKey.name %>: entityMock.<%- primaryKey.name %> });
+        const path = `/api/<%- entityApiUrl %>/${entityMock.<%- primaryKey.name %>}`;
+        await request(app.getHttpServer()).patch(path).type('application/merge-patch+json').send(patch).expect(200);
+        await request(app.getHttpServer()).patch(path).type('text/plain').send(patch).expect(415);
+    });
+
+    it('/PUT and /PATCH <%- entityApiUrl %> without id in the path are methods not supported', async () => {
+        const response = await request(app.getHttpServer()).put('/api/<%- entityApiUrl %>').send(validEntity).expect(405);
+        expect(response.headers.allow.split(', ')).toContain('GET');
+        expect(response.body).toMatchObject({ message: 'error.http.405' });
+        await request(app.getHttpServer()).patch('/api/<%- entityApiUrl %>').send(validEntity).expect(405);
+    });
+
     it('/PUT update <%- entityApiUrl %> from another id', async () => {
         const response = await request(app.getHttpServer())
             .put(`/api/<%- entityApiUrl %>/${anotherId}`)

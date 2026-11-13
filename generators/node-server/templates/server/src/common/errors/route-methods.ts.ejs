@@ -1,0 +1,36 @@
+import { INestApplication } from '@nestjs/common';
+
+/** A layer of the router of Express: a route with its methods, or a middleware. */
+interface Layer {
+  route?: { path: unknown; methods: Record<string, boolean> };
+  match(path: string): boolean;
+}
+
+/**
+ * The methods of the routes of a path, in upper case: none for a path without route. Read from the router of Express,
+ * which has every route of the controllers; a route of any path (a pattern with a wildcard) is not one of the path.
+ */
+export const routeMethods = (app: INestApplication, path: string): string[] => {
+  const stack: Layer[] = app.getHttpAdapter().getInstance().router?.stack ?? [];
+  const methods = new Set<string>();
+  for (const layer of stack) {
+    const { route } = layer;
+    if (route && typeof route.path === 'string' && !route.path.includes('*') && matches(layer, path)) {
+      for (const method of Object.keys(route.methods)) {
+        if (route.methods[method] && method !== '_all') {
+          methods.add(method.toUpperCase());
+        }
+      }
+    }
+  }
+  return [...methods];
+};
+
+/** Whether a route is the one of a path; a path Express does not decode has none. */
+const matches = (layer: Layer, path: string): boolean => {
+  try {
+    return layer.match(path);
+  } catch {
+    return false;
+  }
+};
