@@ -3,6 +3,7 @@ import { randomBytes, randomUUID } from 'node:crypto';
 import { Body, Controller, Delete, Get, HttpCode, Logger, Param, Post, Req, Res, UnauthorizedException, UseGuards } from '@nestjs/common';
 import { ApiConsumes, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Request, Response } from 'express';
+import { FormBody } from '../common/errors/json-body.interceptor.ts';
 import { AuthService } from './auth.service.ts';
 import { checkLoginCsrfToken, REMEMBER_ME_MAX_AGE, setCsrfCookie } from './csrf.middleware.ts';
 import { sessionUser } from './session-user.middleware.ts';
@@ -40,6 +41,7 @@ export class UserSessionController {
   @Post('/authentication')
   @HttpCode(200)
   @ApiConsumes('application/x-www-form-urlencoded')
+  @FormBody()
   @ApiOperation({ summary: 'Log in, in a new session' })
   @ApiResponse({ status: 200, description: 'Logged in' })
   @ApiResponse({ status: 401, description: 'Invalid login, password, or a user not activated' })

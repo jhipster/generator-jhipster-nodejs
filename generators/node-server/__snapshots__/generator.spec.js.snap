@@ -543,6 +543,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > jwt microservic
   "server/src/common/errors/error-constants.ts": {
     "stateCleared": "modified",
   },
+  "server/src/common/errors/json-body.interceptor.ts": {
+    "stateCleared": "modified",
+  },
   "server/src/common/errors/problem-details.filter.ts": {
     "stateCleared": "modified",
   },
@@ -550,6 +553,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > jwt microservic
     "stateCleared": "modified",
   },
   "server/src/common/errors/problem.exception.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/common/errors/route-methods.ts": {
     "stateCleared": "modified",
   },
   "server/src/common/header-util.ts": {
@@ -920,6 +926,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > run > should ma
   "server/src/common/errors/error-constants.ts": {
     "stateCleared": "modified",
   },
+  "server/src/common/errors/json-body.interceptor.ts": {
+    "stateCleared": "modified",
+  },
   "server/src/common/errors/problem-details.filter.ts": {
     "stateCleared": "modified",
   },
@@ -927,6 +936,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > run > should ma
     "stateCleared": "modified",
   },
   "server/src/common/errors/problem.exception.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/common/errors/route-methods.ts": {
     "stateCleared": "modified",
   },
   "server/src/common/header-util.ts": {
@@ -1357,6 +1369,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > with oauth2 > s
   "server/src/common/errors/error-constants.ts": {
     "stateCleared": "modified",
   },
+  "server/src/common/errors/json-body.interceptor.ts": {
+    "stateCleared": "modified",
+  },
   "server/src/common/errors/problem-details.filter.ts": {
     "stateCleared": "modified",
   },
@@ -1364,6 +1379,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > with oauth2 > s
     "stateCleared": "modified",
   },
   "server/src/common/errors/problem.exception.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/common/errors/route-methods.ts": {
     "stateCleared": "modified",
   },
   "server/src/common/header-util.ts": {
@@ -1743,6 +1761,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > with oauth2 and
   "server/src/common/errors/error-constants.ts": {
     "stateCleared": "modified",
   },
+  "server/src/common/errors/json-body.interceptor.ts": {
+    "stateCleared": "modified",
+  },
   "server/src/common/errors/problem-details.filter.ts": {
     "stateCleared": "modified",
   },
@@ -1750,6 +1771,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > with oauth2 and
     "stateCleared": "modified",
   },
   "server/src/common/errors/problem.exception.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/common/errors/route-methods.ts": {
     "stateCleared": "modified",
   },
   "server/src/common/header-util.ts": {
@@ -2564,6 +2588,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > without client 
   "server/src/common/errors/error-constants.ts": {
     "stateCleared": "modified",
   },
+  "server/src/common/errors/json-body.interceptor.ts": {
+    "stateCleared": "modified",
+  },
   "server/src/common/errors/problem-details.filter.ts": {
     "stateCleared": "modified",
   },
@@ -2571,6 +2598,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > without client 
     "stateCleared": "modified",
   },
   "server/src/common/errors/problem.exception.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/common/errors/route-methods.ts": {
     "stateCleared": "modified",
   },
   "server/src/common/header-util.ts": {

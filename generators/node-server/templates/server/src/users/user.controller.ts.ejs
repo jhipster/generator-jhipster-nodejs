@@ -112,7 +112,7 @@ export class UserController {
       return created;
   }
 
-  @Put(['/', '/:login'])
+  @Put('/:login')
   @Roles(RoleType.ADMIN)
   @ApiOperation({ summary: 'Update user' })
   @ApiResponse({
@@ -120,9 +120,14 @@ export class UserController {
       description: 'The record has been successfully updated.',
       type: <%- user.dtoClass %>,
   })
-  @ApiResponse({ status: 400, description: 'The login or the mail is used by another user.' })
+  @ApiResponse({ status: 400, description: 'The login of the path is not the one of the body, or the login or the mail is used by another user.' })
   @ApiResponse({ status: 404, description: 'No user of this id.' })
-  async updateUser(@Req() req: Request, @Body() userDTO: <%- user.dtoClass %>): Promise<<%- user.dtoClass %>> {
+  async updateUser(@Req() req: Request, @Param('login') loginValue: string, @Body() userDTO: <%- user.dtoClass %>): Promise<<%- user.dtoClass %>> {
+    // The login of the path is the one of the body, the new one when it changes, like the id of an entity: a login is the
+    // same in upper or lower case.
+    if (loginValue.toLowerCase() !== userDTO.login.toLowerCase()) {
+      throw new BadRequestAlertException('Invalid login', 'userManagement', 'idinvalid');
+    }
     // Like JHipster Spring Boot, the user of the id of the body, whose login and mail are not the ones of another user.
     const id = userDTO.<%- user.primaryKey.name %>;
     const isAnotherUser = (other?: <%- user.dtoClass %>): boolean => other !== undefined && other !== null && String(other.<%- user.primaryKey.name %>) !== String(id);

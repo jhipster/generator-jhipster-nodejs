@@ -9,7 +9,9 @@ import session from 'express-session';
 
 import type { ApplicationConfig } from './application-config.ts';
 import { HeaderUtil } from './common/header-util.ts';
+import { JsonBodyInterceptor } from './common/errors/json-body.interceptor.ts';
 import { ProblemDetailsFilter } from './common/errors/problem-details.filter.ts';
+import { routeMethods } from './common/errors/route-methods.ts';
 import { BodyValidationPipe } from './common/errors/body-validation.pipe.ts';
 import { validationException } from './common/errors/problem.exception.ts';
 <%_ if (authenticationUsesCsrf && generateAuthenticationApi) { _%>
@@ -165,15 +167,18 @@ export function configureApp(app: INestApplication): INestApplication {
       validationError: { target: true },
     }),
   );
+  // A body of another content type than JSON refused, like JHipster Spring Boot.
+  app.useGlobalInterceptors(new JsonBodyInterceptor());
   // The errors as the problem details of JHipster Spring Boot.
-  app.useGlobalFilters(new ProblemDetailsFilter(app.get(HeaderUtil)));
+  app.useGlobalFilters(new ProblemDetailsFilter(app.get(HeaderUtil), path => routeMethods(app, path)));
 <%_ if (generateUserManagement) { _%>
   // The mail of a password reset request is a text/plain body, as the JHipster clients send it.
   (app as NestExpressApplication).useBodyParser('text');
 <%_ } _%>
   // The JSON bodies up to 10 MB, the blobs of the entities as base64 included (the 100 KB default of Express refused an
-  // image of about 75 KB with 413).
-  (app as NestExpressApplication).useBodyParser('json', { limit: '10mb' });
+  // image of about 75 KB with 413). Like JHipster Spring Boot, application/json and the types of its suffix: the partial
+  // updates (PATCH) accept application/merge-patch+json.
+  (app as NestExpressApplication).useBodyParser('json', { limit: '10mb', type: ['json', '+json'] });
   // Disable cache.
   app.getHttpAdapter().getInstance().set('etag', false);
   return app;

@@ -179,14 +179,14 @@ describe('User', () => {
         expect(Number(response.headers['x-total-count'])).toBeGreaterThanOrEqual(response.body.length);
     });
 
-    it('/PUT update user', async () => {
+    it('/PUT update user, its login the same in upper or lower case', async () => {
         testUserDTO.login = 'TestUserUpdate';
         const { password: _savedPassword, lastModifiedDate: _savedLastModifiedDate, ...savedUser } = await service.save(testUserDTO, 'creator');
         savedUser.firstName = 'Updated Name';
 
         const { password: _updatedPassword, lastModifiedDate: _updatedLastModifiedDate, ...updatedUser } = (
             await request(app.getHttpServer())
-                .put('/api/admin/users')
+                .put('/api/admin/users/TESTUSERUPDATE')
                 .send(savedUser)
                 .expect(200)
         ).body;
@@ -232,7 +232,7 @@ describe('User', () => {
         const savedUser = await service.save({ ...testUserDTO, resetKey: 'savedKey' });
 
         await request(app.getHttpServer())
-            .put('/api/admin/users')
+            .put('/api/admin/users/testuserkeep')
             .send({ ...savedUser, firstName: 'Updated Name', password: 'chosenPassword', resetKey: 'chosenKey' })
             .expect(200);
 
@@ -249,7 +249,7 @@ describe('User', () => {
 
         const emailProblem = (
             await request(app.getHttpServer())
-                .put('/api/admin/users')
+                .put('/api/admin/users/updatedconflict')
                 .send({ ...savedUser, email: 'OtherConflict@localhost.it' })
                 .expect(400)
         ).body;
@@ -257,7 +257,7 @@ describe('User', () => {
 
         const loginProblem = (
             await request(app.getHttpServer())
-                .put('/api/admin/users')
+                .put('/api/admin/users/otherconflict')
                 .send({ ...savedUser, login: 'OtherConflict' })
                 .expect(400)
         ).body;
@@ -269,9 +269,28 @@ describe('User', () => {
         await service.delete(otherUser);
     });
 
+    it('/PUT update user from another login', async () => {
+        const savedUser = await service.save({ ...testUserDTO, login: 'updatedlogin', email: 'updatedlogin@localhost.it' });
+
+        const response = await request(app.getHttpServer())
+            .put('/api/admin/users/anotherlogin')
+            .send({ ...savedUser, firstName: 'Updated Name' })
+            .expect(400);
+        expect(response.body).toMatchObject({ message: 'error.idinvalid', params: 'userManagement' });
+
+        expect((await service.findByFields({ where: { login: 'updatedlogin' } }))!.firstName).toEqual(savedUser.firstName);
+        await service.delete(savedUser);
+    });
+
+    it('/PUT update user without its login in the path is a method not supported', async () => {
+        const response = await request(app.getHttpServer()).put('/api/admin/users').send(testUserRequestObject).expect(405);
+        expect(response.headers.allow.split(', ').sort()).toEqual(['GET', 'POST']);
+        expect(response.body).toMatchObject({ message: 'error.http.405', title: 'Method Not Allowed' });
+    });
+
     it('/PUT update an unknown user is not found, like JHipster Spring Boot', () =>
         request(app.getHttpServer())
-            .put('/api/admin/users')
+            .put('/api/admin/users/unknownuser')
             .send({ ...testUserRequestObject, login: 'unknownuser', email: 'unknownuser@localhost.it', id: <%- databaseTypeMongodb ? "'000000000000000000000042'" : '42' %> })
             .expect(404));
 
