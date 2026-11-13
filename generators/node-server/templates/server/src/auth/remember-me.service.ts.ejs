@@ -2,14 +2,17 @@ import { createHash, randomBytes } from 'node:crypto';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CookieOptions, Request, Response } from 'express';
-import { Repository } from 'typeorm';
+import { <%- databaseTypeSql ? 'LessThan' : 'FindOptionsWhere' %>, Repository } from 'typeorm';
 import { cookieOf } from './csrf.middleware.ts';
 import { PersistentToken } from './persistent-token.entity.ts';
 
 /** The cookie of a remember-me login, the one of JHipster Spring Boot. */
 export const REMEMBER_ME_COOKIE = 'remember-me';
 
-/** The validity of a remember-me login after its last use, like the one of JHipster Spring Boot: 31 days. */
+/**
+ * The validity of a remember-me login, the 31 days of JHipster Spring Boot, counted from the login with the password:
+ * its use does not extend it, the user gives the password again after it.
+ */
 export const TOKEN_VALIDITY = 31 * 24 * 60 * 60 * 1000;
 
 /**
@@ -36,6 +39,7 @@ interface ReplacedToken {
  * The remember-me logins, like the PersistentTokenRememberMeServices of JHipster Spring Boot: a cookie of its own, apart
  * from the session, with a series and a token. The cookie alone logs its user in, in a new session, and its token is
  * replaced by each login it does; a series given with another token than its own is a stolen cookie, and is removed.
+ * A login ends 31 days after its password was given, and the ended ones are removed from the database.
  * The tokens are neither logged nor kept as they are: the database has their hash.
  */
 @Injectable()
@@ -49,9 +53,11 @@ export class RememberMeService {
 
   /** A new remember-me login of the user, its cookie given to the client: the series of the login. */
   async remember(req: Request, res: Response, login: string): Promise<string> {
+    await this.prune();
     const token = random();
-    const { series } = await this.repository.save({ series: random(), login, tokenValue: hash(token), ...requestOf(req) });
-    setCookie(req, res, series, token);
+    const loginDate = new Date();
+    const { series } = await this.repository.save({ series: random(), login, tokenValue: hash(token), loginDate, ...requestOf(req) });
+    setCookie(req, res, series, token, loginDate);
     return series;
   }
 
@@ -89,9 +95,10 @@ export class RememberMeService {
     clearCookie(req, res);
   }
 
-  /** The remember-me logins of a user. */
-  tokensOf(login: string): Promise<PersistentToken[]> {
-    return this.repository.find({ where: { login } });
+  /** The remember-me logins of a user, not ended by their validity. */
+  async tokensOf(login: string): Promise<PersistentToken[]> {
+    const tokens = await this.repository.find({ where: { login } });
+    return tokens.filter(({ loginDate }) => loginDate.getTime() + TOKEN_VALIDITY >= Date.now());
   }
 
   /** Ends a remember-me login of the user; the series of another user is left as it is. */
@@ -104,9 +111,20 @@ export class RememberMeService {
 
   /** Ends the remember-me logins of a user: its password changed, the user deactivated or removed. */
   async removeOf(login: string): Promise<void> {
-    for (const { series } of await this.tokensOf(login)) {
+    for (const { series } of await this.repository.find({ where: { login } })) {
       await this.remove(series);
     }
+  }
+
+  /** Removes the remember-me logins ended by their validity. */
+  async prune(): Promise<void> {
+    const before = new Date(Date.now() - TOKEN_VALIDITY);
+<%_ if (databaseTypeSql) { _%>
+    await this.repository.delete({ loginDate: LessThan(before) });
+<%_ } else { _%>
+    // The operators of MongoDB: TypeORM does not translate its find operators (LessThan) for it.
+    await this.repository.delete({ loginDate: { $lt: before } } as unknown as FindOptionsWhere<PersistentToken>);
+<%_ } _%>
   }
 
   private async remove(series: string): Promise<void> {
@@ -127,7 +145,7 @@ export class RememberMeService {
       // The cookie of a request sent before the client had the new one.
       return replaced.login;
     }
-    if (found.tokenValue !== tokenValue || found.tokenDate.getTime() + TOKEN_VALIDITY < Date.now()) {
+    if (found.tokenValue !== tokenValue || found.loginDate.getTime() + TOKEN_VALIDITY < Date.now()) {
       // Another token than the one of the series is a stolen cookie, like the CookieTheftException of Spring Security.
       await this.remove(found.series);
       clearCookie(req, res);
@@ -135,7 +153,7 @@ export class RememberMeService {
     }
     const token = random();
     await this.repository.save({ ...found, tokenValue: hash(token), ...requestOf(req) });
-    setCookie(req, res, found.series, token);
+    setCookie(req, res, found.series, token, found.loginDate);
     this.keepReplaced(found.series, { tokenValue: found.tokenValue, login: found.login, until: Date.now() + REPLACED_TOKEN_VALIDITY });
     return found.login;
   }
@@ -182,8 +200,10 @@ const decode = (cookie: string): { series: string; token: string } | undefined =
 /** The attributes of the cookie (RFC 6265): not read by the scripts of the page, and sent over HTTPS only when the request is. */
 const cookieOptions = (req: Request): CookieOptions => ({ httpOnly: true, secure: req.secure, sameSite: 'lax', path: '/' });
 
-const setCookie = (req: Request, res: Response, series: string, token: string): void => {
-  res.cookie(REMEMBER_ME_COOKIE, Buffer.from(`${series}:${token}`).toString('base64url'), { ...cookieOptions(req), maxAge: TOKEN_VALIDITY });
+/** The cookie lasts as long as its login: what is left of its validity. */
+const setCookie = (req: Request, res: Response, series: string, token: string, loginDate: Date): void => {
+  const maxAge = loginDate.getTime() + TOKEN_VALIDITY - Date.now();
+  res.cookie(REMEMBER_ME_COOKIE, Buffer.from(`${series}:${token}`).toString('base64url'), { ...cookieOptions(req), maxAge });
 };
 
 const clearCookie = (req: Request, res: Response): void => {

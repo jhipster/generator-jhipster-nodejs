@@ -12,7 +12,8 @@ const repository = (rows: PersistentToken[]): any => ({
     return Promise.resolve(token);
   },
   delete: ({ series }: any) => {
-    const index = rows.findIndex(row => row.series === series);
+    // The removal of the ended logins has no series.
+    const index = rows.findIndex(row => (series ? row.series === series : row.loginDate.getTime() + TOKEN_VALIDITY < Date.now()));
     if (index >= 0) rows.splice(index, 1);
     return Promise.resolve();
   },
@@ -46,8 +47,9 @@ describe('RememberMeService', () => {
     expect(res.cookie).toHaveBeenCalledWith(
       'remember-me',
       expect.any(String),
-      expect.objectContaining({ httpOnly: true, secure: true, maxAge: TOKEN_VALIDITY }),
+      expect.objectContaining({ httpOnly: true, secure: true }),
     );
+    expect(res.cookie.mock.calls[0][2].maxAge).toBeGreaterThan(TOKEN_VALIDITY - 1000);
     const [series, token] = Buffer.from(res.cookie.mock.calls[0][1], 'base64url').toString().split(':');
     expect(rows).toEqual([expect.objectContaining({ series, login: 'user', ipAddress: '127.0.0.1', userAgent: undefined })]);
     expect(rows[0].tokenValue).not.toContain(token);
@@ -79,14 +81,28 @@ describe('RememberMeService', () => {
     expect(rows).toHaveLength(0);
   });
 
-  it('logs nobody in without a cookie, with an unknown series or after 31 days', async () => {
+  it('logs nobody in without a cookie, with an unknown series or 31 days after its password, whatever its use', async () => {
     expect(await service.autoLogin(request(), response())).toBeUndefined();
     expect(await service.autoLogin(request('remember-me=unknown'), response())).toBeUndefined();
     const res = response();
     await service.remember(request(), res, 'user');
-    rows[0].tokenDate = new Date(Date.now() - TOKEN_VALIDITY - 1000);
-    expect(await service.autoLogin(request(cookieOf(res)), response())).toBeUndefined();
+    const halfway = response();
+    rows[0].loginDate = new Date(Date.now() - TOKEN_VALIDITY / 2);
+    expect(await service.autoLogin(request(cookieOf(res)), halfway)).toBe('user');
+    // The cookie lasts what is left of its login, its use does not extend it.
+    expect(halfway.cookie.mock.calls[0][2].maxAge).toBeLessThanOrEqual(TOKEN_VALIDITY / 2);
+    rows[0].loginDate = new Date(Date.now() - TOKEN_VALIDITY - 1000);
+    expect(await service.autoLogin(request(cookieOf(halfway)), response())).toBeUndefined();
     expect(rows).toHaveLength(0);
+  });
+
+  it('removes the ended logins at a new one', async () => {
+    await service.remember(request(), response(), 'user');
+    const [{ series }] = rows;
+    rows[0].loginDate = new Date(Date.now() - TOKEN_VALIDITY - 1000);
+    await service.remember(request(), response(), 'other');
+    expect(rows.map(row => row.series)).not.toContain(series);
+    expect(rows).toHaveLength(1);
   });
 
   it('ends the login of the cookie at the logout, the ones of a user, and a series of the user only', async () => {

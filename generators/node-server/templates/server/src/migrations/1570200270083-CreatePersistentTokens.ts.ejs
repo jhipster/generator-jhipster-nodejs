@@ -12,6 +12,7 @@ export class CreatePersistentTokens1570200270083 implements MigrationInterface {
       { name: 'series', type: String, primary: true },
       { name: 'login', type: String },
       { name: 'tokenValue', type: String },
+      { name: 'loginDate', type: Date },
       { name: 'tokenDate', type: Date },
       { name: 'ipAddress', type: String, nullable: true },
       { name: 'userAgent', type: String, nullable: true },

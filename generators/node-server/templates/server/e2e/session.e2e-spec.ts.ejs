@@ -247,12 +247,25 @@ describe('Session authentication', () => {
     }
   });
 
-  it('ends a remember-me login 31 days after its last use', async () => {
+  it('ends a remember-me login 31 days after its password was given, whatever its use', async () => {
     const cookie = rememberMe(await login({ username: 'session-user', password, 'remember-me': 'true' }));
     const [stored] = await tokens().find({ where: { login: 'session-user' } });
-    await tokens().save({ ...stored, tokenDate: new Date(Date.now() - 32 * 24 * 60 * 60 * 1000) });
+    await tokens().save({ ...stored, loginDate: new Date(Date.now() - 32 * 24 * 60 * 60 * 1000), tokenDate: new Date() });
     await request(app.getHttpServer()).get('/api/account').set('Cookie', cookie).expect(401);
     expect(await tokens().find({ where: { login: 'session-user' } })).toHaveLength(0);
+
+    // The ended logins are removed from the database by a new one.
+    await tokens().save({ ...stored, loginDate: new Date(Date.now() - 32 * 24 * 60 * 60 * 1000) });
+    await request(app.getHttpServer())
+      .post('/api/authentication')
+      .set('Cookie', 'XSRF-TOKEN=other')
+      .set('X-XSRF-TOKEN', 'other')
+      .type('form')
+      .send({ username: 'session-user', password, 'remember-me': 'true' })
+      .expect(200);
+    const left = await tokens().find({ where: { login: 'session-user' } });
+    expect(left.map(({ series }) => series)).not.toContain(stored.series);
+    expect(left).toHaveLength(1);
   });
 
   it('ends the remember-me login at the logout, its cookie removed and refused after', async () => {

@@ -30,7 +30,11 @@ export class PersistentToken {
   @Column()
   tokenValue!: string;
 
-  /** The last login of the token, which lasts 31 days after it. */
+  /** The login with the password: the token lasts 31 days after it, whatever its use. */
+  @Column()
+  loginDate!: Date;
+
+  /** The last login of the token, told by the sessions page. */
   @Column()
   tokenDate!: Date;
 
