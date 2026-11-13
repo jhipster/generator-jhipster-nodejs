@@ -4,16 +4,6 @@ import { NextFunction, Request, Response } from 'express';
 
 /** The idle lifetime of a session, on the server: its cookie lasts until the browser is closed. */
 export const SESSION_MAX_AGE = 30 * 60 * 1000;
-<%_ if (authenticationTypeSession) { _%>
-
-/**
- * The idle lifetime of a session logged in with remember-me, like the validity of the remember-me tokens of JHipster
- * Spring Boot (31 days): kept in the database (SessionStore), the session outlives a restart like those tokens. Its
- * cookie expires 31 days after the login, unlike the remember-me cookie of JHipster Spring Boot, renewed at each new
- * session it logs in.
- */
-export const REMEMBER_ME_MAX_AGE = 31 * 24 * 60 * 60 * 1000;
-<%_ } _%>
 
 /** The methods that change nothing, which the CSRF token does not protect, like the ones of Spring Security. */
 const SAFE_METHODS = ['GET', 'HEAD', 'OPTIONS', 'TRACE'];
@@ -26,14 +16,22 @@ export function setCsrfCookie(res: Response, token: string): void {
   res.cookie('XSRF-TOKEN', token, { sameSite: 'lax', path: '/' });
 }
 
-/** The XSRF-TOKEN cookie of a request. */
-function csrfCookie(req: Request): string | undefined {
+/** A cookie of a request. */
+export function cookieOf(req: Request, name: string): string | undefined {
   const cookie = req.headers.cookie
     ?.split(';')
     .map(value => value.trim())
-    .find(value => value.startsWith('XSRF-TOKEN='));
-  return cookie ? decodeURIComponent(cookie.slice('XSRF-TOKEN='.length)) : undefined;
+    .find(value => value.startsWith(`${name}=`));
+  try {
+    return cookie ? decodeURIComponent(cookie.slice(name.length + 1)) : undefined;
+  } catch {
+    // Not a value a server gave.
+    return undefined;
+  }
 }
+
+/** The XSRF-TOKEN cookie of a request. */
+const csrfCookie = (req: Request): string | undefined => cookieOf(req, 'XSRF-TOKEN');
 <%_ if (authenticationTypeSession) { _%>
 
 /**
@@ -77,8 +75,8 @@ export class CsrfMiddleware implements NestMiddleware {
     }
     session.csrfToken ??= randomUUID();
     if (csrfCookie(req) !== session.csrfToken) {
-      // Like Spring Security, the cookie is set when the client has not the token of its session only (a remember-me
-      // session after the browser is closed): a response of a session ended by a login meanwhile does not put the token
+      // Like Spring Security, the cookie is set when the client has not the token of its session only (the session
+      // of a remember-me login): a response of a session ended by a login meanwhile does not put the token
       // of the ended session back.
       setCsrfCookie(res, session.csrfToken);
     }

@@ -87,9 +87,16 @@ export class AccountController {
     description: 'user password changed',
     type: PasswordChangeDTO,
   })
-  async changePassword(@Req() req: { user: <%- userLoginVmClass %> }, @Body() passwordChange: PasswordChangeDTO): Promise<void> {
+  async changePassword(
+    @Req() req: { user: <%- userLoginVmClass %><%- authenticationTypeSession ? '; session: { save(callback: (error?: Error) => void): void }' : '' %> },
+    @Body() passwordChange: PasswordChangeDTO,
+  ): Promise<void> {
     const { user } = req;
-    return await this.authService.changePassword(user.login, passwordChange.currentPassword, passwordChange.newPassword);
+    await this.authService.changePassword(user.login, passwordChange.currentPassword, passwordChange.newPassword);
+  <%_ if (authenticationTypeSession) { _%>
+    // The new password ended the open sessions of the user: the one of this request is kept, saved again.
+    await new Promise<void>((resolve, reject) => req.session.save(error => (error ? reject(error) : resolve())));
+  <%_ } _%>
   }
 
   @Post('/account/reset-password/init')

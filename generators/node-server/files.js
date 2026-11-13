@@ -261,9 +261,17 @@ export const serverFiles = {
       templates: [
         'src/auth/user.session.controller.ts',
         'src/auth/session-user.middleware.ts',
+        'src/auth/persistent-token.entity.ts',
+        'src/auth/remember-me.service.ts',
+        'src/auth/remember-me.service.spec.ts',
         'e2e/session.e2e-spec.ts',
         'e2e/csrf-request.ts',
       ],
+    },
+    {
+      path: SERVER_NODEJS_DIR,
+      condition: ctx => ctx.authenticationTypeSession && ctx.databaseTypeSql,
+      templates: ['src/migrations/1570200270083-CreatePersistentTokens.ts'],
     },
   ],
   oauth2: [

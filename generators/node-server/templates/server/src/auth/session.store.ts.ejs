@@ -18,7 +18,10 @@ declare module 'express-session' {
     /** The CSRF token the clients send back as X-XSRF-TOKEN. */
     csrfToken: string;
 <%_ if (authenticationTypeSession) { _%>
-    /** The session as the sessions page shows it: its series, the date, the address and the browser of its login. */
+    /**
+     * The session as the sessions page shows it: its series (the one of its remember-me login, if it has one), the date,
+     * the address and the browser of its login.
+     */
     series: string;
     tokenDate: string;
     ipAddress?: string;
@@ -136,7 +139,7 @@ export class SessionStore extends session.Store implements OnModuleInit, OnModul
   }
 }
 
-/** The end of a session: the expiry of its cookie with remember-me, else 30 minutes after its last request. */
+/** The end of a session: the expiry of its cookie when it has one, else 30 minutes after its last request. */
 function expiresOf(data: session.SessionData): Date {
   return data.cookie?.expires ? new Date(data.cookie.expires) : new Date(Date.now() + SESSION_MAX_AGE);
 }
