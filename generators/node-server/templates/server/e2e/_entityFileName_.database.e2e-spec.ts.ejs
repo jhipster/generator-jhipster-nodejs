@@ -212,8 +212,9 @@ describe('<%- entityClass %> on the database', () => {
   <%_ } _%>
 
   <%_ if (collection && otherValues) { _%>
-    // Like JHipster Spring Boot, the foreign key of the join table keeps a related record in use.
-    await request(server).delete(`/api/<%- otherEntity.entityApiUrl %>/${related.<%- otherId %>}`).expect(500);
+    // Like JHipster Spring Boot, the foreign key of the join table keeps a related record in use, a data integrity violation.
+    const { body: problem } = await request(server).delete(`/api/<%- otherEntity.entityApiUrl %>/${related.<%- otherId %>}`).expect(400);
+    expect(problem).toMatchObject({ message: 'error.dataIntegrityViolation', detail: 'Data integrity violation' });
     await request(server).get(`/api/<%- otherEntity.entityApiUrl %>/${related.<%- otherId %>}`).expect(200);
 
   <%_ } _%>

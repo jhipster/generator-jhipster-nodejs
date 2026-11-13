@@ -1,0 +1,31 @@
+import { describe, expect, it } from 'vitest';
+import { QueryFailedError } from 'typeorm';
+
+import { isDataIntegrityViolation } from './data-integrity.ts';
+
+/** A query error of TypeORM, with the error of its driver. */
+const queryFailed = (driverError: Record<string, unknown>): QueryFailedError =>
+  new QueryFailedError('query', [], Object.assign(new Error('driver error'), driverError));
+
+describe('isDataIntegrityViolation', () => {
+  it('reads the violations of the drivers of the databases', () => {
+    expect(isDataIntegrityViolation(queryFailed({ code: 'SQLITE_CONSTRAINT_FOREIGNKEY' }))).toBe(true);
+    expect(isDataIntegrityViolation(queryFailed({ code: 'SQLITE_CONSTRAINT_UNIQUE' }))).toBe(true);
+    expect(isDataIntegrityViolation(queryFailed({ code: '23503' }))).toBe(true);
+    expect(isDataIntegrityViolation(queryFailed({ code: '22001' }))).toBe(true);
+    expect(isDataIntegrityViolation(queryFailed({ code: 'ER_DUP_ENTRY', errno: 1062 }))).toBe(true);
+    expect(isDataIntegrityViolation(queryFailed({ code: 'ER_ROW_IS_REFERENCED_2', errno: 1451 }))).toBe(true);
+    expect(isDataIntegrityViolation(queryFailed({ code: 'EREQUEST', number: 547 }))).toBe(true);
+    expect(isDataIntegrityViolation(queryFailed({ errorNum: 2292 }))).toBe(true);
+    expect(isDataIntegrityViolation(Object.assign(new Error('E11000 duplicate key'), { code: 11000 }))).toBe(true);
+  });
+
+  it('leaves the other errors of the database to an unexpected error', () => {
+    expect(isDataIntegrityViolation(queryFailed({ code: 'SQLITE_BUSY' }))).toBe(false);
+    expect(isDataIntegrityViolation(queryFailed({ code: '42P01' }))).toBe(false);
+    expect(isDataIntegrityViolation(queryFailed({ code: 'ER_PARSE_ERROR', errno: 1064 }))).toBe(false);
+    expect(isDataIntegrityViolation(queryFailed({ code: 'EREQUEST', number: 208 }))).toBe(false);
+    expect(isDataIntegrityViolation(new Error('unexpected'))).toBe(false);
+    expect(isDataIntegrityViolation(undefined)).toBe(false);
+  });
+});

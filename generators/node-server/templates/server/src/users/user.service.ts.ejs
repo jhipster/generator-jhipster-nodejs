@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { EntityMetadata, FindManyOptions, FindOneOptions, Repository } from 'typeorm';
+import { EntityMetadata, FindManyOptions, FindOneOptions, <%- databaseTypeMongodb ? 'FindOptionsWhere' : 'In' %>, Repository } from 'typeorm';
+import { Authority } from './authority.entity.ts';
 import { <%- user.persistClass %> } from './user.entity.ts';
 import { PublicUserDTO, <%- user.dtoClass %> } from './dto/user.dto.ts';
 import { UserMapper } from './user.mapper.ts';
@@ -79,6 +80,21 @@ export class UserService {
           where: { activated: true },
         });
         return [users.map(user => ({ id: user.<%- user.primaryKey.name %>!, login: user.login })), count];
+    }
+
+    /** The names of a list of authorities that exist, like JHipster Spring Boot: an unknown one is left out. */
+    async knownAuthorities(names?: string[]): Promise<string[] | undefined> {
+        if (!names) {
+            return names;
+        }
+<%_ if (databaseTypeMongodb) { _%>
+        // The operators of MongoDB: TypeORM does not translate its find operators (In) for it.
+        const where = { name: { $in: names } } as unknown as FindOptionsWhere<Authority>;
+<%_ } else { _%>
+        const where = { name: In(names) };
+<%_ } _%>
+        const known = new Set((await this.userRepository.manager.find(Authority, { where })).map(({ name }) => name));
+        return names.filter(name => known.has(name));
     }
 
     async save(userDTO: <%- user.dtoClass %>, creator?: string<%- generateUserManagement ? ', updatePassword = false' : '' %>): Promise<<%- user.dtoClass %>> {

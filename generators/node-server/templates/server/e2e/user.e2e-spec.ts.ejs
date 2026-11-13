@@ -77,6 +77,19 @@ describe('User', () => {
         await service.delete(createdUser);
     });
 
+    it('/POST create user leaves out an unknown authority, like JHipster Spring Boot', async () => {
+        const createdUser: <%- user.dtoClass %> = (
+            await request(app.getHttpServer())
+                .post('/api/admin/users')
+                .send({ ...testUserRequestObject, login: 'unknownauthority', email: 'unknownauthority@localhost.it', authorities: ['ROLE_USER', 'ROLE_UNKNOWN'] })
+                .expect(201)
+        ).body;
+
+        expect(createdUser.authorities).toEqual(['ROLE_USER']);
+        expect((await service.findByFields({ where: { login: 'unknownauthority' } }))!.authorities).toEqual(['ROLE_USER']);
+        await service.delete(createdUser);
+    });
+
     it('/POST create user with an id is a bad request, like JHipster Spring Boot', async () => {
         const problem = (
             await request(app.getHttpServer())
