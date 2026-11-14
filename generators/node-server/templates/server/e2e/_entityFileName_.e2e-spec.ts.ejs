@@ -282,10 +282,15 @@ _%>
     });
 <%_ if (numericId || primaryKey.typeUUID) { _%>
 
-    it('/GET <%- entityApiUrl %> by an invalid id', async () => {
-        await request(app.getHttpServer())
+    it('/GET <%- entityApiUrl %> by an invalid id, like the conversion of JHipster Spring Boot', async () => {
+        const { body } = await request(app.getHttpServer())
             .get('/api/<%- entityApiUrl %>/<%- invalidId %>')
             .expect(400);
+        expect(body).toMatchObject({ message: 'error.http.400', detail: "Failed to convert 'id' with value: '<%- invalidId %>'" });
+  <%_ if (numericId) { _%>
+        // Beyond the range of a Long.
+        await request(app.getHttpServer()).get('/api/<%- entityApiUrl %>/99999999999999999999').expect(400);
+  <%_ } _%>
     });
 <%_ } _%>
 
@@ -357,6 +362,8 @@ _%>
         expect(error).toMatchObject({
             type: 'https://www.jhipster.tech/problem/constraint-violation',
             message: 'error.validation',
+            // The detail of JHipster Spring Boot in production, the errors in the fields.
+            detail: 'Unexpected runtime exception',
             fieldErrors: [{ objectName: '<%- entityInstance %>', field: '<%- requiredField.fieldName %>', message: expect.any(String) }],
         });
     });
@@ -450,6 +457,11 @@ _%>
         expect(alertHeader(response.headers, '-params')).toBe(String(entityMock.<%- primaryKey.name %>));
     }
     );
+
+    it('/POST create <%- entityApiUrl %> with malformed JSON is a body that is not read, without the message of the parser', async () => {
+        const { body } = await request(app.getHttpServer()).post('/api/<%- entityApiUrl %>').type('json').send('{"a"').expect(400);
+        expect(body).toMatchObject({ message: 'error.http.400', detail: 'Failed to read request' });
+    });
 
     it('/POST create <%- entityApiUrl %> with another content type than JSON is a media type not supported, like JHipster Spring Boot', async () => {
         const json = JSON.stringify(newEntity);

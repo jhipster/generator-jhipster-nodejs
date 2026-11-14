@@ -36,11 +36,11 @@ export class RegistrationService {
     const email = newUser.email.toLowerCase();
     const userOfLogin = await this.userService.findByFields({ where: { login } });
     if (userOfLogin && !(await this.removeNonActivatedUser(userOfLogin))) {
-      throw new LoginAlreadyUsedException();
+      throw new LoginAlreadyUsedException(true);
     }
     const userOfEmail = await this.userService.findByFields({ where: { email } });
     if (userOfEmail && !(await this.removeNonActivatedUser(userOfEmail))) {
-      throw new EmailAlreadyUsedException();
+      throw new EmailAlreadyUsedException(true);
     }
     const user: <%- user.dtoClass %> = {
       login,

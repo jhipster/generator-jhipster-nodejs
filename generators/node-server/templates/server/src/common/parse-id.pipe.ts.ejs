@@ -1,0 +1,33 @@
+import { ArgumentMetadata, BadRequestException, Injectable, PipeTransform } from '@nestjs/common';
+
+/** The range of a Long of Java, the type of a numeric id of JHipster Spring Boot. */
+const LONG_MIN = -(2n ** 63n);
+const LONG_MAX = 2n ** 63n - 1n;
+const INTEGER = /^[-+]?\d+$/;
+const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+/** The error of a parameter of the path that is not of its type, like the one of the conversion of Spring. */
+const conversionFailure = (name: string | undefined, value: string): BadRequestException =>
+  new BadRequestException(`Failed to convert '${name}' with value: '${value}'`);
+
+/** A numeric id of the path, like a Long of JHipster Spring Boot: an integer within the range of a Long, else 400. */
+@Injectable()
+export class ParseLongPipe implements PipeTransform<string, number> {
+  transform(value: string, { data }: ArgumentMetadata): number {
+    if (!INTEGER.test(value) || BigInt(value) < LONG_MIN || BigInt(value) > LONG_MAX) {
+      throw conversionFailure(data, value);
+    }
+    return Number(value);
+  }
+}
+
+/** A UUID id of the path, like a UUID of JHipster Spring Boot, else 400. */
+@Injectable()
+export class ParseUuidPipe implements PipeTransform<string, string> {
+  transform(value: string, { data }: ArgumentMetadata): string {
+    if (!UUID.test(value)) {
+      throw conversionFailure(data, value);
+    }
+    return value;
+  }
+}

@@ -1,10 +1,11 @@
-import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
+import { CanActivate, ExecutionContext, ForbiddenException, Injectable } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { <%- userLoginVmClass %> } from '../../users/dto/user.dto.ts';
 
 /**
  * Allows a request when its user has one of the roles of the route, the @Roles of the handler, else the ones of its
- * controller class, like a @PreAuthorize of JHipster Spring Boot on a method or on its class.
+ * controller class, like a @PreAuthorize of JHipster Spring Boot on a method or on its class: else 403 with the detail of
+ * Spring Security.
  */
 @Injectable()
 export class RolesGuard implements CanActivate {
@@ -20,6 +21,9 @@ export class RolesGuard implements CanActivate {
     const request = context.switchToHttp().getRequest();
     const user = request.user as <%- userLoginVmClass %>;
 
-    return !!user?.authorities?.some(role => roles.includes(role));
+    if (!user?.authorities?.some(role => roles.includes(role))) {
+      throw new ForbiddenException('Access Denied');
+    }
+    return true;
   }
 }

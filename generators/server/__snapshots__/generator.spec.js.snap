@@ -284,6 +284,9 @@ exports[`SubGenerator server of nodejs JHipster blueprint > run > should match t
   "server/src/common/metrics.ts": {
     "stateCleared": "modified",
   },
+  "server/src/common/parse-id.pipe.ts": {
+    "stateCleared": "modified",
+  },
   "server/src/common/reference-by-id.ts": {
     "stateCleared": "modified",
   },

@@ -72,7 +72,10 @@ export class AuthService {
   /** The hash an unknown login is checked with, like the timing attack protection of the DaoAuthenticationProvider of Spring Security. */
   private unknownUserPasswordHash?: Promise<string>;
 
-  /** The activated user of a login and its password, with its authorities, else 401, like the login of JHipster Spring Boot. */
+  /**
+   * The activated user of a login and its password, with its authorities, else 401, like the login of JHipster Spring
+   * Boot: the same answer to an unknown login, a wrong password and a user not activated, which tells no account apart.
+   */
   async authenticate(loginUserName: string, loginPassword: string): Promise<<%- user.dtoClass %>> {
     // The logins are in lower case, like the ones of JHipster Spring Boot.
     const userFind = await this.userService.findByFields({ where: { login: loginUserName.toLowerCase() } });
@@ -80,17 +83,13 @@ export class AuthService {
     // the logins of the users.
     this.unknownUserPasswordHash ??= this.passwordService.encode(randomBytes(16).toString('hex'));
     const validPassword = await this.passwordService.matches(loginPassword, userFind?.password ?? (await this.unknownUserPasswordHash));
-    if (!userFind || !validPassword) {
-      throw new HttpException('Invalid login name or password!', HttpStatus.UNAUTHORIZED);
-    }
-
-    if (userFind && !userFind.activated) {
-      throw new HttpException('Your account is not been activated!', HttpStatus.UNAUTHORIZED);
+    if (!userFind || !validPassword || !userFind.activated) {
+      throw new HttpException('Invalid credentials', HttpStatus.UNAUTHORIZED);
     }
 
     const user = await this.findUserWithAuthById(userFind.id!);
     if (!user) {
-      throw new HttpException('Invalid login name or password!', HttpStatus.UNAUTHORIZED);
+      throw new HttpException('Invalid credentials', HttpStatus.UNAUTHORIZED);
     }
     return user;
   }
@@ -139,7 +138,7 @@ export class AuthService {
     return userDTO;
   }
 
-  async changePassword(userLogin: string, currentClearTextPassword: string, newPassword: string): Promise<void> {
+  async changePassword(userLogin: string, currentClearTextPassword: string | undefined, newPassword: string | undefined): Promise<void> {
     // Like the AccountResource of JHipster Spring Boot, the length of the new password.
     if (isPasswordLengthInvalid(newPassword)) {
       throw new InvalidPasswordException();
@@ -149,10 +148,10 @@ export class AuthService {
       throw new HttpException('Invalid login name!', HttpStatus.BAD_REQUEST);
     }
 
-    if (!(await this.passwordService.matches(currentClearTextPassword, userFind.password))) {
-      throw new InvalidPasswordException();
+    if (!(await this.passwordService.matches(currentClearTextPassword ?? '', userFind.password))) {
+      throw new InvalidPasswordException('Incorrect password');
     }
-    userFind.password = newPassword;
+    userFind.password = newPassword!;
     await this.userService.save(userFind, userLogin, true);
     return;
   }
@@ -172,16 +171,17 @@ export class AuthService {
   }
 
   /** Like JHipster Spring Boot, sets the new password of the user of a reset key given less than one day ago. */
-  async completePasswordReset(newPassword: string, key: string): Promise<void> {
+  async completePasswordReset(newPassword: string | undefined, key: string | undefined): Promise<void> {
     // Like the AccountResource of JHipster Spring Boot, the length of the new password before its key.
     if (isPasswordLengthInvalid(newPassword)) {
       throw new InvalidPasswordException();
     }
-    const userFind = await this.userService.findByFields({ where: { resetKey: key } });
+    // A where of an undefined key would find any user.
+    const userFind = key ? await this.userService.findByFields({ where: { resetKey: key } }) : undefined;
     if (!userFind?.resetDate || new Date(userFind.resetDate).getTime() < Date.now() - 24 * 60 * 60 * 1000) {
       throw new AccountResourceException('No user was found for this reset key');
     }
-    userFind.password = newPassword;
+    userFind.password = newPassword!;
     // null clears the columns (TypeORM leaves the undefined properties unchanged).
     Object.assign(userFind, { resetKey: null, resetDate: null });
     await this.userService.save(userFind, SYSTEM_AUDITOR, true);

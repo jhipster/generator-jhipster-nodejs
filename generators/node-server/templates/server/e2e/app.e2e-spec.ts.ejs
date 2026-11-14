@@ -106,6 +106,13 @@ describe('App', () => {
         .send(testUserLogin)
         .expect(200));
 
+    it('/POST authenticate with a wrong password or an unknown login is the same 401, like JHipster Spring Boot', async () => {
+        for (const credentials of [{ ...testUserLogin, password: 'wrongPassword' }, { username: 'unknownlogin', password: 'unknownPassword' }]) {
+            const { body } = await request(app.getHttpServer()).post('/api/authenticate').send(credentials).expect(401);
+            expect(body).toMatchObject({ message: 'error.http.401', detail: 'Invalid credentials' });
+        }
+    });
+
     it('/POST authenticate without credentials is a validation error', () => request(app.getHttpServer())
         .post('/api/authenticate')
         .send({})

@@ -150,7 +150,12 @@ describe('Account', () => {
                 .expect(400)
         ).body;
 
-        expect(problem).toMatchObject({ type: 'https://www.jhipster.tech/problem/invalid-password' });
+        // Without detail, like JHipster Spring Boot: the one of a wrong current password only.
+        expect(problem).toMatchObject({ type: 'https://www.jhipster.tech/problem/invalid-password', message: 'error.http.400' });
+        expect(problem.detail).toBeUndefined();
+        const { body: empty } = await request(app.getHttpServer()).post('/api/account/change-password').send({}).expect(400);
+        expect(empty).toMatchObject({ type: 'https://www.jhipster.tech/problem/invalid-password', message: 'error.http.400' });
+        expect(empty.fieldErrors).toBeUndefined();
     });
 
     it('/POST change password with a new password of more than 72 bytes is an invalid password problem, like JHipster Spring Boot', async () => {
@@ -171,7 +176,7 @@ describe('Account', () => {
             .expect(200);
 
         const successFullyLoggedInWithNewPassword = await authService
-            .authenticate(testUserAuthenticated.login, testPasswordChange.newPassword)
+            .authenticate(testUserAuthenticated.login, testPasswordChange.newPassword!)
             .then(() => true, () => false);
 
         expect(successFullyLoggedInWithNewPassword).toEqual(true);
@@ -254,7 +259,16 @@ describe('Account', () => {
                 .send({ key: 'unknownKey', newPassword })
                 .expect(400);
             expect(invalid).toMatchObject({ type: 'https://www.jhipster.tech/problem/invalid-password', message: 'error.http.400' });
+            expect(invalid.detail).toBeUndefined();
         }
+        // Without the key or the password, the password first.
+        const { body: empty } = await request(app.getHttpServer()).post('/api/account/reset-password/finish').send({}).expect(400);
+        expect(empty).toMatchObject({ type: 'https://www.jhipster.tech/problem/invalid-password', message: 'error.http.400' });
+        const { body: noKey } = await request(app.getHttpServer())
+            .post('/api/account/reset-password/finish')
+            .send({ newPassword: 'resetPassword' })
+            .expect(400);
+        expect(noKey).toMatchObject({ title: 'Account resource request invalid', detail: 'No user was found for this reset key' });
     });
 
     it('/POST reset password init without the mail is a bad request', async () => {
