@@ -56,14 +56,15 @@ describe('Authority Controller', () => {
   });
 <%_ if (databaseTypeSql) { _%>
 
-  it('should keep an authority a user has, like the foreign key of JHipster Spring Boot', async () => {
+  it('should keep an authority a user has, the foreign key answered like JHipster Spring Boot', async () => {
     await request(app.getHttpServer()).post('/api/authorities').send({ name: 'ROLE_E2E_USED' }).expect(201);
     const users = app.get(DataSource).getRepository(<%- user.persistClass %>);
     const user = await users.save(
       users.create({ login: 'authority-e2e', email: 'authority-e2e@localhost', password: '', authorities: [{ name: 'ROLE_E2E_USED' }] }),
     );
 
-    await request(app.getHttpServer()).delete('/api/authorities/ROLE_E2E_USED').expect(500);
+    const problem = (await request(app.getHttpServer()).delete('/api/authorities/ROLE_E2E_USED').expect(400)).body;
+    expect(problem).toMatchObject({ title: 'Bad Request', message: 'error.dataIntegrityViolation', detail: 'Data integrity violation' });
     await request(app.getHttpServer()).get('/api/authorities/ROLE_E2E_USED').expect(200);
 
     await users.remove(user);

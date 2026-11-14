@@ -110,6 +110,8 @@ export const serverFiles = {
         'src/common/errors/problem.exception.spec.ts',
         'src/common/errors/problem-details.filter.ts',
         'src/common/errors/route-methods.ts',
+        'src/common/errors/data-integrity.ts',
+        'src/common/errors/data-integrity.spec.ts',
         'src/common/reference-by-id.ts',
         'src/auth/auth.service.ts',
         'src/common/dto/dto-support.ts',

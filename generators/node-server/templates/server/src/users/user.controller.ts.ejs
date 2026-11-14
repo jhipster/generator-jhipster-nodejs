@@ -94,7 +94,7 @@ export class UserController {
           email,
           imageUrl: userDTO.imageUrl,
           langKey: userDTO.langKey ?? '<%- nativeLanguage %>',
-          authorities: userDTO.authorities,
+          authorities: await this.userService.knownAuthorities(userDTO.authorities),
           activated: true,
           password: randomBytes(15).toString('base64url'),
           resetKey: randomBytes(15).toString('base64url'),
@@ -154,7 +154,7 @@ export class UserController {
         imageUrl: userDTO.imageUrl,
         activated: userDTO.activated,
         langKey: userDTO.langKey,
-        authorities: userDTO.authorities,
+        authorities: await this.userService.knownAuthorities(userDTO.authorities),
       },
       req.user?.login,
     );

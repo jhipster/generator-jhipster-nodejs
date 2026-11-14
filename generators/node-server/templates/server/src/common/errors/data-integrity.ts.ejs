@@ -1,0 +1,48 @@
+import { HttpStatus } from '@nestjs/common';
+
+import { ProblemException } from './problem.exception.ts';
+
+/** What the drivers of the databases tell of an error: its code or its number. */
+interface DriverError {
+  code?: unknown;
+  errno?: unknown;
+  number?: unknown;
+  errorNum?: unknown;
+}
+
+/** The SQLSTATE of PostgreSQL: the integrity constraint violations (class 23) and the value too long for its column. */
+const POSTGRES_STATES = /^(?:23\d{3}|22001)$/;
+/** MySQL and MariaDB: a null, a duplicate, a foreign key, a check, a value too long. */
+const MYSQL_ERRORS = [1048, 1062, 1216, 1217, 1364, 1406, 1451, 1452, 3819, 4025];
+/** SQL Server: a null, a foreign key or a check, a duplicate, a value too long. */
+const MSSQL_ERRORS = [515, 547, 2601, 2627, 2628, 8152];
+/** Oracle: a duplicate, a null, a check, a foreign key, a value too long. */
+const ORACLE_ERRORS = [1, 1400, 2290, 2291, 2292, 12899];
+/** MongoDB: a duplicate key. */
+const MONGODB_ERRORS = [11000, 11001];
+
+/**
+ * Whether an error of the database is a violation of its integrity, like the DataIntegrityViolationException of Spring: a
+ * constraint (not null, unique, foreign key, check) or a value too long for its column. A query error of TypeORM keeps the
+ * error of the driver.
+ */
+export const isDataIntegrityViolation = (error: unknown): boolean => {
+  if (typeof error !== 'object' || error === null) {
+    return false;
+  }
+  const { code, errno, number, errorNum } = ((error as { driverError?: DriverError }).driverError ?? error) as DriverError;
+  return (
+    (typeof code === 'string' && (code.startsWith('SQLITE_CONSTRAINT') || POSTGRES_STATES.test(code))) ||
+    (typeof code === 'string' && code.startsWith('ER_') && MYSQL_ERRORS.includes(Number(errno))) ||
+    (typeof code === 'number' && MONGODB_ERRORS.includes(code)) ||
+    (typeof number === 'number' && MSSQL_ERRORS.includes(number)) ||
+    (typeof errorNum === 'number' && ORACLE_ERRORS.includes(errorNum))
+  );
+};
+
+/** A request the database refuses for its integrity, like JHipster Spring Boot: 400, without the error of the database. */
+export class DataIntegrityViolationException extends ProblemException {
+  constructor() {
+    super(HttpStatus.BAD_REQUEST, { message: 'error.dataIntegrityViolation', detail: 'Data integrity violation' });
+  }
+}

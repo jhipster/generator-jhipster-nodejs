@@ -239,6 +239,12 @@ exports[`SubGenerator server of nodejs JHipster blueprint > run > should match t
   "server/src/common/errors/body-validation.pipe.ts": {
     "stateCleared": "modified",
   },
+  "server/src/common/errors/data-integrity.spec.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/common/errors/data-integrity.ts": {
+    "stateCleared": "modified",
+  },
   "server/src/common/errors/error-constants.ts": {
     "stateCleared": "modified",
   },

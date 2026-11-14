@@ -540,6 +540,12 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > jwt microservic
   "server/src/common/errors/body-validation.pipe.ts": {
     "stateCleared": "modified",
   },
+  "server/src/common/errors/data-integrity.spec.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/common/errors/data-integrity.ts": {
+    "stateCleared": "modified",
+  },
   "server/src/common/errors/error-constants.ts": {
     "stateCleared": "modified",
   },
@@ -921,6 +927,12 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > run > should ma
     "stateCleared": "modified",
   },
   "server/src/common/errors/body-validation.pipe.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/common/errors/data-integrity.spec.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/common/errors/data-integrity.ts": {
     "stateCleared": "modified",
   },
   "server/src/common/errors/error-constants.ts": {
@@ -1366,6 +1378,12 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > with oauth2 > s
   "server/src/common/errors/body-validation.pipe.ts": {
     "stateCleared": "modified",
   },
+  "server/src/common/errors/data-integrity.spec.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/common/errors/data-integrity.ts": {
+    "stateCleared": "modified",
+  },
   "server/src/common/errors/error-constants.ts": {
     "stateCleared": "modified",
   },
@@ -1756,6 +1774,12 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > with oauth2 and
     "stateCleared": "modified",
   },
   "server/src/common/errors/body-validation.pipe.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/common/errors/data-integrity.spec.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/common/errors/data-integrity.ts": {
     "stateCleared": "modified",
   },
   "server/src/common/errors/error-constants.ts": {
@@ -2583,6 +2607,12 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > without client 
     "stateCleared": "modified",
   },
   "server/src/common/errors/body-validation.pipe.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/common/errors/data-integrity.spec.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/common/errors/data-integrity.ts": {
     "stateCleared": "modified",
   },
   "server/src/common/errors/error-constants.ts": {
