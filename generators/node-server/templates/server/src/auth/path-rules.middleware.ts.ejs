@@ -13,7 +13,7 @@ import {
   resourceMetadata,
 } from './bearer-challenge.ts';
 <%_ } _%>
-import { isRejectedUrl, pathAccess, requestPath } from './path-rules.ts';
+import { isFirewallRejected, isRejectedUrl, pathAccess, requestPath } from './path-rules.ts';
 import { RequestAuthenticator } from './request-authenticator.ts';
 import { RoleType } from './role-type.ts';
 
@@ -22,7 +22,8 @@ import { RoleType } from './role-type.ts';
  * authenticated, its user set for the guards, then its path checked by the first rule matching it (PATH_RULES): a public
  * path passes, else a request without user is 401 and a user lacking the authority of the rule 403, whether the route
  * exists or not, so that the responses tell nothing of the routes of the server.
- * A URL Express reads another way than its text is refused first (400).
+ * A URL Express reads another way than its text is refused first (400), and a request the firewall of Spring Security
+ * refuses is answered as one of no user<%- authenticationTypeSession ? ', 403' : '' %>, like JHipster Spring Boot.
 <%_ if (!authenticationTypeSession) { _%>
  * The responses to a bearer token tell their reason in WWW-Authenticate (RFC 6750), and the metadata of the server as a
  * protected resource (RFC 9728) are answered before the authentication.
@@ -40,6 +41,14 @@ export class PathRulesMiddleware implements NestMiddleware {
   async use(req: Request, res: Response, next: NextFunction): Promise<void> {
     if (isRejectedUrl(req.originalUrl)) {
       throw new BadRequestException();
+    }
+    if (isFirewallRejected(req.method, req.originalUrl)) {
+<%_ if (authenticationTypeJwt || (authenticationTypeOauth2 && applicationTypeMicroservice)) { _%>
+      res.setHeader('WWW-Authenticate', missingTokenChallenge(req));
+      throw new UnauthorizedException();
+<%_ } else { _%>
+      throw new ForbiddenException();
+<%_ } _%>
     }
 <%_ if (authenticationTypeSession) { _%>
     req.user = await this.authenticator.authenticate(req);

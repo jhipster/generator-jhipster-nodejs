@@ -1,0 +1,23 @@
+import { CallHandler, ExecutionContext, Injectable, NestInterceptor, NotAcceptableException } from '@nestjs/common';
+import { Request } from 'express';
+import { Observable, map } from 'rxjs';
+
+/**
+ * Refuses a JSON response the client does not accept, like the content negotiation of JHipster Spring Boot: 406 when the
+ * Accept header of the request has no JSON type (an XML one alone). A response of another type (a text) is left to its
+ * route, and the error is answered as JSON, like Spring.
+ */
+@Injectable()
+export class AcceptableResponseInterceptor implements NestInterceptor {
+  intercept(context: ExecutionContext, next: CallHandler): Observable<unknown> {
+    const request = context.switchToHttp().getRequest<Request>();
+    return next.handle().pipe(
+      map(result => {
+        if (context.getType() === 'http' && result !== null && typeof result === 'object' && !Buffer.isBuffer(result) && !request.accepts('json')) {
+          throw new NotAcceptableException('No acceptable representation');
+        }
+        return result;
+      }),
+    );
+  }
+}

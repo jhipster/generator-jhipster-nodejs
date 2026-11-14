@@ -1,4 +1,4 @@
-import { CallHandler, ExecutionContext, HttpException, HttpStatus, Injectable, NestInterceptor, SetMetadata } from '@nestjs/common';
+import { CallHandler, ExecutionContext, Injectable, NestInterceptor, SetMetadata, UnsupportedMediaTypeException } from '@nestjs/common';
 import { ROUTE_ARGS_METADATA } from '@nestjs/common/constants';
 import { RouteParamtypes } from '@nestjs/common/enums/route-paramtypes.enum';
 import { Request } from 'express';
@@ -17,6 +17,19 @@ const FORM_BODY = 'jhipster:formBody';
 /** A route whose body is a form (application/x-www-form-urlencoded), not JSON. */
 export const FormBody = (): MethodDecorator => SetMetadata(FORM_BODY, true);
 
+/**
+ * The detail of a content type not supported, the one of JHipster Spring Boot: a type without / is not a media type, and
+ * the type of a request gets the UTF-8 charset of the servlet when it tells none; a PATCH, whose route consumes its JSON
+ * types, tells the type as it came.
+ */
+const unsupportedDetail = (contentType: string, method: string): string => {
+  if (!contentType.split(';')[0].includes('/')) {
+    return `Invalid mime type "${contentType}": does not contain '/'`;
+  }
+  const withCharset = method === 'PATCH' || /;\s*charset=/i.test(contentType) ? contentType : `${contentType};charset=UTF-8`;
+  return `Content-Type '${withCharset}' is not supported`;
+};
+
 /** The @Body() parameters of a route handler, by their kind and index. */
 type RouteArguments = Record<string, { index: number; data?: unknown }>;
 
@@ -31,15 +44,12 @@ export class JsonBodyInterceptor implements NestInterceptor {
 
   intercept(context: ExecutionContext, next: CallHandler): Observable<unknown> {
     if (context.getType() === 'http' && this.readsJson(context)) {
-      const { headers } = context.switchToHttp().getRequest<Request>();
+      const { headers, method } = context.switchToHttp().getRequest<Request>();
       const contentType = headers['content-type'];
       const hasBody = headers['transfer-encoding'] !== undefined || Number(headers['content-length'] ?? 0) > 0;
       // A body without content type is of an unknown one.
       if (contentType === undefined ? hasBody : !JSON_TYPE.test(contentType.split(';')[0].trim())) {
-        throw new HttpException(
-          `Content-Type '${contentType ?? 'application/octet-stream'}' is not supported`,
-          HttpStatus.UNSUPPORTED_MEDIA_TYPE,
-        );
+        throw new UnsupportedMediaTypeException(unsupportedDetail(contentType ?? 'application/octet-stream', method));
       }
       if (!hasBody) {
         throw unreadableBodyException();

@@ -1,0 +1,24 @@
+import { describe, expect, it } from 'vitest';
+import { IsInt } from 'class-validator';
+
+import { BodyValidationPipe } from './body-validation.pipe.ts';
+import { validationException } from './problem.exception.ts';
+
+class PageParams {
+  @IsInt()
+  page!: number;
+}
+
+describe('BodyValidationPipe', () => {
+  const pipe = new BodyValidationPipe({ exceptionFactory: validationException, whitelist: true, transform: true });
+
+  it('leaves a primitive parameter of the path or of the query as its text, for the pipe of its route', async () => {
+    expect(await pipe.transform('abc', { type: 'param', data: 'id', metatype: Number })).toBe('abc');
+    expect(await pipe.transform('nope', { type: 'query', data: 'eagerload', metatype: Boolean })).toBe('nope');
+  });
+
+  it('validates a DTO of parameters like a body', async () => {
+    await expect(pipe.transform({ page: 'x' }, { type: 'query', metatype: PageParams })).rejects.toThrow();
+    await expect(pipe.transform({ page: 'x' }, { type: 'param', metatype: PageParams })).rejects.toThrow();
+  });
+});

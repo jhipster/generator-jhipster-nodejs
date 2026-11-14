@@ -916,6 +916,8 @@ describe('SubGenerator node-server of nodejs JHipster blueprint', () => {
     const region = {
       name: 'Region',
       changelogDate: '20240101000001',
+      // A list with pagination, which reads the sort: without it, like JHipster Spring Boot, the list reads none.
+      pagination: 'pagination',
       fields: [
         { fieldName: 'name', fieldType: 'String' },
         { fieldName: 'secret', fieldType: 'String', options: { notSortable: true } },
@@ -1017,8 +1019,11 @@ describe('SubGenerator node-server of nodejs JHipster blueprint', () => {
       result.assertNoFileContent('server/src/entities/book/dto/book.dto.ts', 'undefined');
     });
 
-    it('should validate a required blob, so the whitelist of the ValidationPipe keeps it', () => {
-      result.assertFileContent('server/src/entities/book/dto/book.dto.ts', /@IsNotEmpty\(\)\s+@ApiProperty\([^)]*\)\s+cover!/);
+    it('should validate a required blob, so the whitelist of the ValidationPipe keeps it, as base64 like JHipster Spring Boot', () => {
+      result.assertFileContent(
+        'server/src/entities/book/dto/book.dto.ts',
+        /@IsNotEmpty\(\)\s+@IsBase64\(\{\}, UNREADABLE\)\s+@ApiProperty\([^)]*\)\s+cover!/,
+      );
     });
 
     it('should refuse a value out of an enum, like the JSON deserialization of Spring Boot', () => {

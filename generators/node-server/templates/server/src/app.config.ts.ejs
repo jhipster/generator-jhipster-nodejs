@@ -103,6 +103,18 @@ const preflightRequests =
     }
   };
 
+/** The decoder of the JSON bodies, which refuses a byte sequence that is not UTF-8. */
+const UTF8 = new TextDecoder('utf-8', { fatal: true });
+
+/** Refuses a body that is not UTF-8, a SyntaxError like the one of a malformed JSON body (400). */
+function rejectInvalidUtf8(_req: unknown, _res: unknown, body: Buffer): void {
+  try {
+    UTF8.decode(body);
+  } catch {
+    throw Object.assign(new SyntaxError('The body is not UTF-8'), { status: 400 });
+  }
+}
+
 /**
  * A middleware writing the headers of every response, like the default headers of Spring Security and the headers of
  * the SecurityConfiguration of JHipster Spring Boot<%- skipClient ? '' : ' (jhipster.security.content-security-policy)' %>.
@@ -194,7 +206,12 @@ export function configureApp(app: INestApplication): INestApplication {
   // The JSON bodies up to 10 MB, the blobs of the entities as base64 included (the 100 KB default of Express refused an
   // image of about 75 KB with 413). Like JHipster Spring Boot, application/json and the types of its suffix: the partial
   // updates (PATCH) accept application/merge-patch+json.
-  (app as NestExpressApplication).useBodyParser('json', { limit: '10mb', type: ['json', '+json'] });
+  // A body that is not UTF-8 is refused like a malformed one, as the JSON deserialization of Spring does. Nest reserves the
+  // verify option of the parser for its rawBody option, which this application does not use, and its type leaves it out:
+  // an application created with rawBody: true replaces this verify function, and has to check the UTF-8 of its bodies
+  // from req.rawBody.
+  const jsonOptions = { limit: '10mb', type: ['json', '+json'], verify: rejectInvalidUtf8 };
+  (app as NestExpressApplication).useBodyParser('json', jsonOptions);
   // Disable cache.
   app.getHttpAdapter().getInstance().set('etag', false);
   return app;

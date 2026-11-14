@@ -197,10 +197,11 @@ describe('Registration', () => {
             .expect(400);
     });
 
-    it('/GET activate account without key', async () => {
-        await request(app.getHttpServer())
+    it('/GET activate account without key, like the required parameter of JHipster Spring Boot', async () => {
+        const { body } = await request(app.getHttpServer())
             .get('/api/activate')
             .expect(400);
+        expect(body).toMatchObject({ title: 'Bad Request', detail: "Required request parameter 'key' for method parameter type String is not present" });
     });
 
 

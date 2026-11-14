@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { isRejectedUrl, pathAccess, pathPatternRegExp, requestPath } from './path-rules.ts';
+import { isFirewallRejected, isRejectedUrl, pathAccess, pathPatternRegExp, requestPath } from './path-rules.ts';
 
 describe('path rules', () => {
   it('matches the paths under a ** pattern, its own path included, whatever their case', () => {
@@ -24,6 +24,13 @@ describe('path rules', () => {
 
   it('refuses a URL with a backslash or a fragment, which Express reads another way', () => {
     expect(['/management\\env#x', '/api\\admin/users', '/api/x#y', '/api/x?y=%23'].map(isRejectedUrl)).toEqual([true, true, true, false]);
+    // An encoded slash or a NUL, refused by the server of Spring too.
+    expect(['/api/x%2F1', '/api/x/%00', '/api/x?y=%2F'].map(isRejectedUrl)).toEqual([true, true, false]);
+  });
+
+  it('tells the requests the firewall of Spring Security refuses', () => {
+    expect(isFirewallRejected('TRACE', '/api/x')).toBe(true);
+    expect(['//api/x', '/api/x;y=1', '/api/x/%25', '/api/x?y=a//b;c'].map(url => isFirewallRejected('GET', url))).toEqual([true, true, true, false]);
   });
 
   it('gives the access of the first rule matching a request', () => {

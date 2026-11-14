@@ -99,9 +99,12 @@ _%>
     }
     );
 
-<%_ const sortField = fields.find(field => !field.id && field.fieldSupportsSortBy);
-    const notSortableField = fields.find(field => !field.id && !field.transient && !field.fieldSupportsSortBy);
-    const inverseOneToOne = databaseTypeSql && nodejsMappedByRelationships.find(relationship => relationship.relationshipOneToOne);
+<%_ // Without pagination, the list reads no sort, like JHipster Spring Boot.
+    const sortsList = pagination !== 'no';
+    const sortField = fields.find(field => !field.id && field.fieldSupportsSortBy);
+    const notSortableField = sortsList && fields.find(field => !field.id && !field.transient && !field.fieldSupportsSortBy);
+    const inverseOneToOne = sortsList && databaseTypeSql && nodejsMappedByRelationships.find(relationship => relationship.relationshipOneToOne);
+    const sortExample = sortsList && nodejsSortExample;
 _%>
 
     it('/GET all <%- entityApiUrl %> sorted on a property of the entity', async () => {
@@ -119,31 +122,31 @@ _%>
         expect(response.body).toMatchObject({ message: 'error.notsortable', params: '<%- entityAlertName %>' });
     });
 <%_ } _%>
-<%_ if (nodejsSortExample) { _%>
+<%_ if (sortExample) { _%>
 
     it('/GET all <%- entityApiUrl %> sorted on a column of a relationship to one, like JHipster Spring Boot', async () => {
         await request(app.getHttpServer())
-            .get('/api/<%- entityApiUrl %>?sort=<%- nodejsSortExample.property %>.<%- nodejsSortExample.column %>,desc')
+            .get('/api/<%- entityApiUrl %>?sort=<%- sortExample.property %>.<%- sortExample.column %>,desc')
             .expect(200);
     });
 
     it('/GET all <%- entityApiUrl %> sorted on what is not a column of a relationship', async () => {
         await request(app.getHttpServer())
-            .get('/api/<%- entityApiUrl %>?sort=<%- nodejsSortExample.property %>.doesNotExist,asc')
+            .get('/api/<%- entityApiUrl %>?sort=<%- sortExample.property %>.doesNotExist,asc')
             .expect(400);
     });
 
     it('/GET all <%- entityApiUrl %> sorted on a relationship itself or a deeper property of it', async () => {
-        await request(app.getHttpServer()).get('/api/<%- entityApiUrl %>?sort=<%- nodejsSortExample.property %>,asc').expect(400);
+        await request(app.getHttpServer()).get('/api/<%- entityApiUrl %>?sort=<%- sortExample.property %>,asc').expect(400);
         await request(app.getHttpServer())
-            .get('/api/<%- entityApiUrl %>?sort=<%- nodejsSortExample.property %>.<%- nodejsSortExample.column %>.unknown,asc')
+            .get('/api/<%- entityApiUrl %>?sort=<%- sortExample.property %>.<%- sortExample.column %>.unknown,asc')
             .expect(400);
     });
-  <%_ if (nodejsSortExample.builtInUser) { _%>
+  <%_ if (sortExample.builtInUser) { _%>
 
     it('/GET all <%- entityApiUrl %> sorted on the password of the related user, marked @NotSortable', async () => {
         await request(app.getHttpServer())
-            .get('/api/<%- entityApiUrl %>?sort=<%- nodejsSortExample.property %>.password,asc')
+            .get('/api/<%- entityApiUrl %>?sort=<%- sortExample.property %>.password,asc')
             .expect(400);
     });
   <%_ } _%>
@@ -157,6 +160,10 @@ _%>
     });
 
 <%_ } _%>
+<%_ if (pagination === 'no') { _%>
+    it('/GET all <%- entityApiUrl %> reads no sort without pagination, like JHipster Spring Boot', () =>
+        request(app.getHttpServer()).get('/api/<%- entityApiUrl %>?sort=unknownProperty,asc').expect(200));
+<%_ } else { _%>
     it('/GET all <%- entityApiUrl %> sorted on an unknown property', async () => {
         const response = await request(app.getHttpServer())
             .get('/api/<%- entityApiUrl %>?sort=unknownProperty,asc')
@@ -175,6 +182,13 @@ _%>
 
         expect(response.body).toMatchObject({ message: 'error.notsortable', params: '<%- entityAlertName %>' });
     });
+
+    it('/GET all <%- entityApiUrl %> with the sort parameter of Spring Data: an empty property left out, a value that is not a direction a property', async () => {
+        await request(app.getHttpServer()).get('/api/<%- entityApiUrl %>?sort=,asc').expect(200);
+        const { body } = await request(app.getHttpServer()).get('/api/<%- entityApiUrl %>?sort=<%- primaryKey.name %>,sideways').expect(400);
+        expect(body).toMatchObject({ message: 'error.notsortable' });
+    });
+<%_ } _%>
 <%_ if (nodejsCriteria) { _%>
 
     it('/GET the count of <%- entityApiUrl %> matching the criteria, as JSON like JHipster Spring Boot', async () => {
@@ -463,12 +477,36 @@ _%>
         expect(body).toMatchObject({ message: 'error.http.400', detail: 'Failed to read request' });
     });
 
+    it('/POST create <%- entityApiUrl %> with a body that is not UTF-8 is a body that is not read, like JHipster Spring Boot', async () => {
+        const { body } = await request(app.getHttpServer())
+            .post('/api/<%- entityApiUrl %>')
+            .type('json')
+            // The bytes as they are, which supertest would send as the JSON of a Buffer.
+            .serialize((bytes: string) => bytes)
+            .send(Buffer.from([0x7b, 0x22, 0xff, 0xfe, 0x22, 0x3a, 0x31, 0x7d]) as unknown as string)
+            .expect(400);
+        expect(body).toMatchObject({ message: 'error.http.400', detail: 'Failed to read request' });
+    });
+
+<%_ if (!jpaMetamodelFiltering && implementsEagerLoadApis) { _%>
+    it('/GET all <%- entityApiUrl %> with an eagerload flag that is not a boolean, like the conversion of JHipster Spring Boot', async () => {
+        await request(app.getHttpServer()).get('/api/<%- entityApiUrl %>?eagerload=true').expect(200);
+        const { body } = await request(app.getHttpServer()).get('/api/<%- entityApiUrl %>?eagerload=nope').expect(400);
+        expect(body).toMatchObject({ detail: "Failed to convert 'eagerload' with value: 'nope'" });
+    });
+
+<%_ } _%>
+    it('/GET <%- entityApiUrl %> to a client accepting no JSON is not acceptable, like JHipster Spring Boot', async () => {
+        const { body } = await request(app.getHttpServer()).get('/api/<%- entityApiUrl %>').set('Accept', 'application/xml').expect(406);
+        expect(body).toMatchObject({ message: 'error.http.406', detail: 'No acceptable representation' });
+    });
+
     it('/POST create <%- entityApiUrl %> with another content type than JSON is a media type not supported, like JHipster Spring Boot', async () => {
         const json = JSON.stringify(newEntity);
         const response = await request(app.getHttpServer()).post('/api/<%- entityApiUrl %>').type('text/plain').send(json).expect(415);
         expect(response.body).toMatchObject({
             title: 'Unsupported Media Type',
-            detail: "Content-Type 'text/plain' is not supported",
+            detail: "Content-Type 'text/plain;charset=UTF-8' is not supported",
             message: 'error.http.415',
         });
         await request(app.getHttpServer()).post('/api/<%- entityApiUrl %>').type('form').send({ a: 'b' }).expect(415);
