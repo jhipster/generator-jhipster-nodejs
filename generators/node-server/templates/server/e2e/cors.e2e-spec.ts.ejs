@@ -34,6 +34,15 @@ describe('CORS', () => {
                 throw new Error(`Unexpected Access-Control-Allow-Origin: ${response.headers['access-control-allow-origin']}`);
             }
         });
+
+        it('answers a preflight request 200 without headers, like the CorsFilter of Spring', async () => {
+            const response = await request(app.getHttpServer())
+                .options('/api/account')
+                .set('Origin', 'http://localhost:9000')
+                .set('Access-Control-Request-Method', 'GET')
+                .expect(200);
+            expect(Object.keys(response.headers).filter(name => name.startsWith('access-control-'))).toEqual([]);
+        });
     });
 
     describe('with the properties of the dev profile', () => {
@@ -58,22 +67,42 @@ describe('CORS', () => {
                 .expect('Access-Control-Allow-Credentials', 'true')
                 .expect('Access-Control-Expose-Headers', 'Authorization,Link,X-Total-Count'));
 
-        it('allows an origin of a pattern on a preflight request of /api', () =>
+        it('allows an origin of a pattern on a preflight request of /api, the method it asks for', () =>
             request(app.getHttpServer())
                 .options('/api/account')
                 .set('Origin', 'https://my-codespace.githubpreview.dev')
                 .set('Access-Control-Request-Method', 'POST')
                 .set('Access-Control-Request-Headers', 'authorization,content-type')
-                .expect(204)
+                .expect(200)
                 .expect('Access-Control-Allow-Origin', 'https://my-codespace.githubpreview.dev')
+                .expect('Access-Control-Allow-Methods', 'POST')
                 .expect('Access-Control-Allow-Headers', 'authorization,content-type')
                 .expect('Access-Control-Max-Age', '1800'));
 
-        it('does not allow another origin', async () => {
+        it('gives no Access-Control-* header to another origin, like the CorsFilter of Spring', async () => {
             const response = await request(app.getHttpServer()).get('/management/health').set('Origin', 'http://other.example.com').expect(200);
-            if (response.headers['access-control-allow-origin'] !== undefined) {
-                throw new Error(`Unexpected Access-Control-Allow-Origin: ${response.headers['access-control-allow-origin']}`);
-            }
+            expect(Object.keys(response.headers).filter(name => name.startsWith('access-control-'))).toEqual([]);
+            const preflight = await request(app.getHttpServer())
+                .options('/api/account')
+                .set('Origin', 'http://other.example.com')
+                .set('Access-Control-Request-Method', 'GET')
+                .expect(403);
+            expect(preflight.text).toBe('Invalid CORS request');
+            expect(Object.keys(preflight.headers).filter(name => name.startsWith('access-control-'))).toEqual([]);
+        });
+
+        it('answers a preflight request out of the paths of the API without headers, like the CorsFilter of Spring', async () => {
+            const response = await request(app.getHttpServer())
+                .options('/nothing')
+                .set('Origin', 'http://localhost:9000')
+                .set('Access-Control-Request-Method', 'GET')
+                .expect(200);
+            expect(Object.keys(response.headers).filter(name => name.startsWith('access-control-'))).toEqual([]);
+        });
+
+        it('answers an OPTIONS without Origin as any request, not a CORS one', async () => {
+            const response = await request(app.getHttpServer()).options('/api/account').expect(401);
+            expect(Object.keys(response.headers).filter(name => name.startsWith('access-control-'))).toEqual([]);
         });
     });
 

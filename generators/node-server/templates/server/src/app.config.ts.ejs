@@ -60,14 +60,54 @@ export function corsOptions(configService: AppConfigService): CorsOptions | unde
   return {
     // * allows any origin, like the allowed origins of the CorsConfiguration of Spring (cors compares the origins as given).
     origin: allowedOrigins.includes('*') ? '*' : [...allowedOrigins, ...allowedOriginPatterns],
-    // Left out for *: the default methods of cors (all of them), the request headers echoed.
+    // Left out for *: the method of a preflight request is the one allowed (corsRequestOptions), the request headers echoed.
     ...(allowedMethods.includes('*') ? {} : { methods: allowedMethods }),
     ...(allowedHeaders.includes('*') ? {} : { allowedHeaders }),
     exposedHeaders: propertyList(cors['exposed-headers']),
     credentials,
     ...(maxAge > 0 ? { maxAge } : {}),
+    // The status of a preflight request allowed, like Spring.
+    optionsSuccessStatus: 200,
   };
 }
+
+/** Whether a request is a preflight request of CORS: an OPTIONS with an Origin and the method it asks for. */
+const isPreflight = (req: Request): boolean =>
+  req.method === 'OPTIONS' && req.headers.origin !== undefined && req.headers['access-control-request-method'] !== undefined;
+
+/** Whether the CORS options allow an origin: one of their origins or patterns, or any for *. */
+const allowsOrigin = ({ origin }: CorsOptions, value: string): boolean =>
+  origin === '*' || (Array.isArray(origin) && origin.some(allowed => (allowed instanceof RegExp ? allowed.test(value) : allowed === value)));
+
+/**
+ * The CORS options of a request, like the CorsFilter of JHipster Spring Boot: a request of an allowed origin to a path
+ * of the API only, else none of the Access-Control-* headers. With * as the allowed methods, a preflight request is
+ * allowed the method it asks for.
+ */
+export function corsRequestOptions(cors: CorsOptions, req: Request): CorsOptions {
+  const origin = req.headers.origin;
+  if (origin === undefined || !CORS_PATHS.some(path => path.test(req.url)) || !allowsOrigin(cors, origin)) {
+    return { origin: false };
+  }
+  const method = req.headers['access-control-request-method'];
+  return cors.methods === undefined && typeof method === 'string' ? { ...cors, methods: [method] } : cors;
+}
+
+/**
+ * The preflight requests cors does not answer, like the CorsFilter of Spring, which answers every one: with CORS, 403 to
+ * an origin not allowed on a path of the API, else 200 without headers. They never reach the rules of the paths.
+ */
+const preflightRequests =
+  (corsEnabled: boolean) =>
+  (req: Request, res: Response, next: NextFunction): void => {
+    if (!isPreflight(req)) {
+      next();
+    } else if (corsEnabled && CORS_PATHS.some(path => path.test(req.url))) {
+      res.status(403).type('text/plain').send('Invalid CORS request');
+    } else {
+      res.status(200).end();
+    }
+  };
 
 /**
  * A middleware writing the headers of every response, like the default headers of Spring Security and the headers of
@@ -131,9 +171,10 @@ export function configureApp(app: INestApplication): INestApplication {
   const cors = corsOptions(configService);
   if (cors) {
     app.enableCors((req: Request, callback: (error: Error | null, options: CorsOptions) => void) =>
-      callback(null, CORS_PATHS.some(path => path.test(req.url)) ? cors : { origin: false }),
+      callback(null, corsRequestOptions(cors, req)),
     );
   }
+  app.use(preflightRequests(cors !== undefined));
 <%_ if (authenticationUsesCsrf && generateAuthenticationApi) { _%>
   app.use(
     session({
