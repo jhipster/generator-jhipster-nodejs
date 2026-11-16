@@ -1,0 +1,25 @@
+import { HttpStatus, Injectable, PipeTransform } from '@nestjs/common';
+
+import { CONSTRAINT_VIOLATION_TYPE, ERR_VALIDATION, VALIDATION_DETAIL } from '../common/errors/error-constants.ts';
+import { ProblemException } from '../common/errors/problem.exception.ts';
+import { LOGIN_PATTERN } from './dto/user.dto.ts';
+
+/**
+ * The login of the path of a user, like the @Pattern of the login parameter of the UserResource of JHipster Spring Boot:
+ * a login out of the pattern is a validation error, its field error the one of a method validation of Spring.
+ */
+@Injectable()
+export class LoginPathPipe implements PipeTransform<string, string> {
+  transform(login: string): string {
+    if (!LOGIN_PATTERN.test(login)) {
+      throw new ProblemException(HttpStatus.BAD_REQUEST, {
+        type: CONSTRAINT_VIOLATION_TYPE,
+        title: 'Method argument not valid',
+        detail: VALIDATION_DETAIL,
+        message: ERR_VALIDATION,
+        fieldErrors: [{ objectName: 'userResource', field: 'login', message: `login must match ${LOGIN_PATTERN} regular expression`, code: 'Pattern' }],
+      });
+    }
+    return login;
+  }
+}

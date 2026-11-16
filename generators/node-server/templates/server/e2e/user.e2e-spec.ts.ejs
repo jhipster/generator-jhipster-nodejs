@@ -301,6 +301,23 @@ describe('User', () => {
         expect(response.body).toMatchObject({ message: 'error.http.405', title: 'Method Not Allowed' });
     });
 
+    it('/GET, /PUT and /DELETE user with a login out of the pattern in the path is a validation error, like JHipster Spring Boot', async () => {
+        const path = '/api/admin/users/not%20a%20login';
+        const responses = [
+            await request(app.getHttpServer()).get(path).expect(400),
+            await request(app.getHttpServer()).put(path).send({ ...testUserRequestObject, login: 'not a login' }).expect(400),
+            await request(app.getHttpServer()).delete(path).expect(400),
+        ];
+        for (const { body } of responses) {
+            expect(body).toMatchObject({
+                type: 'https://www.jhipster.tech/problem/constraint-violation',
+                title: 'Method argument not valid',
+                message: 'error.validation',
+                fieldErrors: [{ objectName: 'userResource', field: 'login', message: expect.any(String), code: 'Pattern' }],
+            });
+        }
+    });
+
     it('/PUT update an unknown user is not found, like JHipster Spring Boot', () =>
         request(app.getHttpServer())
             .put('/api/admin/users/unknownuser')

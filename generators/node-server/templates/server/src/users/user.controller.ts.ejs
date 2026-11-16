@@ -8,6 +8,7 @@ import {
 <%_ if (authenticationTypeJwt) { _%> ApiBearerAuth, 
 <%_ } else { _%> ApiSecurity, 
 <%_ } _%> ApiTags, ApiResponse, ApiOperation } from '@nestjs/swagger';
+import { LoginPathPipe } from './login-path.pipe.ts';
 import { UserService } from './user.service.ts';
 import { MailService } from '../mail/mail.service.ts';
 import { randomBytes } from 'crypto';
@@ -122,7 +123,7 @@ export class UserController {
   })
   @ApiResponse({ status: 400, description: 'The login of the path is not the one of the body, or the login or the mail is used by another user.' })
   @ApiResponse({ status: 404, description: 'No user of this id.' })
-  async updateUser(@Req() req: Request, @Param('login') loginValue: string, @Body() userDTO: <%- user.dtoClass %>): Promise<<%- user.dtoClass %>> {
+  async updateUser(@Req() req: Request, @Param('login', LoginPathPipe) loginValue: string, @Body() userDTO: <%- user.dtoClass %>): Promise<<%- user.dtoClass %>> {
     // The login of the path is the one of the body, the new one when it changes, like the id of an entity: a login is the
     // same in upper or lower case.
     if (loginValue.toLowerCase() !== userDTO.login.toLowerCase()) {
@@ -170,7 +171,7 @@ export class UserController {
       description: 'The found record',
       type: <%- user.dtoClass %>,
   })
-  async getUser(@Param('login') loginValue: string): Promise<<%- user.dtoClass %>> {
+  async getUser(@Param('login', LoginPathPipe) loginValue: string): Promise<<%- user.dtoClass %>> {
       // With its authorities, which the edition page of the client shows and sends back.
       const user = await this.userService.findByFields({ where: { login: loginValue } });
       if (!user) {
@@ -186,7 +187,7 @@ export class UserController {
       status: 204,
       description: 'The record has been successfully deleted.',
   })
-  async deleteUser(@Req() req: Request, @Param('login') loginValue: string): Promise<void> {
+  async deleteUser(@Req() req: Request, @Param('login', LoginPathPipe) loginValue: string): Promise<void> {
       // Like JHipster Spring Boot, the same answer for a login without a user.
       const userToDelete = await this.userService.find({ where: { login: loginValue } });
       if (userToDelete) {

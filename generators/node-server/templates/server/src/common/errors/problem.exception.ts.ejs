@@ -7,6 +7,8 @@ export interface FieldErrorVM {
   objectName: string;
   field: string;
   message: string;
+  /** The code of the constraint, like Pattern. */
+  code?: string;
 }
 
 /** The properties of a problem detail the exception gives, the others are completed by the ProblemDetailsFilter. */

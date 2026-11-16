@@ -13,6 +13,7 @@ export const serverFiles = {
       condition: ctx => ctx.generateUserManagement,
       templates: [
         'src/users/user.controller.ts',
+        'src/users/login-path.pipe.ts',
         'e2e/user.e2e-spec.ts',
         'src/mail/mail.service.ts',
         'src/mail/mail.module.ts',

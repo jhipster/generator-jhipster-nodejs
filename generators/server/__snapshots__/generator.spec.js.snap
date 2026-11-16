@@ -443,6 +443,9 @@ exports[`SubGenerator server of nodejs JHipster blueprint > run > should match t
   "server/src/users/dto/user.dto.ts": {
     "stateCleared": "modified",
   },
+  "server/src/users/login-path.pipe.ts": {
+    "stateCleared": "modified",
+  },
   "server/src/users/public.user.controller.ts": {
     "stateCleared": "modified",
   },
