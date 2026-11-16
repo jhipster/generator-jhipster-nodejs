@@ -5,7 +5,7 @@ import { ApiConsumes, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger
 import { Request, Response } from 'express';
 import { FormBody } from '../common/errors/json-body.interceptor.ts';
 import { AuthService } from './auth.service.ts';
-import { checkLoginCsrfToken, setCsrfCookie } from './csrf.middleware.ts';
+import { LoginCsrfGuard, setCsrfCookie } from './csrf.middleware.ts';
 import { sessionUser } from './session-user.middleware.ts';
 import { AuthGuard } from './guards/auth.guard.ts';
 import { describeSession, RememberMeService } from './remember-me.service.ts';
@@ -42,17 +42,14 @@ export class UserSessionController {
   @Post('/authentication')
   @HttpCode(200)
   @ApiConsumes('application/x-www-form-urlencoded')
+  // Like the formLogin of Spring Security, the parameters of a form only: another body, like JSON, logs nobody in.
   @FormBody()
+  @UseGuards(LoginCsrfGuard)
   @ApiOperation({ summary: 'Log in, in a new session' })
   @ApiResponse({ status: 200, description: 'Logged in' })
   @ApiResponse({ status: 401, description: 'Invalid login, password, or a user not activated' })
   @ApiResponse({ status: 403, description: 'Without the CSRF token of the XSRF-TOKEN cookie' })
   async authenticate(@Req() req: Request, @Res({ passthrough: true }) res: Response, @Body() form: LoginForm): Promise<void> {
-    checkLoginCsrfToken(req);
-    // Like the formLogin of Spring Security, the parameters of a form only: another body, like JSON, logs nobody in.
-    if (!req.is('application/x-www-form-urlencoded')) {
-      throw new UnauthorizedException();
-    }
     if (typeof form?.username !== 'string' || typeof form.password !== 'string' || !form.username || !form.password) {
       throw new UnauthorizedException();
     }

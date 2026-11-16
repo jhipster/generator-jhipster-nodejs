@@ -92,6 +92,8 @@ describe('Session authentication', () => {
     // Express routes the paths whatever their case and a trailing slash.
     for (const path of ['/api/authentication', '/API/Authentication', '/api/authentication/']) {
       await agent.post(path).type('form').send({ username: 'session-user', password }).expect(403);
+      // The CSRF token first, then the body: a JSON body without the token is refused 403 too.
+      await agent.post(path).send({ username: 'session-user', password }).expect(403);
     }
     await agent.get('/api/account').expect(401);
   });

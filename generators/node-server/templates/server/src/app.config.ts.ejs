@@ -31,6 +31,7 @@ function propertyList(value: string | undefined): string[] {
  * The CORS options of the jhipster.cors properties, like the CorsConfiguration of JHipster Spring Boot: undefined when
  * neither allowed-origins nor allowed-origin-patterns is set (CORS disabled, the default but in the dev profile).
  * A pattern matches any value where it has a *, like https://*.githubpreview.dev; * as methods or headers allows them all.
+ * Without allowed-methods, GET and HEAD are, the default methods of Spring.
  */
 export function corsOptions(configService: AppConfigService): CorsOptions | undefined {
   const cors = configService.get('jhipster.cors', { infer: true });
@@ -41,7 +42,8 @@ export function corsOptions(configService: AppConfigService): CorsOptions | unde
   if (allowedOrigins.length === 0 && allowedOriginPatterns.length === 0) {
     return undefined;
   }
-  const allowedMethods = propertyList(cors['allowed-methods']);
+  const configuredMethods = propertyList(cors['allowed-methods']);
+  const allowedMethods = configuredMethods.length > 0 ? configuredMethods : ['GET', 'HEAD'];
   const allowedHeaders = propertyList(cors['allowed-headers']);
   const maxAge = Number(cors['max-age']);
   const credentials = String(cors['allow-credentials']) === 'true';
@@ -73,14 +75,41 @@ const isPreflight = (req: Request): boolean =>
 const allowsOrigin = ({ origin }: CorsOptions, value: string): boolean =>
   origin === '*' || (Array.isArray(origin) && origin.some(allowed => (allowed instanceof RegExp ? allowed.test(value) : allowed === value)));
 
+/** A list of CORS options: undefined for * (all allowed). */
+const optionList = (value: string | string[] | undefined): string[] | undefined =>
+  value === undefined ? undefined : typeof value === 'string' ? value.split(',') : value;
+
+/**
+ * Whether the CORS options allow what a preflight request asks for, like the CorsConfiguration of Spring: its method, and
+ * one of its headers at least when it asks for some.
+ */
+const allowsPreflight = ({ methods, allowedHeaders }: CorsOptions, req: Request): boolean => {
+  const allowedMethods = optionList(methods);
+  if (allowedMethods !== undefined && !allowedMethods.includes(String(req.headers['access-control-request-method']))) {
+    return false;
+  }
+  const requestHeaders = String(req.headers['access-control-request-headers'] ?? '')
+    .split(',')
+    .map(header => header.trim().toLowerCase())
+    .filter(Boolean);
+  const headers = optionList(allowedHeaders)?.map(header => header.toLowerCase());
+  return requestHeaders.length === 0 || headers === undefined || requestHeaders.some(header => headers.includes(header));
+};
+
 /**
  * The CORS options of a request, like the CorsFilter of JHipster Spring Boot: a request of an allowed origin to a path
- * of the API only, else none of the Access-Control-* headers. With * as the allowed methods, a preflight request is
- * allowed the method it asks for.
+ * of the API only, else none of the Access-Control-* headers, and a preflight request of a method or of headers not
+ * allowed is refused (preflightRequests). With * as the allowed methods, a preflight request is allowed the method it
+ * asks for.
  */
 export function corsRequestOptions(cors: CorsOptions, req: Request): CorsOptions {
   const origin = req.headers.origin;
-  if (origin === undefined || !CORS_PATHS.some(path => path.test(req.url)) || !allowsOrigin(cors, origin)) {
+  if (
+    origin === undefined ||
+    !CORS_PATHS.some(path => path.test(req.url)) ||
+    !allowsOrigin(cors, origin) ||
+    (isPreflight(req) && !allowsPreflight(cors, req))
+  ) {
     return { origin: false };
   }
   const method = req.headers['access-control-request-method'];
@@ -89,7 +118,7 @@ export function corsRequestOptions(cors: CorsOptions, req: Request): CorsOptions
 
 /**
  * The preflight requests cors does not answer, like the CorsFilter of Spring, which answers every one: with CORS, 403 to
- * an origin not allowed on a path of the API, else 200 without headers. They never reach the rules of the paths.
+ * an origin, a method or headers not allowed on a path of the API, else 200 without headers. They never reach the rules of the paths.
  */
 const preflightRequests =
   (corsEnabled: boolean) =>

@@ -1,9 +1,9 @@
-import { Controller, ClassSerializerInterceptor, Get, Req, UseGuards, UseInterceptors } from '@nestjs/common';
+import { Controller, ClassSerializerInterceptor, Get, Res, UseGuards, UseInterceptors } from '@nestjs/common';
 import { Pageable } from '../common/database/pageable.ts';
 import { PageRequest, Page } from '../common/database/pagination.entity.ts';
 import { PublicUserDTO } from './dto/user.dto.ts';
 import { AuthGuard } from '../auth/index.ts';
-import { Request } from '../common/request.ts';
+import { Response } from 'express';
 import { HeaderUtil } from '../common/header-util.ts';
 import { ApiTags, ApiResponse, ApiOperation } from '@nestjs/swagger';
 import { UserService } from './user.service.ts';
@@ -33,7 +33,7 @@ export class PublicUserController {
       isArray: true,
   })
   async getAllPublicUsers(
-    @Req() req: Request,
+    @Res({ passthrough: true }) res: Response,
     @Pageable({ defaultSort: '<%- user.primaryKey.name %>,ASC', properties: ALLOWED_ORDERED_PROPERTIES, entityName: 'user' }) pageRequest: PageRequest,
   ): Promise<PublicUserDTO[]> {
       const [results, count] = await this.userService.findPublicUsers({
@@ -41,7 +41,7 @@ export class PublicUserController {
           take: +pageRequest.size,
           order: pageRequest.asOrder(),
       });
-      this.headerUtil.addPaginationHeaders(req.res, new Page(results, count, pageRequest));
+      this.headerUtil.addPaginationHeaders(res, new Page(results, count, pageRequest));
       return results;
   }
 

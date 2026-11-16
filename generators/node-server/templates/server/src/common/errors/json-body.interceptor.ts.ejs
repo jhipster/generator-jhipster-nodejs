@@ -1,4 +1,4 @@
-import { CallHandler, ExecutionContext, Injectable, NestInterceptor, SetMetadata, UnsupportedMediaTypeException } from '@nestjs/common';
+import { CallHandler, ExecutionContext, Injectable, NestInterceptor, SetMetadata, UnauthorizedException, UnsupportedMediaTypeException } from '@nestjs/common';
 import { ROUTE_ARGS_METADATA } from '@nestjs/common/constants';
 import { RouteParamtypes } from '@nestjs/common/enums/route-paramtypes.enum';
 import { Request } from 'express';
@@ -14,7 +14,10 @@ const NOT_OBJECTS: unknown[] = [String, Number, Boolean, Array];
 
 const FORM_BODY = 'jhipster:formBody';
 
-/** A route whose body is a form (application/x-www-form-urlencoded), not JSON. */
+/**
+ * A route whose body is a form (application/x-www-form-urlencoded), not JSON: the session login, which reads the parameters
+ * of a form only, like the formLogin of Spring Security.
+ */
 export const FormBody = (): MethodDecorator => SetMetadata(FORM_BODY, true);
 
 /**
@@ -30,20 +33,29 @@ const unsupportedDetail = (contentType: string, method: string): string => {
   return `Content-Type '${withCharset}' is not supported`;
 };
 
+/** What a route handler reads as its body: a JSON object, a form, or neither. */
+type BodyKind = 'json' | 'form' | undefined;
+
 /** The @Body() parameters of a route handler, by their kind and index. */
 type RouteArguments = Record<string, { index: number; data?: unknown }>;
 
 /**
  * Refuses the body of another content type than JSON of a route that reads an object, like JHipster Spring Boot: 415, and
- * 400 without a body. A route of a form (@FormBody()) reads its own. Its place is after the guards, the authorization of the route first, and before the validation.
+ * 400 without a body. A route of a form (@FormBody()) logs nobody in with another body, like the formLogin of Spring Security:
+ * 401. Its place is after the guards, the authorization of the route (and the CSRF check of the login) first, and before the
+ * validation.
  */
 @Injectable()
 export class JsonBodyInterceptor implements NestInterceptor {
-  /** Whether a route handler reads a JSON object as its body. */
-  private readonly handlers = new WeakMap<object, boolean>();
+  /** What a route handler reads as its body. */
+  private readonly handlers = new WeakMap<object, BodyKind>();
 
   intercept(context: ExecutionContext, next: CallHandler): Observable<unknown> {
-    if (context.getType() === 'http' && this.readsJson(context)) {
+    const kind = context.getType() === 'http' ? this.bodyKind(context) : undefined;
+    if (kind === 'form' && !context.switchToHttp().getRequest<Request>().is('application/x-www-form-urlencoded')) {
+      throw new UnauthorizedException();
+    }
+    if (kind === 'json') {
       const { headers, method } = context.switchToHttp().getRequest<Request>();
       const contentType = headers['content-type'];
       const hasBody = headers['transfer-encoding'] !== undefined || Number(headers['content-length'] ?? 0) > 0;
@@ -58,21 +70,25 @@ export class JsonBodyInterceptor implements NestInterceptor {
     return next.handle();
   }
 
-  private readsJson(context: ExecutionContext): boolean {
+  private bodyKind(context: ExecutionContext): BodyKind {
     const handler = context.getHandler();
-    let reads = this.handlers.get(handler);
-    if (reads === undefined) {
+    if (this.handlers.has(handler)) {
+      return this.handlers.get(handler);
+    }
+    let kind: BodyKind;
+    if (Reflect.getMetadata(FORM_BODY, handler)) {
+      kind = 'form';
+    } else {
       const controller = context.getClass();
       const routeArguments: RouteArguments = Reflect.getMetadata(ROUTE_ARGS_METADATA, controller, handler.name) ?? {};
       const types: unknown[] = Reflect.getMetadata('design:paramtypes', controller.prototype, handler.name) ?? [];
       // The whole body only (@Body()), not one of its properties (@Body('name')).
-      reads =
-        !Reflect.getMetadata(FORM_BODY, handler) &&
-        Object.entries(routeArguments).some(
-          ([key, { index, data }]) => key.startsWith(`${RouteParamtypes.BODY}:`) && data === undefined && !NOT_OBJECTS.includes(types[index]),
-        );
-      this.handlers.set(handler, reads);
+      const readsObject = Object.entries(routeArguments).some(
+        ([key, { index, data }]) => key.startsWith(`${RouteParamtypes.BODY}:`) && data === undefined && !NOT_OBJECTS.includes(types[index]),
+      );
+      kind = readsObject ? 'json' : undefined;
     }
-    return reads;
+    this.handlers.set(handler, kind);
+    return kind;
   }
 }

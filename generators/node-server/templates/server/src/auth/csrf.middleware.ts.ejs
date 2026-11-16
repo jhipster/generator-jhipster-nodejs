@@ -1,5 +1,5 @@
 import { randomUUID } from 'crypto';
-import { ForbiddenException, Injectable, NestMiddleware } from '@nestjs/common';
+import { <%- authenticationTypeSession ? 'CanActivate, ExecutionContext, ' : '' %>ForbiddenException, Injectable, NestMiddleware } from '@nestjs/common';
 import { NextFunction, Request, Response } from 'express';
 
 /** The idle lifetime of a session, on the server: its cookie lasts until the browser is closed. */
@@ -47,6 +47,15 @@ export function checkLoginCsrfToken(req: Request): void {
     throw new ForbiddenException('Invalid CSRF token');
   }
 }
+
+/** The CSRF check of the login (checkLoginCsrfToken), as a guard: before the body of the login is read. */
+@Injectable()
+export class LoginCsrfGuard implements CanActivate {
+  canActivate(context: ExecutionContext): boolean {
+    checkLoginCsrfToken(context.switchToHttp().getRequest<Request>());
+    return true;
+  }
+}
 <%_ } _%>
 
 /**
@@ -55,7 +64,7 @@ export function checkLoginCsrfToken(req: Request): void {
  * the logout included, must send it as X-XSRF-TOKEN, else 403. A request with a bearer token has no session to protect.
 <%_ if (authenticationTypeSession) { _%>
  * A client without a logged session gets a token cookie, which its unsafe requests, the login included, must send back
- * (checkLoginCsrfToken), else 403.
+ * (checkLoginCsrfToken, LoginCsrfGuard), else 403.
 <%_ } _%>
  */
 @Injectable()
