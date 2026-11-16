@@ -50,6 +50,10 @@ export class UserSessionController {
   @ApiResponse({ status: 403, description: 'Without the CSRF token of the XSRF-TOKEN cookie' })
   async authenticate(@Req() req: Request, @Res({ passthrough: true }) res: Response, @Body() form: LoginForm): Promise<void> {
     checkLoginCsrfToken(req);
+    // Like the formLogin of Spring Security, the parameters of a form only: another body, like JSON, logs nobody in.
+    if (!req.is('application/x-www-form-urlencoded')) {
+      throw new UnauthorizedException();
+    }
     if (typeof form?.username !== 'string' || typeof form.password !== 'string' || !form.username || !form.password) {
       throw new UnauthorizedException();
     }

@@ -3,6 +3,7 @@ import { Injectable,
 <%_ } _%> Logger } from '@nestjs/common';
 <%_ if (generateUserManagement) { _%>
 import { randomBytes } from 'crypto';
+import { isEmail } from 'class-validator';
 <%_ } _%>
 <%_ if (generateBuiltInAuthorityEntity) { _%>
 import { InjectRepository } from '@nestjs/typeorm';
@@ -75,10 +76,14 @@ export class AuthService {
   /**
    * The activated user of a login and its password, with its authorities, else 401, like the login of JHipster Spring
    * Boot: the same answer to an unknown login, a wrong password and a user not activated, which tells no account apart.
+   * Like its DomainUserDetailsService, a login that is a mail is the one of the user of that mail.
    */
   async authenticate(loginUserName: string, loginPassword: string): Promise<<%- user.dtoClass %>> {
-    // The logins are in lower case, like the ones of JHipster Spring Boot.
-    const userFind = await this.userService.findByFields({ where: { login: loginUserName.toLowerCase() } });
+    // The logins and the mails are in lower case, like the ones of JHipster Spring Boot.
+    const login = loginUserName.toLowerCase();
+    const userFind = await this.userService.findByFields({
+      where: isEmail(loginUserName, { require_tld: false }) ? { email: login } : { login },
+    });
     // An unknown login checks the password with a hash too: it answers in the time of a known one, which does not tell
     // the logins of the users.
     this.unknownUserPasswordHash ??= this.passwordService.encode(randomBytes(16).toString('hex'));

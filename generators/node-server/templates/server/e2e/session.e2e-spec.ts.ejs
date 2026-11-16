@@ -105,6 +105,18 @@ describe('Session authentication', () => {
     await agent.post('/api/logout').set('X-XSRF-TOKEN', token).expect(200);
   });
 
+  it('refuses a JSON body with 401, like the formLogin of Spring Security', async () => {
+    const token = await anonymousToken();
+    await agent.post('/api/authentication').set('X-XSRF-TOKEN', token).send({ username: 'session-user', password }).expect(401);
+    await agent.get('/api/account').expect(401);
+  });
+
+  it('logs in the user of a mail given as the login, in any case, like JHipster Spring Boot', async () => {
+    expect((await login({ username: 'Session-User@Localhost', password })).status).toBe(200);
+    const { body } = await agent.get('/api/account').expect(200);
+    expect(body).toMatchObject({ login: 'session-user' });
+  });
+
   it('refuses a form of other values than texts with 401', async () => {
     const token = await anonymousToken();
     await agent
