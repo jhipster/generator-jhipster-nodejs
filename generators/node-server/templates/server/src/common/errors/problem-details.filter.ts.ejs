@@ -1,6 +1,7 @@
 import { STATUS_CODES } from 'http';
 
-import { ArgumentsHost, Catch, ExceptionFilter, HttpException, HttpStatus, Logger, NotFoundException } from '@nestjs/common';
+import { ArgumentsHost, Catch, ExceptionFilter, HttpException, HttpStatus, Injectable, Logger, NotFoundException } from '@nestjs/common';
+import { HttpAdapterHost } from '@nestjs/core';
 import { Request, Response } from 'express';
 
 import { HeaderUtil } from '../header-util.ts';
@@ -8,6 +9,7 @@ import { HeaderUtil } from '../header-util.ts';
 import { DataIntegrityViolationException, isDataIntegrityViolation } from './data-integrity.ts';
 import { DEFAULT_TYPE } from './error-constants.ts';
 import { BadRequestAlertException, ProblemException } from './problem.exception.ts';
+import { routeMethods } from './route-methods.ts';
 
 /**
  * Answers the errors as the problem details (RFC 9457, application/problem+json) of JHipster Spring Boot, which the
@@ -18,13 +20,14 @@ import { BadRequestAlertException, ProblemException } from './problem.exception.
  * other methods answers 405 with the Allow header (RFC 9110), and its OPTIONS the methods alone, like JHipster Spring Boot.
  */
 @Catch()
+@Injectable()
 export class ProblemDetailsFilter implements ExceptionFilter {
-  private readonly logger = new Logger('ProblemDetailsFilter');
+  private readonly logger = new Logger(ProblemDetailsFilter.name);
 
   constructor(
     private readonly headerUtil: HeaderUtil,
-    /** The methods of the routes of a path. */
-    private readonly routeMethods: (path: string) => string[] = () => [],
+    /** The HTTP server of the application, the methods of the routes of a path read from its router. */
+    private readonly adapterHost: HttpAdapterHost,
   ) {}
 
   catch(thrown: unknown, host: ArgumentsHost): void {
@@ -33,7 +36,7 @@ export class ProblemDetailsFilter implements ExceptionFilter {
     const response = http.getResponse<Response>();
     // The path of the request, not the one left of it by a middleware answering before the routes.
     const path = request.originalUrl.split('?')[0];
-    const methods = !response.headersSent && isWithoutRoute(thrown, request) ? this.routeMethods(path) : [];
+    const methods = !response.headersSent && isWithoutRoute(thrown, request) ? routeMethods(this.adapterHost, path) : [];
     if (methods.length > 0 && request.method === 'OPTIONS') {
       // A GET route answers HEAD too.
       const allowed = [...methods, ...(methods.includes('GET') ? ['HEAD'] : []), 'OPTIONS'];

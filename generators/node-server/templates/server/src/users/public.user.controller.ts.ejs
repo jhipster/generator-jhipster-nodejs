@@ -1,4 +1,5 @@
-import { Controller, ClassSerializerInterceptor, Get, Logger, Req, UseGuards, UseInterceptors } from '@nestjs/common';
+import { Controller, ClassSerializerInterceptor, Get, Req, UseGuards, UseInterceptors } from '@nestjs/common';
+import { Pageable } from '../common/database/pageable.ts';
 import { PageRequest, Page } from '../common/database/pagination.entity.ts';
 import { PublicUserDTO } from './dto/user.dto.ts';
 import { AuthGuard } from '../auth/index.ts';
@@ -7,15 +8,14 @@ import { HeaderUtil } from '../common/header-util.ts';
 import { ApiTags, ApiResponse, ApiOperation } from '@nestjs/swagger';
 import { UserService } from './user.service.ts';
 
-// The properties the public user list can be sorted on, like the PublicUserResource of JHipster Spring Boot.
-const ALLOWED_ORDERED_PROPERTIES = ['<%- user.primaryKey.name %>', 'login', 'firstName', 'lastName', 'email', 'activated', 'langKey'];
+// The properties the public user list can be sorted on, like the PublicUserResource of JHipster Spring Boot. Exported: the
+// no-useless-assignment rule of ESLint does not see its use in a parameter decorator.
+export const ALLOWED_ORDERED_PROPERTIES = ['<%- user.primaryKey.name %>', 'login', 'firstName', 'lastName', 'email', 'activated', 'langKey'];
 
 @Controller('api')
 @UseInterceptors(ClassSerializerInterceptor)
 @ApiTags('public-user-controller')
 export class PublicUserController {
-
-  logger = new Logger('PublicUserController');
 
   constructor(
     private readonly userService: UserService,
@@ -32,14 +32,10 @@ export class PublicUserController {
       type: PublicUserDTO,
       isArray: true,
   })
-  async getAllPublicUsers(@Req() req: Request): Promise<PublicUserDTO[]> {
-      const pageRequest: PageRequest = new PageRequest(
-        req.query.page,
-        req.query.size,
-        req.query.sort ?? '<%- user.primaryKey.name %>,ASC',
-        property => ALLOWED_ORDERED_PROPERTIES.includes(property),
-        'user',
-      );
+  async getAllPublicUsers(
+    @Req() req: Request,
+    @Pageable({ defaultSort: '<%- user.primaryKey.name %>,ASC', properties: ALLOWED_ORDERED_PROPERTIES, entityName: 'user' }) pageRequest: PageRequest,
+  ): Promise<PublicUserDTO[]> {
       const [results, count] = await this.userService.findPublicUsers({
           skip: +pageRequest.page * pageRequest.size,
           take: +pageRequest.size,

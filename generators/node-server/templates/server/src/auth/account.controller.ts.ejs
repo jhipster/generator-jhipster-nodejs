@@ -18,7 +18,7 @@ import { OidcUser } from './oauth2.authorities.ts';
 @UseInterceptors(ClassSerializerInterceptor)
 @ApiTags('account-resource')
 export class AccountController {
-  logger = new Logger('AccountController');
+  private readonly logger = new Logger(AccountController.name);
 
   constructor(
     private readonly authService: AuthService,

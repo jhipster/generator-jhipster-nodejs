@@ -1,4 +1,4 @@
-import { INestApplication } from '@nestjs/common';
+import { HttpAdapterHost } from '@nestjs/core';
 
 /** A layer of the router of Express: a route with its methods, or a middleware. */
 interface Layer {
@@ -10,8 +10,8 @@ interface Layer {
  * The methods of the routes of a path, in upper case: none for a path without route. Read from the router of Express,
  * which has every route of the controllers; a route of any path (a pattern with a wildcard) is not one of the path.
  */
-export const routeMethods = (app: INestApplication, path: string): string[] => {
-  const stack: Layer[] = app.getHttpAdapter().getInstance().router?.stack ?? [];
+export const routeMethods = ({ httpAdapter }: HttpAdapterHost, path: string): string[] => {
+  const stack: Layer[] = httpAdapter.getInstance<{ router?: { stack: Layer[] } }>().router?.stack ?? [];
   const methods = new Set<string>();
   for (const layer of stack) {
     const { route } = layer;

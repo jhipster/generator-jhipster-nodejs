@@ -2,7 +2,7 @@
     const idPipe = (pkType === 'number' && 'ParseLongPipe') || (primaryKey.typeUUID && 'ParseUuidPipe');
     const idParam = `@Param('id'${idPipe ? `, ${idPipe}` : ''}) id: ${pkType}`;
 _%>
-import { Body, ClassSerializerInterceptor, Controller, Delete, Get,<%- nodejsCriteria ? ' Header,' : '' %> Logger, NotFoundException, Param, Patch, Post as PostMethod, Put, UseGuards, Req, UseInterceptors } from '@nestjs/common';
+import { Body, ClassSerializerInterceptor, Controller, Delete, Get,<%- nodejsCriteria ? ' Header,' : '' %> NotFoundException, Param, Patch, Post as PostMethod, Put, UseGuards, Req, UseInterceptors } from '@nestjs/common';
 import { 
 <%_ if (authenticationTypeJwt) { _%> ApiBearerAuth, 
 <%_ } else { _%> ApiSecurity, 
@@ -10,7 +10,9 @@ import {
 import { plainToInstance } from 'class-transformer';
 import { validate } from 'class-validator';
 import { <%- dtoClass %> } from './dto/<%- entityFileName %>.dto.ts';
+import { <%- entityClass %> } from './<%- entityFileName %>.entity.ts';
 import { <%- entityClass %>Service } from './<%- entityFileName %>.service.ts';
+import { Pageable } from '../../common/database/pageable.ts';
 <%_ if (pagination === 'no') { _%>
 import { PageRequest } from '../../common/database/pagination.entity.ts';
 <%_ } else { _%>
@@ -21,7 +23,6 @@ import { HeaderUtil } from '../../common/header-util.ts';
 <%_ if (idPipe) { _%>
 import { <%- idPipe %> } from '../../common/parse-id.pipe.ts';
 <%_ } _%>
-import { isSortableProperty } from '../../common/sortable-properties.ts';
 <%_ if (nodejsCriteria) { _%>
 import { criteriaOf, criteriaWhere } from '../../common/database/criteria.ts';
 <%_ } _%>
@@ -41,7 +42,6 @@ const ENTITY_NAME = '<%- entityAlertName %>';
 <%_ } _%>
 @ApiTags('<%- entityApiUrl %>')
 export class <%- entityClass %>Controller {
-  logger = new Logger('<%- entityClass %>Controller');
 
   constructor(
     private readonly <%- entityInstance %>Service: <%- entityClass %>Service,
@@ -59,20 +59,16 @@ export class <%- entityClass %>Controller {
     type: <%- dtoClass %>,
     isArray: true,
   })
-  async getAll(@Req() req: Request): Promise<<%- dtoClass %> []>  {
+  async getAll(
+    @Req() req: Request,
+    @Pageable({ defaultSort: '<%- primaryKey.name %>,ASC', entity: <%- entityClass %>, entityName: ENTITY_NAME }) pageRequest: PageRequest,
+  ): Promise<<%- dtoClass %> []>  {
 <%_ for (const relationship of nodejsMappedByRelationships.filter(relationship => relationship.relationshipOneToOne)) { _%>
     // The records without <%- relationship.relationshipName %>, for the form of the other entity, like JHipster Spring Boot.
     if (req.query.filter === '<%- relationship.relationshipName.toLowerCase() %>-is-null') {
       return this.<%- entityInstance %>Service.findAllWhere<%- relationship.relationshipNameCapitalized %>IsNull();
     }
 <%_ } _%>
-    const pageRequest: PageRequest = new PageRequest(
-      req.query.page,
-      req.query.size,
-      req.query.sort ?? '<%- primaryKey.name %>,ASC',
-      property => isSortableProperty(this.<%- entityInstance %>Service.metadata, property),
-      ENTITY_NAME,
-    );
 <%_ if (pagination === 'no') { _%>
     // Like JHipster Spring Boot, an entity without pagination lists all its records, without the pagination headers.
     const [results] = await this.<%- entityInstance %>Service.findAndCount({

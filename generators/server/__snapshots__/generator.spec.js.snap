@@ -227,6 +227,9 @@ exports[`SubGenerator server of nodejs JHipster blueprint > run > should match t
   "server/src/common/database/column-types.ts": {
     "stateCleared": "modified",
   },
+  "server/src/common/database/pageable.ts": {
+    "stateCleared": "modified",
+  },
   "server/src/common/database/pagination.entity.spec.ts": {
     "stateCleared": "modified",
   },
@@ -435,6 +438,9 @@ exports[`SubGenerator server of nodejs JHipster blueprint > run > should match t
     "stateCleared": "modified",
   },
   "server/src/users/authority.entity.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/users/authority.module.ts": {
     "stateCleared": "modified",
   },
   "server/src/users/dto/authority.dto.ts": {

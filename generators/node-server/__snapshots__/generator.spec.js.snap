@@ -528,6 +528,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > jwt microservic
   "server/src/common/database/column-types.ts": {
     "stateCleared": "modified",
   },
+  "server/src/common/database/pageable.ts": {
+    "stateCleared": "modified",
+  },
   "server/src/common/database/pagination.entity.spec.ts": {
     "stateCleared": "modified",
   },
@@ -920,6 +923,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > run > should ma
   "server/src/common/database/column-types.ts": {
     "stateCleared": "modified",
   },
+  "server/src/common/database/pageable.ts": {
+    "stateCleared": "modified",
+  },
   "server/src/common/database/pagination.entity.spec.ts": {
     "stateCleared": "modified",
   },
@@ -1104,6 +1110,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > run > should ma
     "stateCleared": "modified",
   },
   "server/src/users/authority.entity.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/users/authority.module.ts": {
     "stateCleared": "modified",
   },
   "server/src/users/dto/authority.dto.ts": {
@@ -1373,6 +1382,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > with oauth2 > s
     "stateCleared": "modified",
   },
   "server/src/common/database/column-types.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/common/database/pageable.ts": {
     "stateCleared": "modified",
   },
   "server/src/common/database/pagination.entity.spec.ts": {
@@ -1776,6 +1788,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > with oauth2 and
   "server/src/common/database/column-types.ts": {
     "stateCleared": "modified",
   },
+  "server/src/common/database/pageable.ts": {
+    "stateCleared": "modified",
+  },
   "server/src/common/database/pagination.entity.spec.ts": {
     "stateCleared": "modified",
   },
@@ -1939,6 +1954,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > with oauth2 and
     "stateCleared": "modified",
   },
   "server/src/users/authority.entity.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/users/authority.module.ts": {
     "stateCleared": "modified",
   },
   "server/src/users/dto/authority.dto.ts": {
@@ -2612,6 +2630,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > without client 
   "server/src/common/database/column-types.ts": {
     "stateCleared": "modified",
   },
+  "server/src/common/database/pageable.ts": {
+    "stateCleared": "modified",
+  },
   "server/src/common/database/pagination.entity.spec.ts": {
     "stateCleared": "modified",
   },
@@ -2796,6 +2817,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > without client 
     "stateCleared": "modified",
   },
   "server/src/users/authority.entity.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/users/authority.module.ts": {
     "stateCleared": "modified",
   },
   "server/src/users/dto/authority.dto.ts": {

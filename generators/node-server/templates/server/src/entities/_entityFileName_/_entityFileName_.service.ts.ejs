@@ -1,4 +1,4 @@
-import { Injectable, HttpException, HttpStatus, Logger } from '@nestjs/common';
+import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { EntityMetadata, FindManyOptions, FindOneOptions, Repository } from 'typeorm';
 import { <%- entityClass %> } from './<%- entityFileName %>.entity.ts';
@@ -47,7 +47,6 @@ const relations = {
 <%_ } _%>
 @Injectable()
 export class <%- entityClass %>Service {
-    logger = new Logger('<%- entityClass %>Service');
 
     constructor(@InjectRepository(<%- entityClass %>) private <%- entityInstance %>Repository: Repository<<%- entityClass %>>) {}
 

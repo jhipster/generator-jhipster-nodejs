@@ -472,7 +472,8 @@ describe('SubGenerator node-server of nodejs JHipster blueprint', () => {
         'server/src/users/public.user.controller.ts',
         'server/src/migrations/1570200490072-SeedUsersRoles.ts',
       ]);
-      result.assertFileContent('server/src/auth/auth.module.ts', 'ManagementController');
+      result.assertFileContent('server/src/management/management.module.ts', 'ManagementController');
+      result.assertNoFileContent('server/src/auth/auth.module.ts', 'ManagementController');
     });
   });
   describe('with session', () => {
@@ -686,7 +687,7 @@ describe('SubGenerator node-server of nodejs JHipster blueprint', () => {
         'server/src/migrations/1570200490072-SeedUsersRoles.ts',
       ]);
       result.assertNoFile(['server/src/users/user.controller.ts', 'server/e2e/user.e2e-spec.ts']);
-      result.assertNoFileContent('server/src/users/user.module.ts', 'UserController');
+      result.assertNoFileContent('server/src/users/user.module.ts', /\bUserController\b/);
     });
   });
   describe('with the authorities of the entities', () => {

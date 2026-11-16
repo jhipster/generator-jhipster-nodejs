@@ -3,7 +3,7 @@ import { User } from './user.entity.ts';
 <%_ if (generateUserManagement) { _%>
 import { UserController } from './user.controller.ts';
 <%_ } _%>
-import { ManagementController } from '../management/management.controller.ts';
+import { PublicUserController } from './public.user.controller.ts';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserService } from './user.service.ts';
 <%_ if (authenticationTypeSession) { _%>
@@ -13,12 +13,14 @@ import { Session } from '../auth/session.entity.ts';
 <%_ } _%>
 <%_ if (generateUserManagement) { _%>
 import { MailModule } from '../mail/mail.module.ts';
+import { PasswordService } from '../auth/password.service.ts';
 <%_ } _%>
 
 @Module({
   imports: [TypeOrmModule.forFeature([User<%- authenticationTypeSession ? ', PersistentToken, Session' : '' %>])<%- generateUserManagement ? ', MailModule' : '' %>],
-  controllers: [<%- generateUserManagement ? 'UserController, ' : '' %>ManagementController],
-  providers: [UserService<%- authenticationTypeSession ? ', RememberMeService' : '' %>],
-  exports: [UserService<%- authenticationTypeSession ? ', RememberMeService' : '' %><%- generateUserManagement ? ', MailModule' : '' %>],
+  controllers: [<%- generateUserManagement ? 'UserController, ' : '' %>PublicUserController],
+  // The passwords of the users, which the authentication checks too.
+  providers: [UserService<%- authenticationTypeSession ? ', RememberMeService' : '' %><%- generateUserManagement ? ', PasswordService' : '' %>],
+  exports: [UserService<%- authenticationTypeSession ? ', RememberMeService' : '' %><%- generateUserManagement ? ', PasswordService, MailModule' : '' %>],
 })
 export class UserModule {}

@@ -1,6 +1,6 @@
 import { randomUUID } from 'node:crypto';
 
-import { Body, Controller, Delete, Get, HttpCode, Logger, Param, Post, Req, Res, UnauthorizedException, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpCode, Param, Post, Req, Res, UnauthorizedException, UseGuards } from '@nestjs/common';
 import { ApiConsumes, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Request, Response } from 'express';
 import { FormBody } from '../common/errors/json-body.interceptor.ts';
@@ -32,7 +32,6 @@ interface SessionDTO {
 @Controller('api')
 @ApiTags('user-session-controller')
 export class UserSessionController {
-  logger = new Logger('UserSessionController');
 
   constructor(
     private readonly authService: AuthService,

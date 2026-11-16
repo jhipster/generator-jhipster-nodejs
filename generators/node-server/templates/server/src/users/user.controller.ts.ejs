@@ -1,6 +1,8 @@
-import { Body, Controller, NotFoundException, Delete, Get, Logger, Param, Post, Put, UseGuards, Req, UseInterceptors, ClassSerializerInterceptor } from '@nestjs/common';
+import { Body, Controller, NotFoundException, Delete, Get, Param, Post, Put, UseGuards, Req, UseInterceptors, ClassSerializerInterceptor } from '@nestjs/common';
 import { AuthGuard,  Roles, RolesGuard, RoleType } from '../auth/index.ts';
+import { Pageable } from '../common/database/pageable.ts';
 import { PageRequest, Page } from '../common/database/pagination.entity.ts';
+import { <%- user.persistClass %> } from './user.entity.ts';
 import { <%- user.dtoClass %> } from './dto/user.dto.ts';
 import { HeaderUtil } from '../common/header-util.ts';
 import { Request } from '../common/request.ts';
@@ -13,7 +15,6 @@ import { UserService } from './user.service.ts';
 import { MailService } from '../mail/mail.service.ts';
 import { randomBytes } from 'crypto';
 import { BadRequestAlertException, EmailAlreadyUsedException, LoginAlreadyUsedException } from '../common/errors/problem.exception.ts';
-import { isSortableProperty } from '../common/sortable-properties.ts';
 
 @Controller('api/admin/users')
 @UseGuards(AuthGuard, RolesGuard)
@@ -25,7 +26,6 @@ import { isSortableProperty } from '../common/sortable-properties.ts';
 <%_ } _%>
 @ApiTags('user-resource')
 export class UserController {
-  logger = new Logger('UserController');
 
   constructor(
     private readonly userService: UserService,
@@ -42,15 +42,11 @@ export class UserController {
       type: <%- user.dtoClass %>,
       isArray: true,
   })
-  async getAllUsers(@Req() req: Request): Promise<<%- user.dtoClass %>[]> {
-      const pageRequest: PageRequest = new PageRequest(
-        req.query.page,
-        req.query.size,
-        req.query.sort ?? '<%- user.primaryKey.name %>,ASC',
-        // Like JHipster Spring Boot, a column of the user but the ones marked @NotSortable (its password and its keys).
-        property => isSortableProperty(this.userService.metadata, property),
-        'userManagement',
-      );
+  async getAllUsers(
+    @Req() req: Request,
+    // Like JHipster Spring Boot, a column of the user but the ones marked @NotSortable (its password and its keys).
+    @Pageable({ defaultSort: '<%- user.primaryKey.name %>,ASC', entity: <%- user.persistClass %>, entityName: 'userManagement' }) pageRequest: PageRequest,
+  ): Promise<<%- user.dtoClass %>[]> {
       const [results, count] = await this.userService.findAndCount({
           skip: +pageRequest.page * pageRequest.size,
           take: +pageRequest.size,

@@ -6,11 +6,12 @@ import { ApiDocsService } from './api-docs.service.ts';
 import { ApiDocsController } from './api-docs.controller.ts';
 import { ConfigurationController } from './configuration.controller.ts';
 import { LoggersController } from './loggers.controller.ts';
+import { ManagementController } from './management.controller.ts';
 import { MetricsController } from './metrics.controller.ts';
 
 /** The management endpoints of Spring Boot Actuator and the API documentation the admin pages of the JHipster clients use. */
 @Module({
-  controllers: [ApiDocsController, ConfigurationController, LoggersController, MetricsController],
+  controllers: [ApiDocsController, ConfigurationController, LoggersController, ManagementController, MetricsController],
   providers: [
     ApiDocsService,
     MetricsService,

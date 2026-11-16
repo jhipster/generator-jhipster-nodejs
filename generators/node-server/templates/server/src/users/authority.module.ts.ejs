@@ -1,0 +1,13 @@
+import { Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
+
+import { AuthorityController } from './authority.controller.ts';
+import { Authority } from './authority.entity.ts';
+
+/** The authorities of the users, like the AuthorityResource of JHipster Spring Boot: their API and their repository. */
+@Module({
+  imports: [TypeOrmModule.forFeature([Authority])],
+  controllers: [AuthorityController],
+  exports: [TypeOrmModule],
+})
+export class AuthorityModule {}

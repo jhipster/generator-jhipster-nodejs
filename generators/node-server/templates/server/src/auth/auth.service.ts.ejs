@@ -1,6 +1,6 @@
 import { Injectable, 
 <%_ if (generateUserManagement) { _%> HttpException, HttpStatus, 
-<%_ } _%> Logger } from '@nestjs/common';
+<%_ } _%> } from '@nestjs/common';
 <%_ if (generateUserManagement) { _%>
 import { randomBytes } from 'crypto';
 import { isEmail } from 'class-validator';
@@ -52,7 +52,6 @@ export function isPasswordLengthInvalid(password?: string): boolean {
 
 @Injectable()
 export class AuthService {
-    logger = new Logger('AuthService');
   constructor(
 <%_ if (authenticationType === 'jwt' && generateBuiltInUserEntity) { _%>
     private readonly jwtService: JwtService,

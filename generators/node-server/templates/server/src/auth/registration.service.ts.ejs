@@ -19,7 +19,7 @@ const ACTIVATION_DAYS = 3;
  */
 @Injectable()
 export class RegistrationService {
-  logger = new Logger('RegistrationService');
+  private readonly logger = new Logger(RegistrationService.name);
 
   constructor(private readonly userService: UserService) {}
 

@@ -40,7 +40,7 @@ export function parseProperties(content: string): Record<string, string> {
  */
 @Injectable()
 export class MailService {
-  logger = new Logger('MailService');
+  private readonly logger = new Logger(MailService.name);
 
   private readonly defaultMessages: Record<string, string>;
 

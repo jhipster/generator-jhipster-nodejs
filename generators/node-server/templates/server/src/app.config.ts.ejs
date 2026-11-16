@@ -8,12 +8,6 @@ import session from 'express-session';
 <%_ } _%>
 
 import type { ApplicationConfig } from './application-config.ts';
-import { HeaderUtil } from './common/header-util.ts';
-import { JsonBodyInterceptor } from './common/errors/json-body.interceptor.ts';
-import { ProblemDetailsFilter } from './common/errors/problem-details.filter.ts';
-import { routeMethods } from './common/errors/route-methods.ts';
-import { BodyValidationPipe } from './common/errors/body-validation.pipe.ts';
-import { validationException } from './common/errors/problem.exception.ts';
 <%_ if (authenticationUsesCsrf && generateAuthenticationApi) { _%>
 import { SessionStore } from './auth/session.store.ts';
 <%_ } _%>
@@ -148,11 +142,6 @@ function responseHeaders(<%- skipClient ? '' : 'configService: AppConfigService'
 }
 
 /**
- * Configures the application as it runs in production: main.ts and the e2e tests call it, so the e2e tests
- * exercise the same validation and HTTP behaviour as the started application.
- * It has no side effect at import (main.ts starts the application when imported), and does not listen.
- */
-/**
  * The proxies whose X-Forwarded-* headers (the protocol, the host and the address of the client) the application trusts, the
  * trust proxy setting of Express, like the server.forward-headers-strategy of Spring Boot: none, or native, the proxies of
  * the local networks like the internal proxies of the RemoteIpValve of Tomcat.<% if (authenticationUsesCsrf && generateAuthenticationApi) { %> Behind a proxy of HTTPS, the session cookie is then
@@ -162,6 +151,12 @@ export function trustProxy(strategy: string | undefined): string | false {
   return strategy === 'native' ? 'loopback, linklocal, uniquelocal' : false;
 }
 
+/**
+ * Configures the HTTP server of the application as it runs in production: main.ts and the e2e tests call it, so the e2e
+ * tests exercise the same HTTP behaviour as the started application (the headers, CORS, the sessions, the body parsers).
+ * The validation and the errors are the global providers of the CommonModule. It has no side effect at import (main.ts
+ * starts the application when imported), and does not listen.
+ */
 export function configureApp(app: INestApplication): INestApplication {
   // Without the X-Powered-By: Express header, like the responses of JHipster Spring Boot.
   app.getHttpAdapter().getInstance().disable('x-powered-by');
@@ -192,26 +187,6 @@ export function configureApp(app: INestApplication): INestApplication {
     }),
   );
 <%_ } _%>
-  app.useGlobalPipes(
-    new BodyValidationPipe({
-      // The errors of the fields, like JHipster Spring Boot.
-      exceptionFactory: validationException,
-      // The body is an instance of its DTO without the properties the DTO does not declare, like JHipster Spring Boot
-      // binds a request to its DTO and ignores the unknown properties: the declared properties without validation are
-      // @Allow(). The instance keeps the properties excluded from the responses only (the password of a registration).
-      whitelist: true,
-      transform: true,
-      // https://github.com/nestjs/nest/issues/10683#issuecomment-1349614194
-      forbidUnknownValues: false,
-      // The target of an error names the objectName of its field error (ValidationException), which is not sent: Nest
-      // 12.2 leaves it out by default.
-      validationError: { target: true },
-    }),
-  );
-  // A body of another content type than JSON refused, like JHipster Spring Boot.
-  app.useGlobalInterceptors(new JsonBodyInterceptor());
-  // The errors as the problem details of JHipster Spring Boot.
-  app.useGlobalFilters(new ProblemDetailsFilter(app.get(HeaderUtil), path => routeMethods(app, path)));
 <%_ if (generateUserManagement) { _%>
   // The mail of a password reset request is a text/plain body, as the JHipster clients send it.
   (app as NestExpressApplication).useBodyParser('text');

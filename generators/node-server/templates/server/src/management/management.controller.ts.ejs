@@ -1,4 +1,4 @@
-import { Controller, Get, Logger } from '@nestjs/common';
+import { Controller, Get } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { ApiTags, ApiResponse, ApiOperation, ApiExcludeEndpoint } from '@nestjs/swagger';
 import { activeProfiles } from '../config.ts';
@@ -12,8 +12,6 @@ export interface Info {
 @Controller('management')
 @ApiTags('management-controller')
 export class ManagementController {
-
-  logger = new Logger('ManagementController');
 
   constructor(private readonly configService: ConfigService) {}
 

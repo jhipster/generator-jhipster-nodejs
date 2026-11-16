@@ -1,0 +1,46 @@
+import { ArgumentMetadata, ExecutionContext, Injectable, PipeTransform, createParamDecorator } from '@nestjs/common';
+import { Request } from 'express';
+import { DataSource, EntityTarget } from 'typeorm';
+
+import { isSortableProperty } from '../sortable-properties.ts';
+
+import { PageRequest } from './pagination.entity.ts';
+
+/** The page request of a list: its default sort, and the properties a request sorts on, of an entity or listed. */
+export interface PageableOptions {
+  /** The sort of a request without one, like `id,ASC`. */
+  defaultSort: string;
+  /** The name the error of a property that is not sortable gives (error.notsortable), its parameter. */
+  entityName: string;
+  /** The entity whose sortable properties a request sorts on (not @NotSortable). */
+  entity?: EntityTarget<unknown>;
+  /** Else the properties a request sorts on, like the allowed ordered properties of the UserResource of JHipster. */
+  properties?: string[];
+}
+
+/** Builds the page request of the query of a request, its sort checked against the properties of its options. */
+@Injectable()
+export class PageRequestPipe implements PipeTransform<Request['query'], PageRequest> {
+  constructor(private readonly dataSource: DataSource) {}
+
+  transform(query: Request['query'], { data }: ArgumentMetadata): PageRequest {
+    // The data of the parameter decorator, its options.
+    const { defaultSort, entityName, entity, properties } = data as unknown as PageableOptions;
+    const metadata = entity ? this.dataSource.getMetadata(entity) : undefined;
+    return new PageRequest(
+      query.page,
+      query.size,
+      query.sort ?? defaultSort,
+      metadata ? property => isSortableProperty(metadata, property) : properties,
+      entityName,
+    );
+  }
+}
+
+const QueryParameters = createParamDecorator((_data: unknown, context: ExecutionContext) => context.switchToHttp().getRequest<Request>().query);
+
+/**
+ * The page request of a list, its page, size and sort parameters, like the Pageable of Spring Data: a property the list
+ * does not sort on is the error.notsortable of JHipster Spring Boot.
+ */
+export const Pageable = (options: PageableOptions): ParameterDecorator => QueryParameters(options, PageRequestPipe);

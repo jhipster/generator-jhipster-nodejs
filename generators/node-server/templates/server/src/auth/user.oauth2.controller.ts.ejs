@@ -12,7 +12,7 @@ import { OidcUser } from './oauth2.authorities.ts';
 @Controller()
 @ApiTags('user-oauth2-controller')
 export class UserOauth2Controller {
-  logger = new Logger('UserOauth2Controller');
+  private readonly logger = new Logger(UserOauth2Controller.name);
 
   constructor(
     private readonly authService: AuthService,

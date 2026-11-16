@@ -1,4 +1,4 @@
-import { Body, Controller, Logger, Post, Res, Req, HttpCode } from '@nestjs/common';
+import { Body, Controller, Post, Res, Req, HttpCode } from '@nestjs/common';
 import { Response, Request } from 'express';
 import { UserLoginDTO } from './dto/user-login.dto.ts';
 import { AuthService } from './auth.service.ts';
@@ -7,7 +7,6 @@ import { ApiTags, ApiResponse, ApiOperation } from '@nestjs/swagger';
 @Controller('api')
 @ApiTags('user-jwt-controller')
 export class UserJWTController {
-  logger = new Logger('UserJWTController');
 
   constructor(private readonly authService: AuthService) {}
 

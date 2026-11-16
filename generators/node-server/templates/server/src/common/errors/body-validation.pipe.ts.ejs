@@ -1,6 +1,6 @@
 import { ArgumentMetadata, Injectable, ValidationPipe } from '@nestjs/common';
 
-import { unreadableBodyException } from './problem.exception.ts';
+import { unreadableBodyException, validationException } from './problem.exception.ts';
 
 /** The types of a body that is not an object: a text (a mail), a number, a boolean, a list. */
 const NOT_OBJECTS: unknown[] = [String, Number, Boolean, Array];
@@ -26,3 +26,20 @@ export class BodyValidationPipe extends ValidationPipe {
     return super.transform(value, metadata);
   }
 }
+
+/** The validation of the requests of the application, the global pipe of the CommonModule. */
+export const bodyValidationPipe = (): BodyValidationPipe =>
+  new BodyValidationPipe({
+    // The errors of the fields, like JHipster Spring Boot.
+    exceptionFactory: validationException,
+    // The body is an instance of its DTO without the properties the DTO does not declare, like JHipster Spring Boot
+    // binds a request to its DTO and ignores the unknown properties: the declared properties without validation are
+    // @Allow(). The instance keeps the properties excluded from the responses only (the password of a registration).
+    whitelist: true,
+    transform: true,
+    // https://github.com/nestjs/nest/issues/10683#issuecomment-1349614194
+    forbidUnknownValues: false,
+    // The target of an error names the objectName of its field error (ValidationException), which is not sent: Nest
+    // 12.2 leaves it out by default.
+    validationError: { target: true },
+  });

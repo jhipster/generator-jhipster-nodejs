@@ -36,17 +36,11 @@ import { SessionStore } from './session.store.ts';
 import { ConfigService } from '@nestjs/config';
 import { JWT_ALGORITHM, jwtSecretKey } from './jwt.config.ts';
 <%_ } _%>
-<%_ if (generateBuiltInAuthorityEntity || (authenticationUsesCsrf && generateAuthenticationApi)) { _%>
+<%_ if (authenticationUsesCsrf && generateAuthenticationApi) { _%>
 import { TypeOrmModule } from '@nestjs/typeorm';
 <%_ } _%>
 <%_ if (generateBuiltInAuthorityEntity) { _%>
-import { Authority } from '../users/authority.entity.ts';
-import { AuthorityController } from '../users/authority.controller.ts';
-<%_ } _%>
-<%_ if (generateBuiltInUserEntity) { _%>
-import { PublicUserController } from '../users/public.user.controller.ts';
-<%_ } else { _%>
-import { ManagementController } from '../management/management.controller.ts';
+import { AuthorityModule } from '../users/authority.module.ts';
 <%_ } _%>
 <%_ if (generateAuthenticationApi) { _%>
 import { AccountController } from './account.controller.ts';
@@ -58,8 +52,12 @@ import { RegistrationService } from './registration.service.ts';
 
 @Module({
   imports: [
-<%_ if (generateBuiltInAuthorityEntity || (authenticationUsesCsrf && generateAuthenticationApi)) { _%>
-  TypeOrmModule.forFeature([<%- [generateBuiltInAuthorityEntity && 'Authority', authenticationUsesCsrf && generateAuthenticationApi && 'Session'].filter(Boolean).join(', ') %>]),
+<%_ if (authenticationUsesCsrf && generateAuthenticationApi) { _%>
+  TypeOrmModule.forFeature([Session]),
+<%_ } _%>
+<%_ if (generateBuiltInAuthorityEntity) { _%>
+  // The repository of the authorities, which the authentication reads.
+  AuthorityModule,
 <%_ } _%>
 <%_ if (generateBuiltInUserEntity) { _%>
   UserModule,
@@ -88,10 +86,13 @@ import { RegistrationService } from './registration.service.ts';
 <%_ } else if (authenticationTypeSession) { _%>
   UserSessionController,
 <%_ } _%>
-<%_ if (generateBuiltInAuthorityEntity) { _%>
-  AuthorityController,
+<%_ if (generateAuthenticationApi) { _%>
+  AccountController,
 <%_ } _%>
-  <%- generateBuiltInUserEntity ? 'PublicUserController' : 'ManagementController' %><%- generateAuthenticationApi ? ', AccountController' : '' %><%- generateUserRegistration ? ', RegistrationController' : '' %> ],
+<%_ if (generateUserRegistration) { _%>
+  RegistrationController,
+<%_ } _%>
+  ],
   providers: [AuthService,
   RequestAuthenticator,
 <%_ if (generateUserRegistration) { _%>
