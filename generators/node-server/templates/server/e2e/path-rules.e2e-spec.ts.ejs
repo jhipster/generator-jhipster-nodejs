@@ -107,6 +107,15 @@ describe('Path rules', () => {
     it('refuses a URL Express reads another way than its text, like the firewall of Spring Security', async () => {
       expect(await statusOf('/management/env')).toBe(200);
       expect(await statusOf('/management\\env#x')).toBe(400);
+      expect(await statusOf('/management%2Fenv')).toBe(400);
+    });
+
+    it('answers a request the firewall of Spring Security refuses as one of no user, like JHipster Spring Boot', async () => {
+      const expected = <%- authenticationTypeJwt || (authenticationTypeOauth2 && applicationTypeMicroservice) ? 401 : 403 %>;
+      for (const target of ['//management/env', '/management/env;x=1', '/management/%25']) {
+        expect(await statusOf(target)).toBe(expected);
+      }
+      await request(app.getHttpServer()).trace('/management/env').expect(expected);
     });
   });
 

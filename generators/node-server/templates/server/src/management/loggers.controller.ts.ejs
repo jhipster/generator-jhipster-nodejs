@@ -36,7 +36,8 @@ export class LoggersController {
   @HttpCode(204)
   setLevel(@Param('name') name: string, @Body() { configuredLevel }: { configuredLevel?: string | null }): void {
     if (configuredLevel !== null && configuredLevel !== undefined && !isLevel(configuredLevel)) {
-      throw new BadRequestException(`Unknown level ${configuredLevel}, expected one of ${LEVELS.join(', ')}`);
+      // The detail of the Actuator of JHipster Spring Boot, which does not tell the levels.
+      throw new BadRequestException('Parameter mapping failure');
     }
     loggerLevels.setLevel(name, configuredLevel ? (configuredLevel.toUpperCase() as Level) : null);
   }

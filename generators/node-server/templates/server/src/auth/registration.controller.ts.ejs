@@ -1,4 +1,4 @@
-import { Body, ClassSerializerInterceptor, Controller, Get, Post, Query, UseInterceptors } from '@nestjs/common';
+import { BadRequestException, Body, ClassSerializerInterceptor, Controller, Get, Post, Query, UseInterceptors } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AccountResourceException } from '../common/errors/problem.exception.ts';
 import { MailService } from '../mail/mail.service.ts';
@@ -38,6 +38,10 @@ export class RegistrationController {
   })
   @ApiResponse({ status: 400, description: 'No user was found for this activation key' })
   async activateAccount(@Query('key') key: string): Promise<void> {
+    if (key === undefined) {
+      // Like the required request parameter of JHipster Spring Boot.
+      throw new BadRequestException("Required request parameter 'key' for method parameter type String is not present");
+    }
     const user = await this.registrationService.activateRegistration(key);
     if (!user) {
       throw new AccountResourceException('No user was found for this activation key');

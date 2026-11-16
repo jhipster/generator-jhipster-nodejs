@@ -10,13 +10,25 @@ export type SortDirection = 'ASC' | 'DESC';
 export class Sort {
   public property = 'id';
   public direction: SortDirection = 'ASC';
-  constructor(sort?: string) {
+  constructor(sort?: string, direction?: SortDirection) {
     if (sort) {
-      const [property, direction] = sort.split(',');
+      const [property, given] = sort.split(',');
       this.property = property.trim();
       // Like Spring Data, the direction is case insensitive and ascending by default.
-      this.direction = direction?.trim().toUpperCase() === 'DESC' ? 'DESC' : 'ASC';
+      this.direction = direction ?? (given?.trim().toUpperCase() === 'DESC' ? 'DESC' : 'ASC');
     }
+  }
+
+  /**
+   * The sorts of a sort parameter, like the PageableHandlerMethodArgumentResolver of Spring Data: its properties
+   * separated by commas, the last value the direction when it is one (else a property too, ascending), the empty ones left
+   * out.
+   */
+  static parse(value: string): Sort[] {
+    const values = value.split(',').map(each => each.trim());
+    const last = values[values.length - 1].toUpperCase();
+    const direction = last === 'ASC' || last === 'DESC' ? last : undefined;
+    return (direction ? values.slice(0, -1) : values).filter(Boolean).map(property => new Sort(property, direction ?? 'ASC'));
   }
 
   /** The TypeORM order of the property, nested for a property of a relationship like `region.name`. */
@@ -57,7 +69,7 @@ export class PageRequest {
     this.page = Math.max(PageRequest.handleNumberTypes(page, this.page), 0);
     const requestedSize = PageRequest.handleNumberTypes(size, this.size);
     this.size = requestedSize < 1 ? this.size : Math.min(requestedSize, PageRequest.MAX_SIZE);
-    const sorts = PageRequest.handleQueryTypes(sort).map(value => new Sort(value));
+    const sorts = PageRequest.handleQueryTypes(sort).flatMap(value => Sort.parse(value));
     const isSortable =
       typeof sortProperties === 'function' ? sortProperties : (property: string): boolean => sortProperties?.includes(property) ?? true;
     const invalid = sorts.find(each => !isSortable(each.property));

@@ -23,8 +23,18 @@ const typeValidators = {
   Duration: [`@Matches(${ISO_DURATION}, UNREADABLE)`],
 };
 
-/** The class-validator decorators of the type of a field: none for a text, a blob or an enum (@IsEnum). */
-export const fieldTypeValidators = field => (field.fieldIsEnum ? [] : (typeValidators[field.fieldType] ?? []));
+/** A binary blob (not a TextBlob): base64 in JSON, like the byte[] of JHipster Spring Boot. */
+const isBinaryBlob = field => field.fieldTypeBinary && field.fieldTypeBlobContent !== 'text';
+
+/**
+ * The class-validator decorators of the type of a field: none for a text, a TextBlob or an enum (@IsEnum). A binary blob is
+ * base64, the text of another value a body that is not read, like Jackson refuses it.
+ */
+export const fieldTypeValidators = field => {
+  if (field.fieldIsEnum) return [];
+  if (isBinaryBlob(field)) return ['@IsBase64({}, UNREADABLE)'];
+  return typeValidators[field.fieldType] ?? [];
+};
 
 /** A value of another type than each validated field type, which its validators refuse: for the tests of the 400. */
 const invalidTypeValues = {
@@ -43,4 +53,7 @@ const invalidTypeValues = {
 };
 
 /** A value of another type than the field, which its type validators refuse, or undefined for a field without them. */
-export const invalidTypeValue = field => (fieldTypeValidators(field).length > 0 ? invalidTypeValues[field.fieldType] : undefined);
+export const invalidTypeValue = field => {
+  if (fieldTypeValidators(field).length === 0) return undefined;
+  return isBinaryBlob(field) ? 'not base64!' : invalidTypeValues[field.fieldType];
+};

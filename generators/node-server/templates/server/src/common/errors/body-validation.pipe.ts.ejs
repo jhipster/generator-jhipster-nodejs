@@ -5,16 +5,20 @@ import { unreadableBodyException, validationException } from './problem.exceptio
 /** The types of a body that is not an object: a text (a mail), a number, a boolean, a list. */
 const NOT_OBJECTS: unknown[] = [String, Number, Boolean, Array];
 
+/** The primitive types of a parameter, which the ValidationPipe converts (transform) before the pipe of its route. */
+const PRIMITIVES: unknown[] = [String, Number, Boolean];
+
 /**
  * The ValidationPipe of the application, which refuses first a body that is not the object its route reads (a list, a
  * text, a number), like the unreadable body of JHipster Spring Boot: 400, not the validation errors of an empty object.
- * A request without a body gets here as an empty object, and is validated as one. A parameter of the path is left as its
- * text: the pipe of its route converts it (ParseLongPipe), and tells the value it got when it is not of its type.
+ * A request without a body gets here as an empty object, and is validated as one. A primitive parameter of the path or of
+ * the query is left as its text: the pipe of its route converts it (ParseLongPipe, ParseBooleanPipe) and tells the value
+ * it got when it is not of its type. A DTO of parameters (@Param(), @Query()) is validated as any other.
  */
 @Injectable()
 export class BodyValidationPipe extends ValidationPipe {
   override async transform(value: unknown, metadata: ArgumentMetadata): Promise<unknown> {
-    if (metadata.type === 'param') {
+    if ((metadata.type === 'param' || metadata.type === 'query') && metadata.data !== undefined && PRIMITIVES.includes(metadata.metatype)) {
       return value;
     }
     // The whole body only (@Body()), not one of its properties (@Body('name')).

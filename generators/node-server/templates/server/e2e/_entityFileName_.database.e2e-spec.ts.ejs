@@ -267,7 +267,7 @@ describe('<%- entityClass %> on the database', () => {
     const inverseOneToOnes = nodejsMappedByRelationships.filter(relationship => relationship.relationshipOneToOne);
 _%>
 <%_ // A generated id in the order of the records: not one the client gives, a UUID, nor a String id of SQL (a UUID the entity generates). _%>
-<%_ if (primaryKey.autoGenerate && !primaryKey.typeUUID && !(databaseTypeSql && primaryKey.typeString)) { _%>
+<%_ if (pagination !== 'no' && primaryKey.autoGenerate && !primaryKey.typeUUID && !(databaseTypeSql && primaryKey.typeString)) { _%>
 
   it('should sort the list by id, the newest first with id,desc, like Spring Data', async () => {
     const server = app.getHttpServer();

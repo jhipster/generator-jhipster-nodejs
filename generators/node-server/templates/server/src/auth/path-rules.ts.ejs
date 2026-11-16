@@ -49,7 +49,20 @@ export function requestPath(url: string): string {
  * refused, like the firewall of Spring Security, so that the rules and the routes read the same path.
  */
 export function isRejectedUrl(url: string): boolean {
-  return /[\\#]/.test(url);
+  // An encoded slash or a NUL, which the server of JHipster Spring Boot (Tomcat) refuses with 400 too.
+  return /[\\#]/.test(url) || /%(?:2f|00)/i.test(requestPath(url));
+}
+
+/** The methods the firewall of Spring Security lets pass (StrictHttpFirewall): TRACE and the others are refused. */
+const FIREWALL_METHODS = ['DELETE', 'GET', 'HEAD', 'OPTIONS', 'PATCH', 'POST', 'PUT'];
+
+/**
+ * A request the firewall of Spring Security refuses (StrictHttpFirewall), which JHipster Spring Boot answers as a request
+ * of no user: another method, a path that is not normalized (a double slash), with a semicolon or an encoded percent.
+ */
+export function isFirewallRejected(method: string, url: string): boolean {
+  const path = requestPath(url);
+  return !FIREWALL_METHODS.includes(method) || path.includes('//') || path.includes(';') || /%25/.test(path);
 }
 
 /** The access of a request, by the first rule matching it, undefined when none does. */

@@ -1,8 +1,10 @@
 <%_ const pkType = primaryKey.tsType;
     const idPipe = (pkType === 'number' && 'ParseLongPipe') || (primaryKey.typeUUID && 'ParseUuidPipe');
     const idParam = `@Param('id'${idPipe ? `, ${idPipe}` : ''}) id: ${pkType}`;
+    // The eagerload flag of the lists, like JHipster Spring Boot.
+    const eagerLoadFlag = !jpaMetamodelFiltering && implementsEagerLoadApis;
 _%>
-import { Body, ClassSerializerInterceptor, Controller, Delete, Get,<%- nodejsCriteria ? ' Header,' : '' %> NotFoundException, Param, Patch, Post as PostMethod, Put, UseGuards, Req, UseInterceptors } from '@nestjs/common';
+import { Body, ClassSerializerInterceptor, Controller, Delete, Get,<%- nodejsCriteria ? ' Header,' : '' %> NotFoundException, Param, Patch, Post as PostMethod,<%- eagerLoadFlag ? ' Query,' : '' %> Put, UseGuards, Req, UseInterceptors } from '@nestjs/common';
 import { 
 <%_ if (authenticationTypeJwt) { _%> ApiBearerAuth, 
 <%_ } else { _%> ApiSecurity, 
@@ -10,18 +12,17 @@ import {
 import { plainToInstance } from 'class-transformer';
 import { validate } from 'class-validator';
 import { <%- dtoClass %> } from './dto/<%- entityFileName %>.dto.ts';
-import { <%- entityClass %> } from './<%- entityFileName %>.entity.ts';
 import { <%- entityClass %>Service } from './<%- entityFileName %>.service.ts';
+<%_ if (pagination !== 'no') { _%>
+import { <%- entityClass %> } from './<%- entityFileName %>.entity.ts';
 import { Pageable } from '../../common/database/pageable.ts';
-<%_ if (pagination === 'no') { _%>
-import { PageRequest } from '../../common/database/pagination.entity.ts';
-<%_ } else { _%>
 import { PageRequest, Page } from '../../common/database/pagination.entity.ts';
 <%_ } _%>
 import { AuthGuard, <%- nodejsReadRoles ? 'Roles, ' : '' %>RolesGuard } from '../../auth/index.ts';
 import { HeaderUtil } from '../../common/header-util.ts';
-<%_ if (idPipe) { _%>
-import { <%- idPipe %> } from '../../common/parse-id.pipe.ts';
+<%_ const parameterImports = [idPipe, eagerLoadFlag && 'ParseBooleanPipe'].filter(Boolean); _%>
+<%_ if (parameterImports.length > 0) { _%>
+import { <%- parameterImports.join(', ') %> } from '../../common/parse-id.pipe.ts';
 <%_ } _%>
 <%_ if (nodejsCriteria) { _%>
 import { criteriaOf, criteriaWhere } from '../../common/database/criteria.ts';
@@ -59,9 +60,16 @@ export class <%- entityClass %>Controller {
     type: <%- dtoClass %>,
     isArray: true,
   })
+<%_ const listReadsRequest = pagination !== 'no' || nodejsCriteria || nodejsMappedByRelationships.some(relationship => relationship.relationshipOneToOne); _%>
   async getAll(
-    @Req() req: Request,
+    @Req() <%- listReadsRequest ? 'req' : '_req' %>: Request,
+<%_ if (pagination !== 'no') { _%>
     @Pageable({ defaultSort: '<%- primaryKey.name %>,ASC', entity: <%- entityClass %>, entityName: ENTITY_NAME }) pageRequest: PageRequest,
+<%_ } _%>
+<%_ if (eagerLoadFlag) { _%>
+    // Like JHipster Spring Boot, the eagerload flag is a boolean (the relationships are loaded whatever it is).
+    @Query('eagerload', ParseBooleanPipe) _eagerload?: boolean,
+<%_ } _%>
   ): Promise<<%- dtoClass %> []>  {
 <%_ for (const relationship of nodejsMappedByRelationships.filter(relationship => relationship.relationshipOneToOne)) { _%>
     // The records without <%- relationship.relationshipName %>, for the form of the other entity, like JHipster Spring Boot.
@@ -70,12 +78,13 @@ export class <%- entityClass %>Controller {
     }
 <%_ } _%>
 <%_ if (pagination === 'no') { _%>
-    // Like JHipster Spring Boot, an entity without pagination lists all its records, without the pagination headers.
+    // Like JHipster Spring Boot, an entity without pagination lists all its records, without the pagination headers, and
+    // reads no sort: the clients sort its list.
     const [results] = await this.<%- entityInstance %>Service.findAndCount({
   <%_ if (nodejsCriteria) { _%>
       where: criteriaWhere(req.query, criteriaOf(this.<%- entityInstance %>Service.metadata)),
   <%_ } _%>
-      order: pageRequest.asOrder(),
+      order: { <%- primaryKey.name %>: 'ASC' },
     });
     return results;
 <%_ } else { _%>
