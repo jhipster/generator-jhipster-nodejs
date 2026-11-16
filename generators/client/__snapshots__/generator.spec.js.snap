@@ -707,6 +707,15 @@ exports[`SubGenerator client of nodejs JHipster blueprint > run > should match t
   "client/src/app/shared/filter/index.ts": {
     "stateCleared": "modified",
   },
+  "client/src/app/shared/form/index.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/shared/form/select-options.directive.spec.ts": {
+    "stateCleared": "modified",
+  },
+  "client/src/app/shared/form/select-options.directive.ts": {
+    "stateCleared": "modified",
+  },
   "client/src/app/shared/jhipster/admin.samples.ts": {
     "stateCleared": "modified",
   },
