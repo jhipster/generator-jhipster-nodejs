@@ -190,10 +190,7 @@ export class <%- entityClass %>Controller {
     await this.validateIdForUpdate(id, <%- entityInstance %>DTO);
 <%_ // The fields and the stored relationships, the properties of the entity JHipster Spring Boot deserializes from the body.
     const replacedProperties = [
-      ...fields.filter(field => !field.id && !field.transient).flatMap(field => [
-        [field.fieldName, 'null'],
-        ...field.fieldWithContentType ? [[`${field.fieldName}ContentType`, 'null']] : [],
-      ]),
+      ...fields.filter(field => !field.id && !field.transient).map(field => [field.fieldName, 'null']),
       ...persistableRelationships.map(relationship => [relationship.propertyName, relationship.collection ? '[]' : 'null']),
     ];
 _%>

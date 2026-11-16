@@ -54,6 +54,7 @@ export class Sample {
 
     @Column({ name: 'photo_content_type', nullable: true })
     photoContentType?: string;
+
     @Column({ type: 'text', name: 'notes', nullable: true })
     notes?: string;
 
@@ -122,6 +123,7 @@ export class Sample {
 
     @Column({ name: 'photo_content_type', nullable: true })
     photoContentType?: string;
+
     @Column({ type: columnType('text'), name: 'notes', nullable: true })
     notes?: string;
 
@@ -189,6 +191,7 @@ export class Sample {
 
     @Column({ name: 'photo_content_type', nullable: true })
     photoContentType?: string;
+
     @Column({ type: 'clob', name: 'notes', nullable: true })
     notes?: string;
 
@@ -256,6 +259,7 @@ export class Sample {
 
     @Column({ name: 'photo_content_type', nullable: true })
     photoContentType?: string;
+
     @Column({ type: 'text', name: 'notes', nullable: true })
     notes?: string;
 
@@ -323,9 +327,10 @@ export class BookDTO {
             @ApiProperty({ description: "cover field" })
         cover!: string;
 
-
-        @Allow()
+            @IsNotEmpty()
+            @ApiProperty({ description: "coverContentType field" })
         coverContentType!: string;
+
 
 
   // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove

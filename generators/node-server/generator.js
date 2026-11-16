@@ -13,7 +13,6 @@ import { criteriaFiles, serverFiles } from './files.js';
 import {
   MIGRATION_TIMESTAMP_OFFSET,
   columnTransformer,
-  contentTypeColumnOptions,
   fieldColumnOptions,
   fieldColumnTypeImports,
   fieldTypeValidators,
@@ -127,6 +126,13 @@ export default class extends BaseApplicationGenerator {
   oldNodejsVersion;
   existingNodejsVersion;
   nodejsPackageJson;
+
+  constructor(args, options, features) {
+    // The content type of a blob is a field of its own, the <field>ContentType String field JHipster gives next to the blob,
+    // written like any field: the column, the property of the entity and of the DTO, its validation and its fake data,
+    // like JHipster Spring Boot.
+    super(args, options, { ...features, contentTypeFields: true });
+  }
 
   async beforeQueue() {
     await this.dependsOnJHipster('jhipster-nodejs:node-server:bootstrap');
@@ -473,7 +479,6 @@ export default class extends BaseApplicationGenerator {
           nodejsColumnTypeImports: fieldColumnTypeImports(field, application),
           nodejsTypeValidators: fieldTypeValidators(field),
           nodejsInvalidTypeValue: invalidTypeValue(field),
-          nodejsContentTypeColumnOptions: contentTypeColumnOptions(field, application),
         });
         // The fake value of the field as the API exchanges it, generated when a template calls it (after its faker seed).
       },
