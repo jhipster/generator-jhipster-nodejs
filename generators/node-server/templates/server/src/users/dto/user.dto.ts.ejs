@@ -28,7 +28,8 @@ export class <%- userLoginVmClass %> {
 
   @ApiProperty({ uniqueItems: true, example: 'myuser', description: 'User login' })
   @IsString()
-  @IsNotEmpty()
+  // The @NotBlank of the AdminUserDTO of JHipster Spring Boot, the code of its field error.
+  @IsNotEmpty({ context: { code: 'NotBlank' } })
   @Length(1, 50)
   @Matches(LOGIN_PATTERN)
   login!: string;

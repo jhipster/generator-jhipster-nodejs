@@ -48,11 +48,13 @@
       // if (rules.includes('minbytes') && rules.includes('maxbytes')) {
       //     validators.push('@Size(min = ' + field.fieldValidateRulesMinbytes + ', max = ' + field.fieldValidateRulesMaxbytes + ')');
       // }
+      // Like Bean Validation, the bound of a decimal is a @DecimalMin or a @DecimalMax, the code of its field error.
+      const decimal = field.fieldTypeFloat || field.fieldTypeDouble || field.fieldTypeBigDecimal;
       if (rules.includes('min')) {
-        validators.push(`@Min(${field.fieldValidateRulesMin})`);
+        validators.push(`@Min(${field.fieldValidateRulesMin}${decimal ? ", { context: { code: 'DecimalMin' } }" : ''})`);
       }
       if (rules.includes('max')) {
-        validators.push(`@Max(${field.fieldValidateRulesMax})`);
+        validators.push(`@Max(${field.fieldValidateRulesMax}${decimal ? ", { context: { code: 'DecimalMax' } }" : ''})`);
       }
       if (rules.includes('pattern')) {
         // Like Bean Validation @Pattern, the whole value matches the pattern.

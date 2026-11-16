@@ -7,8 +7,8 @@ export interface FieldErrorVM {
   objectName: string;
   field: string;
   message: string;
-  /** The code of the constraint, like Pattern. */
-  code?: string;
+  /** The code of the constraint, like NotNull, Size, Pattern or typeMismatch, the key of its translation in the clients. */
+  code: string;
 }
 
 /** The properties of a problem detail the exception gives, the others are completed by the ProblemDetailsFilter. */
@@ -33,20 +33,56 @@ export class ProblemException extends HttpException {
   }
 }
 
+/** The constraints of the type of a value. */
+const TYPE_CONSTRAINTS = ['isEnum', 'isInt', 'isNumber', 'isBoolean', 'isUuid', 'isIso8601', 'isString'];
+
+/** The constraints of a value that is required. */
+const REQUIRED_CONSTRAINTS = ['isNotEmpty', 'isDefined'];
+
+/** The code of each constraint of class-validator, the Bean Validation annotation of JHipster Spring Boot it stands for. */
+const CONSTRAINT_CODES: Record<string, string> = {
+  isNotEmpty: 'NotNull',
+  isDefined: 'NotNull',
+  isLength: 'Size',
+  minLength: 'Size',
+  maxLength: 'Size',
+  matches: 'Pattern',
+  min: 'Min',
+  max: 'Max',
+  isEmail: 'Email',
+};
+
+/**
+ * The constraint of a field error, the first one the field fails, and its code (see FieldErrorVM): the one its decorator
+ * tells by its context (`{ context: { code: 'DecimalMin' } }`), else the one of its constraint, a type constraint being a
+ * typeMismatch, like a binding failure of Spring. Like Bean Validation, a missing value fails its required constraint
+ * only, or its type constraint, NotNull: the other constraints accept it.
+ */
+const failedConstraint = ({ value, constraints = {}, contexts = {} }: ValidationError): { message: string; code: string } | undefined => {
+  const failed = Object.keys(constraints);
+  const missing = value === undefined || value === null;
+  const constraint =
+    (missing && (failed.find(name => REQUIRED_CONSTRAINTS.includes(name)) ?? failed.find(name => TYPE_CONSTRAINTS.includes(name)))) ||
+    failed[0];
+  if (constraint === undefined) {
+    return undefined;
+  }
+  const code =
+    (contexts[constraint] as { code?: string } | undefined)?.code ??
+    (missing ? 'NotNull' : (CONSTRAINT_CODES[constraint] ?? (TYPE_CONSTRAINTS.includes(constraint) ? 'typeMismatch' : constraint)));
+  return { message: constraints[constraint], code };
+};
+
 /**
  * The errors of the validation of a request body, like the field errors of JHipster Spring Boot: the object (the class
- * of the body without its <%- dtoSuffix %> suffix), the field and the message of the first constraint it fails.
+ * of the body without its <%- dtoSuffix %> suffix), the field, and the message and the code of the constraint it fails.
  */
 export const toFieldErrors = (errors: ValidationError[], parentPath = ''): FieldErrorVM[] =>
   errors.flatMap(error => {
     const field = `${parentPath}${error.property}`;
     const objectName = (error.target?.constructor.name ?? '').replace(/^./, first => first.toLowerCase()).replace(/<%- dtoSuffix %>$/, '');
-    return [
-      ...Object.values(error.constraints ?? {})
-        .slice(0, 1)
-        .map(message => ({ objectName, field, message })),
-      ...toFieldErrors(error.children ?? [], `${field}.`),
-    ];
+    const constraint = failedConstraint(error);
+    return [...(constraint ? [{ objectName, field, ...constraint }] : []), ...toFieldErrors(error.children ?? [], `${field}.`)];
   });
 
 /** The validation of a request body failed, like the MethodArgumentNotValidException of Spring. */
@@ -64,9 +100,6 @@ export class ValidationException extends ProblemException {
 
 /** The validation option of a pattern that tells the type of a value (a date, a time, a duration), not a rule of the entity. */
 export const UNREADABLE = { context: { unreadable: true } };
-
-/** The constraints of the type of a value. */
-const TYPE_CONSTRAINTS = ['isEnum', 'isInt', 'isNumber', 'isBoolean', 'isUuid', 'isIso8601', 'isString'];
 
 /**
  * Whether a value is of another type than its property: one a JSON deserializer refuses before any validation, like

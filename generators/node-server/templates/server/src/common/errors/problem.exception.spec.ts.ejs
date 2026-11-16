@@ -29,6 +29,10 @@ class SampleDTO {
   @IsOptional()
   @Matches(/^[a-z]+$/)
   code?: unknown;
+
+  @IsOptional()
+  @Min(0.5, { context: { code: 'DecimalMin' } })
+  price?: unknown;
 }
 
 const exceptionOf = async (values: Partial<SampleDTO>): Promise<unknown> =>
@@ -47,5 +51,21 @@ describe('validationException', () => {
       expect(exception).toBeInstanceOf(BadRequestException);
       expect((exception as BadRequestException).message).toBe('Failed to read request');
     }
+  });
+
+  it('gives each field error the code of its constraint, like the FieldErrorVM of JHipster Spring Boot', async () => {
+    const codeOf = async (values: Partial<SampleDTO>): Promise<unknown> =>
+      ((await exceptionOf(values)) as ValidationException).problem.fieldErrors?.map(({ field, code }) => `${field} ${code}`);
+    expect(await codeOf({ name: undefined })).toEqual(['name NotNull']);
+    expect(await codeOf({ name: 'A' })).toEqual(['name Size']);
+    expect(await codeOf({ age: 3 })).toEqual(['age Min']);
+    expect(await codeOf({ code: 'A1' })).toEqual(['code Pattern']);
+    expect(await codeOf({ price: 0.1 })).toEqual(['price DecimalMin']);
+    expect(await codeOf({ age: 20.5 })).toEqual(['age typeMismatch']);
+  });
+
+  it('gives a field error the message of the constraint of its code', async () => {
+    const exception = (await exceptionOf({ name: undefined })) as ValidationException;
+    expect(exception.problem.fieldErrors).toEqual([{ objectName: 'sample', field: 'name', message: 'name should not be empty', code: 'NotNull' }]);
   });
 });
