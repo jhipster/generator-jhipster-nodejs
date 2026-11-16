@@ -1,4 +1,7 @@
-import { Controller, Get, Res, UseGuards } from '@nestjs/common';
+import { Controller, Get, NotFoundException, Res, UseGuards } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+
+import type { ApplicationConfig } from '../application-config.ts';
 import { ApiExcludeController } from '@nestjs/swagger';
 import { Response } from 'express';
 
@@ -6,25 +9,48 @@ import { SkipLogging } from '../common/interceptors/logging.interceptor.ts';
 import { MetricsService, NodeMetrics } from '../common/metrics.ts';
 import { AuthGuard, Roles, RolesGuard, RoleType } from '../auth/index.ts';
 
+/** A thread of a thread dump, like the one of Spring Boot Actuator. */
+export interface ThreadInfo {
+  threadName: string;
+  threadId: number;
+  threadState: string;
+}
+
 /**
- * The metrics endpoints: metrics for the metrics page of the client (administrators only), prometheus for the
- * Prometheus of docker/prometheus (public, like JHipster).
+ * The metrics endpoints, like the ones of JHipster Spring Boot: jhimetrics for the metrics page of the client and
+ * threaddump (administrators only), prometheus for the Prometheus of docker/prometheus (public, disabled by the prod
+ * profile with management.prometheus.metrics.export.enabled).
  */
 @ApiExcludeController()
 @Controller('management')
 export class MetricsController {
-  constructor(private readonly metricsService: MetricsService) {}
+  constructor(
+    private readonly metricsService: MetricsService,
+    private readonly configService: ConfigService<ApplicationConfig, true>,
+  ) {}
 
-  @Get('/metrics')
+  @Get('/jhimetrics')
   @UseGuards(AuthGuard, RolesGuard)
   @Roles(RoleType.ADMIN)
   metrics(): NodeMetrics {
     return this.metricsService.nodeMetrics();
   }
 
+  /** The threads of the server: Node.js answers the requests in the one thread of its event loop. */
+  @Get('/threaddump')
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles(RoleType.ADMIN)
+  threaddump(): { threads: ThreadInfo[] } {
+    return { threads: [{ threadName: 'main', threadId: 1, threadState: 'RUNNABLE' }] };
+  }
+
   @Get('/prometheus')
   @SkipLogging()
   async prometheus(@Res({ passthrough: true }) response: Response): Promise<string> {
+    // A property of a file or of the environment, a boolean or its text.
+    if (String(this.configService.get('management.prometheus.metrics.export.enabled', { infer: true })) !== 'true') {
+      throw new NotFoundException();
+    }
     response.type(this.metricsService.registry.contentType);
     return this.metricsService.prometheus();
   }

@@ -46,6 +46,8 @@ export class Config {
   // The values of the env and configprops endpoints: never (shown as ******) like Spring Boot, or always.
   'management.endpoint.env.show-values' = 'never';
   'management.endpoint.configprops.show-values' = 'never';
+  // The prometheus endpoint, disabled in the prod profile like JHipster Spring Boot.
+  'management.prometheus.metrics.export.enabled' = true;
   // CORS is disabled without allowed-origins nor allowed-origin-patterns, like JHipster Spring Boot (application-dev.yml).
   'jhipster.cors.allowed-origins' = '';
   'jhipster.cors.allowed-origin-patterns' = '';

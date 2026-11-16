@@ -1,4 +1,4 @@
-import { Controller, Get, UseGuards } from '@nestjs/common';
+import { Controller, Get, NotFoundException, Param, UseGuards } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { ApiExcludeController } from '@nestjs/swagger';
 
@@ -15,6 +15,13 @@ export interface ConfigurationSource {
 export interface Env {
   activeProfiles: string[];
   sources: ConfigurationSource[];
+}
+
+/** A property of the configuration, like the env/{name} endpoint of Spring Boot Actuator: its value and its sources. */
+export interface EnvProperty {
+  property: { source: string; value: unknown };
+  activeProfiles: string[];
+  propertySources: { name: string; property?: { value: unknown } }[];
 }
 
 export interface ConfigProps {
@@ -45,6 +52,23 @@ export class ConfigurationController {
       activeProfiles,
       sources: [source('systemEnvironment', process.env), ...configFiles.map(({ name, properties }) => source(name, properties))],
     };
+  }
+
+  /** A property of the configuration: the source of its value, the highest precedence first, and its value in each. */
+  @Get('/env/:name')
+  property(@Param('name') name: string): EnvProperty {
+    const value = this.valueFor('env');
+    const propertySources = [
+      { name: 'systemEnvironment', properties: process.env as Record<string, unknown> },
+      ...configFiles,
+    ].map(({ name: sourceName, properties }) =>
+      Object.hasOwn(properties, name) ? { name: sourceName, property: { value: value(properties[name]) } } : { name: sourceName },
+    );
+    const source = propertySources.find(each => each.property);
+    if (!source?.property) {
+      throw new NotFoundException();
+    }
+    return { property: { source: source.name, value: source.property.value }, activeProfiles, propertySources };
   }
 
   @Get('/configprops')

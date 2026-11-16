@@ -5,6 +5,7 @@ import { INestApplication } from '@nestjs/common';
 import { AppModule } from '../src/app.module.ts';
 import { configureApp } from '../src/app.config.ts';
 import { loggerLevels } from '../src/common/logging.ts';
+import { config } from '../src/config.ts';
 import { setupSwagger } from '../src/swagger.ts';
 import { RequestAuthenticator } from '../src/auth/request-authenticator.ts';
 
@@ -68,7 +69,7 @@ describe('Management', () => {
 
         it('/GET metrics gives the memory, the processor and the requests by endpoint', async () => {
             await request(app.getHttpServer()).get('/management/info').expect(200);
-            const { body } = await request(app.getHttpServer()).get('/management/metrics').expect(200);
+            const { body } = await request(app.getHttpServer()).get('/management/jhimetrics').expect(200);
 
             expect(body.memory.heap).toEqual({ used: expect.any(Number), committed: expect.any(Number), max: expect.any(Number) });
             expect(body.process.cpuCount).toBeGreaterThan(0);
@@ -90,6 +91,24 @@ describe('Management', () => {
             expect(applicationYml.properties['management.endpoint.env.show-values']).toBe('******');
         });
 
+        it('/GET env of a property gives its source and its value, hidden like Spring Boot, else not found', async () => {
+            const { body } = await request(app.getHttpServer()).get('/management/env/management.endpoint.env.show-values').expect(200);
+
+            expect(body.property).toEqual({ source: "Config resource 'config/application.yml'", value: '******' });
+            expect(body.activeProfiles).toContain('test');
+            expect(body.propertySources.map((source: { name: string }) => source.name)).toContain('systemEnvironment');
+            await request(app.getHttpServer()).get('/management/env/not.a.property').expect(404);
+        });
+
+        it('/GET threaddump gives the thread of the event loop, like the endpoint of Spring Boot Actuator', async () => {
+            const { body } = await request(app.getHttpServer()).get('/management/threaddump').expect(200);
+
+            expect(body.threads).toEqual([expect.objectContaining({ threadName: 'main', threadState: 'RUNNABLE' })]);
+        });
+
+        it('/GET the metrics of another path than jhimetrics is not found, like JHipster Spring Boot', () =>
+            request(app.getHttpServer()).get('/management/metrics').expect(404));
+
         it('/GET configprops gives the properties of the application by prefix, their values hidden like Spring Boot', async () => {
             const { body } = await request(app.getHttpServer()).get('/management/configprops').expect(200);
 
@@ -108,7 +127,10 @@ describe('Management', () => {
             expect(loggerLevels.getLevel('ManagementTest').configuredLevel).toBeNull();
         });
 
-        it('/GET metrics is forbidden', () => request(app.getHttpServer()).get('/management/metrics').expect(403));
+        it('/GET jhimetrics and threaddump are forbidden', async () => {
+            await request(app.getHttpServer()).get('/management/jhimetrics').expect(403);
+            await request(app.getHttpServer()).get('/management/threaddump').expect(403);
+        });
 
         it('/GET v3/api-docs is forbidden, like JHipster Spring Boot', async () => {
             setupSwagger(app);
@@ -137,6 +159,19 @@ describe('Management', () => {
             // The controller of the document itself is left out.
             expect(Object.keys(body.paths)).not.toContain('/v3/api-docs');
         });
+    });
+
+    describe('Prometheus disabled, like the prod profile of JHipster Spring Boot', () => {
+        beforeEach(async () => {
+            config.addAll({ 'management.prometheus.metrics.export.enabled': false });
+            app = await createApp(true);
+        });
+
+        afterEach(() => {
+            config.addAll({ 'management.prometheus.metrics.export.enabled': true });
+        });
+
+        it('/GET prometheus is not found', () => request(app.getHttpServer()).get('/management/prometheus').expect(404));
     });
 
     describe('Prometheus', () => {

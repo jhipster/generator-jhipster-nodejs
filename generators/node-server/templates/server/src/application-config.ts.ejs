@@ -6,6 +6,9 @@ import { isInt, isNotEmpty, isPort<%- (authenticationTypeOauth2 || serviceDiscov
  * of a property from its path (configService.get('jhipster.cors.max-age', { infer: true }) is a number).
  */
 export interface ApplicationConfig {
+  management: {
+    prometheus: { metrics: { export: { enabled: boolean } } };
+  };
   server: {
     port: string | number;
     'forward-headers-strategy': 'none' | 'native';

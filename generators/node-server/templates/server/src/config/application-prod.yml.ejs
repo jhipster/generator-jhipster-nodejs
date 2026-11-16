@@ -41,6 +41,12 @@ logging:
 server:
   port: <%- serverPort %>
 
+management:
+  prometheus:
+    metrics:
+      export:
+        enabled: false
+
 # ===================================================================
 # JHipster specific properties
 #
