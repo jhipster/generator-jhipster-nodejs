@@ -18,7 +18,10 @@ export class CreatePersistentTokens1570200270083 implements MigrationInterface {
       { name: 'userAgent', type: String, nullable: true },
     ]);
     const { namingStrategy } = queryRunner.connection;
-    await queryRunner.createIndex(TOKEN_TABLE, new TableIndex({ name: namingStrategy.indexName(TOKEN_TABLE, ['login']), columnNames: ['login'] }));
+    await queryRunner.createIndex(
+      TOKEN_TABLE,
+      new TableIndex({ name: namingStrategy.indexName(TOKEN_TABLE, ['login']), columnNames: ['login'] }),
+    );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {

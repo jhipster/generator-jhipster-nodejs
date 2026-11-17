@@ -4,18 +4,32 @@ import { isFirewallRejected, isRejectedUrl, pathAccess, pathPatternRegExp, reque
 describe('path rules', () => {
   it('matches the paths under a ** pattern, its own path included, whatever their case', () => {
     const paths = pathPatternRegExp('/api/admin/**');
-    expect(['/api/admin', '/api/admin/', '/api/admin/users/x', '/API/Admin/users'].map(path => paths.test(path))).toEqual([true, true, true, true]);
+    expect(['/api/admin', '/api/admin/', '/api/admin/users/x', '/API/Admin/users'].map(path => paths.test(path))).toEqual([
+      true,
+      true,
+      true,
+      true,
+    ]);
     expect(['/api/administration', '/api', '/x/api/admin'].map(path => paths.test(path))).toEqual([false, false, false]);
   });
 
   it('matches one path with a trailing slash, like the routes of Express', () => {
     const paths = pathPatternRegExp('/management/info');
-    expect(['/management/info', '/management/info/', '/management/info/x', '/management/infos'].map(path => paths.test(path))).toEqual([true, true, false, false]);
+    expect(['/management/info', '/management/info/', '/management/info/x', '/management/infos'].map(path => paths.test(path))).toEqual([
+      true,
+      true,
+      false,
+      false,
+    ]);
   });
 
   it('matches a * within a segment only, and the dots literally', () => {
     const paths = pathPatternRegExp('/services/*/*.js');
-    expect(['/services/app/main.js', '/services/app/x/main.js', '/services/app/mainxjs'].map(path => paths.test(path))).toEqual([true, false, false]);
+    expect(['/services/app/main.js', '/services/app/x/main.js', '/services/app/mainxjs'].map(path => paths.test(path))).toEqual([
+      true,
+      false,
+      false,
+    ]);
   });
 
   it('reads the path of a request without its query nor its origin', () => {
@@ -30,7 +44,12 @@ describe('path rules', () => {
 
   it('tells the requests the firewall of Spring Security refuses', () => {
     expect(isFirewallRejected('TRACE', '/api/x')).toBe(true);
-    expect(['//api/x', '/api/x;y=1', '/api/x/%25', '/api/x?y=a//b;c'].map(url => isFirewallRejected('GET', url))).toEqual([true, true, true, false]);
+    expect(['//api/x', '/api/x;y=1', '/api/x/%25', '/api/x?y=a//b;c'].map(url => isFirewallRejected('GET', url))).toEqual([
+      true,
+      true,
+      true,
+      false,
+    ]);
   });
 
   it('gives the access of the first rule matching a request', () => {

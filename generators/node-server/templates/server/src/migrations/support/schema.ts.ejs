@@ -266,8 +266,9 @@ export const createJoinTable = async (
   await queryRunner.createTable(
     new Table({
       name,
-      columns: columns.map(({ referencedTableName: _table, referencedColumnName: _column, onDelete: _delete, onUpdate: _update, ...column }) =>
-        tableColumn(queryRunner, { ...column, primary: true }),
+      columns: columns.map(
+        ({ referencedTableName: _table, referencedColumnName: _column, onDelete: _delete, onUpdate: _update, ...column }) =>
+          tableColumn(queryRunner, { ...column, primary: true }),
       ),
       indices: columns.map(column => ({ columnNames: [column.name] })),
       foreignKeys: columns.map(column => ({

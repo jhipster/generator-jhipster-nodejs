@@ -295,7 +295,12 @@ describe('Session authentication', () => {
     const sessions = app.get<Repository<Session>>(getRepositoryToken(Session));
     const other = request.agent(app.getHttpServer());
     const otherToken = cookieValue(await other.get('/api/account').expect(401), 'XSRF-TOKEN')!;
-    await other.post('/api/authentication').set('X-XSRF-TOKEN', otherToken).type('form').send({ username: 'session-user', password }).expect(200);
+    await other
+      .post('/api/authentication')
+      .set('X-XSRF-TOKEN', otherToken)
+      .type('form')
+      .send({ username: 'session-user', password })
+      .expect(200);
     const response = await login({ username: 'session-user', password });
     expect(await sessions.find({ where: { login: 'session-user' } })).toHaveLength(2);
 

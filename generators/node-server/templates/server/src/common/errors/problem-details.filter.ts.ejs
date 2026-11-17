@@ -46,7 +46,8 @@ export class ProblemDetailsFilter implements ExceptionFilter {
     if (methods.length > 0) {
       response.setHeader('Allow', methods.join(', '));
     }
-    const exception = methods.length > 0 ? methodNotAllowed(request) : isDataIntegrityViolation(thrown) ? new DataIntegrityViolationException() : thrown;
+    const exception =
+      methods.length > 0 ? methodNotAllowed(request) : isDataIntegrityViolation(thrown) ? new DataIntegrityViolationException() : thrown;
     const status = exception instanceof HttpException ? exception.getStatus() : HttpStatus.INTERNAL_SERVER_ERROR;
     if (!(exception instanceof HttpException)) {
       this.logger.error(`${request.method} ${request.originalUrl}`, exception instanceof Error ? exception.stack : String(exception));

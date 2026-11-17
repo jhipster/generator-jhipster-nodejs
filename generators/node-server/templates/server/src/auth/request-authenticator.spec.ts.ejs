@@ -28,7 +28,9 @@ describe('RequestAuthenticator', () => {
   });
 
   it('refuses an invalid token, and the token of a user that no longer exists', async () => {
-    await expect(authenticate(null, false, namedError('JsonWebTokenError', 'jwt malformed'))).rejects.toBeInstanceOf(InvalidBearerTokenException);
+    await expect(authenticate(null, false, namedError('JsonWebTokenError', 'jwt malformed'))).rejects.toBeInstanceOf(
+      InvalidBearerTokenException,
+    );
     await expect(authenticate(null, false, namedError('JsonWebTokenError', 'jwt malformed'))).rejects.toMatchObject({ expired: false });
     await expect(authenticate(null, false, namedError('TokenExpiredError', 'jwt expired'))).rejects.toMatchObject({ expired: true });
     await expect(authenticate(new UnauthorizedException('user does not exist'), false)).rejects.toBeInstanceOf(InvalidBearerTokenException);
