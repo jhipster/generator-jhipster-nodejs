@@ -1,9 +1,9 @@
-import { Controller, Get, NotFoundException, Param, UseGuards } from '@nestjs/common';
+import { Controller, Get, NotFoundException, Param } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { ApiExcludeController } from '@nestjs/swagger';
 
 import { activeProfiles, config, configFiles } from '../config.ts';
-import { AuthGuard, Roles, RolesGuard, RoleType } from '../auth/index.ts';
+import { Roles, RoleType } from '../auth/index.ts';
 
 const MASK = '******';
 
@@ -36,7 +36,6 @@ export interface ConfigProps {
  */
 @ApiExcludeController()
 @Controller('management')
-@UseGuards(AuthGuard, RolesGuard)
 @Roles(RoleType.ADMIN)
 export class ConfigurationController {
   constructor(private readonly configService: ConfigService) {}

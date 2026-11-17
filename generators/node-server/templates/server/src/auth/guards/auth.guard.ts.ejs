@@ -1,13 +1,20 @@
 import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common';
+import { Reflector } from '@nestjs/core';
 import { Request } from '../../common/request.ts';
+import { IS_PUBLIC } from '../decorators/public.decorator.ts';
 
 /**
- * The authentication of a route: the user of the request, which the PathRulesMiddleware authenticated before the routes,
- * else 401.
+ * The authentication of the routes, a global guard of the AuthModule: the user of the request, which the
+ * PathRulesMiddleware authenticated before the routes, else 401, but for a route marked @Public().
  */
 @Injectable()
 export class AuthGuard implements CanActivate {
+  constructor(private readonly reflector: Reflector) {}
+
   canActivate(context: ExecutionContext): boolean {
+    if (this.reflector.getAllAndOverride<boolean | undefined>(IS_PUBLIC, [context.getHandler(), context.getClass()])) {
+      return true;
+    }
     if (!context.switchToHttp().getRequest<Request>().user) {
       throw new UnauthorizedException();
     }

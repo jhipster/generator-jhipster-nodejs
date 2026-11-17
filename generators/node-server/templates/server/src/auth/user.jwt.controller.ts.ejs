@@ -2,9 +2,11 @@ import { Body, Controller, Post, Res, HttpCode } from '@nestjs/common';
 import { Response } from 'express';
 import { UserLoginDTO } from './dto/user-login.dto.ts';
 import { AuthService } from './auth.service.ts';
+import { Public } from './decorators/public.decorator.ts';
 import { ApiTags, ApiResponse, ApiOperation } from '@nestjs/swagger';
 
 @Controller('api')
+@Public()
 @ApiTags('user-jwt-controller')
 export class UserJWTController {
 

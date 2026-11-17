@@ -67,7 +67,7 @@ describe('<%- entityClass %> on the database', () => {
       .overrideProvider(RequestAuthenticator)
       // The user of the requests.
       .useValue({ authenticate: () => Promise.resolve({ login: AUDITOR }) })
-      .overrideGuard(RolesGuard)
+      .overrideProvider(RolesGuard)
       .useValue({ canActivate: () => true })
       .compile();
 

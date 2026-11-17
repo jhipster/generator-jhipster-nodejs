@@ -24,7 +24,7 @@ describe('Authority Controller', () => {
       .overrideProvider(RequestAuthenticator)
       // An administrator.
       .useValue({ authenticate: (): Promise<any> => Promise.resolve({ login: 'admin', authorities: ['ROLE_ADMIN', 'ROLE_USER'] }) })
-      .overrideGuard(RolesGuard)
+      .overrideProvider(RolesGuard)
       .useValue({ canActivate: (): any => true })
       .compile();
 

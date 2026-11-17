@@ -1,8 +1,7 @@
-import { Controller, ClassSerializerInterceptor, Get, Res, UseGuards, UseInterceptors } from '@nestjs/common';
+import { Controller, ClassSerializerInterceptor, Get, Res, UseInterceptors } from '@nestjs/common';
 import { Pageable } from '../common/database/pageable.ts';
 import { PageRequest, Page } from '../common/database/pagination.entity.ts';
 import { PublicUserDTO } from './dto/user.dto.ts';
-import { AuthGuard } from '../auth/index.ts';
 import { Response } from 'express';
 import { HeaderUtil } from '../common/header-util.ts';
 import { ApiTags, ApiResponse, ApiOperation } from '@nestjs/swagger';
@@ -24,7 +23,6 @@ export class PublicUserController {
 
   /** Like the PublicUserResource of JHipster Spring Boot: the activated users, by their id and login, for authenticated users. */
   @Get('/users')
-  @UseGuards(AuthGuard)
   @ApiOperation({ summary: 'Get the list of the activated users, by their id and login' })
   @ApiResponse({
       status: 200,

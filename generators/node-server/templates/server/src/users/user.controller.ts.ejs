@@ -1,6 +1,6 @@
-import { Body, Controller, NotFoundException, Delete, Get, Param, Post, Put, UseGuards, Req, Res, UseInterceptors, ClassSerializerInterceptor } from '@nestjs/common';
+import { Body, Controller, NotFoundException, Delete, Get, Param, Post, Put, Req, Res, UseInterceptors, ClassSerializerInterceptor } from '@nestjs/common';
 import { Response } from 'express';
-import { AuthGuard,  Roles, RolesGuard, RoleType } from '../auth/index.ts';
+import { Roles, RoleType } from '../auth/index.ts';
 import { Pageable } from '../common/database/pageable.ts';
 import { PageRequest, Page } from '../common/database/pagination.entity.ts';
 import { <%- user.persistClass %> } from './user.entity.ts';
@@ -18,7 +18,6 @@ import { randomBytes } from 'crypto';
 import { BadRequestAlertException, EmailAlreadyUsedException, LoginAlreadyUsedException } from '../common/errors/problem.exception.ts';
 
 @Controller('api/admin/users')
-@UseGuards(AuthGuard, RolesGuard)
 @UseInterceptors(ClassSerializerInterceptor)
 <%_ if (authenticationType === 'jwt') { _%>
 @ApiBearerAuth()

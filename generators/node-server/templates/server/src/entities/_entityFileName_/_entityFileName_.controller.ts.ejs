@@ -6,7 +6,7 @@
     // The list reads the request for its criteria or its filter.
     const listReadsRequest = nodejsCriteria || nodejsMappedByRelationships.some(relationship => relationship.relationshipOneToOne);
 _%>
-import { Body, ClassSerializerInterceptor, Controller, Delete, Get,<%- nodejsCriteria ? ' Header,' : '' %> NotFoundException, Param, Patch, Post as PostMethod,<%- eagerLoadFlag ? ' Query,' : '' %> Put,<%- listReadsRequest ? ' Req,' : '' %> Res, UseGuards, UseInterceptors } from '@nestjs/common';
+import { Body, ClassSerializerInterceptor, Controller, Delete, Get,<%- nodejsCriteria ? ' Header,' : '' %> NotFoundException, Param, Patch, Post as PostMethod,<%- eagerLoadFlag ? ' Query,' : '' %> Put,<%- listReadsRequest ? ' Req,' : '' %> Res, UseInterceptors } from '@nestjs/common';
 import { Response } from 'express';
 import { 
 <%_ if (authenticationTypeJwt) { _%> ApiBearerAuth, 
@@ -21,7 +21,9 @@ import { <%- entityClass %> } from './<%- entityFileName %>.entity.ts';
 import { Pageable } from '../../common/database/pageable.ts';
 import { PageRequest, Page } from '../../common/database/pagination.entity.ts';
 <%_ } _%>
-import { AuthGuard, <%- nodejsReadRoles ? 'Roles, ' : '' %>RolesGuard } from '../../auth/index.ts';
+<%_ if (nodejsReadRoles) { _%>
+import { Roles } from '../../auth/index.ts';
+<%_ } _%>
 import { HeaderUtil } from '../../common/header-util.ts';
 <%_ const parameterImports = [idPipe, eagerLoadFlag && 'ParseBooleanPipe'].filter(Boolean); _%>
 <%_ if (parameterImports.length > 0) { _%>
@@ -39,7 +41,6 @@ import { BadRequestAlertException, validationException } from '../../common/erro
 const ENTITY_NAME = '<%- entityAlertName %>';
 
 @Controller('api/<%- entityApiUrl %>')
-@UseGuards(AuthGuard, RolesGuard)
 @UseInterceptors(ClassSerializerInterceptor)
 <%_ if (authenticationType === 'jwt') { _%>
 @ApiBearerAuth()

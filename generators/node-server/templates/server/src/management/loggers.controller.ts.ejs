@@ -1,8 +1,8 @@
-import { BadRequestException, Body, Controller, Get, HttpCode, NotFoundException, Param, Post, UseGuards } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Get, HttpCode, NotFoundException, Param, Post } from '@nestjs/common';
 import { ApiExcludeController } from '@nestjs/swagger';
 
 import { LEVELS, Level, LoggerLevel, isLevel, loggerLevels } from '../common/logging.ts';
-import { AuthGuard, Roles, RolesGuard, RoleType } from '../auth/index.ts';
+import { Roles, RoleType } from '../auth/index.ts';
 
 export interface Loggers {
   levels: readonly Level[];
@@ -15,7 +15,6 @@ export interface Loggers {
  */
 @ApiExcludeController()
 @Controller('management/loggers')
-@UseGuards(AuthGuard, RolesGuard)
 @Roles(RoleType.ADMIN)
 export class LoggersController {
   @Get()

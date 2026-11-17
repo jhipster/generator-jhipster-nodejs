@@ -7,7 +7,7 @@ import { FormBody } from '../common/errors/json-body.interceptor.ts';
 import { AuthService } from './auth.service.ts';
 import { LoginCsrfGuard, setCsrfCookie } from './csrf.middleware.ts';
 import { sessionUser } from './session-user.middleware.ts';
-import { AuthGuard } from './guards/auth.guard.ts';
+import { Public } from './decorators/public.decorator.ts';
 import { describeSession, RememberMeService } from './remember-me.service.ts';
 import { SessionStore } from './session.store.ts';
 
@@ -40,6 +40,7 @@ export class UserSessionController {
   ) {}
 
   @Post('/authentication')
+  @Public()
   @HttpCode(200)
   @ApiConsumes('application/x-www-form-urlencoded')
   // Like the formLogin of Spring Security, the parameters of a form only: another body, like JSON, logs nobody in.
@@ -68,6 +69,7 @@ export class UserSessionController {
   }
 
   @Post('/logout')
+  @Public()
   @HttpCode(200)
   @ApiOperation({ summary: 'Log out, ending the session and its remember-me login' })
   @ApiResponse({ status: 200, description: 'Logged out' })
@@ -77,7 +79,6 @@ export class UserSessionController {
   }
 
   @Get('/account/sessions')
-  @UseGuards(AuthGuard)
   @ApiOperation({ summary: 'The open sessions and the remember-me logins of the current user, for the sessions page of the clients' })
   @ApiResponse({ status: 200, description: 'The open sessions and the remember-me logins of the user' })
   async getCurrentSessions(@Req() req: Request): Promise<SessionDTO[]> {
@@ -102,7 +103,6 @@ export class UserSessionController {
   }
 
   @Delete('/account/sessions/:series')
-  @UseGuards(AuthGuard)
   @ApiOperation({ summary: 'Ends an open session or a remember-me login of the current user, a line of the sessions page of the clients' })
   @ApiResponse({ status: 200, description: 'The remember-me login and the open sessions of the series, if they are of the user, ended' })
   async invalidateSession(@Req() req: Request, @Param('series') series: string): Promise<void> {

@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, NotFoundException, Param, Post as PostMethod, Res, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, NotFoundException, Param, Post as PostMethod, Res } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { <%- authenticationTypeJwt ? 'ApiBearerAuth' : 'ApiSecurity' %>, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Repository } from 'typeorm';
@@ -6,7 +6,7 @@ import { Response } from 'express';
 
 import { HeaderUtil } from '../common/header-util.ts';
 import { Authority } from './authority.entity.ts';
-import { AuthGuard, Roles, RolesGuard } from '../auth/index.ts';
+import { Roles } from '../auth/index.ts';
 import { AuthorityDTO } from './dto/authority.dto.ts';
 
 import { BadRequestAlertException } from '../common/errors/problem.exception.ts';
@@ -18,7 +18,6 @@ const ENTITY_NAME = '<%- nodejsAuthorityAlertName %>';
  * management assigns, and the authority pages of the client.
  */
 @Controller('api/authorities')
-@UseGuards(AuthGuard, RolesGuard)
 @Roles(<%- authority.nodejsWriteRoles %>)
 <%_ if (authenticationTypeJwt) { _%>
 @ApiBearerAuth()

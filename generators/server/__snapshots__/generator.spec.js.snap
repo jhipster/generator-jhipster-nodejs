@@ -143,6 +143,9 @@ exports[`SubGenerator server of nodejs JHipster blueprint > run > should match t
   "server/src/auth/decorators/auth-user.decorator.ts": {
     "stateCleared": "modified",
   },
+  "server/src/auth/decorators/public.decorator.ts": {
+    "stateCleared": "modified",
+  },
   "server/src/auth/decorators/roles.decorator.ts": {
     "stateCleared": "modified",
   },
@@ -153,6 +156,9 @@ exports[`SubGenerator server of nodejs JHipster blueprint > run > should match t
     "stateCleared": "modified",
   },
   "server/src/auth/dto/user-login.dto.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/auth/guards/auth.guard.spec.ts": {
     "stateCleared": "modified",
   },
   "server/src/auth/guards/auth.guard.ts": {
