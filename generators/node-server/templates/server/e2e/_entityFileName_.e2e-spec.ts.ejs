@@ -12,8 +12,6 @@ import { RequestAuthenticator } from '../src/auth/request-authenticator.ts';
 import { RolesGuard } from '../src/auth/guards/roles.guard.ts';
 import { <%- dtoClass %> } from '../src/entities/<%- entityFileName %>/dto/<%- entityFileName %>.dto.ts';
 import { <%- entityClass %>Service } from '../src/entities/<%- entityFileName %>/<%- entityFileName %>.service.ts';
-import { DataSource, EntityMetadata } from 'typeorm';
-import { <%- entityClass %> } from '../src/entities/<%- entityFileName %>/<%- entityFileName %>.entity.ts';
 
 // The alert headers the JHipster clients read, named after jhipster.clientApp.name.
 const alertHeader = (headers: Record<string, unknown>, suffix: string): unknown => headers[`x-<%- frontendAppName.toLowerCase() %>${suffix}`];
@@ -61,7 +59,7 @@ _%>
     const newEntity: any = { ...validEntity, <%- primaryKey.name %>: unknownId };
 <%_ } _%>
 
-    const serviceMock: { metadata?: EntityMetadata, [method: string]: unknown } = {
+    const serviceMock: Record<string, unknown> = {
         findById: (id: any): any => (id === entityMock.<%- primaryKey.name %> ? { ...entityMock } : undefined),
         findAndCount: (): any => [entityMock, 0],
         save: (): any => entityMock,
@@ -80,8 +78,6 @@ _%>
         .overrideProvider(<%- entityClass %>Service)
         .useValue(serviceMock)
         .compile();
-        // The sort is validated with the TypeORM metadata of the entity.
-        serviceMock.metadata = moduleFixture.get(DataSource).getMetadata(<%- entityClass %>);
 
         app = moduleFixture.createNestApplication();
         configureApp(app);
@@ -659,7 +655,6 @@ _%>
             .overrideProvider(<%- entityClass %>Service)
             .useValue(serviceMock)
             .compile();
-            serviceMock.metadata = moduleFixture.get(DataSource).getMetadata(<%- entityClass %>);
             const rolesNestApp = moduleFixture.createNestApplication();
             configureApp(rolesNestApp);
             await rolesNestApp.init();

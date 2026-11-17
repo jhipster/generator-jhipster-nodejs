@@ -893,7 +893,7 @@ describe('SubGenerator node-server of nodejs JHipster blueprint', () => {
 
     it('should filter the list and count the records of the criteria', () => {
       const controller = 'server/src/entities/region/region.controller.ts';
-      result.assertFileContent(controller, 'where: criteriaWhere(req.query, criteriaOf(this.regionService.metadata)),');
+      result.assertFileContent(controller, '@Criteria(Region) where: FindOptionsWhere<Region>,');
       result.assertFileContent(controller, "@Get('/count')");
       result.assertFileContent(
         'server/src/entities/region/region.service.ts',

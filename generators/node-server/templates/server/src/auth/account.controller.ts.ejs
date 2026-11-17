@@ -1,6 +1,6 @@
 import { 
 <%_ if (generateUserManagement) { _%> BadRequestException, Body, Post, 
-<%_ } _%>Controller, Get, HttpCode, Logger, Req, UseInterceptors, ClassSerializerInterceptor } from '@nestjs/common';
+<%_ } _%>Controller, Get, HttpCode, Logger,<%- authenticationTypeSession && generateUserManagement ? ' Session,' : '' %> UseInterceptors, ClassSerializerInterceptor } from '@nestjs/common';
 <%_ if (generateUserManagement) { _%>
 import { Public } from './decorators/public.decorator.ts';
 <%_ } _%>
@@ -12,6 +12,7 @@ import { MailService } from '../mail/mail.service.ts';
 import { <%- userLoginVmClass %> } from '../users/dto/user.dto.ts';
 import { ApiBearerAuth, ApiTags, ApiResponse, ApiOperation } from '@nestjs/swagger';
 import { AuthService } from './auth.service.ts';
+import { AuthUser } from './decorators/auth-user.decorator.ts';
 <%_ if (authenticationTypeOauth2) { _%>
 import { OidcUser } from './oauth2.authorities.ts';
 <%_ } _%>
@@ -49,8 +50,7 @@ export class AccountController {
     status: 200,
     description: 'user retrieved',
   })
-  async getAccount(@Req() req: { user: <%- userLoginVmClass %> }): Promise<<%- user.dtoClass %> | undefined> {
-    const { user } = req;
+  async getAccount(@AuthUser() user: <%- userLoginVmClass %>): Promise<<%- user.dtoClass %> | undefined> {
     const userProfileFound = await this.authService.getAccount(user.id!);
   <%_ if (databaseType === 'mongodb') { _%>
     if (userProfileFound && !userProfileFound.firstName) {
@@ -71,8 +71,7 @@ export class AccountController {
     status: 200,
     description: 'user info updated',
   })
-  async saveAccount(@Req() req: { user: <%- userLoginVmClass %> }, @Body() newUserInfo: <%- user.dtoClass %>): Promise<void> {
-    const { user } = req;
+  async saveAccount(@AuthUser() user: <%- userLoginVmClass %>, @Body() newUserInfo: <%- user.dtoClass %>): Promise<void> {
     await this.authService.updateUserSettings(user.login, newUserInfo);
   }
 
@@ -86,14 +85,16 @@ export class AccountController {
     type: PasswordChangeDTO,
   })
   async changePassword(
-    @Req() req: { user: <%- userLoginVmClass %><%- authenticationTypeSession ? '; session: { save(callback: (error?: Error) => void): void }' : '' %> },
+    @AuthUser() user: <%- userLoginVmClass %>,
     @Body() passwordChange: PasswordChangeDTO,
+  <%_ if (authenticationTypeSession) { _%>
+    @Session() session: { save(callback: (error?: Error) => void): void },
+  <%_ } _%>
   ): Promise<void> {
-    const { user } = req;
     await this.authService.changePassword(user.login, passwordChange.currentPassword, passwordChange.newPassword);
   <%_ if (authenticationTypeSession) { _%>
     // The new password ended the open sessions of the user: the one of this request is kept, saved again.
-    await new Promise<void>((resolve, reject) => req.session.save(error => (error ? reject(error) : resolve())));
+    await new Promise<void>((resolve, reject) => session.save(error => (error ? reject(error) : resolve())));
   <%_ } _%>
   }
 
@@ -142,8 +143,8 @@ export class AccountController {
     description: 'User retrieved',
     type: <%- userLoginVmClass %>,
   })
-  getAccount(@Req() req: { user: OidcUser }): <%- userLoginVmClass %> | undefined {
-    return this.authService.getAccount(req.user);
+  getAccount(@AuthUser() user: OidcUser): <%- userLoginVmClass %> | undefined {
+    return this.authService.getAccount(user);
   }
 
 <%_ } else { _%>
@@ -156,14 +157,13 @@ export class AccountController {
     description: 'user retrieved',
   })
   <%_ if (generateBuiltInUserEntity) { _%>
-  async getAccount(@Req() req: { user: <%- userLoginVmClass %> }): Promise<<%- user.dtoClass %> | undefined> {
-    const { user } = req;
+  async getAccount(@AuthUser() user: <%- userLoginVmClass %>): Promise<<%- user.dtoClass %> | undefined> {
     return await this.authService.getAccount(user.id!);
   }
   <%_ } else { _%>
-  getAccount(@Req() req: { user: <%- userLoginVmClass %> }): <%- userLoginVmClass %> {
+  getAccount(@AuthUser() user: <%- userLoginVmClass %>): <%- userLoginVmClass %> {
     // The user of the token, without built-in User.
-    return req.user;
+    return user;
   }
   <%_ } _%>
 <%_ } _%>

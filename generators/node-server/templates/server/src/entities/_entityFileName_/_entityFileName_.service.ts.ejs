@@ -1,6 +1,6 @@
 import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { EntityMetadata, FindManyOptions, FindOneOptions, Repository } from 'typeorm';
+import { FindManyOptions, FindOneOptions, Repository } from 'typeorm';
 import { <%- entityClass %> } from './<%- entityFileName %>.entity.ts';
 import { <%- dtoClass %> }  from './dto/<%- entityFileName %>.dto.ts';
 import { <%- entityClass %>Mapper }  from './<%- entityFileName %>.mapper.ts';
@@ -50,11 +50,6 @@ export class <%- entityClass %>Service {
 
     constructor(@InjectRepository(<%- entityClass %>) private <%- entityInstance %>Repository: Repository<<%- entityClass %>>) {}
 
-    /** The TypeORM metadata of the entity, the sort of its lists is validated with. */
-    get metadata(): EntityMetadata {
-        return this.<%- entityInstance %>Repository.metadata;
-    }
-
       async findById(id: <%- pkType %>): Promise<<%- dtoClass %> | undefined> {
 <%_ if (databaseTypeMongodb) { _%>
         // An id that is not an ObjectId is the one of no document, like an unknown id of JHipster Spring Boot.
@@ -81,7 +76,7 @@ export class <%- entityClass %>Service {
 <%_ if (typeormRelationsSupport && eagerLoadRelations.length > 0) { _%>
           { ...options, relations },
 <%_ } else if (databaseTypeMongodb) { _%>
-          { ...options, order: documentOrder(this.metadata, options.order) },
+          { ...options, order: documentOrder(this.<%- entityInstance %>Repository.metadata, options.order) },
 <%_ } else { _%>
           options,
 <%_ } _%>
