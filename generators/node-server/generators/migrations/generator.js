@@ -85,7 +85,7 @@ export default class extends BaseApplicationGenerator {
       registerMigrations({ source }) {
         // The migrations every changelog records, the ones of this generation included.
         for (const changelog of this.changelogs) {
-          for (const fileName of this.getObjectConfig(changelogName(changelog))?.nodejsMigrations ?? []) {
+          for (const fileName of this.getObjectConfig(changelog.name)?.nodejsMigrations ?? []) {
             source.addMigrationToNodeConfig(migrationOfFile(fileName));
           }
         }
@@ -111,7 +111,7 @@ export default class extends BaseApplicationGenerator {
    */
   #prepareMigrations(changelog, entity, entities) {
     const migrations = changelogMigrations(changelog, entity, entities);
-    const name = changelogName(changelog);
+    const { name } = changelog;
     const recorded = this.getObjectConfig(name)?.nodejsMigrations ?? [];
     const written = Object.values(migrations).filter(Boolean);
     this.#migrations.push({
@@ -124,6 +124,3 @@ export default class extends BaseApplicationGenerator {
     this.setObjectConfig(name, { ...this.getObjectConfig(name), nodejsMigrations: written.map(migration => migration.fileName) });
   }
 }
-
-/** The name of the object of a changelog, like JHipster names it. */
-const changelogName = ({ changelogDate, entityName }) => `${changelogDate}_${entityName}`;

@@ -1400,7 +1400,7 @@ describe('SubGenerator node-server of nodejs JHipster blueprint', () => {
     it('should write the migrations of the changelogs JHipster records, at their date', () => {
       const { objects } = result.fs.readJSON(join(result.cwd, '.yo-rc.json'));
       const update = name => Object.values(objects).find(object => object.entityName === name && object.operation === 'update');
-      expect(update('Customer')).toMatchObject({ addedFields: ['status'], removedFields: ['legacy', 'photo'] });
+      expect(update('Customer')).toMatchObject({ addedFields: ['status'], removedFields: ['legacy', 'photo', 'photoContentType'] });
       const { changelogDate } = update('Customer');
       expect(updatedMigration('UpdatedEntityCustomer')).toMatch(new RegExp(`/${changelogDate}-UpdatedEntityCustomer\\.ts$`));
       expect(timestampOf(updatedMigration('UpdatedEntityCustomer'))).toBe(
@@ -1457,7 +1457,7 @@ describe('SubGenerator node-server of nodejs JHipster blueprint', () => {
 
     it('should record the migrations of each changelog in its object', () => {
       const { objects } = result.fs.readJSON(join(result.cwd, '.yo-rc.json'));
-      expect(objects['20200101000200_Purchase'].nodejsMigrations).toEqual([
+      expect(objects._20200101000200_Purchase.nodejsMigrations).toEqual([
         '20200101000200-AddedEntityPurchase',
         '20200101000200-AddedEntityConstraintsPurchase',
       ]);
@@ -1591,7 +1591,7 @@ describe('SubGenerator node-server of nodejs JHipster blueprint', () => {
         join(migrationsDir, '20200101000200-AddedEntityConstraintsOrder.ts'),
       ]);
       const { objects } = result.fs.readJSON(join(result.cwd, '.yo-rc.json'));
-      expect(objects['20200101000200_Order'].nodejsMigrations).toEqual([
+      expect(objects._20200101000200_Order.nodejsMigrations).toEqual([
         '20200101000200-AddedEntityOrder',
         '20200101000200-AddedEntityConstraintsOrder',
       ]);

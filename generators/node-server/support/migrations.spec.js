@@ -8,7 +8,7 @@ import {
   changelogMigrations,
   constraintsMigration,
   entityMigration,
-  fieldColumns,
+  fieldColumn,
   foreignKeyActions,
   joinTable,
   migrationOfFile,
@@ -65,22 +65,25 @@ const field = ({ fieldValidateRules = [], ...properties }) => ({
   ...properties,
 });
 
-describe('fieldColumns', () => {
+describe('fieldColumn', () => {
   it('should give a column of a TypeScript type without a migration type a String', () => {
-    expect(fieldColumns(field({ fieldNameAsDatabaseColumn: 'data', nodejsFieldType: 'any', fieldType: 'AnyBlob' }))[0]).toMatchObject({
+    expect(fieldColumn(field({ fieldNameAsDatabaseColumn: 'data', nodejsFieldType: 'any', fieldType: 'AnyBlob' }))).toMatchObject({
       type: 'String',
     });
   });
 
   it('should give the column of a field without column type the type of its TypeScript property', () => {
-    expect(fieldColumns(field({ fieldNameAsDatabaseColumn: 'name', nodejsFieldType: 'string', fieldType: 'String' }))).toEqual([
-      { name: 'name', type: 'String', nullable: true, unique: false },
-    ]);
+    expect(fieldColumn(field({ fieldNameAsDatabaseColumn: 'name', nodejsFieldType: 'string', fieldType: 'String' }))).toEqual({
+      name: 'name',
+      type: 'String',
+      nullable: true,
+      unique: false,
+    });
   });
 
   it('should give the column type, the length of maxlength, required and unique', () => {
     expect(
-      fieldColumns(
+      fieldColumn(
         field({
           fieldNameAsDatabaseColumn: 'code',
           nodejsColumnType: 'varchar',
@@ -89,17 +92,22 @@ describe('fieldColumns', () => {
           fieldValidateRulesMaxlength: 3,
         }),
       ),
-    ).toEqual([{ name: 'code', type: "'varchar'", length: 3, nullable: false, unique: true }]);
+    ).toEqual({ name: 'code', type: "'varchar'", length: 3, nullable: false, unique: true });
   });
 
   it('should give a BigDecimal the precision and the scale of its @Column', () => {
-    expect(fieldColumns(field({ fieldNameAsDatabaseColumn: 'area', nodejsColumnType: 'decimal', fieldType: 'BigDecimal' }))).toEqual([
-      { name: 'area', type: "'decimal'", precision: 21, scale: 2, nullable: true, unique: false },
-    ]);
+    expect(fieldColumn(field({ fieldNameAsDatabaseColumn: 'area', nodejsColumnType: 'decimal', fieldType: 'BigDecimal' }))).toEqual({
+      name: 'area',
+      type: "'decimal'",
+      precision: 21,
+      scale: 2,
+      nullable: true,
+      unique: false,
+    });
   });
 
   it('should give an enum the names of its values, like the column of a Java enum', () => {
-    const [column] = fieldColumns(
+    const column = fieldColumn(
       field({
         fieldName: 'kind',
         fieldNameAsDatabaseColumn: 'kind',
@@ -112,15 +120,12 @@ describe('fieldColumns', () => {
     expect(column.enum).toBe("['BIG', 'SMALL']");
   });
 
-  it('should add the content type column of a binary blob', () => {
+  it('should give a binary blob its column only, its content type being a field of its own', () => {
     expect(
-      fieldColumns(
+      fieldColumn(
         field({ fieldNameAsDatabaseColumn: 'flag', nodejsColumnType: 'blob', fieldType: 'byte[]', fieldTypeBlobContent: 'image' }),
       ),
-    ).toEqual([
-      { name: 'flag', type: "'blob'", nullable: true, unique: false },
-      { name: 'flag_content_type', type: 'String', nullable: true },
-    ]);
+    ).toEqual({ name: 'flag', type: "'blob'", nullable: true, unique: false });
   });
 });
 
@@ -441,6 +446,8 @@ describe('the migrations of an update changelog', () => {
     fields: [
       { fieldName: 'legacy', columnName: 'legacy', fieldType: 'String' },
       { fieldName: 'photo', columnName: 'photo', fieldType: 'byte[]', fieldTypeBlobContent: 'image' },
+      // The content type field of the blob, as JHipster gives it with the blob.
+      { fieldName: 'photoContentType', columnName: 'photo_content_type', fieldType: 'String', contentTypeOf: 'photo' },
       { fieldName: 'notes', columnName: 'notes', fieldType: 'byte[]', fieldTypeBlobContent: 'text' },
     ],
     relationships: [
@@ -460,7 +467,7 @@ describe('the migrations of an update changelog', () => {
     operation: 'update',
     previousEntity,
     addedFields: ['status'],
-    removedFields: ['legacy', 'photo', 'notes'],
+    removedFields: ['legacy', 'photo', 'photoContentType', 'notes'],
     addedRelationships: ['gadgets'],
     removedRelationships: ['owner', 'gifts', 'buyers'],
     recreatedRelationships: ['country'],
@@ -469,7 +476,7 @@ describe('the migrations of an update changelog', () => {
   const timestamp = changelogDateToTimestamp(changelogDate) + MIGRATION_TIMESTAMP_OFFSET;
   const changes = { entity: shop, changelogDate, ...changelogChanges(changelog, shop, [region, gadget]) };
 
-  it('adds the columns of the added fields, and drops the ones of the removed fields with the content type of a binary blob', () => {
+  it('adds the columns of the added fields, and drops the ones of the removed fields, the content type of a binary blob one of them', () => {
     const migration = updatedEntityMigration(changes);
     expect(migration).toMatchObject({
       className: `UpdatedEntityShop${timestamp}`,

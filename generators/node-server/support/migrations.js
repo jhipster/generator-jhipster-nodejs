@@ -118,8 +118,11 @@ const referenceColumn = (name, entity) => ({
   type: primaryKeyType(entity),
 });
 
-/** The migration columns of a field, like the @Column decorators of the entity: its column, and the content type of a blob. */
-export const fieldColumns = field => {
+/**
+ * The migration column of a field, like the @Column decorator of the entity. The content type of a blob is a field of its
+ * own, like the Liquibase changelogs of JHipster write it.
+ */
+export const fieldColumn = field => {
   const { fieldValidationRequired: required, fieldValidationUnique: unique, fieldValidationMaxlength: maxlength } = field;
   const nullable = !required;
   const type = field.nodejsColumnType ? literal(field.nodejsColumnType) : (typeOfFieldType[field.nodejsFieldType] ?? 'String');
@@ -134,15 +137,8 @@ export const fieldColumns = field => {
   } else if (!['Instant', 'ZonedDateTime', 'LocalDate'].includes(field.fieldType) && maxlength) {
     column.length = field.fieldValidateRulesMaxlength;
   }
-  const columns = [column];
-  if (hasContentTypeColumn(field)) {
-    columns.push({ name: `${field.fieldNameAsDatabaseColumn}_content_type`, type: 'String', nullable });
-  }
-  return columns;
+  return column;
 };
-
-/** Whether a field is a binary blob, stored with the column of its content type. */
-const hasContentTypeColumn = field => ['byte[]', 'ByteBuffer'].includes(field.fieldType) && field.fieldTypeBlobContent !== 'text';
 
 /**
  * The camelCase of the default naming strategy of TypeORM, the names it gives the join columns and the columns of the join
@@ -221,7 +217,7 @@ export const entityMigration = (entity, changelogDate = entity.changelogDate) =>
     tableName: entity.entityTableName,
     columns: [
       primaryKeyColumn(entity),
-      ...entity.fields.filter(field => !field.id).flatMap(fieldColumns),
+      ...entity.fields.filter(field => !field.id).map(fieldColumn),
       ...relationships.map(relationship => ({
         ...referenceColumn(joinColumnName(relationship), relationship.otherEntity),
         // Like the join column of a required relationship of JHipster Spring Boot, not null.
@@ -403,9 +399,6 @@ const removedRelationship = (relationship, entities) => {
   };
 };
 
-/** The names of the columns of a field of the entity before a changelog, by the column name the changelog records. */
-const removedFieldColumnNames = field => [field.columnName, ...(hasContentTypeColumn(field) ? [`${field.columnName}_content_type`] : [])];
-
 /** The TypeScript of an array of names, none without a name. */
 const namesLiteral = names => (names.length > 0 ? `[${names.map(literal).join(', ')}]` : undefined);
 
@@ -416,14 +409,14 @@ const namesLiteral = names => (names.length > 0 ? `[${names.map(literal).join(',
  */
 export const updatedEntityMigration = ({ entity, changelogDate, addedFields, removedFields }) => {
   if (addedFields.length === 0 && removedFields.length === 0) return undefined;
-  const addedColumns = addedFields.flatMap(fieldColumns);
+  const addedColumns = addedFields.map(fieldColumn);
   return {
     ...migrationName('UpdatedEntity', entity.entityClass, changelogDate),
     tableName: entity.entityTableName,
     addedColumns,
     // The TypeScript of the names of the columns the migration adds and drops, and of the helpers it imports.
     addedColumnNames: namesLiteral(addedColumns.map(column => column.name)),
-    removedColumnNames: namesLiteral(removedFields.flatMap(removedFieldColumnNames)),
+    removedColumnNames: namesLiteral(removedFields.map(field => field.columnName)),
     schemaImports: addedColumns.length > 0 ? 'addColumns, dropColumns' : 'dropColumns',
   };
 };
