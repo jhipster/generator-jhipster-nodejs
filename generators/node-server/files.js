@@ -258,6 +258,7 @@ export const serverFiles = {
         'src/auth/csrf.middleware.ts',
         'src/auth/csrf.middleware.spec.ts',
         'src/auth/session.entity.ts',
+        'src/auth/session.middleware.ts',
         'src/auth/session.store.ts',
         'src/auth/session.store.spec.ts',
       ],

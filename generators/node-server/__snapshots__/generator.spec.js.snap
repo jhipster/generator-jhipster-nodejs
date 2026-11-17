@@ -1394,6 +1394,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > with oauth2 > s
   "server/src/auth/session.entity.ts": {
     "stateCleared": "modified",
   },
+  "server/src/auth/session.middleware.ts": {
+    "stateCleared": "modified",
+  },
   "server/src/auth/session.store.spec.ts": {
     "stateCleared": "modified",
   },
@@ -1808,6 +1811,9 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > with oauth2 and
     "stateCleared": "modified",
   },
   "server/src/auth/session.entity.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/auth/session.middleware.ts": {
     "stateCleared": "modified",
   },
   "server/src/auth/session.store.spec.ts": {
