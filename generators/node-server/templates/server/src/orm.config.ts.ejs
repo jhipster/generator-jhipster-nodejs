@@ -124,9 +124,6 @@ function ormConfig(read: ConfigReader = key => config.get(key)): TypeOrmModuleOp
     // each migration runs in its own transaction
 <%_ } _%>
     migrationsTransactionMode: 'each',
-    entities: [
-      // jhipster-needle-add-entity-to-ormconfig-entities - JHipster will add code here, do not remove
-    ],
     migrations: [
 <%_ if (databaseTypeMongodb || generateBuiltInUserEntity || generateBuiltInAuthorityEntity) { _%>
       CreateTables1570200270081,
@@ -142,6 +139,8 @@ function ormConfig(read: ConfigReader = key => config.get(key)): TypeOrmModuleOp
 <%_ } _%>
       // jhipster-needle-add-migration-to-ormconfig-migrations - JHipster will add code here, do not remove
     ],
+    // The entities of the modules (TypeOrmModule.forFeature), the built-in ones and the ones of the JDL, like the entities
+    // Spring Boot scans: a new entity is the one of its module.
     autoLoadEntities: true,
     // A bounded start: TypeORM tries to connect (and to run the migrations) 5 times, 3 seconds apart (10 times by default), then the start fails
     // and the process exits, for the container orchestrator (docker compose, Kubernetes) to restart it.

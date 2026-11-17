@@ -1607,7 +1607,9 @@ describe('SubGenerator node-server of nodejs JHipster blueprint', () => {
       const ormConfig = result.fs.read(join(result.cwd, 'server/src/orm.config.ts'));
       const paths = [...ormConfig.matchAll(/^import .+ from '(\.\/[^']+)';$/gm)].map(([, path]) => path);
       expect(paths).toEqual(paths.toSorted(compareModulePaths));
-      expect(paths).toContain('./entities/order/order.entity.ts');
+      expect(paths).toContain('./migrations/20200101000200-AddedEntityOrder.ts');
+      // The entities are the ones of their modules (autoLoadEntities).
+      expect(paths).not.toContain('./entities/order/order.entity.ts');
     });
 
     describe('regenerated without a change', () => {
