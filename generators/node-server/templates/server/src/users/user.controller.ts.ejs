@@ -1,11 +1,10 @@
-import { Body, Controller, NotFoundException, Delete, Get, Param, Post, Put, Res, UseInterceptors, ClassSerializerInterceptor } from '@nestjs/common';
-import { Response } from 'express';
+import { Body, Controller, NotFoundException, Delete, Get, HttpCode, Param, Post, Put, UseInterceptors, ClassSerializerInterceptor } from '@nestjs/common';
 import { Roles, RoleType } from '../auth/index.ts';
 import { Pageable } from '../common/database/pageable.ts';
 import { PageRequest, Page } from '../common/database/pagination.entity.ts';
+import { AlertHeaders, Paginated } from '../common/interceptors/response-headers.interceptor.ts';
 import { <%- user.persistClass %> } from './user.entity.ts';
 import { <%- [...new Set([user.dtoClass, userLoginVmClass])].join(', ') %> } from './dto/user.dto.ts';
-import { HeaderUtil } from '../common/header-util.ts';
 import { AuthUser } from '../auth/index.ts';
 import {
 <%_ if (authenticationTypeJwt) { _%> ApiBearerAuth, 
@@ -30,7 +29,6 @@ export class UserController {
   constructor(
     private readonly userService: UserService,
     private readonly mailService: MailService,
-    private readonly headerUtil: HeaderUtil,
   ) {}
 
   @Get('/')
@@ -42,21 +40,22 @@ export class UserController {
       type: <%- user.dtoClass %>,
       isArray: true,
   })
+  @Paginated()
   async getAllUsers(
-    @Res({ passthrough: true }) res: Response,
     // Like JHipster Spring Boot, a column of the user but the ones marked @NotSortable (its password and its keys).
     @Pageable({ defaultSort: '<%- user.primaryKey.name %>,ASC', entity: <%- user.persistClass %>, entityName: 'userManagement' }) pageRequest: PageRequest,
-  ): Promise<<%- user.dtoClass %>[]> {
+  ): Promise<Page<<%- user.dtoClass %>>> {
       const [results, count] = await this.userService.findAndCount({
           skip: +pageRequest.page * pageRequest.size,
           take: +pageRequest.size,
           order: pageRequest.asOrder(),
       });
-      this.headerUtil.addPaginationHeaders(res, new Page(results, count, pageRequest));
-      return results;
+      return new Page(results, count, pageRequest);
   }
 
   @Post('/')
+  // Like JHipster Spring Boot, the location of the created user, by its login.
+  @AlertHeaders({ action: 'created', param: 'login', location: login => `/api/admin/users/${encodeURIComponent(login)}` })
   @Roles(RoleType.ADMIN)
   @ApiOperation({ summary: 'Create user' })
   @ApiResponse({
@@ -66,7 +65,7 @@ export class UserController {
   })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
   @ApiResponse({ status: 400, description: 'The user already has an id, or its login or mail is already used.' })
-  async createUser(@AuthUser() auditor: <%- userLoginVmClass %>, @Res({ passthrough: true }) res: Response, @Body() userDTO: <%- user.dtoClass %>): Promise<<%- user.dtoClass %>> {
+  async createUser(@AuthUser() auditor: <%- userLoginVmClass %>, @Body() userDTO: <%- user.dtoClass %>): Promise<<%- user.dtoClass %>> {
       if (userDTO.<%- user.primaryKey.name %> !== undefined && userDTO.<%- user.primaryKey.name %> !== null) {
           // Like JHipster Spring Boot, a new user cannot have an id: it would update an existing one.
           throw new BadRequestAlertException('A new user cannot already have an ID', 'userManagement', 'idexists');
@@ -103,13 +102,11 @@ export class UserController {
 <%_ } _%>
       );
       void this.mailService.sendCreationEmail(created);
-      this.headerUtil.addUserManagementHeaders(res, 'created', created.login);
-      // Like JHipster Spring Boot, the location of the created user, by its login.
-      res.location(`/api/admin/users/${encodeURIComponent(created.login)}`);
       return created;
   }
 
   @Put('/:login')
+  @AlertHeaders({ action: 'updated', param: 'login' })
   @Roles(RoleType.ADMIN)
   @ApiOperation({ summary: 'Update user' })
   @ApiResponse({
@@ -119,7 +116,7 @@ export class UserController {
   })
   @ApiResponse({ status: 400, description: 'The login of the path is not the one of the body, or the login or the mail is used by another user.' })
   @ApiResponse({ status: 404, description: 'No user of this id.' })
-  async updateUser(@AuthUser() auditor: <%- userLoginVmClass %>, @Res({ passthrough: true }) res: Response, @Param('login', LoginPathPipe) loginValue: string, @Body() userDTO: <%- user.dtoClass %>): Promise<<%- user.dtoClass %>> {
+  async updateUser(@AuthUser() auditor: <%- userLoginVmClass %>, @Param('login', LoginPathPipe) loginValue: string, @Body() userDTO: <%- user.dtoClass %>): Promise<<%- user.dtoClass %>> {
     // The login of the path is the one of the body, the new one when it changes, like the id of an entity: a login is the
     // same in upper or lower case.
     if (loginValue.toLowerCase() !== userDTO.login.toLowerCase()) {
@@ -155,7 +152,6 @@ export class UserController {
       },
       auditor.login,
     );
-    this.headerUtil.addUserManagementHeaders(res, 'updated', updated.login);
     return updated;
   }
 
@@ -177,18 +173,19 @@ export class UserController {
   }
 
   @Delete('/:login')
+  @HttpCode(204)
+  @AlertHeaders({ action: 'deleted', param: 'login' })
   @Roles(RoleType.ADMIN)
   @ApiOperation({ summary: 'Delete user' })
   @ApiResponse({
       status: 204,
       description: 'The record has been successfully deleted.',
   })
-  async deleteUser(@Res({ passthrough: true }) res: Response, @Param('login', LoginPathPipe) loginValue: string): Promise<void> {
+  async deleteUser(@Param('login', LoginPathPipe) loginValue: string): Promise<void> {
       // Like JHipster Spring Boot, the same answer for a login without a user.
       const userToDelete = await this.userService.find({ where: { login: loginValue } });
       if (userToDelete) {
         await this.userService.delete(userToDelete);
       }
-      this.headerUtil.addUserManagementHeaders(res, 'deleted', loginValue);
   }
 }
