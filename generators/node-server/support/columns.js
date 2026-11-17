@@ -63,11 +63,3 @@ export const fieldColumnOptions = (field, application) => {
   if (field.nodejsColumnTransformer) options.push(`transformer: ${field.nodejsColumnTransformer}Transformer`);
   return options;
 };
-
-/** The options of the @Column decorator of the content type of a binary blob. */
-export const contentTypeColumnOptions = (field, { databaseTypeSql }) => {
-  return [
-    databaseTypeSql && `name: '${field.fieldNameAsDatabaseColumn}_content_type'`,
-    !field.fieldValidationRequired && 'nullable: true',
-  ].filter(Boolean);
-};

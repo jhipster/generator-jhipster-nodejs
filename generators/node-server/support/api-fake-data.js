@@ -15,11 +15,8 @@ export const apiValue = (field, value) => {
 /** The value of a field in a request and in the response reading it back. */
 export const apiFakeValue = field => apiValue(field, field.generateFakeData('json-serializable'));
 
-/** The content type of a binary blob, like the JHipster clients send it. */
-const contentTypeOf = field => (field.fieldTypeBlobContent === 'image' ? 'image/png' : 'application/octet-stream');
-
 /**
- * The values of the fields of an entity in a request (and their content types), and the fields compared approximately:
+ * The values of the fields of an entity in a request (the content type of a blob one of them), and the fields compared approximately:
  * a Float is a single precision number of some databases (MySQL).
  */
 export const apiFakeEntity = entity => {
@@ -29,9 +26,6 @@ export const apiFakeEntity = entity => {
     const value = apiFakeValue(field);
     if (value === undefined || value === null) continue;
     values[field.fieldName] = value;
-    if (['byte[]', 'ByteBuffer'].includes(field.fieldType) && field.fieldTypeBlobContent !== 'text') {
-      values[`${field.fieldName}ContentType`] = contentTypeOf(field);
-    }
   }
   const approximateFields = entity.fields
     .filter(field => field.fieldType === 'Float' && field.fieldName in values)

@@ -37,9 +37,10 @@ const valueTypeOf = ({ fieldType, fieldTypeNumeric, fieldTypeBoolean, fieldTypeT
 
 /**
  * Whether a field is filterable, like the filterableField of JHipster Spring Boot: not a binary blob (a TextBlob is a text),
- * nor transient.
+ * nor the content type of a blob (its contentTypeOf), nor transient.
  */
-const isFilterableField = field => !field.transient && (!field.fieldTypeBinary || field.fieldTypeBlobContent === 'text');
+const isFilterableField = field =>
+  !field.transient && !('contentTypeOf' in field) && (!field.fieldTypeBinary || field.fieldTypeBlobContent === 'text');
 
 /**
  * A property of the criteria: its name in the request, the property of the entity declaring it (its @Filterable

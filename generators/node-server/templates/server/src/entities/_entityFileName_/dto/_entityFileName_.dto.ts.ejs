@@ -70,7 +70,6 @@ export class <%- dtoClass %> {
   <%_ const required = field.fieldValidationRequired;
       const { fieldValidate } = field;
       const { fieldType } = field;
-      const { fieldTypeBlobContent } = field;
       const { fieldName } = field;
   _%>
   <%_ if (fieldValidate === true || field.fieldIsEnum || field.nodejsTypeValidators.length > 0) { _%>
@@ -81,11 +80,6 @@ export class <%- dtoClass %> {
             @ApiProperty({ <%- field.fieldIsEnum ? `enum: ${fieldType}, ` : '' %>description: "<%- field.fieldApiDescription ?? `${fieldName} ${field.fieldIsEnum ? 'enum ' : ''}field` %>"<%- required ? '' : ', required: false' %> })
         <%- fieldName %><%- field.fieldValidationRequired ? '!' : '?' %>: <%- field.nodejsFieldType %>;
 
-  <%_ if ((fieldType === 'byte[]' || fieldType === 'ByteBuffer') && fieldTypeBlobContent !== 'text') { _%>
-
-        @Allow()
-        <%- fieldName %>ContentType<%- field.fieldValidationRequired ? '!' : '?' %>: string;
-  <%_ } _%>
 <%_ } _%>
 
 <%_ for (const relationship of relationships) { _%>
