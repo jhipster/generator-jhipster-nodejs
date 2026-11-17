@@ -21,7 +21,13 @@ describe('CORS', () => {
     };
 
     afterEach(async () => {
-        config.addAll({ 'jhipster.cors.allowed-origins': '', 'jhipster.cors.allowed-origin-patterns': '', 'jhipster.cors.allow-credentials': false });
+        config.addAll({
+            'jhipster.cors.allowed-origins': '',
+            'jhipster.cors.allowed-origin-patterns': '',
+            'jhipster.cors.allowed-methods': '',
+            'jhipster.cors.allowed-headers': '',
+            'jhipster.cors.allow-credentials': false,
+        });
         await app?.close();
     });
 
@@ -103,6 +109,56 @@ describe('CORS', () => {
         it('answers an OPTIONS without Origin as any request, not a CORS one', async () => {
             const response = await request(app.getHttpServer()).options('/api/account').expect(401);
             expect(Object.keys(response.headers).filter(name => name.startsWith('access-control-'))).toEqual([]);
+        });
+    });
+
+    describe('with lists of methods and headers', () => {
+        beforeEach(() =>
+            createApp({
+                'jhipster.cors.allowed-origins': 'http://localhost:9000',
+                'jhipster.cors.allowed-methods': 'GET,POST',
+                'jhipster.cors.allowed-headers': 'Authorization,Content-Type',
+            }),
+        );
+
+        it('allows a preflight request of an allowed method and headers', () =>
+            request(app.getHttpServer())
+                .options('/api/account')
+                .set('Origin', 'http://localhost:9000')
+                .set('Access-Control-Request-Method', 'POST')
+                .set('Access-Control-Request-Headers', 'content-type')
+                .expect(200)
+                .expect('Access-Control-Allow-Origin', 'http://localhost:9000')
+                .expect('Access-Control-Allow-Methods', 'GET,POST'));
+
+        it('refuses a preflight request of a method not allowed, like the CorsConfiguration of Spring', async () => {
+            const response = await request(app.getHttpServer())
+                .options('/api/account')
+                .set('Origin', 'http://localhost:9000')
+                .set('Access-Control-Request-Method', 'DELETE')
+                .expect(403);
+            expect(response.text).toBe('Invalid CORS request');
+            expect(Object.keys(response.headers).filter(name => name.startsWith('access-control-'))).toEqual([]);
+        });
+
+        it('refuses a preflight request of headers none of them allowed, like the CorsConfiguration of Spring', async () => {
+            await request(app.getHttpServer())
+                .options('/api/account')
+                .set('Origin', 'http://localhost:9000')
+                .set('Access-Control-Request-Method', 'GET')
+                .set('Access-Control-Request-Headers', 'x-other')
+                .expect(403);
+        });
+    });
+
+    describe('without allowed methods', () => {
+        beforeEach(() => createApp({ 'jhipster.cors.allowed-origins': 'http://localhost:9000' }));
+
+        it('allows GET and HEAD only, the default methods of Spring', async () => {
+            const preflight = (method: string): request.Test =>
+                request(app.getHttpServer()).options('/api/account').set('Origin', 'http://localhost:9000').set('Access-Control-Request-Method', method);
+            await preflight('GET').expect(200).expect('Access-Control-Allow-Methods', 'GET,HEAD');
+            await preflight('POST').expect(403);
         });
     });
 

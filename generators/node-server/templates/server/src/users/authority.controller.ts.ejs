@@ -1,10 +1,10 @@
-import { Body, Controller, Delete, Get, NotFoundException, Param, Post as PostMethod, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, NotFoundException, Param, Post as PostMethod, Res, UseGuards } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { <%- authenticationTypeJwt ? 'ApiBearerAuth' : 'ApiSecurity' %>, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Repository } from 'typeorm';
+import { Response } from 'express';
 
 import { HeaderUtil } from '../common/header-util.ts';
-import { Request } from '../common/request.ts';
 import { Authority } from './authority.entity.ts';
 import { AuthGuard, Roles, RolesGuard } from '../auth/index.ts';
 import { AuthorityDTO } from './dto/authority.dto.ts';
@@ -64,22 +64,22 @@ export class AuthorityController {
   @ApiOperation({ summary: 'Create an authority' })
   @ApiResponse({ status: 201, type: AuthorityDTO })
   @ApiResponse({ status: 400, description: 'The authority exists already.' })
-  async create(@Req() req: Request, @Body() authorityDTO: AuthorityDTO): Promise<AuthorityDTO> {
+  async create(@Res({ passthrough: true }) res: Response, @Body() authorityDTO: AuthorityDTO): Promise<AuthorityDTO> {
     // Like JHipster Spring Boot, the name is the id of an authority: an existing one is not a new one.
     if (await this.authorityRepository.findOne({ where: { name: authorityDTO.name } })) {
       throw new BadRequestAlertException('A new authority cannot already have an ID', ENTITY_NAME, 'idexists');
     }
     await this.authorityRepository.save(this.authorityRepository.create({ name: authorityDTO.name }));
-    this.headerUtil.addEntityCreatedHeaders(req.res, ENTITY_NAME, authorityDTO.name);
-    req.res.location(`/api/authorities/${encodeURIComponent(authorityDTO.name)}`);
+    this.headerUtil.addEntityCreatedHeaders(res, ENTITY_NAME, authorityDTO.name);
+    res.location(`/api/authorities/${encodeURIComponent(authorityDTO.name)}`);
     return { name: authorityDTO.name };
   }
 
   @Delete('/:name')
   @ApiOperation({ summary: 'Delete an authority' })
   @ApiResponse({ status: 204, description: 'The authority has been deleted.' })
-  async delete(@Req() req: Request, @Param('name') name: string): Promise<void> {
-    this.headerUtil.addEntityDeletedHeaders(req.res, ENTITY_NAME, name);
+  async delete(@Res({ passthrough: true }) res: Response, @Param('name') name: string): Promise<void> {
+    this.headerUtil.addEntityDeletedHeaders(res, ENTITY_NAME, name);
     await this.authorityRepository.delete({ name });
   }
 }

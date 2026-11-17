@@ -3,8 +3,11 @@
     const idParam = `@Param('id'${idPipe ? `, ${idPipe}` : ''}) id: ${pkType}`;
     // The eagerload flag of the lists, like JHipster Spring Boot.
     const eagerLoadFlag = !jpaMetamodelFiltering && implementsEagerLoadApis;
+    // The list reads the request for its criteria or its filter.
+    const listReadsRequest = nodejsCriteria || nodejsMappedByRelationships.some(relationship => relationship.relationshipOneToOne);
 _%>
-import { Body, ClassSerializerInterceptor, Controller, Delete, Get,<%- nodejsCriteria ? ' Header,' : '' %> NotFoundException, Param, Patch, Post as PostMethod,<%- eagerLoadFlag ? ' Query,' : '' %> Put, UseGuards, Req, UseInterceptors } from '@nestjs/common';
+import { Body, ClassSerializerInterceptor, Controller, Delete, Get,<%- nodejsCriteria ? ' Header,' : '' %> NotFoundException, Param, Patch, Post as PostMethod,<%- eagerLoadFlag ? ' Query,' : '' %> Put,<%- listReadsRequest ? ' Req,' : '' %> Res, UseGuards, UseInterceptors } from '@nestjs/common';
+import { Response } from 'express';
 import { 
 <%_ if (authenticationTypeJwt) { _%> ApiBearerAuth, 
 <%_ } else { _%> ApiSecurity, 
@@ -27,7 +30,9 @@ import { <%- parameterImports.join(', ') %> } from '../../common/parse-id.pipe.t
 <%_ if (nodejsCriteria) { _%>
 import { criteriaOf, criteriaWhere } from '../../common/database/criteria.ts';
 <%_ } _%>
+<%_ if (listReadsRequest) { _%>
 import { Request } from '../../common/request.ts';
+<%_ } _%>
 
 import { BadRequestAlertException, validationException } from '../../common/errors/problem.exception.ts';
 
@@ -60,10 +65,12 @@ export class <%- entityClass %>Controller {
     type: <%- dtoClass %>,
     isArray: true,
   })
-<%_ const listReadsRequest = pagination !== 'no' || nodejsCriteria || nodejsMappedByRelationships.some(relationship => relationship.relationshipOneToOne); _%>
   async getAll(
-    @Req() <%- listReadsRequest ? 'req' : '_req' %>: Request,
+<%_ if (listReadsRequest) { _%>
+    @Req() req: Request,
+<%_ } _%>
 <%_ if (pagination !== 'no') { _%>
+    @Res({ passthrough: true }) res: Response,
     @Pageable({ defaultSort: '<%- primaryKey.name %>,ASC', entity: <%- entityClass %>, entityName: ENTITY_NAME }) pageRequest: PageRequest,
 <%_ } _%>
 <%_ if (eagerLoadFlag) { _%>
@@ -96,7 +103,7 @@ export class <%- entityClass %>Controller {
       take: +pageRequest.size,
       order: pageRequest.asOrder(),
     });
-    this.headerUtil.addPaginationHeaders(req.res, new Page(results, count, pageRequest));
+    this.headerUtil.addPaginationHeaders(res, new Page(results, count, pageRequest));
     return results;
 <%_ } _%>
   }
@@ -147,7 +154,7 @@ export class <%- entityClass %>Controller {
   })
   @ApiResponse({ status: 400, description: 'The record already has an id.' })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
-  async post(@Req() req: Request, @Body() <%- entityInstance %>DTO: <%- dtoClass %>): Promise<<%- dtoClass %>>  {
+  async post(@Res({ passthrough: true }) res: Response, @Body() <%- entityInstance %>DTO: <%- dtoClass %>): Promise<<%- dtoClass %>>  {
 <%_ if (primaryKey.autoGenerate) { _%>
     if (<%- entityInstance %>DTO.<%- primaryKey.name %> !== undefined && <%- entityInstance %>DTO.<%- primaryKey.name %> !== null) {
       // Like JHipster Spring Boot, a new record cannot have an id: it would update an existing one.
@@ -163,8 +170,8 @@ export class <%- entityClass %>Controller {
     }
 <%_ } _%>
     const created = await this.<%- entityInstance %>Service.save(<%- entityInstance %>DTO);
-    this.headerUtil.addEntityCreatedHeaders(req.res, ENTITY_NAME, created.<%- primaryKey.name %>);
-    req.res.location(`/api/<%- entityApiUrl %>/${created.<%- primaryKey.name %>}`);
+    this.headerUtil.addEntityCreatedHeaders(res, ENTITY_NAME, created.<%- primaryKey.name %>);
+    res.location(`/api/<%- entityApiUrl %>/${created.<%- primaryKey.name %>}`);
     return created;
   }
 
@@ -179,8 +186,8 @@ export class <%- entityClass %>Controller {
     type: <%- dtoClass %>,
   })
   @ApiResponse({ status: 400, description: 'Invalid id, or the record does not exist.' })
-  async putId(@Req() req: Request, <%- idParam %>, @Body() <%- entityInstance %>DTO: <%- dtoClass %>): Promise<<%- dtoClass %>>  {
-    await this.validateIdForUpdate(req, id, <%- entityInstance %>DTO);
+  async putId(@Res({ passthrough: true }) res: Response, <%- idParam %>, @Body() <%- entityInstance %>DTO: <%- dtoClass %>): Promise<<%- dtoClass %>>  {
+    await this.validateIdForUpdate(id, <%- entityInstance %>DTO);
 <%_ // The fields and the stored relationships, the properties of the entity JHipster Spring Boot deserializes from the body.
     const replacedProperties = [
       ...fields.filter(field => !field.id && !field.transient).flatMap(field => [
@@ -199,7 +206,7 @@ _%>
     });
 <%_ } _%>
     const updated = await this.<%- entityInstance %>Service.update(<%- entityInstance %>DTO);
-    this.headerUtil.addEntityUpdatedHeaders(req.res, ENTITY_NAME, id);
+    this.headerUtil.addEntityUpdatedHeaders(res, ENTITY_NAME, id);
     return updated;
   }
 
@@ -214,8 +221,8 @@ _%>
     type: <%- dtoClass %>,
   })
   @ApiResponse({ status: 400, description: 'Invalid id or values, or the record does not exist.' })
-  async patchId(@Req() req: Request, <%- idParam %>, @Body() <%- entityInstance %>DTO: Partial<<%- dtoClass %>>): Promise<<%- dtoClass %>>  {
-    const existing = await this.validateIdForUpdate(req, id, <%- entityInstance %>DTO);
+  async patchId(@Res({ passthrough: true }) res: Response, <%- idParam %>, @Body() <%- entityInstance %>DTO: Partial<<%- dtoClass %>>): Promise<<%- dtoClass %>>  {
+    const existing = await this.validateIdForUpdate(id, <%- entityInstance %>DTO);
     // Like JHipster Spring Boot, a JSON merge patch: the given fields replace the ones of the record, a null clears
     // one, and the record is transformed and validated as the global ValidationPipe does for a PUT.
     const patched = plainToInstance(<%- dtoClass %>, { ...existing, ...<%- entityInstance %>DTO });
@@ -226,7 +233,7 @@ _%>
       throw validationException(errors);
     }
     const updated = await this.<%- entityInstance %>Service.update(patched);
-    this.headerUtil.addEntityUpdatedHeaders(req.res, ENTITY_NAME, id);
+    this.headerUtil.addEntityUpdatedHeaders(res, ENTITY_NAME, id);
     return updated;
   }
 
@@ -239,8 +246,8 @@ _%>
     status: 204,
     description: 'The record has been successfully deleted.',
   })
-  async deleteById(@Req() req: Request, <%- idParam %>): Promise<void>  {
-    this.headerUtil.addEntityDeletedHeaders(req.res, ENTITY_NAME, id);
+  async deleteById(@Res({ passthrough: true }) res: Response, <%- idParam %>): Promise<void>  {
+    this.headerUtil.addEntityDeletedHeaders(res, ENTITY_NAME, id);
     return await this.<%- entityInstance %>Service.deleteById(id);
   }
 
@@ -248,7 +255,7 @@ _%>
    * Checks the id of an update like JHipster Spring Boot: the body must have the id of the path,
    * and the record must exist, otherwise answers 400.
    */
-  private async validateIdForUpdate(req: Request, id: <%- pkType %>, <%- entityInstance %>DTO: Partial<<%- dtoClass %>> | undefined): Promise<<%- dtoClass %>> {
+  private async validateIdForUpdate(id: <%- pkType %>, <%- entityInstance %>DTO: Partial<<%- dtoClass %>> | undefined): Promise<<%- dtoClass %>> {
     if (<%- entityInstance %>DTO?.<%- primaryKey.name %> === undefined || <%- entityInstance %>DTO.<%- primaryKey.name %> === null) {
       throw new BadRequestAlertException('Invalid id', ENTITY_NAME, 'idnull');
     }

@@ -1,5 +1,5 @@
-import { Body, Controller, Post, Res, Req, HttpCode } from '@nestjs/common';
-import { Response, Request } from 'express';
+import { Body, Controller, Post, Res, HttpCode } from '@nestjs/common';
+import { Response } from 'express';
 import { UserLoginDTO } from './dto/user-login.dto.ts';
 import { AuthService } from './auth.service.ts';
 import { ApiTags, ApiResponse, ApiOperation } from '@nestjs/swagger';
@@ -17,9 +17,9 @@ export class UserJWTController {
     status: 200,
     description: 'Authorized',
   })
-  async authorize(@Req() req: Request, @Body() user: UserLoginDTO, @Res() res: Response): Promise<Response> {
+  async authorize(@Body() user: UserLoginDTO, @Res({ passthrough: true }) res: Response): Promise<{ id_token: string }> {
     const jwt = await this.authService.login(user);
-    res.setHeader('Authorization', 'Bearer ' + jwt.id_token);
-    return res.json(jwt);
+    res.setHeader('Authorization', `Bearer ${jwt.id_token}`);
+    return jwt;
   }
 }
