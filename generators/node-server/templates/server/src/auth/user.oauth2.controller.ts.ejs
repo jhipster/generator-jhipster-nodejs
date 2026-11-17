@@ -5,11 +5,13 @@ import { Request, Response } from 'express';
 import { AuthService } from './auth.service.ts';
 import { ApiTags, ApiResponse, ApiOperation, ApiExcludeEndpoint } from '@nestjs/swagger';
 import { setCsrfCookie } from './csrf.middleware.ts';
+import { Public } from './decorators/public.decorator.ts';
 import { OAuth2LoginGuard } from './guards/oauth2-login.guard.ts';
 import { OAuth2Config } from './oauth2.config.ts';
 import { OidcUser } from './oauth2.authorities.ts';
 
 @Controller()
+@Public()
 @ApiTags('user-oauth2-controller')
 export class UserOauth2Controller {
   private readonly logger = new Logger(UserOauth2Controller.name);

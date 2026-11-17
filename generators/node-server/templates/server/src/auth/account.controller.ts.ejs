@@ -1,7 +1,9 @@
 import { 
 <%_ if (generateUserManagement) { _%> BadRequestException, Body, Post, 
-<%_ } _%>UseGuards, Controller, Get, HttpCode, Logger, Req, UseInterceptors, ClassSerializerInterceptor } from '@nestjs/common';
-import { AuthGuard } from './index.ts';
+<%_ } _%>Controller, Get, HttpCode, Logger, Req, UseInterceptors, ClassSerializerInterceptor } from '@nestjs/common';
+<%_ if (generateUserManagement) { _%>
+import { Public } from './decorators/public.decorator.ts';
+<%_ } _%>
 <%_ if (generateUserManagement) { _%>
 import { PasswordChangeDTO } from './dto/password-change.dto.ts';
 import { KeyAndPasswordDTO } from './dto/key-and-password.dto.ts';
@@ -31,7 +33,6 @@ export class AccountController {
   @Get('/authenticate')
   @HttpCode(204)
   @ApiBearerAuth()
-  @UseGuards(AuthGuard)
   @ApiOperation({ summary: 'Check if the user is authenticated' })
   @ApiResponse({
     status: 204,
@@ -43,7 +44,6 @@ export class AccountController {
 
   @Get('/account')
   @ApiBearerAuth()
-  @UseGuards(AuthGuard)
   @ApiOperation({ summary: 'Get the current user.' })
   @ApiResponse({
     status: 200,
@@ -66,7 +66,6 @@ export class AccountController {
   @Post('/account')
   @HttpCode(200)
   @ApiBearerAuth()
-  @UseGuards(AuthGuard)
   @ApiOperation({ summary: 'Update the current user information' })
   @ApiResponse({
     status: 200,
@@ -80,7 +79,6 @@ export class AccountController {
   @Post('/account/change-password')
   @HttpCode(200)
   @ApiBearerAuth()
-  @UseGuards(AuthGuard)
   @ApiOperation({ summary: 'Change current password' })
   @ApiResponse({
     status: 200,
@@ -100,6 +98,7 @@ export class AccountController {
   }
 
   @Post('/account/reset-password/init')
+  @Public()
   @HttpCode(200)
   @ApiOperation({ summary: 'Send an email to reset the password of the user' })
   @ApiResponse({
@@ -122,6 +121,7 @@ export class AccountController {
   }
 
   @Post('/account/reset-password/finish')
+  @Public()
   @HttpCode(200)
   @ApiOperation({ summary: 'Finish to reset the password of the user' })
   @ApiResponse({
@@ -136,7 +136,6 @@ export class AccountController {
 
   @Get('/account')
   @ApiBearerAuth()
-  @UseGuards(AuthGuard)
   @ApiOperation({ summary: 'Get the current user, of the session or of the bearer token, else 401' })
   @ApiResponse({
     status: 200,
@@ -151,7 +150,6 @@ export class AccountController {
 
   @Get('/account')
   @ApiBearerAuth()
-  @UseGuards(AuthGuard)
   @ApiOperation({ summary: 'Get the current user.' })
   @ApiResponse({
     status: 200,

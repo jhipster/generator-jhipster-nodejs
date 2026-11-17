@@ -1,4 +1,4 @@
-import { Controller, Get, NotFoundException, Res, UseGuards } from '@nestjs/common';
+import { Controller, Get, NotFoundException, Res } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 
 import type { ApplicationConfig } from '../application-config.ts';
@@ -7,7 +7,7 @@ import { Response } from 'express';
 
 import { SkipLogging } from '../common/interceptors/logging.interceptor.ts';
 import { MetricsService, NodeMetrics } from '../common/metrics.ts';
-import { AuthGuard, Roles, RolesGuard, RoleType } from '../auth/index.ts';
+import { Public, Roles, RoleType } from '../auth/index.ts';
 
 /** A thread of a thread dump, like the one of Spring Boot Actuator. */
 export interface ThreadInfo {
@@ -30,7 +30,6 @@ export class MetricsController {
   ) {}
 
   @Get('/jhimetrics')
-  @UseGuards(AuthGuard, RolesGuard)
   @Roles(RoleType.ADMIN)
   metrics(): NodeMetrics {
     return this.metricsService.nodeMetrics();
@@ -38,13 +37,13 @@ export class MetricsController {
 
   /** The threads of the server: Node.js answers the requests in the one thread of its event loop. */
   @Get('/threaddump')
-  @UseGuards(AuthGuard, RolesGuard)
   @Roles(RoleType.ADMIN)
   threaddump(): { threads: ThreadInfo[] } {
     return { threads: [{ threadName: 'main', threadId: 1, threadState: 'RUNNABLE' }] };
   }
 
   @Get('/prometheus')
+  @Public()
   @SkipLogging()
   async prometheus(@Res({ passthrough: true }) response: Response): Promise<string> {
     // A property of a file or of the environment, a boolean or its text.

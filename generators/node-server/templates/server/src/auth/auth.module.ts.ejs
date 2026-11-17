@@ -2,6 +2,9 @@
 import { HttpModule } from '@nestjs/axios';
 <%_ } _%>
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
+import { APP_GUARD } from '@nestjs/core';
+import { AuthGuard } from './guards/auth.guard.ts';
+import { RolesGuard } from './guards/roles.guard.ts';
 import { AuthService } from './auth.service.ts';
 import { PathRulesMiddleware } from './path-rules.middleware.ts';
 import { RequestAuthenticator } from './request-authenticator.ts';
@@ -95,6 +98,12 @@ import { RegistrationService } from './registration.service.ts';
   ],
   providers: [AuthService,
   RequestAuthenticator,
+  // The guards of every route, like the authorization of JHipster Spring Boot: an authenticated user but for the routes
+  // marked @Public(), then the roles of the @Roles of the route. Aliases of the providers, which a test overrides.
+  AuthGuard,
+  RolesGuard,
+  { provide: APP_GUARD, useExisting: AuthGuard },
+  { provide: APP_GUARD, useExisting: RolesGuard },
 <%_ if (generateUserRegistration) { _%>
   RegistrationService,
 <%_ } _%>

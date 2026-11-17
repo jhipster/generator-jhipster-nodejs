@@ -3,6 +3,7 @@ import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AccountResourceException } from '../common/errors/problem.exception.ts';
 import { MailService } from '../mail/mail.service.ts';
 import { Managed<%- userLoginVmClass %> } from '../users/dto/user.dto.ts';
+import { Public } from './decorators/public.decorator.ts';
 import { RegistrationService } from './registration.service.ts';
 
 /**
@@ -10,6 +11,7 @@ import { RegistrationService } from './registration.service.ts';
  * written with skipUserRegistration.
  */
 @Controller('api')
+@Public()
 @UseInterceptors(ClassSerializerInterceptor)
 @ApiTags('account-resource')
 export class RegistrationController {

@@ -1,7 +1,7 @@
-import { Controller, Get, NotFoundException, UseGuards } from '@nestjs/common';
+import { Controller, Get, NotFoundException } from '@nestjs/common';
 import { ApiExcludeController, OpenAPIObject } from '@nestjs/swagger';
 
-import { AuthGuard, Roles, RolesGuard, RoleType } from '../auth/index.ts';
+import { Roles, RoleType } from '../auth/index.ts';
 import { ApiDocsService } from './api-docs.service.ts';
 
 /**
@@ -10,7 +10,6 @@ import { ApiDocsService } from './api-docs.service.ts';
  */
 @ApiExcludeController()
 @Controller('v3')
-@UseGuards(AuthGuard, RolesGuard)
 @Roles(RoleType.ADMIN)
 export class ApiDocsController {
   constructor(private readonly apiDocsService: ApiDocsService) {}

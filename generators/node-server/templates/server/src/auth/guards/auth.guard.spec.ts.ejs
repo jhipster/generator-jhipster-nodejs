@@ -1,0 +1,39 @@
+import { ExecutionContext, UnauthorizedException } from '@nestjs/common';
+import { Reflector } from '@nestjs/core';
+import { describe, expect, it } from 'vitest';
+import { Public } from '../decorators/public.decorator.ts';
+import { AuthGuard } from './auth.guard.ts';
+
+class Routes {
+  open(): void {}
+
+  @Public()
+  public(): void {}
+}
+
+@Public()
+class PublicRoutes {
+  open(): void {}
+}
+
+/** The context of a route handler of a controller, for a request of a user or without one. */
+const contextOf = (controller: new () => object, handler: string, user?: object): ExecutionContext =>
+  ({
+    getClass: () => controller,
+    getHandler: () => (controller.prototype as Record<string, unknown>)[handler],
+    switchToHttp: () => ({ getRequest: () => ({ user }) }),
+  }) as unknown as ExecutionContext;
+
+describe('AuthGuard', () => {
+  const guard = new AuthGuard(new Reflector());
+
+  it('refuses a request without user with 401, lets the one of a user pass', () => {
+    expect(() => guard.canActivate(contextOf(Routes, 'open'))).toThrow(UnauthorizedException);
+    expect(guard.canActivate(contextOf(Routes, 'open', { login: 'user' }))).toBe(true);
+  });
+
+  it('lets a request without user pass to a route marked @Public(), or to the routes of a controller marked @Public()', () => {
+    expect(guard.canActivate(contextOf(Routes, 'public'))).toBe(true);
+    expect(guard.canActivate(contextOf(PublicRoutes, 'open'))).toBe(true);
+  });
+});

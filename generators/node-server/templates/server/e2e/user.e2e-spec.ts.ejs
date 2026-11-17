@@ -46,7 +46,7 @@ describe('User', () => {
         })
             .overrideProvider(RequestAuthenticator)
             .useValue(authenticatorMock)
-            .overrideGuard(RolesGuard)
+            .overrideProvider(RolesGuard)
             .useValue(rolesGuardMock)
             .compile();
 

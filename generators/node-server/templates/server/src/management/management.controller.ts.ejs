@@ -2,6 +2,7 @@ import { Controller, Get } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { ApiTags, ApiResponse, ApiOperation, ApiExcludeEndpoint } from '@nestjs/swagger';
 import { activeProfiles } from '../config.ts';
+import { Public } from '../auth/index.ts';
 
 /** The info of the info endpoint of Spring Boot Actuator the JHipster clients read: the profiles and the ribbon. */
 export interface Info {
@@ -10,6 +11,7 @@ export interface Info {
 }
 
 @Controller('management')
+@Public()
 @ApiTags('management-controller')
 export class ManagementController {
 
