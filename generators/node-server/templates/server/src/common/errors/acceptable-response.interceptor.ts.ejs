@@ -13,7 +13,13 @@ export class AcceptableResponseInterceptor implements NestInterceptor {
     const request = context.switchToHttp().getRequest<Request>();
     return next.handle().pipe(
       map(result => {
-        if (context.getType() === 'http' && result !== null && typeof result === 'object' && !Buffer.isBuffer(result) && !request.accepts('json')) {
+        if (
+          context.getType() === 'http' &&
+          result !== null &&
+          typeof result === 'object' &&
+          !Buffer.isBuffer(result) &&
+          !request.accepts('json')
+        ) {
           throw new NotAcceptableException('No acceptable representation');
         }
         return result;

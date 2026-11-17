@@ -120,7 +120,11 @@ describe('criteriaOf', () => {
 
   it('names the criteria of the entity in the errors of its values, like the criteria class of JHipster Spring Boot', () => {
     expect(() => criteriaWhere({ 'id.equals': 'a' }, criteriaOf(metadata))).toThrow(
-      expect.objectContaining({ problem: expect.objectContaining({ fieldErrors: [{ objectName: 'sampleCriteria', field: 'id.equals', message: 'typeMismatch', code: 'typeMismatch' }] }) }),
+      expect.objectContaining({
+        problem: expect.objectContaining({
+          fieldErrors: [{ objectName: 'sampleCriteria', field: 'id.equals', message: 'typeMismatch', code: 'typeMismatch' }],
+        }),
+      }),
     );
   });
 });

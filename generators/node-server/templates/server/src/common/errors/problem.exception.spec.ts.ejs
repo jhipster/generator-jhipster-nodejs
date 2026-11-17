@@ -66,6 +66,8 @@ describe('validationException', () => {
 
   it('gives a field error the message of the constraint of its code', async () => {
     const exception = (await exceptionOf({ name: undefined })) as ValidationException;
-    expect(exception.problem.fieldErrors).toEqual([{ objectName: 'sample', field: 'name', message: 'name should not be empty', code: 'NotNull' }]);
+    expect(exception.problem.fieldErrors).toEqual([
+      { objectName: 'sample', field: 'name', message: 'name should not be empty', code: 'NotNull' },
+    ]);
   });
 });

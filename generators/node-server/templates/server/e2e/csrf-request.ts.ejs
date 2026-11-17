@@ -19,8 +19,7 @@ export default function request(app: Parameters<typeof supertest>[0]): ReturnTyp
       if (!UNSAFE_METHODS.has(property) || typeof value !== 'function') {
         return value;
       }
-      return (url: string) =>
-        value.call(target, url).set('Cookie', `XSRF-TOKEN=${CSRF_TOKEN}`).set('X-XSRF-TOKEN', CSRF_TOKEN);
+      return (url: string) => value.call(target, url).set('Cookie', `XSRF-TOKEN=${CSRF_TOKEN}`).set('X-XSRF-TOKEN', CSRF_TOKEN);
     },
   });
 }

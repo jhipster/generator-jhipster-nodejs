@@ -77,7 +77,9 @@ describe('Path rules', () => {
 <%_ if (!authenticationTypeSession) { _%>
 
     it('answers the metadata of the server as a protected resource, like Spring Security', async () => {
-      const { body } = await get('/.well-known/oauth-protected-resource').expect(200).expect('Content-Type', /^application\/json/);
+      const { body } = await get('/.well-known/oauth-protected-resource')
+        .expect(200)
+        .expect('Content-Type', /^application\/json/);
       expect(body).toEqual({ resource: expect.stringMatching(/^http:\/\/127\.0\.0\.1:\d+$/), bearer_methods_supported: ['header'] });
       expect((await get('/.well-known/oauth-protected-resource/api/x').expect(200)).body.resource).toMatch(/:\d+\/api\/x$/);
       await get('/.well-known/oauth-protected-resource').set('Authorization', 'Bearer invalid').expect(200);

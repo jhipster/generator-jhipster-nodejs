@@ -17,7 +17,9 @@ export class LoginPathPipe implements PipeTransform<string, string> {
         title: 'Method argument not valid',
         detail: VALIDATION_DETAIL,
         message: ERR_VALIDATION,
-        fieldErrors: [{ objectName: 'userResource', field: 'login', message: `login must match ${LOGIN_PATTERN} regular expression`, code: 'Pattern' }],
+        fieldErrors: [
+          { objectName: 'userResource', field: 'login', message: `login must match ${LOGIN_PATTERN} regular expression`, code: 'Pattern' },
+        ],
       });
     }
     return login;

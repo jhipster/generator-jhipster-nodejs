@@ -73,7 +73,8 @@ const isPreflight = (req: Request): boolean =>
 
 /** Whether the CORS options allow an origin: one of their origins or patterns, or any for *. */
 const allowsOrigin = ({ origin }: CorsOptions, value: string): boolean =>
-  origin === '*' || (Array.isArray(origin) && origin.some(allowed => (allowed instanceof RegExp ? allowed.test(value) : allowed === value)));
+  origin === '*' ||
+  (Array.isArray(origin) && origin.some(allowed => (allowed instanceof RegExp ? allowed.test(value) : allowed === value)));
 
 /** A list of CORS options: undefined for * (all allowed). */
 const optionList = (value: string | string[] | undefined): string[] | undefined =>

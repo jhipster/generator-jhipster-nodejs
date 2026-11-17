@@ -151,14 +151,26 @@ export class BadRequestAlertException extends ProblemException {
  */
 export class LoginAlreadyUsedException extends BadRequestAlertException {
   constructor(inDetail = false) {
-    super('Login name already used!', 'userManagement', 'userexists', LOGIN_ALREADY_USED_TYPE, inDetail ? 'Login name already used!' : undefined);
+    super(
+      'Login name already used!',
+      'userManagement',
+      'userexists',
+      LOGIN_ALREADY_USED_TYPE,
+      inDetail ? 'Login name already used!' : undefined,
+    );
   }
 }
 
 /** A mail of another user, told in the detail by the registration like the login. */
 export class EmailAlreadyUsedException extends BadRequestAlertException {
   constructor(inDetail = false) {
-    super('Email is already in use!', 'userManagement', 'emailexists', EMAIL_ALREADY_USED_TYPE, inDetail ? 'Email is already in use!' : undefined);
+    super(
+      'Email is already in use!',
+      'userManagement',
+      'emailexists',
+      EMAIL_ALREADY_USED_TYPE,
+      inDetail ? 'Email is already in use!' : undefined,
+    );
   }
 }
 
