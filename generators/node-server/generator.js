@@ -323,15 +323,6 @@ export default class extends BaseApplicationGenerator {
               createNeedleCallback({ needle: 'add-entity-to-ormconfig-imports', contentToAdd: importLine }).call(this, content, filePath)
             );
           };
-        source.addEntityToNodeConfig = ({ nodejsEntityPath, persistClass }) =>
-          this.editFile(
-            `${SERVER_NODEJS_SRC_DIR}/src/orm.config.ts`,
-            addOrmConfigImport(`import { ${persistClass} } from './${nodejsEntityPath}';`),
-            createNeedleCallback({
-              needle: 'add-entity-to-ormconfig-entities',
-              contentToAdd: `${persistClass},`,
-            }),
-          );
         source.addMigrationToNodeConfig = ({ className, fileName }) =>
           this.editFile(
             `${SERVER_NODEJS_SRC_DIR}/src/orm.config.ts`,
@@ -787,10 +778,7 @@ export default class extends BaseApplicationGenerator {
     return this.asPostWritingEntitiesTaskGroup({
       async postWritingEntitiesTemplateTask({ entities, source }) {
         for (const entity of entities.filter(entity => !entity.skipServer)) {
-          const { nodejsEntityPath, nodejsModulePath, persistClass, entityClass } = entity;
-          if (!entity.builtInUserManagement) {
-            source.addEntityToNodeConfig({ nodejsEntityPath, persistClass });
-          }
+          const { nodejsModulePath, entityClass } = entity;
           if (entity.entityDomainLayer) {
             source.addEntityToAppModule({ nodejsModulePath, entityClass });
           }
