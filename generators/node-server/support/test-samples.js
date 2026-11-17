@@ -94,7 +94,7 @@ export const mutateTestSamples = ({ databaseTypeSql }) => ({
   // The fake data of the mocked end-to-end tests, reproducible (the faker of the entity is seeded): distinct ids of the type
   // of the primary key, as TypeScript literals, a value for each field as the API exchanges it, an id the pipe of the path
   // rejects (neither a number nor a UUID), the user a partial update sets as the last modifier, and the valid values of the
-  // validated fields, for the global ValidationPipe.
+  // validated fields, for the global ValidationPipe, and a value under the min of a field.
   nodejsMockE2e: (entity, { delayMarker }) => {
     if (delayMarker) return delayMarker;
     if (!entity.entityRestLayer) return undefined;
@@ -116,6 +116,13 @@ export const mutateTestSamples = ({ databaseTypeSql }) => ({
     const patcher = faker.internet.username();
     entity.resetFakerSeed('nodejs-e2e');
     const validatedFields = fields.filter(field => !field.id && field.fieldValidate && field.fieldType !== 'byte[]');
+    // A number under the min of a field, and the code of its field error: the @DecimalMin of a decimal, like Bean Validation.
+    const minField = validatedFields.find(field => field.fieldTypeNumeric && field.fieldValidationMin);
+    const belowMin = minField && {
+      fieldName: minField.fieldName,
+      value: Number(minField.fieldValidateRulesMin) - 1,
+      code: minField.fieldTypeFloat || minField.fieldTypeDouble || minField.fieldTypeBigDecimal ? 'DecimalMin' : 'Min',
+    };
     return {
       entityId,
       unknownId,
@@ -124,6 +131,7 @@ export const mutateTestSamples = ({ databaseTypeSql }) => ({
       invalidId,
       patcher,
       validatedFields,
+      belowMin,
       validValues: Object.fromEntries(definedValues(validatedFields, 'fieldName')),
     };
   },

@@ -178,8 +178,14 @@ describe('User', () => {
             status: 400,
             message: 'error.validation',
             path: '/api/admin/users',
-            fieldErrors: [{ objectName: 'user', field: 'email', message: expect.any(String) }],
+            fieldErrors: [{ objectName: 'user', field: 'email', message: expect.any(String), code: 'Email' }],
         });
+    });
+
+    it('/POST create user without a login is a field error NotBlank, like the AdminUserDTO of JHipster Spring Boot', async () => {
+        const { login: _login, ...withoutLogin } = testUserRequestObject;
+        const { body } = await request(app.getHttpServer()).post('/api/admin/users').send(withoutLogin).expect(400);
+        expect(body.fieldErrors).toEqual([{ objectName: 'user', field: 'login', message: expect.any(String), code: 'NotBlank' }]);
     });
 
     it('/GET all users', async () => {

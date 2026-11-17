@@ -1,6 +1,6 @@
 <%_ const numericId = primaryKey.tsType === 'number';
     const idField = primaryKey.fields[0];
-    const { entityId, unknownId, anotherId, fakeFields, invalidId, patcher, validatedFields, validValues } = nodejsMockE2e;
+    const { entityId, unknownId, anotherId, fakeFields, invalidId, patcher, validatedFields, belowMin, validValues } = nodejsMockE2e;
 _%>
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { Test, TestingModule } from '@nestjs/testing';
@@ -218,8 +218,8 @@ _%>
 
         expect(body).toMatchObject({ message: 'error.validation' });
         expect(body.fieldErrors).toEqual([
-            { objectName: '<%- entityInstance %>Criteria', field: 'distinct', message: 'typeMismatch' },
-            { objectName: '<%- entityInstance %>Criteria', field: '<%- primaryKey.name %>.specified', message: 'typeMismatch' },
+            { objectName: '<%- entityInstance %>Criteria', field: 'distinct', message: 'typeMismatch', code: 'typeMismatch' },
+            { objectName: '<%- entityInstance %>Criteria', field: '<%- primaryKey.name %>.specified', message: 'typeMismatch', code: 'typeMismatch' },
         ]);
     });
 <%_ } _%>
@@ -378,8 +378,18 @@ _%>
             message: 'error.validation',
             // The detail of JHipster Spring Boot in production, the errors in the fields.
             detail: 'Unexpected runtime exception',
-            fieldErrors: [{ objectName: '<%- entityInstance %>', field: '<%- requiredField.fieldName %>', message: expect.any(String) }],
+            fieldErrors: [{ objectName: '<%- entityInstance %>', field: '<%- requiredField.fieldName %>', message: expect.any(String), code: 'NotNull' }],
         });
+    });
+
+<%_ } _%>
+<%_ if (belowMin) { _%>
+    it('/POST create <%- entityApiUrl %> with <%- belowMin.fieldName %> under its min is a field error <%- belowMin.code %>, like JHipster Spring Boot', async () => {
+        const { body } = await request(app.getHttpServer())
+            .post('/api/<%- entityApiUrl %>')
+            .send({ ...validEntity, <%- belowMin.fieldName %>: <%- belowMin.value %> })
+            .expect(400);
+        expect(body.fieldErrors).toEqual([{ objectName: '<%- entityInstance %>', field: '<%- belowMin.fieldName %>', message: expect.any(String), code: '<%- belowMin.code %>' }]);
     });
 
 <%_ } _%>
@@ -589,7 +599,7 @@ _%>
         expect(error).toMatchObject({
             type: 'https://www.jhipster.tech/problem/constraint-violation',
             message: 'error.validation',
-            fieldErrors: [expect.objectContaining({ objectName: '<%- entityInstance %>', field: '<%- requiredField.fieldName %>' })],
+            fieldErrors: [expect.objectContaining({ objectName: '<%- entityInstance %>', field: '<%- requiredField.fieldName %>', code: 'NotNull' })],
         });
     });
 

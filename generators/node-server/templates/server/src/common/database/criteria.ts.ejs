@@ -195,7 +195,7 @@ export const criteriaWhere = <T>(query: ParsedQs, criteria: Record<string, Crite
       title: 'Method argument not valid',
       detail: VALIDATION_DETAIL,
       message: ERR_VALIDATION,
-      fieldErrors: mismatches.map(field => ({ objectName, field, message: 'typeMismatch' })),
+      fieldErrors: mismatches.map(field => ({ objectName, field, message: 'typeMismatch', code: 'typeMismatch' })),
     });
   }
   const where: Record<string, unknown> = {};
