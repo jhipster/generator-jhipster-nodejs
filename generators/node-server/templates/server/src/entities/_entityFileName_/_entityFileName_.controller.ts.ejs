@@ -3,10 +3,10 @@
     const idParam = `@Param('id'${idPipe ? `, ${idPipe}` : ''}) id: ${pkType}`;
     // The eagerload flag of the lists, like JHipster Spring Boot.
     const eagerLoadFlag = !jpaMetamodelFiltering && implementsEagerLoadApis;
-    // The list reads the request for its criteria or its filter.
-    const listReadsRequest = nodejsCriteria || nodejsMappedByRelationships.some(relationship => relationship.relationshipOneToOne);
+    // The filter of the list of the records without a relationship to one record, for the form of the other entity.
+    const oneToOneFilter = nodejsMappedByRelationships.some(relationship => relationship.relationshipOneToOne);
 _%>
-import { Body, ClassSerializerInterceptor, Controller, Delete, Get,<%- nodejsCriteria ? ' Header,' : '' %> NotFoundException, Param, Patch, Post as PostMethod,<%- eagerLoadFlag ? ' Query,' : '' %> Put,<%- listReadsRequest ? ' Req,' : '' %> Res, UseInterceptors } from '@nestjs/common';
+import { Body, ClassSerializerInterceptor, Controller, Delete, Get,<%- nodejsCriteria ? ' Header,' : '' %> NotFoundException, Param, Patch, Post as PostMethod,<%- eagerLoadFlag || oneToOneFilter ? ' Query,' : '' %> Put, Res, UseInterceptors } from '@nestjs/common';
 import { Response } from 'express';
 import { 
 <%_ if (authenticationTypeJwt) { _%> ApiBearerAuth, 
@@ -16,8 +16,10 @@ import { plainToInstance } from 'class-transformer';
 import { validate } from 'class-validator';
 import { <%- dtoClass %> } from './dto/<%- entityFileName %>.dto.ts';
 import { <%- entityClass %>Service } from './<%- entityFileName %>.service.ts';
-<%_ if (pagination !== 'no') { _%>
+<%_ if (pagination !== 'no' || nodejsCriteria) { _%>
 import { <%- entityClass %> } from './<%- entityFileName %>.entity.ts';
+<%_ } _%>
+<%_ if (pagination !== 'no') { _%>
 import { Pageable } from '../../common/database/pageable.ts';
 import { PageRequest, Page } from '../../common/database/pagination.entity.ts';
 <%_ } _%>
@@ -30,10 +32,8 @@ import { HeaderUtil } from '../../common/header-util.ts';
 import { <%- parameterImports.join(', ') %> } from '../../common/parse-id.pipe.ts';
 <%_ } _%>
 <%_ if (nodejsCriteria) { _%>
-import { criteriaOf, criteriaWhere } from '../../common/database/criteria.ts';
-<%_ } _%>
-<%_ if (listReadsRequest) { _%>
-import { Request } from '../../common/request.ts';
+import { FindOptionsWhere } from 'typeorm';
+import { Criteria } from '../../common/database/criteria.ts';
 <%_ } _%>
 
 import { BadRequestAlertException, validationException } from '../../common/errors/problem.exception.ts';
@@ -67,8 +67,11 @@ export class <%- entityClass %>Controller {
     isArray: true,
   })
   async getAll(
-<%_ if (listReadsRequest) { _%>
-    @Req() req: Request,
+<%_ if (nodejsCriteria) { _%>
+    @Criteria(<%- entityClass %>) where: FindOptionsWhere<<%- entityClass %>>,
+<%_ } _%>
+<%_ if (oneToOneFilter) { _%>
+    @Query('filter') filter: string | undefined,
 <%_ } _%>
 <%_ if (pagination !== 'no') { _%>
     @Res({ passthrough: true }) res: Response,
@@ -81,7 +84,7 @@ export class <%- entityClass %>Controller {
   ): Promise<<%- dtoClass %> []>  {
 <%_ for (const relationship of nodejsMappedByRelationships.filter(relationship => relationship.relationshipOneToOne)) { _%>
     // The records without <%- relationship.relationshipName %>, for the form of the other entity, like JHipster Spring Boot.
-    if (req.query.filter === '<%- relationship.relationshipName.toLowerCase() %>-is-null') {
+    if (filter === '<%- relationship.relationshipName.toLowerCase() %>-is-null') {
       return this.<%- entityInstance %>Service.findAllWhere<%- relationship.relationshipNameCapitalized %>IsNull();
     }
 <%_ } _%>
@@ -90,7 +93,7 @@ export class <%- entityClass %>Controller {
     // reads no sort: the clients sort its list.
     const [results] = await this.<%- entityInstance %>Service.findAndCount({
   <%_ if (nodejsCriteria) { _%>
-      where: criteriaWhere(req.query, criteriaOf(this.<%- entityInstance %>Service.metadata)),
+      where,
   <%_ } _%>
       order: { <%- primaryKey.name %>: 'ASC' },
     });
@@ -98,7 +101,7 @@ export class <%- entityClass %>Controller {
 <%_ } else { _%>
     const [results, count] = await this.<%- entityInstance %>Service.findAndCount({
   <%_ if (nodejsCriteria) { _%>
-      where: criteriaWhere(req.query, criteriaOf(this.<%- entityInstance %>Service.metadata)),
+      where,
   <%_ } _%>
       skip: +pageRequest.page * pageRequest.size,
       take: +pageRequest.size,
@@ -121,8 +124,8 @@ export class <%- entityClass %>Controller {
     description: 'The count of the records matching the criteria',
     type: Number,
   })
-  async count(@Req() req: Request): Promise<number> {
-    return this.<%- entityInstance %>Service.count({ where: criteriaWhere(req.query, criteriaOf(this.<%- entityInstance %>Service.metadata)) });
+  async count(@Criteria(<%- entityClass %>) where: FindOptionsWhere<<%- entityClass %>>): Promise<number> {
+    return this.<%- entityInstance %>Service.count({ where });
   }
 
 <%_ } _%>

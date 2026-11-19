@@ -1,8 +1,10 @@
-import { HttpStatus } from '@nestjs/common';
+import { ArgumentMetadata, HttpStatus, Injectable, PipeTransform } from '@nestjs/common';
 import type { ParsedQs } from 'qs';
 import {
   And,
+  DataSource,
   type EntityMetadata,
+  type EntityTarget,
   Equal,
   FindOperator,
   type FindOptionsWhere,
@@ -18,6 +20,8 @@ import {
 
 import { CONSTRAINT_VIOLATION_TYPE, ERR_VALIDATION, VALIDATION_DETAIL } from '../errors/error-constants.ts';
 import { ProblemException } from '../errors/problem.exception.ts';
+
+import { QueryParameters } from './pageable.ts';
 
 /**
  * The kind of a property of the criteria, its operators like the filters of JHipster Spring Boot
@@ -210,3 +214,19 @@ export const criteriaWhere = <T>(query: ParsedQs, criteria: Record<string, Crite
   }
   return where as FindOptionsWhere<T>;
 };
+
+/** Builds the where of the criteria of the query of a request, of the entity of its decorator (its data). */
+@Injectable()
+export class CriteriaPipe implements PipeTransform<ParsedQs, FindOptionsWhere<unknown>> {
+  constructor(private readonly dataSource: DataSource) {}
+
+  transform(query: ParsedQs, { data }: ArgumentMetadata): FindOptionsWhere<unknown> {
+    return criteriaWhere(query, criteriaOf(this.dataSource.getMetadata(data as unknown as EntityTarget<unknown>)));
+  }
+}
+
+/**
+ * The where of the criteria of a list of an entity, the filters of its query parameters, like the Criteria of JHipster
+ * Spring Boot: a value of another type than its property is a validation error.
+ */
+export const Criteria = (entity: EntityTarget<unknown>): ParameterDecorator => QueryParameters(entity, CriteriaPipe);

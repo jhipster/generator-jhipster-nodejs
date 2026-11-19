@@ -37,7 +37,8 @@ export class PageRequestPipe implements PipeTransform<Request['query'], PageRequ
   }
 }
 
-const QueryParameters = createParamDecorator((_data: unknown, context: ExecutionContext) => context.switchToHttp().getRequest<Request>().query);
+/** The query parameters of a request, which the pipe of a parameter decorator (its options its data) reads. */
+export const QueryParameters = createParamDecorator((_data: unknown, context: ExecutionContext) => context.switchToHttp().getRequest<Request>().query);
 
 /**
  * The page request of a list, its page, size and sort parameters, like the Pageable of Spring Data: a property the list
