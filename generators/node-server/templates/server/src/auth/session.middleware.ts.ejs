@@ -1,0 +1,35 @@
+import { Injectable, NestMiddleware } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { NextFunction, Request, RequestHandler, Response } from 'express';
+import session from 'express-session';
+
+import type { ApplicationConfig } from '../application-config.ts';
+import { SessionStore } from './session.store.ts';
+
+/**
+ * The HTTP session of a request, like the sessions of JHipster Spring Boot: the JSESSIONID cookie, the sessions in the
+ * database of the application (SessionStore), which outlive a restart and are shared by its instances.
+ */
+@Injectable()
+export class SessionMiddleware implements NestMiddleware {
+  private readonly session: RequestHandler;
+
+  constructor(configService: ConfigService<ApplicationConfig, true>, store: SessionStore) {
+    this.session = session({
+      // The session cookie of JHipster Spring Boot.
+      name: 'JSESSIONID',
+      secret: configService.get('jhipster.security.session.secret', { infer: true }),
+      store,
+      resave: false,
+      saveUninitialized: false,
+      // Like the JSESSIONID of JHipster Spring Boot, a cookie until the browser is closed, set when the session is created
+      // only: the session expires on the server, after 30 minutes without requests (SessionStore). A cookie set again by
+      // every response would let a response of a session ended by a login meanwhile put the ended session back.
+      cookie: { httpOnly: true, sameSite: 'lax', secure: 'auto' },
+    });
+  }
+
+  use(req: Request, res: Response, next: NextFunction): void {
+    this.session(req, res, next);
+  }
+}

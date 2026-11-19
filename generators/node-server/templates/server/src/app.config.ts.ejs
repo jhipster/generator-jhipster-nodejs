@@ -3,14 +3,8 @@ import { ConfigService } from '@nestjs/config';
 import { CorsOptions } from '@nestjs/common/interfaces/external/cors-options.interface';
 import { NextFunction, Request, Response } from 'express';
 import { NestExpressApplication } from '@nestjs/platform-express';
-<%_ if (authenticationUsesCsrf && generateAuthenticationApi) { _%>
-import session from 'express-session';
-<%_ } _%>
 
 import type { ApplicationConfig } from './application-config.ts';
-<%_ if (authenticationUsesCsrf && generateAuthenticationApi) { _%>
-import { SessionStore } from './auth/session.store.ts';
-<%_ } _%>
 
 type AppConfigService = ConfigService<ApplicationConfig, true>;
 
@@ -195,7 +189,11 @@ export function trustProxy(strategy: string | undefined): string | false {
 
 /**
  * Configures the HTTP server of the application as it runs in production: main.ts and the e2e tests call it, so the e2e
- * tests exercise the same HTTP behaviour as the started application (the headers, CORS, the sessions, the body parsers).
+ * tests exercise the same HTTP behaviour as the started application: what runs before the middlewares of the modules
+ * (the headers, CORS, the body parsers).
+<%_ if (authenticationUsesCsrf && generateAuthenticationApi) { _%>
+ * The sessions are a middleware of the AuthModule.
+<%_ } _%>
  * The validation and the errors are the global providers of the CommonModule. It has no side effect at import (main.ts
  * starts the application when imported), and does not listen.
  */
@@ -212,23 +210,6 @@ export function configureApp(app: INestApplication): INestApplication {
     );
   }
   app.use(preflightRequests(cors !== undefined));
-<%_ if (authenticationUsesCsrf && generateAuthenticationApi) { _%>
-  app.use(
-    session({
-      // The session cookie of JHipster Spring Boot.
-      name: 'JSESSIONID',
-      secret: configService.get('jhipster.security.session.secret', { infer: true }),
-      // The sessions in the database of the application, which outlive a restart and are shared by its instances.
-      store: app.get(SessionStore),
-      resave: false,
-      saveUninitialized: false,
-      // Like the JSESSIONID of JHipster Spring Boot, a cookie until the browser is closed, set when the session is created
-      // only: the session expires on the server, after 30 minutes without requests (SessionStore). A cookie set again by
-      // every response would let a response of a session ended by a login meanwhile put the ended session back.
-      cookie: { httpOnly: true, sameSite: 'lax', secure: 'auto' },
-    }),
-  );
-<%_ } _%>
 <%_ if (generateUserManagement) { _%>
   // The mail of a password reset request is a text/plain body, as the JHipster clients send it.
   (app as NestExpressApplication).useBodyParser('text');

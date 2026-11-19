@@ -21,9 +21,6 @@ import { LevelsConsoleLogger, loggerLevels } from './common/logging.ts';
 <%_ if (!skipClient) { _%>
 import * as fs from 'fs';
 <%_ } _%>
-<%_ if (authenticationTypeOauth2 && authenticationUsesCsrf && generateAuthenticationApi) { _%>
-import passport from 'passport';
-<%_ } _%>
 // The levels of the loggers (logging.level.* of the configuration), like Spring Boot, the loggers endpoint changes them.
 loggerLevels.configure(config);
 const appLogger = new LevelsConsoleLogger();
@@ -50,14 +47,8 @@ async function bootstrap(): Promise<void> {
   });
   // Close the application (HTTP server, database connections) on SIGTERM, the signal docker stop sends.
   app.enableShutdownHooks();
-  // CORS, global validation<%- authenticationUsesCsrf && generateAuthenticationApi ? ', HTTP settings and sessions' : ' and HTTP settings' %>, shared with the e2e tests.
+  // The headers, CORS and the HTTP settings, shared with the e2e tests.
   configureApp(app);
-
-<%_ if (authenticationTypeOauth2 && authenticationUsesCsrf && generateAuthenticationApi) { _%>
-
-  app.use(passport.initialize());
-  app.use(passport.session());
-<%_ } _%>
 
 <%_ if (skipClient) { _%>
   logger.log(`The client is not been generated`);

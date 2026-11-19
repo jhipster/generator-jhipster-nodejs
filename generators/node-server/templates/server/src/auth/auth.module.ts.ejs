@@ -15,7 +15,7 @@ import { PassportModule } from '@nestjs/passport';
 <%_ if (authenticationType === 'jwt') { _%>
   <%_ if (generateBuiltInUserEntity) { _%>
 import { JwtModule } from '@nestjs/jwt';
-import { UserJWTController} from './user.jwt.controller.ts';
+import { UserJWTController } from './user.jwt.controller.ts';
   <%_ } _%>
 import { JwtStrategy } from './passport.jwt.strategy.ts';
 <%_ } else if (authenticationType === 'oauth2') { _%>
@@ -33,6 +33,7 @@ import { SessionUserMiddleware } from './session-user.middleware.ts';
 <%_ if (authenticationUsesCsrf && generateAuthenticationApi) { _%>
 import { CsrfMiddleware } from './csrf.middleware.ts';
 import { Session } from './session.entity.ts';
+import { SessionMiddleware } from './session.middleware.ts';
 import { SessionStore } from './session.store.ts';
 <%_ } _%>
 <%_ if (authenticationType === 'jwt' && generateBuiltInUserEntity) { _%>
@@ -56,16 +57,16 @@ import { RegistrationService } from './registration.service.ts';
 @Module({
   imports: [
 <%_ if (authenticationUsesCsrf && generateAuthenticationApi) { _%>
-  TypeOrmModule.forFeature([Session]),
+    TypeOrmModule.forFeature([Session]),
 <%_ } _%>
 <%_ if (generateBuiltInAuthorityEntity) { _%>
-  // The repository of the authorities, which the authentication reads.
-  AuthorityModule,
+    // The repository of the authorities, which the authentication reads.
+    AuthorityModule,
 <%_ } _%>
 <%_ if (generateBuiltInUserEntity) { _%>
-  UserModule,
+    UserModule,
 <%_ } _%>
-  PassportModule,
+    PassportModule,
 <%_ if (authenticationType === 'jwt' && generateBuiltInUserEntity) { _%>
     JwtModule.registerAsync({
       inject: [ConfigService],
@@ -83,46 +84,48 @@ import { RegistrationService } from './registration.service.ts';
   ],
   controllers: [
 <%_ if (authenticationType === 'jwt' && generateBuiltInUserEntity) { _%>
-  UserJWTController,
+    UserJWTController,
 <%_ } else if (authenticationType === 'oauth2' && authenticationUsesCsrf && generateAuthenticationApi) { _%>
-  UserOauth2Controller,
+    UserOauth2Controller,
 <%_ } else if (authenticationTypeSession) { _%>
-  UserSessionController,
+    UserSessionController,
 <%_ } _%>
 <%_ if (generateAuthenticationApi) { _%>
-  AccountController,
+    AccountController,
 <%_ } _%>
 <%_ if (generateUserRegistration) { _%>
-  RegistrationController,
+    RegistrationController,
 <%_ } _%>
   ],
-  providers: [AuthService,
-  RequestAuthenticator,
-  // The guards of every route, like the authorization of JHipster Spring Boot: an authenticated user but for the routes
-  // marked @Public(), then the roles of the @Roles of the route. Aliases of the providers, which a test overrides.
-  AuthGuard,
-  RolesGuard,
-  { provide: APP_GUARD, useExisting: AuthGuard },
-  { provide: APP_GUARD, useExisting: RolesGuard },
+  providers: [
+    AuthService,
+    RequestAuthenticator,
+    // The guards of every route, like the authorization of JHipster Spring Boot: an authenticated user but for the routes
+    // marked @Public(), then the roles of the @Roles of the route. Aliases of the providers, which a test overrides.
+    AuthGuard,
+    RolesGuard,
+    { provide: APP_GUARD, useExisting: AuthGuard },
+    { provide: APP_GUARD, useExisting: RolesGuard },
 <%_ if (generateUserRegistration) { _%>
-  RegistrationService,
+    RegistrationService,
 <%_ } _%>
 <%_ if (authenticationUsesCsrf && generateAuthenticationApi) { _%>
-  SessionStore,
+    SessionStore,
 <%_ } _%>
 <%_ if (authenticationType === 'jwt') { _%>
-  JwtStrategy
+    JwtStrategy,
 <%_ } else if (authenticationType === 'oauth2') { _%>
   <%_ if (authenticationUsesCsrf && generateAuthenticationApi) { _%>
-  Oauth2Strategy,
+    Oauth2Strategy,
   <%_ } _%>
-  Oauth2BearerStrategy
+    Oauth2BearerStrategy,
 <%_ } _%>
   ],
   exports: [AuthService],
 })
 export class AuthModule implements NestModule {
+  // The middlewares of every request, in this order, after the ones of configureApp (the headers, CORS, the body parsers).
   configure(consumer: MiddlewareConsumer): void {
-    consumer.apply(<%- [authenticationTypeSession && 'SessionUserMiddleware', authenticationUsesCsrf && generateAuthenticationApi && 'CsrfMiddleware', 'PathRulesMiddleware'].filter(Boolean).join(', ') %>).forRoutes('*');
+    consumer.apply(<%- [authenticationUsesCsrf && generateAuthenticationApi && 'SessionMiddleware', authenticationTypeSession && 'SessionUserMiddleware', authenticationUsesCsrf && generateAuthenticationApi && 'CsrfMiddleware', 'PathRulesMiddleware'].filter(Boolean).join(', ') %>).forRoutes('*');
   }
 }
