@@ -107,6 +107,7 @@ export const serverFiles = {
         'src/auth/index.ts',
         'src/common/header-util.ts',
         'src/common/interceptors/logging.interceptor.ts',
+        'src/common/interceptors/response-headers.interceptor.ts',
         'src/common/request.ts',
         'src/common/errors/error-constants.ts',
         'src/common/errors/problem.exception.ts',

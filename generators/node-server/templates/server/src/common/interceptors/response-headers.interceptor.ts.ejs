@@ -1,0 +1,78 @@
+import { applyDecorators, CallHandler, ExecutionContext, Injectable, NestInterceptor, SetMetadata, UseInterceptors } from '@nestjs/common';
+import { Reflector } from '@nestjs/core';
+import { Request, Response } from 'express';
+import { map, Observable, tap } from 'rxjs';
+
+import { Page } from '../database/pagination.entity.ts';
+import { AlertAction, HeaderUtil } from '../header-util.ts';
+
+const ALERT_HEADERS = 'jhipster:alertHeaders';
+
+/** The alert of the response of a route. */
+export interface AlertHeadersOptions {
+  action: AlertAction;
+  /** The name of the entity in the alert, the user management without it. */
+  entityName?: string;
+  /** The parameter of the alert: this property of the record answered, else the path parameter of this name (a deletion). */
+  param: string;
+  /** The location of a created record, from the parameter of its alert. */
+  location?: (param: string) => string;
+}
+
+/** Writes the alert of a route, and the location of a created record, once the route succeeded. */
+@Injectable()
+export class AlertHeadersInterceptor implements NestInterceptor {
+  constructor(
+    private readonly reflector: Reflector,
+    private readonly headerUtil: HeaderUtil,
+  ) {}
+
+  intercept(context: ExecutionContext, next: CallHandler): Observable<unknown> {
+    const { action, entityName, param, location } = this.reflector.get<AlertHeadersOptions>(ALERT_HEADERS, context.getHandler());
+    const request = context.switchToHttp().getRequest<Request>();
+    const response = context.switchToHttp().getResponse<Response>();
+    return next.handle().pipe(
+      tap(result => {
+        // The id or the login of the record answered, else the one of the path.
+        const answered = (result as Record<string, unknown> | undefined)?.[param];
+        const value = typeof answered === 'string' || typeof answered === 'number' ? String(answered) : String(request.params[param]);
+        this.headerUtil.addAlertHeaders(response, action, entityName, value);
+        if (location) {
+          response.location(location(value));
+        }
+      }),
+    );
+  }
+}
+
+/**
+ * The alert headers of a change of a record, like the HeaderUtil of JHipster Spring Boot (X-<application>-alert and
+ * X-<application>-params), which the JHipster clients show, and the location of a created record.
+ */
+export const AlertHeaders = (options: AlertHeadersOptions): MethodDecorator =>
+  applyDecorators(SetMetadata(ALERT_HEADERS, options), UseInterceptors(AlertHeadersInterceptor));
+
+/** Answers the records of the page a route gives, with its pagination headers. */
+@Injectable()
+export class PaginationHeadersInterceptor implements NestInterceptor {
+  constructor(private readonly headerUtil: HeaderUtil) {}
+
+  intercept(context: ExecutionContext, next: CallHandler): Observable<unknown> {
+    const response = context.switchToHttp().getResponse<Response>();
+    return next.handle().pipe(
+      map(result => {
+        if (!(result instanceof Page)) {
+          return result;
+        }
+        this.headerUtil.addPaginationHeaders(response, result);
+        return result.content;
+      }),
+    );
+  }
+}
+
+/**
+ * A list answered by pages, like the PaginationUtil of JHipster Spring Boot: the route gives a Page, answered as its
+ * records with the total count (X-Total-Count) and the links of the other pages (Link).
+ */
+export const Paginated = (): MethodDecorator => UseInterceptors(PaginationHeadersInterceptor);

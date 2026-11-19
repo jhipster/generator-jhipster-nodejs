@@ -628,15 +628,14 @@ _%>
 <%_ } _%>
 
     it('/DELETE <%- entityApiUrl %>', async () => {
-
-
-        const deletedEntity: <%- dtoClass %> = (await request(app.getHttpServer())
+        const response = await request(app.getHttpServer())
             .delete(`/api/<%- entityApiUrl %>/${entityMock.<%- primaryKey.name %>}`)
-            .expect(204)).body;
+            .expect(204);
 
-            expect(deletedEntity).toEqual({});
-    }
-    );
+        expect(response.body).toEqual({});
+        expect(alertHeader(response.headers, '-alert')).toMatch(<%- enableTranslation ? `/^${frontendAppName}\\.${entityAlertName}\\.deleted$/` : `/^A ${entityAlertName} is deleted with identifier /` %>);
+        expect(alertHeader(response.headers, '-params')).toBe(String(entityMock.<%- primaryKey.name %>));
+    });
 
     afterEach(async () => {
         await app?.close();

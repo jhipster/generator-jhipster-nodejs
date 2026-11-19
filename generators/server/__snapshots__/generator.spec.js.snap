@@ -287,6 +287,9 @@ exports[`SubGenerator server of nodejs JHipster blueprint > run > should match t
   "server/src/common/interceptors/logging.interceptor.ts": {
     "stateCleared": "modified",
   },
+  "server/src/common/interceptors/response-headers.interceptor.ts": {
+    "stateCleared": "modified",
+  },
   "server/src/common/logging.spec.ts": {
     "stateCleared": "modified",
   },

@@ -197,8 +197,8 @@ describe('SubGenerator node-server of nodejs JHipster blueprint', () => {
     });
 
     it('alert headers should be translation keys', () => {
-      result.assertFileContent('server/src/common/header-util.ts', '`${this.applicationName}.${entityName}.created`');
-      result.assertNoFileContent('server/src/common/header-util.ts', 'is created with identifier');
+      result.assertFileContent('server/src/common/header-util.ts', '`${this.applicationName}.${entityName}.${action}`');
+      result.assertNoFileContent('server/src/common/header-util.ts', 'with identifier');
     });
   });
 
@@ -216,8 +216,9 @@ describe('SubGenerator node-server of nodejs JHipster blueprint', () => {
     });
 
     it('alert headers should be messages, without the translation keys', () => {
-      result.assertFileContent('server/src/common/header-util.ts', '`A new ${entityName} is created with identifier ${param}`');
-      result.assertNoFileContent('server/src/common/header-util.ts', '.created`');
+      result.assertFileContent('server/src/common/header-util.ts', 'created: `A new ${entityName} is created`');
+      result.assertFileContent('server/src/common/header-util.ts', '`${subject} with identifier ${param}`');
+      result.assertNoFileContent('server/src/common/header-util.ts', '.${action}`');
       result.assertNoFileContent('server/src/common/header-util.ts', 'enableTranslation');
     });
   });
