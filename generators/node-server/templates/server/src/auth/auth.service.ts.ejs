@@ -32,6 +32,7 @@ import { OidcUser } from './oauth2.authorities.ts';
 <%_ } _%>
 <%_ if (authenticationType === 'jwt' && generateBuiltInUserEntity) { _%>
 import { ConfigService } from '@nestjs/config';
+import type { ApplicationConfig } from '../application-config.ts';
 <%_ } _%>
 
 <%_ const userIdType = user?.primaryKey.tsType; _%>
@@ -55,7 +56,7 @@ export class AuthService {
   constructor(
 <%_ if (authenticationType === 'jwt' && generateBuiltInUserEntity) { _%>
     private readonly jwtService: JwtService,
-    private readonly configService: ConfigService,
+    private readonly configService: ConfigService<ApplicationConfig, true>,
 <%_ } _%>
 <%_ if (generateUserManagement) { _%>
     private readonly passwordService: PasswordService,
@@ -111,8 +112,8 @@ export class AuthService {
 
     const expiresIn = Number(
       userLogin.rememberMe
-        ? this.configService.getOrThrow('jhipster.security.authentication.jwt.token-validity-in-seconds-for-remember-me')
-        : this.configService.getOrThrow('jhipster.security.authentication.jwt.token-validity-in-seconds'),
+        ? this.configService.get('jhipster.security.authentication.jwt.token-validity-in-seconds-for-remember-me', { infer: true })
+        : this.configService.get('jhipster.security.authentication.jwt.token-validity-in-seconds', { infer: true }),
     );
     return {
       id_token: this.jwtService.sign(payload, { expiresIn }),

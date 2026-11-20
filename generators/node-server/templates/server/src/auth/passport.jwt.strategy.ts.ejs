@@ -3,6 +3,7 @@ import { PassportStrategy } from '@nestjs/passport';
 import { ConfigService } from '@nestjs/config';
 import { Injectable<%- generateBuiltInUserEntity ? ', UnauthorizedException' : '' %> } from '@nestjs/common';
 import { Payload<%- generateBuiltInUserEntity ? '' : ', payloadAuthorities' %> } from './payload.interface.ts';
+import type { ApplicationConfig } from '../application-config.ts';
 import { JWT_ALGORITHM, jwtSecretKey } from './jwt.config.ts';
 <%_ if (generateBuiltInUserEntity) { _%>
 import { AuthService } from './auth.service.ts';
@@ -14,9 +15,9 @@ import { <%- userLoginVmClass %> } from '../users/dto/user.dto.ts';
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
 <%_ if (generateBuiltInUserEntity) { _%>
-  constructor(private readonly authService: AuthService, configService: ConfigService) {
+  constructor(private readonly authService: AuthService, configService: ConfigService<ApplicationConfig, true>) {
 <%_ } else { _%>
-  constructor(configService: ConfigService) {
+  constructor(configService: ConfigService<ApplicationConfig, true>) {
 <%_ } _%>
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),

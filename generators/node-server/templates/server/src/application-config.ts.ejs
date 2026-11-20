@@ -8,7 +8,10 @@ import { isInt, isNotEmpty, isPort<%- (authenticationTypeOauth2 || serviceDiscov
 export interface ApplicationConfig {
   management: {
     prometheus: { metrics: { export: { enabled: boolean } } };
+    /** The values of the env and configprops endpoints: never (shown as ******) or always. */
+    endpoint: { env: { 'show-values': string }; configprops: { 'show-values': string } };
   };
+  info: { 'display-ribbon-on-profiles': string };
   server: {
     port: string | number;
     'forward-headers-strategy': 'none' | 'native';
@@ -57,6 +60,7 @@ export interface ApplicationConfig {
       'max-age': number;
     };
     mail: { from: string; 'base-url': string };
+    swagger: { 'default-include-pattern': string; title: string; description: string; version: string };
     registry: { username?: string; password?: string };
   };
 <%_ if (generateUserManagement) { _%>

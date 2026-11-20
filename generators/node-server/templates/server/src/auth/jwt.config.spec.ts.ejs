@@ -1,8 +1,10 @@
 import { describe, expect, it } from 'vitest';
 import { ConfigService } from '@nestjs/config';
+import type { ApplicationConfig } from '../application-config.ts';
 import { JWT_MIN_KEY_BYTES, jwtSecretKey } from './jwt.config.ts';
 
-const configServiceOf = (secret: string): ConfigService => ({ getOrThrow: () => secret }) as unknown as ConfigService;
+const configServiceOf = (secret: string): ConfigService<ApplicationConfig, true> =>
+  ({ get: () => secret }) as unknown as ConfigService<ApplicationConfig, true>;
 
 describe('JWT key', () => {
   it('is the base64 decoded secret', () => {

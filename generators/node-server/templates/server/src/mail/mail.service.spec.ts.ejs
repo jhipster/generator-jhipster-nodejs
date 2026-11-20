@@ -4,6 +4,7 @@ import { MAILER_OPTIONS, MailerService } from '@nestjs-modules/mailer';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 
+import type { ApplicationConfig } from '../application-config.ts';
 import { MailModule, mailerOptions } from './mail.module.ts';
 import { MailService, parseProperties } from './mail.service.ts';
 
@@ -38,7 +39,7 @@ describe('MailService', () => {
     })
       .overrideProvider(MAILER_OPTIONS)
       .useFactory({
-        factory: (configService: ConfigService) => ({ ...mailerOptions(configService), transport: { jsonTransport: true } }),
+        factory: (configService: ConfigService<ApplicationConfig, true>) => ({ ...mailerOptions(configService), transport: { jsonTransport: true } }),
         inject: [ConfigService],
       })
       .compile();
