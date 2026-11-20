@@ -6,6 +6,7 @@ import { HelperOptions } from 'handlebars';
 import { MailerModule, MailerOptions } from '@nestjs-modules/mailer';
 import { HandlebarsAdapter } from '@nestjs-modules/mailer/adapters/handlebars.adapter';
 
+import type { ApplicationConfig } from '../application-config.ts';
 import { MailService } from './mail.service.ts';
 
 /** The templates of the account mails, like the templates/mail of JHipster Spring Boot. */
@@ -28,15 +29,15 @@ export const mailTemplateHelpers = {
  * The SMTP server of the mail properties, like spring.mail, and the Handlebars templates of the mails: they only
  * interpolate values, escaped, and call the helpers of the server, they run no code.
  */
-export function mailerOptions(configService: ConfigService): MailerOptions {
-  const username = configService.get<string>('mail.username');
+export function mailerOptions(configService: ConfigService<ApplicationConfig, true>): MailerOptions {
+  const { host, port, username, password } = configService.get('mail', { infer: true });
   return {
     transport: {
-      host: configService.get<string>('mail.host'),
-      port: Number(configService.get('mail.port')),
-      auth: username ? { user: username, pass: configService.get<string>('mail.password') } : undefined,
+      host,
+      port: Number(port),
+      auth: username ? { user: username, pass: password } : undefined,
     },
-    defaults: { from: configService.get<string>('jhipster.mail.from') },
+    defaults: { from: configService.get('jhipster.mail.from', { infer: true }) },
     template: { dir: mailTemplatesFolder, adapter: new HandlebarsAdapter(mailTemplateHelpers), options: { strict: true } },
   };
 }

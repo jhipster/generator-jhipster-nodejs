@@ -3,6 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { ApiTags, ApiResponse, ApiOperation, ApiExcludeEndpoint } from '@nestjs/swagger';
 import { activeProfiles } from '../config.ts';
 import { Public } from '../auth/index.ts';
+import type { ApplicationConfig } from '../application-config.ts';
 
 /** The info of the info endpoint of Spring Boot Actuator the JHipster clients read: the profiles and the ribbon. */
 export interface Info {
@@ -15,7 +16,7 @@ export interface Info {
 @ApiTags('management-controller')
 export class ManagementController {
 
-  constructor(private readonly configService: ConfigService) {}
+  constructor(private readonly configService: ConfigService<ApplicationConfig, true>) {}
 
   @ApiExcludeEndpoint()
   @Get('/info')
@@ -27,7 +28,7 @@ export class ManagementController {
   info(): Info {
     return {
       activeProfiles,
-      'display-ribbon-on-profiles': this.configService.getOrThrow<string>('info.display-ribbon-on-profiles'),
+      'display-ribbon-on-profiles': this.configService.get('info.display-ribbon-on-profiles', { infer: true }),
     };
   }
 
