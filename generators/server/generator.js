@@ -13,7 +13,7 @@ export default class extends ServerGenerator {
   get [ServerGenerator.COMPOSING]() {
     return this.asComposingTaskGroup({
       async composingTemplateTask() {
-        await this.composeWithJHipster('jhipster-nodejs:node-server');
+        await this.composeWithJHipster(':node-server');
       },
     });
   }

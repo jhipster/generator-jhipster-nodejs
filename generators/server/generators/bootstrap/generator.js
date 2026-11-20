@@ -8,7 +8,7 @@ export default class extends BaseApplicationGenerator {
   get [BaseApplicationGenerator.COMPOSING]() {
     return this.asComposingTaskGroup({
       async composingTemplateTask() {
-        await this.composeWithJHipster('jhipster-nodejs:node-server:bootstrap');
+        await this.composeWithJHipster(':node-server:bootstrap');
       },
     });
   }
