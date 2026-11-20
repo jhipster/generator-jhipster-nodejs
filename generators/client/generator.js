@@ -9,7 +9,7 @@ export default class extends BaseApplicationGenerator {
     return this.asPostPreparingTaskGroup({
       async composeNodejsClient({ application }) {
         if (application.clientFrameworkBuiltIn) {
-          await this.composeWithJHipster('jhipster-nodejs:client:nodejs');
+          await this.composeWithJHipster(':client:nodejs');
         }
       },
     });

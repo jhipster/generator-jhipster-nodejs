@@ -29,7 +29,7 @@ export default class extends BaseApplicationGenerator {
   }
 
   async beforeQueue() {
-    await this.dependsOnJHipster('jhipster-nodejs:node-server:bootstrap');
+    await this.dependsOnJHipster(':node-server:bootstrap');
   }
 
   /** The changelogs of the entities, the ones of this generation recorded (see getEntityChangelogs of JHipster). */
