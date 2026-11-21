@@ -42,9 +42,8 @@ export class RegistrationService {
     if (userOfEmail && !(await this.removeNonActivatedUser(userOfEmail))) {
       throw new EmailAlreadyUsedException(true);
     }
-    const user: <%- user.dtoClass %> = {
+    const user: Omit<<%- user.dtoClass %>, 'password'> = {
       login,
-      password: newUser.password,
       firstName: newUser.firstName,
       lastName: newUser.lastName,
       email,
@@ -56,7 +55,7 @@ export class RegistrationService {
       activationKey: randomBytes(15).toString('base64url'),
       authorities: ['ROLE_USER'],
     };
-    return await this.userService.save(user, SYSTEM_AUDITOR, true);
+    return await this.userService.saveWithPassword(user, newUser.password, SYSTEM_AUDITOR);
   }
 
   /** Like JHipster Spring Boot, activates the user of an activation key, undefined for an unknown key. */

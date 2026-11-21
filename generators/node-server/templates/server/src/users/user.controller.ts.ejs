@@ -83,7 +83,7 @@ export class UserController {
       // The fields of the UserService.createUser of JHipster Spring Boot only (not the password, the keys or the audit of
       // the body): the user is activated, with a random password and a reset key, the creation mail linking to the page that
       // sets the password.
-      const created = await this.userService.save(
+      const created = await this.userService.<%- generateUserManagement ? 'saveWithPassword' : 'save' %>(
         {
           login,
           firstName: userDTO.firstName,
@@ -93,14 +93,16 @@ export class UserController {
           langKey: userDTO.langKey ?? '<%- nativeLanguage %>',
           authorities: await this.userService.knownAuthorities(userDTO.authorities),
           activated: true,
+<%_ if (!generateUserManagement) { _%>
           password: randomBytes(15).toString('base64url'),
+<%_ } _%>
           resetKey: randomBytes(15).toString('base64url'),
           resetDate: new Date(),
         },
-        auditor.login,
 <%_ if (generateUserManagement) { _%>
-        true,
+        randomBytes(15).toString('base64url'),
 <%_ } _%>
+        auditor.login,
       );
       void this.mailService.sendCreationEmail(created);
       this.headerUtil.addUserManagementHeaders(res, 'created', created.login);

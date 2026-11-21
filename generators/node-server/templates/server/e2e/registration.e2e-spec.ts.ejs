@@ -66,7 +66,7 @@ describe('Registration', () => {
 <%_ if (databaseTypeMongodb) { _%>
         userRepository = moduleFixture.get<Repository<User>>(getRepositoryToken(User));
 <%_ } _%>
-        userAuthenticated = await service.save(testUserAuthenticated, testUserAuthenticated.login, true);
+        userAuthenticated = await service.saveWithPassword(testUserAuthenticated, testUserAuthenticated.password, testUserAuthenticated.login);
     });
 
     it('/POST register new user', async () => {
