@@ -12,3 +12,4 @@ export * from './test-samples.js';
 export * from './criteria.js';
 export * from './sort.js';
 export * from './path-rules.js';
+export * from './workspaces.js';
