@@ -743,11 +743,6 @@ describe('SubGenerator node-server of nodejs JHipster blueprint', () => {
     it('should give the built-in Authority the screens of a client of JHipster, which its user management uses', () => {
       expect(result.entities.Authority.skipClient).toBe(skipClient);
     });
-
-    it('should have the overrides of the workspaces in the root package.json, which npm reads only', () => {
-      const overridesOf = file => Object.keys(result.fs.readJSON(join(result.cwd, file))?.overrides ?? {});
-      expect(overridesOf('package.json')).toEqual([...overridesOf('server/package.json'), ...overridesOf('client/package.json')]);
-    });
   });
 
   describe('with many relationships to an entity of a unique field', () => {

@@ -733,11 +733,14 @@ export default class extends BaseApplicationGenerator {
           });
         }
       },
-      workspacesOverrides() {
-        // npm reads the overrides and the allowScripts of the root package.json only: the ones of the workspaces (like the
-        // overrides of the Vue client) are merged into it, like the workspaces generator of JHipster does.
-        for (const workspace of this.packageJson.get('workspaces') ?? []) {
-          this.packageJson.merge(rootPackageJsonOfWorkspace(this.readDestinationJSON(`${workspace}/package.json`)));
+      workspacesOverrides({ application }) {
+        // npm reads the overrides and the allowScripts of the root package.json only: the ones of the server and the client
+        // workspaces (like the overrides of the Vue client) are merged into it, like the workspaces generator of JHipster
+        // does. By their folders: JHipster adds the client to the workspaces of the root in its own post writing.
+        for (const folder of [application.nodeServerRootDir, application.clientFrameworkAny && application.clientRootDir]) {
+          if (folder) {
+            this.packageJson.merge(rootPackageJsonOfWorkspace(this.readDestinationJSON(`${folder}package.json`)));
+          }
         }
       },
       packageJsonE2eScripts({ application }) {

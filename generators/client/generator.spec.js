@@ -41,6 +41,30 @@ describe('SubGenerator client of nodejs JHipster blueprint', () => {
     });
   });
 
+  describe('with Vue in the application', () => {
+    beforeAll(async function () {
+      await helpers
+        .run('jhipster:app')
+        .withJHipsterConfig({ clientFramework: 'vue' })
+        .withOptions({ ignoreNeedlesError: true, useVersionPlaceholders: false })
+        .withJHipsterGenerators()
+        .withConfiguredBlueprint()
+        .withBlueprintConfig({});
+    });
+
+    it('should give the root the overrides of the client, which npm reads from the root only', () => {
+      const overridesOf = file => result.fs.readJSON(`${result.cwd}/${file}`)?.overrides ?? {};
+      const { dependencies, devDependencies } = result.fs.readJSON(`${result.cwd}/client/package.json`);
+      const versions = { ...dependencies, ...devDependencies };
+      const resolved = JSON.parse(
+        JSON.stringify(overridesOf('client/package.json'), (_key, value) =>
+          typeof value === 'string' && value.startsWith('$') ? versions[value.slice(1)] : value,
+        ),
+      );
+      expect(overridesOf('package.json')).toMatchObject(resolved);
+    });
+  });
+
   describe('admin screens', () => {
     const run = config =>
       helpers
