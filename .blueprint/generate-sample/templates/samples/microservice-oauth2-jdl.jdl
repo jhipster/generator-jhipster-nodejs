@@ -72,10 +72,6 @@ entity ShopUser {
     preference String
 }
 
-relationship OneToOne {
-  ShopUser{internalUser} to User with builtInEntity
-}
-
 relationship OneToMany {
     Customer{wishList(title)} to WishList{customer},
     WishList{product(title)} to Product{wishList},

@@ -477,6 +477,33 @@ describe('SubGenerator node-server of nodejs JHipster blueprint', () => {
       result.assertNoFileContent('server/src/auth/auth.module.ts', 'ManagementController');
     });
   });
+  describe('with oauth2 and an entity related to User', () => {
+    it('should fail with an error telling the relationship is refused by design', async () => {
+      await expect(
+        helpers
+          .run(SUB_GENERATOR_NAMESPACE)
+          .withJHipsterConfig({ authenticationType: 'oauth2', skipClient: true }, [
+            {
+              name: 'Preferences',
+              changelogDate: '20200101000100',
+              fields: [{ fieldName: 'weeklyGoal', fieldType: 'Integer' }],
+              relationships: [
+                {
+                  relationshipName: 'owner',
+                  otherEntityName: 'user',
+                  relationshipType: 'many-to-one',
+                  relationshipWithBuiltInEntity: true,
+                },
+              ],
+            },
+          ])
+          .withOptions({ ignoreNeedlesError: true })
+          .withJHipsterGenerators()
+          .withConfiguredBlueprint()
+          .withBlueprintConfig({}),
+      ).rejects.toThrow('by design an entity has no relationship with User: remove the relationship owner of Preferences');
+    });
+  });
   describe('with session', () => {
     beforeAll(async function () {
       await helpers
