@@ -12,7 +12,7 @@ const rolesOf = authority =>
     .map(role => role.trim())
     .filter(Boolean);
 
-/** The TypeScript of the arguments of a @Roles decorator, undefined without roles. */
+/** The TypeScript of the roles of a @Roles decorator, the items of its list, undefined without roles. */
 const rolesLiteral = roles => (roles.length > 0 ? roles.map(role => `'${role}'`).join(', ') : undefined);
 
 /** The mutations of an entity (entityDefaults), delayed until the entity is prepared. */

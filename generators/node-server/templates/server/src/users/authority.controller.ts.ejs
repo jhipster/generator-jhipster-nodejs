@@ -17,7 +17,7 @@ const ENTITY_NAME = '<%- nodejsAuthorityAlertName %>';
  * management assigns, and the authority pages of the client.
  */
 @Controller('api/authorities')
-@Roles(<%- authority.nodejsWriteRoles %>)
+@Roles([<%- authority.nodejsWriteRoles %>])
 <%_ if (authenticationTypeJwt) { _%>
 @ApiBearerAuth()
 <%_ } else { _%>
@@ -32,7 +32,7 @@ export class AuthorityController {
   @Get()
 <%_ if (authority.nodejsReadOnlyRoles) { _%>
   // The roles of @EntityReadAuthority read the authorities too, like JHipster Spring Boot.
-  @Roles(<%- authority.nodejsReadRoles %>)
+  @Roles([<%- authority.nodejsReadRoles %>])
 <%_ } _%>
   @ApiOperation({ summary: 'Get all the authorities' })
   @ApiResponse({ status: 200, type: AuthorityDTO, isArray: true })
@@ -44,7 +44,7 @@ export class AuthorityController {
   @Get('/:name')
 <%_ if (authority.nodejsReadOnlyRoles) { _%>
   // The roles of @EntityReadAuthority read the authorities too, like JHipster Spring Boot.
-  @Roles(<%- authority.nodejsReadRoles %>)
+  @Roles([<%- authority.nodejsReadRoles %>])
 <%_ } _%>
   @ApiOperation({ summary: 'Get an authority' })
   @ApiResponse({ status: 200, type: AuthorityDTO })

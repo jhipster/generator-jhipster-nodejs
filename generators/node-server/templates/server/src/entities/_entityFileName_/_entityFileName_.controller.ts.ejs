@@ -57,7 +57,7 @@ export class <%- entityClass %>Controller {
 
   @Get('/')
 <%_ if (nodejsReadRoles) { _%>
-  @Roles(<%- nodejsReadRoles %>)
+  @Roles([<%- nodejsReadRoles %>])
 <%_ } _%>
   @ApiResponse({
     status: 200,
@@ -117,7 +117,7 @@ export class <%- entityClass %>Controller {
   // The count as JSON, like JHipster Spring Boot: Nest sends a number as text.
   @Header('Content-Type', 'application/json')
   <%_ if (nodejsReadRoles) { _%>
-  @Roles(<%- nodejsReadRoles %>)
+  @Roles([<%- nodejsReadRoles %>])
   <%_ } _%>
   @ApiResponse({
     status: 200,
@@ -131,7 +131,7 @@ export class <%- entityClass %>Controller {
 <%_ } _%>
   @Get('/:id')
 <%_ if (nodejsReadRoles) { _%>
-  @Roles(<%- nodejsReadRoles %>)
+  @Roles([<%- nodejsReadRoles %>])
 <%_ } _%>
   @ApiResponse({
     status: 200,
@@ -149,7 +149,7 @@ export class <%- entityClass %>Controller {
   @PostMethod('/')
   @AlertHeaders({ action: 'created', entityName: ENTITY_NAME, param: '<%- primaryKey.name %>', location: id => `/api/<%- entityApiUrl %>/${id}` })
 <%_ if (nodejsWriteRoles) { _%>
-  @Roles(<%- nodejsWriteRoles %>)
+  @Roles([<%- nodejsWriteRoles %>])
 <%_ } _%>
   @ApiOperation({ summary: 'Create <%- entityInstance %>' })
   @ApiResponse({
@@ -180,7 +180,7 @@ export class <%- entityClass %>Controller {
   @Put('/:id')
   @AlertHeaders({ action: 'updated', entityName: ENTITY_NAME, param: '<%- primaryKey.name %>' })
 <%_ if (nodejsWriteRoles) { _%>
-  @Roles(<%- nodejsWriteRoles %>)
+  @Roles([<%- nodejsWriteRoles %>])
 <%_ } _%>
   @ApiOperation({ summary: 'Update <%- entityInstance %> with id' })
   @ApiResponse({
@@ -211,7 +211,7 @@ _%>
   @Patch('/:id')
   @AlertHeaders({ action: 'updated', entityName: ENTITY_NAME, param: '<%- primaryKey.name %>' })
 <%_ if (nodejsWriteRoles) { _%>
-  @Roles(<%- nodejsWriteRoles %>)
+  @Roles([<%- nodejsWriteRoles %>])
 <%_ } _%>
   @ApiOperation({ summary: 'Partially update <%- entityInstance %> with id, the absent fields are kept and the null ones cleared' })
   @ApiResponse({
@@ -238,7 +238,7 @@ _%>
   @HttpCode(204)
   @AlertHeaders({ action: 'deleted', entityName: ENTITY_NAME, param: 'id' })
 <%_ if (nodejsWriteRoles) { _%>
-  @Roles(<%- nodejsWriteRoles %>)
+  @Roles([<%- nodejsWriteRoles %>])
 <%_ } _%>
   @ApiOperation({ summary: 'Delete <%- entityInstance %>' })
   @ApiResponse({

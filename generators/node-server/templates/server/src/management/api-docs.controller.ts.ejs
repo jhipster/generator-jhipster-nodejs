@@ -10,7 +10,7 @@ import { ApiDocsService } from './api-docs.service.ts';
  */
 @ApiExcludeController()
 @Controller('v3')
-@Roles(RoleType.ADMIN)
+@Roles([RoleType.ADMIN])
 export class ApiDocsController {
   constructor(private readonly apiDocsService: ApiDocsService) {}
 

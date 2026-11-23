@@ -3,7 +3,7 @@ import { ServiceUnavailableException } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { Test, TestingModule } from '@nestjs/testing';
 import { HealthCheckService, TypeOrmHealthIndicator } from '@nestjs/terminus';
-import { SKIP_LOGGING } from '../common/interceptors/logging.interceptor.ts';
+import { SkipLogging } from '../common/interceptors/logging.interceptor.ts';
 import { HealthController } from './health.controller.ts';
 
 describe('Health Controller', () => {
@@ -48,7 +48,7 @@ describe('Health Controller', () => {
   it('the health checks are not logged', () => {
     for (const name of ['health', 'liveness', 'readiness']) {
       const method = Object.getOwnPropertyDescriptor(HealthController.prototype, name)?.value as () => unknown;
-      expect(new Reflector().get<boolean>(SKIP_LOGGING, method)).toBe(true);
+      expect(new Reflector().get(SkipLogging, method)).toBe(true);
     }
   });
 
