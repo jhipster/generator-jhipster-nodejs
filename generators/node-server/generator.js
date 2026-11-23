@@ -135,7 +135,7 @@ export default class extends BaseApplicationGenerator {
   }
 
   async beforeQueue() {
-    await this.dependsOnJHipster('jhipster-nodejs:node-server:bootstrap');
+    await this.dependsOnJHipster(':node-server:bootstrap');
     await this.dependsOnJHipster('server');
     // The database preparation of JHipster (the columnRequired of the relationships, among others), composed before the
     // server like the bootstrap of the server of JHipster composes it, so its tasks of a priority run first.
@@ -238,7 +238,7 @@ export default class extends BaseApplicationGenerator {
       async composeMigrations() {
         // The migrations of the entities of a SQL database, from their changelogs, like the incremental Liquibase changelogs.
         if (this.jhipsterConfigWithDefaults.databaseType === 'sql') {
-          await this.composeWithJHipster('jhipster-nodejs:node-server:migrations');
+          await this.composeWithJHipster(':node-server:migrations');
         }
       },
       async composeLanguages() {
