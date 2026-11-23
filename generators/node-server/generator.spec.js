@@ -411,10 +411,6 @@ describe('SubGenerator node-server of nodejs JHipster blueprint', () => {
     [{ authenticationType: 'session', applicationType: 'microservice' }, 'authenticationType session of a microservice'],
     [{ authenticationType: 'session', skipUserManagement: true }, 'authenticationType session with skipUserManagement'],
     [{ reactive: true }, 'reactive'],
-    [
-      { authenticationType: 'oauth2', syncUserWithIdp: true },
-      'syncUserWithIdp (with OAuth2 the users are the ones of the identity provider)',
-    ],
   ]) {
     describe(`with ${refused}`, () => {
       it('should fail with an unsupported option error', async () => {
@@ -481,8 +477,21 @@ describe('SubGenerator node-server of nodejs JHipster blueprint', () => {
       result.assertNoFileContent('server/src/auth/auth.module.ts', 'ManagementController');
     });
   });
+  describe('with oauth2 and syncUserWithIdp', () => {
+    it('should fail with an error telling the users are the ones of the identity provider', async () => {
+      await expect(
+        helpers
+          .run(SUB_GENERATOR_NAMESPACE)
+          .withJHipsterConfig({ authenticationType: 'oauth2', syncUserWithIdp: true, skipClient: true })
+          .withOptions({ ignoreNeedlesError: true })
+          .withJHipsterGenerators()
+          .withConfiguredBlueprint()
+          .withBlueprintConfig({}),
+      ).rejects.toThrow('by design the backend keeps none of them: the JHipster NodeJS blueprint does not support syncUserWithIdp.');
+    });
+  });
   describe('with oauth2 and an entity related to User', () => {
-    it('should fail with an error telling the relationship is refused by design', async () => {
+    it('should fail with the error of JHipster, a relationship with User needing syncUserWithIdp', async () => {
       await expect(
         helpers
           .run(SUB_GENERATOR_NAMESPACE)
@@ -505,7 +514,9 @@ describe('SubGenerator node-server of nodejs JHipster blueprint', () => {
           .withJHipsterGenerators()
           .withConfiguredBlueprint()
           .withBlueprintConfig({}),
-      ).rejects.toThrow('by design an entity has no relationship with User: remove the relationship owner of Preferences');
+      ).rejects.toThrow(
+        "Error at entity Preferences: relationships with built-in User entity is supported in oauth2 applications with database and '--sync-user-with-idp' option",
+      );
     });
   });
   describe('with session', () => {

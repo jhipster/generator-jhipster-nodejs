@@ -198,8 +198,6 @@ export default class extends BaseApplicationGenerator {
             ? ['authenticationType session with skipUserManagement']
             : []),
           ...(config.reactive ? ['reactive'] : []),
-          // With OAuth2 the users are the ones of the identity provider, the backend keeps none of them, by design.
-          ...(config.syncUserWithIdp ? ['syncUserWithIdp (with OAuth2 the users are the ones of the identity provider)'] : []),
         ];
         if (unsupported.length > 0) {
           throw new Error(`The JHipster NodeJS blueprint does not support ${unsupported.join(', ')}.`);
@@ -259,6 +257,14 @@ export default class extends BaseApplicationGenerator {
 
   get [BaseApplicationGenerator.PREPARING]() {
     return this.asPreparingTaskGroup({
+      refuseSyncUserWithIdp({ application }) {
+        // With OAuth2 the users are the ones of the identity provider, the backend keeps none of them, by design.
+        if (application.syncUserWithIdp) {
+          throw new Error(
+            'With OAuth2 the users are the ones of the identity provider, by design the backend keeps none of them: the JHipster NodeJS blueprint does not support syncUserWithIdp.',
+          );
+        }
+      },
       migrations({ applicationDefaults }) {
         applicationDefaults({
           __override__: false,
@@ -362,20 +368,6 @@ export default class extends BaseApplicationGenerator {
 
   get [BaseApplicationGenerator.CONFIGURING_EACH_ENTITY]() {
     return this.asConfiguringEachEntityTaskGroup({
-      refuseUserRelationshipWithOauth2({ application, entityName, entityConfig }) {
-        // With OAuth2 the users are the ones of the identity provider, the backend keeps none of them: an entity has no
-        // relationship with User, by design.
-        if (!application.authenticationTypeOauth2) return;
-        const userRelationships = (entityConfig.relationships ?? []).filter(
-          ({ otherEntityName }) => otherEntityName?.toLowerCase() === 'user',
-        );
-        if (userRelationships.length > 0) {
-          const names = userRelationships.map(({ relationshipName }) => relationshipName).join(', ');
-          throw new Error(
-            `With OAuth2 the users are the ones of the identity provider, by design an entity has no relationship with User: remove the relationship ${names} of ${entityName}, or keep the login of the user in a field.`,
-          );
-        }
-      },
       configureFiltering({ application, entityName, entityConfig }) {
         // Like JHipster Spring Boot, the filtering of the lists needs a SQL database.
         if (entityConfig.jpaMetamodelFiltering && application.databaseType !== 'sql') {
