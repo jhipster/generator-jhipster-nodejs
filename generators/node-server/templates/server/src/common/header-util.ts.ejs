@@ -6,6 +6,9 @@ import { URL } from 'url';
 import type { ApplicationConfig } from '../application-config.ts';
 import { Page } from './database/pagination.entity.ts';
 
+/** The change of a record an alert tells, like the alerts of the HeaderUtil of JHipster Spring Boot. */
+export type AlertAction = 'created' | 'updated' | 'deleted';
+
 /**
  * The headers of the responses the JHipster clients read, like the HeaderUtil and the PaginationUtil of JHipster Spring
  * Boot: the alerts, named after the application (jhipster.clientApp.name), and the pagination.
@@ -23,46 +26,17 @@ export class HeaderUtil {
     res.set(`X-${this.applicationName}-params`, param);
   }
 
-  addEntityCreatedHeaders(res: Response, entityName: string, param: string | number | undefined): void {
-    res.status(201);
-<%_ if (enableTranslation) { _%>
-    // The translation key of the alert, translated by the client.
-    this.createAlert(res, `${this.applicationName}.${entityName}.created`, String(param));
-<%_ } else { _%>
-    this.createAlert(res, `A new ${entityName} is created with identifier ${param}`, String(param));
-<%_ } _%>
-  }
-
-  addEntityUpdatedHeaders(res: Response, entityName: string, param: string | number | undefined): void {
-    res.status(200);
-<%_ if (enableTranslation) { _%>
-    // The translation key of the alert, translated by the client.
-    this.createAlert(res, `${this.applicationName}.${entityName}.updated`, String(param));
-<%_ } else { _%>
-    this.createAlert(res, `A ${entityName} is updated with identifier ${param}`, String(param));
-<%_ } _%>
-  }
-
-  addEntityDeletedHeaders(res: Response, entityName: string, param: string | number | undefined): void {
-    res.status(204);
-<%_ if (enableTranslation) { _%>
-    // The translation key of the alert, translated by the client.
-    this.createAlert(res, `${this.applicationName}.${entityName}.deleted`, String(param));
-<%_ } else { _%>
-    this.createAlert(res, `A ${entityName} is deleted with identifier ${param}`, String(param));
-<%_ } _%>
-  }
-
   /**
-   * The alerts of the user management, like the UserResource of JHipster Spring Boot: translated by the client from its
-   * userManagement keys.
+   * The alert of a change of a record, like the HeaderUtil of JHipster Spring Boot: of an entity, or of the user
+   * management without entity name. The status is the one of the route (201 for a creation, @HttpCode(204) for a deletion).
    */
-  addUserManagementHeaders(res: Response, action: 'created' | 'updated' | 'deleted', login: string): void {
-    res.status({ created: 201, updated: 200, deleted: 204 }[action]);
+  addAlertHeaders(res: Response, action: AlertAction, entityName: string | undefined, param: string): void {
 <%_ if (enableTranslation) { _%>
-    this.createAlert(res, `userManagement.${action}`, login);
+    // The translation key of the alert, translated by the client, like the userManagement keys of the UserResource.
+    this.createAlert(res, entityName ? `${this.applicationName}.${entityName}.${action}` : `userManagement.${action}`, param);
 <%_ } else { _%>
-    this.createAlert(res, `A user is ${action} with identifier ${login}`, login);
+    const subject = entityName ? { created: `A new ${entityName} is created`, updated: `A ${entityName} is updated`, deleted: `A ${entityName} is deleted` }[action] : `A user is ${action}`;
+    this.createAlert(res, `${subject} with identifier ${param}`, param);
 <%_ } _%>
   }
 

@@ -6,8 +6,7 @@
     // The filter of the list of the records without a relationship to one record, for the form of the other entity.
     const oneToOneFilter = nodejsMappedByRelationships.some(relationship => relationship.relationshipOneToOne);
 _%>
-import { Body, ClassSerializerInterceptor, Controller, Delete, Get,<%- nodejsCriteria ? ' Header,' : '' %> NotFoundException, Param, Patch, Post as PostMethod,<%- eagerLoadFlag || oneToOneFilter ? ' Query,' : '' %> Put, Res, UseInterceptors } from '@nestjs/common';
-import { Response } from 'express';
+import { Body, ClassSerializerInterceptor, Controller, Delete, Get, HttpCode,<%- nodejsCriteria ? ' Header,' : '' %> NotFoundException, Param, Patch, Post as PostMethod,<%- eagerLoadFlag || oneToOneFilter ? ' Query,' : '' %> Put, UseInterceptors } from '@nestjs/common';
 import { 
 <%_ if (authenticationTypeJwt) { _%> ApiBearerAuth, 
 <%_ } else { _%> ApiSecurity, 
@@ -22,11 +21,11 @@ import { <%- entityClass %> } from './<%- entityFileName %>.entity.ts';
 <%_ if (pagination !== 'no') { _%>
 import { Pageable } from '../../common/database/pageable.ts';
 import { PageRequest, Page } from '../../common/database/pagination.entity.ts';
+import { Paginated } from '../../common/interceptors/response-headers.interceptor.ts';
 <%_ } _%>
 <%_ if (nodejsReadRoles) { _%>
 import { Roles } from '../../auth/index.ts';
 <%_ } _%>
-import { HeaderUtil } from '../../common/header-util.ts';
 <%_ const parameterImports = [idPipe, eagerLoadFlag && 'ParseBooleanPipe'].filter(Boolean); _%>
 <%_ if (parameterImports.length > 0) { _%>
 import { <%- parameterImports.join(', ') %> } from '../../common/parse-id.pipe.ts';
@@ -37,6 +36,7 @@ import { Criteria } from '../../common/database/criteria.ts';
 <%_ } _%>
 
 import { BadRequestAlertException, validationException } from '../../common/errors/problem.exception.ts';
+import { AlertHeaders } from '../../common/interceptors/response-headers.interceptor.ts';
 
 const ENTITY_NAME = '<%- entityAlertName %>';
 
@@ -52,7 +52,6 @@ export class <%- entityClass %>Controller {
 
   constructor(
     private readonly <%- entityInstance %>Service: <%- entityClass %>Service,
-    private readonly headerUtil: HeaderUtil,
   ) {}
 
 
@@ -66,6 +65,9 @@ export class <%- entityClass %>Controller {
     type: <%- dtoClass %>,
     isArray: true,
   })
+<%_ if (pagination !== 'no') { _%>
+  @Paginated()
+<%_ } _%>
   async getAll(
 <%_ if (nodejsCriteria) { _%>
     @Criteria(<%- entityClass %>) where: FindOptionsWhere<<%- entityClass %>>,
@@ -74,14 +76,13 @@ export class <%- entityClass %>Controller {
     @Query('filter') filter: string | undefined,
 <%_ } _%>
 <%_ if (pagination !== 'no') { _%>
-    @Res({ passthrough: true }) res: Response,
     @Pageable({ defaultSort: '<%- primaryKey.name %>,ASC', entity: <%- entityClass %>, entityName: ENTITY_NAME }) pageRequest: PageRequest,
 <%_ } _%>
 <%_ if (eagerLoadFlag) { _%>
     // Like JHipster Spring Boot, the eagerload flag is a boolean (the relationships are loaded whatever it is).
     @Query('eagerload', ParseBooleanPipe) _eagerload?: boolean,
 <%_ } _%>
-  ): Promise<<%- dtoClass %> []>  {
+  ): Promise<<%- pagination === 'no' ? `${dtoClass}[]` : `Page<${dtoClass}>${oneToOneFilter ? ` | ${dtoClass}[]` : ''}` %>> {
 <%_ for (const relationship of nodejsMappedByRelationships.filter(relationship => relationship.relationshipOneToOne)) { _%>
     // The records without <%- relationship.relationshipName %>, for the form of the other entity, like JHipster Spring Boot.
     if (filter === '<%- relationship.relationshipName.toLowerCase() %>-is-null') {
@@ -107,8 +108,7 @@ export class <%- entityClass %>Controller {
       take: +pageRequest.size,
       order: pageRequest.asOrder(),
     });
-    this.headerUtil.addPaginationHeaders(res, new Page(results, count, pageRequest));
-    return results;
+    return new Page(results, count, pageRequest);
 <%_ } _%>
   }
 
@@ -147,6 +147,7 @@ export class <%- entityClass %>Controller {
   }
 
   @PostMethod('/')
+  @AlertHeaders({ action: 'created', entityName: ENTITY_NAME, param: '<%- primaryKey.name %>', location: id => `/api/<%- entityApiUrl %>/${id}` })
 <%_ if (nodejsWriteRoles) { _%>
   @Roles(<%- nodejsWriteRoles %>)
 <%_ } _%>
@@ -158,7 +159,7 @@ export class <%- entityClass %>Controller {
   })
   @ApiResponse({ status: 400, description: 'The record already has an id.' })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
-  async post(@Res({ passthrough: true }) res: Response, @Body() <%- entityInstance %>DTO: <%- dtoClass %>): Promise<<%- dtoClass %>>  {
+  async post(@Body() <%- entityInstance %>DTO: <%- dtoClass %>): Promise<<%- dtoClass %>>  {
 <%_ if (primaryKey.autoGenerate) { _%>
     if (<%- entityInstance %>DTO.<%- primaryKey.name %> !== undefined && <%- entityInstance %>DTO.<%- primaryKey.name %> !== null) {
       // Like JHipster Spring Boot, a new record cannot have an id: it would update an existing one.
@@ -173,13 +174,11 @@ export class <%- entityClass %>Controller {
       throw new BadRequestAlertException('A new <%- entityInstance %> cannot already have an ID', ENTITY_NAME, 'idexists');
     }
 <%_ } _%>
-    const created = await this.<%- entityInstance %>Service.save(<%- entityInstance %>DTO);
-    this.headerUtil.addEntityCreatedHeaders(res, ENTITY_NAME, created.<%- primaryKey.name %>);
-    res.location(`/api/<%- entityApiUrl %>/${created.<%- primaryKey.name %>}`);
-    return created;
+    return await this.<%- entityInstance %>Service.save(<%- entityInstance %>DTO);
   }
 
   @Put('/:id')
+  @AlertHeaders({ action: 'updated', entityName: ENTITY_NAME, param: '<%- primaryKey.name %>' })
 <%_ if (nodejsWriteRoles) { _%>
   @Roles(<%- nodejsWriteRoles %>)
 <%_ } _%>
@@ -190,7 +189,7 @@ export class <%- entityClass %>Controller {
     type: <%- dtoClass %>,
   })
   @ApiResponse({ status: 400, description: 'Invalid id, or the record does not exist.' })
-  async putId(@Res({ passthrough: true }) res: Response, <%- idParam %>, @Body() <%- entityInstance %>DTO: <%- dtoClass %>): Promise<<%- dtoClass %>>  {
+  async putId(<%- idParam %>, @Body() <%- entityInstance %>DTO: <%- dtoClass %>): Promise<<%- dtoClass %>>  {
     await this.validateIdForUpdate(id, <%- entityInstance %>DTO);
 <%_ // The fields and the stored relationships, the properties of the entity JHipster Spring Boot deserializes from the body.
     const replacedProperties = [
@@ -206,12 +205,11 @@ _%>
   <%_ } _%>
     });
 <%_ } _%>
-    const updated = await this.<%- entityInstance %>Service.update(<%- entityInstance %>DTO);
-    this.headerUtil.addEntityUpdatedHeaders(res, ENTITY_NAME, id);
-    return updated;
+    return await this.<%- entityInstance %>Service.update(<%- entityInstance %>DTO);
   }
 
   @Patch('/:id')
+  @AlertHeaders({ action: 'updated', entityName: ENTITY_NAME, param: '<%- primaryKey.name %>' })
 <%_ if (nodejsWriteRoles) { _%>
   @Roles(<%- nodejsWriteRoles %>)
 <%_ } _%>
@@ -222,7 +220,7 @@ _%>
     type: <%- dtoClass %>,
   })
   @ApiResponse({ status: 400, description: 'Invalid id or values, or the record does not exist.' })
-  async patchId(@Res({ passthrough: true }) res: Response, <%- idParam %>, @Body() <%- entityInstance %>DTO: Partial<<%- dtoClass %>>): Promise<<%- dtoClass %>>  {
+  async patchId(<%- idParam %>, @Body() <%- entityInstance %>DTO: Partial<<%- dtoClass %>>): Promise<<%- dtoClass %>>  {
     const existing = await this.validateIdForUpdate(id, <%- entityInstance %>DTO);
     // Like JHipster Spring Boot, a JSON merge patch: the given fields replace the ones of the record, a null clears
     // one, and the record is transformed and validated as the global ValidationPipe does for a PUT.
@@ -233,12 +231,12 @@ _%>
       // The errors of the fields, or a value of another type, like the ValidationPipe of a PUT.
       throw validationException(errors);
     }
-    const updated = await this.<%- entityInstance %>Service.update(patched);
-    this.headerUtil.addEntityUpdatedHeaders(res, ENTITY_NAME, id);
-    return updated;
+    return await this.<%- entityInstance %>Service.update(patched);
   }
 
   @Delete('/:id')
+  @HttpCode(204)
+  @AlertHeaders({ action: 'deleted', entityName: ENTITY_NAME, param: 'id' })
 <%_ if (nodejsWriteRoles) { _%>
   @Roles(<%- nodejsWriteRoles %>)
 <%_ } _%>
@@ -247,8 +245,7 @@ _%>
     status: 204,
     description: 'The record has been successfully deleted.',
   })
-  async deleteById(@Res({ passthrough: true }) res: Response, <%- idParam %>): Promise<void>  {
-    this.headerUtil.addEntityDeletedHeaders(res, ENTITY_NAME, id);
+  async deleteById(<%- idParam %>): Promise<void>  {
     return await this.<%- entityInstance %>Service.deleteById(id);
   }
 
