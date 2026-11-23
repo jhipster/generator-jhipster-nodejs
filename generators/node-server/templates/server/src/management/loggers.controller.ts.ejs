@@ -15,7 +15,7 @@ export interface Loggers {
  */
 @ApiExcludeController()
 @Controller('management/loggers')
-@Roles(RoleType.ADMIN)
+@Roles([RoleType.ADMIN])
 export class LoggersController {
   @Get()
   loggers(): Loggers {

@@ -37,7 +37,7 @@ export interface ConfigProps {
  */
 @ApiExcludeController()
 @Controller('management')
-@Roles(RoleType.ADMIN)
+@Roles([RoleType.ADMIN])
 export class ConfigurationController {
   constructor(private readonly configService: ConfigService<ApplicationConfig, true>) {}
 

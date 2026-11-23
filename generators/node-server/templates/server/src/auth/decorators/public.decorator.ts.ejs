@@ -1,9 +1,7 @@
-import { CustomDecorator, SetMetadata } from '@nestjs/common';
-
-export const IS_PUBLIC = 'isPublic';
+import { Reflector } from '@nestjs/core';
 
 /**
  * A route, or the routes of a controller, open to a request without user, like a permitAll of the SecurityConfiguration of
  * JHipster Spring Boot: the global AuthGuard lets it pass. Its path has a permitAll rule too (PATH_RULES), checked first.
  */
-export const Public = (): CustomDecorator<string> => SetMetadata(IS_PUBLIC, true);
+export const Public = Reflector.createDecorator<void, boolean>({ transform: () => true });

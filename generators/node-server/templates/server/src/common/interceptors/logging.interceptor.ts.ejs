@@ -1,15 +1,13 @@
-import { CallHandler, CustomDecorator, ExecutionContext, Injectable, Logger, NestInterceptor, SetMetadata } from '@nestjs/common';
+import { CallHandler, ExecutionContext, Injectable, Logger, NestInterceptor } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { Observable } from 'rxjs';
 import { Request, Response } from 'express';
-
-export const SKIP_LOGGING = 'skipLogging';
 
 /**
  * Excludes a controller, or one of its handlers, from the request logging of the LoggingInterceptor, like the health
  * endpoint that the container and the service discovery health checks call every few seconds.
  */
-export const SkipLogging = (): CustomDecorator<string> => SetMetadata(SKIP_LOGGING, true);
+export const SkipLogging = Reflector.createDecorator<void, boolean>({ transform: () => true });
 
 /**
  * Logs every request handled by a controller once its response is sent: method, URL, status and elapsed time.
@@ -25,7 +23,7 @@ export class LoggingInterceptor implements NestInterceptor {
   intercept(context: ExecutionContext, next: CallHandler): Observable<unknown> {
     if (
       context.getType() !== 'http' ||
-      this.reflector.getAllAndOverride<boolean>(SKIP_LOGGING, [context.getHandler(), context.getClass()])
+      this.reflector.getAllAndOverride(SkipLogging, [context.getHandler(), context.getClass()])
     ) {
       return next.handle();
     }

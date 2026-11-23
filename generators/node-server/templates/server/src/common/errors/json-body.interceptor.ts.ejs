@@ -1,6 +1,7 @@
-import { CallHandler, ExecutionContext, Injectable, NestInterceptor, SetMetadata, UnauthorizedException, UnsupportedMediaTypeException } from '@nestjs/common';
+import { CallHandler, ExecutionContext, Injectable, NestInterceptor, UnauthorizedException, UnsupportedMediaTypeException } from '@nestjs/common';
 import { ROUTE_ARGS_METADATA } from '@nestjs/common/constants';
 import { RouteParamtypes } from '@nestjs/common/enums/route-paramtypes.enum';
+import { Reflector } from '@nestjs/core';
 import { Request } from 'express';
 import { Observable } from 'rxjs';
 
@@ -12,13 +13,11 @@ const JSON_TYPE = /^application\/(?:[\w.-]+\+)?json$/i;
 /** The types of a body that is not an object: a text (a mail), a number, a boolean, a list. */
 const NOT_OBJECTS: unknown[] = [String, Number, Boolean, Array];
 
-const FORM_BODY = 'jhipster:formBody';
-
 /**
  * A route whose body is a form (application/x-www-form-urlencoded), not JSON: the session login, which reads the parameters
  * of a form only, like the formLogin of Spring Security.
  */
-export const FormBody = (): MethodDecorator => SetMetadata(FORM_BODY, true);
+export const FormBody = Reflector.createDecorator<void, boolean>({ transform: () => true });
 
 /**
  * The detail of a content type not supported, the one of JHipster Spring Boot: a type without / is not a media type, and
@@ -50,6 +49,8 @@ export class JsonBodyInterceptor implements NestInterceptor {
   /** What a route handler reads as its body. */
   private readonly handlers = new WeakMap<object, BodyKind>();
 
+  constructor(private readonly reflector: Reflector) {}
+
   intercept(context: ExecutionContext, next: CallHandler): Observable<unknown> {
     const kind = context.getType() === 'http' ? this.bodyKind(context) : undefined;
     if (kind === 'form' && !context.switchToHttp().getRequest<Request>().is('application/x-www-form-urlencoded')) {
@@ -76,7 +77,7 @@ export class JsonBodyInterceptor implements NestInterceptor {
       return this.handlers.get(handler);
     }
     let kind: BodyKind;
-    if (Reflect.getMetadata(FORM_BODY, handler)) {
+    if (this.reflector.get(FormBody, handler)) {
       kind = 'form';
     } else {
       const controller = context.getClass();
