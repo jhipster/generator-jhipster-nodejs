@@ -23,7 +23,7 @@ export const serverFiles = {
 
     {
       path: SERVER_NODEJS_DIR,
-      // The users of the application, synchronized from the identity provider with OAuth2 and syncUserWithIdp.
+      // The users of the application, of its user management (none with OAuth2).
       condition: ctx => ctx.generateBuiltInUserEntity,
       templates: [
         'src/users/user.entity.ts',
