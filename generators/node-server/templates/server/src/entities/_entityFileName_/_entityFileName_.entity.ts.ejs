@@ -117,7 +117,7 @@ export class <%- persistClass %> {
     @OneToMany(() => <%- otherEntityClass %> 
     <%_ if (!otherEntityUser) { _%>, other => other.<%- otherEntityRelationshipName %>
     <%_ } _%>)
-    <%- relationshipFieldNamePlural %><%- relationship.relationshipRequired ? '!' : '?' %>: Relation<<%- otherEntityClass %>[]>;
+    <%- relationshipFieldNamePlural %><%- relationship.relationshipRequired && relationship.persistableRelationship ? '!' : '?' %>: Relation<<%- otherEntityClass %>[]>;
 
   <%_ } else if (relationship.relationshipManyToOne) { _%>
     @ManyToOne(() => <%- otherEntityClass %> 
@@ -129,7 +129,7 @@ export class <%- persistClass %> {
     <%_ if (relationship.notSortable) { _%>
     @NotSortable()
     <%_ } _%>
-    <%- relationshipFieldName %><%- relationship.relationshipRequired ? '!' : '?' %>: Relation<<%- otherEntityClass %>>;
+    <%- relationshipFieldName %><%- relationship.relationshipRequired && relationship.persistableRelationship ? '!' : '?' %>: Relation<<%- otherEntityClass %>>;
 
   <%_ } else if (relationship.relationshipManyToMany) { _%>
     @ManyToMany(() => <%- otherEntityClass %> )
@@ -140,7 +140,7 @@ export class <%- persistClass %> {
         inverseJoinColumn: { name: '<%- relationship.nodejsJoinTable.inverseJoinColumn.name %>', referencedColumnName: '<%- relationship.nodejsJoinTable.inverseJoinColumn.referencedColumnName %>' }
     })
     <%_ } _%>
-    <%- relationshipFieldNamePlural %><%- relationship.relationshipRequired ? '!' : '?' %>: Relation<<%- otherEntityClass %>[]>;
+    <%- relationshipFieldNamePlural %><%- relationship.relationshipRequired && relationship.persistableRelationship ? '!' : '?' %>: Relation<<%- otherEntityClass %>[]>;
 
   <%_ } else { _%>
     <%_ if (ownerSide) { _%>
@@ -155,7 +155,7 @@ export class <%- persistClass %> {
     <%_ if (relationship.notSortable) { _%>
     @NotSortable()
     <%_ } _%>
-    <%- relationshipFieldName %><%- relationship.relationshipRequired ? '!' : '?' %>: Relation<<%- otherEntityClass %>>;
+    <%- relationshipFieldName %><%- relationship.relationshipRequired && relationship.persistableRelationship ? '!' : '?' %>: Relation<<%- otherEntityClass %>>;
 
   <%_ } _%>
 <%_ } _%>

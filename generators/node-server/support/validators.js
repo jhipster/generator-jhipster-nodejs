@@ -57,3 +57,14 @@ export const invalidTypeValue = field => {
   if (fieldTypeValidators(field).length === 0) return undefined;
   return isBinaryBlob(field) ? 'not base64!' : invalidTypeValues[field.fieldType];
 };
+
+/** The mutations of a relationship, its validation in a request body. */
+export const mutateRelationshipValidation = {
+  __override__: false,
+  /**
+   * Whether a body must give the relationship, like the @NotNull and the @NotEmpty of JHipster Spring Boot: a required
+   * relationship the entity stores, not a side it does not store (ignored in a body), nor the relationship of a derived
+   * id, which the controller checks itself (error.null).
+   */
+  nodejsRequired: relationship => Boolean(relationship.relationshipRequired && relationship.persistableRelationship && !relationship.id),
+};

@@ -38,16 +38,12 @@
       if (rules.includes('minlength') && rules.includes('maxlength')) {
         validators.push(`@Length(${field.fieldValidateRulesMinlength}, ${field.fieldValidateRulesMaxlength})`);
       }
-      // Not supported anymore because the server can't check the size of the blob before downloading it completely.
-      // if (rules.includes('minbytes') && !rules.includes('maxbytes')) {
-      //     validators.push('@Size(min = ' + field.fieldValidateRulesMinbytes + ')');
-      // }
-      // if (rules.includes('maxbytes') && !rules.includes('minbytes')) {
-      //     validators.push('@Size(max = ' + field.fieldValidateRulesMaxbytes + ')');
-      // }
-      // if (rules.includes('minbytes') && rules.includes('maxbytes')) {
-      //     validators.push('@Size(min = ' + field.fieldValidateRulesMinbytes + ', max = ' + field.fieldValidateRulesMaxbytes + ')');
-      // }
+      // The size of a blob, like a @Size: the bytes of a binary blob (its base64 decoded), the characters of a TextBlob.
+      if (rules.includes('minbytes') || rules.includes('maxbytes')) {
+        const min = rules.includes('minbytes') ? field.fieldValidateRulesMinbytes : 0;
+        const max = rules.includes('maxbytes') ? field.fieldValidateRulesMaxbytes : undefined;
+        validators.push(field.fieldTypeBlobContent === 'text' ? `@Length(${min}${max === undefined ? '' : `, ${max}`})` : `@ByteLength(${min}${max === undefined ? '' : `, ${max}`})`);
+      }
       // Like Bean Validation, the bound of a decimal is a @DecimalMin or a @DecimalMax, the code of its field error.
       const decimal = field.fieldTypeFloat || field.fieldTypeDouble || field.fieldTypeBigDecimal;
       if (rules.includes('min')) {

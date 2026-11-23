@@ -1,6 +1,13 @@
 <%_ // The relationships the other entity stores (nodejsMappedByRelationships): never stored from this entity.
     const inverseProperties = nodejsMappedByRelationships.map(relationship => relationship.propertyName);
+    // Like the mapstruct DTOs of JHipster Spring Boot, a stored relationship gives the related record by its id and its
+    // display field only (the other entity field), not the whole record: a related user without its account.
+    const shownRelationships = dtoMapstruct ? persistableRelationships : [];
+    const shownKeys = relationship => [...new Set([relationship.otherEntity.primaryKey.name, relationship.otherEntityField].filter(Boolean))];
 _%>
+<%_ if (shownRelationships.length > 0) { _%>
+import { relatedOf } from '../../common/reference-by-id.ts';
+<%_ } _%>
 import { <%- persistClass %> } from './<%- entityFileName %>.entity.ts';
 import { <%- dtoClass %> } from './dto/<%- entityFileName %>.dto.ts';
 
@@ -31,6 +38,19 @@ export class <%- entityClass %>Mapper {
     if (!entity) {
       return undefined;
     }
+<%_ if (shownRelationships.length > 0) { _%>
+    return Object.assign(new <%- dtoClass %>(), entity, {
+  <%_ for (const relationship of shownRelationships) { _%>
+    <%_ const keys = shownKeys(relationship).map(key => `'${key}'`).join(', '); _%>
+    <%_ if (relationship.collection) { _%>
+      <%- relationship.propertyName %>: entity.<%- relationship.propertyName %>?.map(related => relatedOf(related, [<%- keys %>])),
+    <%_ } else { _%>
+      <%- relationship.propertyName %>: relatedOf(entity.<%- relationship.propertyName %>, [<%- keys %>]),
+    <%_ } _%>
+  <%_ } _%>
+    });
+<%_ } else { _%>
     return Object.assign(new <%- dtoClass %>(), entity);
+<%_ } _%>
   }
 }

@@ -6,13 +6,15 @@
     // The filter of the list of the records without a relationship to one record, for the form of the other entity.
     const oneToOneFilter = nodejsMappedByRelationships.some(relationship => relationship.relationshipOneToOne);
 _%>
-import { Body, Controller, Delete, Get, HttpCode,<%- nodejsCriteria ? ' Header,' : '' %> NotFoundException, Param, Patch, Post as PostMethod,<%- eagerLoadFlag || oneToOneFilter ? ' Query,' : '' %> Put } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpCode,<%- nodejsCriteria ? ' Header,' : '' %> NotFoundException, Param,<%- updatableEntity ? ' Patch,' : '' %> Post as PostMethod,<%- eagerLoadFlag || oneToOneFilter ? ' Query,' : '' %><%- updatableEntity ? ' Put' : '' %> } from '@nestjs/common';
 import { 
 <%_ if (authenticationTypeJwt) { _%> ApiBearerAuth, 
 <%_ } else { _%> ApiSecurity, 
 <%_ } _%> ApiTags, ApiResponse, ApiOperation } from '@nestjs/swagger';
+<%_ if (updatableEntity) { _%>
 import { plainToInstance } from 'class-transformer';
 import { validate } from 'class-validator';
+<%_ } _%>
 import { <%- dtoClass %> } from './dto/<%- entityFileName %>.dto.ts';
 import { <%- entityClass %>Service } from './<%- entityFileName %>.service.ts';
 <%_ if (pagination !== 'no' || nodejsCriteria) { _%>
@@ -35,7 +37,7 @@ import { FindOptionsWhere } from 'typeorm';
 import { Criteria } from '../../common/database/criteria.ts';
 <%_ } _%>
 
-import { BadRequestAlertException, validationException } from '../../common/errors/problem.exception.ts';
+import { BadRequestAlertException<%- updatableEntity ? ', validationException' : '' %> } from '../../common/errors/problem.exception.ts';
 import { AlertHeaders } from '../../common/interceptors/response-headers.interceptor.ts';
 
 const ENTITY_NAME = '<%- entityAlertName %>';
@@ -173,14 +175,23 @@ export class <%- entityClass %>Controller {
       throw new BadRequestAlertException('A new <%- entityInstance %> cannot already have an ID', ENTITY_NAME, 'idexists');
     }
 <%_ } _%>
+<%_ const derivedIdRelationship = primaryKey.derived ? relationships.find(relationship => relationship.id) : undefined; _%>
+<%_ if (derivedIdRelationship) { _%>
+    // Like JHipster Spring Boot, the record its id comes from is required.
+    if (<%- entityInstance %>DTO.<%- derivedIdRelationship.propertyName %> === undefined || <%- entityInstance %>DTO.<%- derivedIdRelationship.propertyName %> === null) {
+      throw new BadRequestAlertException('Invalid association value provided', ENTITY_NAME, 'null');
+    }
+<%_ } _%>
     return await this.<%- entityInstance %>Service.save(<%- entityInstance %>DTO);
   }
 
+<%_ if (updatableEntity) { _%>
+  // Like JHipster Spring Boot, an entity with something to update: one without has no PUT nor PATCH (405).
   @Put('/:id')
   @AlertHeaders({ action: 'updated', entityName: ENTITY_NAME, param: '<%- primaryKey.name %>' })
-<%_ if (nodejsWriteRoles) { _%>
+  <%_ if (nodejsWriteRoles) { _%>
   @Roles([<%- nodejsWriteRoles %>])
-<%_ } _%>
+  <%_ } _%>
   @ApiOperation({ summary: 'Update <%- entityInstance %> with id' })
   @ApiResponse({
     status: 200,
@@ -190,28 +201,28 @@ export class <%- entityClass %>Controller {
   @ApiResponse({ status: 400, description: 'Invalid id, or the record does not exist.' })
   async putId(<%- idParam %>, @Body() <%- entityInstance %>DTO: <%- dtoClass %>): Promise<<%- dtoClass %>>  {
     await this.validateIdForUpdate(id, <%- entityInstance %>DTO);
-<%_ // The fields and the stored relationships, the properties of the entity JHipster Spring Boot deserializes from the body.
-    const replacedProperties = [
-      ...fields.filter(field => !field.id && !field.transient).map(field => [field.fieldName, 'null']),
-      ...persistableRelationships.map(relationship => [relationship.propertyName, relationship.collection ? '[]' : 'null']),
-    ];
-_%>
-<%_ if (replacedProperties.length > 0) { _%>
+  <%_ // The fields and the stored relationships, the properties of the entity JHipster Spring Boot deserializes from the body.
+      const replacedProperties = [
+        ...fields.filter(field => !field.id && !field.transient).map(field => [field.fieldName, 'null']),
+        ...persistableRelationships.map(relationship => [relationship.propertyName, relationship.collection ? '[]' : 'null']),
+      ];
+  _%>
+  <%_ if (replacedProperties.length > 0) { _%>
     // Like JHipster Spring Boot, a PUT replaces the record: a field or a relationship the body does not give is cleared.
     Object.assign(<%- entityInstance %>DTO, {
-  <%_ for (const [property, cleared] of replacedProperties) { _%>
+    <%_ for (const [property, cleared] of replacedProperties) { _%>
       <%- property %>: <%- entityInstance %>DTO.<%- property %> ?? <%- cleared %>,
-  <%_ } _%>
+    <%_ } _%>
     });
-<%_ } _%>
+  <%_ } _%>
     return await this.<%- entityInstance %>Service.update(<%- entityInstance %>DTO);
   }
 
   @Patch('/:id')
   @AlertHeaders({ action: 'updated', entityName: ENTITY_NAME, param: '<%- primaryKey.name %>' })
-<%_ if (nodejsWriteRoles) { _%>
+  <%_ if (nodejsWriteRoles) { _%>
   @Roles([<%- nodejsWriteRoles %>])
-<%_ } _%>
+  <%_ } _%>
   @ApiOperation({ summary: 'Partially update <%- entityInstance %> with id, the absent fields are kept and the null ones cleared' })
   @ApiResponse({
     status: 200,
@@ -222,8 +233,10 @@ _%>
   async patchId(<%- idParam %>, @Body() <%- entityInstance %>DTO: Partial<<%- dtoClass %>>): Promise<<%- dtoClass %>>  {
     const existing = await this.validateIdForUpdate(id, <%- entityInstance %>DTO);
     // Like JHipster Spring Boot, a JSON merge patch: the given fields replace the ones of the record, a null clears
-    // one, and the record is transformed and validated as the global ValidationPipe does for a PUT.
-    const patched = plainToInstance(<%- dtoClass %>, { ...existing, ...<%- entityInstance %>DTO });
+    // one, and the record is transformed and validated as the global ValidationPipe does for a PUT. The record as its
+    // JSON gives it, like a body: the values read from the database (a Date of an Instant) as a client sends them.
+    const stored: unknown = JSON.parse(JSON.stringify(existing));
+    const patched = plainToInstance(<%- dtoClass %>, { ...(stored as object), ...<%- entityInstance %>DTO });
     // Without the properties the DTO does not declare, like the whitelist of the ValidationPipe.
     const errors = await validate(patched, { whitelist: true, forbidUnknownValues: false });
     if (errors.length > 0) {
@@ -232,6 +245,7 @@ _%>
     }
     return await this.<%- entityInstance %>Service.update(patched);
   }
+<%_ } _%>
 
   @Delete('/:id')
   @HttpCode(204)
@@ -247,6 +261,7 @@ _%>
   async deleteById(<%- idParam %>): Promise<void>  {
     return await this.<%- entityInstance %>Service.deleteById(id);
   }
+<%_ if (updatableEntity) { _%>
 
   /**
    * Checks the id of an update like JHipster Spring Boot: the body must have the id of the path,
@@ -265,4 +280,5 @@ _%>
     }
     return existing;
   }
+<%_ } _%>
 }

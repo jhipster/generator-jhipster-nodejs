@@ -46,11 +46,17 @@ describe('<%- entityClass %> on the database', () => {
     <%- name %>: <%- literal(value) %>,
 <%_ } _%>
   };
+<%_ // The values of a second record: of the update, of the sort by id and of the is-null filter of an inverse one-to-one.
+    const sortedById = pagination !== 'no' && primaryKey.autoGenerate && !primaryKey.typeUUID && !(databaseTypeSql && primaryKey.typeString);
+    const secondRecord = updatableEntity || sortedById || nodejsMappedByRelationships.some(relationship => relationship.relationshipOneToOne);
+_%>
+<%_ if (secondRecord) { _%>
   const updatedValues: Record<string, any> = {
-<%_ for (const [name, value] of Object.entries(updated.values)) { _%>
+  <%_ for (const [name, value] of Object.entries(updated.values)) { _%>
     <%- name %>: <%- literal(value) %>,
-<%_ } _%>
+  <%_ } _%>
   };
+<%_ } _%>
 
   /** The values read back: a Float is approximate on the databases keeping it in single precision. */
   const expected = (values: Record<string, any>): Record<string, any> => ({
@@ -85,13 +91,14 @@ describe('<%- entityClass %> on the database', () => {
     await app?.close();
   });
 
-  it('should store every field and read it back, then update and delete it', async () => {
+  it('should store every field and read it back, then <%- updatableEntity ? 'update and ' : '' %>delete it', async () => {
     const server = app.getHttpServer();
     const { body: stored } = await request(server).post('/api/<%- entityApiUrl %>').send(<%- spreads[entityInstance] ? `{ ...createdValues${spreads[entityInstance]} }` : 'createdValues' %>).expect(201);
     const { body: read } = await request(server).get(`/api/<%- entityApiUrl %>/${stored.<%- primaryKey.name %>}`).expect(200);
     expect(read).toMatchObject(expected(createdValues));
     // Like JHipster Spring Boot, the entity is not audited: no audit field, of a related record neither.
     expect(JSON.stringify(read)).not.toMatch(/"(createdBy|createdDate|lastModifiedBy|lastModifiedDate)"/);
+<%_ if (updatableEntity) { _%>
 
     await request(server)
       .put(`/api/<%- entityApiUrl %>/${stored.<%- primaryKey.name %>}`)
@@ -99,6 +106,7 @@ describe('<%- entityClass %> on the database', () => {
       .expect(200);
     const { body: readUpdated } = await request(server).get(`/api/<%- entityApiUrl %>/${stored.<%- primaryKey.name %>}`).expect(200);
     expect(readUpdated).toMatchObject(expected({ ...updatedValues, <%- primaryKey.name %>: stored.<%- primaryKey.name %> }));
+<%_ } _%>
 
     await request(server).delete(`/api/<%- entityApiUrl %>/${stored.<%- primaryKey.name %>}`).expect(204);
     await request(server).get(`/api/<%- entityApiUrl %>/${stored.<%- primaryKey.name %>}`).expect(404);
@@ -244,11 +252,13 @@ describe('<%- entityClass %> on the database', () => {
       .post('/api/<%- otherEntity.entityApiUrl %>')
       .send({ ...<%- literal(otherValues) %><%- spreads[otherEntity.entityInstance] ?? '' %>, <%- otherProperty %>: <%- otherCollection ? '[reference]' : 'reference' %> })
       .expect(201);
+  <%_ if (updatableEntity) { _%>
 
     await request(server)
       .put(`/api/<%- entityApiUrl %>/${stored.<%- primaryKey.name %>}`)
       .send({ ...stored, <%- property %>: <%- collection ? '[]' : 'null' %> })
       .expect(200);
+  <%_ } _%>
 
     const { body: relatedRead } = await request(server).get(`/api/<%- otherEntity.entityApiUrl %>/${related.<%- otherId %>}`).expect(200);
   <%_ if (otherCollection) { _%>
@@ -267,7 +277,7 @@ describe('<%- entityClass %> on the database', () => {
     const inverseOneToOnes = nodejsMappedByRelationships.filter(relationship => relationship.relationshipOneToOne);
 _%>
 <%_ // A generated id in the order of the records: not one the client gives, a UUID, nor a String id of SQL (a UUID the entity generates). _%>
-<%_ if (pagination !== 'no' && primaryKey.autoGenerate && !primaryKey.typeUUID && !(databaseTypeSql && primaryKey.typeString)) { _%>
+<%_ if (sortedById) { _%>
 
   it('should sort the list by id, the newest first with id,desc, like Spring Data', async () => {
     const server = app.getHttpServer();

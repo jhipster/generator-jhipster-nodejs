@@ -1,4 +1,5 @@
 import type { TransformFnParams } from 'class-transformer';
+import { ValidateBy, type ValidationOptions } from 'class-validator';
 
 /** A JSON number: an integer or a decimal, with an exponent or not. */
 const NUMBER = /^[-+]?(?:\d+\.?\d*|\.\d+)(?:[eE][-+]?\d+)?$/;
@@ -16,3 +17,27 @@ export const numberFromString = ({ value }: TransformFnParams): unknown =>
  * the other class (with this type it is Object), or the first module fails with "Cannot access ... before initialization".
  */
 export type RelatedDTO<T> = T;
+
+/**
+ * The size of a binary blob, like the @Size of a byte[] of JHipster Spring Boot: the bytes of its base64, from min to max
+ * (no maximum when it is not given). A value that is not a text is left to the type validator of the field (@IsBase64).
+ */
+export const ByteLength = (min: number, max?: number, options?: ValidationOptions): PropertyDecorator =>
+  ValidateBy(
+    {
+      name: 'byteLength',
+      constraints: [min, max],
+      validator: {
+        validate: (value: unknown): boolean => {
+          if (typeof value !== 'string') return true;
+          const size = Buffer.from(value, 'base64').length;
+          return size >= min && (max === undefined || size <= max);
+        },
+        defaultMessage: args =>
+          max === undefined
+            ? `${args?.property} must be at least ${min} bytes`
+            : `${args?.property} must be between ${min} and ${max} bytes`,
+      },
+    },
+    options,
+  );

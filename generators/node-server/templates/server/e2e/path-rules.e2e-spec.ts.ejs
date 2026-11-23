@@ -147,7 +147,8 @@ describe('Path rules', () => {
     });
 <%_ } _%>
 
-<%_ if (generateBuiltInAuthorityEntity) { _%>
+<%_ // The authorities of the administrators, unless the entity opens their reads to the users (entityReadAuthority). _%>
+<%_ if (generateBuiltInAuthorityEntity && !authority?.entityReadAuthority?.includes('ROLE_USER')) { _%>
     it('answers 403 to a route of another role, with the detail of Spring Security', async () => {
       const { body } = await get('/api/authorities').expect(403);
       expect(body).toMatchObject({ message: 'error.http.403', detail: 'Access Denied' });

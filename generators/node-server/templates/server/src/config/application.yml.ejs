@@ -75,8 +75,10 @@ management:
 # ===================================================================
 
 jhipster:
+<%_ if (!skipClient) { _%>
   clientApp:
     name: '<%- frontendAppName %>'
+<%_ } _%>
   # By default, CORS is disabled. Uncomment to enable.
   # cors:
   #   allowed-origins: "http://localhost:8100,http://localhost:9000"

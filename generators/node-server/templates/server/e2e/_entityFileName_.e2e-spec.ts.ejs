@@ -14,7 +14,7 @@ import { <%- dtoClass %> } from '../src/entities/<%- entityFileName %>/dto/<%- e
 import { <%- entityClass %>Service } from '../src/entities/<%- entityFileName %>/<%- entityFileName %>.service.ts';
 
 // The alert headers the JHipster clients read, named after jhipster.clientApp.name.
-const alertHeader = (headers: Record<string, unknown>, suffix: string): unknown => headers[`x-<%- frontendAppName.toLowerCase() %>${suffix}`];
+const alertHeader = (headers: Record<string, unknown>, suffix: string): unknown => headers[`x-<%- nodejsClientAppName.toLowerCase() %>${suffix}`];
 
 describe('<%- entityClass %> Controller', () => {
     let app: INestApplication;
@@ -35,7 +35,9 @@ describe('<%- entityClass %> Controller', () => {
 <%_ } _%>
     }
     const unknownId = <%- unknownId %>;
+<%_ if (updatableEntity) { _%>
     const anotherId = <%- anotherId %>;
+<%_ } _%>
 <%_ const requiredField = validatedFields.find(field => field.fieldValidationRequired);
     const enumField = fields.find(field => !field.id && field.fieldIsEnum);
     // A field whose type the DTO validates, with a value of another type.
@@ -312,7 +314,7 @@ _%>
 
         expect(response.body).toEqual(entityMock);
         expect(response.headers.location).toBe(`/api/<%- entityApiUrl %>/${entityMock.<%- primaryKey.name %>}`);
-        expect(alertHeader(response.headers, '-alert')).toMatch(<%- enableTranslation ? `/^${frontendAppName}\\.${entityAlertName}\\.created$/` : `/^A new ${entityAlertName} is created with identifier /` %>);
+        expect(alertHeader(response.headers, '-alert')).toMatch(<%- enableTranslation ? `/^${nodejsClientAppName}\\.${entityAlertName}\\.created$/` : `/^A new ${entityAlertName} is created with identifier /` %>);
     });
 
     it('/POST create <%- entityApiUrl %> ignores the properties its DTO does not declare', async () => {
@@ -414,7 +416,7 @@ _%>
 
 <%_ for (const relationship of relationships) { _%>
   <%_ if (relationship.nodejsMockReference) { _%>
-    it('/POST create <%- entityApiUrl %> without its required <%- relationship.propertyName %> is a validation error, like JHipster Spring Boot', async () => {
+    it('/POST create <%- entityApiUrl %> without its required <%- relationship.propertyName %> is <%- relationship.id ? 'an error of its association' : 'a validation error' %>, like JHipster Spring Boot', async () => {
         const { <%- relationship.propertyName %>: _<%- relationship.propertyName %>, ...invalidEntity } = newEntity;
 
         const error = (await request(app.getHttpServer())
@@ -422,7 +424,12 @@ _%>
             .send(invalidEntity)
             .expect(400)).body;
 
+    <%_ if (relationship.id) { _%>
+        // The record the id comes from, checked by the controller.
+        expect(error).toMatchObject({ message: 'error.null', params: '<%- entityInstance %>' });
+    <%_ } else { _%>
         expect(error).toMatchObject({ message: 'error.validation', fieldErrors: [expect.objectContaining({ field: '<%- relationship.propertyName %>' })] });
+    <%_ } _%>
     });
 
   <%_ } _%>
@@ -465,6 +472,7 @@ _%>
     });
 
 <%_ } _%>
+<%_ if (updatableEntity) { _%>
     it('/PUT update <%- entityApiUrl %> from id', async () => {
         const response = await request(app.getHttpServer())
             .put(`/api/<%- entityApiUrl %>/${entityMock.<%- primaryKey.name %>}`)
@@ -473,10 +481,19 @@ _%>
 
         // The values sent, the properties the body does not give cleared (the service of the mock returns what it gets).
         expect(response.body).toMatchObject(validEntity);
-        expect(alertHeader(response.headers, '-alert')).toMatch(<%- enableTranslation ? `/^${frontendAppName}\\.${entityAlertName}\\.updated$/` : `/^A ${entityAlertName} is updated with identifier /` %>);
+        expect(alertHeader(response.headers, '-alert')).toMatch(<%- enableTranslation ? `/^${nodejsClientAppName}\\.${entityAlertName}\\.updated$/` : `/^A ${entityAlertName} is updated with identifier /` %>);
         expect(alertHeader(response.headers, '-params')).toBe(String(entityMock.<%- primaryKey.name %>));
     }
     );
+<%_ } else { _%>
+    it('/PUT and /PATCH <%- entityApiUrl %> are methods not supported, like JHipster Spring Boot for an entity with nothing to update', async () => {
+        const path = `/api/<%- entityApiUrl %>/${entityMock.<%- primaryKey.name %>}`;
+        const response = await request(app.getHttpServer()).put(path).send(entityMock).expect(405);
+        expect(response.headers.allow.split(', ').sort()).toEqual(['DELETE', 'GET']);
+        expect(response.body).toMatchObject({ message: 'error.http.405' });
+        await request(app.getHttpServer()).patch(path).send(entityMock).expect(405);
+    });
+<%_ } _%>
 
     it('/POST create <%- entityApiUrl %> with malformed JSON is a body that is not read, without the message of the parser', async () => {
         const { body } = await request(app.getHttpServer()).post('/api/<%- entityApiUrl %>').type('json').send('{"a"').expect(400);
@@ -526,12 +543,14 @@ _%>
         expect(response.body.fieldErrors).toBeUndefined();
     });
 
+<%_ if (updatableEntity) { _%>
     it('/PATCH partial update <%- entityApiUrl %> reads a merge patch, not another content type, like JHipster Spring Boot', async () => {
         const patch = JSON.stringify({ <%- primaryKey.name %>: entityMock.<%- primaryKey.name %> });
         const path = `/api/<%- entityApiUrl %>/${entityMock.<%- primaryKey.name %>}`;
         await request(app.getHttpServer()).patch(path).type('application/merge-patch+json').send(patch).expect(200);
         await request(app.getHttpServer()).patch(path).type('text/plain').send(patch).expect(415);
     });
+<%_ } _%>
 
     it('/PUT and /PATCH <%- entityApiUrl %> without id in the path are methods not supported', async () => {
         const response = await request(app.getHttpServer()).put('/api/<%- entityApiUrl %>').send(validEntity).expect(405);
@@ -540,6 +559,7 @@ _%>
         await request(app.getHttpServer()).patch('/api/<%- entityApiUrl %>').send(validEntity).expect(405);
     });
 
+<%_ if (updatableEntity) { _%>
     it('/PUT update <%- entityApiUrl %> from another id', async () => {
         const response = await request(app.getHttpServer())
             .put(`/api/<%- entityApiUrl %>/${anotherId}`)
@@ -550,7 +570,7 @@ _%>
         expect(response.body).toMatchObject({ message: 'error.idinvalid', params: '<%- entityAlertName %>' });
     });
 
-<%_ if (!idField.fieldValidationRequired) { _%>
+  <%_ if (!idField.fieldValidationRequired) { _%>
     it('/PUT update <%- entityApiUrl %> without id', async () => {
         const response = await request(app.getHttpServer())
             .put(`/api/<%- entityApiUrl %>/${entityMock.<%- primaryKey.name %>}`)
@@ -561,7 +581,7 @@ _%>
         expect(response.body).toMatchObject({ message: 'error.idnull', params: '<%- entityAlertName %>' });
     });
 
-<%_ } _%>
+  <%_ } _%>
     it('/PUT update an unknown <%- entityApiUrl %>', async () => {
         const response = await request(app.getHttpServer())
             .put(`/api/<%- entityApiUrl %>/${unknownId}`)
@@ -572,7 +592,7 @@ _%>
         expect(response.body).toMatchObject({ message: 'error.idnotfound', params: '<%- entityAlertName %>' });
     });
 
-<%_ const clearedField = fields.find(field => !field.id && !field.transient && !field.fieldValidationRequired && field.fieldType !== 'byte[]' && fakeFields.some(([propertyName]) => propertyName === field.propertyName)); _%>
+  <%_ const clearedField = fields.find(field => !field.id && !field.transient && !field.fieldValidationRequired && field.fieldType !== 'byte[]' && fakeFields.some(([propertyName]) => propertyName === field.propertyName)); _%>
     it('/PATCH partial update <%- entityApiUrl %> from id', async () => {
         const response = await request(app.getHttpServer())
             .patch(`/api/<%- entityApiUrl %>/${entityMock.<%- primaryKey.name %>}`)
@@ -581,11 +601,11 @@ _%>
 
         // The absent fields are kept<%- clearedField ? ', a null clears one' : '' %>, and a property the DTO does not declare (an audit field) is ignored.
         expect(response.body).toEqual(<%- clearedField ? `{ ...entityMock, ${clearedField.propertyName}: null }` : 'entityMock' %>);
-        expect(alertHeader(response.headers, '-alert')).toMatch(<%- enableTranslation ? `/^${frontendAppName}\\.${entityAlertName}\\.updated$/` : `/^A ${entityAlertName} is updated with identifier /` %>);
+        expect(alertHeader(response.headers, '-alert')).toMatch(<%- enableTranslation ? `/^${nodejsClientAppName}\\.${entityAlertName}\\.updated$/` : `/^A ${entityAlertName} is updated with identifier /` %>);
         expect(alertHeader(response.headers, '-params')).toBe(String(entityMock.<%- primaryKey.name %>));
     });
 
-<%_ if (requiredField) { _%>
+  <%_ if (requiredField) { _%>
     it('/PATCH partial update <%- entityApiUrl %> clearing <%- requiredField.fieldName %> is a validation error', async () => {
         const error = (await request(app.getHttpServer())
             .patch(`/api/<%- entityApiUrl %>/${entityMock.<%- primaryKey.name %>}`)
@@ -599,7 +619,7 @@ _%>
         });
     });
 
-<%_ } _%>
+  <%_ } _%>
     it('/PATCH partial update <%- entityApiUrl %> from another id', async () => {
         const response = await request(app.getHttpServer())
             .patch(`/api/<%- entityApiUrl %>/${anotherId}`)
@@ -617,7 +637,7 @@ _%>
 
         expect(alertHeader(response.headers, '-error')).toBe('error.idnotfound');
     });
-<%_ if (numericId || primaryKey.typeUUID) { _%>
+  <%_ if (numericId || primaryKey.typeUUID) { _%>
 
     it('/PATCH partial update <%- entityApiUrl %> from an invalid id', async () => {
         await request(app.getHttpServer())
@@ -625,6 +645,7 @@ _%>
             .send({ <%- primaryKey.name %>: entityMock.<%- primaryKey.name %> })
             .expect(400);
     });
+  <%_ } _%>
 <%_ } _%>
 
     it('/DELETE <%- entityApiUrl %>', async () => {
@@ -633,7 +654,7 @@ _%>
             .expect(204);
 
         expect(response.body).toEqual({});
-        expect(alertHeader(response.headers, '-alert')).toMatch(<%- enableTranslation ? `/^${frontendAppName}\\.${entityAlertName}\\.deleted$/` : `/^A ${entityAlertName} is deleted with identifier /` %>);
+        expect(alertHeader(response.headers, '-alert')).toMatch(<%- enableTranslation ? `/^${nodejsClientAppName}\\.${entityAlertName}\\.deleted$/` : `/^A ${entityAlertName} is deleted with identifier /` %>);
         expect(alertHeader(response.headers, '-params')).toBe(String(entityMock.<%- primaryKey.name %>));
     });
 
@@ -688,7 +709,9 @@ _%>
             await request(rolesApp.getHttpServer()).get('/api/<%- entityApiUrl %>').expect(200);
     <%_ if (nodejsWriteRoles) { _%>
             await request(rolesApp.getHttpServer()).post('/api/<%- entityApiUrl %>').send(newEntity).expect(403);
+      <%_ if (updatableEntity) { _%>
             await request(rolesApp.getHttpServer()).patch(`/api/<%- entityApiUrl %>/${validEntity.<%- primaryKey.name %>}`).send({ <%- primaryKey.name %>: validEntity.<%- primaryKey.name %> }).expect(403);
+      <%_ } _%>
     <%_ } _%>
         });
   <%_ } _%>
