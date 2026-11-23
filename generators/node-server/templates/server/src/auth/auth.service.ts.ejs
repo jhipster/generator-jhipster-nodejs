@@ -143,7 +143,13 @@ export class AuthService {
     return userDTO;
   }
 
-  async changePassword(userLogin: string, currentClearTextPassword: string | undefined, newPassword: string | undefined): Promise<void> {
+  <%_ if (authenticationTypeSession) { _%>
+  /**
+   * Sets the new password of a user that gives its current one. The new password ends the open sessions and the
+   * remember-me logins of the user: keptSession is the id of the session to keep, the one of the request of the user.
+   */
+  <%_ } _%>
+  async changePassword(userLogin: string, currentClearTextPassword: string | undefined, newPassword: string | undefined<%- authenticationTypeSession ? ', keptSession?: string' : '' %>): Promise<void> {
     // Like the AccountResource of JHipster Spring Boot, the length of the new password.
     if (isPasswordLengthInvalid(newPassword)) {
       throw new InvalidPasswordException();
@@ -156,9 +162,7 @@ export class AuthService {
     if (!(await this.passwordService.matches(currentClearTextPassword ?? '', userFind.password))) {
       throw new InvalidPasswordException('Incorrect password');
     }
-    userFind.password = newPassword!;
-    await this.userService.save(userFind, userLogin, true);
-    return;
+    await this.userService.saveWithPassword(userFind, newPassword!, userLogin<%- authenticationTypeSession ? ', keptSession' : '' %>);
   }
 
   /**
@@ -186,10 +190,9 @@ export class AuthService {
     if (!userFind?.resetDate || new Date(userFind.resetDate).getTime() < Date.now() - 24 * 60 * 60 * 1000) {
       throw new AccountResourceException('No user was found for this reset key');
     }
-    userFind.password = newPassword!;
     // null clears the columns (TypeORM leaves the undefined properties unchanged).
     Object.assign(userFind, { resetKey: null, resetDate: null });
-    await this.userService.save(userFind, SYSTEM_AUDITOR, true);
+    await this.userService.saveWithPassword(userFind, newPassword!, SYSTEM_AUDITOR);
   }
 
   async updateUserSettings(userLogin: string, newUserInfo: <%- user.dtoClass %>) : Promise<<%- user.dtoClass %>> {

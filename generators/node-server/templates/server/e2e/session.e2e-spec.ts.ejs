@@ -6,6 +6,7 @@ import { AppModule } from '../src/app.module.ts';
 import { configureApp } from '../src/app.config.ts';
 import { <%- user.dtoClass %> } from '../src/users/dto/user.dto.ts';
 import { UserService } from '../src/users/user.service.ts';
+import { AuthService } from '../src/auth/auth.service.ts';
 import { PasswordService } from '../src/auth/password.service.ts';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -44,11 +45,11 @@ describe('Session authentication', () => {
     await app.init();
     service = moduleFixture.get<UserService>(UserService);
     users = [
-      await service.save({ login: 'session-user', email: 'session-user@localhost', password, activated: true }, 'session-user', true),
-      await service.save(
-        { login: 'session-inactive', email: 'session-inactive@localhost', password, activated: false },
+      await service.saveWithPassword({ login: 'session-user', email: 'session-user@localhost', activated: true }, password, 'session-user'),
+      await service.saveWithPassword(
+        { login: 'session-inactive', email: 'session-inactive@localhost', activated: false },
+        password,
         'session-inactive',
-        true,
       ),
     ];
     // An agent keeps the cookies of the responses, like a browser: the session and the XSRF-TOKEN cookie.
@@ -291,7 +292,7 @@ describe('Session authentication', () => {
     expect(await tokens().find({ where: { login: 'session-user' } })).toHaveLength(0);
   });
 
-  it('ends the other open sessions of a user with a new password, and all of them once deactivated or removed', async () => {
+  it('ends the open sessions of a user with a new password, but the one told to keep, and all of them once deactivated or removed', async () => {
     const sessions = app.get<Repository<Session>>(getRepositoryToken(Session));
     const other = request.agent(app.getHttpServer());
     const otherToken = cookieValue(await other.get('/api/account').expect(401), 'XSRF-TOKEN')!;
@@ -313,6 +314,15 @@ describe('Session authentication', () => {
     expect(await sessions.find({ where: { login: 'session-user' } })).toHaveLength(1);
     await agent.get('/api/account').expect(200);
     await other.get('/api/account').expect(401);
+
+    // The services end every session of the user, the one of the caller too, unless told the one to keep.
+    const [{ sid }] = await sessions.find({ where: { login: 'session-user' } });
+    const auth = app.get(AuthService);
+    await auth.changePassword('session-user', 'otherPassword', 'otherPassword', sid);
+    await agent.get('/api/account').expect(200);
+    await auth.changePassword('session-user', 'otherPassword', 'otherPassword');
+    expect(await sessions.find({ where: { login: 'session-user' } })).toHaveLength(0);
+    await agent.get('/api/account').expect(401);
 
     const user = (await service.findByFields({ where: { login: 'session-user' } }))!;
     await service.save({ ...user, activated: false }, 'admin');
@@ -438,7 +448,7 @@ describe('Session authentication', () => {
     const token = cookieValue(await login({ username: 'session-user', password, 'remember-me': 'true' }), 'XSRF-TOKEN')!;
     const admin = request.agent(app.getHttpServer());
     users.push(
-      await service.save({ login: 'session-other', email: 'session-other@localhost', password, activated: true }, 'session-other', true),
+      await service.saveWithPassword({ login: 'session-other', email: 'session-other@localhost', activated: true }, password, 'session-other'),
     );
     const adminToken = cookieValue(await admin.get('/api/account').expect(401), 'XSRF-TOKEN')!;
     await admin

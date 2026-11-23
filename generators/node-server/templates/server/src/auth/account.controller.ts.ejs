@@ -88,13 +88,14 @@ export class AccountController {
     @AuthUser() user: <%- userLoginVmClass %>,
     @Body() passwordChange: PasswordChangeDTO,
   <%_ if (authenticationTypeSession) { _%>
-    @Session() session: { save(callback: (error?: Error) => void): void },
+    @Session() session: { id: string },
   <%_ } _%>
   ): Promise<void> {
-    await this.authService.changePassword(user.login, passwordChange.currentPassword, passwordChange.newPassword);
   <%_ if (authenticationTypeSession) { _%>
-    // The new password ended the open sessions of the user: the one of this request is kept, saved again.
-    await new Promise<void>((resolve, reject) => session.save(error => (error ? reject(error) : resolve())));
+    // The new password ends the open sessions of the user, but the one of this request.
+    await this.authService.changePassword(user.login, passwordChange.currentPassword, passwordChange.newPassword, session.id);
+  <%_ } else { _%>
+    await this.authService.changePassword(user.login, passwordChange.currentPassword, passwordChange.newPassword);
   <%_ } _%>
   }
 

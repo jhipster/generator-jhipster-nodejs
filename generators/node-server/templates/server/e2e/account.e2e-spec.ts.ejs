@@ -66,7 +66,7 @@ describe('Account', () => {
         // The mails are not sent, the tests check the users they are for.
         const mailService = moduleFixture.get<MailService>(MailService);
         sendPasswordResetMail = vi.spyOn(mailService, 'sendPasswordResetMail').mockResolvedValue();
-        userAuthenticated = await service.save(testUserAuthenticated, testUserAuthenticated.login, true);
+        userAuthenticated = await service.saveWithPassword(testUserAuthenticated, testUserAuthenticated.password, testUserAuthenticated.login);
     });
 
 <%_ if (!generateUserRegistration) { _%>

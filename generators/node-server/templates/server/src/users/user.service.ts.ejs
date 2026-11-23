@@ -97,13 +97,14 @@ export class UserService {
         return names.filter(name => known.has(name));
     }
 
-    async save(userDTO: <%- user.dtoClass %>, creator?: string<%- generateUserManagement ? ', updatePassword = false' : '' %>): Promise<<%- user.dtoClass %>> {
-        const user = UserMapper.fromDTOtoEntity(userDTO);
-<%_ if (generateUserManagement) { _%>
-        if (updatePassword) {
-            await this.passwordService.transform(user);
-        }
+    /**
+     * Saves a user, its password as it is, already encoded<%- generateUserManagement ? ': a new password is set by saveWithPassword' : '' %>.
+<%_ if (authenticationTypeSession) { _%>
+     * A deactivated user ends its open sessions and its remember-me logins.
 <%_ } _%>
+     */
+    async save(userDTO: <%- user.dtoClass %>, creator?: string): Promise<<%- user.dtoClass %>> {
+        const user = UserMapper.fromDTOtoEntity(userDTO);
         if (creator) {
             if (!user.createdBy ) {
                 user.createdBy = creator;
@@ -112,12 +113,32 @@ export class UserService {
         }
         const result = await this.userRepository.save(user);
 <%_ if (authenticationTypeSession) { _%>
-        if (<%- generateUserManagement ? 'updatePassword || ' : '' %>!result.activated) {
+        if (!result.activated) {
             await this.endLoginsOf(result.login);
         }
 <%_ } _%>
         return UserMapper.fromEntityToDTO(result);
     }
+<%_ if (generateUserManagement) { _%>
+
+    /**
+     * Saves a user with a new password, encoded here: the only way to set the password of a user, new or not.
+  <%_ if (authenticationTypeSession) { _%>
+     * A new password ends the open sessions and the remember-me logins of the user, the session of the caller included:
+     * keptSession is the id of the session to keep, the one of the request of a user changing its own password.
+  <%_ } _%>
+     */
+    async saveWithPassword(userDTO: Omit<<%- user.dtoClass %>, 'password'>, password: string, creator?: string<%- authenticationTypeSession ? ', keptSession?: string' : '' %>): Promise<<%- user.dtoClass %>> {
+        const result = await this.save({ ...userDTO, password: await this.passwordService.encode(password) }, creator);
+  <%_ if (authenticationTypeSession) { _%>
+        // The logins of a deactivated user are ended by its save, all of them.
+        if (result.activated) {
+            await this.endLoginsOf(result.login, keptSession);
+        }
+  <%_ } _%>
+        return result;
+    }
+<%_ } _%>
 
     async update(userDTO: <%- user.dtoClass %>, updater?: string): Promise<<%- user.dtoClass %>> {
         return this.save(userDTO, updater);
@@ -133,9 +154,16 @@ export class UserService {
     }
 <%_ if (authenticationTypeSession) { _%>
 
-    /** A new password, a deactivated or a removed user ends its open sessions and its remember-me logins. */
-    private async endLoginsOf(login: string): Promise<void> {
-        await this.sessionRepository.delete({ login });
+    /**
+     * A new password, a deactivated or a removed user ends its open sessions and its remember-me logins: all of them,
+     * but the session to keep.
+     */
+    private async endLoginsOf(login: string, keptSession?: string): Promise<void> {
+        for (const { sid } of await this.sessionRepository.find({ where: { login } })) {
+            if (sid !== keptSession) {
+                await this.sessionRepository.delete({ sid });
+            }
+        }
         await this.rememberMeService.removeOf(login);
     }
 <%_ } _%>
