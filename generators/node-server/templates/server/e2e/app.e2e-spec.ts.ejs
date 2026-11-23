@@ -11,6 +11,7 @@ import { JwtService } from '@nestjs/jwt';
 import { UserLoginDTO } from '../src/auth/dto/user-login.dto.ts';
 <%_ } else if (authenticationType === 'jwt') { _%>
 import { ConfigService } from '@nestjs/config';
+import type { ApplicationConfig } from '../src/application-config.ts';
 import { JWT_ALGORITHM, jwtSecretKey } from '../src/auth/jwt.config.ts';
 <%_ } else if (authenticationType === 'oauth2' && generateBuiltInUserEntity) { _%>
 import { oidcUserOfClaims } from '../src/auth/oauth2.authorities.ts';
@@ -151,7 +152,7 @@ describe('App', () => {
     describe('with a token of the gateway', () => {
         // Signed like a JHipster Spring Boot gateway: HS512 with the base64 decoded secret, login as subject, authorities in auth.
         const gatewayJwtService = (): JwtService =>
-            new JwtService({ secret: jwtSecretKey(app.get(ConfigService)), signOptions: { algorithm: JWT_ALGORITHM } });
+            new JwtService({ secret: jwtSecretKey(app.get<ConfigService<ApplicationConfig, true>>(ConfigService)), signOptions: { algorithm: JWT_ALGORITHM } });
 
   <%_ if (generateAuthenticationApi) { _%>
         it('/GET account is the user of the token', () => {
@@ -185,7 +186,9 @@ describe('App', () => {
         });
 
         it('/GET a protected route with a token signed with the encoded secret is unauthorized', () => {
-            const encodedSecret = app.get(ConfigService).getOrThrow<string>('jhipster.security.authentication.jwt.base64-secret');
+            const encodedSecret = app
+                .get<ConfigService<ApplicationConfig, true>>(ConfigService)
+                .get('jhipster.security.authentication.jwt.base64-secret', { infer: true });
             const token = new JwtService({ secret: encodedSecret }).sign({ sub: 'gateway-user', auth: 'ROLE_USER' });
             return request(app.getHttpServer())
                 .get('<%- generateAuthenticationApi ? '/api/account' : '/management/env' %>')

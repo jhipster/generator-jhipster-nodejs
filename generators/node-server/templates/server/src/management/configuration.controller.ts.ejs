@@ -4,6 +4,7 @@ import { ApiExcludeController } from '@nestjs/swagger';
 
 import { activeProfiles, config, configFiles } from '../config.ts';
 import { Roles, RoleType } from '../auth/index.ts';
+import type { ApplicationConfig } from '../application-config.ts';
 
 const MASK = '******';
 
@@ -38,7 +39,7 @@ export interface ConfigProps {
 @Controller('management')
 @Roles(RoleType.ADMIN)
 export class ConfigurationController {
-  constructor(private readonly configService: ConfigService) {}
+  constructor(private readonly configService: ConfigService<ApplicationConfig, true>) {}
 
   @Get('/env')
   env(): Env {
@@ -86,7 +87,7 @@ export class ConfigurationController {
   }
 
   private valueFor(endpoint: 'env' | 'configprops'): (property: unknown) => unknown {
-    const showValues = this.configService.get<string>(`management.endpoint.${endpoint}.show-values`) === 'always';
+    const showValues = this.configService.get(`management.endpoint.${endpoint}.show-values`, { infer: true }) === 'always';
     return property => (showValues ? property : MASK);
   }
 }

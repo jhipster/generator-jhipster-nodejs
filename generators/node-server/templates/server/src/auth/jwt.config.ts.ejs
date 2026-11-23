@@ -1,5 +1,7 @@
 import { ConfigService } from '@nestjs/config';
 
+import type { ApplicationConfig } from '../application-config.ts';
+
 /**
  * The algorithm and the key of the JWTs, like JHipster Spring Boot: HS512, with the base64 decoded
  * `jhipster.security.authentication.jwt.base64-secret` as the key, so the applications of a microservice architecture
@@ -9,8 +11,8 @@ export const JWT_ALGORITHM = 'HS512';
 /** The minimum length of the key of HS512, 512 bits. */
 export const JWT_MIN_KEY_BYTES = 64;
 
-export function jwtSecretKey(configService: ConfigService): Buffer {
-  const secret = configService.getOrThrow<string>('jhipster.security.authentication.jwt.base64-secret');
+export function jwtSecretKey(configService: ConfigService<ApplicationConfig, true>): Buffer {
+  const secret = configService.get('jhipster.security.authentication.jwt.base64-secret', { infer: true });
   if (!secret) {
     // Like JHipster Spring Boot, the application does not start without a secret: the secret-samples profile has a
     // sample for development, production sets its own.
