@@ -216,8 +216,8 @@ _%>
 
         expect(body).toMatchObject({ message: 'error.validation' });
         expect(body.fieldErrors).toEqual([
-            { objectName: '<%- entityInstance %>Criteria', field: 'distinct', message: 'typeMismatch', code: 'typeMismatch' },
-            { objectName: '<%- entityInstance %>Criteria', field: '<%- primaryKey.name %>.specified', message: 'typeMismatch', code: 'typeMismatch' },
+            { objectName: '<%- entityInstance %>Criteria', field: 'distinct', message: 'Failed to convert the value of distinct', code: 'typeMismatch' },
+            { objectName: '<%- entityInstance %>Criteria', field: '<%- primaryKey.name %>.specified', message: 'Failed to convert the value of <%- primaryKey.name %>.specified', code: 'typeMismatch' },
         ]);
     });
 <%_ } _%>
@@ -374,8 +374,8 @@ _%>
         expect(error).toMatchObject({
             type: 'https://www.jhipster.tech/problem/constraint-violation',
             message: 'error.validation',
-            // The detail of JHipster Spring Boot in production, the errors in the fields.
-            detail: 'Unexpected runtime exception',
+            // The detail tells the errors of the fields.
+            detail: expect.stringContaining('<%- requiredField.fieldName %>'),
             fieldErrors: [{ objectName: '<%- entityInstance %>', field: '<%- requiredField.fieldName %>', message: expect.any(String), code: 'NotNull' }],
         });
     });

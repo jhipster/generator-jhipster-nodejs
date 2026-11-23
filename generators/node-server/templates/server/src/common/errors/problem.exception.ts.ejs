@@ -1,6 +1,6 @@
 import { BadRequestException, HttpException, HttpStatus, ValidationError } from '@nestjs/common';
 
-import { CONSTRAINT_VIOLATION_TYPE, DEFAULT_TYPE, ERR_VALIDATION, VALIDATION_DETAIL<%- generateUserManagement ? ', EMAIL_ALREADY_USED_TYPE, INVALID_PASSWORD_TYPE, LOGIN_ALREADY_USED_TYPE' : '' %> } from './error-constants.ts';
+import { CONSTRAINT_VIOLATION_TYPE, DEFAULT_TYPE, ERR_VALIDATION<%- generateUserManagement ? ', EMAIL_ALREADY_USED_TYPE, INVALID_PASSWORD_TYPE, LOGIN_ALREADY_USED_TYPE' : '' %> } from './error-constants.ts';
 
 /** An error of a field, like the FieldErrorVM of JHipster Spring Boot. */
 export interface FieldErrorVM {
@@ -22,6 +22,15 @@ export interface ProblemProperties {
   params?: string;
   fieldErrors?: FieldErrorVM[];
 }
+
+/** The problem of a validation failure, like JHipster Spring Boot: its detail tells the errors of the fields. */
+export const validationProblem = (fieldErrors: FieldErrorVM[]): ProblemProperties => ({
+  type: CONSTRAINT_VIOLATION_TYPE,
+  title: 'Method argument not valid',
+  detail: fieldErrors.map(({ message }) => message).join(', '),
+  message: ERR_VALIDATION,
+  fieldErrors,
+});
 
 /** An exception answered as the problem detail it gives. */
 export class ProblemException extends HttpException {
@@ -89,13 +98,7 @@ export const toFieldErrors = (errors: ValidationError[], parentPath = ''): Field
 /** The validation of a request body failed, like the MethodArgumentNotValidException of Spring. */
 export class ValidationException extends ProblemException {
   constructor(errors: ValidationError[]) {
-    super(HttpStatus.BAD_REQUEST, {
-      type: CONSTRAINT_VIOLATION_TYPE,
-      title: 'Method argument not valid',
-      detail: VALIDATION_DETAIL,
-      message: ERR_VALIDATION,
-      fieldErrors: toFieldErrors(errors),
-    });
+    super(HttpStatus.BAD_REQUEST, validationProblem(toFieldErrors(errors)));
   }
 }
 
