@@ -1,4 +1,5 @@
-import { BadRequestException, Body, Controller, Get, HttpCode, NotFoundException, Param, Post } from '@nestjs/common';
+import { BadRequestException, Controller, Get, HttpCode, NotFoundException, Param, Post } from '@nestjs/common';
+import { JsonBody } from '../common/errors/json-body.interceptor.ts';
 import { ApiExcludeController } from '@nestjs/swagger';
 
 import { LEVELS, Level, LoggerLevel, isLevel, loggerLevels } from '../common/logging.ts';
@@ -33,7 +34,7 @@ export class LoggersController {
   /** Sets the level of a logger, a null `configuredLevel` gives it the level of its parent again. */
   @Post('/:name')
   @HttpCode(204)
-  setLevel(@Param('name') name: string, @Body() { configuredLevel }: { configuredLevel?: string | null }): void {
+  setLevel(@Param('name') name: string, @JsonBody() { configuredLevel }: { configuredLevel?: string | null }): void {
     if (configuredLevel !== null && configuredLevel !== undefined && !isLevel(configuredLevel)) {
       // The detail of the Actuator of JHipster Spring Boot, which does not tell the levels.
       throw new BadRequestException('Parameter mapping failure');

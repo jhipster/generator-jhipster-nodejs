@@ -1,4 +1,5 @@
-import { BadRequestException, Body, Controller, Get, Post, Query } from '@nestjs/common';
+import { BadRequestException, Controller, Get, Post, Query } from '@nestjs/common';
+import { JsonBody } from '../common/errors/json-body.interceptor.ts';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AccountResourceException } from '../common/errors/problem.exception.ts';
 import { MailService } from '../mail/mail.service.ts';
@@ -25,7 +26,7 @@ export class RegistrationController {
     status: 201,
     description: 'Registered user',
   })
-  async registerAccount(@Body() userDTO: Managed<%- userLoginVmClass %>): Promise<void> {
+  async registerAccount(@JsonBody() userDTO: Managed<%- userLoginVmClass %>): Promise<void> {
     // Like JHipster Spring Boot, nothing in the answer.
     const user = await this.registrationService.registerUser(userDTO);
     void this.mailService.sendActivationEmail(user);

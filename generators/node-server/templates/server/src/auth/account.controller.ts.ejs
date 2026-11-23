@@ -2,6 +2,7 @@ import {
 <%_ if (generateUserManagement) { _%> BadRequestException, Body, Post, 
 <%_ } _%>Controller, Get, HttpCode, Logger,<%- authenticationTypeSession && generateUserManagement ? ' Session,' : '' %> } from '@nestjs/common';
 <%_ if (generateUserManagement) { _%>
+import { JsonBody } from '../common/errors/json-body.interceptor.ts';
 import { Public } from './decorators/public.decorator.ts';
 <%_ } _%>
 <%_ if (generateUserManagement) { _%>
@@ -70,7 +71,7 @@ export class AccountController {
     status: 200,
     description: 'user info updated',
   })
-  async saveAccount(@AuthUser() user: <%- userLoginVmClass %>, @Body() newUserInfo: <%- user.dtoClass %>): Promise<void> {
+  async saveAccount(@AuthUser() user: <%- userLoginVmClass %>, @JsonBody() newUserInfo: <%- user.dtoClass %>): Promise<void> {
     await this.authService.updateUserSettings(user.login, newUserInfo);
   }
 
@@ -85,7 +86,7 @@ export class AccountController {
   })
   async changePassword(
     @AuthUser() user: <%- userLoginVmClass %>,
-    @Body() passwordChange: PasswordChangeDTO,
+    @JsonBody() passwordChange: PasswordChangeDTO,
   <%_ if (authenticationTypeSession) { _%>
     @Session() session: { id: string },
   <%_ } _%>
@@ -129,7 +130,7 @@ export class AccountController {
     status: 200,
     description: 'password reset',
   })
-  async finishPasswordReset(@Body() keyAndPassword: KeyAndPasswordDTO): Promise<void> {
+  async finishPasswordReset(@JsonBody() keyAndPassword: KeyAndPasswordDTO): Promise<void> {
     await this.authService.completePasswordReset(keyAndPassword.newPassword, keyAndPassword.key);
   }
 

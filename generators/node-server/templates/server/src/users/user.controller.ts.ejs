@@ -1,4 +1,5 @@
-import { Body, Controller, NotFoundException, Delete, Get, HttpCode, Param, Post, Put } from '@nestjs/common';
+import { Controller, NotFoundException, Delete, Get, HttpCode, Param, Post, Put } from '@nestjs/common';
+import { JsonBody } from '../common/errors/json-body.interceptor.ts';
 import { Roles, RoleType } from '../auth/index.ts';
 import { Pageable } from '../common/database/pageable.ts';
 import { PageRequest, Page } from '../common/database/pagination.entity.ts';
@@ -64,7 +65,7 @@ export class UserController {
   })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
   @ApiResponse({ status: 400, description: 'The user already has an id, or its login or mail is already used.' })
-  async createUser(@AuthUser() auditor: <%- userLoginVmClass %>, @Body() userDTO: <%- user.dtoClass %>): Promise<<%- user.dtoClass %>> {
+  async createUser(@AuthUser() auditor: <%- userLoginVmClass %>, @JsonBody() userDTO: <%- user.dtoClass %>): Promise<<%- user.dtoClass %>> {
       if (userDTO.<%- user.primaryKey.name %> !== undefined && userDTO.<%- user.primaryKey.name %> !== null) {
           // Like JHipster Spring Boot, a new user cannot have an id: it would update an existing one.
           throw new BadRequestAlertException('A new user cannot already have an ID', 'userManagement', 'idexists');
@@ -117,7 +118,7 @@ export class UserController {
   })
   @ApiResponse({ status: 400, description: 'The login of the path is not the one of the body, or the login or the mail is used by another user.' })
   @ApiResponse({ status: 404, description: 'No user of this id.' })
-  async updateUser(@AuthUser() auditor: <%- userLoginVmClass %>, @Param('login', LoginPathPipe) loginValue: string, @Body() userDTO: <%- user.dtoClass %>): Promise<<%- user.dtoClass %>> {
+  async updateUser(@AuthUser() auditor: <%- userLoginVmClass %>, @Param('login', LoginPathPipe) loginValue: string, @JsonBody() userDTO: <%- user.dtoClass %>): Promise<<%- user.dtoClass %>> {
     // The login of the path is the one of the body, the new one when it changes, like the id of an entity: a login is the
     // same in upper or lower case.
     if (loginValue.toLowerCase() !== userDTO.login.toLowerCase()) {
