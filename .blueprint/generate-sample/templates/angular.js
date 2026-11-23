@@ -14,4 +14,15 @@ const samples = [
   'monolith-angular-postgresql-prod-jdl',
 ];
 
-export default Object.fromEntries(samples.map(sample => prepareSampleEntry(sample)));
+export default {
+  ...Object.fromEntries(samples.map(sample => prepareSampleEntry(sample))),
+  // The entities of the parity of the backends with JHipster Spring Boot: the jdl files of jdl-entities/ next to
+  // the one of the application. Without a client, like the case it measures: disabled, out of the matrix of this
+  // workflow, which tests a client.
+  'monolith-jwt-jdl-entities': {
+    'sample-folder': 'samples/',
+    'sample-type': 'jdl',
+    'jdl-entities': 'jdl-entities',
+    disabled: true,
+  },
+};

@@ -1,0 +1,21 @@
+/*
+ * The application of the case monolith-jwt-jdl-entities of the parity of the backends with JHipster Spring Boot, its
+ * config as the case has it, with the entities of jdl-entities/, a folder next to samples/, copied next to this file by generate-sample: the entity
+ * JDL files of test-integration/samples/jdl-entities of generator-jhipster the sample ng-default-additional generates
+ * (without entities.jdl, its @MapstructExpression of a Java application only, nor user-relationships), and
+ * field-validations.jdl, every field type with every validation.
+ */
+application {
+  config {
+    applicationType monolith
+    authenticationType jwt
+    baseName jdlEntities
+    packageName com.mycompany.myapp
+    prodDatabaseType postgresql
+    skipClient true
+    languages [en]
+    nativeLanguage en
+    testFrameworks []
+  }
+  entities *
+}

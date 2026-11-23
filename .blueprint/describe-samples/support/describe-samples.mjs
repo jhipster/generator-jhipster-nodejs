@@ -16,8 +16,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { existsSync, statSync } from 'node:fs';
-import { basename, extname, join } from 'node:path';
+import { existsSync, readdirSync, statSync } from 'node:fs';
+import { basename, extname, join, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import {
@@ -89,9 +89,30 @@ let descriptions;
  */
 const describeAllSamples = () => {
   descriptions ??= WORKFLOWS.flatMap(group =>
-    describeGithubSamplesGroup({ samplesGroupFolder, group, samples: samplesGroups[group], root }),
+    describeGithubSamplesGroup({ samplesGroupFolder, group, samples: samplesGroups[group], root }).map(sample =>
+      withJdlEntities(sample, samplesGroups[group][sample.name]['jdl-entities']),
+    ),
   );
   return descriptions;
+};
+
+/**
+ * A jdl sample with the jdl files of entities of a folder of the samples groups folder (`jdl-entities` of the sample),
+ * copied next to its own, like the jdl-entities of the samples of generator-jhipster.
+ * @param {SampleDescription} sample
+ * @param {string | undefined} folder
+ * @returns {SampleDescription}
+ */
+const withJdlEntities = (sample, folder) => {
+  if (!folder) return sample;
+  const path = join(samplesGroupFolder, folder);
+  const files = readdirSync(path)
+    .filter(file => extname(file) === '.jdl')
+    .sort();
+  return {
+    ...sample,
+    jdls: { ...sample.jdls, ...Object.fromEntries(files.map(file => [file, { file: relative(root, join(path, file)) }])) },
+  };
 };
 
 /**

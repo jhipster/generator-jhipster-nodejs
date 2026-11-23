@@ -1,0 +1,85 @@
+/*
+ * Every field type and every validation, each one with a limit a value can break: the entity JDL files of JHipster
+ * have no validation, and its FieldTestEntity has limits no value breaks (minlength 0, min 0) and no unique.
+ * A unique field has no other rule: the probe gives it a new value at each record.
+ */
+enum FieldValidationLevel {
+  LOW, MEDIUM, HIGH
+}
+
+@ChangelogDate(20261121000100)
+entity FieldValidation {
+  textValue String
+  textRequired String required
+  textMinlength String minlength(3)
+  textMaxlength String maxlength(10)
+  textPattern String pattern(/^[a-z]+$/)
+  textUnique String unique
+  textEvery String required minlength(3) maxlength(10) pattern(/^[a-z]+$/)
+  integerValue Integer
+  integerRequired Integer required
+  integerMin Integer min(10)
+  integerMax Integer max(100)
+  integerUnique Integer unique
+  longValue Long
+  longRequired Long required
+  longMin Long min(10)
+  longMax Long max(100)
+  floatValue Float
+  floatRequired Float required
+  floatMin Float min(10)
+  floatMax Float max(100)
+  doubleValue Double
+  doubleRequired Double required
+  doubleMin Double min(10)
+  doubleMax Double max(100)
+  bigDecimalValue BigDecimal
+  bigDecimalRequired BigDecimal required
+  bigDecimalMin BigDecimal min(10)
+  bigDecimalMax BigDecimal max(100)
+  localDateValue LocalDate
+  localDateRequired LocalDate required
+  instantValue Instant
+  instantRequired Instant required
+  zonedDateTimeValue ZonedDateTime
+  zonedDateTimeRequired ZonedDateTime required
+  localTimeValue LocalTime
+  localTimeRequired LocalTime required
+  durationValue Duration
+  durationRequired Duration required
+  booleanValue Boolean
+  booleanRequired Boolean required
+  uuidValue UUID
+  uuidRequired UUID required
+  levelValue FieldValidationLevel
+  levelRequired FieldValidationLevel required
+  imageValue ImageBlob
+  imageRequired ImageBlob required
+  imageMinbytes ImageBlob minbytes(2)
+  imageMaxbytes ImageBlob maxbytes(8)
+  fileValue AnyBlob
+  fileRequired AnyBlob required
+  fileMinbytes AnyBlob minbytes(2)
+  fileMaxbytes AnyBlob maxbytes(8)
+  notesValue TextBlob
+  notesRequired TextBlob required
+}
+
+/*
+ * The validations through a DTO and a service: one field by rule.
+ */
+@ChangelogDate(20261121000200)
+entity FieldValidationMapped {
+  textRequired String required
+  textMinlength String minlength(3)
+  textMaxlength String maxlength(10)
+  textPattern String pattern(/^[a-z]+$/)
+  textUnique String unique
+  integerMin Integer min(10)
+  integerMax Integer max(100)
+  levelRequired FieldValidationLevel required
+  imageRequired ImageBlob required
+}
+
+dto FieldValidationMapped with mapstruct
+service FieldValidationMapped with serviceClass
