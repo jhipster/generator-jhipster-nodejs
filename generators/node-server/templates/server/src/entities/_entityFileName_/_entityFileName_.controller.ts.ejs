@@ -6,7 +6,7 @@
     // The filter of the list of the records without a relationship to one record, for the form of the other entity.
     const oneToOneFilter = nodejsMappedByRelationships.some(relationship => relationship.relationshipOneToOne);
 _%>
-import { Body, ClassSerializerInterceptor, Controller, Delete, Get, HttpCode,<%- nodejsCriteria ? ' Header,' : '' %> NotFoundException, Param, Patch, Post as PostMethod,<%- eagerLoadFlag || oneToOneFilter ? ' Query,' : '' %> Put, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpCode,<%- nodejsCriteria ? ' Header,' : '' %> NotFoundException, Param, Patch, Post as PostMethod,<%- eagerLoadFlag || oneToOneFilter ? ' Query,' : '' %> Put } from '@nestjs/common';
 import { 
 <%_ if (authenticationTypeJwt) { _%> ApiBearerAuth, 
 <%_ } else { _%> ApiSecurity, 
@@ -41,7 +41,6 @@ import { AlertHeaders } from '../../common/interceptors/response-headers.interce
 const ENTITY_NAME = '<%- entityAlertName %>';
 
 @Controller('api/<%- entityApiUrl %>')
-@UseInterceptors(ClassSerializerInterceptor)
 <%_ if (authenticationType === 'jwt') { _%>
 @ApiBearerAuth()
 <%_ } else { _%>

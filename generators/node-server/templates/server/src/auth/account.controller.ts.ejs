@@ -1,6 +1,6 @@
 import { 
 <%_ if (generateUserManagement) { _%> BadRequestException, Body, Post, 
-<%_ } _%>Controller, Get, HttpCode, Logger,<%- authenticationTypeSession && generateUserManagement ? ' Session,' : '' %> UseInterceptors, ClassSerializerInterceptor } from '@nestjs/common';
+<%_ } _%>Controller, Get, HttpCode, Logger,<%- authenticationTypeSession && generateUserManagement ? ' Session,' : '' %> } from '@nestjs/common';
 <%_ if (generateUserManagement) { _%>
 import { Public } from './decorators/public.decorator.ts';
 <%_ } _%>
@@ -18,7 +18,6 @@ import { OidcUser } from './oauth2.authorities.ts';
 <%_ } _%>
 
 @Controller('api')
-@UseInterceptors(ClassSerializerInterceptor)
 @ApiTags('account-resource')
 export class AccountController {
   private readonly logger = new Logger(AccountController.name);

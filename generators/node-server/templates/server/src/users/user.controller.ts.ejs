@@ -1,4 +1,4 @@
-import { Body, Controller, NotFoundException, Delete, Get, HttpCode, Param, Post, Put, UseInterceptors, ClassSerializerInterceptor } from '@nestjs/common';
+import { Body, Controller, NotFoundException, Delete, Get, HttpCode, Param, Post, Put } from '@nestjs/common';
 import { Roles, RoleType } from '../auth/index.ts';
 import { Pageable } from '../common/database/pageable.ts';
 import { PageRequest, Page } from '../common/database/pagination.entity.ts';
@@ -17,7 +17,6 @@ import { randomBytes } from 'crypto';
 import { BadRequestAlertException, EmailAlreadyUsedException, LoginAlreadyUsedException } from '../common/errors/problem.exception.ts';
 
 @Controller('api/admin/users')
-@UseInterceptors(ClassSerializerInterceptor)
 <%_ if (authenticationType === 'jwt') { _%>
 @ApiBearerAuth()
 <%_ } else { _%>

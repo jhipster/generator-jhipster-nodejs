@@ -1,4 +1,4 @@
-import { BadRequestException, Body, ClassSerializerInterceptor, Controller, Get, Post, Query, UseInterceptors } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Get, Post, Query } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AccountResourceException } from '../common/errors/problem.exception.ts';
 import { MailService } from '../mail/mail.service.ts';
@@ -12,7 +12,6 @@ import { RegistrationService } from './registration.service.ts';
  */
 @Controller('api')
 @Public()
-@UseInterceptors(ClassSerializerInterceptor)
 @ApiTags('account-resource')
 export class RegistrationController {
   constructor(

@@ -1,4 +1,4 @@
-import { Controller, ClassSerializerInterceptor, Get, UseInterceptors } from '@nestjs/common';
+import { Controller, Get } from '@nestjs/common';
 import { Pageable } from '../common/database/pageable.ts';
 import { PageRequest, Page } from '../common/database/pagination.entity.ts';
 import { PublicUserDTO } from './dto/user.dto.ts';
@@ -11,7 +11,6 @@ import { UserService } from './user.service.ts';
 export const ALLOWED_ORDERED_PROPERTIES = ['<%- user.primaryKey.name %>', 'login', 'firstName', 'lastName', 'email', 'activated', 'langKey'];
 
 @Controller('api')
-@UseInterceptors(ClassSerializerInterceptor)
 @ApiTags('public-user-controller')
 export class PublicUserController {
 

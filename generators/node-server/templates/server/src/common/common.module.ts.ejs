@@ -1,4 +1,4 @@
-import { Global, Module } from '@nestjs/common';
+import { ClassSerializerInterceptor, Global, Module } from '@nestjs/common';
 import { APP_FILTER, APP_INTERCEPTOR, APP_PIPE } from '@nestjs/core';
 
 import { bodyValidationPipe } from './errors/body-validation.pipe.ts';
@@ -22,10 +22,11 @@ const providers = [HeaderUtil<%- authenticationTypeOauth2 ? ', OAuth2Config' : '
     ...providers,
     // The global enhancers of the requests, like the handling of the requests of JHipster Spring Boot: the validation of
     // the bodies and parameters, a body of another content type than JSON refused, a response the client does not accept
-    // refused, the errors as problem details.
+    // refused, the responses serialized by class-transformer (the @Exclude of a DTO), the errors as problem details.
     { provide: APP_PIPE, useFactory: bodyValidationPipe },
     { provide: APP_INTERCEPTOR, useClass: JsonBodyInterceptor },
     { provide: APP_INTERCEPTOR, useClass: AcceptableResponseInterceptor },
+    { provide: APP_INTERCEPTOR, useClass: ClassSerializerInterceptor },
     { provide: APP_FILTER, useClass: ProblemDetailsFilter },
   ],
   exports: providers,
