@@ -374,8 +374,7 @@ _%>
         expect(error).toMatchObject({
             type: 'https://www.jhipster.tech/problem/constraint-violation',
             message: 'error.validation',
-            // The detail tells the errors of the fields.
-            detail: expect.stringContaining('<%- requiredField.fieldName %>'),
+            detail: 'Validation error on the server.',
             fieldErrors: [{ objectName: '<%- entityInstance %>', field: '<%- requiredField.fieldName %>', message: expect.any(String), code: 'NotNull' }],
         });
     });

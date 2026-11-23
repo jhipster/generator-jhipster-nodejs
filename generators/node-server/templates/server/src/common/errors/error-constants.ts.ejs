@@ -1,5 +1,10 @@
 /** The problem types and the translation keys of the errors, like the ErrorConstants of JHipster Spring Boot. */
 export const ERR_VALIDATION = 'error.validation';
+/**
+ * The detail of a validation error, the English text of its key (ERR_VALIDATION) in the clients of JHipster: the errors
+ * of the fields are in its fieldErrors.
+ */
+export const VALIDATION_DETAIL = 'Validation error on the server.';
 /** The detail of an error not anticipated, like JHipster Spring Boot in production: its message stays out of the response. */
 export const UNEXPECTED_DETAIL = 'Unexpected runtime exception';
 export const PROBLEM_BASE_URL = 'https://www.jhipster.tech/problem';

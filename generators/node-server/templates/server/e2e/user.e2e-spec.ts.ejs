@@ -179,6 +179,7 @@ describe('User', () => {
             type: 'https://www.jhipster.tech/problem/constraint-violation',
             status: 400,
             message: 'error.validation',
+            detail: 'Validation error on the server.',
             path: '/api/admin/users',
             fieldErrors: [{ objectName: 'user', field: 'email', message: expect.any(String), code: 'Email' }],
         });
