@@ -518,6 +518,89 @@ export default class extends BaseApplicationGenerator {
 
   get [BaseApplicationGenerator.WRITING]() {
     return this.asWritingTaskGroup({
+      async cleanup({ application, control }) {
+        // The files a former version of the blueprint wrote, removed since: by the blueprintVersion JHipster records.
+        if (control.existingProject) {
+          await control.cleanupBlueprintFiles({
+            '3.0.1': [
+              '.server.eslintrc.json',
+              '.server.eslintignore',
+              'server/src/repository/authority.repository.ts',
+              'server/src/repository/user.repository.ts',
+              [application.authenticationTypeOauth2, 'node/src/security/password-util.ts'],
+            ],
+            '4.1.1': [
+              // The Dockerfile starts node itself, the database readiness comes from the compose healthchecks.
+              'server/scripts/entrypoint.sh',
+              [!application.generateUserManagement, 'server/src/web/rest/user.controller.ts', 'server/e2e/user.e2e-spec.ts'],
+              [
+                !application.generateBuiltInUserEntity,
+                'server/src/domain/user.entity.ts',
+                'server/src/service/mapper/user.mapper.ts',
+                'server/src/service/user.service.ts',
+                'server/src/module/user.module.ts',
+                'server/src/web/rest/public.user.controller.ts',
+              ],
+              [
+                !application.generateBuiltInAuthorityEntity,
+                'server/src/domain/authority.entity.ts',
+                'server/src/migrations/1570200490072-SeedUsersRoles.ts',
+              ],
+            ],
+            '4.2.1': [
+              // The HTTP helpers of the server moved from src/client (a name taken by the client workspace) to src/common.
+              'server/src/client/header-util.ts',
+              'server/src/client/request.ts',
+              'server/src/client/interceptors/logging.interceptor.ts',
+              // The tests run with Vitest (vitest.config.e2e.ts) instead of Jest.
+              'server/e2e/jest.e2e.config.json',
+              // The webpack bundle (webpack:prod) is removed: the server is built with tsc, like NestJS does by default.
+              'server/webpack.server.prod.config.js',
+              // The Nest CLI builds and starts the server, and copies the configuration files (assets of nest-cli.json).
+              'server/scripts/copy-resources.ts',
+              // The development profile of 4.2.0 (BACKEND_ENV=dev) is in .env.dev: the .env file, loaded by every start of the
+              // server, would start the built server with the development profile.
+              'server/.env',
+              // The files of 4.2.0 moved to the feature modules (auth, users, management, common), their specs next to them.
+              'server/src/domain/authority.entity.ts',
+              'server/src/domain/user.entity.ts',
+              'server/src/domain/base/base.entity.ts',
+              'server/src/domain/base/pagination.entity.ts',
+              'server/src/domain/base/pagination.entity.spec.ts',
+              'server/src/module/auth.module.ts',
+              'server/src/module/user.module.ts',
+              'server/src/security/decorators/auth-user.decorator.ts',
+              'server/src/security/decorators/roles.decorator.ts',
+              'server/src/security/guards/auth.guard.ts',
+              'server/src/security/guards/roles.guard.ts',
+              'server/src/security/index.ts',
+              'server/src/security/oauth2.authorities.ts',
+              'server/src/security/oauth2.config.ts',
+              'server/src/security/passport.jwt.strategy.ts',
+              'server/src/security/passport.oauth2.strategy.ts',
+              'server/src/security/password-util.ts',
+              'server/src/security/payload.interface.ts',
+              'server/src/security/role-type.ts',
+              'server/src/service/auth.service.ts',
+              'server/src/service/user.service.ts',
+              'server/src/service/dto/base.dto.ts',
+              'server/src/service/dto/password-change.dto.ts',
+              'server/src/service/dto/user-login.dto.ts',
+              'server/src/service/dto/user.dto.ts',
+              'server/src/service/mapper/user.mapper.ts',
+              'server/src/web/rest/account.controller.ts',
+              'server/src/web/rest/management.controller.ts',
+              'server/src/web/rest/public.user.controller.ts',
+              'server/src/web/rest/user.controller.ts',
+              'server/src/web/rest/user.jwt.controller.ts',
+              'server/src/web/rest/user.oauth2.controller.ts',
+              'server/test/admin/management.controller.spec.ts',
+              'server/test/config.spec.ts',
+              'server/test/security/oauth2.authorities.spec.ts',
+            ],
+          });
+        }
+      },
       async writingTemplateTask({ application }) {
         await this.writeFiles({
           sections: serverFiles,
@@ -566,6 +649,25 @@ export default class extends BaseApplicationGenerator {
 
   get [BaseApplicationGenerator.WRITING_ENTITIES]() {
     return this.asWritingEntitiesTaskGroup({
+      async cleanup({ control, entities }) {
+        if (control.existingProject) {
+          await control.cleanupBlueprintFiles({
+            '3.0.1': entities.filter(e => !e.skipServer).map(e => `server/src/repository/${e.entityFileName}.repository.ts`),
+            // The files of the entities, of 4.2.0, moved to their feature module (src/entities/<entity>).
+            '4.2.1': entities
+              .filter(entity => !entity.skipServer && !entity.builtIn)
+              .flatMap(({ entityFileName, fields }) => [
+                `server/src/domain/${entityFileName}.entity.ts`,
+                `server/src/module/${entityFileName}.module.ts`,
+                `server/src/service/${entityFileName}.service.ts`,
+                `server/src/service/dto/${entityFileName}.dto.ts`,
+                `server/src/service/mapper/${entityFileName}.mapper.ts`,
+                `server/src/web/rest/${entityFileName}.controller.ts`,
+                ...fields.filter(field => field.fieldIsEnum).map(field => `server/src/domain/enumeration/${field.enumFileName}.ts`),
+              ]),
+          });
+        }
+      },
       async customEntityServerFiles({ application, entities }) {
         for (const entity of entities.filter(entity => !entity.skipServer && entity.entityDomainLayer)) {
           if (application.databaseType === 'mongodb' && entity.relationships.length > 0) {
