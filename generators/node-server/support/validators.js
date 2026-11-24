@@ -68,3 +68,19 @@ export const mutateRelationshipValidation = {
    */
   nodejsRequired: relationship => Boolean(relationship.relationshipRequired && relationship.persistableRelationship && !relationship.id),
 };
+
+/**
+ * The JSON type of a primary key, which a body must give for it: an integer (Long, Integer), a UUID, or another text
+ * (a String, the ObjectId of MongoDB). Like the JSON deserialization the contract of the backends asks, a value of
+ * another type (the text "1" of a Long) is a body that is not read, not converted.
+ */
+export const idType = primaryKey => {
+  if (primaryKey?.type === 'UUID') return 'uuid';
+  return ['Long', 'Integer'].includes(primaryKey?.type) ? 'integer' : 'string';
+};
+
+/** The mutations of an entity, the JSON type of its id (the @IsId of its DTO, the @IsRelated of the relationships to it). */
+export const mutateIdType = {
+  __override__: false,
+  nodejsIdType: ({ primaryKey }) => idType(primaryKey),
+};

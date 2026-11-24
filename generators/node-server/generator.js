@@ -23,6 +23,7 @@ import {
   mutateCriteria,
   mutateEntityAuthorities,
   mutateEntityPaths,
+  mutateIdType,
   mutateRelatedValues,
   mutateRelationOptions,
   mutateRelationshipValidation,
@@ -389,6 +390,10 @@ export default class extends BaseApplicationGenerator {
       prepareEntityPaths({ entityDefaults }) {
         // The files of the entity in its feature module (support/entity-paths.js).
         entityDefaults(mutateEntityPaths);
+      },
+      prepareIdType({ entityDefaults }) {
+        // The JSON type of the id of the entity in a request body (support/validators.js).
+        entityDefaults(mutateIdType);
       },
       prepareEntityAuthorities({ entityDefaults }) {
         // The roles of the endpoints of the entity, like the @PreAuthorize of JHipster Spring Boot (support/entity-authorities.js).

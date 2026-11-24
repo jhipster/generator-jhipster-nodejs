@@ -1,5 +1,7 @@
 import type { TransformFnParams } from 'class-transformer';
-import { ValidateBy, type ValidationOptions } from 'class-validator';
+import { isUUID, ValidateBy, type ValidationOptions } from 'class-validator';
+
+import { UNREADABLE } from '../errors/problem.exception.ts';
 
 /** A JSON number: an integer or a decimal, with an exponent or not. */
 const NUMBER = /^[-+]?(?:\d+\.?\d*|\.\d+)(?:[eE][-+]?\d+)?$/;
@@ -40,4 +42,59 @@ export const ByteLength = (min: number, max?: number, options?: ValidationOption
       },
     },
     options,
+  );
+
+/** The JSON type of an id: an integer (Long, Integer), a UUID, or another text (a String, the ObjectId of MongoDB). */
+export type IdType = 'integer' | 'uuid' | 'string';
+
+const ID_TYPES: Record<IdType, (id: unknown) => boolean> = {
+  integer: id => Number.isInteger(id),
+  uuid: id => typeof id === 'string' && isUUID(id),
+  string: id => typeof id === 'string',
+};
+
+/** An id of its type, or no id (null or undefined): a record without one, which the rules of its route answer. */
+const isIdOrEmpty = (type: IdType, id: unknown): boolean => id === undefined || id === null || ID_TYPES[type](id);
+
+/** A related record: an object with an id of its type, or without an id. */
+const isReference = (type: IdType, id: string, related: unknown): boolean =>
+  typeof related === 'object' && related !== null && !Array.isArray(related) && isIdOrEmpty(type, (related as Record<string, unknown>)[id]);
+
+/**
+ * The id of a DTO, of its JSON type: like the contract of the backends, a value of another type (the text "1" of a Long)
+ * is a body that is not read (400), not converted. A missing id is left to the rules of the route (error.idnull).
+ */
+export const IsId = (type: IdType): PropertyDecorator =>
+  ValidateBy(
+    {
+      name: 'isId',
+      constraints: [type],
+      validator: {
+        validate: (value: unknown): boolean => isIdOrEmpty(type, value),
+        defaultMessage: args => `${args?.property} must be an id of type ${type}`,
+      },
+    },
+    UNREADABLE,
+  );
+
+/**
+ * A relationship of a DTO, its related record (or the list of them, for a collection) with an id of its JSON type: like
+ * @IsId, a value of another type (the text "1" of a Long, a text for the record) is a body that is not read (400), not
+ * converted. A related record without its id is left to the reference of the service (a data integrity violation).
+ */
+export const IsRelated = (id: string, type: IdType, collection = false): PropertyDecorator =>
+  ValidateBy(
+    {
+      name: 'isRelated',
+      constraints: [id, type],
+      validator: {
+        validate: (value: unknown): boolean => {
+          if (value === undefined || value === null) return true;
+          if (!collection) return isReference(type, id, value);
+          return Array.isArray(value) && value.every(related => isReference(type, id, related));
+        },
+        defaultMessage: args => `${args?.property} must be ${collection ? 'a list of records' : 'a record'} with an id of type ${type}`,
+      },
+    },
+    UNREADABLE,
   );

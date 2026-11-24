@@ -394,6 +394,36 @@ _%>
     });
 
 <%_ for (const relationship of relationships) { _%>
+  <%_ const otherId = relationship.otherEntity.primaryKey.name; _%>
+    it('/POST create <%- entityApiUrl %> with a <%- relationship.propertyName %> of another type is a body that is not read, not converted', async () => {
+        const save = vi.spyOn(serviceMock as any, 'save');
+        const invalidValues: unknown[] = [
+            // A related record is an object, not its id.
+            <%- relationship.collection ? '[1]' : '1' %>,
+  <%_ const invalidId = { integer: "'1'", uuid: "'not-a-uuid'" }[relationship.otherEntity.nodejsIdType]; _%>
+  <%_ if (invalidId) { _%>
+            // <%- relationship.otherEntity.nodejsIdType === 'integer' ? 'A numeric id is a number, not a text.' : 'A UUID id is a UUID.' %>
+            <%- relationship.collection ? `[{ ${otherId}: ${invalidId} }]` : `{ ${otherId}: ${invalidId} }` %>,
+  <%_ } _%>
+        ];
+        try {
+            for (const <%- relationship.propertyName %> of invalidValues) {
+                const error = (await request(app.getHttpServer())
+                    .post('/api/<%- entityApiUrl %>')
+                    .send({ ...newEntity, <%- relationship.propertyName %> })
+                    .expect(400)).body;
+
+                expect(error).toMatchObject({ message: 'error.http.400', detail: 'Failed to read request' });
+                expect(error.fieldErrors).toBeUndefined();
+            }
+            expect(save).not.toHaveBeenCalled();
+        } finally {
+            save.mockRestore();
+        }
+    });
+
+<%_ } _%>
+<%_ for (const relationship of relationships) { _%>
   <%_ if (relationship.nodejsMockReference) { _%>
     it('/POST create <%- entityApiUrl %> without its required <%- relationship.propertyName %> is <%- relationship.id ? 'an error of its association' : 'a validation error' %>, like JHipster Spring Boot', async () => {
         const { <%- relationship.propertyName %>: _<%- relationship.propertyName %>, ...invalidEntity } = newEntity;
@@ -549,6 +579,24 @@ _%>
         expect(response.body).toMatchObject({ message: 'error.idinvalid', params: '<%- entityAlertName %>' });
     });
 
+  <%_ if (primaryKey.autoGenerate && ['integer', 'uuid'].includes(nodejsIdType)) { _%>
+    it('/PUT update <%- entityApiUrl %> with <%- nodejsIdType === 'integer' ? 'its id as a text' : 'an id that is not a UUID' %> is a body that is not read, not converted', async () => {
+        const update = vi.spyOn(serviceMock as any, 'update');
+        try {
+            const error = (await request(app.getHttpServer())
+                .put(`/api/<%- entityApiUrl %>/${entityMock.<%- primaryKey.name %>}`)
+                .send({ ...validEntity, <%- primaryKey.name %>: <%- nodejsIdType === 'integer' ? `String(entityMock.${primaryKey.name})` : "'not-a-uuid'" %> })
+                .expect(400)).body;
+
+            expect(error).toMatchObject({ message: 'error.http.400', detail: 'Failed to read request' });
+            expect(error.fieldErrors).toBeUndefined();
+            expect(update).not.toHaveBeenCalled();
+        } finally {
+            update.mockRestore();
+        }
+    });
+
+  <%_ } _%>
   <%_ if (!idField.fieldValidationRequired) { _%>
     it('/PUT update <%- entityApiUrl %> without id', async () => {
         const response = await request(app.getHttpServer())

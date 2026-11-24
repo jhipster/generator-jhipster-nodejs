@@ -5,7 +5,7 @@ import { Allow<%- relationships.some(relationship => relationship.nodejsRequired
 import { Transform } from 'class-transformer';
 <%_ } _%>
 <%_ const anyBinarySize = fields.some(field => field.fieldTypeBinary && field.fieldTypeBlobContent !== 'text' && field.fieldValidate === true && field.fieldValidateRules.some(rule => ['minbytes', 'maxbytes'].includes(rule))); _%>
-<%_ const baseImports = [anyBinarySize && 'ByteLength', anyFieldNumeric && 'numberFromString', relationships.length > 0 && 'type RelatedDTO'].filter(Boolean); _%>
+<%_ const baseImports = [anyBinarySize && 'ByteLength', primaryKey.autoGenerate && 'IsId', relationships.length > 0 && 'IsRelated', anyFieldNumeric && 'numberFromString', relationships.length > 0 && 'type RelatedDTO'].filter(Boolean); _%>
 <%_ if (baseImports.length > 0) { _%>
 import { <%- baseImports.join(', ') %> } from '../../../common/dto/dto-support.ts';
 <%_ } _%>
@@ -59,7 +59,7 @@ export class <%- dtoClass %> {
   <%_ if (databaseTypeMongodb) { _%>
   @Transform(({ value }) => value?.toHexString ? value?.toHexString() : value, {toPlainOnly: true})
   <%_ } _%>
-  @Allow()
+  @IsId('<%- nodejsIdType %>')
   <%- primaryKey.name %>?: <%- primaryKey.tsType %>;
 <%_ } _%>
 
@@ -94,7 +94,7 @@ export class <%- dtoClass %> {
   // Like the @NotNull relationships of JHipster Spring Boot.
   @IsNotEmpty()
   <%_ } _%>
-  @Allow()
+  @IsRelated('<%- relationship.otherEntity.primaryKey.name %>', '<%- relationship.otherEntity.nodejsIdType %>'<%- relationship.collection ? ', true' : '' %>)
   @ApiProperty({ type: () => <%- relationship.otherEntity.dtoClass %><%- relationship.collection ? ', isArray: true' : '' %>, description: "<%- relationship.relationshipApiDescription ?? `${relationship.propertyName} relationship` %>" })
   <%- relationship.propertyName %><%- relationship.nodejsRequired ? '!' : '?' %>: RelatedDTO<<%- relationship.otherEntity.dtoClass %><%- relationship.collection ? '[]' : '' %>>;
 <%_ } _%>

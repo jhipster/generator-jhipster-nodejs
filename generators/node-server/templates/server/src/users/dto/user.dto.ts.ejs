@@ -4,6 +4,10 @@ import { Allow, IsBoolean, IsEmail, IsNotEmpty, IsOptional, IsString, Length, Ma
 import { Transform } from 'class-transformer';
 <%_ } _%>
 import { Exclude } from 'class-transformer';
+<%_ if (user) { _%>
+
+import { IsId } from '../../common/dto/dto-support.ts';
+<%_ } _%>
 
 import { ObjectName } from '../../common/errors/problem.exception.ts';
 
@@ -23,7 +27,7 @@ export class <%- userLoginVmClass %> {
   <%_ if (databaseTypeMongodb) { _%>
   @Transform(({ value }) => value?.toHexString ? value?.toHexString() : value, {toPlainOnly: true})
   <%_ } _%>
-  @Allow()
+  @IsId('<%- user.nodejsIdType %>')
   <%- user.primaryKey.name %>?: <%- user.primaryKey.tsType %>;
 <%_ } else { _%>
   @Allow()
