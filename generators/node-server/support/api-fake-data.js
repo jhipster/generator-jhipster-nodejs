@@ -3,10 +3,22 @@
  * for the tests storing an entity in the database and reading it back.
  */
 
+/** The bytes of a binary blob fitted to its minbytes and maxbytes, like the @Size of JHipster Spring Boot validates them. */
+const fitBytes = (field, bytes) => {
+  const min = field.fieldValidationMinbytes ? Number(field.fieldValidateRulesMinbytes) : 0;
+  const max = field.fieldValidationMaxbytes ? Number(field.fieldValidateRulesMaxbytes) : Infinity;
+  const size = Math.min(Math.max(bytes.length, min), max);
+  return Buffer.from(Array.from({ length: size }, (_, index) => bytes[index % bytes.length] ?? 0));
+};
+
 /** A fake value of a field, as the API exchanges it. */
 export const apiValue = (field, value) => {
   // The text of a TextBlob, a String of JHipster Spring Boot: json-serializable gives the base64 of any byte[].
   if (field.fieldTypeBlobContent === 'text' && typeof value === 'string') return Buffer.from(value, 'base64').toString();
+  // A binary blob within its minbytes and maxbytes: its bytes repeated or cut to fit, base64.
+  if (field.fieldTypeBinary && typeof value === 'string' && (field.fieldValidationMinbytes || field.fieldValidationMaxbytes)) {
+    return fitBytes(field, Buffer.from(value, 'base64')).toString('base64');
+  }
   // Seconds without milliseconds: the datetime columns of MySQL do not keep them.
   if (value instanceof Date) return `${value.toISOString().slice(0, 19)}.000Z`;
   return value;

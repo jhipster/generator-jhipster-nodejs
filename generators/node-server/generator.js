@@ -27,6 +27,7 @@ import {
   mutateEntityPaths,
   mutateRelatedValues,
   mutateRelationOptions,
+  mutateRelationshipValidation,
   mutateRequiredReference,
   mutateTestSamples,
   nodejsPathRules,
@@ -275,6 +276,14 @@ export default class extends BaseApplicationGenerator {
           nodejsMigrationTimestampOffset: MIGRATION_TIMESTAMP_OFFSET,
         });
       },
+      clientAppName({ applicationDefaults }) {
+        applicationDefaults({
+          __override__: false,
+          // The name of the alert headers and of their translation keys (jhipster.clientApp.name), like JHipster Spring
+          // Boot: the frontendAppName of the client, else, without a client, its default, the camelized base name.
+          nodejsClientAppName: ({ skipClient, frontendAppName, camelizedBaseName }) => (skipClient ? camelizedBaseName : frontendAppName),
+        });
+      },
       pathRules({ applicationDefaults }) {
         applicationDefaults({
           __override__: false,
@@ -421,6 +430,10 @@ export default class extends BaseApplicationGenerator {
     return this.asPreparingEachEntityRelationshipTaskGroup({
       prepareRelationOptions({ relationshipDefaults }) {
         relationshipDefaults(mutateRelationOptions);
+      },
+      prepareRelationshipValidation({ relationshipDefaults }) {
+        // Whether a body must give the relationship (support/validators.js).
+        relationshipDefaults(mutateRelationshipValidation);
       },
       prepareRelationshipDocumentation({ relationshipDefaults }) {
         relationshipDefaults({

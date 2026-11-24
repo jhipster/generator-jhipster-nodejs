@@ -23,6 +23,15 @@ export interface ProblemProperties {
   fieldErrors?: FieldErrorVM[];
 }
 
+/** The problem of a validation failure, like JHipster Spring Boot: the errors of the fields in its fieldErrors. */
+export const validationProblem = (fieldErrors: FieldErrorVM[]): ProblemProperties => ({
+  type: CONSTRAINT_VIOLATION_TYPE,
+  title: 'Method argument not valid',
+  detail: VALIDATION_DETAIL,
+  message: ERR_VALIDATION,
+  fieldErrors,
+});
+
 /** An exception answered as the problem detail it gives. */
 export class ProblemException extends HttpException {
   constructor(
@@ -46,6 +55,7 @@ const CONSTRAINT_CODES: Record<string, string> = {
   isLength: 'Size',
   minLength: 'Size',
   maxLength: 'Size',
+  byteLength: 'Size',
   matches: 'Pattern',
   min: 'Min',
   max: 'Max',
@@ -88,13 +98,7 @@ export const toFieldErrors = (errors: ValidationError[], parentPath = ''): Field
 /** The validation of a request body failed, like the MethodArgumentNotValidException of Spring. */
 export class ValidationException extends ProblemException {
   constructor(errors: ValidationError[]) {
-    super(HttpStatus.BAD_REQUEST, {
-      type: CONSTRAINT_VIOLATION_TYPE,
-      title: 'Method argument not valid',
-      detail: VALIDATION_DETAIL,
-      message: ERR_VALIDATION,
-      fieldErrors: toFieldErrors(errors),
-    });
+    super(HttpStatus.BAD_REQUEST, validationProblem(toFieldErrors(errors)));
   }
 }
 

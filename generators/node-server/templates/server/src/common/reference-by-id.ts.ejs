@@ -3,3 +3,10 @@
  * related records.
  */
 export const referenceById = <T>(related: T, id: keyof NonNullable<T>): T => (related ? ({ [id]: related[id] } as T) : related);
+
+/**
+ * The related record by some of its properties only (its id and its display field), like a mapstruct DTO of JHipster
+ * Spring Boot maps a related record.
+ */
+export const relatedOf = <T>(related: T, keys: (keyof NonNullable<T>)[]): T =>
+  related ? (Object.fromEntries(keys.map(key => [key, related[key]])) as T) : related;

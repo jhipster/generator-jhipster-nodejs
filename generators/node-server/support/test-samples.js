@@ -1,8 +1,4 @@
-import {
-  generateEntitySamples,
-  hasCyclicRequiredRelationship,
-  isRequiredRelationship,
-} from 'generator-jhipster/generators/base-application/support';
+import { generateEntitySamples, isRequiredRelationship } from 'generator-jhipster/generators/base-application/support';
 
 import { apiFakeEntity, apiFakeValue, apiValue } from './api-fake-data.js';
 
@@ -23,12 +19,27 @@ const UNIQUE_SAMPLES = 30;
 const isStoredRequired = relationship => Boolean(isRequiredRelationship(relationship) && relationship.persistableRelationship);
 
 /**
+ * Whether a chain of required relationships the entities store comes back to an entity of the chain, like the
+ * hasCyclicRequiredRelationship of JHipster but by the stored sides only: a required side the entity does not store (the
+ * inverse side of a many-to-many) is ignored in a body, and needs no record.
+ */
+const hasCyclicStoredRequired = (entity, path = new Set()) => {
+  if (path.has(entity)) return true;
+  path.add(entity);
+  const cyclic = (entity.relationships ?? []).some(
+    relationship => isStoredRequired(relationship) && hasCyclicStoredRequired(relationship.otherEntity, path),
+  );
+  path.delete(entity);
+  return cyclic;
+};
+
+/**
  * Whether the samples store a record for a required relationship: of another entity of the application or the built-in
  * User, the related entities of a cycle of required relationships left out like the createEntity of JHipster Spring Boot.
  */
 const isSampleRelationship = relationship =>
   isStoredRequired(relationship) &&
-  !hasCyclicRequiredRelationship(relationship.otherEntity) &&
+  !hasCyclicStoredRequired(relationship.otherEntity) &&
   (relationship.otherEntity.builtInUser || relationship.otherEntity.entityRestLayer);
 
 /**

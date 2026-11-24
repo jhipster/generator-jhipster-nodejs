@@ -1,10 +1,11 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Allow<%- (anyPropertyHasValidation || fields.some(field => field.fieldIsEnum || field.nodejsTypeValidators.length > 0)) ? ', IsNotEmpty, IsOptional, IsEnum, MinLength, MaxLength, Length, Min, Max, Matches, IsInt, IsNumber, IsBoolean, IsUUID, IsISO8601, IsBase64' : '' %> } from 'class-validator';
+import { Allow<%- relationships.some(relationship => relationship.nodejsRequired && relationship.collection) ? ', ArrayNotEmpty' : '' %><%- (anyPropertyHasValidation || fields.some(field => field.fieldIsEnum || field.nodejsTypeValidators.length > 0)) ? ', IsNotEmpty, IsOptional, IsEnum, MinLength, MaxLength, Length, Min, Max, Matches, IsInt, IsNumber, IsBoolean, IsUUID, IsISO8601, IsBase64' : '' %> } from 'class-validator';
 <%_ const anyFieldNumeric = fields.some(field => (!field.id || !primaryKey.autoGenerate) && field.fieldTypeNumeric); _%>
 <%_ if (databaseTypeMongodb || anyFieldNumeric) { _%>
 import { Transform } from 'class-transformer';
 <%_ } _%>
-<%_ const baseImports = [anyFieldNumeric && 'numberFromString', relationships.length > 0 && 'type RelatedDTO'].filter(Boolean); _%>
+<%_ const anyBinarySize = fields.some(field => field.fieldTypeBinary && field.fieldTypeBlobContent !== 'text' && field.fieldValidate === true && field.fieldValidateRules.some(rule => ['minbytes', 'maxbytes'].includes(rule))); _%>
+<%_ const baseImports = [anyBinarySize && 'ByteLength', anyFieldNumeric && 'numberFromString', relationships.length > 0 && 'type RelatedDTO'].filter(Boolean); _%>
 <%_ if (baseImports.length > 0) { _%>
 import { <%- baseImports.join(', ') %> } from '../../../common/dto/dto-support.ts';
 <%_ } _%>
@@ -86,13 +87,16 @@ export class <%- dtoClass %> {
   <%_ if (relationship.relationshipJavadoc) { _%>
   <%- relationship.relationshipJavadoc %>
   <%_ } _%>
-  <%_ if (relationship.columnRequired) { _%>
+  <%_ if (relationship.nodejsRequired && relationship.collection) { _%>
+  // Like the @NotEmpty of a collection: a required many-to-many has at least one record.
+  @ArrayNotEmpty({ context: { code: 'NotEmpty' } })
+  <%_ } else if (relationship.nodejsRequired) { _%>
   // Like the @NotNull relationships of JHipster Spring Boot.
   @IsNotEmpty()
   <%_ } _%>
   @Allow()
   @ApiProperty({ type: () => <%- relationship.otherEntity.dtoClass %><%- relationship.collection ? ', isArray: true' : '' %>, description: "<%- relationship.relationshipApiDescription ?? `${relationship.propertyName} relationship` %>" })
-  <%- relationship.propertyName %><%- relationship.relationshipRequired ? '!' : '?' %>: RelatedDTO<<%- relationship.otherEntity.dtoClass %><%- relationship.collection ? '[]' : '' %>>;
+  <%- relationship.propertyName %><%- relationship.nodejsRequired ? '!' : '?' %>: RelatedDTO<<%- relationship.otherEntity.dtoClass %><%- relationship.collection ? '[]' : '' %>>;
 <%_ } _%>
 
   // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove

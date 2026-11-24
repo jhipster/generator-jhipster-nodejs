@@ -66,7 +66,7 @@ describe('criteriaWhere', () => {
       } catch (error) {
         const { problem } = error as ProblemException;
         expect(problem).toMatchObject({ message: 'error.validation', title: 'Method argument not valid' });
-        return problem.fieldErrors!.map(({ field, message }) => `${field} ${message}`);
+        return problem.fieldErrors!.map(({ field, code }) => `${field} ${code}`);
       }
     };
     expect(mismatches({ 'id.equals': 'a' })).toEqual(['id.equals typeMismatch']);
@@ -122,7 +122,7 @@ describe('criteriaOf', () => {
     expect(() => criteriaWhere({ 'id.equals': 'a' }, criteriaOf(metadata))).toThrow(
       expect.objectContaining({
         problem: expect.objectContaining({
-          fieldErrors: [{ objectName: 'sampleCriteria', field: 'id.equals', message: 'typeMismatch', code: 'typeMismatch' }],
+          fieldErrors: [{ objectName: 'sampleCriteria', field: 'id.equals', message: 'Failed to convert the value of id.equals', code: 'typeMismatch' }],
         }),
       }),
     );
