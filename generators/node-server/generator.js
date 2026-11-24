@@ -32,6 +32,7 @@ import {
   mutateTestSamples,
   nodejsPathRules,
   primaryKeyColumn,
+  rootPackageJsonOfWorkspace,
   serverEnumInfo,
   thymeleafMailToHandlebars,
   toOneSortExample,
@@ -744,12 +745,15 @@ export default class extends BaseApplicationGenerator {
             },
           });
         }
-        if (application.clientFrameworkAngular) {
-          this.packageJson.merge({
-            overrides: {
-              'browser-sync': application.nodeDependencies['browser-sync'],
-            },
-          });
+      },
+      workspacesOverrides({ application }) {
+        // npm reads the overrides and the allowScripts of the root package.json only: the ones of the server and the client
+        // workspaces (like the overrides of the Vue client) are merged into it, like the workspaces generator of JHipster
+        // does. By their folders: JHipster adds the client to the workspaces of the root in its own post writing.
+        for (const folder of [application.nodeServerRootDir, application.clientFrameworkAny && application.clientRootDir]) {
+          if (folder) {
+            this.packageJson.merge(rootPackageJsonOfWorkspace(this.readDestinationJSON(`${folder}package.json`)));
+          }
         }
       },
       packageJsonE2eScripts({ application }) {
