@@ -108,7 +108,7 @@ describe('Registration', () => {
 
             expect(problem).toMatchObject({
                 type: 'https://www.jhipster.tech/problem/constraint-violation',
-                fieldErrors: [expect.objectContaining({ field: 'password' })],
+                fieldErrors: [expect.objectContaining({ objectName: 'userManagement', field: 'password' })],
             });
         }
         expect(await service.findByFields({ where: { login: testUserDTO.login.toLowerCase() } })).toBeFalsy();
@@ -131,7 +131,7 @@ describe('Registration', () => {
         await service.delete(registeredUser);
     });
 
-    it('/POST register with an invalid login or email is a validation error', async () => {
+    it('/POST register with an invalid login or email is a validation error of userManagement', async () => {
         const problem = (
             await request(app.getHttpServer())
                 .post('/api/register')
@@ -140,10 +140,9 @@ describe('Registration', () => {
         ).body;
 
         expect(problem).toMatchObject({ type: 'https://www.jhipster.tech/problem/constraint-violation' });
-        expect(problem.fieldErrors.map(({ field, code }: { field: string; code: string }) => `${field} ${code}`).sort()).toEqual([
-            'email Email',
-            'login Pattern',
-        ]);
+        expect(
+            problem.fieldErrors.map(({ objectName, field, code }: { objectName: string; field: string; code: string }) => `${objectName}.${field} ${code}`).sort(),
+        ).toEqual(['userManagement.email Email', 'userManagement.login Pattern']);
     });
 
     it('/POST register with the login of another user is a login already used problem', async () => {

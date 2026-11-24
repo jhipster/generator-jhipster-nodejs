@@ -119,6 +119,17 @@ describe('Account', () => {
 
     });
 
+    it('/POST account update settings with an invalid mail is a validation error of userManagement', async () => {
+        const { body: problem } = await request(app.getHttpServer())
+            .post('/api/account')
+            .send({ ...testUserAuthenticated, email: 'not an email' })
+            .expect(400);
+        expect(problem).toMatchObject({
+            type: 'https://www.jhipster.tech/problem/constraint-violation',
+            fieldErrors: [{ objectName: 'userManagement', field: 'email', message: expect.any(String), code: 'Email' }],
+        });
+    });
+
     it('/POST account update settings keeps the mail in lower case, like JHipster Spring Boot', async () => {
         await request(app.getHttpServer())
             .post('/api/account')

@@ -233,6 +233,14 @@ _%>
     await request(server).delete(`/api/<%- otherEntity.entityApiUrl %>/${related.<%- otherId %>}`).expect(204);
   <%_ } _%>
   });
+
+  it('should refuse the <%- property %> relationship with a related record without its id, like the transient reference of JHipster Spring Boot', async () => {
+    const { body: problem } = await request(app.getHttpServer())
+      .post('/api/<%- entityApiUrl %>')
+      .send({ ...createdValues<%- spreads[entityInstance] ?? '' %>, <%- property %>: <%- collection ? '[{}]' : '{}' %> })
+      .expect(400);
+    expect(problem).toMatchObject({ message: 'error.dataIntegrityViolation', detail: 'Data integrity violation' });
+  });
 <%_ } _%>
 <%_ for (const relationship of inverseRelationships) { _%>
   <%_ const { otherEntity } = relationship;

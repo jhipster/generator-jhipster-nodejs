@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { BadRequestException } from '@nestjs/common';
 import { IsEnum, IsInt, IsNotEmpty, IsOptional, Length, Matches, Min, validate } from 'class-validator';
 
-import { UNREADABLE, ValidationException, validationException } from './problem.exception.ts';
+import { ObjectName, UNREADABLE, ValidationException, validationException } from './problem.exception.ts';
 
 enum Level {
   LOW = 'LOW',
@@ -34,6 +34,11 @@ class SampleDTO {
   @Min(0.5, { context: { code: 'DecimalMin' } })
   price?: unknown;
 }
+
+@ObjectName('sampleManagement')
+class NamedDTO extends SampleDTO {}
+
+class ExtendedNamedDTO extends NamedDTO {}
 
 const exceptionOf = async (values: Partial<SampleDTO>): Promise<unknown> =>
   validationException(await validate(Object.assign(new SampleDTO(), { name: 'Ana', ...values })));
@@ -69,5 +74,12 @@ describe('validationException', () => {
     expect(exception.problem.fieldErrors).toEqual([
       { objectName: 'sample', field: 'name', message: 'name should not be empty', code: 'NotNull' },
     ]);
+  });
+
+  it('gives a field error the objectName of its class and of the classes extending it', async () => {
+    for (const body of [new NamedDTO(), new ExtendedNamedDTO()]) {
+      const exception = validationException(await validate(body)) as ValidationException;
+      expect(exception.problem.fieldErrors).toEqual([expect.objectContaining({ objectName: 'sampleManagement', field: 'name' })]);
+    }
   });
 });

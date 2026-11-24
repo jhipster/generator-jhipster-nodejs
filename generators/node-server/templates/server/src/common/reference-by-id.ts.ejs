@@ -1,8 +1,20 @@
+import { DataIntegrityViolationException } from './errors/data-integrity.ts';
+
 /**
  * The related record referenced by its id alone: like JHipster Spring Boot, storing an entity does not write its
- * related records.
+ * related records. A related record without its id is a record the database does not have, which Hibernate refuses as
+ * a transient reference: a data integrity violation.
  */
-export const referenceById = <T>(related: T, id: keyof NonNullable<T>): T => (related ? ({ [id]: related[id] } as T) : related);
+export const referenceById = <T>(related: T, id: keyof NonNullable<T>): T => {
+  if (!related) {
+    return related;
+  }
+  const value = related[id];
+  if (value === undefined || value === null) {
+    throw new DataIntegrityViolationException();
+  }
+  return { [id]: value } as T;
+};
 
 /**
  * The related record by some of its properties only (its id and its display field), like a mapstruct DTO of JHipster

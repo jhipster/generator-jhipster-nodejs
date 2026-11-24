@@ -13,6 +13,7 @@ describe('isDataIntegrityViolation', () => {
     expect(isDataIntegrityViolation(queryFailed({ code: 'SQLITE_CONSTRAINT_UNIQUE' }))).toBe(true);
     expect(isDataIntegrityViolation(queryFailed({ code: '23503' }))).toBe(true);
     expect(isDataIntegrityViolation(queryFailed({ code: '22001' }))).toBe(true);
+    expect(isDataIntegrityViolation(queryFailed({ code: '22021' }))).toBe(true);
     expect(isDataIntegrityViolation(queryFailed({ code: 'ER_DUP_ENTRY', errno: 1062 }))).toBe(true);
     expect(isDataIntegrityViolation(queryFailed({ code: 'ER_ROW_IS_REFERENCED_2', errno: 1451 }))).toBe(true);
     expect(isDataIntegrityViolation(queryFailed({ code: 'EREQUEST', number: 547 }))).toBe(true);
