@@ -30,6 +30,7 @@ import {
   mutateRequiredReference,
   mutateTestSamples,
   nodejsPathRules,
+  numberFromText,
   primaryKeyColumn,
   rootPackageJsonOfWorkspace,
   serverEnumInfo,
@@ -466,6 +467,7 @@ export default class extends BaseApplicationGenerator {
           nodejsColumnOptions: fieldColumnOptions(field, application),
           nodejsColumnTypeImports: fieldColumnTypeImports(field, application),
           nodejsTypeValidators: fieldTypeValidators(field),
+          nodejsNumberFromText: numberFromText(field),
           nodejsInvalidTypeValue: invalidTypeValue(field),
         });
         // The fake value of the field as the API exchanges it, generated when a template calls it (after its faker seed).

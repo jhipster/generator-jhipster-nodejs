@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Allow<%- relationships.some(relationship => relationship.nodejsRequired && relationship.collection) ? ', ArrayNotEmpty' : '' %><%- (anyPropertyHasValidation || fields.some(field => field.fieldIsEnum || field.nodejsTypeValidators.length > 0)) ? ', IsNotEmpty, IsOptional, IsEnum, MinLength, MaxLength, Length, Min, Max, Matches, IsInt, IsNumber, IsBoolean, IsUUID, IsISO8601, IsBase64' : '' %> } from 'class-validator';
-<%_ const anyFieldNumeric = fields.some(field => (!field.id || !primaryKey.autoGenerate) && field.fieldTypeNumeric); _%>
+<%_ const anyFieldNumeric = fields.some(field => (!field.id || !primaryKey.autoGenerate) && field.nodejsNumberFromText); _%>
 <%_ if (databaseTypeMongodb || anyFieldNumeric) { _%>
 import { Transform } from 'class-transformer';
 <%_ } _%>

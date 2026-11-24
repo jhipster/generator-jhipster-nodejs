@@ -70,13 +70,21 @@ export const mutateRelationshipValidation = {
 };
 
 /**
- * The JSON type of a primary key, which a body must give for it: an integer (Long, Integer), a UUID, or another text
- * (a String, the ObjectId of MongoDB). Like the JSON deserialization the contract of the backends asks, a value of
- * another type (the text "1" of a Long) is a body that is not read, not converted.
+ * Whether a number field takes its value as a text too: a Long or a BigDecimal, which the contract of the backends
+ * accepts as a number or as a text, like I-JSON (RFC 7493) recommends a text for a number beyond the precision of a
+ * double. An Integer, a Float or a Double is a number only: a text is a body that is not read.
+ */
+export const numberFromText = field => ['Long', 'BigDecimal'].includes(field.fieldType);
+
+/**
+ * The JSON type of a primary key, which a body must give for it: a Long (a number, or its text, converted like
+ * numberFromText), an Integer (a number only), a UUID, or another text (a String, the ObjectId of MongoDB). A value of
+ * another type is a body that is not read, not converted.
  */
 export const idType = primaryKey => {
   if (primaryKey?.type === 'UUID') return 'uuid';
-  return ['Long', 'Integer'].includes(primaryKey?.type) ? 'integer' : 'string';
+  if (primaryKey?.type === 'Long') return 'long';
+  return primaryKey?.type === 'Integer' ? 'integer' : 'string';
 };
 
 /** The mutations of an entity, the JSON type of its id (the @IsId of its DTO, the @IsRelated of the relationships to it). */

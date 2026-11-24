@@ -42,9 +42,11 @@ describe('<%- entityClass %> Controller', () => {
     const enumField = fields.find(field => !field.id && field.fieldIsEnum);
     // A field whose type the DTO validates, with a value of another type.
     const typedField = fields.find(field => !field.id && !field.transient && field.nodejsInvalidTypeValue !== undefined);
-    // A number field with a valid value, sent as a text.
+    // A Long or BigDecimal field with a valid value, sent as a text.
     const validEntityValues = { ...Object.fromEntries(fakeFields), ...validValues };
-    const numericField = fields.find(field => !field.id && field.fieldTypeNumeric && typeof validEntityValues[field.fieldName] === 'number');
+    const numericField = fields.find(field => !field.id && field.nodejsNumberFromText && typeof validEntityValues[field.fieldName] === 'number');
+    // An Integer, Float or Double field with a valid value, which a text of it does not give.
+    const strictNumericField = fields.find(field => !field.id && !field.transient && field.fieldTypeNumeric && !field.nodejsNumberFromText && typeof validEntityValues[field.fieldName] === 'number');
 _%>
     const validEntity: any = {
         ...entityMock,
@@ -400,9 +402,11 @@ _%>
         const invalidValues: unknown[] = [
             // A related record is an object, not its id.
             <%- relationship.collection ? '[1]' : '1' %>,
-  <%_ const invalidId = { integer: "'1'", uuid: "'not-a-uuid'" }[relationship.otherEntity.nodejsIdType]; _%>
+  <%_ const otherIdType = relationship.otherEntity.nodejsIdType;
+      const invalidId = { long: "'abc'", integer: "'1'", uuid: "'not-a-uuid'" }[otherIdType];
+  _%>
   <%_ if (invalidId) { _%>
-            // <%- relationship.otherEntity.nodejsIdType === 'integer' ? 'A numeric id is a number, not a text.' : 'A UUID id is a UUID.' %>
+            // <%- ({ long: 'A Long id is a number or the text of one.', integer: 'An Integer id is a number, not a text.', uuid: 'A UUID id is a UUID.' })[otherIdType] %>
             <%- relationship.collection ? `[{ ${otherId}: ${invalidId} }]` : `{ ${otherId}: ${invalidId} }` %>,
   <%_ } _%>
         ];
@@ -422,6 +426,23 @@ _%>
         }
     });
 
+  <%_ if (otherIdType === 'long') { _%>
+    it('/POST create <%- entityApiUrl %> with the id of its <%- relationship.propertyName %> as a text, the number', async () => {
+        const save = vi.spyOn(serviceMock as any, 'save');
+        try {
+            await request(app.getHttpServer())
+                .post('/api/<%- entityApiUrl %>')
+                .send({ ...newEntity, <%- relationship.propertyName %>: <%- relationship.collection ? `[{ ${otherId}: '1' }]` : `{ ${otherId}: '1' }` %> })
+                .expect(201);
+
+            const [dto] = save.mock.calls[0];
+            expect((dto as any).<%- relationship.propertyName %>).toEqual(<%- relationship.collection ? `[{ ${otherId}: 1 }]` : `{ ${otherId}: 1 }` %>);
+        } finally {
+            save.mockRestore();
+        }
+    });
+
+  <%_ } _%>
 <%_ } _%>
 <%_ for (const relationship of relationships) { _%>
   <%_ if (relationship.nodejsMockReference) { _%>
@@ -478,6 +499,18 @@ _%>
             .expect(200);
 
         expect(response.body.<%- numericField.fieldName %>).toBe(validEntity.<%- numericField.fieldName %>);
+    });
+
+<%_ } _%>
+<%_ if (strictNumericField) { _%>
+    it('/POST create <%- entityApiUrl %> with <%- strictNumericField.fieldName %> as a text of a number is a body that is not read, not converted', async () => {
+        const error = (await request(app.getHttpServer())
+            .post('/api/<%- entityApiUrl %>')
+            .send({ ...newEntity, <%- strictNumericField.fieldName %>: String(validEntity.<%- strictNumericField.fieldName %>) })
+            .expect(400)).body;
+
+        expect(error).toMatchObject({ message: 'error.http.400', detail: 'Failed to read request' });
+        expect(error.fieldErrors).toBeUndefined();
     });
 
 <%_ } _%>
@@ -579,6 +612,23 @@ _%>
         expect(response.body).toMatchObject({ message: 'error.idinvalid', params: '<%- entityAlertName %>' });
     });
 
+  <%_ if (primaryKey.autoGenerate && nodejsIdType === 'long') { _%>
+    it('/PUT update <%- entityApiUrl %> with its id as a text, the number', async () => {
+        const update = vi.spyOn(serviceMock as any, 'update');
+        try {
+            await request(app.getHttpServer())
+                .put(`/api/<%- entityApiUrl %>/${entityMock.<%- primaryKey.name %>}`)
+                .send({ ...validEntity, <%- primaryKey.name %>: String(entityMock.<%- primaryKey.name %>) })
+                .expect(200);
+
+            const [dto] = update.mock.calls[0];
+            expect((dto as any).<%- primaryKey.name %>).toBe(entityMock.<%- primaryKey.name %>);
+        } finally {
+            update.mockRestore();
+        }
+    });
+
+  <%_ } _%>
   <%_ if (primaryKey.autoGenerate && ['integer', 'uuid'].includes(nodejsIdType)) { _%>
     it('/PUT update <%- entityApiUrl %> with <%- nodejsIdType === 'integer' ? 'its id as a text' : 'an id that is not a UUID' %> is a body that is not read, not converted', async () => {
         const update = vi.spyOn(serviceMock as any, 'update');
