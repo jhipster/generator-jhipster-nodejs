@@ -346,7 +346,7 @@ _%>
   /** The properties of the criteria, like the <%- entityClass %>Criteria of JHipster Spring Boot, by their kind. */
   const criteria: { name: string; property: string; kind: 'equality' | 'range' | 'string'; approximate?: boolean }[] = <%- nodejsCriteria.tests %>;
 
-  it('should filter the list and its count by the criteria of every property, like the filtering of JHipster Spring Boot', async () => {
+  it('should filter the list by the criteria of every property, like the filtering of JHipster Spring Boot', async () => {
     const server = app.getHttpServer();
     const { body: stored } = await request(server).post('/api/<%- entityApiUrl %>').send(<%- spreads[entityInstance] ? `{ ...createdValues${spreads[entityInstance]} }` : 'createdValues' %>).expect(201);
     const id = stored.<%- primaryKey.name %>;
@@ -354,8 +354,6 @@ _%>
     const found = async (criterion: string, value: unknown): Promise<boolean> => {
       const query = `${criterion}=${encodeURIComponent(String(value))}&<%- primaryKey.name %>.in=${encodeURIComponent(String(id))}`;
       const { body } = await request(server).get(`/api/<%- entityApiUrl %>?${query}`).expect(200);
-      const { body: count } = await request(server).get(`/api/<%- entityApiUrl %>/count?${query}`).expect(200);
-      expect(count).toBe(body.length);
       return body.some((record: any) => record.<%- primaryKey.name %> === id);
     };
 

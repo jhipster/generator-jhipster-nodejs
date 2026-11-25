@@ -902,14 +902,11 @@ describe('SubGenerator node-server of nodejs JHipster blueprint', () => {
       result.assertNoFileContent(entity, /@Filterable\([^)]*\)\n\s+neighbours\?/);
     });
 
-    it('should filter the list and count the records of the criteria', () => {
+    it('should filter the list by the criteria, without the count route no generated client calls', () => {
       const controller = 'server/src/entities/region/region.controller.ts';
       result.assertFileContent(controller, '@Criteria(Region) where: FindOptionsWhere<Region>,');
-      result.assertFileContent(controller, "@Get('/count')");
-      result.assertFileContent(
-        'server/src/entities/region/region.service.ts',
-        'async count(options: FindManyOptions<Region>): Promise<number> {',
-      );
+      result.assertNoFileContent(controller, "@Get('/count')");
+      result.assertNoFileContent('server/src/entities/region/region.service.ts', 'async count(');
     });
 
     it('should test the criteria of every property on the database', () => {

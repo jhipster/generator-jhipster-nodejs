@@ -6,7 +6,7 @@
     // The filter of the list of the records without a relationship to one record, for the form of the other entity.
     const oneToOneFilter = nodejsMappedByRelationships.some(relationship => relationship.relationshipOneToOne);
 _%>
-import { Controller, Delete, Get, HttpCode,<%- nodejsCriteria ? ' Header,' : '' %> NotFoundException, Param,<%- updatableEntity ? ' Patch,' : '' %> Post as PostMethod,<%- eagerLoadFlag || oneToOneFilter ? ' Query,' : '' %><%- updatableEntity ? ' Put' : '' %> } from '@nestjs/common';
+import { Controller, Delete, Get, HttpCode, NotFoundException, Param,<%- updatableEntity ? ' Patch,' : '' %> Post as PostMethod,<%- eagerLoadFlag || oneToOneFilter ? ' Query,' : '' %><%- updatableEntity ? ' Put' : '' %> } from '@nestjs/common';
 import { 
 <%_ if (authenticationTypeJwt) { _%> ApiBearerAuth, 
 <%_ } else { _%> ApiSecurity, 
@@ -114,23 +114,6 @@ export class <%- entityClass %>Controller {
 <%_ } _%>
   }
 
-<%_ if (nodejsCriteria) { _%>
-  @Get('/count')
-  // The count as JSON, like JHipster Spring Boot: Nest sends a number as text.
-  @Header('Content-Type', 'application/json')
-  <%_ if (nodejsReadRoles) { _%>
-  @Roles([<%- nodejsReadRoles %>])
-  <%_ } _%>
-  @ApiResponse({
-    status: 200,
-    description: 'The count of the records matching the criteria',
-    type: Number,
-  })
-  async count(@Criteria(<%- entityClass %>) where: FindOptionsWhere<<%- entityClass %>>): Promise<number> {
-    return this.<%- entityInstance %>Service.count({ where });
-  }
-
-<%_ } _%>
   @Get('/:id')
 <%_ if (nodejsReadRoles) { _%>
   @Roles([<%- nodejsReadRoles %>])
