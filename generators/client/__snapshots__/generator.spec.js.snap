@@ -788,6 +788,9 @@ exports[`SubGenerator client of nodejs JHipster blueprint > run > should match t
   "client/src/app/shared/jhipster/pagination.ts": {
     "stateCleared": "modified",
   },
+  "client/src/app/shared/jhipster/problem-details.spec.ts": {
+    "stateCleared": "modified",
+  },
   "client/src/app/shared/jhipster/problem-details.ts": {
     "stateCleared": "modified",
   },
