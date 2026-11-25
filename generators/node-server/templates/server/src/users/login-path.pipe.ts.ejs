@@ -5,7 +5,7 @@ import { LOGIN_PATTERN } from './dto/user.dto.ts';
 
 /**
  * The login of the path of a user, like the @Pattern of the login parameter of the UserResource of JHipster Spring Boot:
- * a login out of the pattern is a validation error, its field error the one of a method validation of Spring.
+ * a login out of the pattern is a validation error, its field error of userManagement like the ones of a user body.
  */
 @Injectable()
 export class LoginPathPipe implements PipeTransform<string, string> {
@@ -14,7 +14,7 @@ export class LoginPathPipe implements PipeTransform<string, string> {
       throw new ProblemException(
         HttpStatus.BAD_REQUEST,
         validationProblem([
-          { objectName: 'userResource', field: 'login', message: `login must match ${LOGIN_PATTERN} regular expression`, code: 'Pattern' },
+          { objectName: 'userManagement', field: 'login', message: `login must match ${LOGIN_PATTERN} regular expression`, code: 'Pattern' },
         ]),
       );
     }

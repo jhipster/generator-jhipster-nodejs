@@ -181,14 +181,14 @@ describe('User', () => {
             message: 'error.validation',
             detail: 'Validation error on the server.',
             path: '/api/admin/users',
-            fieldErrors: [{ objectName: 'user', field: 'email', message: expect.any(String), code: 'Email' }],
+            fieldErrors: [{ objectName: 'userManagement', field: 'email', message: expect.any(String), code: 'Email' }],
         });
     });
 
     it('/POST create user without a login is a field error NotBlank, like the AdminUserDTO of JHipster Spring Boot', async () => {
         const { login: _login, ...withoutLogin } = testUserRequestObject;
         const { body } = await request(app.getHttpServer()).post('/api/admin/users').send(withoutLogin).expect(400);
-        expect(body.fieldErrors).toEqual([{ objectName: 'user', field: 'login', message: expect.any(String), code: 'NotBlank' }]);
+        expect(body.fieldErrors).toEqual([{ objectName: 'userManagement', field: 'login', message: expect.any(String), code: 'NotBlank' }]);
     });
 
     it('/GET all users', async () => {
@@ -322,7 +322,7 @@ describe('User', () => {
                 type: 'https://www.jhipster.tech/problem/constraint-violation',
                 title: 'Method argument not valid',
                 message: 'error.validation',
-                fieldErrors: [{ objectName: 'userResource', field: 'login', message: expect.any(String), code: 'Pattern' }],
+                fieldErrors: [{ objectName: 'userManagement', field: 'login', message: expect.any(String), code: 'Pattern' }],
             });
         }
     });

@@ -10,8 +10,11 @@ interface DriverError {
   errorNum?: unknown;
 }
 
-/** The SQLSTATE of PostgreSQL: the integrity constraint violations (class 23) and the value too long for its column. */
-const POSTGRES_STATES = /^(?:23\d{3}|22001)$/;
+/**
+ * The SQLSTATE of PostgreSQL: the integrity constraint violations (class 23) and the data exceptions (class 22), like the
+ * DataException of Hibernate: a value too long for its column, a character its encoding refuses (a NUL).
+ */
+const POSTGRES_STATES = /^2[23][0-9A-Z]{3}$/;
 /** MySQL and MariaDB: a null, a duplicate, a foreign key, a check, a value too long. */
 const MYSQL_ERRORS = [1048, 1062, 1216, 1217, 1364, 1406, 1451, 1452, 3819, 4025];
 /** SQL Server: a null, a foreign key or a check, a duplicate, a value too long. */
@@ -23,7 +26,7 @@ const MONGODB_ERRORS = [11000, 11001];
 
 /**
  * Whether an error of the database is a violation of its integrity, like the DataIntegrityViolationException of Spring: a
- * constraint (not null, unique, foreign key, check) or a value too long for its column. A query error of TypeORM keeps the
+ * constraint (not null, unique, foreign key, check) or a value the column refuses. A query error of TypeORM keeps the
  * error of the driver.
  */
 export const isDataIntegrityViolation = (error: unknown): boolean => {

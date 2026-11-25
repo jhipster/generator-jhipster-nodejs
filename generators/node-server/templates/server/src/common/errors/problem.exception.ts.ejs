@@ -1,4 +1,5 @@
 import { BadRequestException, HttpException, HttpStatus, ValidationError } from '@nestjs/common';
+import { Reflector } from '@nestjs/core';
 
 import { CONSTRAINT_VIOLATION_TYPE, DEFAULT_TYPE, ERR_VALIDATION, VALIDATION_DETAIL<%- generateUserManagement ? ', EMAIL_ALREADY_USED_TYPE, INVALID_PASSWORD_TYPE, LOGIN_ALREADY_USED_TYPE' : '' %> } from './error-constants.ts';
 
@@ -84,13 +85,28 @@ const failedConstraint = ({ value, constraints = {}, contexts = {} }: Validation
 };
 
 /**
- * The errors of the validation of a request body, like the field errors of JHipster Spring Boot: the object (the class
- * of the body without its <%- dtoSuffix %> suffix), the field, and the message and the code of the constraint it fails.
+ * The objectName of the field errors of a body class and of the classes extending it, instead of the one of its name:
+ * the prefix of the translation keys of its fields in the clients, like userManagement for a user.
+ */
+export const ObjectName = Reflector.createDecorator<string>();
+
+/** The objectName of the field errors of a body: the one of its class (ObjectName), else its class without its <%- dtoSuffix %> suffix. */
+const objectNameOf = (body: object | undefined): string => {
+  const type = body?.constructor;
+  return (
+    (type && (Reflect.getMetadata(ObjectName.KEY, type) as string | undefined)) ??
+    (type?.name ?? '').replace(/^./, first => first.toLowerCase()).replace(/<%- dtoSuffix %>$/, '')
+  );
+};
+
+/**
+ * The errors of the validation of a request body, like the field errors of JHipster Spring Boot: the object (see
+ * objectNameOf), the field, and the message and the code of the constraint it fails.
  */
 export const toFieldErrors = (errors: ValidationError[], parentPath = ''): FieldErrorVM[] =>
   errors.flatMap(error => {
     const field = `${parentPath}${error.property}`;
-    const objectName = (error.target?.constructor.name ?? '').replace(/^./, first => first.toLowerCase()).replace(/<%- dtoSuffix %>$/, '');
+    const objectName = objectNameOf(error.target);
     const constraint = failedConstraint(error);
     return [...(constraint ? [{ objectName, field, ...constraint }] : []), ...toFieldErrors(error.children ?? [], `${field}.`)];
   });
