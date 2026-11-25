@@ -1,4 +1,5 @@
-import { Body, Controller, Delete, Get, HttpCode, NotFoundException, Param, Post as PostMethod } from '@nestjs/common';
+import { Controller, Delete, Get, HttpCode, NotFoundException, Param, Post as PostMethod } from '@nestjs/common';
+import { JsonBody } from '../common/errors/json-body.interceptor.ts';
 import { InjectRepository } from '@nestjs/typeorm';
 import { <%- authenticationTypeJwt ? 'ApiBearerAuth' : 'ApiSecurity' %>, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Repository } from 'typeorm';
@@ -62,7 +63,7 @@ export class AuthorityController {
   @ApiOperation({ summary: 'Create an authority' })
   @ApiResponse({ status: 201, type: AuthorityDTO })
   @ApiResponse({ status: 400, description: 'The authority exists already.' })
-  async create(@Body() authorityDTO: AuthorityDTO): Promise<AuthorityDTO> {
+  async create(@JsonBody() authorityDTO: AuthorityDTO): Promise<AuthorityDTO> {
     // Like JHipster Spring Boot, the name is the id of an authority: an existing one is not a new one.
     if (await this.authorityRepository.findOne({ where: { name: authorityDTO.name } })) {
       throw new BadRequestAlertException('A new authority cannot already have an ID', ENTITY_NAME, 'idexists');
