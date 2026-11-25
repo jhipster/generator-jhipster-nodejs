@@ -27,7 +27,7 @@ export class <%- userLoginVmClass %> {
   <%_ if (databaseTypeMongodb) { _%>
   @Transform(({ value }) => value?.toHexString ? value?.toHexString() : value, {toPlainOnly: true})
   <%_ } _%>
-  @IsId('<%- user.nodejsIdType %>')
+  @IsId('<%- user.primaryKey.jsonType %>')
   <%- user.primaryKey.name %>?: <%- user.primaryKey.tsType %>;
 <%_ } else { _%>
   @Allow()

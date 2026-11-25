@@ -61,7 +61,7 @@
     }
     // A value of another type is a bad request (400), but a Long or a BigDecimal given as a text is the number, like the
     // contract of the backends (support/validators.js).
-    if (field.nodejsNumberFromText) {
+    if (field.jsonTypeNumberOrText) {
       validators.push('@Transform(numberFromString)');
     }
     validators.push(...field.nodejsTypeValidators);

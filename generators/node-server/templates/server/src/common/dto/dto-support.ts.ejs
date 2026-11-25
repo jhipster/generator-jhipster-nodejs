@@ -46,20 +46,20 @@ export const ByteLength = (min: number, max?: number, options?: ValidationOption
   );
 
 /**
- * The JSON type of an id: a Long (a number, or its text), an Integer (a number only), a UUID, or another text (a String,
- * the ObjectId of MongoDB).
+ * The JSON values a body takes for an id, the jsonType of its primary key: a number or its text (a Long), a number only
+ * (an Integer), the text of a UUID, or any other text (a String, the ObjectId of MongoDB).
  */
-export type IdType = 'long' | 'integer' | 'uuid' | 'string';
+export type IdType = 'number-or-text' | 'number' | 'uuid' | 'text';
 
 /** The text of an integer, the text a Long may be given as. */
 const INTEGER = /^[-+]?\d+$/;
 
 const ID_TYPES: Record<IdType, (id: unknown) => boolean> = {
   // A Long given as a text is converted before the validation (idFromText).
-  long: id => Number.isInteger(id),
-  integer: id => Number.isInteger(id),
+  'number-or-text': id => Number.isInteger(id),
+  number: id => Number.isInteger(id),
   uuid: id => typeof id === 'string' && isUUID(id),
-  string: id => typeof id === 'string',
+  text: id => typeof id === 'string',
 };
 
 /** An id of its type, or no id (null or undefined): a record without one, which the rules of its route answer. */
@@ -70,7 +70,7 @@ const isReference = (type: IdType, id: string, related: unknown): boolean =>
   typeof related === 'object' && related !== null && !Array.isArray(related) && isIdOrEmpty(type, (related as Record<string, unknown>)[id]);
 
 /** A Long id given as a text is the number; any other value is kept for the validation to refuse. */
-const idFromText = (type: IdType, id: unknown): unknown => (type === 'long' && typeof id === 'string' && INTEGER.test(id) ? Number(id) : id);
+const idFromText = (type: IdType, id: unknown): unknown => (type === 'number-or-text' && typeof id === 'string' && INTEGER.test(id) ? Number(id) : id);
 
 /** A related record with its Long id given as a text, with the number. */
 const referenceFromText = (type: IdType, id: string, related: unknown): unknown =>

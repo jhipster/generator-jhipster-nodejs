@@ -44,9 +44,9 @@ describe('<%- entityClass %> Controller', () => {
     const typedField = fields.find(field => !field.id && !field.transient && field.nodejsInvalidTypeValue !== undefined);
     // A Long or BigDecimal field with a valid value, sent as a text.
     const validEntityValues = { ...Object.fromEntries(fakeFields), ...validValues };
-    const numericField = fields.find(field => !field.id && field.nodejsNumberFromText && typeof validEntityValues[field.fieldName] === 'number');
+    const numericField = fields.find(field => !field.id && field.jsonTypeNumberOrText && typeof validEntityValues[field.fieldName] === 'number');
     // An Integer, Float or Double field with a valid value, which a text of it does not give.
-    const strictNumericField = fields.find(field => !field.id && !field.transient && field.fieldTypeNumeric && !field.nodejsNumberFromText && typeof validEntityValues[field.fieldName] === 'number');
+    const strictNumericField = fields.find(field => !field.id && !field.transient && field.jsonTypeNumber && typeof validEntityValues[field.fieldName] === 'number');
 _%>
     const validEntity: any = {
         ...entityMock,
@@ -402,11 +402,11 @@ _%>
         const invalidValues: unknown[] = [
             // A related record is an object, not its id.
             <%- relationship.collection ? '[1]' : '1' %>,
-  <%_ const otherIdType = relationship.otherEntity.nodejsIdType;
-      const invalidId = { long: "'abc'", integer: "'1'", uuid: "'not-a-uuid'" }[otherIdType];
+  <%_ const otherIdType = relationship.otherEntity.primaryKey.jsonType;
+      const invalidId = { 'number-or-text': "'abc'", 'number': "'1'", 'uuid': "'not-a-uuid'" }[otherIdType];
   _%>
   <%_ if (invalidId) { _%>
-            // <%- ({ long: 'A Long id is a number or the text of one.', integer: 'An Integer id is a number, not a text.', uuid: 'A UUID id is a UUID.' })[otherIdType] %>
+            // <%- ({ 'number-or-text': 'A Long id is a number or the text of one.', 'number': 'An Integer id is a number, not a text.', 'uuid': 'A UUID id is a UUID.' })[otherIdType] %>
             <%- relationship.collection ? `[{ ${otherId}: ${invalidId} }]` : `{ ${otherId}: ${invalidId} }` %>,
   <%_ } _%>
         ];
@@ -426,7 +426,7 @@ _%>
         }
     });
 
-  <%_ if (otherIdType === 'long') { _%>
+  <%_ if (otherIdType === 'number-or-text') { _%>
     it('/POST create <%- entityApiUrl %> with the id of its <%- relationship.propertyName %> as a text, the number', async () => {
         const save = vi.spyOn(serviceMock as any, 'save');
         try {
@@ -612,7 +612,7 @@ _%>
         expect(response.body).toMatchObject({ message: 'error.idinvalid', params: '<%- entityAlertName %>' });
     });
 
-  <%_ if (primaryKey.autoGenerate && nodejsIdType === 'long') { _%>
+  <%_ if (primaryKey.autoGenerate && primaryKey.jsonTypeNumberOrText) { _%>
     it('/PUT update <%- entityApiUrl %> with its id as a text, the number', async () => {
         const update = vi.spyOn(serviceMock as any, 'update');
         try {
@@ -629,13 +629,13 @@ _%>
     });
 
   <%_ } _%>
-  <%_ if (primaryKey.autoGenerate && ['integer', 'uuid'].includes(nodejsIdType)) { _%>
-    it('/PUT update <%- entityApiUrl %> with <%- nodejsIdType === 'integer' ? 'its id as a text' : 'an id that is not a UUID' %> is a body that is not read, not converted', async () => {
+  <%_ if (primaryKey.autoGenerate && (primaryKey.jsonTypeNumber || primaryKey.jsonTypeUuid)) { _%>
+    it('/PUT update <%- entityApiUrl %> with <%- primaryKey.jsonTypeNumber ? 'its id as a text' : 'an id that is not a UUID' %> is a body that is not read, not converted', async () => {
         const update = vi.spyOn(serviceMock as any, 'update');
         try {
             const error = (await request(app.getHttpServer())
                 .put(`/api/<%- entityApiUrl %>/${entityMock.<%- primaryKey.name %>}`)
-                .send({ ...validEntity, <%- primaryKey.name %>: <%- nodejsIdType === 'integer' ? `String(entityMock.${primaryKey.name})` : "'not-a-uuid'" %> })
+                .send({ ...validEntity, <%- primaryKey.name %>: <%- primaryKey.jsonTypeNumber ? `String(entityMock.${primaryKey.name})` : "'not-a-uuid'" %> })
                 .expect(400)).body;
 
             expect(error).toMatchObject({ message: 'error.http.400', detail: 'Failed to read request' });

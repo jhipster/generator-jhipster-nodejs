@@ -290,7 +290,7 @@ import { BookFormat } from '../../enumeration/book-format.ts';
  * A BookDTO object.
  */
 export class BookDTO {
-  @IsId('long')
+  @IsId('number-or-text')
   id?: number;
 
             @IsNotEmpty()

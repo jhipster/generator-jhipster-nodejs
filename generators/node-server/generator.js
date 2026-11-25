@@ -23,14 +23,12 @@ import {
   mutateCriteria,
   mutateEntityAuthorities,
   mutateEntityPaths,
-  mutateIdType,
   mutateRelatedValues,
   mutateRelationOptions,
   mutateRelationshipValidation,
   mutateRequiredReference,
   mutateTestSamples,
   nodejsPathRules,
-  numberFromText,
   primaryKeyColumn,
   rootPackageJsonOfWorkspace,
   serverEnumInfo,
@@ -392,10 +390,6 @@ export default class extends BaseApplicationGenerator {
         // The files of the entity in its feature module (support/entity-paths.js).
         entityDefaults(mutateEntityPaths);
       },
-      prepareIdType({ entityDefaults }) {
-        // The JSON type of the id of the entity in a request body (support/validators.js).
-        entityDefaults(mutateIdType);
-      },
       prepareEntityAuthorities({ entityDefaults }) {
         // The roles of the endpoints of the entity, like the @PreAuthorize of JHipster Spring Boot (support/entity-authorities.js).
         entityDefaults(mutateEntityAuthorities);
@@ -467,7 +461,6 @@ export default class extends BaseApplicationGenerator {
           nodejsColumnOptions: fieldColumnOptions(field, application),
           nodejsColumnTypeImports: fieldColumnTypeImports(field, application),
           nodejsTypeValidators: fieldTypeValidators(field),
-          nodejsNumberFromText: numberFromText(field),
           nodejsInvalidTypeValue: invalidTypeValue(field),
         });
         // The fake value of the field as the API exchanges it, generated when a template calls it (after its faker seed).

@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Allow<%- relationships.some(relationship => relationship.nodejsRequired && relationship.collection) ? ', ArrayNotEmpty' : '' %><%- (anyPropertyHasValidation || fields.some(field => field.fieldIsEnum || field.nodejsTypeValidators.length > 0)) ? ', IsNotEmpty, IsOptional, IsEnum, MinLength, MaxLength, Length, Min, Max, Matches, IsInt, IsNumber, IsBoolean, IsUUID, IsISO8601, IsBase64' : '' %> } from 'class-validator';
-<%_ const anyFieldNumeric = fields.some(field => (!field.id || !primaryKey.autoGenerate) && field.nodejsNumberFromText); _%>
+<%_ const anyFieldNumeric = fields.some(field => (!field.id || !primaryKey.autoGenerate) && field.jsonTypeNumberOrText); _%>
 <%_ if (databaseTypeMongodb || anyFieldNumeric) { _%>
 import { Transform } from 'class-transformer';
 <%_ } _%>
@@ -59,7 +59,7 @@ export class <%- dtoClass %> {
   <%_ if (databaseTypeMongodb) { _%>
   @Transform(({ value }) => value?.toHexString ? value?.toHexString() : value, {toPlainOnly: true})
   <%_ } _%>
-  @IsId('<%- nodejsIdType %>')
+  @IsId('<%- primaryKey.jsonType %>')
   <%- primaryKey.name %>?: <%- primaryKey.tsType %>;
 <%_ } _%>
 
@@ -94,7 +94,7 @@ export class <%- dtoClass %> {
   // Like the @NotNull relationships of JHipster Spring Boot.
   @IsNotEmpty()
   <%_ } _%>
-  @IsRelated('<%- relationship.otherEntity.primaryKey.name %>', '<%- relationship.otherEntity.nodejsIdType %>'<%- relationship.collection ? ', true' : '' %>)
+  @IsRelated('<%- relationship.otherEntity.primaryKey.name %>', '<%- relationship.otherEntity.primaryKey.jsonType %>'<%- relationship.collection ? ', true' : '' %>)
   @ApiProperty({ type: () => <%- relationship.otherEntity.dtoClass %><%- relationship.collection ? ', isArray: true' : '' %>, description: "<%- relationship.relationshipApiDescription ?? `${relationship.propertyName} relationship` %>" })
   <%- relationship.propertyName %><%- relationship.nodejsRequired ? '!' : '?' %>: RelatedDTO<<%- relationship.otherEntity.dtoClass %><%- relationship.collection ? '[]' : '' %>>;
 <%_ } _%>
