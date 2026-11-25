@@ -1,5 +1,3 @@
-import { readFile } from 'node:fs/promises';
-
 import { TEMPLATES_WEBAPP_SOURCES_DIR } from 'generator-jhipster';
 import BaseApplicationGenerator from 'generator-jhipster/generators/base-application';
 import { createNeedleCallback } from 'generator-jhipster/generators/base-core/support';
@@ -125,10 +123,6 @@ const databaseDevDrivers = {
 };
 
 export default class extends BaseApplicationGenerator {
-  oldNodejsVersion;
-  existingNodejsVersion;
-  nodejsPackageJson;
-
   constructor(args, options, features) {
     // The content type of a blob is a field of its own, the <field>ContentType String field JHipster gives next to the blob,
     // written like any field: the column, the property of the entity and of the DTO, its validation and its fake data,
@@ -142,17 +136,6 @@ export default class extends BaseApplicationGenerator {
     // The database preparation of JHipster (the columnRequired of the relationships, among others), composed before the
     // server like the bootstrap of the server of JHipster composes it, so its tasks of a priority run first.
     await this.dependsOnJHipster('jhipster:base-application:database-bootstrap');
-  }
-
-  get [BaseApplicationGenerator.INITIALIZING]() {
-    return this.asInitializingTaskGroup({
-      async initializing() {
-        this.existingNodejsVersion = this.blueprintConfig.nodejsVersion;
-        this.oldNodejsVersion = this.existingNodejsVersion ?? '3.0.0';
-        this.nodejsPackageJson = JSON.parse((await readFile(this.templatePath('../../../package.json'), 'utf-8')).toString());
-        this.blueprintConfig.nodejsVersion = this.nodejsPackageJson.version;
-      },
-    });
   }
 
   get [BaseApplicationGenerator.CONFIGURING]() {
@@ -536,8 +519,9 @@ export default class extends BaseApplicationGenerator {
   get [BaseApplicationGenerator.WRITING]() {
     return this.asWritingTaskGroup({
       async cleanup({ application, control }) {
+        // The files a former version of the blueprint wrote, removed since: by the blueprintVersion JHipster records.
         if (control.existingProject) {
-          await control.cleanupFiles(this.oldNodejsVersion, {
+          await control.cleanupBlueprintFiles({
             '3.0.1': [
               '.server.eslintrc.json',
               '.server.eslintignore',
@@ -667,7 +651,7 @@ export default class extends BaseApplicationGenerator {
     return this.asWritingEntitiesTaskGroup({
       async cleanup({ control, entities }) {
         if (control.existingProject) {
-          await control.cleanupFiles(this.oldNodejsVersion, {
+          await control.cleanupBlueprintFiles({
             '3.0.1': entities.filter(e => !e.skipServer).map(e => `server/src/repository/${e.entityFileName}.repository.ts`),
             // The files of the entities, of 4.2.0, moved to their feature module (src/entities/<entity>).
             '4.2.1': entities
