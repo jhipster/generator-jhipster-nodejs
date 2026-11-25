@@ -53,8 +53,13 @@ export const prepareSampleEntry = sampleData => {
     generatorOptions.prodDatabaseType = databaseType;
   }
 
-  const sampleFile = [...split, 'template', 'jdl'].join('-');
-  const file = path.join(__dirname, '../templates/samples', `${sampleFile}.jdl`);
+  // The template of the authentication type when it has one of its own (the entities of OAuth2 have no relationship with
+  // User), else the one of every authentication type.
+  const sampleFileOf = parts => [...parts, 'template', 'jdl'].join('-');
+  const fileOf = sampleFile => path.join(__dirname, '../templates/samples', `${sampleFile}.jdl`);
+  const ownSampleFile = sampleFileOf(split.map(s => (s === 'auth' ? authenticationType : s)));
+  const sampleFile = authenticationType && existsSync(fileOf(ownSampleFile)) ? ownSampleFile : sampleFileOf(split);
+  const file = fileOf(sampleFile);
   assert(existsSync(file), `The sample ${file} does not exist.`);
 
   return [

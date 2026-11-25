@@ -42,20 +42,12 @@ export class <%- user.persistClass %> extends AbstractAuditingEntity {
   authorities?: Authority[];
 <%_ } _%>
 
-<%_ if (generateUserManagement) { _%>
   @Column({
     type: "varchar"
   })
   @Exclude()
   @NotSortable()
   password!: string;
-<%_ } else { _%>
-  // The identity provider authenticates the users: no password of their own, like JHipster Spring Boot with OAuth2.
-  @Column({ type: 'varchar', nullable: true })
-  @Exclude()
-  @NotSortable()
-  password?: string;
-<%_ } _%>
   @Column({ nullable: true })
   imageUrl?: string;
   // Never in a response, like the @JsonIgnore keys of JHipster Spring Boot: a user related to an entity is serialized

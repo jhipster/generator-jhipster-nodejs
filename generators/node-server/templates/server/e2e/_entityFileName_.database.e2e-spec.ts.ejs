@@ -179,7 +179,7 @@ _%>
   it('should store the <%- property %> relationship by the id of the related record, without changing it', async () => {
     const server = app.getHttpServer();
   <%_ if (otherEntity.builtInUser) { _%>
-    // A user of this test: the applications without seed users (OAuth2) have none.
+    // A user of this test, with its keys, removed at its end.
     const users = app.get(DataSource).getRepository(<%- user.persistClass %>);
     const related = await users.save(
       users.create({

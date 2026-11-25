@@ -1,4 +1,4 @@
-import { describe, expect, it, vi } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import { Oauth2Strategy } from './passport.oauth2.strategy.ts';
 
 const token = (claims: object): string =>
@@ -6,14 +6,13 @@ const token = (claims: object): string =>
 
 describe('OAuth2 login strategy', () => {
   it('should build the user of the ID token of the token response, which passport-oauth2 gives to the verify', async () => {
-    const authService = { findUserOrSave: vi.fn() };
     const configService = { get: () => 'value' };
     const oauth2Config = {
       authorizationURL: 'http://localhost/auth',
       tokenURL: 'http://localhost/token',
       callbackURL: 'http://localhost/callback',
     };
-    const strategy: any = new Oauth2Strategy(authService as any, configService as any, oauth2Config as any);
+    const strategy: any = new Oauth2Strategy(configService as any, oauth2Config as any);
     // passport-oauth2 gives the params of the token response with a verify of 5 parameters only (4 without them).
     expect(strategy._verify).toHaveLength(5);
 
@@ -25,8 +24,5 @@ describe('OAuth2 login strategy', () => {
     );
 
     expect(user).toMatchObject({ login: 'user', email: 'user@example.com', authorities: ['ROLE_USER'], idToken });
-<%_ if (generateBuiltInUserEntity) { _%>
-    expect(authService.findUserOrSave).toHaveBeenCalledWith(expect.objectContaining({ login: 'user' }));
-<%_ } _%>
   });
 });

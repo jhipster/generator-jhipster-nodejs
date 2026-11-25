@@ -1,5 +1,5 @@
 import { beforeAll, describe, expect, it } from 'expect-node';
-import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { mkdirSync, writeFileSync } from 'node:fs';
 import { basename, dirname, join } from 'node:path';
 
 import { defaultHelpers as helpers, result } from 'generator-jhipster/testing';
@@ -463,7 +463,7 @@ describe('SubGenerator node-server of nodejs JHipster blueprint', () => {
       expect(result.getStateSnapshot()).toMatchSnapshot();
     });
 
-    it('should not generate built-in users by default (syncUserWithIdp disabled)', () => {
+    it('should not generate built-in users', () => {
       result.assertFile(['server/src/auth/account.controller.ts', 'server/src/management/management.controller.ts']);
       result.assertNoFile([
         'server/src/users/user.entity.ts',
@@ -475,6 +475,48 @@ describe('SubGenerator node-server of nodejs JHipster blueprint', () => {
       ]);
       result.assertFileContent('server/src/management/management.module.ts', 'ManagementController');
       result.assertNoFileContent('server/src/auth/auth.module.ts', 'ManagementController');
+    });
+  });
+  describe('with oauth2 and syncUserWithIdp', () => {
+    it('should fail with an error telling the users are the ones of the identity provider', async () => {
+      await expect(
+        helpers
+          .run(SUB_GENERATOR_NAMESPACE)
+          .withJHipsterConfig({ authenticationType: 'oauth2', syncUserWithIdp: true, skipClient: true })
+          .withOptions({ ignoreNeedlesError: true })
+          .withJHipsterGenerators()
+          .withConfiguredBlueprint()
+          .withBlueprintConfig({}),
+      ).rejects.toThrow('by design the backend keeps none of them: the JHipster NodeJS blueprint does not support syncUserWithIdp.');
+    });
+  });
+  describe('with oauth2 and an entity related to User', () => {
+    it('should fail with the error of JHipster, a relationship with User needing syncUserWithIdp', async () => {
+      await expect(
+        helpers
+          .run(SUB_GENERATOR_NAMESPACE)
+          .withJHipsterConfig({ authenticationType: 'oauth2', skipClient: true }, [
+            {
+              name: 'Preferences',
+              changelogDate: '20200101000100',
+              fields: [{ fieldName: 'weeklyGoal', fieldType: 'Integer' }],
+              relationships: [
+                {
+                  relationshipName: 'owner',
+                  otherEntityName: 'user',
+                  relationshipType: 'many-to-one',
+                  relationshipWithBuiltInEntity: true,
+                },
+              ],
+            },
+          ])
+          .withOptions({ ignoreNeedlesError: true })
+          .withJHipsterGenerators()
+          .withConfiguredBlueprint()
+          .withBlueprintConfig({}),
+      ).rejects.toThrow(
+        "Error at entity Preferences: relationships with built-in User entity is supported in oauth2 applications with database and '--sync-user-with-idp' option",
+      );
     });
   });
   describe('with session', () => {
@@ -659,38 +701,6 @@ describe('SubGenerator node-server of nodejs JHipster blueprint', () => {
     });
   });
 
-  describe('with oauth2 and syncUserWithIdp', () => {
-    beforeAll(async function () {
-      await helpers
-        .run(SUB_GENERATOR_NAMESPACE)
-        .withJHipsterConfig({
-          authenticationType: 'oauth2',
-          syncUserWithIdp: true,
-          skipClient: true,
-        })
-        .withOptions({
-          ignoreNeedlesError: true,
-        })
-        .withJHipsterGenerators()
-        .withConfiguredBlueprint()
-        .withBlueprintConfig({});
-    });
-
-    it('should match the files snapshot', () => {
-      expect(result.getStateSnapshot()).toMatchSnapshot();
-    });
-
-    it('should generate the users of the identity provider without the users administration', () => {
-      result.assertFile([
-        'server/src/users/user.entity.ts',
-        'server/src/users/authority.entity.ts',
-        'server/src/users/public.user.controller.ts',
-        'server/src/migrations/1570200490072-SeedUsersRoles.ts',
-      ]);
-      result.assertNoFile(['server/src/users/user.controller.ts', 'server/e2e/user.e2e-spec.ts']);
-      result.assertNoFileContent('server/src/users/user.module.ts', /\bUserController\b/);
-    });
-  });
   describe('with the authorities of the entities', () => {
     const entities = [
       {
@@ -1188,7 +1198,7 @@ describe('SubGenerator node-server of nodejs JHipster blueprint', () => {
         }
       };
 
-    describe('without syncUserWithIdp', () => {
+    describe('with the users of 4.0.0', () => {
       beforeAll(async function () {
         await helpers
           .run(SUB_GENERATOR_NAMESPACE)
@@ -1198,17 +1208,9 @@ describe('SubGenerator node-server of nodejs JHipster blueprint', () => {
           .withConfiguredBlueprint();
       });
 
-      it('should keep synchronizing the users', () => {
-        result.assertJsonFileContent('.yo-rc.json', { 'generator-jhipster': { syncUserWithIdp: true } });
-        result.assertFile(['server/src/users/user.entity.ts', 'server/src/users/authority.entity.ts']);
-      });
-
-      it('should remove the users administration', () => {
-        result.assertNoFile([
-          'server/src/web/rest/user.controller.ts',
-          'server/src/users/user.controller.ts',
-          'server/e2e/user.e2e-spec.ts',
-        ]);
+      it('should remove the built-in users and authorities', () => {
+        result.assertNoFile(oldFiles);
+        result.assertNoFile(['server/src/users/user.entity.ts', 'server/src/users/authority.entity.ts']);
       });
 
       it('should remove the entrypoint script', () => {
@@ -1229,26 +1231,11 @@ describe('SubGenerator node-server of nodejs JHipster blueprint', () => {
       });
     });
 
-    describe('generated by the current version', () => {
-      beforeAll(async function () {
-        await helpers
-          .run(SUB_GENERATOR_NAMESPACE)
-          .doInDir(writeExistingProject({}, JSON.parse(readFileSync(new URL('../../package.json', import.meta.url), 'utf8')).version))
-          .withOptions({ ignoreNeedlesError: true })
-          .withJHipsterGenerators()
-          .withConfiguredBlueprint();
-      });
-
-      it('should not enable syncUserWithIdp', () => {
-        result.assertNoJsonFileContent('.yo-rc.json', { 'generator-jhipster': { syncUserWithIdp: true } });
-      });
-    });
-
     describe('generated with 4.2.0', () => {
       beforeAll(async function () {
         await helpers
           .run(SUB_GENERATOR_NAMESPACE)
-          .doInDir(writeExistingProject({ syncUserWithIdp: false }, '4.2.0'))
+          .doInDir(writeExistingProject({}, '4.2.0'))
           .withOptions({ ignoreNeedlesError: true })
           .withJHipsterGenerators()
           .withConfiguredBlueprint();
@@ -1273,7 +1260,7 @@ describe('SubGenerator node-server of nodejs JHipster blueprint', () => {
       beforeAll(async function () {
         await helpers
           .run(SUB_GENERATOR_NAMESPACE)
-          .doInDir(writeExistingProject({ syncUserWithIdp: false }, '4.3.0'))
+          .doInDir(writeExistingProject({}, '4.3.0'))
           .withOptions({ ignoreNeedlesError: true })
           .withJHipsterGenerators()
           .withConfiguredBlueprint();
@@ -1286,21 +1273,6 @@ describe('SubGenerator node-server of nodejs JHipster blueprint', () => {
           'server/src/security/index.ts',
           'server/.env',
         ]);
-      });
-    });
-
-    describe('with syncUserWithIdp disabled', () => {
-      beforeAll(async function () {
-        await helpers
-          .run(SUB_GENERATOR_NAMESPACE)
-          .doInDir(writeExistingProject({ syncUserWithIdp: false }))
-          .withOptions({ ignoreNeedlesError: true })
-          .withJHipsterGenerators()
-          .withConfiguredBlueprint();
-      });
-
-      it('should remove the built-in users and authorities', () => {
-        result.assertNoFile(oldFiles);
       });
     });
   });

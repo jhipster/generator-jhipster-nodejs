@@ -25,11 +25,9 @@ export default class extends BaseApplicationGenerator {
           jhiTablePrefix: ({ jhiPrefix }) => hibernateSnakeCase(jhiPrefix),
           clientPackageManager: 'npm',
           dbPortValue: undefined,
-          // As in JHipster's Spring Boot application, syncUserWithIdp is disabled by default, enabled for a gateway or
-          // when an entity has a relationship with User (JHipster only derives it for a Java backend). Delayed until
-          // anyEntityHasRelationshipWithUser is defined, before JHipster derives the built-in entities from it.
-          syncUserWithIdp: ({ authenticationType, applicationType, anyEntityHasRelationshipWithUser }) =>
-            authenticationType === 'oauth2' && (applicationType === 'gateway' || anyEntityHasRelationshipWithUser),
+          // With OAuth2 the users are the ones of the identity provider, the backend keeps none of them: disabled by default,
+          // an application enabling it refused (see the node-server generator).
+          syncUserWithIdp: false,
           // The scripts of the client run from the root package.json with --prefix, not -w (the e2e default): an application
           // of a JHipster workspace is itself a workspace, and npm resolves -w from the root of the outer one.
           clientNpmRun: ({ clientRootDir }) => (clientRootDir ? `npm --prefix ${clientRootDir} run` : 'npm run'),
