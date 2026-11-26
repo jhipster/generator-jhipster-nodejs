@@ -1,12 +1,15 @@
-import type { TransformFnParams } from 'class-transformer';
-import { ValidateBy, type ValidationOptions } from 'class-validator';
+import { Transform, type TransformFnParams } from 'class-transformer';
+import { isUUID, ValidateBy, type ValidationOptions } from 'class-validator';
+
+import { UNREADABLE } from '../errors/problem.exception.ts';
 
 /** A JSON number: an integer or a decimal, with an exponent or not. */
 const NUMBER = /^[-+]?(?:\d+\.?\d*|\.\d+)(?:[eE][-+]?\d+)?$/;
 
 /**
- * The @Transform of a number field: a number given as a text is the number, like the JSON deserialization (Jackson) of
- * JHipster Spring Boot accepts "12.50" for a BigDecimal. Any other value is kept for the validators of the field to refuse.
+ * The @Transform of a Long or a BigDecimal field: a number given as a text is the number, like the contract of the
+ * backends accepts "12.50" for a BigDecimal (I-JSON, RFC 7493, recommends a text for a number beyond the precision of a
+ * double). Any other value is kept for the validators of the field to refuse.
  */
 export const numberFromString = ({ value }: TransformFnParams): unknown =>
   typeof value === 'string' && NUMBER.test(value) ? Number(value) : value;
@@ -41,3 +44,89 @@ export const ByteLength = (min: number, max?: number, options?: ValidationOption
     },
     options,
   );
+
+/**
+ * The JSON values a body takes for an id, the jsonType of its primary key: a number or its text (a Long), a number only
+ * (an Integer), the text of a UUID, or any other text (a String, the ObjectId of MongoDB).
+ */
+export type IdType = 'number-or-text' | 'number' | 'uuid' | 'text';
+
+/** The text of an integer, the text a Long may be given as. */
+const INTEGER = /^[-+]?\d+$/;
+
+const ID_TYPES: Record<IdType, (id: unknown) => boolean> = {
+  // A Long given as a text is converted before the validation (idFromText).
+  'number-or-text': id => Number.isInteger(id),
+  number: id => Number.isInteger(id),
+  uuid: id => typeof id === 'string' && isUUID(id),
+  text: id => typeof id === 'string',
+};
+
+/** An id of its type, or no id (null or undefined): a record without one, which the rules of its route answer. */
+const isIdOrEmpty = (type: IdType, id: unknown): boolean => id === undefined || id === null || ID_TYPES[type](id);
+
+/** A related record: an object with an id of its type, or without an id. */
+const isReference = (type: IdType, id: string, related: unknown): boolean =>
+  typeof related === 'object' && related !== null && !Array.isArray(related) && isIdOrEmpty(type, (related as Record<string, unknown>)[id]);
+
+/** A Long id given as a text is the number; any other value is kept for the validation to refuse. */
+const idFromText = (type: IdType, id: unknown): unknown => (type === 'number-or-text' && typeof id === 'string' && INTEGER.test(id) ? Number(id) : id);
+
+/** A related record with its Long id given as a text, with the number. */
+const referenceFromText = (type: IdType, id: string, related: unknown): unknown =>
+  typeof related === 'object' && related !== null && !Array.isArray(related) && id in related
+    ? { ...related, [id]: idFromText(type, (related as Record<string, unknown>)[id]) }
+    : related;
+
+/**
+ * The id of a DTO, of its JSON type, like the contract of the backends: a Long given as a text is the number, a value of
+ * another type (the text "1" of an Integer, a text that is not a UUID) is a body that is not read (400), not converted. A
+ * missing id is left to the rules of the route (error.idnull).
+ */
+export const IsId =
+  (type: IdType): PropertyDecorator =>
+  (target, property) => {
+    Transform(({ value }) => idFromText(type, value), { toClassOnly: true })(target, property);
+    ValidateBy(
+      {
+        name: 'isId',
+        constraints: [type],
+        validator: {
+          validate: (value: unknown): boolean => isIdOrEmpty(type, value),
+          defaultMessage: args => `${args?.property} must be an id of type ${type}`,
+        },
+      },
+      UNREADABLE,
+    )(target, property);
+  };
+
+/**
+ * A relationship of a DTO, its related record (or the list of them, for a collection) with an id of its JSON type, like
+ * @IsId: a Long given as a text is the number, a value of another type (a text for the record, the text of an Integer
+ * id) is a body that is not read (400), not converted. A related record without its id is left to the reference of the
+ * service (a data integrity violation).
+ */
+export const IsRelated =
+  (id: string, type: IdType, collection = false): PropertyDecorator =>
+  (target, property) => {
+    Transform(
+      ({ value }) =>
+        collection && Array.isArray(value) ? value.map(related => referenceFromText(type, id, related)) : referenceFromText(type, id, value),
+      { toClassOnly: true },
+    )(target, property);
+    ValidateBy(
+      {
+        name: 'isRelated',
+        constraints: [id, type],
+        validator: {
+          validate: (value: unknown): boolean => {
+            if (value === undefined || value === null) return true;
+            if (!collection) return isReference(type, id, value);
+            return Array.isArray(value) && value.every(related => isReference(type, id, related));
+          },
+          defaultMessage: args => `${args?.property} must be ${collection ? 'a list of records' : 'a record'} with an id of type ${type}`,
+        },
+      },
+      UNREADABLE,
+    )(target, property);
+  };
