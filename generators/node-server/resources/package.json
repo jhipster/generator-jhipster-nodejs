@@ -29,7 +29,7 @@
     "jwt-decode": "4.0.0",
     "mongodb": "7.9.1",
     "mongodb-memory-server": "11.4.0",
-    "mssql": "12.8.0",
+    "mssql": "12.8.1",
     "mysql2": "3.24.6",
     "oracledb": "7.0.1",
     "passport": "0.7.0",
