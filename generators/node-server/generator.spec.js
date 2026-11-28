@@ -519,6 +519,43 @@ describe('SubGenerator node-server of nodejs JHipster blueprint', () => {
       );
     });
   });
+  describe('with a relationship of an entity to itself', () => {
+    beforeAll(async function () {
+      await helpers
+        .run(SUB_GENERATOR_NAMESPACE)
+        .withJHipsterConfig({ skipClient: true }, [
+          {
+            name: 'Member',
+            changelogDate: '20200101000100',
+            fields: [{ fieldName: 'name', fieldType: 'String', fieldValidateRules: ['required'] }],
+            relationships: [
+              { relationshipName: 'mentor', otherEntityName: 'member', relationshipType: 'many-to-one' },
+              {
+                relationshipName: 'team',
+                otherEntityName: 'team',
+                relationshipType: 'many-to-one',
+                relationshipValidateRules: ['required'],
+              },
+            ],
+          },
+          {
+            name: 'Team',
+            changelogDate: '20200101000200',
+            fields: [{ fieldName: 'name', fieldType: 'String' }],
+          },
+        ])
+        .withOptions({ ignoreNeedlesError: true })
+        .withJHipsterGenerators()
+        .withConfiguredBlueprint()
+        .withBlueprintConfig({});
+    });
+
+    it('should import the samples of the entity once in its database end-to-end test', () => {
+      const spec = 'server/e2e/member.database.e2e-spec.ts';
+      result.assertFileContent(spec, "import * as memberSamples from './samples/member.test-samples.ts';");
+      result.assertNoFileContent(spec, /import \* as memberSamples from[\s\S]*import \* as memberSamples from/);
+    });
+  });
   describe('with session', () => {
     beforeAll(async function () {
       await helpers
