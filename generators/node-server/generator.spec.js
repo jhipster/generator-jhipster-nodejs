@@ -519,6 +519,51 @@ describe('SubGenerator node-server of nodejs JHipster blueprint', () => {
       );
     });
   });
+  describe('with a module of a blueprint', () => {
+    beforeAll(async function () {
+      await helpers
+        .run(SUB_GENERATOR_NAMESPACE)
+        .withJHipsterConfig({ skipClient: true })
+        .withOptions({ ignoreNeedlesError: true })
+        .withJHipsterGenerators()
+        .withConfiguredBlueprint()
+        .withBlueprintConfig({})
+        .withTask('postWriting', function ({ source }) {
+          source.addModuleToAppModule({ moduleClass: 'SettingsModule', modulePath: 'settings/settings.module.ts' });
+        });
+    });
+
+    it('should import it in the application module', () => {
+      result.assertFileContent('server/src/app.module.ts', "import { SettingsModule } from './settings/settings.module.ts';");
+      result.assertFileContent('server/src/app.module.ts', /imports: \[[\s\S]*SettingsModule,[\s\S]*\],\n {2}providers/);
+    });
+  });
+
+  describe('with the mails of a blueprint, without user management', () => {
+    beforeAll(async function () {
+      await helpers
+        .run(SUB_GENERATOR_NAMESPACE)
+        .withJHipsterConfig({ authenticationType: 'oauth2', skipClient: true })
+        .withOptions({ ignoreNeedlesError: true })
+        .withJHipsterGenerators()
+        .withConfiguredBlueprint()
+        .withBlueprintConfig({})
+        .withTask('preparing', function ({ application }) {
+          application.nodejsMail = true;
+        });
+    });
+
+    it('should write the mail module, imported by the application module, without the account mails', () => {
+      result.assertFile(['server/src/mail/mail.service.ts', 'server/src/mail/mail-settings.provider.ts']);
+      result.assertNoFile('server/src/templates/mail/creationEmail.hbs');
+      result.assertNoFileContent('server/src/mail/mail.service.ts', 'sendCreationEmail');
+      result.assertFileContent('server/src/app.module.ts', "import { MailModule } from './mail/mail.module.ts';");
+      result.assertJsonFileContent('server/package.json', { dependencies: { '@nestjs-modules/mailer': /./, handlebars: /./ } });
+      result.assertFileContent('README.md', '### Mails');
+      result.assertFileContent('README.md', 'by `MailService.sendMail`');
+      result.assertNoFileContent('README.md', 'An account mail that cannot be sent');
+    });
+  });
   describe('with session', () => {
     beforeAll(async function () {
       await helpers

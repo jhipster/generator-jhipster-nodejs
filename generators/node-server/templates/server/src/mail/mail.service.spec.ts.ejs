@@ -1,17 +1,29 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { MAILER_OPTIONS, MailerService } from '@nestjs-modules/mailer';
-import { ConfigModule, ConfigService } from '@nestjs/config';
+import { MailerService } from '@nestjs-modules/mailer';
+import { Global, Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 
-import type { ApplicationConfig } from '../application-config.ts';
-import { MailModule, mailerOptions } from './mail.module.ts';
-import { MailService, parseProperties } from './mail.service.ts';
+import { MailError, type MailSettings, MailSettingsProvider } from './mail-settings.provider.ts';
+import { MailModule } from './mail.module.ts';
+import { MailService<%- generateUserManagement ? ', parseProperties' : '' %> } from './mail.service.ts';
 
 describe('MailService', () => {
   let moduleRef: TestingModule;
   let mailService: MailService;
+  let mailerService: MailerService;
   let sendMail: ReturnType<typeof vi.spyOn>;
+  let addTransporter: ReturnType<typeof vi.spyOn>;
+  let removeTransporter: ReturnType<typeof vi.spyOn>;
+  let settings: MailSettings;
+  const mailSettingsProvider = { get: vi.fn(() => Promise.resolve(settings)) };
+
+  /** The provider of the mail settings of a global module, like the one of an application. */
+  @Global()
+  @Module({ providers: [{ provide: MailSettingsProvider, useValue: mailSettingsProvider }], exports: [MailSettingsProvider] })
+  class MailSettingsModule {}
+<%_ if (generateUserManagement) { _%>
 
   const user = {
     login: 'mailuser',
@@ -21,37 +33,121 @@ describe('MailService', () => {
     activationKey: 'activationKey',
     resetKey: 'resetKey',
   };
+<%_ } _%>
 
   /** The mail the JSON transport of nodemailer gives back instead of sending it. */
-  const sentMail = async (): Promise<{ from: { address: string }; subject: string; html: string }> =>
-    JSON.parse(((await sendMail.mock.results[0].value) as { message: string }).message);
+  const sentMail = async (index = 0): Promise<{ from: { address: string }; to: { address: string }[]; subject: string; text: string; html: string }> =>
+    JSON.parse(((await sendMail.mock.results[index].value) as { message: string }).message);
 
   beforeEach(async () => {
+    settings = { host: 'localhost', port: 25, from: '<%- baseName %>@localhost', baseUrl: 'http://127.0.0.1:<%- serverPort %>' };
+    mailSettingsProvider.get.mockClear();
     moduleRef = await Test.createTestingModule({
-      imports: [
-        ConfigModule.forRoot({
-          isGlobal: true,
-          ignoreEnvFile: true,
-          load: [() => ({ mail: { host: 'localhost', port: 25 }, jhipster: { mail: { from: '<%- baseName %>@localhost', 'base-url': 'http://127.0.0.1:<%- serverPort %>' } } })],
-        }),
-        MailModule,
-      ],
-    })
-      .overrideProvider(MAILER_OPTIONS)
-      .useFactory({
-        factory: (configService: ConfigService<ApplicationConfig, true>) => ({ ...mailerOptions(configService), transport: { jsonTransport: true } }),
-        inject: [ConfigService],
-      })
-      .compile();
+      imports: [ConfigModule.forRoot({ isGlobal: true, ignoreEnvFile: true, load: [() => ({})] }), MailSettingsModule, MailModule.forRoot()],
+    }).compile();
     mailService = moduleRef.get(MailService);
-    sendMail = vi.spyOn(moduleRef.get(MailerService), 'sendMail');
+    mailerService = moduleRef.get(MailerService);
+    // The transports of the settings, as the JSON transport of nodemailer: the mail is given back instead of sent.
+    const add = mailerService.addTransporter.bind(mailerService);
+    addTransporter = vi.spyOn(mailerService, 'addTransporter').mockImplementation((name: string) => add(name, { jsonTransport: true }));
+    removeTransporter = vi.spyOn(mailerService, 'removeTransporter');
+    sendMail = vi.spyOn(mailerService, 'sendMail');
   });
 
   afterEach(async () => {
     await moduleRef.close();
   });
 
-<%_ if (generateUserRegistration) { _%>
+  it('should take the settings of the mail properties without a provider', async () => {
+    const withoutProvider = await Test.createTestingModule({
+      imports: [
+        ConfigModule.forRoot({
+          isGlobal: true,
+          ignoreEnvFile: true,
+          load: [() => ({ mail: { host: 'smtp.localhost', port: 587 }, jhipster: { mail: { from: '<%- baseName %>@localhost' } } })],
+        }),
+        MailModule.forRoot(),
+      ],
+    }).compile();
+
+    expect(await withoutProvider.get(MailService).mailSettings()).toMatchObject({ host: 'smtp.localhost', port: 587 });
+    await withoutProvider.close();
+  });
+
+  it('should send a mail from the sender of the settings', async () => {
+    await mailService.sendMail({ to: 'someone@localhost.it', subject: 'Subject', text: 'Text' });
+
+    const mail = await sentMail();
+    expect(mail.from.address).toBe('<%- baseName %>@localhost');
+    expect(mail.to[0].address).toBe('someone@localhost.it');
+  });
+
+  it('should keep the transport while the provider gives the same settings, and replace it for new ones', async () => {
+    await mailService.sendMail({ to: 'someone@localhost.it', text: 'First' });
+    await mailService.sendMail({ to: 'someone@localhost.it', text: 'Second' });
+    expect(addTransporter).toHaveBeenCalledTimes(1);
+
+    settings = { ...settings, from: 'changed@localhost' };
+    await mailService.sendMail({ to: 'someone@localhost.it', text: 'Third' });
+
+    expect(addTransporter).toHaveBeenCalledTimes(2);
+    expect(removeTransporter).toHaveBeenCalledTimes(1);
+    expect((await sentMail(2)).from.address).toBe('changed@localhost');
+  });
+
+  it('should tell when the settings are not available, and read them again at the next mail', async () => {
+    mailSettingsProvider.get.mockRejectedValueOnce(new Error('No settings'));
+
+    await expect(mailService.sendMail({ to: 'someone@localhost.it', text: 'Text' })).rejects.toMatchObject({
+      messageKey: 'error.mail.settingsunavailable',
+      message: 'The mail settings are not available: No settings',
+    });
+    await mailService.sendMail({ to: 'someone@localhost.it', text: 'Text' });
+    expect(mailSettingsProvider.get).toHaveBeenCalledTimes(2);
+  });
+
+  it('should refuse a user without password', async () => {
+    settings = { ...settings, auth: { type: 'password', username: 'smtpuser' } };
+
+    await expect(mailService.sendMail({ to: 'someone@localhost.it', text: 'Text' })).rejects.toMatchObject({
+      messageKey: 'error.mail.passwordundefined',
+    });
+    expect(sendMail).not.toHaveBeenCalled();
+  });
+
+  it('should tell the SMTP error of a mail not sent', async () => {
+    sendMail.mockRejectedValueOnce(new Error('Connection refused'));
+
+    const error = await mailService.sendMail({ to: 'someone@localhost.it', text: 'Text' }).catch((error: unknown) => error);
+    expect(error).toBeInstanceOf(MailError);
+    expect(error).toMatchObject({ messageKey: 'error.mail.sendfailed', message: 'The mail could not be sent: Connection refused' });
+    expect((error as MailError).toProblem().getStatus()).toBe(502);
+  });
+
+  it('should send a test mail with the settings given over the ones in use, without keeping them', async () => {
+    settings = { ...settings, auth: { type: 'password', username: 'smtpuser', password: 'secret' } };
+
+    await mailService.sendTestEmail('someone@localhost.it', { host: 'smtp.localhost', auth: { type: 'password', username: 'other', password: '' } });
+
+    expect(addTransporter).toHaveBeenCalledWith(expect.any(String), expect.anything());
+    const [, transport] = addTransporter.mock.calls[0];
+    expect(transport).toMatchObject({ host: 'smtp.localhost', port: 25, auth: { user: 'other', pass: 'secret' } });
+    expect((await sentMail()).subject).toBe('<%- baseName %> test mail');
+    expect(removeTransporter).toHaveBeenCalledTimes(1);
+    expect(await mailService.mailSettings()).toMatchObject({ host: 'localhost' });
+  });
+
+  it('should take the security of the port of a test mail given without security', async () => {
+    settings = { ...settings, security: 'NONE' };
+
+    await mailService.sendTestEmail('someone@localhost.it', { port: 465 });
+
+    const [, transport] = addTransporter.mock.calls[0];
+    expect(transport).toMatchObject({ port: 465, secure: true, ignoreTLS: false });
+  });
+
+<%_ if (generateUserManagement) { _%>
+  <%_ if (generateUserRegistration) { _%>
   it('should send the activation mail with the activation link', async () => {
     await mailService.sendActivationEmail(user);
 
@@ -62,7 +158,7 @@ describe('MailService', () => {
     expect(mail.html).toContain('<p>Dear mailuser</p>');
   });
 
-<%_ } _%>
+  <%_ } _%>
   it('should send the creation mail with the link to set the password', async () => {
     await mailService.sendCreationEmail(user);
 
@@ -115,4 +211,5 @@ describe('MailService', () => {
       'email.title': 'Équipe',
     });
   });
+<%_ } _%>
 });

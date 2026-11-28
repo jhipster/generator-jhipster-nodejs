@@ -270,6 +270,14 @@ export default class extends BaseApplicationGenerator {
           nodejsPathRules,
         });
       },
+      mail({ applicationDefaults }) {
+        applicationDefaults({
+          __override__: false,
+          // The mail module (src/mail): the account mails of the user management, or the mails of a blueprint that sets it,
+          // like one giving the MailSettingsProvider of a global module. Read from the writing on.
+          nodejsMail: ({ generateUserManagement }) => generateUserManagement,
+        });
+      },
       passwords({ applicationDefaults }) {
         applicationDefaults({
           __override__: false,
@@ -320,16 +328,18 @@ export default class extends BaseApplicationGenerator {
               contentToAdd: `${className},`,
             }),
           );
-        source.addEntityToAppModule = ({ entityClass, nodejsModulePath }) =>
+        // A module imported by the application module, like the module of an entity or a global module of a blueprint:
+        // moduleClass, of modulePath (from src/, like entities/foo/foo.module.ts).
+        source.addModuleToAppModule = ({ moduleClass, modulePath }) =>
           this.editFile(
             `${SERVER_NODEJS_SRC_DIR}/src/app.module.ts`,
             createNeedleCallback({
-              needle: 'jhipster-needle-add-entity-module-to-main-import',
-              contentToAdd: `import { ${entityClass}Module } from './${nodejsModulePath}';`,
+              needle: 'jhipster-needle-add-module-to-main-import',
+              contentToAdd: `import { ${moduleClass} } from './${modulePath}';`,
             }),
             createNeedleCallback({
-              needle: 'jhipster-needle-add-entity-module-to-main',
-              contentToAdd: `${entityClass}Module,`,
+              needle: 'jhipster-needle-add-module-to-main',
+              contentToAdd: `${moduleClass},`,
             }),
           );
       },
@@ -776,7 +786,7 @@ export default class extends BaseApplicationGenerator {
         for (const entity of entities.filter(entity => !entity.skipServer)) {
           const { nodejsModulePath, entityClass } = entity;
           if (entity.entityDomainLayer) {
-            source.addEntityToAppModule({ nodejsModulePath, entityClass });
+            source.addModuleToAppModule({ moduleClass: `${entityClass}Module`, modulePath: nodejsModulePath });
           }
         }
       },

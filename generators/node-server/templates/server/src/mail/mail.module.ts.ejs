@@ -1,12 +1,11 @@
 import * as path from 'path';
 
-import { Module } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
+import { DynamicModule, Module } from '@nestjs/common';
 import { HelperOptions } from 'handlebars';
 import { MailerModule, MailerOptions } from '@nestjs-modules/mailer';
 import { HandlebarsAdapter } from '@nestjs-modules/mailer/adapters/handlebars.adapter';
 
-import type { ApplicationConfig } from '../application-config.ts';
+import { ConfigMailSettingsProvider } from './mail-settings.provider.ts';
 import { MailService } from './mail.service.ts';
 
 /** The templates of the account mails, like the templates/mail of JHipster Spring Boot. */
@@ -26,25 +25,30 @@ export const mailTemplateHelpers = {
 };
 
 /**
- * The SMTP server of the mail properties, like spring.mail, and the Handlebars templates of the mails: they only
- * interpolate values, escaped, and call the helpers of the server, they run no code.
+ * The options of the mailer: its transports are the ones of the mail settings, which the MailService adds (the MailSettingsProvider),
+ * and the Handlebars templates of the mails: they only interpolate values, escaped, and call the helpers of the server, they run no code.
  */
-export function mailerOptions(configService: ConfigService<ApplicationConfig, true>): MailerOptions {
-  const { host, port, username, password } = configService.get('mail', { infer: true });
+export function mailerOptions(): MailerOptions {
   return {
-    transport: {
-      host,
-      port: Number(port),
-      auth: username ? { user: username, pass: password } : undefined,
-    },
-    defaults: { from: configService.get('jhipster.mail.from', { infer: true }) },
+    transports: {},
     template: { dir: mailTemplatesFolder, adapter: new HandlebarsAdapter(mailTemplateHelpers), options: { strict: true } },
   };
 }
 
-@Module({
-  imports: [MailerModule.forRootAsync({ inject: [ConfigService], useFactory: mailerOptions })],
-  providers: [MailService],
-  exports: [MailService],
-})
-export class MailModule {}
+/**
+ * The mails of the application, a global module imported once by the application module with forRoot, like the ConfigModule:
+ * the MailService is injected without importing it. Its settings are the ones of the MailSettingsProvider of a global module
+ * of the application, else the ones of the mail properties (ConfigMailSettingsProvider, exported to fall back on them).
+ */
+@Module({})
+export class MailModule {
+  static forRoot(): DynamicModule {
+    return {
+      module: MailModule,
+      global: true,
+      imports: [MailerModule.forRoot(mailerOptions())],
+      providers: [MailService, ConfigMailSettingsProvider],
+      exports: [MailService, ConfigMailSettingsProvider],
+    };
+  }
+}

@@ -1066,6 +1066,12 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > run > should ma
   "server/src/i18n/messages_en.properties": {
     "stateCleared": "modified",
   },
+  "server/src/mail/mail-settings.provider.spec.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/mail/mail-settings.provider.ts": {
+    "stateCleared": "modified",
+  },
   "server/src/mail/mail.module.ts": {
     "stateCleared": "modified",
   },
@@ -1680,7 +1686,9 @@ Like JHipster Spring Boot, the responses to a bearer token tell their reason in 
 
 Like JHipster Spring Boot, the server sends the account mails with [@nestjs-modules/mailer][] (Nodemailer): the activation mail of a registered user (who signs in once activated, with the link of the mail), the creation mail of a user created by an administrator and the password reset mail. Their HTML is the [Handlebars][] templates of \`server/src/templates/mail/\` (like the Thymeleaf templates of \`templates/mail\`; they interpolate values, escaped, and call the \`message\` helper of the server, they run no code), their texts the messages of \`server/src/i18n/messages*.properties\` in the language of the user, and their links open the client at \`jhipster.mail.base-url\`.
 
-The SMTP server is set by the \`mail\` settings of \`server/src/config/application-dev.yml\` and \`application-prod.yml\` (\`localhost:25\` by default), or by environment variables like \`MAIL_HOST\`, \`MAIL_PORT\`, \`MAIL_USERNAME\` and \`MAIL_PASSWORD\`. A mail that cannot be sent is logged as a warning, without failing the request.
+The SMTP server is set by the \`mail\` settings of \`server/src/config/application-dev.yml\` and \`application-prod.yml\` (\`localhost:25\` by default), or by environment variables like \`MAIL_HOST\`, \`MAIL_PORT\`, \`MAIL_SECURITY\`, \`MAIL_USERNAME\` and \`MAIL_PASSWORD\`. Its security, \`NONE\`, \`STARTTLS\` (required) or \`TLS\` (SMTPS), is by default TLS on the port 465 and, on the others, STARTTLS when the server offers it. An account mail that cannot be sent is logged as a warning, with its reason, without failing the request.
+
+The settings are the ones of the \`MailSettingsProvider\` of \`server/src/mail/mail-settings.provider.ts\`, the mail properties by default, asked at each mail: the transport is kept while the provider gives the same settings back, and replaced for new ones, so a provider whose settings change applies a change by giving new ones. An application gives its own provider by a global module providing and exporting \`MailSettingsProvider\`, imported by the application module. \`MailService.sendTestEmail(to, settings?)\` sends a test mail with settings not kept, its failure a \`MailError\` with a message key like \`error.mail.sendfailed\`.
 
 ### Using NestJS CLI
 
@@ -1812,7 +1820,7 @@ they test, the end-to-end tests in \`e2e\`.
   REST controller and its module; \`src/entities/enumeration/\` the enumerations of the entities.
 - \`src/users/\`: the users and their authorities, their administration API.
 - \`src/auth/\`: the authentication, its guards, its decorators, its strategies and the account API.
-- \`src/mail/\`: the emails of the user management.
+- \`src/mail/\`: the emails of the user management and their settings (\`MailSettingsProvider\`).
 - \`src/management/\`: the management endpoints (health, metrics, loggers, configuration, API documentation).
 - \`src/common/\`: the helpers of every feature: the errors, the HTTP helpers, the audit columns of the user and the column types
   (\`database/\`), the helpers of the DTOs.
@@ -2368,6 +2376,12 @@ exports[`SubGenerator node-server of nodejs JHipster blueprint > without client 
     "stateCleared": "modified",
   },
   "server/src/i18n/messages_en.properties": {
+    "stateCleared": "modified",
+  },
+  "server/src/mail/mail-settings.provider.spec.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/mail/mail-settings.provider.ts": {
     "stateCleared": "modified",
   },
   "server/src/mail/mail.module.ts": {

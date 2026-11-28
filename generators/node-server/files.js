@@ -11,13 +11,18 @@ export const serverFiles = {
       path: SERVER_NODEJS_DIR,
       // The users administration API, not generated with OAuth2 (users come from the identity provider).
       condition: ctx => ctx.generateUserManagement,
+      templates: ['src/users/user.controller.ts', 'src/users/login-path.pipe.ts', 'e2e/user.e2e-spec.ts'],
+    },
+    {
+      path: SERVER_NODEJS_DIR,
+      // The mail module: the account mails of the user management, or the mails of a blueprint (nodejsMail).
+      condition: ctx => ctx.nodejsMail,
       templates: [
-        'src/users/user.controller.ts',
-        'src/users/login-path.pipe.ts',
-        'e2e/user.e2e-spec.ts',
         'src/mail/mail.service.ts',
         'src/mail/mail.module.ts',
         'src/mail/mail.service.spec.ts',
+        'src/mail/mail-settings.provider.ts',
+        'src/mail/mail-settings.provider.spec.ts',
       ],
     },
 
