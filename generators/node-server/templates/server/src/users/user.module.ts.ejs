@@ -12,15 +12,14 @@ import { RememberMeService } from '../auth/remember-me.service.ts';
 import { Session } from '../auth/session.entity.ts';
 <%_ } _%>
 <%_ if (generateUserManagement) { _%>
-import { MailModule } from '../mail/mail.module.ts';
 import { PasswordService } from '../auth/password.service.ts';
 <%_ } _%>
 
 @Module({
-  imports: [TypeOrmModule.forFeature([User<%- authenticationTypeSession ? ', PersistentToken, Session' : '' %>])<%- generateUserManagement ? ', MailModule' : '' %>],
+  imports: [TypeOrmModule.forFeature([User<%- authenticationTypeSession ? ', PersistentToken, Session' : '' %>])],
   controllers: [<%- generateUserManagement ? 'UserController, ' : '' %>PublicUserController],
   // The passwords of the users, which the authentication checks too.
   providers: [UserService<%- authenticationTypeSession ? ', RememberMeService' : '' %><%- generateUserManagement ? ', PasswordService' : '' %>],
-  exports: [UserService<%- authenticationTypeSession ? ', RememberMeService' : '' %><%- generateUserManagement ? ', PasswordService, MailModule' : '' %>],
+  exports: [UserService<%- authenticationTypeSession ? ', RememberMeService' : '' %><%- generateUserManagement ? ', PasswordService' : '' %>],
 })
 export class UserModule {}

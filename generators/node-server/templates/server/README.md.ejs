@@ -46,8 +46,8 @@ they test, the end-to-end tests in `e2e`.
 - `src/users/`: the users and their authorities, their administration API.
 <%_ } _%>
 - `src/auth/`: the authentication, its guards, its decorators, its strategies and the account API.
-<%_ if (generateUserManagement) { _%>
-- `src/mail/`: the emails of the user management.
+<%_ if (nodejsMail) { _%>
+- `src/mail/`: the emails<%- generateUserManagement ? ' of the user management' : '' %> and their settings (`MailSettingsProvider`).
 <%_ } _%>
 - `src/management/`: the management endpoints (health, metrics, loggers, configuration, API documentation).
 <%_ if (serviceDiscoveryAny) { _%>

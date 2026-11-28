@@ -1,13 +1,17 @@
+<%_ if (generateUserManagement) { _%>
 import { existsSync, readFileSync } from 'fs';
 import * as path from 'path';
 
-import { Injectable, Logger } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
-import { MailerService } from '@nestjs-modules/mailer';
+<%_ } _%>
+import { Injectable, Logger, Optional } from '@nestjs/common';
+import { type ISendMailOptions, MailerService } from '@nestjs-modules/mailer';
 
-import type { ApplicationConfig } from '../application-config.ts';
+<%_ if (generateUserManagement) { _%>
 import { <%- user.dtoClass %> } from '../users/dto/user.dto.ts';
+<%_ } _%>
+import { ConfigMailSettingsProvider, MailError, type MailSettings, MailSettingsProvider, mailTransport } from './mail-settings.provider.ts';
 
+<%_ if (generateUserManagement) { _%>
 /** A language tag of JHipster, like pt-br: the langKey of a user, which the user can change, read as a file name. */
 const LANGUAGE_TAG = /^[a-zA-Z0-9-]+$/;
 
@@ -32,35 +36,106 @@ export function parseProperties(content: string): Record<string, string> {
   }
   return messages;
 }
+<%_ } _%>
+
+/** The mail settings in use and the name of the transport of the mailer they were added as. */
+interface MailConnection {
+  settings: MailSettings;
+  transporterName: string;
+}
+
+/** The defined values of an object, without the empty texts: the ones that replace the values of the settings in use. */
+const definedValues = <T extends object>(values: T): Partial<T> =>
+  Object.fromEntries(Object.entries(values).filter(([, value]) => value !== undefined && value !== null && value !== '')) as Partial<T>;
 
 /**
- * Sends the account mails, like the MailService of JHipster Spring Boot: the activation mail of a registered user, the
- * creation mail of a user created by an administrator and the password reset mail, in the language of the user (its
- * langKey), with the SMTP server of the mail properties. Like the @Async methods of Spring, a mail is sent without
- * failing the request: a mail that could not be sent is logged.
+ * Sends the mails with the settings of the MailSettingsProvider of a global module, else of the mail properties, asked at each mail: their transport is kept while the provider
+ * gives the same settings back, and replaced, the previous one closed, when it gives new ones.
+<%_ if (generateUserManagement) { _%>
+ *
+ * The account mails, like the MailService of JHipster Spring Boot: the activation mail of a registered user, the creation
+ * mail of a user created by an administrator and the password reset mail, in the language of the user (its langKey). Like
+ * the @Async methods of Spring, an account mail is sent without failing the request: a mail that could not be sent is
+ * logged, with its reason.
+<%_ } _%>
  */
 @Injectable()
 export class MailService {
   private readonly logger = new Logger(MailService.name);
+<%_ if (generateUserManagement) { _%>
 
   private readonly defaultMessages: Record<string, string>;
 
   private readonly languageMessages = new Map<string, Record<string, string>>();
+<%_ } _%>
+
+  /** The settings of the last mail and their transport. */
+  private current?: MailConnection;
+
+  private transporters = 0;
+
+  private readonly mailSettingsProvider: MailSettingsProvider;
 
   constructor(
     private readonly mailerService: MailerService,
-    private readonly configService: ConfigService<ApplicationConfig, true>,
+    configMailSettingsProvider: ConfigMailSettingsProvider,
+    @Optional() mailSettingsProvider?: MailSettingsProvider,
   ) {
+    this.mailSettingsProvider = mailSettingsProvider ?? configMailSettingsProvider;
+<%_ if (generateUserManagement) { _%>
     this.defaultMessages = parseProperties(readFileSync(path.join(i18nFolder, 'messages.properties'), 'utf8'));
+<%_ } _%>
   }
 
-<%_ if (generateUserRegistration) { _%>
+  /** The mail settings in use, the ones the provider gives. */
+  mailSettings(): Promise<MailSettings> {
+    return this.readSettings();
+  }
+
+  /** Sends a mail with the settings in use, from their sender: rejects with a MailError telling its reason. */
+  async sendMail(options: Omit<ISendMailOptions, 'from' | 'transporterName'>): Promise<void> {
+    const { settings, transporterName } = await this.connect();
+    await this.send(options, settings, transporterName);
+  }
+
+  /**
+   * Sends a test mail to an address with the settings given, without keeping them: the ones not given (or empty, like the
+   * password) are the ones in use, the security of a port given without one the default of the port. Rejects with a
+   * MailError telling its reason, like the SMTP error (toProblem gives the problem detail of an API).
+   */
+  async sendTestEmail(to: string, settings: Partial<MailSettings> = {}): Promise<void> {
+    const current = await this.readSettings();
+    const { auth, ...given } = definedValues(settings);
+    const tested: MailSettings = {
+      ...current,
+      ...given,
+      security: settings.security || (settings.port ? undefined : current.security),
+      auth: auth && current.auth?.type === auth.type ? { ...current.auth, ...definedValues(auth) } : (auth ?? current.auth),
+    };
+    const transporterName = this.addTransporter(tested);
+    try {
+      await this.send(
+        {
+          to,
+          subject: '<%- baseName %> test mail',
+          text: `This is a test mail of <%- baseName %>, sent by ${tested.host}:${tested.port}. If it arrived, the mail settings are right.`,
+        },
+        tested,
+        transporterName,
+      );
+    } finally {
+      this.mailerService.removeTransporter(transporterName);
+    }
+  }
+
+<%_ if (generateUserManagement) { _%>
+  <%_ if (generateUserRegistration) { _%>
   async sendActivationEmail(user: <%- user.dtoClass %>): Promise<void> {
     this.logger.debug(`Sending activation email to '${user.email}'`);
     await this.sendEmailFromTemplate(user, 'activationEmail', 'email.activation.title');
   }
 
-<%_ } _%>
+  <%_ } _%>
   async sendCreationEmail(user: <%- user.dtoClass %>): Promise<void> {
     this.logger.debug(`Sending creation email to '${user.email}'`);
     await this.sendEmailFromTemplate(user, 'creationEmail', 'email.activation.title');
@@ -86,17 +161,22 @@ export class MailService {
     const subject = message(titleKey);
     this.logger.debug(`Send email to '${user.email}' with subject '${subject}'`);
     try {
-      await this.mailerService.sendMail({
-        to: user.email,
-        subject,
-        template,
-        context: {
-          user,
-          baseUrl: this.configService.get('jhipster.mail.base-url', { infer: true }),
-          langKey: user.langKey ?? 'en',
-          messages: { ...this.defaultMessages, ...messages },
+      const { settings, transporterName } = await this.connect();
+      await this.send(
+        {
+          to: user.email,
+          subject,
+          template,
+          context: {
+            user,
+            baseUrl: settings.baseUrl,
+            langKey: user.langKey ?? 'en',
+            messages: { ...this.defaultMessages, ...messages },
+          },
         },
-      });
+        settings,
+        transporterName,
+      );
       this.logger.debug(`Sent email to User '${user.email}'`);
     } catch (error) {
       this.logger.warn(`Email could not be sent to user '${user.email}': ${(error as Error).message}`);
@@ -119,5 +199,42 @@ export class MailService {
       this.languageMessages.set(fileName, messages);
     }
     return messages;
+  }
+<%_ } _%>
+
+  /** The settings the provider gives and their transport: the one of the last mail for the same settings, else a new one. */
+  private async connect(): Promise<MailConnection> {
+    const settings = await this.readSettings();
+    if (this.current?.settings !== settings) {
+      const previous = this.current;
+      this.current = { settings, transporterName: this.addTransporter(settings) };
+      if (previous) {
+        this.mailerService.removeTransporter(previous.transporterName);
+      }
+    }
+    return this.current;
+  }
+
+  /** The settings of the provider: a MailError when it fails. */
+  private async readSettings(): Promise<MailSettings> {
+    try {
+      return await this.mailSettingsProvider.get();
+    } catch (error) {
+      throw new MailError('error.mail.settingsunavailable', `The mail settings are not available: ${(error as Error).message}`);
+    }
+  }
+
+  /** Adds the transport of the settings to the mailer, by a name of its own. */
+  private addTransporter(settings: MailSettings): string {
+    return this.mailerService.addTransporter(`mail-settings-${++this.transporters}`, mailTransport(settings));
+  }
+
+  /** Sends a mail by a transport, from the sender of its settings, without the failover to another transport. */
+  private async send(options: Omit<ISendMailOptions, 'from' | 'transporterName'>, settings: MailSettings, transporterName: string): Promise<void> {
+    try {
+      await this.mailerService.sendMail({ ...options, from: settings.from, transporterName, failover: false });
+    } catch (error) {
+      throw new MailError('error.mail.sendfailed', `The mail could not be sent: ${(error as Error).message}`);
+    }
   }
 }

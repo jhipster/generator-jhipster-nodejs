@@ -63,8 +63,8 @@ export interface ApplicationConfig {
     swagger: { 'default-include-pattern': string; title: string; description: string; version: string };
     registry: { username?: string; password?: string };
   };
-<%_ if (generateUserManagement) { _%>
-  mail: { host: string; port: number; username: string; password: string };
+<%_ if (nodejsMail) { _%>
+  mail: { host: string; port: number; security: string; username: string; password: string };
 <%_ } _%>
 <%_ if (serviceDiscoveryEureka) { _%>
   eureka: {
@@ -128,8 +128,9 @@ const rules: Rule[] = [
   ['<%- nodejsPasswordRoundsProperty %>', value => isInt(Number(value)) && Number(value) >= 4 && Number(value) <= 31, 'bcrypt rounds, from 4 to 31'],
 <%_ } _%>
   ['jhipster.cors.max-age', value => isInt(Number(value)) && Number(value) >= 0, 'a number of seconds'],
-<%_ if (generateUserManagement) { _%>
+<%_ if (nodejsMail) { _%>
   ['mail.port', value => isPort(String(value)), 'a port'],
+  ['mail.security', value => !value || (typeof value === 'string' && ['NONE', 'STARTTLS', 'TLS'].includes(value.trim())), 'NONE, STARTTLS or TLS (or nothing: TLS on the port 465, STARTTLS when offered on the others)'],
 <%_ } _%>
 <%_ if (authenticationTypeOauth2) { _%>
   ['jhipster.security.oauth2.client.provider.oidc.issuer-uri', value => isURL(String(value), { require_tld: false }), 'the URL of the OpenID Connect issuer'],

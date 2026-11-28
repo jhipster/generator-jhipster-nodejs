@@ -270,6 +270,14 @@ export default class extends BaseApplicationGenerator {
           nodejsPathRules,
         });
       },
+      mail({ applicationDefaults }) {
+        applicationDefaults({
+          __override__: false,
+          // The mail module (src/mail): the account mails of the user management, or the mails of a blueprint that sets it,
+          // like one giving the MailSettingsProvider of a global module. Read from the writing on.
+          nodejsMail: ({ generateUserManagement }) => generateUserManagement,
+        });
+      },
       passwords({ applicationDefaults }) {
         applicationDefaults({
           __override__: false,

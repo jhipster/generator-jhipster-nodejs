@@ -58,9 +58,10 @@ export class Config {
   'jhipster.cors.max-age' = 1800;
   'jhipster.mail.base-url' = 'http://127.0.0.1:${server.port}';
   'jhipster.mail.from' = '<%- baseName %>@localhost';
-<%_ if (generateUserManagement) { _%>
+<%_ if (nodejsMail) { _%>
   'mail.host' = 'localhost';
   'mail.port' = 25;
+  'mail.security' = '';
   'mail.username' = '';
   'mail.password' = '';
 <%_ } _%>

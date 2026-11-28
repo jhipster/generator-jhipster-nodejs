@@ -371,6 +371,12 @@ exports[`SubGenerator server of nodejs JHipster blueprint > run > should match t
   "server/src/i18n/messages_en.properties": {
     "stateCleared": "modified",
   },
+  "server/src/mail/mail-settings.provider.spec.ts": {
+    "stateCleared": "modified",
+  },
+  "server/src/mail/mail-settings.provider.ts": {
+    "stateCleared": "modified",
+  },
   "server/src/mail/mail.module.ts": {
     "stateCleared": "modified",
   },

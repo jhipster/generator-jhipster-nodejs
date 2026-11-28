@@ -161,13 +161,19 @@ user but for a route marked `@Public()`, and the `RolesGuard`, the roles of its 
 
 Like JHipster Spring Boot, the responses to a bearer token tell their reason in `WWW-Authenticate` ([RFC 6750](https://www.rfc-editor.org/rfc/rfc6750)): `invalid_token` with a 401, `insufficient_scope` with a 403. A 401 also tells where the metadata of the server as a protected resource are ([RFC 9728](https://www.rfc-editor.org/rfc/rfc9728)), `/.well-known/oauth-protected-resource`, which answers without authentication.
 <%_ } _%>
-<%_ if (generateUserManagement) { _%>
+<%_ if (nodejsMail) { _%>
 
-### Account mails
+### <%- generateUserManagement ? 'Account mails' : 'Mails' %>
 
+  <%_ if (generateUserManagement) { _%>
 Like JHipster Spring Boot, the server sends the account mails with [@nestjs-modules/mailer][] (Nodemailer): <%- generateUserRegistration ? 'the activation mail of a registered user (who signs in once activated, with the link of the mail), ' : '' %>the creation mail of a user created by an administrator and the password reset mail. Their HTML is the [Handlebars][] templates of `<%- nodeServerRootDir %>src/templates/mail/` (like the Thymeleaf templates of `templates/mail`; they interpolate values, escaped, and call the `message` helper of the server, they run no code), their texts the messages of `<%- nodeServerRootDir %>src/i18n/messages*.properties` in the language of the user, and their links open the client at `jhipster.mail.base-url`.
+  <%_ } else { _%>
+The server sends the mails of the application with [@nestjs-modules/mailer][] (Nodemailer), by `MailService.sendMail`, which rejects with a `MailError` telling the reason of a mail not sent.
+  <%_ } _%>
 
-The SMTP server is set by the `mail` settings of `<%- nodeServerRootDir %>src/config/application-dev.yml` and `application-prod.yml` (`localhost:25` by default), or by environment variables like `MAIL_HOST`, `MAIL_PORT`, `MAIL_USERNAME` and `MAIL_PASSWORD`. A mail that cannot be sent is logged as a warning, without failing the request.
+The SMTP server is set by the `mail` settings of `<%- nodeServerRootDir %>src/config/application-dev.yml` and `application-prod.yml` (`localhost:25` by default), or by environment variables like `MAIL_HOST`, `MAIL_PORT`, `MAIL_SECURITY`, `MAIL_USERNAME` and `MAIL_PASSWORD`. Its security, `NONE`, `STARTTLS` (required) or `TLS` (SMTPS), is by default TLS on the port 465 and, on the others, STARTTLS when the server offers it.<%- generateUserManagement ? ' An account mail that cannot be sent is logged as a warning, with its reason, without failing the request.' : '' %>
+
+The settings are the ones of the `MailSettingsProvider` of `<%- nodeServerRootDir %>src/mail/mail-settings.provider.ts`, the mail properties by default, asked at each mail: the transport is kept while the provider gives the same settings back, and replaced for new ones, so a provider whose settings change applies a change by giving new ones. An application gives its own provider by a global module providing and exporting `MailSettingsProvider`, imported by the application module. `MailService.sendTestEmail(to, settings?)` sends a test mail with settings not kept, its failure a `MailError` with a message key like `error.mail.sendfailed`.
 <%_ } _%>
 
 ### Using NestJS CLI

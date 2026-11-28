@@ -1,0 +1,90 @@
+import { describe, expect, it } from 'vitest';
+
+import { ConfigService } from '@nestjs/config';
+
+import type { ApplicationConfig } from '../application-config.ts';
+import { ConfigMailSettingsProvider, MailError, type MailSettings, mailTransport } from './mail-settings.provider.ts';
+
+describe('mail settings', () => {
+  const settings: MailSettings = { host: 'smtp.localhost', port: 587, from: '<%- baseName %>@localhost', baseUrl: 'http://127.0.0.1' };
+
+  /** The provider of the mail properties of a configuration. */
+  const configProvider = (properties: Record<string, unknown>) =>
+    new ConfigMailSettingsProvider({ get: (key: string) => properties[key] } as unknown as ConfigService<ApplicationConfig, true>);
+
+  describe('ConfigMailSettingsProvider', () => {
+    const jhipsterMail = { 'jhipster.mail.from': '<%- baseName %>@localhost', 'jhipster.mail.base-url': 'http://127.0.0.1' };
+
+    it('should give the mail properties, a password of digits as a text', async () => {
+      const provider = configProvider({
+        mail: { host: 'smtp.localhost', port: '465', security: ' TLS ', username: 'smtpuser', password: 1234 },
+        ...jhipsterMail,
+      });
+
+      expect(await provider.get()).toEqual({
+        host: 'smtp.localhost',
+        port: 465,
+        security: 'TLS',
+        auth: { type: 'password', username: 'smtpuser', password: '1234' },
+        from: '<%- baseName %>@localhost',
+        baseUrl: 'http://127.0.0.1',
+      });
+    });
+
+    it('should give the same settings again, the properties not changing while the application runs', async () => {
+      const provider = configProvider({ mail: { host: 'localhost', port: 25 }, ...jhipsterMail });
+
+      expect(await provider.get()).toBe(await provider.get());
+    });
+
+    it('should give no authentication nor security without them', async () => {
+      const provider = configProvider({ mail: { host: 'localhost', port: 25, security: '', username: '', password: '' }, ...jhipsterMail });
+
+      expect(await provider.get()).toMatchObject({ security: undefined, auth: undefined });
+    });
+  });
+
+  describe('mailTransport', () => {
+    it('should use TLS from the start on the port 465', () => {
+      expect(mailTransport({ ...settings, port: 465 })).toMatchObject({ secure: true, requireTLS: false, ignoreTLS: false });
+    });
+
+    it('should use STARTTLS when offered on the other ports', () => {
+      expect(mailTransport(settings)).toMatchObject({ secure: false, requireTLS: false, ignoreTLS: false });
+    });
+
+    it('should require STARTTLS', () => {
+      expect(mailTransport({ ...settings, security: 'STARTTLS' })).toMatchObject({ secure: false, requireTLS: true });
+    });
+
+    it('should not use TLS with the security NONE', () => {
+      expect(mailTransport({ ...settings, port: 465, security: 'NONE' })).toMatchObject({ secure: false, ignoreTLS: true });
+    });
+
+    it('should authenticate with the password', () => {
+      expect(mailTransport({ ...settings, auth: { type: 'password', username: 'smtpuser', password: 'secret' } }).auth).toEqual({
+        user: 'smtpuser',
+        pass: 'secret',
+      });
+    });
+
+    it('should refuse a user without password', () => {
+      expect(() => mailTransport({ ...settings, auth: { type: 'password', username: 'smtpuser' } })).toThrow(
+        expect.objectContaining({ messageKey: 'error.mail.passwordundefined' }),
+      );
+    });
+
+    it('should refuse the OAuth2 authentication', () => {
+      expect(() => mailTransport({ ...settings, auth: { type: 'oauth2', username: 'smtpuser', accessToken: 'token' } })).toThrow(
+        expect.objectContaining({ messageKey: 'error.mail.authunsupported' }),
+      );
+    });
+  });
+
+  it('should give the problem detail of a mail not sent', () => {
+    const problem = new MailError('error.mail.sendfailed', 'The mail could not be sent: Connection refused').toProblem();
+
+    expect(problem.getStatus()).toBe(502);
+    expect(problem.problem).toMatchObject({ detail: 'The mail could not be sent: Connection refused', message: 'error.mail.sendfailed' });
+  });
+});

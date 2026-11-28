@@ -1,0 +1,126 @@
+import { HttpStatus, Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+
+import type { ApplicationConfig } from '../application-config.ts';
+import { ProblemException } from '../common/errors/problem.exception.ts';
+
+/**
+ * The security of the connection to the SMTP server: NONE without TLS, STARTTLS required, or TLS from the start (SMTPS).
+ * Without one, TLS on the port 465 and, on the others, STARTTLS when the server offers it.
+ */
+export type MailSecurity = 'NONE' | 'STARTTLS' | 'TLS';
+
+/**
+ * The authentication on the SMTP server: a password, or OAuth2 (XOAUTH2 of nodemailer), with an access token given ready or
+ * the fields nodemailer renews one with. OAuth2 is refused for now (error.mail.authunsupported).
+ */
+export type MailAuth =
+  | { type: 'password'; username: string; password?: string }
+  | {
+      type: 'oauth2';
+      username: string;
+      accessToken?: string;
+      clientId?: string;
+      clientSecret?: string;
+      refreshToken?: string;
+      accessUrl?: string;
+    };
+
+/** The settings of the mails: the SMTP server, the sender, and the base URL of the links of the account mails. */
+export interface MailSettings {
+  host: string;
+  port: number;
+  security?: MailSecurity;
+  /** Without one, the mails are sent without authentication. */
+  auth?: MailAuth;
+  from: string;
+  baseUrl: string;
+}
+
+/**
+ * The provider of the mail settings, asked by the MailService at each mail: it keeps the transport of the settings while the
+ * provider gives the same object back, and replaces it for a new one. A provider whose settings change, like ones of a
+ * settings screen, keeps the object it read and reads a new one once they change. An application gives its own by a
+ * global module providing and exporting this token, imported by the application module; without one, the MailService
+ * takes the ConfigMailSettingsProvider.
+ */
+export abstract class MailSettingsProvider {
+  abstract get(): Promise<MailSettings>;
+}
+
+/** A text of a property without the spaces around it, undefined when empty: a password of digits is a number in YAML. */
+const text = (value: unknown): string | undefined => {
+  const trimmed = typeof value === 'string' ? value.trim() : typeof value === 'number' ? String(value) : '';
+  return trimmed || undefined;
+};
+
+/**
+ * The mail settings of the mail properties, like spring.mail of JHipster Spring Boot: mail.host, mail.port, mail.security,
+ * mail.username and mail.password, the sender of jhipster.mail.from and the base URL of jhipster.mail.base-url.
+ */
+@Injectable()
+export class ConfigMailSettingsProvider extends MailSettingsProvider {
+  /** The settings of the properties, which do not change while the application runs. */
+  private settings?: MailSettings;
+
+  constructor(private readonly configService: ConfigService<ApplicationConfig, true>) {
+    super();
+  }
+
+  get(): Promise<MailSettings> {
+    this.settings ??= this.read();
+    return Promise.resolve(this.settings);
+  }
+
+  private read(): MailSettings {
+    const { host, port, security, username, password } = this.configService.get('mail', { infer: true });
+    const user = text(username);
+    return {
+      host,
+      port: Number(port),
+      security: (text(security) as MailSecurity | undefined) ?? undefined,
+      auth: user ? { type: 'password', username: user, password: text(password) } : undefined,
+      from: this.configService.get('jhipster.mail.from', { infer: true }),
+      baseUrl: this.configService.get('jhipster.mail.base-url', { infer: true }),
+    };
+  }
+}
+
+/**
+ * A mail that could not be sent, its reason by a stable message key the clients translate: error.mail.settingsunavailable
+ * (the provider failed), error.mail.passwordundefined, error.mail.authunsupported or error.mail.sendfailed (the SMTP server
+ * refused it or did not answer).
+ */
+export class MailError extends Error {
+  constructor(
+    readonly messageKey: string,
+    message: string,
+  ) {
+    super(message);
+    this.name = 'MailError';
+  }
+
+  /** The problem detail of an API sending a mail, like a test mail: a bad gateway, its reason in its detail and message. */
+  toProblem(): ProblemException {
+    return new ProblemException(HttpStatus.BAD_GATEWAY, { title: 'Mail not sent', detail: this.message, message: this.messageKey });
+  }
+}
+
+/** The SMTP transport of nodemailer of the settings: the TLS of its security, its authentication. */
+export function mailTransport({ host, port, security, auth }: MailSettings) {
+  const tls = security ?? (port === 465 ? 'TLS' : undefined);
+  if (auth?.type === 'oauth2') {
+    throw new MailError('error.mail.authunsupported', 'The OAuth2 authentication of the mails is not supported');
+  }
+  if (auth && !auth.password) {
+    throw new MailError('error.mail.passwordundefined', `The password of the mail user '${auth.username}' is not defined`);
+  }
+  return {
+    host,
+    port,
+    secure: tls === 'TLS',
+    requireTLS: tls === 'STARTTLS',
+    ignoreTLS: tls === 'NONE',
+    auth: auth ? { user: auth.username, pass: auth.password } : undefined,
+  };
+}

@@ -80,13 +80,15 @@ database:
 <%_ } _%>
   logging: false
 
-<%_ if (generateUserManagement) { _%>
-# The SMTP server of the account mails (activation, creation, password reset), read by the mail module
+<%_ if (nodejsMail) { _%>
+# The SMTP server of the mails<%- generateUserManagement ? ' (activation, creation, password reset)' : '' %>, read by the mail module
 # (@nestjs-modules/mailer), like spring.mail of JHipster Spring Boot: environment variables override each property, like MAIL_HOST
-# or MAIL_PASSWORD.
+# or MAIL_PASSWORD. The security, NONE, STARTTLS (required) or TLS (SMTPS), is by default TLS on the port 465 and, on the
+# others, STARTTLS when the server offers it.
 mail:
   host: localhost
   port: 25
+  # security: STARTTLS
   username:
   password:
 

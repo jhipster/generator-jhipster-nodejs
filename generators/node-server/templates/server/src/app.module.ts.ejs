@@ -22,6 +22,9 @@ import { ConsulService } from './registry/consul.service.ts';
 import { config } from './config.ts';
 import { ServeStaticModule } from '@nestjs/serve-static';
 <%_ } _%>
+<%_ if (nodejsMail) { _%>
+import { MailModule } from './mail/mail.module.ts';
+<%_ } _%>
 // jhipster-needle-add-entity-module-to-main-import - JHipster will import entity modules here, do not remove
 // jhipster-needle-add-controller-module-to-main-import - JHipster will import controller modules here, do not remove
 // jhipster-needle-add-service-module-to-main-import - JHipster will import service modules here, do not remove
@@ -55,6 +58,11 @@ import { ServeStaticModule } from '@nestjs/serve-static';
     AuthModule,
     HealthModule,
     ManagementModule,
+<%_ if (nodejsMail) { _%>
+    // The mails of the application, the account mails among them: a global module, its settings the ones of the mail
+    // properties, or of the MailSettingsProvider of a global module of the application.
+    MailModule.forRoot(),
+<%_ } _%>
     // jhipster-needle-add-entity-module-to-main - JHipster will add entity modules here, do not remove
   ],
   controllers: [
