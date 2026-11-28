@@ -25,9 +25,7 @@ import { ServeStaticModule } from '@nestjs/serve-static';
 <%_ if (nodejsMail) { _%>
 import { MailModule } from './mail/mail.module.ts';
 <%_ } _%>
-// jhipster-needle-add-entity-module-to-main-import - JHipster will import entity modules here, do not remove
-// jhipster-needle-add-controller-module-to-main-import - JHipster will import controller modules here, do not remove
-// jhipster-needle-add-service-module-to-main-import - JHipster will import service modules here, do not remove
+// jhipster-needle-add-module-to-main-import - JHipster will import modules here, do not remove
 
 @Module({
   imports: [
@@ -63,10 +61,7 @@ import { MailModule } from './mail/mail.module.ts';
     // properties, or of the MailSettingsProvider of a global module of the application.
     MailModule.forRoot(),
 <%_ } _%>
-    // jhipster-needle-add-entity-module-to-main - JHipster will add entity modules here, do not remove
-  ],
-  controllers: [
-    // jhipster-needle-add-controller-module-to-main - JHipster will add controller modules here, do not remove
+    // jhipster-needle-add-module-to-main - JHipster will add modules here, do not remove
   ],
   providers: [
     // Logs the requests of every controller, opt out with @SkipLogging().
@@ -79,7 +74,6 @@ import { MailModule } from './mail/mail.module.ts';
     // The registration in Consul, started by main.ts once the application listens.
     ConsulService,
 <%_ } _%>
-  // jhipster-needle-add-service-module-to-main - JHipster will add service modules here, do not remove
   ],
 })
 export class AppModule  {

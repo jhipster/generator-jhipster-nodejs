@@ -519,6 +519,26 @@ describe('SubGenerator node-server of nodejs JHipster blueprint', () => {
       );
     });
   });
+  describe('with a module of a blueprint', () => {
+    beforeAll(async function () {
+      await helpers
+        .run(SUB_GENERATOR_NAMESPACE)
+        .withJHipsterConfig({ skipClient: true })
+        .withOptions({ ignoreNeedlesError: true })
+        .withJHipsterGenerators()
+        .withConfiguredBlueprint()
+        .withBlueprintConfig({})
+        .withTask('postWriting', function ({ source }) {
+          source.addModuleToAppModule({ moduleClass: 'SettingsModule', modulePath: 'settings/settings.module.ts' });
+        });
+    });
+
+    it('should import it in the application module', () => {
+      result.assertFileContent('server/src/app.module.ts', "import { SettingsModule } from './settings/settings.module.ts';");
+      result.assertFileContent('server/src/app.module.ts', /imports: \[[\s\S]*SettingsModule,[\s\S]*\],\n {2}providers/);
+    });
+  });
+
   describe('with the mails of a blueprint, without user management', () => {
     beforeAll(async function () {
       await helpers

@@ -328,16 +328,18 @@ export default class extends BaseApplicationGenerator {
               contentToAdd: `${className},`,
             }),
           );
-        source.addEntityToAppModule = ({ entityClass, nodejsModulePath }) =>
+        // A module imported by the application module, like the module of an entity or a global module of a blueprint:
+        // moduleClass, of modulePath (from src/, like entities/foo/foo.module.ts).
+        source.addModuleToAppModule = ({ moduleClass, modulePath }) =>
           this.editFile(
             `${SERVER_NODEJS_SRC_DIR}/src/app.module.ts`,
             createNeedleCallback({
-              needle: 'jhipster-needle-add-entity-module-to-main-import',
-              contentToAdd: `import { ${entityClass}Module } from './${nodejsModulePath}';`,
+              needle: 'jhipster-needle-add-module-to-main-import',
+              contentToAdd: `import { ${moduleClass} } from './${modulePath}';`,
             }),
             createNeedleCallback({
-              needle: 'jhipster-needle-add-entity-module-to-main',
-              contentToAdd: `${entityClass}Module,`,
+              needle: 'jhipster-needle-add-module-to-main',
+              contentToAdd: `${moduleClass},`,
             }),
           );
       },
@@ -784,7 +786,7 @@ export default class extends BaseApplicationGenerator {
         for (const entity of entities.filter(entity => !entity.skipServer)) {
           const { nodejsModulePath, entityClass } = entity;
           if (entity.entityDomainLayer) {
-            source.addEntityToAppModule({ nodejsModulePath, entityClass });
+            source.addModuleToAppModule({ moduleClass: `${entityClass}Module`, modulePath: nodejsModulePath });
           }
         }
       },
