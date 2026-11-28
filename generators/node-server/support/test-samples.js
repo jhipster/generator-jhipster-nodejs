@@ -162,8 +162,12 @@ export const mutateTestSamples = ({ databaseTypeSql }) => ({
         relationship.relationshipOneToOne ||
         (databaseTypeSql && (relationship.persistableRelationship || relationship.otherRelationship?.propertyName)),
     );
-    const sampleEntities = [...new Set([entity, ...related.map(({ otherEntity }) => otherEntity)])].filter(
-      sampleEntity => sampleEntity.entityRestLayer && sampleEntity.relationships.some(isSampleRelationship),
+    // Once each, by the name: the other entity of a relationship of the entity to itself is not the object the mutation gets.
+    const sampleEntities = [entity, ...related.map(({ otherEntity }) => otherEntity)].filter(
+      (sampleEntity, index, all) =>
+        all.findIndex(other => other.name === sampleEntity.name) === index &&
+        sampleEntity.entityRestLayer &&
+        sampleEntity.relationships.some(isSampleRelationship),
     );
     return {
       entities: sampleEntities.map(({ entityInstance, entityFileName }) => ({ entityInstance, entityFileName })),
